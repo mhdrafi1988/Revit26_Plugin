@@ -5,16 +5,118 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>1003</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\1612\09</BaseOutputPath>
 	</PropertyGroup>
 	<ItemGroup>
+	  <Compile Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
+	  <Compile Remove="Menu\Dimensions\TwoPOintLInes_V02\**" />
 	  <Compile Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
+	  <Compile Remove="Menu\Setup\WorksetAdvanced_V001\**" />
+	  <Compile Remove="Menu\Setup\WorksetAdvanced_V02\**" />
+	  <Compile Remove="Menu\Tagging\RoofTag_V04\**" />
+	  <Compile Remove="Menu\Tagging\RoofTag_V4\**" />
+	  <Compile Remove="Menu\ViewTools\Rename\SectionManagerRefactor\**" />
+	  <Compile Remove="Menu\ViewTools\Rename\SectionRenamer_V02\**" />
+	  <Compile Remove="Menu\ViewTools\Rename\Section_Renamer_V02\**" />
+	  <Compile Remove="Menu\ViewTools\Rename\Section_Renamer_V06\**" />
+	  <EmbeddedResource Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
+	  <EmbeddedResource Remove="Menu\Dimensions\TwoPOintLInes_V02\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
+	  <EmbeddedResource Remove="Menu\Setup\WorksetAdvanced_V001\**" />
+	  <EmbeddedResource Remove="Menu\Setup\WorksetAdvanced_V02\**" />
+	  <EmbeddedResource Remove="Menu\Tagging\RoofTag_V04\**" />
+	  <EmbeddedResource Remove="Menu\Tagging\RoofTag_V4\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Rename\SectionManagerRefactor\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Rename\SectionRenamer_V02\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Rename\Section_Renamer_V02\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Rename\Section_Renamer_V06\**" />
+	  <None Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
+	  <None Remove="Menu\Dimensions\TwoPOintLInes_V02\**" />
 	  <None Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
+	  <None Remove="Menu\Setup\WorksetAdvanced_V001\**" />
+	  <None Remove="Menu\Setup\WorksetAdvanced_V02\**" />
+	  <None Remove="Menu\Tagging\RoofTag_V04\**" />
+	  <None Remove="Menu\Tagging\RoofTag_V4\**" />
+	  <None Remove="Menu\ViewTools\Rename\SectionManagerRefactor\**" />
+	  <None Remove="Menu\ViewTools\Rename\SectionRenamer_V02\**" />
+	  <None Remove="Menu\ViewTools\Rename\Section_Renamer_V02\**" />
+	  <None Remove="Menu\ViewTools\Rename\Section_Renamer_V06\**" />
+	  <Page Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
+	  <Page Remove="Menu\Dimensions\TwoPOintLInes_V02\**" />
 	  <Page Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
+	  <Page Remove="Menu\Setup\WorksetAdvanced_V001\**" />
+	  <Page Remove="Menu\Setup\WorksetAdvanced_V02\**" />
+	  <Page Remove="Menu\Tagging\RoofTag_V04\**" />
+	  <Page Remove="Menu\Tagging\RoofTag_V4\**" />
+	  <Page Remove="Menu\ViewTools\Rename\SectionManagerRefactor\**" />
+	  <Page Remove="Menu\ViewTools\Rename\SectionRenamer_V02\**" />
+	  <Page Remove="Menu\ViewTools\Rename\Section_Renamer_V02\**" />
+	  <Page Remove="Menu\ViewTools\Rename\Section_Renamer_V06\**" />
 	</ItemGroup>
 	<ItemGroup>
+	  <Compile Remove="IconLoader.cs" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\AutoSlopeCommand_03.cs" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\AutoSlopeEngine.cs" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\AutoSlopeEventManager.cs" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\AutoSlopeGeometry.cs" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\AutoSlopeHandler.cs" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\AutoSlopeMetrics.cs" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\AutoSlopeParameterWriter.cs" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\AutoSlopePayload.cs" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\AutoSlopeViewModel.cs" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\AutoSlopeWindow.xaml.cs" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\DijkstraPathEngine - Copy.cs" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\DijkstraPathEngine.cs" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\InverseBoolConverter.cs" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\LogColorHelper.cs" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSloperDrain_04\AutoSloperDrain_04.cs" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSloperDrain_04\DrainDetectionService.cs" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSloperDrain_04\DrainItem.cs" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSloperDrain_04\GraphBuilderService.cs" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSloperDrain_04\LogMessage.cs" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSloperDrain_04\MainViewModel.cs" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSloperDrain_04\MainWindow.xaml.cs" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSloperDrain_04\PathSolverService.cs" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSloperDrain_04\RoofData.cs" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSloperDrain_04\RoofSlopeProcessorService.cs" />
+	  <Compile Remove="Resources\App.xaml.cs" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Remove="Menu\ViewTools\Rename\BubbleRenumber_SDRV4.rar" />
+	  <None Remove="Menu\ViewTools\Rename\SectionManagerRefactor.rar" />
+	  <None Remove="Resources\Icons\addlines32.png" />
+	  <None Remove="Resources\Icons\addpoints32.png" />
+	  <None Remove="Resources\Icons\addtag32.png" />
+	  <None Remove="Resources\Icons\automatci.png" />
+	  <None Remove="Resources\Icons\Autoslope32.png" />
+	  <None Remove="Resources\Icons\converter32.png" />
+	  <None Remove="Resources\Icons\createview32.png" />
+	  <None Remove="Resources\Icons\linematch32.png" />
+	  <None Remove="Resources\Icons\placeview.png" />
+	  <None Remove="Resources\Icons\rename.png" />
+	  <None Remove="Resources\Icons\setting32.png" />
+	  <None Remove="Resources\Icons\setup32.png" />
+	  <None Remove="Resources\Icons\shapepoints32.png" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\AutoSlopeWindow.xaml" />
+	  <Page Remove="Menu\RoofTools\RoofSlope\AutoSloperDrain_04\MainWindow.xaml" />
+	  <Page Remove="Resources\App.xaml" />
+	</ItemGroup>
+	<ItemGroup>
+	  <EmbeddedResource Include="Resources\Icons\addlines32.png" />
+	  <EmbeddedResource Include="Resources\Icons\addpoints32.png" />
+	  <EmbeddedResource Include="Resources\Icons\addtag32.png" />
+	  <EmbeddedResource Include="Resources\Icons\automatci.png" />
+	  <EmbeddedResource Include="Resources\Icons\Autoslope32.png" />
+	  <EmbeddedResource Include="Resources\Icons\converter32.png" />
+	  <EmbeddedResource Include="Resources\Icons\createview32.png" />
+	  <EmbeddedResource Include="Resources\Icons\linematch32.png" />
+	  <EmbeddedResource Include="Resources\Icons\placeview.png" />
+	  <EmbeddedResource Include="Resources\Icons\rename.png" />
+	  <EmbeddedResource Include="Resources\Icons\setting32.png" />
+	  <EmbeddedResource Include="Resources\Icons\setup32.png" />
+	  <EmbeddedResource Include="Resources\Icons\shapepoints32.png" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Reference Include="RevitAPI">
@@ -28,5 +130,18 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+	  <PackageReference Include="MahApps.Metro" Version="2.4.11" />
+	  <PackageReference Include="MahApps.Metro.IconPacks" Version="6.2.1" />
+	  <PackageReference Include="MaterialDesignColors" Version="5.3.0" />
+	  <PackageReference Include="MaterialDesignThemes" Version="5.3.0" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\" />
+	  <Folder Include="Menu\RoofTools\RoofSlope\AutoSloperDrain_04\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Compile Update="Menu\RoofTools\Lines\AutoLinerWindow.xaml.cs">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Compile>
 	</ItemGroup>
 </Project>

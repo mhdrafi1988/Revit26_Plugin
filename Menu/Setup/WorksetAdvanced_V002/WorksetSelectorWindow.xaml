@@ -1,0 +1,97 @@
+﻿<mah:MetroWindow x:Class="Revit26_Plugin.WSAV02.Views.WorksetSelectorWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:vm="clr-namespace:Revit26_Plugin.WSAV02.ViewModels"
+                 Title="Workset Assignment Tool"
+                 Height="600" Width="900"
+                 WindowStartupLocation="CenterScreen"
+                 GlowBrush="Black"
+                 BorderThickness="1">
+
+    <Grid Margin="15">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="200"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Title -->
+        <TextBlock Text="Workset Assignment Tool"
+                   FontSize="22"
+                   FontWeight="Bold"
+                   Foreground="White"
+                   Margin="0 0 0 15"/>
+
+        <!-- Pattern Input Row -->
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0 0 0 10">
+            <TextBlock Text="Workset Name Pattern:"
+                       VerticalAlignment="Center"
+                       Foreground="White"
+                       Width="180"/>
+
+            <TextBox Width="400"
+                     Text="{Binding Pattern, UpdateSourceTrigger=PropertyChanged}"
+                     Foreground="White"
+                     Background="#333"/>
+        </StackPanel>
+
+        <!-- Workset List -->
+        <DataGrid Grid.Row="2"
+                  ItemsSource="{Binding Items}"
+                  AutoGenerateColumns="False"
+                  HeadersVisibility="Column"
+                  RowHeaderWidth="0"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  CanUserResizeRows="False"
+                  Background="#222"
+                  Foreground="White">
+
+            <DataGrid.Columns>
+                <DataGridCheckBoxColumn Binding="{Binding IsSelected}"
+                                        Header="Select"
+                                        Width="60"/>
+
+                <DataGridTextColumn Binding="{Binding LinkName}"
+                                    Header="Linked File Name"
+                                    Width="*"/>
+
+                <DataGridTextColumn Binding="{Binding PreviewName}"
+                                    Header="Workset Name"
+                                    Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- LOG PANEL -->
+        <GroupBox Header="Log" Grid.Row="3" Foreground="White">
+            <ListBox ItemsSource="{Binding LogMessages}"
+                     Background="#111"
+                     Foreground="White" />
+        </GroupBox>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="4" Orientation="Horizontal"
+                    HorizontalAlignment="Right" Margin="0 10 0 0">
+
+            <Button Content="Re-Sync"
+                    Width="120" Height="35"
+                    Margin="0 0 10 0"
+                    Command="{Binding ReSyncCommand}"/>
+
+            <Button Content="Create"
+                    Width="120" Height="35"
+                    Margin="0 0 10 0"
+                    Command="{Binding CreateCommand}"/>
+
+            <Button Content="Close"
+                    Width="120" Height="35"
+                    Command="{Binding CloseCommand}"/>
+        </StackPanel>
+
+    </Grid>
+</mah:MetroWindow>

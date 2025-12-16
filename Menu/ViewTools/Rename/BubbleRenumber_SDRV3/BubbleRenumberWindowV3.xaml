@@ -1,0 +1,54 @@
+﻿<mah:MetroWindow x:Class="Revit22_Plugin.SDRV3.BubbleRenumberWindowV3"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                 Title="Section Bubble Renumber — V3"
+                 Height="480" Width="520"
+                 WindowStartupLocation="CenterScreen">
+
+    <Grid Margin="12">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Inputs -->
+        <StackPanel Orientation="Vertical" Margin="0 0 0 12">
+
+            <TextBlock Text="Select Sheet" FontWeight="Bold"/>
+            <ComboBox ItemsSource="{Binding Sheets}"
+                      SelectedItem="{Binding SelectedSheet}"
+                      DisplayMemberPath="Name"
+                      Height="28" Margin="0 4"/>
+
+            <TextBlock Text="Starting Detail Number" FontWeight="Bold"/>
+            <TextBox Text="{Binding StartingDetailNumber}" Height="28" Margin="0 4"/>
+
+            <TextBlock Text="Vertical Threshold (mm)" FontWeight="Bold"/>
+            <TextBox Text="{Binding VerticalThresholdMm}" Height="28" Margin="0 4"/>
+
+            <Button Content="RUN"
+                    Command="{Binding RunCommand}"
+                    Height="36"
+                    Margin="0 8"
+                    Background="#3B82F6"
+                    Foreground="White"
+                    FontWeight="Bold"/>
+        </StackPanel>
+
+        <!-- Log Panel -->
+        <GroupBox Header="Log Output" Grid.Row="2" Margin="0 10 0 0">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <TextBlock Text="{Binding LogText}"
+                           TextWrapping="Wrap"
+                           FontFamily="Consolas"
+                           Foreground="#1E40AF"
+                           Margin="6"/>
+            </ScrollViewer>
+        </GroupBox>
+
+    </Grid>
+
+</mah:MetroWindow>

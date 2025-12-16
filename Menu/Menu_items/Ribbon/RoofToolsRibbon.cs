@@ -1,29 +1,23 @@
 ﻿using Autodesk.Revit.UI;
-//using Revit22_Plugin.Commands;
-//using Revit22_Plugin.Utils;
 using System;
 using System.Reflection;
 using System.Windows.Markup;
-//using System.Windows.Media.Imaging;
 
-namespace Revit26_Plugin.Ribbon
+namespace Revit26_Plugin.Menu.Ribbon
 {
     public static class RoofToolsRibbon
     {
-        //Bitmaps
-       /* private static BitmapSource LoadPng(string relativePath)
-        {
-            string assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
-            string uriPath = $"pack://application:,,,/{assemblyName};component/{relativePath}";
-            return new BitmapImage(new Uri(uriPath));
-        }*/
+       
         public static void Build(UIControlledApplication app, string tabName, string assemblyPath)
         {
             RibbonPanel panel = app.CreateRibbonPanel(tabName, "Roof Tools");
+            //string Autoslope32 = "Revit26_Plugin.Resources.Icons.Autoslope32.png";
+
 
             PulldownButton SlopeMenu = panel.AddItem(new PulldownButtonData("RoofSlopeMenu", "Auto SLope")) as PulldownButton;
             //SlopeMenu.LargeImage = IconManager.ToBitmapSource(Properties.Resources.Autoslope32);
-            
+            //SlopeMenu.Image = IconLoader.LoadPng(Autoslope32);
+
             SlopeMenu.AddPushButton(new PushButtonData("Btn_DijkstraPath2_2026", "DijkstraPath2_2026(Point)", assemblyPath, "Revit26_Plugin.Commands.DijkstraPath2_2026"));
             SlopeMenu.AddPushButton(new PushButtonData("Btn_RoofSloperClassic1_v2", "RoofSloperClassic1_v2(Point)", assemblyPath, "Revit26_Plugin.Commands.RoofSloperClassic1_v2"));
             SlopeMenu.AddPushButton(new PushButtonData("Btn_RoofSloperClassic_02", "RoofSloperClassic_02(Point)", assemblyPath, "Revit26_Plugin.Commands.RoofSloperClassic_02"));
@@ -51,10 +45,21 @@ namespace Revit26_Plugin.Ribbon
 
 
 
-            /*PulldownButton tagMenu = panel.AddItem(new PulldownButtonData("RoofTagMenu", "Tag")) as PulldownButton;
+            PulldownButton tagMenu = panel.AddItem(new PulldownButtonData("RoofTagMenu", "Tag")) as PulldownButton;
            //tagMenu.LargeImage = IconManager.ToBitmapSource(Properties.Resources.addtag32);
 
-           tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagAll", "Tag All Roof Points 1.0", assemblyPath, "Revit22_Plugin.RoofTagCommand"));
+
+           //tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagAll", "Tag All Roof Points 1.0", assemblyPath, "Revit22_Plugin.WorksetFromLinked.Commands.CreateWorksetsFromLinkedFiles"));
+           tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV4", "Roof Tag Command V4", assemblyPath, "Revit22_Plugin.RoofTagV4.RoofTagCommandV4"));
+           tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV3", "Roof Tag Command V3", assemblyPath, "Revit22_Plugin.RoofTagV3.RoofTagCommandV3"));           
+           tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV5", "Roof Tag Command V5", assemblyPath, "Revit22_Plugin.RoofTagV5.RoofTagCommandV5"));
+           tagMenu.AddPushButton(new PushButtonData("Btn_DtlLineDimCommand_V03", "DtlLineDimCommand_V03", assemblyPath, "Revit26_Plugin.DtlLineDim_V03.Commands.DtlLineDimCommand"));
+
+            tagMenu.AddPushButton(new PushButtonData("Btn_CreateWorksetsFromLinkedFilesv02", "CreateWorksetsFromLinkedFilesv02", assemblyPath, "Revit26_Plugin.WSAV02.CreateWorksetsFromLinkedFilesv02"));
+
+            //setup.AddPushButton(new PushButtonData("Btn_CreateWorksetsFromLinkedFilesv02", "Create Worksets FromLinked Files v02", assemblyPath, "Revit26_Plugin.WSAV02.CreateWorksetsFromLinkedFilesv02"));
+
+            /*
            tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagSelectedv2", "Tag Selected Vertices 2.0", assemblyPath, "Revit22_Plugin.RoofTagCommandSelected"));
            tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV3", "RoofTagCommand V3.0", assemblyPath, "Revit22_Plugin.RoofTagV3.RoofTagCommandV3"));
            tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV4", "RoofTagCommand V4.0", assemblyPath, "Revit22_Plugin.RoofTagV4.RoofTagCommandV4"));

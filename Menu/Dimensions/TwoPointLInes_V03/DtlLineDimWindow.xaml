@@ -1,0 +1,43 @@
+﻿<Window x:Class="Revit26_Plugin.DtlLineDim_V03.Views.DtlLineDimWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Detail Line Dimension"
+        Height="420" Width="520"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <ComboBox
+            ItemsSource="{Binding DetailItemTypes}"
+            SelectedItem="{Binding SelectedDetailItemType}"
+            DisplayMemberPath="Name"
+            Margin="0,0,0,8"/>
+
+        <ComboBox
+            Grid.Row="1"
+            ItemsSource="{Binding DimensionTypes}"
+            SelectedItem="{Binding SelectedDimensionType}"
+            DisplayMemberPath="Name"
+            Margin="0,0,0,8"/>
+
+        <Button
+            Grid.Row="2"
+            Content="Generate Dimensions"
+            Command="{Binding GenerateDimensionsCommand}"
+            Height="30"
+            Margin="0,0,0,8"/>
+
+        <TextBox
+            Grid.Row="3"
+            Text="{Binding StatusLogText}"
+            IsReadOnly="True"
+            AcceptsReturn="True"
+            VerticalScrollBarVisibility="Auto"/>
+    </Grid>
+</Window>

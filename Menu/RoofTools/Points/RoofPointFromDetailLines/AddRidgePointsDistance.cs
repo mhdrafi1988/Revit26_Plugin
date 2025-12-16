@@ -204,4 +204,32 @@ namespace Revit22_Plugin.Commands
             return (success, fail);
         }
     }
+
+    // Add this filter class to allow selection of only DetailLine elements
+    public class DetailLineSelectionFilter : ISelectionFilter
+    {
+        public bool AllowElement(Element elem)
+        {
+            return elem is Autodesk.Revit.DB.DetailLine;
+        }
+
+        public bool AllowReference(Reference reference, XYZ position)
+        {
+            return false;
+        }
+    }
+
+    // Add this filter class to allow selection of only RoofBase elements
+    public class RoofSelectionFilter : ISelectionFilter
+    {
+        public bool AllowElement(Element elem)
+        {
+            return elem is Autodesk.Revit.DB.RoofBase;
+        }
+
+        public bool AllowReference(Reference reference, XYZ position)
+        {
+            return false;
+        }
+    }
 }

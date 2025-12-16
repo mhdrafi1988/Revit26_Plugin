@@ -1,7 +1,4 @@
-﻿// ✅ COMBINED AND VALIDATED VERSION
-// Revit 2022 Plugin – Roof Shape Points Inserter
-
-using Autodesk.Revit.Attributes;
+﻿using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
@@ -9,79 +6,70 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit22_Plugin.Commands
+namespace Revit26_Plugin.Commands
 {
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]
-    public class RoofRidgePointsCommand04 : IExternalCommand
+    public class RoofRidgePointsCommand2026 : IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
-            UIApplication uiApp = commandData.Application;
-            UIDocument uidoc = uiApp.ActiveUIDocument;
+            UIDocument uidoc = commandData.Application.ActiveUIDocument;
             Document doc = uidoc.Document;
 
             try
             {
-                // Step 1 – Select a roof
-                Reference roofRef = uidoc.Selection.PickObject(ObjectType.Element, new RoofSelectionFilter(), "Select a Roof element");
+                // STEP 1 — Select Roof
+                Reference roofRef = uidoc.Selection.PickObject(
+                    ObjectType.Element,
+                    new RoofSelectionFilter(),
+                    "Select a Roof element"
+                );
+
                 RoofBase roof = doc.GetElement(roofRef) as RoofBase;
                 if (roof == null)
-                {
-                    TaskDialog.Show("Roof Shape Points", "❌ Invalid selection – only Roof elements are supported.");
-                    return Result.Cancelled;
-                }
+                    return Fail("Not a roof.");
 
-                // Step 2 – Get roof outline
-                RoofOutlineService outlineService = new RoofOutlineService();
-                var curves = outlineService.GetRoofOutline(roof, doc);
-                if (curves == null || curves.Count == 0)
-                {
-                    TaskDialog.Show("Roof Shape Points", "❌ Failed to extract roof outline.");
-                    return Result.Cancelled;
-                }
-                TaskDialog.Show("Roof Shape Points", $"✅ Roof outline found ({curves.Count} curves). Select detail lines.");
+                // STEP 2 — Extract roof outline
+                var outline = new RoofOutlineService().GetRoofOutline(roof, doc);
+                if (outline == null || outline.Count == 0)
+                    return Fail("Roof outline extraction failed.");
 
-                // Step 3 – Select detail lines
-                IList<Reference> lineRefs = uidoc.Selection.PickObjects(ObjectType.Element, new DetailLineSelectionFilter(), "Select Detail Lines");
-                List<CurveElement> detailLines = lineRefs.Select(r => doc.GetElement(r)).OfType<CurveElement>().ToList();
+                TaskDialog.Show("Roof Points", $"Roof outline curves: {outline.Count}");
+
+                // STEP 3 — Select detail lines
+                IList<Reference> refs = uidoc.Selection.PickObjects(
+                    ObjectType.Element,
+                    new DetailLineSelectionFilter(),
+                    "Select Detail Lines"
+                );
+
+                List<CurveElement> detailLines =
+                    refs.Select(r => doc.GetElement(r)).OfType<CurveElement>().ToList();
+
                 if (!detailLines.Any())
-                {
-                    TaskDialog.Show("Roof Shape Points", "❌ No detail lines selected.");
-                    return Result.Cancelled;
-                }
+                    return Fail("No detail lines selected.");
 
-                // Step 4 – Find intersections
-                IntersectionService intService = new IntersectionService();
-                List<XYZ> intersections = intService.GetIntersections(curves, detailLines, 5.0 / 304.8);
-                if (intersections.Count == 0)
-                {
-                    TaskDialog.Show("Roof Shape Points", "⚠️ No intersections found between roof and lines.");
-                    return Result.Cancelled;
-                }
-                TaskDialog.Show("Roof Shape Points", $"✅ {intersections.Count} unique intersection points found.");
+                // STEP 4 — Find intersection points
+                double tol = 5.0 / 304.8; // 5 mm in feet
+                var intersections = new IntersectionService().GetIntersections(outline, detailLines, tol);
 
-                // Step 5 – Add shape points
+                if (!intersections.Any())
+                    return Fail("No intersections found.");
+
+                TaskDialog.Show("Roof Points", $"{intersections.Count} intersection points.");
+
+                // STEP 5 — Add slab shape points
                 ShapeEditService shapeService = new ShapeEditService();
-                using (TransactionGroup tg = new TransactionGroup(doc, "Roof Shape Points"))
+                using (Transaction t = new Transaction(doc, "Add Shape Points"))
                 {
-                    tg.Start();
-                    using (Transaction t = new Transaction(doc, "Add Points"))
-                    {
-                        t.Start();
-                        (int success, int fail) = shapeService.EnableAndAddShapePoints(doc, roof, intersections);
-                        if (success == 0)
-                        {
-                            t.RollBack();
-                            tg.RollBack();
-                            TaskDialog.Show("Roof Shape Points", "❌ No valid points added – rolled back.");
-                            return Result.Failed;
-                        }
-                        t.Commit();
-                        TaskDialog.Show("Roof Shape Points", $"✅ Points added: {success}\n⚠️ Failed: {fail}");
-                    }
-                    tg.Assimilate();
+                    t.Start();
+                    var (ok, fail) = shapeService.EnableAndAddShapePoints(doc, roof, intersections);
+                    t.Commit();
+
+                    TaskDialog.Show("Result", $"Added: {ok}\nFailed: {fail}");
                 }
+
                 return Result.Succeeded;
             }
             catch (Autodesk.Revit.Exceptions.OperationCanceledException)
@@ -90,12 +78,22 @@ namespace Revit22_Plugin.Commands
             }
             catch (Exception ex)
             {
+                TaskDialog.Show("ERR", ex.ToString());
                 message = ex.Message;
-                TaskDialog.Show("Roof Shape Points – Error", ex.ToString());
                 return Result.Failed;
             }
         }
+
+        private Result Fail(string msg)
+        {
+            TaskDialog.Show("FAIL", msg);
+            return Result.Cancelled;
+        }
     }
+
+    // -----------------------------
+    // FILTERS
+    // -----------------------------
 
     public class RoofSelectionFilter : ISelectionFilter
     {
@@ -105,68 +103,78 @@ namespace Revit22_Plugin.Commands
 
     public class DetailLineSelectionFilter : ISelectionFilter
     {
-        public bool AllowElement(Element e) => e is CurveElement ce && ce.CurveElementType == CurveElementType.DetailCurve;
+        public bool AllowElement(Element e)
+        {
+            return e is CurveElement ce &&
+                   ce.CurveElementType == CurveElementType.DetailCurve;
+        }
         public bool AllowReference(Reference r, XYZ p) => true;
     }
+
+    // -----------------------------
+    // ROOF OUTLINE SERVICE
+    // -----------------------------
 
     public class RoofOutlineService
     {
         public List<Curve> GetRoofOutline(RoofBase roof, Document doc)
         {
-            List<Curve> curves = new List<Curve>();
+            List<Curve> curves = new();
 
-            // 1️⃣ Try footprint
+            // 1 — Footprint roof loops
             if (roof is FootPrintRoof fpr)
             {
                 var profiles = fpr.GetProfiles();
-                if (profiles != null)
-                {
-                    foreach (CurveArray ca in profiles)
-                        foreach (Curve c in ca)
-                            if (c != null) curves.Add(c);
-                }
-                if (curves.Any()) return curves;
+                foreach (CurveArray arr in profiles)
+                    foreach (Curve c in arr)
+                        curves.Add(c);
+
+                if (curves.Any())
+                    return curves;
             }
 
-            // 2️⃣ Fallback – solid edges
-            Solid roofSolid = GetRoofSolid(roof);
-            if (roofSolid != null)
+            // 2 — Solid geometry fallback
+            Solid solid = GetRoofSolid(roof);
+            if (solid != null)
             {
-                foreach (Edge e in roofSolid.Edges)
-                {
-                    Curve c = e.AsCurve();
-                    if (c != null) curves.Add(c);
-                }
-                if (curves.Any()) return curves;
+                foreach (Edge e in solid.Edges)
+                    curves.Add(e.AsCurve());
+
+                if (curves.Any())
+                    return curves;
             }
 
-            // 3️⃣ Fallback – top face loop
+            // 3 — Top face edges fallback
             Face topFace = GetTopFace(roof);
             if (topFace != null)
             {
                 var loops = topFace.GetEdgesAsCurveLoops();
                 var outer = loops.OrderByDescending(l => l.GetExactLength()).FirstOrDefault();
-                if (outer != null) curves.AddRange(outer);
+                if (outer != null)
+                    curves.AddRange(outer);
             }
 
             return curves;
         }
 
-        private Solid GetRoofSolid(Element elem)
+        public Solid GetRoofSolid(Element elem)
         {
-            Options opt = new Options { ComputeReferences = false, DetailLevel = ViewDetailLevel.Fine };
-            GeometryElement geomElem = elem.get_Geometry(opt);
-            foreach (GeometryObject go in geomElem)
-                if (go is Solid s && s.Volume > 0) return s;
+            Options opt = new Options { DetailLevel = ViewDetailLevel.Fine };
+            foreach (var obj in elem.get_Geometry(opt))
+                if (obj is Solid s && s.Volume > 0)
+                    return s;
+
             return null;
         }
 
-        private Face GetTopFace(Element elem)
+        public Face GetTopFace(Element elem)
         {
             Solid solid = GetRoofSolid(elem);
             if (solid == null) return null;
+
             Face top = null;
             double maxZ = double.NegativeInfinity;
+
             foreach (Face f in solid.Faces)
             {
                 if (f is PlanarFace pf && pf.FaceNormal.IsAlmostEqualTo(XYZ.BasisZ))
@@ -182,11 +190,15 @@ namespace Revit22_Plugin.Commands
         }
     }
 
+    // -----------------------------
+    // INTERSECTION SERVICE
+    // -----------------------------
+
     public class IntersectionService
     {
         public List<XYZ> GetIntersections(List<Curve> roofCurves, List<CurveElement> detailLines, double tolFeet)
         {
-            List<XYZ> points = new List<XYZ>();
+            List<XYZ> pts = new();
 
             foreach (Curve rc in roofCurves)
             {
@@ -194,88 +206,68 @@ namespace Revit22_Plugin.Commands
                 {
                     Curve dl = ce.GeometryCurve;
                     if (dl == null) continue;
+
                     rc.Intersect(dl, out IntersectionResultArray ira);
-                    if (ira != null)
-                    {
-                        foreach (IntersectionResult i in ira)
-                            if (i.XYZPoint != null)
-                                points.Add(i.XYZPoint);
-                    }
+                    if (ira == null) continue;
+
+                    foreach (IntersectionResult ir in ira)
+                        if (ir.XYZPoint != null)
+                            pts.Add(ir.XYZPoint);
                 }
             }
 
-            // Deduplicate by distance tolerance
-            List<XYZ> unique = new List<XYZ>();
-            foreach (XYZ p in points)
-            {
-                bool exists = unique.Any(u => u.DistanceTo(p) < tolFeet);
-                if (!exists) unique.Add(p);
-            }
+            // Deduplicate
+            List<XYZ> unique = new();
+            foreach (XYZ p in pts)
+                if (!unique.Any(u => u.DistanceTo(p) < tolFeet))
+                    unique.Add(p);
+
             return unique;
         }
     }
 
+    // -----------------------------
+    // SHAPE EDIT SERVICE
+    // -----------------------------
+
     public class ShapeEditService
     {
-        public (int success, int fail) EnableAndAddShapePoints(Document doc, RoofBase roof, List<XYZ> pts)
+        public (int ok, int fail) EnableAndAddShapePoints(Document doc, RoofBase roof, List<XYZ> pts)
         {
-            int success = 0, fail = 0;
-            SlabShapeEditor slabShapeEditor;
+            int ok = 0, fail = 0;
+            SlabShapeEditor editor;
+
             try
             {
-                slabShapeEditor = roof.GetSlabShapeEditor();
-                if (!slabShapeEditor.IsEnabled)
-                    slabShapeEditor.Enable();
+                editor = roof.GetSlabShapeEditor();
+                if (!editor.IsEnabled)
+                    editor.Enable();
             }
             catch
             {
                 return (0, pts.Count);
             }
 
-            Face topFace = GetTopFace(roof);
-            if (topFace == null) return (0, pts.Count);
+            Face topFace = new RoofOutlineService().GetTopFace(roof);
+            if (topFace == null)
+                return (0, pts.Count);
 
             foreach (XYZ p in pts)
             {
                 try
                 {
-                    IntersectionResult ir = topFace.Project(p);
-                    XYZ proj = ir != null ? ir.XYZPoint : new XYZ(p.X, p.Y, p.Z);
-                    slabShapeEditor.AddPoint(proj); // <-- FIX: Use AddPoint instead of DrawPoint
-                    success++;
+                    IntersectionResult pr = topFace.Project(p);
+                    XYZ final = pr != null ? pr.XYZPoint : p;
+                    editor.AddPoint(final);
+                    ok++;
                 }
                 catch
                 {
                     fail++;
                 }
             }
-            return (success, fail);
-        }
 
-        private Face GetTopFace(Element elem)
-        {
-            Options opt = new Options { ComputeReferences = false, DetailLevel = ViewDetailLevel.Fine };
-            GeometryElement geomElem = elem.get_Geometry(opt);
-            Face top = null;
-            double maxZ = double.NegativeInfinity;
-            foreach (GeometryObject go in geomElem)
-            {
-                if (go is Solid s && s.Volume > 0)
-                {
-                    foreach (Face f in s.Faces)
-                    {
-                        if (f is PlanarFace pf && pf.FaceNormal.IsAlmostEqualTo(XYZ.BasisZ))
-                        {
-                            if (pf.Origin.Z > maxZ)
-                            {
-                                maxZ = pf.Origin.Z;
-                                top = pf;
-                            }
-                        }
-                    }
-                }
-            }
-            return top;
+            return (ok, fail);
         }
     }
 }

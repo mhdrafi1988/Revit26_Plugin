@@ -9,7 +9,7 @@ namespace Revit22_Plugin.Asd_V4_01.Services
         public static void UpdateAllParameters(
             Document doc,
             RoofBase roof,
-            AutoSlopePayloadv2 data,      // <--- changed from AutoSlopePayload
+            AutoSlopePayload_04_01 data,      // <--- changed from AutoSlopePayload
             double highestElevationMeters,
             double longestPathMeters,
             int processed,

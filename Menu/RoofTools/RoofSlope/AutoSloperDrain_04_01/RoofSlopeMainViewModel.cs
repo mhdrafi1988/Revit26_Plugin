@@ -324,8 +324,8 @@ namespace Revit22_Plugin.Asd_V4_01.ViewModels
                     highestElevationMeters = 0;
                 }
 
-                // ---- Payload v2 ----
-                var payload = new AutoSlopePayloadv2
+                // ---- Payload v-0401 ----
+                var payload = new AutoSlopePayload_04_01
                 {
                     SlopePercent = slope,
                     ThresholdMeters = 0,
@@ -409,6 +409,43 @@ namespace Revit22_Plugin.Asd_V4_01.ViewModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
+        // ===================== AutoSlope Engine Summary Bindings =====================
+
+        private int _verticesProcessed;
+        public int VerticesProcessed
+        {
+            get => _verticesProcessed;
+            set { _verticesProcessed = value; OnPropertyChanged(nameof(VerticesProcessed)); }
+        }
+
+        private int _verticesSkipped;
+        public int VerticesSkipped
+        {
+            get => _verticesSkipped;
+            set { _verticesSkipped = value; OnPropertyChanged(nameof(VerticesSkipped)); }
+        }
+
+        private double _highestElevation;
+        public double HighestElevation
+        {
+            get => _highestElevation;
+            set { _highestElevation = value; OnPropertyChanged(nameof(HighestElevation)); }
+        }
+
+        private double _longestPathMeters;
+        public double LongestPathMeters
+        {
+            get => _longestPathMeters;
+            set { _longestPathMeters = value; OnPropertyChanged(nameof(LongestPathMeters)); }
+        }
+
+        private string _summaryText;
+        public string SummaryText
+        {
+            get => _summaryText;
+            set { _summaryText = value; OnPropertyChanged(nameof(SummaryText)); }
+        }
+
     }
 
     // ------------------------- RELAY COMMAND -------------------------
@@ -434,4 +471,5 @@ namespace Revit22_Plugin.Asd_V4_01.ViewModels
 
         public void Execute(object p) => _exec();
     }
+
 }
