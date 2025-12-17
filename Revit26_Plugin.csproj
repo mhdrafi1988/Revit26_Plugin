@@ -5,7 +5,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\1612\09</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\1712\02</BaseOutputPath>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
@@ -69,6 +69,7 @@
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\DijkstraPathEngine.cs" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\InverseBoolConverter.cs" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\LogColorHelper.cs" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03_00\DijkstraPathEngine - Copy.cs" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSloperDrain_04\AutoSloperDrain_04.cs" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSloperDrain_04\DrainDetectionService.cs" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSloperDrain_04\DrainItem.cs" />
@@ -140,7 +141,7 @@
 	  <Folder Include="Menu\RoofTools\RoofSlope\AutoSloperDrain_04\" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Compile Update="Menu\RoofTools\Lines\AutoLinerWindow.xaml.cs">
+	  <Compile Update="Menu\RoofTools\Lines\AutoLinerCommand_V01\AutoLinerWindow.xaml.cs">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Compile>
 	</ItemGroup>

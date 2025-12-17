@@ -13,7 +13,7 @@ namespace Revit26_Plugin
     /// </summary>
     public partial class App : IExternalApplication
     {
-        private const string RibbonTabName = "Rf_26_16_09";
+        private const string RibbonTabName = "Rf_26_17_00";
                 public Result OnStartup(UIControlledApplication application)
         {
             EnsureRibbonTabExists(application);

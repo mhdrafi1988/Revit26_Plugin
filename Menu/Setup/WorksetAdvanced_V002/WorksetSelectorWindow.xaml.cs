@@ -13,5 +13,10 @@ namespace Revit26_Plugin.WSAV02.Views
             vm.RequestClose += _ => this.Close();
             DataContext = vm;
         }
+
+        private void DataGrid_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }

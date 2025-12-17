@@ -36,7 +36,7 @@
 
             <TextBox Width="400"
                      Text="{Binding Pattern, UpdateSourceTrigger=PropertyChanged}"
-                     Foreground="White"
+                     Foreground="Red"
                      Background="#333"/>
         </StackPanel>
 
@@ -49,8 +49,9 @@
                   CanUserAddRows="False"
                   CanUserDeleteRows="False"
                   CanUserResizeRows="False"
-                  Background="#222"
-                  Foreground="White">
+                  Background="AliceBlue"
+                  Foreground="DarkGreen" 
+                  SelectionChanged="DataGrid_SelectionChanged">
 
             <DataGrid.Columns>
                 <DataGridCheckBoxColumn Binding="{Binding IsSelected}"
@@ -70,8 +71,8 @@
         <!-- LOG PANEL -->
         <GroupBox Header="Log" Grid.Row="3" Foreground="White">
             <ListBox ItemsSource="{Binding LogMessages}"
-                     Background="#111"
-                     Foreground="White" />
+                     Background="AliceBlue"
+                     Foreground="DarkGreen" />
         </GroupBox>
 
         <!-- Buttons -->

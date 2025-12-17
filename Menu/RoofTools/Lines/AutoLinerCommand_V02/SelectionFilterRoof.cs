@@ -1,13 +1,14 @@
 ﻿using Autodesk.Revit.DB;
 using Autodesk.Revit.UI.Selection;
 
-namespace Revit26_Plugin.AutoLiner_V01.Services
+namespace AutoLinerCommand_V02.Helpers
 {
-    public class RoofSelectionFilter : ISelectionFilter
+    public class SelectionFilterRoof : ISelectionFilter
     {
         public bool AllowElement(Element elem)
         {
-            return elem is RoofBase;
+            return elem.Category != null &&
+                   elem.Category.Id.Value == (int)BuiltInCategory.OST_Roofs;
         }
 
         public bool AllowReference(Reference reference, XYZ position)

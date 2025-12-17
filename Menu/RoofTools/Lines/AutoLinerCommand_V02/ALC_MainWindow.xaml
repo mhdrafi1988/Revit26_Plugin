@@ -1,0 +1,44 @@
+﻿<Window x:Class="Revit26_Plugin.AutoLiner_V02.Views.AutoLinerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="AutoLiner – Roof to Drain"
+        Height="500"
+        Width="450"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Roof -->
+        <TextBlock Text="{Binding RoofInfo}"
+                   FontWeight="Bold"
+                   Margin="0,0,0,10"/>
+
+        <!-- Detail Item Selector -->
+        <ComboBox Grid.Row="1"
+                  ItemsSource="{Binding DetailItems}"
+                  SelectedItem="{Binding SelectedDetailItem}"
+                  DisplayMemberPath="Name"
+                  Margin="0,0,0,10"/>
+
+        <!-- Log -->
+        <TextBox Grid.Row="2"
+                 Text="{Binding LogText}"
+                 IsReadOnly="True"
+                 AcceptsReturn="True"
+                 VerticalScrollBarVisibility="Auto"/>
+
+        <!-- Execute -->
+        <Button Grid.Row="3"
+        Content="Create Detail Items"
+        Command="{Binding ExecuteCommand}"
+        Height="35"
+        Margin="0,10,0,0"/>
+
+    </Grid>
+</Window>

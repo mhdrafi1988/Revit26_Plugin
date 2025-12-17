@@ -21,7 +21,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             //DimMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV5", "Roof Tag Command V5", assemblyPath, "Revit22_Plugin.RoofTagV5.RoofTagCommandV5"));
             DimMenu.AddPushButton(new PushButtonData("Btn_DtlLineDimCommand_01", "DtlLineDimCommand_01", assemblyPath, "Revit26_Plugin.DtlLineDim_V03.Commands.DtlLineDimCommand_01"));
             DimMenu.AddPushButton(new PushButtonData("Btn_AutoLinerCommand_01", "AutoLinerCommand_01", assemblyPath, "Revit26_Plugin.AutoLiner_V01.Commands.AutoLinerCommand"));
-            DimMenu.AddPushButton(new PushButtonData("Btn_AutoLinerCommand_V01", "AutoLinerCommand_V01", assemblyPath, "Revit26_Plugin.AutoLiner_V01.Commands.AutoLinerCommand_V01"));
+            DimMenu.AddPushButton(new PushButtonData("Btn_AutoLinerCommand_V02", "AutoLinerCommand_V02", assemblyPath, "Revit26_Plugin.AutoLiner_V02.Commands.AutoLinerCommand_V02"));
 
         }
     }
