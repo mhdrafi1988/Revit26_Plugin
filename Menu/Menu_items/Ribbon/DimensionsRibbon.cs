@@ -22,6 +22,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             DimMenu.AddPushButton(new PushButtonData("Btn_DtlLineDimCommand_01", "DtlLineDimCommand_01", assemblyPath, "Revit26_Plugin.DtlLineDim_V03.Commands.DtlLineDimCommand_01"));
             DimMenu.AddPushButton(new PushButtonData("Btn_AutoLinerCommand_01", "AutoLinerCommand_01", assemblyPath, "Revit26_Plugin.AutoLiner_V01.Commands.AutoLinerCommand"));
             DimMenu.AddPushButton(new PushButtonData("Btn_AutoLinerCommand_V02", "AutoLinerCommand_V02", assemblyPath, "Revit26_Plugin.AutoLiner_V02.Commands.AutoLinerCommand_V02"));
+            DimMenu.AddPushButton(new PushButtonData("Btn_AutoLinerCommand_V04", "AutoLinerCommand_04", assemblyPath, "Revit26_Plugin.AutoLiner_V04.Commands.AutoLinerCommand"));
 
         }
     }

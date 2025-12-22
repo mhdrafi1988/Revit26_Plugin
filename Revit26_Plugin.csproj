@@ -5,11 +5,12 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\1712\02</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\22212\0602</BaseOutputPath>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
 	  <Compile Remove="Menu\Dimensions\TwoPOintLInes_V02\**" />
+	  <Compile Remove="Menu\RoofTools\CreasetoLines\Creaser_V05\**" />
 	  <Compile Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
 	  <Compile Remove="Menu\Setup\WorksetAdvanced_V001\**" />
 	  <Compile Remove="Menu\Setup\WorksetAdvanced_V02\**" />
@@ -21,6 +22,7 @@
 	  <Compile Remove="Menu\ViewTools\Rename\Section_Renamer_V06\**" />
 	  <EmbeddedResource Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
 	  <EmbeddedResource Remove="Menu\Dimensions\TwoPOintLInes_V02\**" />
+	  <EmbeddedResource Remove="Menu\RoofTools\CreasetoLines\Creaser_V05\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
 	  <EmbeddedResource Remove="Menu\Setup\WorksetAdvanced_V001\**" />
 	  <EmbeddedResource Remove="Menu\Setup\WorksetAdvanced_V02\**" />
@@ -32,6 +34,7 @@
 	  <EmbeddedResource Remove="Menu\ViewTools\Rename\Section_Renamer_V06\**" />
 	  <None Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
 	  <None Remove="Menu\Dimensions\TwoPOintLInes_V02\**" />
+	  <None Remove="Menu\RoofTools\CreasetoLines\Creaser_V05\**" />
 	  <None Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
 	  <None Remove="Menu\Setup\WorksetAdvanced_V001\**" />
 	  <None Remove="Menu\Setup\WorksetAdvanced_V02\**" />
@@ -43,6 +46,7 @@
 	  <None Remove="Menu\ViewTools\Rename\Section_Renamer_V06\**" />
 	  <Page Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
 	  <Page Remove="Menu\Dimensions\TwoPOintLInes_V02\**" />
+	  <Page Remove="Menu\RoofTools\CreasetoLines\Creaser_V05\**" />
 	  <Page Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
 	  <Page Remove="Menu\Setup\WorksetAdvanced_V001\**" />
 	  <Page Remove="Menu\Setup\WorksetAdvanced_V02\**" />

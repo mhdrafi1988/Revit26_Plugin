@@ -44,7 +44,7 @@ namespace Revit26_Plugin.AutoLiner_V02.ExternalEvents
                     drains,
                     Log);
 
-                DetailItemCreationService.Create(
+                DetailItemCreationService.CreateCornerToDrainLines(
                     Document,
                     ActiveView,
                     DetailSymbol,

@@ -41,7 +41,20 @@ namespace Revit26_Plugin.Menu.Ribbon
             ShapepointMenu.AddPushButton(new PushButtonData("Btn_RoofCircleDividerV1", "Circle Divider 1.0", assemblyPath, "Revit22_Plugin.PDCV1.Commands.RoofLoopAnalyzerCommand_01"));//Working
             ShapepointMenu.AddPushButton(new PushButtonData("Btn_AddRidgeAllPointsCommand_01", "AddRidgeAllPointsCommand 3.0", assemblyPath, "Revit22_Plugin.RPD.Commands.AddRidgeAllPointsCommand_03"));//Worki
             ShapepointMenu.AddPushButton(new PushButtonData("Btn_RoofRidgePointsCommand", "Roof Ridge Points Command 4.0", assemblyPath, "Revit22_Plugin.Commands.RoofRidgePointsCommand04"));//Worki
-            ShapepointMenu.AddPushButton(new PushButtonData("Btn_AddRidgePoints", " Ridge Points by DL & Distance 5.0", assemblyPath, "Revit22_Plugin.Commands.AddRidgePointsDistance"));//Worki
+            ShapepointMenu.AddPushButton(new PushButtonData("Btn_AddRidgePoints", " Ridge Points by DL & Distance 5.0", assemblyPath, "Revit22_Plugin.Commands.AddRidgePointsDistance"));//Worki.
+
+            PulldownButton SlopeLinerMenu = panel.AddItem(new PulldownButtonData("SlopeLiner", "SlopeLiner")) as PulldownButton;
+            SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_01", "CreaserCommand 1.0", assemblyPath, "Revit26_Plugin.Creaser_V01.Commands.CreaserCommand"));
+            SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_02010", "CreaserCommand 2.20", assemblyPath, "Revit26_Plugin.Creaser_V02010.Commands.CreaserCommand"));
+            SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_02", "CreaserCommand 2.0", assemblyPath, "Revit26_Plugin.Creaser_V02.Commands.CreaserCommand"));
+            SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_03", "CreaserCommand 3.0", assemblyPath, "Revit26_Plugin.Creaser_V03.Commands.CreaserCommand"));
+            SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_03_01", "CreaserCommand V03_01", assemblyPath, "Revit26_Plugin.Creaser_V03_01.Commands.CreaserCommand"));
+            SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_03_02", "CreaserCommand V03_02", assemblyPath, "Revit26_Plugin.Creaser_V03_02.Commands.CreaserCommand"));
+            SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_04", "CreaserCommand 4.0", assemblyPath, "Revit26_Plugin.Creaser_V04.Commands.CreaserCommand"));
+            SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_05", "CreaserCommand 5.0", assemblyPath, "Revit26_Plugin.Creaser_V05.Commands.CreaserCommand"));
+            SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_06", "CreaserCommand 6.0", assemblyPath, "Revit26_Plugin.Creaser_V06.Commands.CreaserCommand"));
+            SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_07", "CreaserCommand 7.0", assemblyPath, "Revit26_Plugin.Creaser_V07.Commands.CreaserCommand"));
+
 
 
 
@@ -53,7 +66,7 @@ namespace Revit26_Plugin.Menu.Ribbon
            tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV4", "Roof Tag Command V4", assemblyPath, "Revit22_Plugin.RoofTagV4.RoofTagCommandV4"));
            tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV3", "Roof Tag Command V3", assemblyPath, "Revit22_Plugin.RoofTagV3.RoofTagCommandV3"));           
            tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV5", "Roof Tag Command V5", assemblyPath, "Revit22_Plugin.RoofTagV5.RoofTagCommandV5"));
-           tagMenu.AddPushButton(new PushButtonData("Btn_DtlLineDimCommand_V03", "DtlLineDimCommand_V03", assemblyPath, "Revit26_Plugin.DtlLineDim_V03.Commands.DtlLineDimCommand"));
+           tagMenu.AddPushButton(new PushButtonData("Btn_DtlLineDimCommand_V03", "DtlLineDimCommand_V03", assemblyPath, "Revit26_Plugin.DtlLineDim_V03.Commands.SelectRoofAndPlaceEdgeDetailsCommand"));
 
             tagMenu.AddPushButton(new PushButtonData("Btn_CreateWorksetsFromLinkedFilesv02", "CreateWorksetsFromLinkedFilesv02", assemblyPath, "Revit26_Plugin.WSAV02.CreateWorksetsFromLinkedFilesv02"));
 
