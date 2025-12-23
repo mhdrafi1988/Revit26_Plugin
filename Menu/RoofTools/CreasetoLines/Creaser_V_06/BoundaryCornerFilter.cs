@@ -6,7 +6,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.Creaser_V06.Commands
+namespace Revit26_Plugin.Creaser_V06_01.Commands
 {
     internal static class BoundaryCornerFilter
     {

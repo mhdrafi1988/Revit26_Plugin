@@ -1,11 +1,7 @@
-﻿// ============================================================
-// File: DrainPathSolver.cs
-// Namespace: Revit26_Plugin.Creaser_V06.Commands
-// ============================================================
+﻿using System.Collections.Generic;
+using Revit26_Plugin.Creaser_V08.Commands.Models;
 
-using System.Collections.Generic;
-
-namespace Revit26_Plugin.Creaser_V06.Commands
+namespace Revit26_Plugin.Creaser_V08.Commands
 {
     internal static class DrainPathSolver
     {
@@ -15,14 +11,12 @@ namespace Revit26_Plugin.Creaser_V06.Commands
             Dictionary<XYZKey, List<XYZKey>> graph)
         {
             Dictionary<XYZKey, double> dist = new();
-            Dictionary<XYZKey, XYZKey?> prev = new();
+            Dictionary<XYZKey, XYZKey> prev = new();
+
             PriorityQueue<XYZKey, double> pq = new();
 
-            foreach (var n in graph.Keys)
-            {
+            foreach (XYZKey n in graph.Keys)
                 dist[n] = double.PositiveInfinity;
-                prev[n] = null;
-            }
 
             dist[start] = 0;
             pq.Enqueue(start, 0);
@@ -34,13 +28,11 @@ namespace Revit26_Plugin.Creaser_V06.Commands
                 if (drains.Contains(current))
                     return Reconstruct(prev, current);
 
-                if (!graph.TryGetValue(current, out var neighbors))
-                    continue;
-
-                foreach (XYZKey next in neighbors)
+                foreach (XYZKey next in graph[current])
                 {
                     double alt = dist[current] + current.DistanceTo(next);
-                    if (alt < dist[next])
+
+                    if (!dist.ContainsKey(next) || alt < dist[next])
                     {
                         dist[next] = alt;
                         prev[next] = current;
@@ -53,20 +45,19 @@ namespace Revit26_Plugin.Creaser_V06.Commands
         }
 
         private static List<XYZKey> Reconstruct(
-            Dictionary<XYZKey, XYZKey?> prev,
+            Dictionary<XYZKey, XYZKey> prev,
             XYZKey end)
         {
             List<XYZKey> path = new();
-            XYZKey current = end;
+            XYZKey cur = end;
 
-            while (true)
+            while (prev.ContainsKey(cur))
             {
-                path.Add(current);
-                if (!prev.TryGetValue(current, out XYZKey? p) || p == null)
-                    break;
-                current = p.Value;
+                path.Add(cur);
+                cur = prev[cur];
             }
 
+            path.Add(cur);
             path.Reverse();
             return path;
         }

@@ -11,7 +11,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 
-namespace Revit26_Plugin.Creaser_V06.Commands
+namespace Revit26_Plugin.Creaser_V06_01.Commands
 {
     [Transaction(TransactionMode.Manual)]
     public class CreaserCommand : IExternalCommand

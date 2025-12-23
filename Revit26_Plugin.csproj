@@ -5,12 +5,20 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\22212\0602</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2312\03</BaseOutputPath>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
 	  <Compile Remove="Menu\Dimensions\TwoPOintLInes_V02\**" />
+	  <Compile Remove="Menu\RoofTools\CreasetoLines\Creaser_V01\**" />
+	  <Compile Remove="Menu\RoofTools\CreasetoLines\Creaser_V0201\**" />
+	  <Compile Remove="Menu\RoofTools\CreasetoLines\Creaser_V02\**" />
+	  <Compile Remove="Menu\RoofTools\CreasetoLines\Creaser_V03\**" />
+	  <Compile Remove="Menu\RoofTools\CreasetoLines\Creaser_V03_01\**" />
+	  <Compile Remove="Menu\RoofTools\CreasetoLines\Creaser_V03_02\**" />
 	  <Compile Remove="Menu\RoofTools\CreasetoLines\Creaser_V05\**" />
+	  <Compile Remove="Menu\RoofTools\CreasetoLines\Creaser_V06\**" />
+	  <Compile Remove="Menu\RoofTools\CreasetoLines\Creaser_V07\**" />
 	  <Compile Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
 	  <Compile Remove="Menu\Setup\WorksetAdvanced_V001\**" />
 	  <Compile Remove="Menu\Setup\WorksetAdvanced_V02\**" />
@@ -22,7 +30,15 @@
 	  <Compile Remove="Menu\ViewTools\Rename\Section_Renamer_V06\**" />
 	  <EmbeddedResource Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
 	  <EmbeddedResource Remove="Menu\Dimensions\TwoPOintLInes_V02\**" />
+	  <EmbeddedResource Remove="Menu\RoofTools\CreasetoLines\Creaser_V01\**" />
+	  <EmbeddedResource Remove="Menu\RoofTools\CreasetoLines\Creaser_V0201\**" />
+	  <EmbeddedResource Remove="Menu\RoofTools\CreasetoLines\Creaser_V02\**" />
+	  <EmbeddedResource Remove="Menu\RoofTools\CreasetoLines\Creaser_V03\**" />
+	  <EmbeddedResource Remove="Menu\RoofTools\CreasetoLines\Creaser_V03_01\**" />
+	  <EmbeddedResource Remove="Menu\RoofTools\CreasetoLines\Creaser_V03_02\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\CreasetoLines\Creaser_V05\**" />
+	  <EmbeddedResource Remove="Menu\RoofTools\CreasetoLines\Creaser_V06\**" />
+	  <EmbeddedResource Remove="Menu\RoofTools\CreasetoLines\Creaser_V07\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
 	  <EmbeddedResource Remove="Menu\Setup\WorksetAdvanced_V001\**" />
 	  <EmbeddedResource Remove="Menu\Setup\WorksetAdvanced_V02\**" />
@@ -34,7 +50,15 @@
 	  <EmbeddedResource Remove="Menu\ViewTools\Rename\Section_Renamer_V06\**" />
 	  <None Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
 	  <None Remove="Menu\Dimensions\TwoPOintLInes_V02\**" />
+	  <None Remove="Menu\RoofTools\CreasetoLines\Creaser_V01\**" />
+	  <None Remove="Menu\RoofTools\CreasetoLines\Creaser_V0201\**" />
+	  <None Remove="Menu\RoofTools\CreasetoLines\Creaser_V02\**" />
+	  <None Remove="Menu\RoofTools\CreasetoLines\Creaser_V03\**" />
+	  <None Remove="Menu\RoofTools\CreasetoLines\Creaser_V03_01\**" />
+	  <None Remove="Menu\RoofTools\CreasetoLines\Creaser_V03_02\**" />
 	  <None Remove="Menu\RoofTools\CreasetoLines\Creaser_V05\**" />
+	  <None Remove="Menu\RoofTools\CreasetoLines\Creaser_V06\**" />
+	  <None Remove="Menu\RoofTools\CreasetoLines\Creaser_V07\**" />
 	  <None Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
 	  <None Remove="Menu\Setup\WorksetAdvanced_V001\**" />
 	  <None Remove="Menu\Setup\WorksetAdvanced_V02\**" />
@@ -46,7 +70,15 @@
 	  <None Remove="Menu\ViewTools\Rename\Section_Renamer_V06\**" />
 	  <Page Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
 	  <Page Remove="Menu\Dimensions\TwoPOintLInes_V02\**" />
+	  <Page Remove="Menu\RoofTools\CreasetoLines\Creaser_V01\**" />
+	  <Page Remove="Menu\RoofTools\CreasetoLines\Creaser_V0201\**" />
+	  <Page Remove="Menu\RoofTools\CreasetoLines\Creaser_V02\**" />
+	  <Page Remove="Menu\RoofTools\CreasetoLines\Creaser_V03\**" />
+	  <Page Remove="Menu\RoofTools\CreasetoLines\Creaser_V03_01\**" />
+	  <Page Remove="Menu\RoofTools\CreasetoLines\Creaser_V03_02\**" />
 	  <Page Remove="Menu\RoofTools\CreasetoLines\Creaser_V05\**" />
+	  <Page Remove="Menu\RoofTools\CreasetoLines\Creaser_V06\**" />
+	  <Page Remove="Menu\RoofTools\CreasetoLines\Creaser_V07\**" />
 	  <Page Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
 	  <Page Remove="Menu\Setup\WorksetAdvanced_V001\**" />
 	  <Page Remove="Menu\Setup\WorksetAdvanced_V02\**" />
@@ -59,6 +91,8 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Remove="IconLoader.cs" />
+	  <Compile Remove="Menu\RoofTools\CreasetoLines\Creaser_V_08\CreaserInputWindow.xaml.cs" />
+	  <Compile Remove="Menu\RoofTools\CreasetoLines\Creaser_V_08\CreaserSummaryWindow.xaml.cs" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\AutoSlopeCommand_03.cs" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\AutoSlopeEngine.cs" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\AutoSlopeEventManager.cs" />
@@ -104,6 +138,8 @@
 	  <None Remove="Resources\Icons\shapepoints32.png" />
 	</ItemGroup>
 	<ItemGroup>
+	  <Page Remove="Menu\RoofTools\CreasetoLines\Creaser_V_08\CreaserInputWindow.xaml" />
+	  <Page Remove="Menu\RoofTools\CreasetoLines\Creaser_V_08\CreaserSummaryWindow.xaml" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\AutoSlopeWindow.xaml" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\AutoSloperDrain_04\MainWindow.xaml" />
 	  <Page Remove="Resources\App.xaml" />
@@ -145,6 +181,9 @@
 	  <Folder Include="Menu\RoofTools\RoofSlope\AutoSloperDrain_04\" />
 	</ItemGroup>
 	<ItemGroup>
+	  <Compile Update="Menu\RoofTools\CreasetoLines\Creaser_V08\CreaserSummaryWindow.xaml.cs">
+	    <SubType>Code</SubType>
+	  </Compile>
 	  <Compile Update="Menu\RoofTools\Lines\AutoLinerCommand_V01\AutoLinerWindow.xaml.cs">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Compile>
