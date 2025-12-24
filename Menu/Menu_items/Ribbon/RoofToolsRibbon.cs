@@ -55,7 +55,11 @@ namespace Revit26_Plugin.Menu.Ribbon
             SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_06_01", "CreaserCommand 06_01", assemblyPath, "Revit26_Plugin.Creaser_V06_01.Commands.CreaserCommand"));
             SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_07", "CreaserCommand 7.0", assemblyPath, "Revit26_Plugin.Creaser_V07.Commands.CreaserCommand"));
             SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_08", "CreaserCommand 8.0", assemblyPath, "Revit26_Plugin.Creaser_V08.Commands.CreaserCommand"));
-
+            SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_09", "CreaserCommand 9.0", assemblyPath, "Revit26_Plugin.Creaser_V09.Commands.CreaserCommand"));
+            SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_10", "CreaserCommand 10.0", assemblyPath, "Revit26_Plugin.Creaser_V10.Commands.CreaserCommand"));
+            SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_11", "CreaserCommand 11.0", assemblyPath, "Revit26_Plugin.Creaser_V11.Commands.CreaserCommand"));
+            SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_31", "CreaserCommand 31.0", assemblyPath, "Revit26_Plugin.Creaser_V31.Commands.CreaserCommand"));
+            SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_32", "CreaserCommand 32.0", assemblyPath, "Revit26_Plugin.Creaser_V32.Commands.CreaserCommand"));
 
 
 

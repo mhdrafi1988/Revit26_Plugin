@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text;
 using System.Windows.Input;
+using System.Collections.Generic; // <-- Add this using directive
 using Autodesk.Revit.DB;
 using Revit26_Plugin.Creaser_V08.Commands.GeometryHelpers;
 using Revit26_Plugin.Creaser_V08.Commands.Models;
@@ -161,8 +162,11 @@ namespace Revit26_Plugin.Creaser_V08.Commands.ViewModels
             // ✅ CORRECT VARIABLE NAME
             var graph = creaseSvc.BuildCreaseGraph(corners, drains);
 
+            // Convert to Dictionary to match BuildPaths signature
+            var graphDict = new Dictionary<XYZ, List<XYZ>>(graph);
+
             var paths = pathSvc.BuildPaths(
-                graph,          // ✅ graph (NOT graphDict)
+                graphDict,      // <-- Pass as Dictionary, not IDictionary
                 corners,
                 drains,
                 out int failedPaths,

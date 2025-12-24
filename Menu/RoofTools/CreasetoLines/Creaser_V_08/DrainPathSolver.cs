@@ -1,38 +1,46 @@
 ﻿using System.Collections.Generic;
-using Revit26_Plugin.Creaser_V08.Commands.Models;
+using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.Creaser_V08.Commands
+namespace Revit26_Plugin.Creaser_V08.Commands.Services
 {
+    /// <summary>
+    /// Dijkstra-based shortest path solver using XYZ nodes.
+    /// </summary>
     internal static class DrainPathSolver
     {
-        public static List<XYZKey> FindShortestPath(
-            XYZKey start,
-            HashSet<XYZKey> drains,
-            Dictionary<XYZKey, List<XYZKey>> graph)
+        public static List<XYZ> FindShortestPath(
+            XYZ start,
+            IList<XYZ> drains,
+            IDictionary<XYZ, List<XYZ>> graph)
         {
-            Dictionary<XYZKey, double> dist = new();
-            Dictionary<XYZKey, XYZKey> prev = new();
+            Dictionary<XYZ, double> dist = new();
+            Dictionary<XYZ, XYZ> prev = new();
+            PriorityQueue<XYZ, double> pq = new();
 
-            PriorityQueue<XYZKey, double> pq = new();
+            foreach (XYZ node in graph.Keys)
+            {
+                dist[node] = double.PositiveInfinity;
+                prev[node] = null;
+            }
 
-            foreach (XYZKey n in graph.Keys)
-                dist[n] = double.PositiveInfinity;
-
-            dist[start] = 0;
-            pq.Enqueue(start, 0);
+            dist[start] = 0.0;
+            pq.Enqueue(start, 0.0);
 
             while (pq.Count > 0)
             {
-                XYZKey current = pq.Dequeue();
+                XYZ current = pq.Dequeue();
 
-                if (drains.Contains(current))
-                    return Reconstruct(prev, current);
+                // Stop when reaching any drain
+                foreach (XYZ drain in drains)
+                {
+                    if (current.IsAlmostEqualTo(drain))
+                        return Reconstruct(prev, current);
+                }
 
-                foreach (XYZKey next in graph[current])
+                foreach (XYZ next in graph[current])
                 {
                     double alt = dist[current] + current.DistanceTo(next);
-
-                    if (!dist.ContainsKey(next) || alt < dist[next])
+                    if (alt < dist[next])
                     {
                         dist[next] = alt;
                         prev[next] = current;
@@ -41,23 +49,22 @@ namespace Revit26_Plugin.Creaser_V08.Commands
                 }
             }
 
-            return new List<XYZKey>();
+            return new List<XYZ>();
         }
 
-        private static List<XYZKey> Reconstruct(
-            Dictionary<XYZKey, XYZKey> prev,
-            XYZKey end)
+        private static List<XYZ> Reconstruct(
+            Dictionary<XYZ, XYZ> prev,
+            XYZ end)
         {
-            List<XYZKey> path = new();
-            XYZKey cur = end;
+            List<XYZ> path = new();
+            XYZ current = end;
 
-            while (prev.ContainsKey(cur))
+            while (current != null)
             {
-                path.Add(cur);
-                cur = prev[cur];
+                path.Add(current);
+                prev.TryGetValue(current, out current);
             }
 
-            path.Add(cur);
             path.Reverse();
             return path;
         }

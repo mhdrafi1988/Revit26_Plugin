@@ -1,0 +1,29 @@
+﻿<Window x:Class="Revit26_Plugin.Creaser_V31.Views.CreaserView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Creaser – Drain Slope Arrows"
+        Height="220" Width="420"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Generate Roof Drain Slope Arrows"
+                   FontSize="16"
+                   FontWeight="SemiBold"/>
+
+        <TextBlock Grid.Row="1"
+                   Margin="0,12,0,0"
+                   TextWrapping="Wrap"
+                   Text="{Binding StatusMessage}"/>
+
+        <Button Grid.Row="2"
+                Height="32"
+                Content="Generate Arrows"
+                Command="{Binding RunCommand}"/>
+    </Grid>
+</Window>

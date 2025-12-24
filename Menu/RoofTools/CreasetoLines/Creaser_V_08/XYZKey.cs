@@ -5,23 +5,23 @@ namespace Revit26_Plugin.Creaser_V08.Commands.Models
     /// <summary>
     /// Hashable XYZ wrapper for graph algorithms.
     /// </summary>
-    public readonly struct XYZKey
+    public readonly struct CreaserCommand
     {
         public XYZ Point { get; }
 
-        public XYZKey(XYZ point)
+        public CreaserCommand(XYZ point)
         {
             Point = point;
         }
 
-        public double DistanceTo(XYZKey other)
+        public double DistanceTo(CreaserCommand other)
         {
             return Point.DistanceTo(other.Point);
         }
 
         public override bool Equals(object obj)
         {
-            if (obj is not XYZKey other)
+            if (obj is not CreaserCommand other)
                 return false;
 
             return Point.IsAlmostEqualTo(other.Point);
