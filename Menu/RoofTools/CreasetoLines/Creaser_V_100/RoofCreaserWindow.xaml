@@ -1,0 +1,96 @@
+﻿<Window x:Class="Revit26_Plugin.Creaser_V100.Views.RoofCreaserWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Roof Creaser"
+        Width="380"
+        Height="480"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ===================================== -->
+        <!-- Detail Family Selection -->
+        <!-- ===================================== -->
+        <StackPanel Grid.Row="0">
+            <TextBlock
+                Text="Detail Family"
+                FontWeight="SemiBold"
+                Margin="0,0,0,4"/>
+
+            <ComboBox
+                ItemsSource="{Binding DetailFamilies}"
+                SelectedItem="{Binding SelectedFamily, Mode=TwoWay}"
+                DisplayMemberPath="Name"
+                Height="28"/>
+        </StackPanel>
+
+        <!-- ===================================== -->
+        <!-- Separator -->
+        <!-- ===================================== -->
+        <Separator Grid.Row="1" Margin="0,10,0,10"/>
+
+        <!-- ===================================== -->
+        <!-- LOG PANEL (COPYABLE) -->
+        <!-- ===================================== -->
+        <Border Grid.Row="2"
+                BorderBrush="#BFBFBF"
+                BorderThickness="1"
+                CornerRadius="4"
+                Padding="4">
+
+            <ScrollViewer
+                VerticalScrollBarVisibility="Auto"
+                HorizontalScrollBarVisibility="Disabled">
+
+                <ItemsControl ItemsSource="{Binding LogEntries}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <!-- ✅ Copyable log line -->
+                            <TextBox
+                            Text="{Binding Mode=OneWay}"
+                            IsReadOnly="True"
+                            BorderThickness="0"
+                            Background="Transparent"
+                            FontFamily="Consolas"
+                            FontSize="12"
+                            TextWrapping="Wrap"
+                            Padding="2"
+                            IsTabStop="False"/>
+
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+            </ScrollViewer>
+        </Border>
+
+        <!-- ===================================== -->
+        <!-- Buttons -->
+        <!-- ===================================== -->
+        <StackPanel Grid.Row="3"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="0,10,0,0">
+
+            <Button
+                Content="Run"
+                Command="{Binding RunCommand}"
+                Width="90"
+                Height="30"
+                Margin="0,0,8,0"/>
+
+            <Button
+                Content="Close"
+                Command="{Binding CloseCommand}"
+                Width="90"
+                Height="30"/>
+        </StackPanel>
+    </Grid>
+</Window>

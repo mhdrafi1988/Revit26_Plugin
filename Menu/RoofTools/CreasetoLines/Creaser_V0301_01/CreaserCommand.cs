@@ -2,7 +2,9 @@
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
-using Revit26_Plugin.AutoLiner_V04.Services;
+//using Revit26_Plugin.AutoLiner_V04.Services;
+using Revit26_Plugin.Creaser_V31.Models;
+using Revit26_Plugin.Creaser_V31.Helpers;  
 using Revit26_Plugin.Creaser_V31.ViewModels;
 using Revit26_Plugin.Creaser_V32.Helpers;
 using Revit26_Plugin.Creaser_V32.Services;

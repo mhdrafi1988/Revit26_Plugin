@@ -44,12 +44,12 @@ namespace Revit26_Plugin.Menu.Ribbon
             ShapepointMenu.AddPushButton(new PushButtonData("Btn_AddRidgePoints", " Ridge Points by DL & Distance 5.0", assemblyPath, "Revit22_Plugin.Commands.AddRidgePointsDistance"));//Worki.
 
             PulldownButton SlopeLinerMenu = panel.AddItem(new PulldownButtonData("SlopeLiner", "SlopeLiner")) as PulldownButton;
-            SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_01", "CreaserCommand 1.0", assemblyPath, "Revit26_Plugin.Creaser_V01.Commands.CreaserCommand"));
+            /*SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_01", "CreaserCommand 1.0", assemblyPath, "Revit26_Plugin.Creaser_V01.Commands.CreaserCommand"));
             SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_02010", "CreaserCommand 2.20", assemblyPath, "Revit26_Plugin.Creaser_V02010.Commands.CreaserCommand"));
             SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_02", "CreaserCommand 2.0", assemblyPath, "Revit26_Plugin.Creaser_V02.Commands.CreaserCommand"));
             SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_03", "CreaserCommand 3.0", assemblyPath, "Revit26_Plugin.Creaser_V03.Commands.CreaserCommand"));
             SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_03_01", "CreaserCommand V03_01", assemblyPath, "Revit26_Plugin.Creaser_V03_01.Commands.CreaserCommand"));
-            SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_03_02", "CreaserCommand V03_02", assemblyPath, "Revit26_Plugin.Creaser_V03_02.Commands.CreaserCommand"));
+            
             SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_04", "CreaserCommand 4.0", assemblyPath, "Revit26_Plugin.Creaser_V04.Commands.CreaserCommand"));
             SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_05", "CreaserCommand 5.0", assemblyPath, "Revit26_Plugin.Creaser_V05.Commands.CreaserCommand"));
             SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_06_01", "CreaserCommand 06_01", assemblyPath, "Revit26_Plugin.Creaser_V06_01.Commands.CreaserCommand"));
@@ -60,7 +60,10 @@ namespace Revit26_Plugin.Menu.Ribbon
             SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_11", "CreaserCommand 11.0", assemblyPath, "Revit26_Plugin.Creaser_V11.Commands.CreaserCommand"));
             SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_31", "CreaserCommand 31.0", assemblyPath, "Revit26_Plugin.Creaser_V31.Commands.CreaserCommand"));
             SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_32", "CreaserCommand 32.0", assemblyPath, "Revit26_Plugin.Creaser_V32.Commands.CreaserCommand"));
-
+            SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_Creaser_V100", "Creaser_V100", assemblyPath, "Revit26_Plugin.Creaser_V100.Commands.RoofCreaserCommand"));*/
+            SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_DetailLine_A101", "DetailLine_A101", assemblyPath, "Revit26_Plugin.Creaser_A100.Commands.PlaceRoofCreaseDetailLinesCommand"));
+            //SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_03_02", "CreaserCommand V03_02", assemblyPath, "Revit26_Plugin.Creaser_V03_02.Commands.CreaserCommand"));
+            SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_LaunchCreaserCommand", "LaunchCreaserCommand_03_03", assemblyPath, "Revit26_Plugin.Creaser_V03_03.Commands.LaunchCreaserCommand"));
 
 
             PulldownButton tagMenu = panel.AddItem(new PulldownButtonData("RoofTagMenu", "Tag")) as PulldownButton;
