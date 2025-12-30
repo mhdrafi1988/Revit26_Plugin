@@ -13,7 +13,7 @@ namespace Revit22_Plugin.PDCV1.ViewModels
         private readonly Document _doc;
         private readonly RoofBase _roof;
         private readonly RoofGeometryService _geometryService;
-        private readonly LoopDivisionService _divisionService;
+        private readonly c _divisionService;
 
         public ObservableCollection<RoofLoopModel> Loops { get; set; }
 
@@ -32,7 +32,7 @@ namespace Revit22_Plugin.PDCV1.ViewModels
             _doc = doc;
             _roof = roof;
             _geometryService = new RoofGeometryService();
-            _divisionService = new LoopDivisionService();
+            _divisionService = new c();
             Loops = new ObservableCollection<RoofLoopModel>();
 
             AnalyzeCommand = new RelayCommand(AnalyzeRoof);
