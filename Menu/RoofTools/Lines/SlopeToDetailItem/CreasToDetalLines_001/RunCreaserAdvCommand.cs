@@ -56,6 +56,7 @@ namespace Revit26_Plugin.Creaser_adv_V001.Commands
             var vm = new CreaserAdvViewModel(uiApp, roof);
             var window = new CreaserAdvWindow(vm)
             {
+                DataContext = vm,
                 Topmost = true
             };
 

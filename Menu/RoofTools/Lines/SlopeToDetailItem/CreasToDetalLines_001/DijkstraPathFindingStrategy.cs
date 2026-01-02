@@ -5,11 +5,7 @@ using Revit26_Plugin.Creaser_adv_V001.Models;
 
 namespace Revit26_Plugin.Creaser_adv_V001.Services
 {
-    /// <summary>
-    /// Enhanced Dijkstra with roof face validation for edge connectivity.
-    /// Uses actual roof geometry to ensure valid drainage paths.
-    /// </summary>
-    public class DijkstraPathFindingStrategy : IPathFindingStrategy
+    public class DijkstraPathFindingStrategy
     {
         private const double PROJ_TOL = 0.00328084; // ~1mm
         private readonly double _edgeThresholdFt = 50.0; // Maximum edge length in feet
@@ -24,12 +20,8 @@ namespace Revit26_Plugin.Creaser_adv_V001.Services
 
         public PathResult FindPath(RoofGraph graph, GraphNode startNode)
         {
-            // Use the graph's DrainNodes property for default interface method
-            return FindPath(graph, startNode, new HashSet<GraphNode>(graph.DrainNodes));
-        }
+            var drainNodes = new HashSet<GraphNode>(graph.DrainNodes);
 
-        public PathResult FindPath(RoofGraph graph, GraphNode startNode, HashSet<GraphNode> drainNodes)
-        {
             if (drainNodes == null || drainNodes.Count == 0)
             {
                 return new PathResult
@@ -40,7 +32,6 @@ namespace Revit26_Plugin.Creaser_adv_V001.Services
                 };
             }
 
-            // Corner must not be treated as a drain
             if (drainNodes.Contains(startNode))
             {
                 return new PathResult
@@ -51,7 +42,6 @@ namespace Revit26_Plugin.Creaser_adv_V001.Services
                 };
             }
 
-            // Build adjacency based on roof face validation if available
             Dictionary<GraphNode, List<GraphNode>> adjacency;
             if (_roofFace != null)
             {
@@ -59,7 +49,6 @@ namespace Revit26_Plugin.Creaser_adv_V001.Services
             }
             else
             {
-                // Fallback to existing neighbor connections
                 adjacency = graph.Nodes.ToDictionary(
                     n => n,
                     n => n.Neighbors.ToList()
@@ -74,17 +63,14 @@ namespace Revit26_Plugin.Creaser_adv_V001.Services
 
             while (unvisited.Count > 0)
             {
-                // Pick node with smallest tentative distance
                 GraphNode current = unvisited.OrderBy(n => distances[n]).First();
                 unvisited.Remove(current);
 
-                // Early exit ONLY when we pop a drain (Dijkstra correctness)
                 if (drainNodes.Contains(current) && current != startNode)
                 {
                     return BuildResult(startNode, current, previous);
                 }
 
-                // Get valid neighbors from adjacency dictionary
                 if (!adjacency.TryGetValue(current, out var neighbors))
                     continue;
 
@@ -93,10 +79,8 @@ namespace Revit26_Plugin.Creaser_adv_V001.Services
                     if (!unvisited.Contains(neighbor))
                         continue;
 
-                    // Base distance
                     double cost = current.DistanceTo(neighbor);
 
-                    // Optional uphill penalty (keeps solutions realistic but still reachable)
                     double dz = neighbor.Z - current.Z;
                     if (dz > 0)
                         cost += dz * 100.0;
@@ -119,21 +103,16 @@ namespace Revit26_Plugin.Creaser_adv_V001.Services
             };
         }
 
-        /// <summary>
-        /// Builds adjacency list using roof face validation for edge connectivity
-        /// </summary>
         private Dictionary<GraphNode, List<GraphNode>> BuildFaceValidatedAdjacency(IList<GraphNode> nodes)
         {
             var adjacency = new Dictionary<GraphNode, List<GraphNode>>();
             int count = nodes.Count;
 
-            // Initialize adjacency lists
             foreach (var node in nodes)
             {
                 adjacency[node] = new List<GraphNode>();
             }
 
-            // Check all possible edges
             for (int i = 0; i < count; i++)
             {
                 GraphNode a = nodes[i];
@@ -146,17 +125,13 @@ namespace Revit26_Plugin.Creaser_adv_V001.Services
 
                     double dist = pointA.DistanceTo(pointB);
 
-                    // Skip micro edges (less than 0.5 feet)
                     if (dist < 0.5) continue;
 
-                    // Skip edges beyond threshold
                     if (dist > _edgeThresholdFt) continue;
 
-                    // Validate edge against roof face
                     if (_roofFace != null && !IsValidEdgeOnFace(pointA, pointB))
                         continue;
 
-                    // If valid, add undirected edge
                     adjacency[a].Add(b);
                     adjacency[b].Add(a);
                 }
@@ -165,9 +140,6 @@ namespace Revit26_Plugin.Creaser_adv_V001.Services
             return adjacency;
         }
 
-        /// <summary>
-        /// Checks if the edge between two points lies entirely on the roof face
-        /// </summary>
         private bool IsValidEdgeOnFace(XYZ a, XYZ b)
         {
             try
@@ -175,11 +147,9 @@ namespace Revit26_Plugin.Creaser_adv_V001.Services
                 Line edgeLine = Line.CreateBound(a, b);
                 double dist = a.DistanceTo(b);
 
-                // Adaptive sample count based on edge length
                 int samples = System.Math.Max(10, (int)(dist * 4));
                 double step = 1.0 / samples;
 
-                // Sample points along the edge
                 for (double t = step; t < 1.0; t += step)
                 {
                     XYZ samplePoint = edgeLine.Evaluate(t, true);
@@ -195,17 +165,12 @@ namespace Revit26_Plugin.Creaser_adv_V001.Services
             }
         }
 
-        /// <summary>
-        /// Checks if a point lies on the roof face with projection tolerance
-        /// </summary>
         private bool IsPointOnRoofFace(XYZ point)
         {
-            if (_roofFace == null) return true; // Fallback if no face available
+            if (_roofFace == null) return true;
 
-            // Try direct projection
             IntersectionResult proj = _roofFace.Project(point);
 
-            // If direct projection fails, try nudging point vertically
             if (proj == null)
             {
                 XYZ pUp = point + new XYZ(0, 0, PROJ_TOL);
@@ -216,7 +181,6 @@ namespace Revit26_Plugin.Creaser_adv_V001.Services
                     XYZ pDown = point - new XYZ(0, 0, PROJ_TOL);
                     proj = _roofFace.Project(pDown);
 
-                    // All failed → treat as invalid
                     if (proj == null)
                         return false;
                 }
@@ -224,18 +188,13 @@ namespace Revit26_Plugin.Creaser_adv_V001.Services
 
             UV uv = proj.UVPoint;
 
-            // Check if UV point is inside the face (handles trimmed faces)
             try
             {
                 if (_roofFace.IsInside(uv))
                     return true;
             }
-            catch
-            {
-                // Fallback to bounding box check
-            }
+            catch { }
 
-            // Bounding box fallback
             BoundingBoxUV bb = _roofFace.GetBoundingBox();
             if (bb == null) return false;
 
@@ -283,7 +242,6 @@ namespace Revit26_Plugin.Creaser_adv_V001.Services
                 };
             }
 
-            // Calculate total path length
             double totalLength = 0;
             for (int i = 0; i < path.Count - 1; i++)
             {

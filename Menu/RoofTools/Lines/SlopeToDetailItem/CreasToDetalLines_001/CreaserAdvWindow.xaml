@@ -26,14 +26,6 @@
                 Foreground="Gray"
                 Margin="0,0,0,8"/>
 
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                <TextBlock Text="Pathfinding:" Width="100"/>
-                <ComboBox
-                    Width="220"
-                    ItemsSource="{Binding PathFindingMethods}"
-                    SelectedItem="{Binding SelectedMethod}"/>
-            </StackPanel>
-
             <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                 <TextBlock Text="Detail Item:" Width="100"/>
                 <ComboBox

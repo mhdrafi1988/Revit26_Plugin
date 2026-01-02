@@ -1,7 +1,7 @@
 ﻿using System.Windows;
-using Revit26_Plugin.Creaser_adv_V001.ViewModels;
+using Revit26_Plugin.CreaserAdv_V002.ViewModels;
 
-namespace Revit26_Plugin.Creaser_adv_V001.Views
+namespace Revit26_Plugin.CreaserAdv_V002.Views
 {
     public partial class CreaserAdvWindow : Window
     {
