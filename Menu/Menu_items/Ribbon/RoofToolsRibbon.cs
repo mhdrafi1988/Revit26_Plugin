@@ -21,13 +21,14 @@ namespace Revit26_Plugin.Menu.Ribbon
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeCommand_03", "AutoSlopeCommand_03(Point)", assemblyPath, "Revit22_Plugin.AutoSlopeV3.AutoSlopeCommand_03"));
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSloperDrain_04", "AutoSloperDrain_04(Drain)", assemblyPath, "Revit22_Plugin.Asd.Commands.AutoSloperDrain_04"));
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSloperDrain_04_01", "AutoSloperDrain_04_01(Drain)", assemblyPath, "Revit22_Plugin.Asd_V4_01.Commands.AutoSloperDrain_04_01"));
-                        /*
-             PulldownButton LineMenu = panel.AddItem(new PulldownButtonData("addlineMenu", "Add Lines")) as PulldownButton;
-            //LineMenu.LargeImage = IconManager.ToBitmapSource(Properties.Resources.addlines32);
-            LineMenu.AddPushButton(new PushButtonData("Btn_RoofRidgeLinepoints_01", "Detail Line Connection 2.0", assemblyPath, "Revit22_Plugin.Commands.RoofRidgeLineandPoints_01"));
-            LineMenu.AddPushButton(new PushButtonData("Btn_RoofRidgeLineandPointsV1", "Detail Line Connection 2.0", assemblyPath, "Revit22_Plugin.Commands.RoofRidgeLineandPointsV1"));            
-            LineMenu.AddPushButton(new PushButtonData("Btn_RoofRidgeLinepoints_03", "Perpendicular & Points 3.0", assemblyPath, "Revit22_Plugin.RRLPV3.Commands.RoofRidgeCommand_03"));
-            LineMenu.AddPushButton(new PushButtonData("Btn_RoofRidgeLineandPoints_04", "Roof Ridge Lineand Points_V1", assemblyPath, "Revit22_Plugin.Commands.RoofRidgeLineandPointsV1")); */
+            SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlope04_02", "AutoSlope04_02(Drain)", assemblyPath, "Revit22_Plugin.V4_02.Commands.AutoSlopeCommand"));
+            /*
+ PulldownButton LineMenu = panel.AddItem(new PulldownButtonData("addlineMenu", "Add Lines")) as PulldownButton;
+//LineMenu.LargeImage = IconManager.ToBitmapSource(Properties.Resources.addlines32);
+LineMenu.AddPushButton(new PushButtonData("Btn_RoofRidgeLinepoints_01", "Detail Line Connection 2.0", assemblyPath, "Revit22_Plugin.Commands.RoofRidgeLineandPoints_01"));
+LineMenu.AddPushButton(new PushButtonData("Btn_RoofRidgeLineandPointsV1", "Detail Line Connection 2.0", assemblyPath, "Revit22_Plugin.Commands.RoofRidgeLineandPointsV1"));            
+LineMenu.AddPushButton(new PushButtonData("Btn_RoofRidgeLinepoints_03", "Perpendicular & Points 3.0", assemblyPath, "Revit22_Plugin.RRLPV3.Commands.RoofRidgeCommand_03"));
+LineMenu.AddPushButton(new PushButtonData("Btn_RoofRidgeLineandPoints_04", "Roof Ridge Lineand Points_V1", assemblyPath, "Revit22_Plugin.Commands.RoofRidgeLineandPointsV1")); */
 
             PulldownButton ShapepointMenu = panel.AddItem(new PulldownButtonData("ShapepointMenu", "Shape Points")) as PulldownButton;
             //ShapepointMenu.LargeImage = IconManager.ToBitmapSource(Properties.Resources.addpoints32);
@@ -58,7 +59,10 @@ namespace Revit26_Plugin.Menu.Ribbon
            tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV4", "Roof Tag Command V4", assemblyPath, "Revit22_Plugin.RoofTagV4.RoofTagCommandV4"));
            tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV3", "Roof Tag Command V3", assemblyPath, "Revit22_Plugin.RoofTagV3.RoofTagCommandV3"));           
            tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV5", "Roof Tag Command V5", assemblyPath, "Revit22_Plugin.RoofTagV5.RoofTagCommandV5"));
-           tagMenu.AddPushButton(new PushButtonData("Btn_DtlLineDimCommand_V03", "DtlLineDimCommand_V03", assemblyPath, "Revit26_Plugin.DtlLineDim_V03.Commands.SelectRoofAndPlaceEdgeDetailsCommand"));
+           tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommand_V06", "RoofTagCommand_V06", assemblyPath, "Revit26_Plugin.RoofTag_V06.Commands.RoofTagCommand_V06"));
+           tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV7", "RoofTagCommandV7", assemblyPath, "Revit22_Plugin.RoofTagV7.Commands.RoofTagCommandV7"));
+
+            tagMenu.AddPushButton(new PushButtonData("Btn_DtlLineDimCommand_V03", "DtlLineDimCommand_V03", assemblyPath, "Revit26_Plugin.DtlLineDim_V03.Commands.SelectRoofAndPlaceEdgeDetailsCommand"));
 
             tagMenu.AddPushButton(new PushButtonData("Btn_CreateWorksetsFromLinkedFilesv02", "CreateWorksetsFromLinkedFilesv02", assemblyPath, "Revit26_Plugin.WSAV02.CreateWorksetsFromLinkedFilesv02"));
 

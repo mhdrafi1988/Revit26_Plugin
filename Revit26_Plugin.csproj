@@ -5,7 +5,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\01\02\04</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\01\06\001</BaseOutputPath>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
@@ -39,12 +39,18 @@
 	  <Compile Remove="Menu\RoofTools\Lines\AutoLinerCommand_V04\**" />
 	  <Compile Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreaserAdvCommand\**" />
 	  <Compile Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_001\**" />
+	  <Compile Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_002\**" />
+	  <Compile Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_002_01\**" />
+	  <Compile Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_003\**" />
 	  <Compile Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_01\**" />
 	  <Compile Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_02\**" />
 	  <Compile Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
 	  <Compile Remove="Menu\Setup\WorksetAdvanced_V001\**" />
 	  <Compile Remove="Menu\Setup\WorksetAdvanced_V02\**" />
+	  <Compile Remove="Menu\Tagging\RoofTag_V003\**" />
+	  <Compile Remove="Menu\Tagging\RoofTag_V03\**" />
 	  <Compile Remove="Menu\Tagging\RoofTag_V04\**" />
+	  <Compile Remove="Menu\Tagging\RoofTag_V06\Views\**" />
 	  <Compile Remove="Menu\Tagging\RoofTag_V4\**" />
 	  <Compile Remove="Menu\ViewTools\Rename\SectionManagerRefactor\**" />
 	  <Compile Remove="Menu\ViewTools\Rename\SectionRenamer_V02\**" />
@@ -81,12 +87,18 @@
 	  <EmbeddedResource Remove="Menu\RoofTools\Lines\AutoLinerCommand_V04\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreaserAdvCommand\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_001\**" />
+	  <EmbeddedResource Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_002\**" />
+	  <EmbeddedResource Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_002_01\**" />
+	  <EmbeddedResource Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_003\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_01\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_02\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
 	  <EmbeddedResource Remove="Menu\Setup\WorksetAdvanced_V001\**" />
 	  <EmbeddedResource Remove="Menu\Setup\WorksetAdvanced_V02\**" />
+	  <EmbeddedResource Remove="Menu\Tagging\RoofTag_V003\**" />
+	  <EmbeddedResource Remove="Menu\Tagging\RoofTag_V03\**" />
 	  <EmbeddedResource Remove="Menu\Tagging\RoofTag_V04\**" />
+	  <EmbeddedResource Remove="Menu\Tagging\RoofTag_V06\Views\**" />
 	  <EmbeddedResource Remove="Menu\Tagging\RoofTag_V4\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Rename\SectionManagerRefactor\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Rename\SectionRenamer_V02\**" />
@@ -123,12 +135,18 @@
 	  <None Remove="Menu\RoofTools\Lines\AutoLinerCommand_V04\**" />
 	  <None Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreaserAdvCommand\**" />
 	  <None Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_001\**" />
+	  <None Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_002\**" />
+	  <None Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_002_01\**" />
+	  <None Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_003\**" />
 	  <None Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_01\**" />
 	  <None Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_02\**" />
 	  <None Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
 	  <None Remove="Menu\Setup\WorksetAdvanced_V001\**" />
 	  <None Remove="Menu\Setup\WorksetAdvanced_V02\**" />
+	  <None Remove="Menu\Tagging\RoofTag_V003\**" />
+	  <None Remove="Menu\Tagging\RoofTag_V03\**" />
 	  <None Remove="Menu\Tagging\RoofTag_V04\**" />
+	  <None Remove="Menu\Tagging\RoofTag_V06\Views\**" />
 	  <None Remove="Menu\Tagging\RoofTag_V4\**" />
 	  <None Remove="Menu\ViewTools\Rename\SectionManagerRefactor\**" />
 	  <None Remove="Menu\ViewTools\Rename\SectionRenamer_V02\**" />
@@ -165,12 +183,18 @@
 	  <Page Remove="Menu\RoofTools\Lines\AutoLinerCommand_V04\**" />
 	  <Page Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreaserAdvCommand\**" />
 	  <Page Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_001\**" />
+	  <Page Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_002\**" />
+	  <Page Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_002_01\**" />
+	  <Page Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_003\**" />
 	  <Page Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_01\**" />
 	  <Page Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_02\**" />
 	  <Page Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
 	  <Page Remove="Menu\Setup\WorksetAdvanced_V001\**" />
 	  <Page Remove="Menu\Setup\WorksetAdvanced_V02\**" />
+	  <Page Remove="Menu\Tagging\RoofTag_V003\**" />
+	  <Page Remove="Menu\Tagging\RoofTag_V03\**" />
 	  <Page Remove="Menu\Tagging\RoofTag_V04\**" />
+	  <Page Remove="Menu\Tagging\RoofTag_V06\Views\**" />
 	  <Page Remove="Menu\Tagging\RoofTag_V4\**" />
 	  <Page Remove="Menu\ViewTools\Rename\SectionManagerRefactor\**" />
 	  <Page Remove="Menu\ViewTools\Rename\SectionRenamer_V02\**" />
@@ -179,7 +203,6 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Remove="IconLoader.cs" />
-	  <Compile Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_002\DetailItemCreationService.cs" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\AutoSlopeCommand_03.cs" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\AutoSlopeEngine.cs" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\AutoSlopeEventManager.cs" />
@@ -216,6 +239,10 @@
 	  <None Remove="Menu\RoofTools\Lines\AutoLinerCommand_V01.rar" />
 	  <None Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreaserAdvCommand.rar" />
 	  <None Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreaserAdvCommand_01.rar" />
+	  <None Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_002_01.rar" />
+	  <None Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_002_02.rar" />
+	  <None Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_002_03.rar" />
+	  <None Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_002_dup.rar" />
 	  <None Remove="Menu\ViewTools\Rename\BubbleRenumber_SDRV4.rar" />
 	  <None Remove="Menu\ViewTools\Rename\SectionManagerRefactor.rar" />
 	  <None Remove="Resources\Icons\addlines32.png" />
@@ -270,6 +297,7 @@
 	  <PackageReference Include="MaterialDesignThemes" Version="5.3.0" />
 	</ItemGroup>
 	<ItemGroup>
+	  <Folder Include="Menu\RoofTools\Lines\SlopeToDetailItem\" />
 	  <Folder Include="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\" />
 	  <Folder Include="Menu\RoofTools\RoofSlope\AutoSloperDrain_04\" />
 	</ItemGroup>

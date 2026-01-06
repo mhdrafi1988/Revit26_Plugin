@@ -1,6 +1,8 @@
 ﻿using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using Revit26_Plugin.CreaserAdv_V002.Models;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Revit26_Plugin.CreaserAdv_V002.Services
 {
@@ -13,11 +15,11 @@ namespace Revit26_Plugin.CreaserAdv_V002.Services
             _log = log;
         }
 
-        public PipelineResult Execute(
+        public SimplePipelineResult Execute(
             UIDocument uiDoc,
             Element roof)
         {
-            _log.Info("Roof geometry pipeline started.");
+            _log.Info("Simple roof geometry pipeline started.");
 
             var solid =
                 new RoofSolidExtractionService()
@@ -41,43 +43,30 @@ namespace Revit26_Plugin.CreaserAdv_V002.Services
                 new RoofEdgeFlatteningService()
                     .Flatten(edges3D);
 
-            _log.Info($"Flattened edges collected: {flattenedEdges.Count}");
+            var creaseLines =
+                flattenedEdges
+                    .Where(e => e.IsCrease)
+                    .Select(e => e.ToLine2D())
+                    .ToList();
 
-            // ⚠️ IMPORTANT:
-            // Loops are used ONLY to detect corners
-            // Routing must NEVER use cleaned / loop edges
+            _log.Info($"Crease lines found: {creaseLines.Count}");
 
-            var loops =
-                new RoofLoopBuilderService()
-                    .BuildLoops(flattenedEdges, _log);
-
-            var classified =
-                new RoofEdgeClassificationService()
-                    .Classify(loops, _log);
+            var boundaryLines =
+                flattenedEdges
+                    .Where(e => !e.IsCrease)
+                    .Select(e => e.ToLine2D())
+                    .ToList();
 
             var corners =
                 new CornerDetectionService()
-                    .DetectCorners(
-                        classified.OuterLoop,
-                        _log);
+                    .DetectCornersFromEdges(boundaryLines, _log);
 
-            _log.Info($"Corners detected: {corners.Count}");
-
-            return new PipelineResult
+            return new SimplePipelineResult
             {
                 Corners = corners,
                 Drains = drains,
-
-                // 🔑 ROUTING USES ALL EDGES
-                AllEdges = flattenedEdges
+                CreaseLines = creaseLines
             };
         }
-    }
-
-    public class PipelineResult
-    {
-        public IList<XYZ> Corners { get; set; }
-        public IList<XYZ> Drains { get; set; }
-        public IList<FlattenedEdge2D> AllEdges { get; set; }
     }
 }

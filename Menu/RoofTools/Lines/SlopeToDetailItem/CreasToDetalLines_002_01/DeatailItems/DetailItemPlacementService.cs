@@ -1,5 +1,4 @@
 ﻿using Autodesk.Revit.DB;
-using System;
 using System.Collections.Generic;
 
 namespace Revit26_Plugin.CreaserAdv_V002.Services
@@ -9,12 +8,10 @@ namespace Revit26_Plugin.CreaserAdv_V002.Services
         private readonly Document _doc;
         private readonly ViewPlan _view;
 
-        public DetailItemPlacementService(
-            Document doc,
-            ViewPlan view)
+        public DetailItemPlacementService(Document doc, ViewPlan view)
         {
-            _doc = doc ?? throw new ArgumentNullException(nameof(doc));
-            _view = view ?? throw new ArgumentNullException(nameof(view));
+            _doc = doc;
+            _view = view;
         }
 
         public void PlaceAlongLines(
@@ -22,18 +19,6 @@ namespace Revit26_Plugin.CreaserAdv_V002.Services
             FamilySymbol symbol,
             LoggingService log)
         {
-            if (lines == null || lines.Count == 0)
-            {
-                log.Warning("No lines provided for placement.");
-                return;
-            }
-
-            if (symbol == null)
-            {
-                log.Warning("Detail item symbol is null.");
-                return;
-            }
-
             if (!symbol.IsActive)
             {
                 symbol.Activate();
@@ -44,15 +29,14 @@ namespace Revit26_Plugin.CreaserAdv_V002.Services
 
             foreach (var line in lines)
             {
-                if (line == null || line.Length < GeometryTolerance.Point)
+                if (line == null)
                     continue;
 
                 var instance =
-                    _doc.Create
-                        .NewFamilyInstance(
-                            line,
-                            symbol,
-                            _view);
+                    _doc.Create.NewFamilyInstance(
+                        line,
+                        symbol,
+                        _view);
 
                 if (instance != null)
                     placed++;
