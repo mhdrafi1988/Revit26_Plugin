@@ -2,6 +2,9 @@
 
 namespace Revit26_Plugin.WSA_V05.Models
 {
+    /// <summary>
+    /// Represents a single Link row in the UI Grid.
+    /// </summary>
     public class LinkInfo : INotifyPropertyChanged
     {
         public string LinkName { get; }

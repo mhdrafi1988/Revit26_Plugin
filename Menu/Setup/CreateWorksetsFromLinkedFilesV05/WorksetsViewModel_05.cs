@@ -3,10 +3,11 @@ using Autodesk.Revit.UI;
 using Revit26_Plugin.WSA_V05.Helpers;
 using Revit26_Plugin.WSA_V05.Models;
 using Revit26_Plugin.WSA_V05.Services;
-using Revit26_Plugin.WSA_V05.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Windows.Input;
 
@@ -16,12 +17,11 @@ namespace Revit26_Plugin.WSA_V05.ViewModels
     {
         private readonly UIDocument _uidoc;
         private readonly WorksetAssignmentService _svc;
-        private readonly HashSet<string> _existingWorksets;
+        private HashSet<string> _existingWorksets;
 
         public ObservableCollection<LinkInfo> Links { get; } = new();
         public ObservableCollection<string> Log { get; } = new();
 
-        // ===== User Inputs =====
         private string _plusPrefix = "+";
         public string PlusPrefix
         {
@@ -43,87 +43,87 @@ namespace Revit26_Plugin.WSA_V05.ViewModels
             set { _zeroSuffix = value ?? ""; OnChanged(nameof(ZeroSuffix)); UpdateTargets(); }
         }
 
-        // ===== Commands =====
         public ICommand SelectAllCommand { get; }
-        public ICommand SelectNoneCommand { get; }
-        public ICommand ReverseSelectionCommand { get; }
         public ICommand CreateCommand { get; }
         public ICommand ReSyncCommand { get; }
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public WorksetsViewModel(ExternalCommandData cmd)
         {
             _uidoc = cmd.Application.ActiveUIDocument;
             _svc = new WorksetAssignmentService(Log);
+            LoadData();
 
+            SelectAllCommand = new RelayCommand(_ => { foreach (var l in Links) l.IsSelected = true; });
+            CreateCommand = new RelayCommand(_ => ExecuteBatch(false));
+            ReSyncCommand = new RelayCommand(_ => ExecuteBatch(true));
+        }
+
+        private void LoadData()
+        {
             _existingWorksets = new FilteredWorksetCollector(_uidoc.Document)
                 .OfKind(WorksetKind.UserWorkset)
                 .Select(w => w.Name)
                 .ToHashSet(System.StringComparer.OrdinalIgnoreCase);
 
-            var linkTypes = new FilteredElementCollector(_uidoc.Document)
+            var linkNames = new FilteredElementCollector(_uidoc.Document)
                 .OfClass(typeof(RevitLinkType))
                 .Cast<RevitLinkType>()
-                .Where(t => t.GetExternalFileReference() != null)
+                .Select(t => Path.GetFileNameWithoutExtension(t.Name))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToList();
 
-            foreach (var lt in linkTypes)
+            Links.Clear();
+            foreach (var name in linkNames)
             {
-                string name = WorksetAssignmentService.GetCleanLinkName(lt);
                 Links.Add(new LinkInfo(name));
             }
 
             UpdateTargets();
-
-            SelectAllCommand = new RelayCommand(_ => Links.ToList().ForEach(l => l.IsSelected = true));
-            SelectNoneCommand = new RelayCommand(_ => Links.ToList().ForEach(l => l.IsSelected = false));
-            ReverseSelectionCommand = new RelayCommand(_ => Links.ToList().ForEach(l => l.IsSelected = !l.IsSelected));
-            CreateCommand = new RelayCommand(_ => Execute(false));
-            ReSyncCommand = new RelayCommand(_ => Execute(true));
         }
 
         private void UpdateTargets()
         {
             foreach (var l in Links)
             {
-                string target =
-                    $"{PlusPrefix}{LinkWord}({l.LinkName}{ZeroSuffix})";
-
-                l.TargetWorkset = target;
-                l.WorksetExists = _existingWorksets.Contains(target);
+                l.TargetWorkset = $"{PlusPrefix}{LinkWord}({l.LinkName}{ZeroSuffix})";
+                l.WorksetExists = _existingWorksets.Contains(l.TargetWorkset);
             }
         }
 
-        private void Execute(bool resyncAll)
+        // WorksetsViewModel_05.cs - ExecuteBatch method update (replace ONLY this method)
+        private void ExecuteBatch(bool processAll)
         {
-            using var tx =
-                new Transaction(_uidoc.Document, "Assign Link Worksets");
-
-            tx.Start();
-
-            var linkTypes = new FilteredElementCollector(_uidoc.Document)
+            var allLinkTypes = new FilteredElementCollector(_uidoc.Document)
                 .OfClass(typeof(RevitLinkType))
                 .Cast<RevitLinkType>()
+                .Where(t => t.GetExternalFileReference() != null)
                 .ToList();
 
-            var targets = resyncAll
-                ? Links
-                : Links.Where(l => l.IsSelected);
+            var items = processAll ? Links : Links.Where(l => l.IsSelected);
 
-            foreach (var item in targets)
+            foreach (var item in items)
             {
-                var lt = linkTypes.First(t =>
-                    WorksetAssignmentService.GetCleanLinkName(t) == item.LinkName);
+                var cleanLinkName = item.LinkName; // Already Path.GetFileNameWithoutExtension from LoadData
+                var type = allLinkTypes.FirstOrDefault(t => Path.GetFileNameWithoutExtension(t.Name) == cleanLinkName);
 
-                _svc.Assign(_uidoc.Document, lt, item.TargetWorkset);
+                if (type != null)
+                {
+                    Log.Add($"[MATCH] Found type '{type.Name}' for '{cleanLinkName}'");
+                    _svc.Assign(_uidoc.Document, type, item.TargetWorkset);
+                }
+                else
+                {
+                    Log.Add($"[WARN] No RevitLinkType found for '{cleanLinkName}'");
+                }
             }
 
-            tx.Commit();
-            Log.Add(resyncAll ? "🔄 Re-Sync complete." : "✔ Create WS complete.");
+            LoadData(); // Refresh UI
+            Log.Add("Done.");
         }
 
-        private void OnChanged(string p) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(p));
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnChanged(string p) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(p));
     }
 }

@@ -22,21 +22,20 @@ namespace Revit26_Plugin.Menu.Ribbon
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSloperDrain_04", "AutoSloperDrain_04(Drain)", assemblyPath, "Revit22_Plugin.Asd.Commands.AutoSloperDrain_04"));
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSloperDrain_04_01", "AutoSloperDrain_04_01(Drain)", assemblyPath, "Revit22_Plugin.Asd_V4_01.Commands.AutoSloperDrain_04_01"));
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlope04_02", "AutoSlope04_02(Drain)", assemblyPath, "Revit22_Plugin.V4_02.Commands.AutoSlopeCommand"));
-            /*
- PulldownButton LineMenu = panel.AddItem(new PulldownButtonData("addlineMenu", "Add Lines")) as PulldownButton;
-//LineMenu.LargeImage = IconManager.ToBitmapSource(Properties.Resources.addlines32);
-LineMenu.AddPushButton(new PushButtonData("Btn_RoofRidgeLinepoints_01", "Detail Line Connection 2.0", assemblyPath, "Revit22_Plugin.Commands.RoofRidgeLineandPoints_01"));
-LineMenu.AddPushButton(new PushButtonData("Btn_RoofRidgeLineandPointsV1", "Detail Line Connection 2.0", assemblyPath, "Revit22_Plugin.Commands.RoofRidgeLineandPointsV1"));            
-LineMenu.AddPushButton(new PushButtonData("Btn_RoofRidgeLinepoints_03", "Perpendicular & Points 3.0", assemblyPath, "Revit22_Plugin.RRLPV3.Commands.RoofRidgeCommand_03"));
-LineMenu.AddPushButton(new PushButtonData("Btn_RoofRidgeLineandPoints_04", "Roof Ridge Lineand Points_V1", assemblyPath, "Revit22_Plugin.Commands.RoofRidgeLineandPointsV1")); */
-
+            SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSloperAndDetail", "AutoSloperAndDetail", assemblyPath, "Revit26_Plugin.V5_00.Commands.AutoSlopeCommand"));
+           
             PulldownButton ShapepointMenu = panel.AddItem(new PulldownButtonData("ShapepointMenu", "Shape Points")) as PulldownButton;
             //ShapepointMenu.LargeImage = IconManager.ToBitmapSource(Properties.Resources.addpoints32);
-            //ShapepointMenu.AddPushButton(new PushButtonData("Btn_AddShapePointsFromLines", "Add Shape Points From Lines On roof Edge 1.0", assemblyPath, "Revit22_Plugin.Commands.AddRidgeAllPointsCommand_01"));//working-need some updation notify to select roof and multiple lines
             ShapepointMenu.AddPushButton(new PushButtonData("Btn_RoofCircleDividerV1", "Circle Divider 1.0", assemblyPath, "Revit22_Plugin.PDCV1.Commands.RoofLoopAnalyzerCommand_01"));//Working
             ShapepointMenu.AddPushButton(new PushButtonData("Btn_AddRidgeAllPointsCommand_01", "AddRidgeAllPointsCommand 3.0", assemblyPath, "Revit22_Plugin.RPD.Commands.AddRidgeAllPointsCommand_03"));//Worki
             ShapepointMenu.AddPushButton(new PushButtonData("Btn_RoofRidgePointsCommand", "Roof Ridge Points Command 4.0", assemblyPath, "Revit22_Plugin.Commands.RoofRidgePointsCommand04"));//Worki
             ShapepointMenu.AddPushButton(new PushButtonData("Btn_AddRidgePoints", " Ridge Points by DL & Distance 5.0", assemblyPath, "Revit_26.CornertoDrainArrow.RoofDrainageCommand"));//Worki.
+
+            PulldownButton LineAndPointMenu = panel.AddItem(new PulldownButtonData("LineAndPointMenu", "Line & PointMenu")) as PulldownButton;
+            //LineAndPointMenu.AddPushButton(new PushButtonData("Btn_RoofRidgeCommand_03", "RoofRidgeCommand_03", assemblyPath, "Revit22_Plugin.RRLPV3.Commands.RoofRidgeCommand_03"));//Working
+            LineAndPointMenu.AddPushButton(new PushButtonData("Btn_RoofRidgeCommand_V11", "RoofRidgeCommand_V11", assemblyPath, "Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines_V11.Commands.RoofRidgeCommand_V11"));//Working
+
+
 
             PulldownButton SlopeLinerMenu = panel.AddItem(new PulldownButtonData("SlopeLiner", "SlopeLiner")) as PulldownButton;            
             SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserCommand_03_01", "CreaserCommand V03_01", assemblyPath, "Revit26_Plugin.Creaser_V03_01.Commands.CreaserCommand"));

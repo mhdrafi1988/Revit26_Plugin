@@ -3,6 +3,10 @@ using System.Windows.Input;
 
 namespace Revit26_Plugin.WSA_V05.Helpers
 {
+    /// <summary>
+    /// A standard implementation of ICommand to allow ViewModel methods 
+    /// to be bound to WPF UI buttons.
+    /// </summary>
     public class RelayCommand : ICommand
     {
         private readonly Action<object> _execute;
@@ -10,16 +14,18 @@ namespace Revit26_Plugin.WSA_V05.Helpers
 
         public RelayCommand(Action<object> execute, Func<object, bool> canExecute = null)
         {
-            _execute = execute;
+            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
             _canExecute = canExecute;
         }
 
-        public bool CanExecute(object parameter) =>
-            _canExecute?.Invoke(parameter) ?? true;
+        public bool CanExecute(object parameter) => _canExecute?.Invoke(parameter) ?? true;
 
-        public void Execute(object parameter) =>
-            _execute(parameter);
+        public void Execute(object parameter) => _execute(parameter);
 
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler CanExecuteChanged
+        {
+            add => CommandManager.RequerySuggested += value;
+            remove => CommandManager.RequerySuggested -= value;
+        }
     }
 }

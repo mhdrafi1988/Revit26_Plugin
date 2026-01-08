@@ -1,0 +1,40 @@
+﻿<UserControl x:Class="Revit26_Plugin.RoofRidgeLines_V06.Views.Steps.Step1_RoofSelectionView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Height="Auto" Width="Auto">
+
+    <StackPanel Margin="20">
+
+        <TextBlock Text="Step 1: Select Roof"
+                   FontSize="18"
+                   FontWeight="Bold"
+                   Margin="0,0,0,12"/>
+
+        <Button Content="Select Roof"
+                Width="140"
+                Margin="0,0,0,10"
+                Command="{Binding SelectRoofCommand}"/>
+
+        <Border BorderThickness="1"
+                BorderBrush="Gray"
+                Padding="10">
+
+            <StackPanel>
+
+                <TextBlock Text="Selected Roof:"
+                           FontWeight="Bold"/>
+
+                <TextBlock Text="{Binding SelectedRoof.RoofName}"
+                           Margin="0,4,0,0"/>
+
+                <TextBlock Text="Shape Editing Supported:"
+                           Margin="0,8,0,0"/>
+
+                <CheckBox IsChecked="{Binding SelectedRoof.IsShapeEditable}"
+                          IsEnabled="False"/>
+
+            </StackPanel>
+        </Border>
+
+    </StackPanel>
+</UserControl>
