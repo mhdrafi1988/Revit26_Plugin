@@ -5,7 +5,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\01\09\000</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\01\09\001</BaseOutputPath>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
@@ -60,6 +60,8 @@
 	  <Compile Remove="Menu\Tagging\RoofTag_V04\**" />
 	  <Compile Remove="Menu\Tagging\RoofTag_V06\Views\**" />
 	  <Compile Remove="Menu\Tagging\RoofTag_V4\**" />
+	  <Compile Remove="Menu\ViewTools\Create\**" />
+	  <Compile Remove="Menu\ViewTools\Place\**" />
 	  <Compile Remove="Menu\ViewTools\Rename\SectionManagerRefactor\**" />
 	  <Compile Remove="Menu\ViewTools\Rename\SectionRenamer_V02\**" />
 	  <Compile Remove="Menu\ViewTools\Rename\Section_Renamer_V02\**" />
@@ -116,6 +118,8 @@
 	  <EmbeddedResource Remove="Menu\Tagging\RoofTag_V04\**" />
 	  <EmbeddedResource Remove="Menu\Tagging\RoofTag_V06\Views\**" />
 	  <EmbeddedResource Remove="Menu\Tagging\RoofTag_V4\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Create\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Place\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Rename\SectionManagerRefactor\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Rename\SectionRenamer_V02\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Rename\Section_Renamer_V02\**" />
@@ -172,6 +176,8 @@
 	  <None Remove="Menu\Tagging\RoofTag_V04\**" />
 	  <None Remove="Menu\Tagging\RoofTag_V06\Views\**" />
 	  <None Remove="Menu\Tagging\RoofTag_V4\**" />
+	  <None Remove="Menu\ViewTools\Create\**" />
+	  <None Remove="Menu\ViewTools\Place\**" />
 	  <None Remove="Menu\ViewTools\Rename\SectionManagerRefactor\**" />
 	  <None Remove="Menu\ViewTools\Rename\SectionRenamer_V02\**" />
 	  <None Remove="Menu\ViewTools\Rename\Section_Renamer_V02\**" />
@@ -228,6 +234,8 @@
 	  <Page Remove="Menu\Tagging\RoofTag_V04\**" />
 	  <Page Remove="Menu\Tagging\RoofTag_V06\Views\**" />
 	  <Page Remove="Menu\Tagging\RoofTag_V4\**" />
+	  <Page Remove="Menu\ViewTools\Create\**" />
+	  <Page Remove="Menu\ViewTools\Place\**" />
 	  <Page Remove="Menu\ViewTools\Rename\SectionManagerRefactor\**" />
 	  <Page Remove="Menu\ViewTools\Rename\SectionRenamer_V02\**" />
 	  <Page Remove="Menu\ViewTools\Rename\Section_Renamer_V02\**" />

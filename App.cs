@@ -7,6 +7,7 @@ namespace Revit26_Plugin
 {
     /// <summary>
     /// Entry point for the Revit add-in.
+    /// Registers ribbon + dockable panes.
     /// </summary>
     public partial class App : IExternalApplication
     {
@@ -16,7 +17,7 @@ namespace Revit26_Plugin
         {
             EnsureRibbonTabExists(application);
 
-            // 🔹 REQUIRED: register dockable panes here
+            // ✅ Register dockable pane ONCE using singleton instance
             RegisterDockablePanes(application);
 
             InitializeRibbonPanels(application);
@@ -56,12 +57,12 @@ namespace Revit26_Plugin
                 application.RegisterDockablePane(
                     DockablePaneIds.SectionManagerPaneId,
                     "Section Manager",
-                    new SectionManagerDockablePane()
+                    SectionManagerDockablePane.Instance   // 🔴 IMPORTANT
                 );
             }
             catch
             {
-                // Pane already registered (Revit reload / debug scenario)
+                // Pane already registered (debug reload / restart scenario)
             }
         }
     }

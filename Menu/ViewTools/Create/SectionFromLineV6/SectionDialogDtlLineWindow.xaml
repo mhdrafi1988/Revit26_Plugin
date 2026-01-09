@@ -1,0 +1,141 @@
+﻿<Window x:Class="Revit22_Plugin.PlanSections.Views.SectionDialogDtlLineWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Auto Plan Sections"
+        Width="560"
+        Height="640"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="White"
+        FontFamily="Segoe UI"
+        FontSize="13">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ======================= HEADER ======================= -->
+        <TextBlock Text="Create Sections From Detail Lines"
+                   FontSize="18"
+                   FontWeight="SemiBold"
+                   Foreground="#0D47A1"/>
+
+        <ScrollViewer Grid.Row="2"
+                      VerticalScrollBarVisibility="Auto">
+            <StackPanel Orientation="Vertical" Margin="0 10 0 0">
+
+                <!-- SECTION TYPE -->
+                <GroupBox Header="Section Type" Padding="10">
+                    <StackPanel>
+                        <ComboBox ItemsSource="{Binding SectionTypes}"
+                                  SelectedItem="{Binding SelectedSectionType}"
+                                  DisplayMemberPath="Name"
+                                  Height="28"/>
+                    </StackPanel>
+                </GroupBox>
+
+                <!-- VIEW TEMPLATE -->
+                <GroupBox Header="View Template" Padding="10" Margin="0,10,0,0">
+                    <StackPanel>
+                        <ComboBox ItemsSource="{Binding ViewTemplates}"
+                                  SelectedItem="{Binding SelectedTemplate}"
+                                  DisplayMemberPath="Name"
+                                  Height="28"/>
+                    </StackPanel>
+                </GroupBox>
+
+                <!-- NAMING -->
+                <GroupBox Header="Naming Options" Padding="10" Margin="0,10,0,0">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                            <TextBlock Text="Prefix:" Width="140" VerticalAlignment="Center"/>
+                            <TextBox Text="{Binding SectionPrefix}" Width="260" />
+                        </StackPanel>
+                        <CheckBox Content="Include Plan Level in Name"
+                                  IsChecked="{Binding IncludePlanLevelInName}" Margin="0,6,0,0"/>
+                    </StackPanel>
+                </GroupBox>
+
+                <!-- BOUNDING OPTIONS -->
+                <GroupBox Header="Bounding  AND Visibility" Padding="10" Margin="0,10,0,0">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                            <TextBlock Text="Far Clip (mm):" Width="140"/>
+                            <TextBox Text="{Binding FarClipMm}" Width="120"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                            <TextBlock Text="Search Threshold (mm):" Width="140"/>
+                            <TextBox Text="{Binding SearchThresholdMm}" Width="120"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                            <TextBlock Text="Top Padding (mm):" Width="140"/>
+                            <TextBox Text="{Binding TopPaddingMm}" Width="120"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                            <TextBlock Text="Bottom Padding (mm):" Width="140"/>
+                            <TextBox Text="{Binding BottomPaddingMm}" Width="120"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                            <TextBlock Text="Bottom Offset (mm):" Width="140"/>
+                            <TextBox Text="{Binding BottomOffsetMm}" Width="120"/>
+                        </StackPanel>
+
+                        <!-- Snap Source -->
+                        <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                            <TextBlock Text="Snap Source:" Width="140"/>
+                            <ComboBox Width="160"
+                                      SelectedItem="{Binding SelectedSnapSource}">
+                                <ComboBoxItem Content="Host+Linked" Tag="HostAndLinked"/>
+                                <ComboBoxItem Content="Host Only" Tag="HostOnly"/>
+                                <ComboBoxItem Content="Linked Only" Tag="LinkedOnly"/>
+                            </ComboBox>
+                        </StackPanel>
+                    </StackPanel>
+                </GroupBox>
+
+                <!-- BEHAVIOR -->
+                <GroupBox Header="Behavior" Padding="10" Margin="0,10,0,0">
+                    <StackPanel Orientation="Vertical">
+                        <CheckBox Content="Open all views after creation"
+                                  IsChecked="{Binding OpenAllAfterCreate}" Margin="0,6,0,0"/>
+                        <CheckBox Content="Delete detail lines after creation"
+                                  IsChecked="{Binding DeleteLinesAfterCreate}" Margin="0,6,0,0"/>
+                    </StackPanel>
+                </GroupBox>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- BUTTONS -->
+        <StackPanel Grid.Row="3"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="0,10,0,0">
+            <StackPanel.Resources>
+                <Style TargetType="Button">
+                    <Setter Property="Margin" Value="0,0,10,0"/>
+                </Style>
+            </StackPanel.Resources>
+            <Button Content="Cancel"
+                    Width="90"
+                    Height="30"
+                    Click="OnCancelClick"/>
+            <Button Content="Create"
+                    Width="120"
+                    Height="30"
+                    Background="#0D47A1"
+                    Foreground="White"
+                    FontWeight="SemiBold"
+                    Click="OnOkClick"/>
+        </StackPanel>
+
+    </Grid>
+</Window>

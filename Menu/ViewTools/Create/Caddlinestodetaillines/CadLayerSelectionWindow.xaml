@@ -1,0 +1,10 @@
+﻿<Window x:Class="Revit22_Plugin.ImportCadLines.Views.CadLayerSelectionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Select CAD Layer" Height="180" Width="300">
+    <StackPanel Margin="10">
+        <TextBlock Text="Select a CAD Layer to Import:" Margin="0,0,0,5"/>
+        <ComboBox ItemsSource="{Binding Layers}" SelectedItem="{Binding SelectedLayer}" />
+        <Button Content="Import" Margin="0,10,0,0" Width="100" HorizontalAlignment="Center" Click="OnImportClick"/>
+    </StackPanel>
+</Window>

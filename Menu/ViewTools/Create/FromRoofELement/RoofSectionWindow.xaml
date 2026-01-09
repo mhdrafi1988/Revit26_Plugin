@@ -1,0 +1,169 @@
+﻿<Window
+    x:Class="Revit22_Plugin.AutoRoofSections.MVVM.RoofSectionWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    Title="Auto Roof Edge Sections"
+    Width="640"
+    Height="720"
+    WindowStartupLocation="CenterOwner"
+    ResizeMode="NoResize"
+    Background="#F2F2F2">
+
+    <Window.Resources>
+        <SolidColorBrush x:Key="PanelBG" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="PanelBorder" Color="#D0D0D0"/>
+        <SolidColorBrush x:Key="InputBG" Color="#F7F9FC"/>
+        <SolidColorBrush x:Key="AccentBlue" Color="#2196F3"/>
+        <SolidColorBrush x:Key="LabelColor" Color="#0D47A1"/>
+    </Window.Resources>
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- SETTINGS PANEL -->
+        <Border Grid.Row="0"
+                Background="{StaticResource PanelBG}"
+                BorderBrush="{StaticResource PanelBorder}"
+                BorderThickness="1"
+                CornerRadius="6"
+                Padding="12">
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- PREFIX -->
+                <TextBlock Grid.Row="0" Grid.Column="0"
+                           Text="Prefix:"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource LabelColor}"/>
+
+                <TextBox Grid.Row="0" Grid.Column="2"
+                         Background="{StaticResource InputBG}"
+                         BorderBrush="{StaticResource PanelBorder}"
+                         Padding="4"
+                         Text="{Binding Prefix, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <!-- SCALE -->
+                <TextBlock Grid.Row="2" Grid.Column="0"
+                           Text="Scale:"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource LabelColor}"/>
+
+                <TextBox Grid.Row="2" Grid.Column="2"
+                         Background="{StaticResource InputBG}"
+                         BorderBrush="{StaticResource PanelBorder}"
+                         Padding="4"
+                         Text="{Binding Scale}"/>
+
+                <!-- MIN EDGE LENGTH -->
+                <TextBlock Grid.Row="4" Grid.Column="0"
+                           Text="Min Edge Length (mm):"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource LabelColor}"/>
+
+                <TextBox Grid.Row="4" Grid.Column="2"
+                         Background="{StaticResource InputBG}"
+                         BorderBrush="{StaticResource PanelBorder}"
+                         Padding="4"
+                         Text="{Binding MinEdgeLengthMm}"/>
+
+                <!-- VIEW TEMPLATE -->
+                <TextBlock Grid.Row="6" Grid.Column="0"
+                           Text="View Template:"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource LabelColor}"/>
+
+                <ComboBox Grid.Row="6" Grid.Column="2"
+                          Background="{StaticResource InputBG}"
+                          BorderBrush="{StaticResource PanelBorder}"
+                          ItemsSource="{Binding ViewTemplates}"
+                          SelectedItem="{Binding SelectedViewTemplate}"
+                          DisplayMemberPath="Name"/>
+
+                <!-- TIMESTAMP -->
+                <TextBlock Grid.Row="8" Grid.Column="0"
+                           Text="Include Timestamp:"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource LabelColor}"/>
+
+                <CheckBox Grid.Row="8" Grid.Column="2"
+                          VerticalAlignment="Center"
+                          IsChecked="{Binding IncludeTimestamp}"/>
+
+                <!-- DIRECTION MODE -->
+                <TextBlock Grid.Row="10" Grid.Column="0"
+                           Text="Direction Mode:"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource LabelColor}"/>
+
+                <ComboBox Grid.Row="10" Grid.Column="2"
+                          Background="{StaticResource InputBG}"
+                          BorderBrush="{StaticResource PanelBorder}"
+                          SelectedItem="{Binding SelectedDirectionMode}">
+                    <ComboBoxItem Content="Auto"/>
+                    <ComboBoxItem Content="Force North"/>
+                    <ComboBoxItem Content="Force East"/>
+                </ComboBox>
+
+            </Grid>
+        </Border>
+
+        <!-- LOG PANEL -->
+        <Border Grid.Row="2"
+                Background="{StaticResource PanelBG}"
+                BorderBrush="{StaticResource PanelBorder}"
+                BorderThickness="1"
+                Padding="8"
+                CornerRadius="6">
+
+            <RichTextBox x:Name="LogBox"
+                         Background="{StaticResource InputBG}"
+                         BorderBrush="{StaticResource PanelBorder}"
+                         IsReadOnly="True"
+                         VerticalScrollBarVisibility="Auto"/>
+        </Border>
+
+        <!-- RUN BUTTON -->
+        <StackPanel Grid.Row="3"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="0 10 0 0">
+
+            <Button Content="Run"
+                    Command="{Binding RunCommand}"
+                    Width="150"
+                    Height="45"
+                    Background="{StaticResource AccentBlue}"
+                    Foreground="White"
+                    FontWeight="Bold"
+                    BorderBrush="#0D47A1"
+                    BorderThickness="1"
+                    Cursor="Hand"/>
+        </StackPanel>
+
+    </Grid>
+</Window>

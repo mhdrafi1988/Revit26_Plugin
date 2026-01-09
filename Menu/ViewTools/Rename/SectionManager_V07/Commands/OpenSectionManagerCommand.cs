@@ -12,8 +12,14 @@ namespace Revit26_Plugin.SectionManager_V07.Commands
             ref string message,
             Autodesk.Revit.DB.ElementSet elements)
         {
-            DockablePane pane = commandData.Application
-                .GetDockablePane(DockablePaneIds.SectionManagerPaneId);
+            UIApplication uiApp = commandData.Application;
+
+            var pane = uiApp.GetDockablePane(
+                DockablePaneIds.SectionManagerPaneId);
+
+            // ?? THIS IS THE MISSING STEP
+            var provider = SectionManagerDockablePane.Instance;
+            provider.Initialize(uiApp);
 
             pane.Show();
             return Result.Succeeded;

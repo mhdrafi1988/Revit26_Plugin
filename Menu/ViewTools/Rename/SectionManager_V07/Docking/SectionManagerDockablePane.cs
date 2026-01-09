@@ -5,7 +5,13 @@ namespace Revit26_Plugin.SectionManager_V07.Docking
 {
     public class SectionManagerDockablePane : IDockablePaneProvider
     {
+        // ?? SINGLE INSTANCE
+        public static SectionManagerDockablePane Instance { get; }
+            = new SectionManagerDockablePane();
+
         private SectionManagerView _view;
+
+        private SectionManagerDockablePane() { }
 
         public void SetupDockablePane(DockablePaneProviderData data)
         {
@@ -18,9 +24,6 @@ namespace Revit26_Plugin.SectionManager_V07.Docking
             };
         }
 
-        /// <summary>
-        /// Must be called from App.OnStartup AFTER registration
-        /// </summary>
         public void Initialize(UIApplication uiApp)
         {
             _view?.Initialize(uiApp);
