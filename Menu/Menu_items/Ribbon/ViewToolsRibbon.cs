@@ -20,6 +20,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             ViewRename.AddPushButton(new PushButtonData("Btn_SectionManagerRefactored", "Section Renamer 4.0 #4", assemblyPath, "Revit22_Plugin.SectionManagerMVVM_Refactored.SectionManagerCommandRefactored"));
             ViewRename.AddPushButton(new PushButtonData("Btn_SectionManagerRefactoredV2", "Section Renamer V2 4.0 #4", assemblyPath, "Revit26_Plugin.SectionRenamer_V02.SectionManagerEventManager"));
             ViewRename.AddPushButton(new PushButtonData("Btn_SectionManagerRefactoredV6", "Section Renamer V6 1.0 #6", assemblyPath, "Revit26_Plugin.SARV6.Commands.OpenSectionManagerCommand"));
+            ViewRename.AddPushButton(new PushButtonData("Btn_SectionManagerRefactoredV7", "Section Renamer V7 **", assemblyPath, "Revit26_Plugin.SectionManager_V07.Commands.OpenSectionManagerCommand"));
 
 
 

@@ -1,0 +1,171 @@
+﻿<UserControl x:Class="Revit26_Plugin.SectionManager_V07.Views.SectionManagerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <!-- Watermark visibility converter -->
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </UserControl.Resources>
+
+    <Grid Margin="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Filters -->
+            <RowDefinition Height="Auto"/>
+            <!-- Rename rules -->
+            <RowDefinition Height="*"/>
+            <!-- Section list -->
+            <RowDefinition Height="Auto"/>
+            <!-- Status bar -->
+        </Grid.RowDefinitions>
+
+        <!-- ================================================= -->
+        <!-- FILTERS -->
+        <!-- ================================================= -->
+        <GroupBox Header="Filters" Grid.Row="0" Margin="0,0,0,6">
+            <StackPanel>
+
+                <!-- Sheet filter with watermark -->
+                <Grid Margin="0,0,0,4">
+                    <TextBox Text="{Binding SheetFilterText,
+                                            UpdateSourceTrigger=PropertyChanged}"
+                             Padding="4"/>
+
+                    <TextBlock Text="Type to filter sheet numbers…"
+                               Margin="8,4,0,0"
+                               Foreground="Gray"
+                               IsHitTestVisible="False"
+                               Visibility="{Binding IsSheetFilterEmpty,
+                                                    Converter={StaticResource BoolToVis}}"/>
+                </Grid>
+
+                <!-- Multi-select sheet list -->
+                <ListBox ItemsSource="{Binding AvailableSheets}"
+                         SelectionMode="Multiple"
+                         MaxHeight="120"
+                         x:Name="SheetsListBox">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox Content="{Binding}"
+                                      IsChecked="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem},
+                                                          Path=IsSelected,
+                                                          Mode=TwoWay}"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+            </StackPanel>
+        </GroupBox>
+
+        <!-- ================================================= -->
+        <!-- RENAME OPTIONS -->
+        <!-- ================================================= -->
+        <GroupBox Header="Rename Options" Grid.Row="1" Margin="0,0,0,6">
+            <StackPanel>
+
+                <WrapPanel Margin="0,0,0,4">
+                    <TextBlock Text="Prefix:" VerticalAlignment="Center"/>
+                    <TextBox Width="120" Margin="4,0"
+                             Text="{Binding PrefixText, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <TextBlock Text="Postfix:" VerticalAlignment="Center"/>
+                    <TextBox Width="120" Margin="4,0"
+                             Text="{Binding PostfixText, UpdateSourceTrigger=PropertyChanged}"/>
+                </WrapPanel>
+
+                <WrapPanel Margin="0,0,0,4">
+                    <TextBlock Text="Find:" VerticalAlignment="Center"/>
+                    <TextBox Width="120" Margin="4,0"
+                             Text="{Binding FindText, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <TextBlock Text="Replace:" VerticalAlignment="Center"/>
+                    <TextBox Width="120" Margin="4,0"
+                             Text="{Binding ReplaceText, UpdateSourceTrigger=PropertyChanged}"/>
+                </WrapPanel>
+
+                <WrapPanel>
+                    <CheckBox Content="Add Serial"
+                              IsChecked="{Binding AddSerial}"/>
+
+                    <TextBox Width="60" Margin="4,0"
+                             Text="{Binding SerialFormat}"
+                             IsEnabled="{Binding AddSerial}"/>
+
+                    <CheckBox Content="Include Detail Number"
+                              Margin="12,0,0,0"
+                              IsChecked="{Binding IncludeDetailNumber}"/>
+
+                    <CheckBox Content="Auto Preview"
+                              Margin="12,0,0,0"
+                              IsChecked="{Binding AutoPreview}"/>
+                </WrapPanel>
+
+            </StackPanel>
+        </GroupBox>
+
+        <!-- ================================================= -->
+        <!-- SECTION LIST (VIRTUALIZED + INLINE EDIT) -->
+        <!-- ================================================= -->
+        <ListView Grid.Row="2"
+                  ItemsSource="{Binding FilteredSections}"
+                  VirtualizingPanel.IsVirtualizing="True"
+                  VirtualizingPanel.VirtualizationMode="Recycling"
+                  ScrollViewer.IsDeferredScrollingEnabled="True">
+
+            <ListView.View>
+                <GridView>
+
+                    <GridViewColumn Header="#" Width="40"
+                                    DisplayMemberBinding="{Binding Index}"/>
+
+                    <GridViewColumn Header="Original Name" Width="220"
+                                    DisplayMemberBinding="{Binding OriginalName}"/>
+
+                    <!-- Inline edit -->
+                    <GridViewColumn Header="Edit Name" Width="220">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Text="{Binding EditableName,
+                                                        UpdateSourceTrigger=LostFocus}"
+                                         ToolTip="Edit section name (inline)"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn Header="Preview" Width="260"
+                                    DisplayMemberBinding="{Binding PreviewName}"/>
+
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <!-- ================================================= -->
+        <!-- STATUS BAR -->
+        <!-- ================================================= -->
+        <Border Grid.Row="3"
+                Margin="0,6,0,0"
+                Padding="6"
+                Background="#F2F2F2"
+                BorderBrush="#D0D0D0"
+                BorderThickness="1">
+
+            <DockPanel>
+                <TextBlock Text="{Binding StatusText}"
+                           Foreground="Gray"
+                           VerticalAlignment="Center"/>
+
+                <Button Content="Rename"
+                        DockPanel.Dock="Right"
+                        Width="90"
+                        Margin="6,0,0,0"
+                        Command="{Binding RenameCommand}"
+                        IsEnabled="{Binding CanRename}"/>
+            </DockPanel>
+
+        </Border>
+
+    </Grid>
+</UserControl>

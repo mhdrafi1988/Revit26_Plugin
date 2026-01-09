@@ -1,24 +1,22 @@
 ﻿using System.Reflection;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.Menu.Ribbon;
-using Revit26_Plugin.SectionManager_V07.Docking;
 
 namespace Revit26_Plugin
 {
     /// <summary>
+    //var names = Assembly.GetExecutingAssembly().GetManifestResourceNames();
+    
+
+
     /// Entry point for the Revit add-in.
     /// </summary>
     public partial class App : IExternalApplication
     {
         private const string RibbonTabName = "Rf_2026_JAN_09_003";
-
-        public Result OnStartup(UIControlledApplication application)
+                public Result OnStartup(UIControlledApplication application)
         {
             EnsureRibbonTabExists(application);
-
-            // 🔹 REQUIRED: register dockable panes here
-            RegisterDockablePanes(application);
-
             InitializeRibbonPanels(application);
             return Result.Succeeded;
         }
@@ -36,7 +34,7 @@ namespace Revit26_Plugin
             }
             catch
             {
-                // Tab already exists – safe to ignore
+                // Tab likely already exists, ignore safely.
             }
         }
 
@@ -46,23 +44,7 @@ namespace Revit26_Plugin
             RoofToolsRibbon.Build(application, RibbonTabName, assemblyPath);
             ViewToolsRibbon.Build(application, RibbonTabName, assemblyPath);
             DimensionsRibbon.Build(application, RibbonTabName, assemblyPath);
-            SetupRibbon.Build(application, RibbonTabName, assemblyPath);
-        }
-
-        private void RegisterDockablePanes(UIControlledApplication application)
-        {
-            try
-            {
-                application.RegisterDockablePane(
-                    DockablePaneIds.SectionManagerPaneId,
-                    "Section Manager",
-                    new SectionManagerDockablePane()
-                );
-            }
-            catch
-            {
-                // Pane already registered (Revit reload / debug scenario)
-            }
+            SetupRibbon.Build(application, RibbonTabName, assemblyPath);    
         }
     }
 }

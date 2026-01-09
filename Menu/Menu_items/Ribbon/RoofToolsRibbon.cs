@@ -34,6 +34,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             PulldownButton LineAndPointMenu = panel.AddItem(new PulldownButtonData("LineAndPointMenu", "Line & PointMenu")) as PulldownButton;
             //LineAndPointMenu.AddPushButton(new PushButtonData("Btn_RoofRidgeCommand_03", "RoofRidgeCommand_03", assemblyPath, "Revit22_Plugin.RRLPV3.Commands.RoofRidgeCommand_03"));//Working
             LineAndPointMenu.AddPushButton(new PushButtonData("Btn_RoofRidgeCommand_V11", "RoofRidgeCommand_V11", assemblyPath, "Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines_V11.Commands.RoofRidgeCommand_V11"));//Working
+            LineAndPointMenu.AddPushButton(new PushButtonData("Btn_RoofRidgeLines_V12", "Roof Ridge&Lines v12", assemblyPath, "Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines_V12.Commands.RoofRidgeCommand_V12"));
 
 
 
@@ -46,6 +47,8 @@ namespace Revit26_Plugin.Menu.Ribbon
             SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_RunCreaserAdvCommand", "RunCreaserAdvCommand #", assemblyPath, "Revit26_Plugin.Creaser_adv_V001.Commands.RunCreaserAdvCommand"));
             SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserAdvCommand_002", "CreaserAdvCommand_002 #", assemblyPath, "Revit26_Plugin.CreaserAdv_V002.Commands.CreaserAdvCommand"));
             SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserAdvCommand_001", "CreaserAdvCommand_001 #", assemblyPath, "Revit26_Plugin.AutoLiner_V02.Commands.AutoLinerCommand_V02"));
+            
+
 
 
 
@@ -55,11 +58,12 @@ namespace Revit26_Plugin.Menu.Ribbon
 
 
            //tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagAll", "Tag All Roof Points 1.0", assemblyPath, "Revit22_Plugin.WorksetFromLinked.Commands.CreateWorksetsFromLinkedFiles"));
-           tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV4", "Roof Tag Command V4", assemblyPath, "Revit22_Plugin.RoofTagV4.RoofTagCommandV4"));
-           tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV3", "Roof Tag Command V3", assemblyPath, "Revit22_Plugin.RoofTagV3.RoofTagCommandV3"));           
-           tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV5", "Roof Tag Command V5", assemblyPath, "Revit22_Plugin.RoofTagV5.RoofTagCommandV5"));
-           tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommand_V06", "RoofTagCommand_V06", assemblyPath, "Revit26_Plugin.RoofTag_V06.Commands.RoofTagCommand_V06"));
-           tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV7", "RoofTagCommandV7", assemblyPath, "Revit22_Plugin.RoofTagV7.Commands.RoofTagCommandV7"));
+           
+            tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV3", "Roof Tag Command V3", assemblyPath, "Revit22_Plugin.RoofTagV3.RoofTagCommandV3"));
+            tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV4", "Roof Tag Command V4", assemblyPath, "Revit22_Plugin.RoofTagV4.RoofTagCommandV4"));
+            tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV7", "RoofTagCommandV7", assemblyPath, "Revit22_Plugin.RoofTagV7.Commands.RoofTagCommandV7"));
+
+
 
             tagMenu.AddPushButton(new PushButtonData("Btn_DtlLineDimCommand_V03", "DtlLineDimCommand_V03", assemblyPath, "Revit26_Plugin.DtlLineDim_V03.Commands.SelectRoofAndPlaceEdgeDetailsCommand"));
 
@@ -68,14 +72,6 @@ namespace Revit26_Plugin.Menu.Ribbon
             //setup.AddPushButton(new PushButtonData("Btn_CreateWorksetsFromLinkedFilesv02", "Create Worksets FromLinked Files v02", assemblyPath, "Revit26_Plugin.WSAV02.CreateWorksetsFromLinkedFilesv02"));
 
             /*
-           tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagSelectedv2", "Tag Selected Vertices 2.0", assemblyPath, "Revit22_Plugin.RoofTagCommandSelected"));
-           tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV3", "RoofTagCommand V3.0", assemblyPath, "Revit22_Plugin.RoofTagV3.RoofTagCommandV3"));
-           tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV4", "RoofTagCommand V4.0", assemblyPath, "Revit22_Plugin.RoofTagV4.RoofTagCommandV4"));
-
-
-           PulldownButton RoofConverter = panel.AddItem(new PulldownButtonData("RoofConverter", "RoofConverter")) as PulldownButton;
-          // RoofConverter.LargeImage = IconManager.ToBitmapSource(Properties.Resources.converter32);
-
            RoofConverter.AddPushButton(new PushButtonData("Btn_RoomToFloor", "Room To Floor", assemblyPath, "Revit22_Plugin.RoomToFloorCommand"));
            RoofConverter.AddPushButton(new PushButtonData("Btn_RoomToRoof", "Room To Roof", assemblyPath, "Revit22_Plugin.RoomToRoofCommand")); */
 

@@ -5,7 +5,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\01\06\003</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\01\09\000</BaseOutputPath>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
@@ -234,6 +234,7 @@
 	  <Page Remove="Menu\ViewTools\Rename\Section_Renamer_V06\**" />
 	</ItemGroup>
 	<ItemGroup>
+	  <Compile Remove="App - Copy.cs" />
 	  <Compile Remove="IconLoader.cs" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\AutoSlopeCommand_03.cs" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\AutoSlopeEngine.cs" />
@@ -339,6 +340,9 @@
 	    <SubType>Code</SubType>
 	  </Compile>
 	  <Compile Update="Menu\RoofTools\Line&amp;Points\RoofRidgeLines_V11\SummaryWindow.xaml.cs">
+	    <SubType>Code</SubType>
+	  </Compile>
+	  <Compile Update="Menu\RoofTools\Line&amp;Points\RoofRidgeLines_V12\Views\SummaryWindow.xaml.cs">
 	    <SubType>Code</SubType>
 	  </Compile>
 	  <Compile Update="Menu\RoofTools\Lines\AutoLinerCommand_V01\AutoLinerWindow.xaml.cs">
