@@ -1,0 +1,125 @@
+﻿<Window x:Class="Revit26_Plugin.CalloutCOP_V04.Views.CalloutCOPWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="CalloutCOP V04"
+    Width="900"
+        Height="650"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResize"
+        ShowInTaskbar="False">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <!-- Controls -->
+            <RowDefinition Height="Auto"/>
+            <!-- Main list -->
+            <RowDefinition Height="*"/>
+            <!-- Log panel -->
+            <RowDefinition Height="180"/>
+        </Grid.RowDefinitions>
+
+        <!-- ================= TOP CONTROLS ================= -->
+        <Border Grid.Row="0"
+                Padding="10"
+                CornerRadius="4"
+                Background="#F2F2F2"
+                BorderBrush="#CCCCCC"
+                BorderThickness="1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Drafting View -->
+                <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                    <TextBlock Text="Target Drafting View"
+                               FontWeight="SemiBold"
+                               Margin="0,0,0,4"/>
+                    <ComboBox ItemsSource="{Binding DraftingViews}"
+                              SelectedItem="{Binding SelectedDraftingView}"
+                              DisplayMemberPath="Name"
+                              Height="26"/>
+                </StackPanel>
+
+                <!-- Search -->
+                <StackPanel Grid.Column="1" Margin="0,0,10,0">
+                    <TextBlock Text="Search Sections"
+                               FontWeight="SemiBold"
+                               Margin="0,0,0,4"/>
+                    <TextBox Height="26"
+                             Text="{Binding Filter.SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+
+                <!-- Place Button -->
+                <Button Grid.Column="2"
+                        Content="Place Callouts"
+                        Width="140"
+                        Height="36"
+                        Margin="10,18,0,0"
+                        Command="{Binding PlaceCommand}"/>
+            </Grid>
+        </Border>
+
+        <!-- ================= SECTION LIST ================= -->
+        <Border Grid.Row="1"
+                Margin="0,10,0,10"
+                Padding="6"
+                CornerRadius="4"
+                BorderBrush="#CCCCCC"
+                BorderThickness="1">
+            <DataGrid ItemsSource="{Binding Items}"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      HeadersVisibility="Column"
+                      SelectionMode="Extended"
+                      GridLinesVisibility="Horizontal">
+
+                <DataGrid.Columns>
+                    <!-- Selection -->
+                    <DataGridCheckBoxColumn Width="40"
+                                            Binding="{Binding IsSelected, Mode=TwoWay}"/>
+
+                    <!-- Section Name -->
+                    <DataGridTextColumn Header="Section"
+                                        Width="*"
+                                        Binding="{Binding SectionName}"
+                                        IsReadOnly="True"/>
+
+                    <!-- Status -->
+                    <DataGridTextColumn Header="Status"
+                                        Width="160"
+                                        Binding="{Binding Status}"
+                                        IsReadOnly="True"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <!-- ================= LOG PANEL ================= -->
+        <Border Grid.Row="2"
+                Padding="6"
+                CornerRadius="4"
+                Background="#1E1E1E"
+                BorderBrush="#444"
+                BorderThickness="1">
+            <DockPanel>
+
+                <TextBlock DockPanel.Dock="Top"
+                           Text="Log"
+                           Foreground="White"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,6"/>
+
+                <ListBox ItemsSource="{Binding Logger.Items}"
+                         Background="#1E1E1E"
+                         BorderThickness="0"
+                         Foreground="#DDDDDD"
+                         FontFamily="Consolas"
+                         FontSize="12"/>
+            </DockPanel>
+        </Border>
+
+    </Grid>
+</Window>

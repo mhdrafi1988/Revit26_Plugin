@@ -5,16 +5,17 @@ using Revit26_Plugin.Menu.Ribbon;
 namespace Revit26_Plugin
 {
     /// <summary>
+    //var names = Assembly.GetExecutingAssembly().GetManifestResourceNames();
+    
+
+
     /// Entry point for the Revit add-in.
     /// </summary>
     public partial class App : IExternalApplication
     {
-        private const string RibbonTabName = "Rf_2026_JAN_13_006";
-
-        public Result OnStartup(UIControlledApplication application)
+        private const string RibbonTabName = "Rf_2026_JAN_12_002";
+                public Result OnStartup(UIControlledApplication application)
         {
-            // DEBUG: list embedded resources (TEMPORARY)
-            
             EnsureRibbonTabExists(application);
             InitializeRibbonPanels(application);
             return Result.Succeeded;
@@ -33,7 +34,7 @@ namespace Revit26_Plugin
             }
             catch
             {
-                // Tab already exists – ignore
+                // Tab likely already exists, ignore safely.
             }
         }
 
@@ -43,7 +44,7 @@ namespace Revit26_Plugin
             RoofToolsRibbon.Build(application, RibbonTabName, assemblyPath);
             ViewToolsRibbon.Build(application, RibbonTabName, assemblyPath);
             DimensionsRibbon.Build(application, RibbonTabName, assemblyPath);
-            SetupRibbon.Build(application, RibbonTabName, assemblyPath);
+            SetupRibbon.Build(application, RibbonTabName, assemblyPath);    
         }
     }
 }

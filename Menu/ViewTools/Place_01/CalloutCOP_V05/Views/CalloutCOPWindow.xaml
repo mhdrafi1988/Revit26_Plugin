@@ -1,0 +1,162 @@
+﻿<Window x:Class="Revit26_Plugin.CalloutCOP_V06.Views.CalloutCOPWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Callout COP V06"
+        Height="760"
+        Width="1050"
+        WindowStartupLocation="CenterOwner">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
+    </Window.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="180"/>
+        </Grid.RowDefinitions>
+
+        <!-- ========================= -->
+        <!-- TOP CONTROLS -->
+        <!-- ========================= -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,10">
+
+            <!-- Drafting View -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                <TextBlock Text="Reference Drafting View:"
+                           Width="200"
+                           VerticalAlignment="Center"/>
+                <ComboBox ItemsSource="{Binding DraftingViews}"
+                          SelectedItem="{Binding SelectedDraftingView}"
+                          DisplayMemberPath="Name"
+                          Width="360"/>
+            </StackPanel>
+
+            <!-- Sheet Filter -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                <TextBlock Text="Sheet Filter:"
+                           Width="200"
+                           VerticalAlignment="Center"/>
+                <ComboBox ItemsSource="{Binding SheetFilterItems}"
+                          SelectedItem="{Binding SheetFilterText}"
+                          Width="160"/>
+            </StackPanel>
+
+            <!-- Callout Size -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                <TextBlock Text="Callout Size (mm):"
+                           Width="200"
+                           VerticalAlignment="Center"/>
+
+                <TextBox Width="110"
+                         Text="{Binding CalloutSize,
+                                        Mode=TwoWay,
+                                        UpdateSourceTrigger=PropertyChanged}"/>
+
+                <TextBlock Text="suggested from view scale"
+                           Margin="10,0,0,0"
+                           Foreground="Gray"
+                           VerticalAlignment="Center"
+                           Visibility="{Binding IsSizeAutoSuggested,
+                                                Converter={StaticResource BoolToVisibility}}"/>
+
+                <Button Content="Reset to Suggested"
+                        Margin="14,0,0,0"
+                        Padding="8,2"
+                        Command="{Binding ResetSizeToSuggestedCommand}"/>
+            </StackPanel>
+
+            <!-- Toggles -->
+            <WrapPanel Margin="0,6,0,0">
+                <CheckBox Content="Show Placed"
+                          IsChecked="{Binding ShowPlaced}"
+                          Margin="0,0,14,0"/>
+                <CheckBox Content="Show Unplaced"
+                          IsChecked="{Binding ShowUnplaced}"
+                          Margin="0,0,14,0"/>
+                <CheckBox Content="Show Sections"
+                          IsChecked="{Binding ShowSections}"
+                          Margin="0,0,14,0"/>
+                <CheckBox Content="Show Elevations"
+                          IsChecked="{Binding ShowElevations}"/>
+            </WrapPanel>
+        </StackPanel>
+
+        <!-- ========================= -->
+        <!-- VIEW GRID -->
+        <!-- ========================= -->
+        <DataGrid Grid.Row="1"
+                  ItemsSource="{Binding ViewsCollection}"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  HeadersVisibility="Column"
+                  Margin="0,0,0,10">
+
+            <DataGrid.Columns>
+
+                <!-- Selection -->
+                <DataGridCheckBoxColumn Header="✔"
+                                        Binding="{Binding IsSelected, Mode=TwoWay}"
+                                        Width="40"/>
+
+                <!-- Name -->
+                <DataGridTextColumn Header="View Name"
+                                    Binding="{Binding Name}"
+                                    Width="*"/>
+
+                <!-- Type -->
+                <DataGridTextColumn Header="Type"
+                                    Binding="{Binding ViewType}"
+                                    Width="140"/>
+
+                <!-- Sheets -->
+                <DataGridTextColumn Header="Sheets"
+                                    Binding="{Binding SheetNumbers}"
+                                    Width="200"/>
+
+                <!-- PLACED (READ-ONLY – CRITICAL FIX) -->
+                <DataGridCheckBoxColumn Header="Placed"
+                                        Binding="{Binding IsPlaced, Mode=OneWay}"
+                                        IsReadOnly="True"
+                                        Width="90"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- ========================= -->
+        <!-- ACTION + LOG -->
+        <!-- ========================= -->
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Progress + Button -->
+            <DockPanel Margin="0,0,0,6">
+                <TextBlock Text="{Binding ProgressText}"
+                           Foreground="DarkBlue"
+                           FontWeight="SemiBold"
+                           VerticalAlignment="Center"
+                           Visibility="{Binding IsRunning,
+                                                Converter={StaticResource BoolToVisibility}}"/>
+
+                <Button Content="Place Reference Callouts"
+                        Command="{Binding PlaceCalloutsCommand}"
+                        Width="260"
+                        Height="34"
+                        DockPanel.Dock="Right"
+                        IsEnabled="{Binding IsRunning, Converter={StaticResource BoolToVisibility}, ConverterParameter=False}"/>
+            </DockPanel>
+
+            <!-- Logs -->
+            <ListBox Grid.Row="1"
+                     ItemsSource="{Binding Logs}"
+                     FontFamily="Consolas"
+                     FontSize="12"/>
+        </Grid>
+    </Grid>
+</Window>

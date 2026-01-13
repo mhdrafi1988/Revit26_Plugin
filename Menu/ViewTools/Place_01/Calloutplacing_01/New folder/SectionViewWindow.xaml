@@ -1,0 +1,86 @@
+﻿<Window x:Class="zaiwa_22.callout.Views.SectionViewWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:Revit22_Plugin.callout.Converters"
+        Title="Section View Manager" Height="600" Width="900">
+
+    <Window.Resources>
+        <local:StringNullOrEmptyToVisibilityConverter x:Key="StringNullOrEmptyToVisibilityConverter"/>
+    </Window.Resources>
+
+    <Grid Margin="10">
+        <StackPanel>
+
+            <!-- Sheet Name Filter -->
+            <Grid Margin="5" Width="250">
+                <TextBox x:Name="SheetFilterBox"
+                         Text="{Binding SheetNameFilter, UpdateSourceTrigger=PropertyChanged}"
+                         Width="250"
+                         Height="25"
+                         Padding="5"
+                         VerticalContentAlignment="Center"/>
+                <TextBlock Text="Filter by Sheet Name"
+                           Foreground="Gray"
+                           Margin="8,0,0,0"
+                           VerticalAlignment="Center"
+                           IsHitTestVisible="False"
+                           Visibility="{Binding Text, ElementName=SheetFilterBox, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}"/>
+            </Grid>
+
+            <!-- Sheet Number Filter -->
+            <Grid Margin="5" Width="250">
+                <TextBox x:Name="SheetNumberFilterBox"
+                         Text="{Binding SheetNumberFilter, UpdateSourceTrigger=PropertyChanged}"
+                         Width="250"
+                         Height="25"
+                         Padding="5"
+                         VerticalContentAlignment="Center"/>
+                <TextBlock Text="Filter by Sheet Number"
+                           Foreground="Gray"
+                           Margin="8,0,0,0"
+                           VerticalAlignment="Center"
+                           IsHitTestVisible="False"
+                           Visibility="{Binding Text, ElementName=SheetNumberFilterBox, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}"/>
+            </Grid>
+
+            <!-- Filtering and Callout Controls -->
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <CheckBox Content="Show Placed Only" IsChecked="{Binding ShowPlacedOnly}" Margin="0,0,10,0"/>
+                <CheckBox Content="Show Unplaced Only" IsChecked="{Binding ShowUnplacedOnly}" Margin="0,0,10,0"/>
+                <TextBlock Text="Callout Size:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                <TextBox Width="60" Text="{Binding CalloutSize}" VerticalContentAlignment="Center"/>
+            </StackPanel>
+
+            <!-- Drafting View Selection Dropdown -->
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <TextBlock Text="Reference Drafting View:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <ComboBox ItemsSource="{Binding DraftingViews}"
+                          DisplayMemberPath="Name"
+                          SelectedItem="{Binding SelectedDraftingView}"
+                          Width="300"
+                          Margin="0,0,10,0"/>
+                <Button Content="Insert Reference Views"
+                        Command="{Binding InsertReferenceViewsCommand}"
+                        Padding="10,2"/>
+            </StackPanel>
+
+            <!-- DataGrid for Section Views -->
+            <DataGrid ItemsSource="{Binding FilteredViews}"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      SelectionMode="Extended"
+                      Margin="0,10,0,0"
+                      Height="400">
+                <DataGrid.Columns>
+                    <DataGridCheckBoxColumn Binding="{Binding IsSelected}" Header="Select" Width="50"/>
+                    <DataGridTextColumn Binding="{Binding SectionName}" Header="Section Name" Width="*"/>
+                    <DataGridTextColumn Binding="{Binding SheetName}" Header="Sheet Name" Width="*"/>
+                    <DataGridTextColumn Binding="{Binding SheetNumber}" Header="Sheet Number" Width="120"/>
+                    <DataGridTextColumn Binding="{Binding DetailNumber}" Header="Detail Number" Width="100"/>
+                    <DataGridCheckBoxColumn Binding="{Binding IsPlaced}" Header="Placed" Width="80"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+        </StackPanel>
+    </Grid>
+</Window>

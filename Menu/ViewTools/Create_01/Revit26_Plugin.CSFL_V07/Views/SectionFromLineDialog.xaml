@@ -1,0 +1,143 @@
+﻿<Window x:Class="Revit26_Plugin.CSFL_V07.Views.SectionFromLineDialog.SectionFromLineDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:helpers="clr-namespace:Revit26_Plugin.CSFL_V07.Helpers"
+        mc:Ignorable="d"
+        Title="Create Sections From Detail Lines"
+        Width="520"
+        Height="720"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="160"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ================= HEADER ================= -->
+        <TextBlock Grid.Row="0"
+                   Text="Section Creation Options"
+                   FontSize="16"
+                   FontWeight="SemiBold"
+                   Margin="0,0,0,10"/>
+
+        <!-- ================= OPTIONS ================= -->
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto">
+            <StackPanel Orientation="Vertical" Margin="0,0,0,10">
+
+                <!-- Section Type -->
+                <GroupBox Header="Section Type" Margin="0,0,0,8">
+                    <ComboBox ItemsSource="{Binding SectionTypes}"
+                              SelectedItem="{Binding SelectedSectionType}"
+                              DisplayMemberPath="Name"
+                              Height="26"/>
+                </GroupBox>
+
+                <!-- View Template -->
+                <GroupBox Header="View Template" Margin="0,0,0,8">
+                    <ComboBox ItemsSource="{Binding ViewTemplates}"
+                              SelectedItem="{Binding SelectedTemplate}"
+                              DisplayMemberPath="Name"
+                              Height="26"/>
+                </GroupBox>
+
+                <!-- Naming -->
+                <GroupBox Header="Naming" Margin="0,0,0,8">
+                    <StackPanel>
+                        <TextBlock Text="Section Prefix"/>
+                        <TextBox Text="{Binding SectionPrefix}" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </GroupBox>
+
+                <!-- Geometry -->
+                <GroupBox Header="Geometry Settings" Margin="0,0,0,8">
+                    <Grid Margin="4">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="80"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="Far Clip (mm)" Grid.Row="0"/>
+                        <TextBox Text="{Binding FarClipMm}" Grid.Row="0" Grid.Column="1"/>
+
+                        <TextBlock Text="Search Threshold (mm)" Grid.Row="1"/>
+                        <TextBox Text="{Binding SearchThresholdMm}" Grid.Row="1" Grid.Column="1"/>
+
+                        <TextBlock Text="Top Padding (mm)" Grid.Row="2"/>
+                        <TextBox Text="{Binding TopPaddingMm}" Grid.Row="2" Grid.Column="1"/>
+
+                        <TextBlock Text="Bottom Padding (mm)" Grid.Row="3"/>
+                        <TextBox Text="{Binding BottomPaddingMm}" Grid.Row="3" Grid.Column="1"/>
+
+                        <TextBlock Text="Bottom Offset (mm)" Grid.Row="4"/>
+                        <TextBox Text="{Binding BottomOffsetMm}" Grid.Row="4" Grid.Column="1"/>
+                    </Grid>
+                </GroupBox>
+
+                <!-- Snap Source -->
+                <GroupBox Header="Snap Source" Margin="0,0,0,8">
+                    <ComboBox ItemsSource="{Binding SnapSources}"
+                              SelectedItem="{Binding SelectedSnapSource}"
+                              Height="26"/>
+                </GroupBox>
+
+                <!-- Options -->
+                <GroupBox Header="Post Creation Options">
+                    <StackPanel>
+                        <CheckBox Content="Open sections after creation"
+                                  IsChecked="{Binding OpenAllAfterCreate}"/>
+                        <CheckBox Content="Delete source detail lines"
+                                  IsChecked="{Binding DeleteLinesAfterCreate}"/>
+                    </StackPanel>
+                </GroupBox>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- ================= LIVE LOG ================= -->
+        <GroupBox Grid.Row="2"
+                  Header="Live Log"
+                  Margin="0,8,0,8">
+            <ListBox ItemsSource="{Binding LiveLog}"
+                     helpers:AutoScrollBehavior.Enable="True">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}"
+                                   Foreground="{Binding Color}"
+                                   FontFamily="Consolas"
+                                   FontSize="12"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </GroupBox>
+
+        <!-- ================= BUTTONS ================= -->
+        <StackPanel Grid.Row="3"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+
+            <Button Content="Create"
+                    Width="90"
+                    Margin="0,0,8,0"
+                    Command="{Binding CreateCommand}"/>
+
+            <Button Content="Cancel"
+                    Width="90"
+                    Command="{Binding CancelDialogCommand}"/>
+        </StackPanel>
+
+    </Grid>
+</Window>

@@ -5,7 +5,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\01\09\001</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\01\13\005</BaseOutputPath>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
@@ -62,10 +62,18 @@
 	  <Compile Remove="Menu\Tagging\RoofTag_V4\**" />
 	  <Compile Remove="Menu\ViewTools\Create\**" />
 	  <Compile Remove="Menu\ViewTools\Place\**" />
-	  <Compile Remove="Menu\ViewTools\Rename\SectionManagerRefactor\**" />
-	  <Compile Remove="Menu\ViewTools\Rename\SectionRenamer_V02\**" />
-	  <Compile Remove="Menu\ViewTools\Rename\Section_Renamer_V02\**" />
-	  <Compile Remove="Menu\ViewTools\Rename\Section_Renamer_V06\**" />
+	  <Compile Remove="Menu\ViewTools\Place_00\**" />
+	  <Compile Remove="Menu\ViewTools\Place_01\Calloutcopv02\**" />
+	  <Compile Remove="Menu\ViewTools\Place_01\Calloutcopv2\**" />
+	  <Compile Remove="Menu\ViewTools\Place_01\CalloutCOP_V04\**" />
+	  <Compile Remove="Menu\ViewTools\Place_01\Calloutplacing\**" />
+	  <Compile Remove="Menu\ViewTools\Place_01\Calloutplacing_01\**" />
+	  <Compile Remove="Menu\ViewTools\Place_01\PlaceUnplacedSectionsv4\**" />
+	  <Compile Remove="Menu\ViewTools\Place_01\Revit26_Plugin.SectionPlacement_V01\**" />
+	  <Compile Remove="Menu\ViewTools\Place_01\SectionPlacement_V001\**" />
+	  <Compile Remove="Menu\ViewTools\Place_01\Section_V3\**" />
+	  <Compile Remove="Menu\ViewTools\Place_01\Section_V4\**" />
+	  <Compile Remove="Menu\ViewTools\Rename\**" />
 	  <EmbeddedResource Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
 	  <EmbeddedResource Remove="Menu\Dimensions\TwoPOintLInes_V02\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\CreasetoLines\CreaserAdvCommand\**" />
@@ -120,10 +128,18 @@
 	  <EmbeddedResource Remove="Menu\Tagging\RoofTag_V4\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Create\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place\**" />
-	  <EmbeddedResource Remove="Menu\ViewTools\Rename\SectionManagerRefactor\**" />
-	  <EmbeddedResource Remove="Menu\ViewTools\Rename\SectionRenamer_V02\**" />
-	  <EmbeddedResource Remove="Menu\ViewTools\Rename\Section_Renamer_V02\**" />
-	  <EmbeddedResource Remove="Menu\ViewTools\Rename\Section_Renamer_V06\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Place_00\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\Calloutcopv02\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\Calloutcopv2\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\CalloutCOP_V04\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\Calloutplacing\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\Calloutplacing_01\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\PlaceUnplacedSectionsv4\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\Revit26_Plugin.SectionPlacement_V01\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\SectionPlacement_V001\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\Section_V3\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\Section_V4\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Rename\**" />
 	  <None Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
 	  <None Remove="Menu\Dimensions\TwoPOintLInes_V02\**" />
 	  <None Remove="Menu\RoofTools\CreasetoLines\CreaserAdvCommand\**" />
@@ -178,10 +194,18 @@
 	  <None Remove="Menu\Tagging\RoofTag_V4\**" />
 	  <None Remove="Menu\ViewTools\Create\**" />
 	  <None Remove="Menu\ViewTools\Place\**" />
-	  <None Remove="Menu\ViewTools\Rename\SectionManagerRefactor\**" />
-	  <None Remove="Menu\ViewTools\Rename\SectionRenamer_V02\**" />
-	  <None Remove="Menu\ViewTools\Rename\Section_Renamer_V02\**" />
-	  <None Remove="Menu\ViewTools\Rename\Section_Renamer_V06\**" />
+	  <None Remove="Menu\ViewTools\Place_00\**" />
+	  <None Remove="Menu\ViewTools\Place_01\Calloutcopv02\**" />
+	  <None Remove="Menu\ViewTools\Place_01\Calloutcopv2\**" />
+	  <None Remove="Menu\ViewTools\Place_01\CalloutCOP_V04\**" />
+	  <None Remove="Menu\ViewTools\Place_01\Calloutplacing\**" />
+	  <None Remove="Menu\ViewTools\Place_01\Calloutplacing_01\**" />
+	  <None Remove="Menu\ViewTools\Place_01\PlaceUnplacedSectionsv4\**" />
+	  <None Remove="Menu\ViewTools\Place_01\Revit26_Plugin.SectionPlacement_V01\**" />
+	  <None Remove="Menu\ViewTools\Place_01\SectionPlacement_V001\**" />
+	  <None Remove="Menu\ViewTools\Place_01\Section_V3\**" />
+	  <None Remove="Menu\ViewTools\Place_01\Section_V4\**" />
+	  <None Remove="Menu\ViewTools\Rename\**" />
 	  <Page Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
 	  <Page Remove="Menu\Dimensions\TwoPOintLInes_V02\**" />
 	  <Page Remove="Menu\RoofTools\CreasetoLines\CreaserAdvCommand\**" />
@@ -236,13 +260,23 @@
 	  <Page Remove="Menu\Tagging\RoofTag_V4\**" />
 	  <Page Remove="Menu\ViewTools\Create\**" />
 	  <Page Remove="Menu\ViewTools\Place\**" />
-	  <Page Remove="Menu\ViewTools\Rename\SectionManagerRefactor\**" />
-	  <Page Remove="Menu\ViewTools\Rename\SectionRenamer_V02\**" />
-	  <Page Remove="Menu\ViewTools\Rename\Section_Renamer_V02\**" />
-	  <Page Remove="Menu\ViewTools\Rename\Section_Renamer_V06\**" />
+	  <Page Remove="Menu\ViewTools\Place_00\**" />
+	  <Page Remove="Menu\ViewTools\Place_01\Calloutcopv02\**" />
+	  <Page Remove="Menu\ViewTools\Place_01\Calloutcopv2\**" />
+	  <Page Remove="Menu\ViewTools\Place_01\CalloutCOP_V04\**" />
+	  <Page Remove="Menu\ViewTools\Place_01\Calloutplacing\**" />
+	  <Page Remove="Menu\ViewTools\Place_01\Calloutplacing_01\**" />
+	  <Page Remove="Menu\ViewTools\Place_01\PlaceUnplacedSectionsv4\**" />
+	  <Page Remove="Menu\ViewTools\Place_01\Revit26_Plugin.SectionPlacement_V01\**" />
+	  <Page Remove="Menu\ViewTools\Place_01\SectionPlacement_V001\**" />
+	  <Page Remove="Menu\ViewTools\Place_01\Section_V3\**" />
+	  <Page Remove="Menu\ViewTools\Place_01\Section_V4\**" />
+	  <Page Remove="Menu\ViewTools\Rename\**" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Remove="App - Copy.cs" />
+	  <Compile Remove="App - Working.cs" />
+	  <Compile Remove="App-backup.cs" />
 	  <Compile Remove="IconLoader.cs" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\AutoSlopeCommand_03.cs" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\AutoSlopeEngine.cs" />
@@ -285,18 +319,13 @@
 	  <None Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_002_02.rar" />
 	  <None Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_002_03.rar" />
 	  <None Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_002_dup.rar" />
-	  <None Remove="Menu\ViewTools\Rename\BubbleRenumber_SDRV4.rar" />
-	  <None Remove="Menu\ViewTools\Rename\SectionManagerRefactor.rar" />
 	  <None Remove="Resources\Icons\addlines32.png" />
 	  <None Remove="Resources\Icons\addpoints32.png" />
 	  <None Remove="Resources\Icons\addtag32.png" />
 	  <None Remove="Resources\Icons\automatci.png" />
 	  <None Remove="Resources\Icons\Autoslope32.png" />
 	  <None Remove="Resources\Icons\converter32.png" />
-	  <None Remove="Resources\Icons\createview32.png" />
 	  <None Remove="Resources\Icons\linematch32.png" />
-	  <None Remove="Resources\Icons\placeview.png" />
-	  <None Remove="Resources\Icons\rename.png" />
 	  <None Remove="Resources\Icons\setting32.png" />
 	  <None Remove="Resources\Icons\setup32.png" />
 	  <None Remove="Resources\Icons\shapepoints32.png" />
@@ -313,10 +342,10 @@
 	  <EmbeddedResource Include="Resources\Icons\automatci.png" />
 	  <EmbeddedResource Include="Resources\Icons\Autoslope32.png" />
 	  <EmbeddedResource Include="Resources\Icons\converter32.png" />
-	  <EmbeddedResource Include="Resources\Icons\createview32.png" />
+	  <EmbeddedResource Include="Resources\Icons\create_32.png" />
 	  <EmbeddedResource Include="Resources\Icons\linematch32.png" />
-	  <EmbeddedResource Include="Resources\Icons\placeview.png" />
-	  <EmbeddedResource Include="Resources\Icons\rename.png" />
+	  <EmbeddedResource Include="Resources\Icons\place_32.png" />
+	  <EmbeddedResource Include="Resources\Icons\rename_32.png" />
 	  <EmbeddedResource Include="Resources\Icons\setting32.png" />
 	  <EmbeddedResource Include="Resources\Icons\setup32.png" />
 	  <EmbeddedResource Include="Resources\Icons\shapepoints32.png" />
@@ -359,5 +388,16 @@
 	  <Compile Update="Menu\RoofTools\SlopeDirections_V03\RoofDrainageWindow.xaml.cs">
 	    <SubType>Code</SubType>
 	  </Compile>
+	  <Compile Update="Properties\Resources.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Resources.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+	<ItemGroup>
+	  <EmbeddedResource Update="Properties\Resources.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
 	</ItemGroup>
 </Project>
