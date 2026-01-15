@@ -1,19 +1,24 @@
-﻿using Autodesk.Revit.DB;
+using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using Revit26_Plugin.RoofTag_V73.ViewModels;
 using System;
 using System.IO;
 
-namespace Revit22_Plugin.RoofTagV3
+namespace Revit26_Plugin.RoofTag_V73.Services
 {
-    public static class TaggingServiceV3
+    /// <summary>
+    /// Centralized service responsible for placing spot elevation tags
+    /// with ordered fallbacks and diagnostic logging.
+    /// </summary>
+    public static class TaggingService
     {
         private static readonly string LogFile =
             Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                "RoofTagV3_Log.txt");
+                "RoofTagV73_Log.txt");
 
         // ================================================================
-        // MAIN ENTRY – per-point ordered fallback
+        // MAIN ENTRY � per-point ordered fallback
         // ================================================================
         public static bool PlaceSpotTag(
             Document doc,
@@ -21,9 +26,9 @@ namespace Revit22_Plugin.RoofTagV3
             XYZ origin,
             XYZ bend,
             XYZ end,
-            RoofTagViewModelV3 vm)
+            RoofTagViewModel vm)
         {
-            if (doc == null || origin == null)
+            if (doc == null || origin == null || vm == null)
                 return false;
 
             View view = doc.ActiveView;
@@ -31,7 +36,7 @@ namespace Revit22_Plugin.RoofTagV3
                 return false;
 
             // ------------------------------------------------------------
-            // 1️⃣ Primary: Face reference (correct binding)
+            // 1?? Primary: Face reference (correct binding)
             // ------------------------------------------------------------
             if (faceRef != null)
             {
@@ -40,7 +45,7 @@ namespace Revit22_Plugin.RoofTagV3
             }
 
             // ------------------------------------------------------------
-            // 2️⃣ Fallback: Level plane
+            // 2?? Fallback: Level plane
             // ------------------------------------------------------------
             Reference levelRef = GetLevelPlaneReference(doc, view);
             if (levelRef != null)
@@ -50,7 +55,7 @@ namespace Revit22_Plugin.RoofTagV3
             }
 
             // ------------------------------------------------------------
-            // 3️⃣ Fallback: Sketch plane
+            // 3?? Fallback: Sketch plane
             // ------------------------------------------------------------
             Reference sketchRef = GetSketchPlaneReference(view);
             if (sketchRef != null)
@@ -60,7 +65,7 @@ namespace Revit22_Plugin.RoofTagV3
             }
 
             // ------------------------------------------------------------
-            // 4️⃣ Final fallback: Origin-only (same face ref)
+            // 4?? Final fallback: Origin-only (same face ref)
             // ------------------------------------------------------------
             if (faceRef != null)
             {
@@ -82,7 +87,7 @@ namespace Revit22_Plugin.RoofTagV3
             XYZ origin,
             XYZ bend,
             XYZ end,
-            RoofTagViewModelV3 vm,
+            RoofTagViewModel vm,
             string label)
         {
             try

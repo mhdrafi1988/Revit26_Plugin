@@ -1,12 +1,16 @@
-﻿using Autodesk.Revit.DB;
+using Autodesk.Revit.DB;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.RoofTag_V03.Helpers
+namespace Revit26_Plugin.RoofTag_V73.Helpers
 {
-    internal static partial class GeometryHelperV3
+    internal static partial class GeometryHelper
     {
+        /// <summary>
+        /// Returns the highest Z slab-shape vertex per XY location.
+        /// Used for auto-tagging roofs with shape-edited slabs.
+        /// </summary>
         public static List<XYZ> GetExactShapeVertices(RoofBase roof)
         {
             if (roof == null)
@@ -23,7 +27,10 @@ namespace Revit26_Plugin.RoofTag_V03.Helpers
                 .GroupBy(v => (
                     Math.Round(v.Position.X / tol),
                     Math.Round(v.Position.Y / tol)))
-                .Select(g => g.OrderByDescending(v => v.Position.Z).First().Position)
+                .Select(g => g
+                    .OrderByDescending(v => v.Position.Z)
+                    .First()
+                    .Position)
                 .ToList();
         }
     }

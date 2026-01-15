@@ -1,0 +1,38 @@
+<Window x:Class="Revit26_Plugin.CreaserAdv_V00.Views.CreaserAdvWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Creaser Advanced"
+        Height="500"
+        Width="700">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ComboBox
+            ItemsSource="{Binding DetailSymbols}"
+            SelectedItem="{Binding SelectedDetailSymbol}"
+            DisplayMemberPath="Name"
+            Height="28"/>
+
+        <ListBox Grid.Row="1"
+                 ItemsSource="{Binding LogEntries}"
+                 FontFamily="Consolas"/>
+
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+            <Button Content="Run"
+                    Command="{Binding RunCommand}"
+                    Width="100"
+                    Margin="5"/>
+            <Button Content="Clear Log"
+                    Command="{Binding ClearLogCommand}"
+                    Width="100"
+                    Margin="5"/>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -1,17 +1,14 @@
-﻿using Autodesk.Revit.DB;
-using System;
+using Autodesk.Revit.DB;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.RoofTag_V03.Helpers
+namespace Revit26_Plugin.RoofTag_V73.Helpers
 {
-    internal static partial class GeometryHelperV3
+    internal static partial class GeometryHelper
     {
         public static List<XYZ> BuildRoofBoundaryXY(RoofBase roof)
         {
             List<XYZ> pts = new();
-
-            Options opt = new();
-            GeometryElement geo = roof.get_Geometry(opt);
+            GeometryElement geo = roof.get_Geometry(new Options());
 
             foreach (GeometryObject obj in geo)
             {
@@ -34,7 +31,7 @@ namespace Revit26_Plugin.RoofTag_V03.Helpers
             XYZ end,
             List<XYZ> boundary)
         {
-            return end; // intentional no-op (collision-safe placeholder)
+            return end;
         }
     }
 }
