@@ -7,7 +7,7 @@ using Revit26_Plugin.DtlLineDim_V03.Views;
 namespace Revit26_Plugin.DtlLineDim_V03.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    public class DtlLineDimCommand_01 : IExternalCommand
+    public class DtlLineDimCommand : IExternalCommand
     {
         public Result Execute(
             ExternalCommandData commandData,

@@ -28,6 +28,9 @@ namespace Revit26_Plugin.Menu.Ribbon
             PulldownButton ViewPlace = panel.AddItem(new PulldownButtonData("Place", "Place")) as PulldownButton;
             ViewPlace.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Place_32.png");
             
+            ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_301", "AutoPlaceSectionsCommand_301 #", assemblyPath, "Revit26_Plugin.APUS_301.Commands.AutoPlaceSectionsCommand"));
+            ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_306", "AutoPlaceSectionsCommand_306 #", assemblyPath, "Revit26_Plugin.APUS_V306.Commands.AutoPlaceSectionsCommand"));
+
             ViewPlace.AddPushButton(new PushButtonData("Btn_COPV1", "COPV1 #", assemblyPath, "Revit22_Plugin.callout.CalloutExternalCommand"));
             ViewPlace.AddPushButton(new PushButtonData("Btn_COPV2", "COPV2 #", assemblyPath, "Revit22_Plugin.copv2.CalloutExternalCommand"));
             ViewPlace.AddPushButton(new PushButtonData("Btn_COPV3", "COPV3 #", assemblyPath, "Revit22_Plugin.copv3.CalloutCOPV3Command"));
