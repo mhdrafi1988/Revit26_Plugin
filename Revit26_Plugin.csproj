@@ -5,7 +5,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\01\16\003</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\01\19\007</BaseOutputPath>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
@@ -73,12 +73,15 @@
 	  <Compile Remove="Menu\ViewTools\Create\**" />
 	  <Compile Remove="Menu\ViewTools\Place\**" />
 	  <Compile Remove="Menu\ViewTools\Place_00\**" />
+	  <Compile Remove="Menu\ViewTools\Place_01\APUS_302\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\Calloutcopv02\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\Calloutcopv2\**" />
+	  <Compile Remove="Menu\ViewTools\Place_01\CalloutCOP_V004\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\CalloutCOP_V04\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\CalloutCOP_V05\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\Calloutplacing\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\Calloutplacing_01\**" />
+	  <Compile Remove="Menu\ViewTools\Place_01\COPV03_CalloutPLacing\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\COPV3_CalloutPLacing\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\PlaceUnplacedSectionsv4\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\Revit26_Plugin.SectionPlacement_V01\**" />
@@ -152,12 +155,15 @@
 	  <EmbeddedResource Remove="Menu\ViewTools\Create\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_00\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_302\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\Calloutcopv02\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\Calloutcopv2\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\CalloutCOP_V004\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\CalloutCOP_V04\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\CalloutCOP_V05\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\Calloutplacing\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\Calloutplacing_01\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\COPV03_CalloutPLacing\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\COPV3_CalloutPLacing\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\PlaceUnplacedSectionsv4\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\Revit26_Plugin.SectionPlacement_V01\**" />
@@ -231,12 +237,15 @@
 	  <None Remove="Menu\ViewTools\Create\**" />
 	  <None Remove="Menu\ViewTools\Place\**" />
 	  <None Remove="Menu\ViewTools\Place_00\**" />
+	  <None Remove="Menu\ViewTools\Place_01\APUS_302\**" />
 	  <None Remove="Menu\ViewTools\Place_01\Calloutcopv02\**" />
 	  <None Remove="Menu\ViewTools\Place_01\Calloutcopv2\**" />
+	  <None Remove="Menu\ViewTools\Place_01\CalloutCOP_V004\**" />
 	  <None Remove="Menu\ViewTools\Place_01\CalloutCOP_V04\**" />
 	  <None Remove="Menu\ViewTools\Place_01\CalloutCOP_V05\**" />
 	  <None Remove="Menu\ViewTools\Place_01\Calloutplacing\**" />
 	  <None Remove="Menu\ViewTools\Place_01\Calloutplacing_01\**" />
+	  <None Remove="Menu\ViewTools\Place_01\COPV03_CalloutPLacing\**" />
 	  <None Remove="Menu\ViewTools\Place_01\COPV3_CalloutPLacing\**" />
 	  <None Remove="Menu\ViewTools\Place_01\PlaceUnplacedSectionsv4\**" />
 	  <None Remove="Menu\ViewTools\Place_01\Revit26_Plugin.SectionPlacement_V01\**" />
@@ -310,12 +319,15 @@
 	  <Page Remove="Menu\ViewTools\Create\**" />
 	  <Page Remove="Menu\ViewTools\Place\**" />
 	  <Page Remove="Menu\ViewTools\Place_00\**" />
+	  <Page Remove="Menu\ViewTools\Place_01\APUS_302\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\Calloutcopv02\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\Calloutcopv2\**" />
+	  <Page Remove="Menu\ViewTools\Place_01\CalloutCOP_V004\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\CalloutCOP_V04\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\CalloutCOP_V05\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\Calloutplacing\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\Calloutplacing_01\**" />
+	  <Page Remove="Menu\ViewTools\Place_01\COPV03_CalloutPLacing\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\COPV3_CalloutPLacing\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\PlaceUnplacedSectionsv4\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\Revit26_Plugin.SectionPlacement_V01\**" />
@@ -425,7 +437,6 @@
 	  <Folder Include="Menu\RoofTools\Lines\SlopeToDetailItem\" />
 	  <Folder Include="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\" />
 	  <Folder Include="Menu\RoofTools\RoofSlope\AutoSloperDrain_04\" />
-	  <Folder Include="Menu\ViewTools\Place_01\APUS_302\" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Update="Menu\RoofTools\CreasetoLines\Creaser_V08\CreaserSummaryWindow.xaml.cs">

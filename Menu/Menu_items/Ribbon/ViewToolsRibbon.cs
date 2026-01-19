@@ -31,10 +31,6 @@ namespace Revit26_Plugin.Menu.Ribbon
             ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_301", "AutoPlaceSectionsCommand_301 #", assemblyPath, "Revit26_Plugin.APUS_301.Commands.AutoPlaceSectionsCommand"));
             ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_306", "AutoPlaceSectionsCommand_306 #", assemblyPath, "Revit26_Plugin.APUS_V306.Commands.AutoPlaceSectionsCommand"));
 
-            ViewPlace.AddPushButton(new PushButtonData("Btn_COPV1", "COPV1 #", assemblyPath, "Revit22_Plugin.callout.CalloutExternalCommand"));
-            ViewPlace.AddPushButton(new PushButtonData("Btn_COPV2", "COPV2 #", assemblyPath, "Revit22_Plugin.copv2.CalloutExternalCommand"));
-            ViewPlace.AddPushButton(new PushButtonData("Btn_COPV3", "COPV3 #", assemblyPath, "Revit22_Plugin.copv3.CalloutCOPV3Command"));
-            ViewPlace.AddPushButton(new PushButtonData("Btn_COPV5", "COPV5 #", assemblyPath, "Revit26_Plugin.CalloutCOP_V05.Commands.CalloutCOPCommand"));
             ViewPlace.AddPushButton(new PushButtonData("Btn_COPV6", "COPV6 #", assemblyPath, "Revit26_Plugin.CalloutCOP_V06.Commands.CalloutCOPCommand"));
         }
     }
