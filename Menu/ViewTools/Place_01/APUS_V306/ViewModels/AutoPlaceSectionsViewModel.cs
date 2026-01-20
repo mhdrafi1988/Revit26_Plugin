@@ -14,23 +14,18 @@ namespace Revit26_Plugin.APUS_V306.ViewModels
 {
     /// <summary>
     /// Main ViewModel for Auto Place Sections (APUS).
-    /// UI state only — Revit API logic runs inside ExternalEvent handler.
+    /// UI state only — all Revit API logic runs in ExternalEvent.
+    /// All layout values are millimeters.
     /// </summary>
     public class AutoPlaceSectionsViewModel : INotifyPropertyChanged
     {
         private readonly UIDocument _uidoc;
 
-        // ===================== MASTER DATA =====================
+        // ===================== DATA =====================
 
-        /// <summary>
-        /// Full, unfiltered collection of sections.
-        /// </summary>
         public ObservableCollection<SectionItemViewModel> Sections { get; }
             = new ObservableCollection<SectionItemViewModel>();
 
-        /// <summary>
-        /// Filtered view bound to the DataGrid.
-        /// </summary>
         public ICollectionView FilteredSections { get; }
 
         public ObservableCollection<LogEntryViewModel> LogEntries { get; }
@@ -39,7 +34,7 @@ namespace Revit26_Plugin.APUS_V306.ViewModels
         public PlacementProgressViewModel Progress { get; }
             = new PlacementProgressViewModel();
 
-        // ===================== FILTER OPTIONS =====================
+        // ===================== FILTERS =====================
 
         public ObservableCollection<string> PlacementScopes { get; }
             = new ObservableCollection<string>();
@@ -92,16 +87,17 @@ namespace Revit26_Plugin.APUS_V306.ViewModels
         }
 
         // ===================== LAYOUT INPUTS (mm) =====================
+        // DEFAULT = 10 mm (Revit-like)
 
-        public double LeftMarginMm { get; set; } = 20;
-        public double RightMarginMm { get; set; } = 20;
-        public double TopMarginMm { get; set; } = 20;
-        public double BottomMarginMm { get; set; } = 20;
+        public double LeftMarginMm { get; set; } = 10;
+        public double RightMarginMm { get; set; } = 10;
+        public double TopMarginMm { get; set; } = 10;
+        public double BottomMarginMm { get; set; } = 10;
 
-        public double HorizontalGapMm { get; set; } = 20;
-        public double VerticalGapMm { get; set; } = 20;
+        public double HorizontalGapMm { get; set; } = 10;
+        public double VerticalGapMm { get; set; } = 10;
 
-        public double YToleranceMm { get; set; } = 50;
+        public double YToleranceMm { get; set; } = 10;
 
         // ===================== COMMANDS =====================
 
@@ -114,7 +110,6 @@ namespace Revit26_Plugin.APUS_V306.ViewModels
         {
             _uidoc = uidoc;
 
-            // Setup filtered collection view
             FilteredSections = CollectionViewSource.GetDefaultView(Sections);
             FilteredSections.Filter = FilterPredicate;
 
@@ -151,21 +146,19 @@ namespace Revit26_Plugin.APUS_V306.ViewModels
             LogInfo($"{Sections.Count} section(s) collected.");
         }
 
-        // ===================== UI FILTER LOGIC =====================
+        // ===================== FILTER =====================
 
         private bool FilterPredicate(object obj)
         {
             if (obj is not SectionItemViewModel item)
                 return false;
 
-            // Placement State
             if (SelectedPlacementState == "Placed Only" && !item.IsPlaced)
                 return false;
 
             if (SelectedPlacementState == "Unplaced Only" && item.IsPlaced)
                 return false;
 
-            // Placement Scope
             if (!string.IsNullOrWhiteSpace(SelectedPlacementScope))
             {
                 if (string.IsNullOrWhiteSpace(item.PlacementScope) ||
@@ -175,7 +168,6 @@ namespace Revit26_Plugin.APUS_V306.ViewModels
                     return false;
             }
 
-            // Sheet Number filter (placed views only)
             if (!string.IsNullOrWhiteSpace(SheetNumberFilter))
             {
                 if (!item.IsPlaced ||

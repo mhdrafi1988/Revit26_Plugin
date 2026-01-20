@@ -8,14 +8,6 @@ using System.Linq;
 
 namespace Revit26_Plugin.APUS_V306.ExternalEvents
 {
-    /// <summary>
-    /// ExternalEvent handler for Auto Place Sections (APUS).
-    /// Owns:
-    /// - Revit API execution
-    /// - Sorting order
-    /// - Sheet creation loop
-    /// - Global detail numbering
-    /// </summary>
     public class AutoPlaceSectionsHandler : IExternalEventHandler
     {
         public AutoPlaceSectionsViewModel ViewModel { get; set; }
@@ -23,20 +15,16 @@ namespace Revit26_Plugin.APUS_V306.ExternalEvents
         public void Execute(UIApplication app)
         {
             UIDocument uidoc = app.ActiveUIDocument;
-            Document doc = uidoc.Document;
+            Document doc = uidoc?.Document;
 
-            if (uidoc == null || doc == null)
+            if (doc == null)
             {
                 ViewModel.LogError("No active document.");
                 return;
             }
 
-            // --------------------------------------------------
-            // 1?? Collect selected sections
-            // --------------------------------------------------
-            var selected = ViewModel.Sections
-                .Where(x => x.IsSelected)
-                .ToList();
+            var selected =
+                ViewModel.Sections.Where(x => x.IsSelected).ToList();
 
             if (!selected.Any())
             {
@@ -44,9 +32,6 @@ namespace Revit26_Plugin.APUS_V306.ExternalEvents
                 return;
             }
 
-            // --------------------------------------------------
-            // 2?? Apply UI filters
-            // --------------------------------------------------
             var filtered = SectionFilterService.Apply(
                 selected,
                 ViewModel.SelectedPlacementScope,
@@ -59,28 +44,28 @@ namespace Revit26_Plugin.APUS_V306.ExternalEvents
                 return;
             }
 
-            // --------------------------------------------------
-            // 3?? Sort by projected X/Y in reference view (Option A)
-            // --------------------------------------------------
             View referenceView = uidoc.ActiveView;
-
             if (referenceView == null)
             {
-                ViewModel.LogError("No active view available for sorting.");
+                ViewModel.LogError("No active view for sorting.");
                 return;
             }
 
-            var sorted = SectionSortingService.Sort(filtered);
+            var sortedWithCoords =
+                SectionSortingService.SortLeftToRight(
+                    filtered,
+                    referenceView);
 
-            // Optional debug – placement order
-            foreach (var s in sorted)
+            int order = 1;
+            foreach (var s in sortedWithCoords)
             {
-                ViewModel.LogInfo($"ORDER ? {s.Name}");
+                ViewModel.LogInfo(
+                    $"SORT {order++:00} ? {s.Item.Name} (X={s.X:0.0}, Y={s.Y:0.0})");
             }
 
-            // --------------------------------------------------
-            // 4?? Initialize progress + transaction
-            // --------------------------------------------------
+            var sorted =
+                sortedWithCoords.Select(x => x.Item).ToList();
+
             ViewModel.Progress.Reset(sorted.Count);
 
             using Transaction tx =
@@ -88,9 +73,6 @@ namespace Revit26_Plugin.APUS_V306.ExternalEvents
 
             tx.Start();
 
-            // --------------------------------------------------
-            // 5?? Resolve title block
-            // --------------------------------------------------
             var titleBlock =
                 new FilteredElementCollector(doc)
                     .OfClass(typeof(FamilySymbol))
@@ -111,18 +93,13 @@ namespace Revit26_Plugin.APUS_V306.ExternalEvents
 
             int sheetIndex = 1;
             int cursor = 0;
-
-            // ? Global continuous detail number
             int globalDetailIndex = 0;
 
-            // --------------------------------------------------
-            // 6?? Multi-sheet placement loop
-            // --------------------------------------------------
             while (cursor < sorted.Count)
             {
                 if (ViewModel.Progress.IsCancelled)
                 {
-                    ViewModel.LogWarning("Placement cancelled by user.");
+                    ViewModel.LogWarning("Placement cancelled.");
                     break;
                 }
 
@@ -137,17 +114,16 @@ namespace Revit26_Plugin.APUS_V306.ExternalEvents
                         ViewModel.TopMarginMm,
                         ViewModel.BottomMarginMm);
 
-                double gapFt =
-                    UnitConversionHelper.MmToFeet(
-                        ViewModel.HorizontalGapMm);
+                double gapMm = ViewModel.HorizontalGapMm;
 
-                int placed = placer.PlaceBatch(
-                    sheet,
-                    sorted.Skip(cursor).ToList(),
-                    area,
-                    gapFt,
-                    ViewModel,
-                    ref globalDetailIndex);
+                int placed = placer.PlaceBatchOrdered(
+                        sheet,
+                        sorted,                       // already sorted list
+                        area,
+                        ViewModel.HorizontalGapMm,    // mm
+                        ViewModel,
+                        ref globalDetailIndex);
+
 
                 if (placed == 0)
                 {
