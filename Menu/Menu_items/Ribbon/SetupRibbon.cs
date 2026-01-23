@@ -14,6 +14,7 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             setup.AddPushButton(new PushButtonData("Btn_CreateWorksetsFromLinkedFilesv022", "Create Worksets FromLinked Files v02", assemblyPath, "Revit26_Plugin.WSAV02.CreateWorksetsFromLinkedFilesv02"));
             setup.AddPushButton(new PushButtonData("Btn_CreateWorksetsFromLinkedFiles_V05", "Create Worksets FromLinked Files v05", assemblyPath, "Revit26_Plugin.WSA_V05.Commands.CreateWorksetsFromLinkedFilesV05"));
+            setup.AddPushButton(new PushButtonData("Btn_CreateWorksetsFromLinkedFiles_V008", "Create Worksets FromLinked Files V 008", assemblyPath, "Revit26_Plugin.WSFL_008.Commands.CreateWorksetsFromLinkedFiles"));
 
         }
     }

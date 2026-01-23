@@ -163,7 +163,7 @@ namespace Revit22_Plugin.AutoSlope_V4_01.Engine
             // -------------------------------------------------------
             // SUMMARY (meters)
             // -------------------------------------------------------
-            double highestM = UnitUtils.ConvertFromInternalUnits(highestElevFt, UnitTypeId.Meters);
+            double highestM = UnitUtils.ConvertFromInternalUnits(highestElevFt, UnitTypeId.Millimeters);
             double longestM = UnitUtils.ConvertFromInternalUnits(longestPathFt, UnitTypeId.Meters);
 
             data.Log(LogColorHelper.Green($"Vertices Processed: {processed}"));

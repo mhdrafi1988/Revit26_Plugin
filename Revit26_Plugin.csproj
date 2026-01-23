@@ -5,7 +5,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\01\20\008</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\01\23\005</BaseOutputPath>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
@@ -59,7 +59,10 @@
 	  <Compile Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_003\**" />
 	  <Compile Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSloperAndDetail_V5_00\**" />
+	  <Compile Remove="Menu\Setup\CreateWorksetsFromLinkedFilesV005\**" />
+	  <Compile Remove="Menu\Setup\CreateWorksetsFromLinkedFilesV05\**" />
 	  <Compile Remove="Menu\Setup\WorksetAdvanced_V001\**" />
+	  <Compile Remove="Menu\Setup\WorksetAdvanced_V002\**" />
 	  <Compile Remove="Menu\Setup\WorksetAdvanced_V02\**" />
 	  <Compile Remove="Menu\Tagging\NewFolder\**" />
 	  <Compile Remove="Menu\Tagging\Revit26_Plugin.RoofTag_V062\**" />
@@ -74,6 +77,9 @@
 	  <Compile Remove="Menu\ViewTools\Place\**" />
 	  <Compile Remove="Menu\ViewTools\Place_00\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\APUS_302\**" />
+	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V3007Evening\**" />
+	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V307-Succes\**" />
+	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V307\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\Calloutcopv02\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\Calloutcopv2\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\CalloutCOP_V004\**" />
@@ -141,7 +147,10 @@
 	  <EmbeddedResource Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_003\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\AutoSloperAndDetail_V5_00\**" />
+	  <EmbeddedResource Remove="Menu\Setup\CreateWorksetsFromLinkedFilesV005\**" />
+	  <EmbeddedResource Remove="Menu\Setup\CreateWorksetsFromLinkedFilesV05\**" />
 	  <EmbeddedResource Remove="Menu\Setup\WorksetAdvanced_V001\**" />
+	  <EmbeddedResource Remove="Menu\Setup\WorksetAdvanced_V002\**" />
 	  <EmbeddedResource Remove="Menu\Setup\WorksetAdvanced_V02\**" />
 	  <EmbeddedResource Remove="Menu\Tagging\NewFolder\**" />
 	  <EmbeddedResource Remove="Menu\Tagging\Revit26_Plugin.RoofTag_V062\**" />
@@ -156,6 +165,9 @@
 	  <EmbeddedResource Remove="Menu\ViewTools\Place\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_00\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_302\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_V3007Evening\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_V307-Succes\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_V307\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\Calloutcopv02\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\Calloutcopv2\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\CalloutCOP_V004\**" />
@@ -223,7 +235,10 @@
 	  <None Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_003\**" />
 	  <None Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\AutoSloperAndDetail_V5_00\**" />
+	  <None Remove="Menu\Setup\CreateWorksetsFromLinkedFilesV005\**" />
+	  <None Remove="Menu\Setup\CreateWorksetsFromLinkedFilesV05\**" />
 	  <None Remove="Menu\Setup\WorksetAdvanced_V001\**" />
+	  <None Remove="Menu\Setup\WorksetAdvanced_V002\**" />
 	  <None Remove="Menu\Setup\WorksetAdvanced_V02\**" />
 	  <None Remove="Menu\Tagging\NewFolder\**" />
 	  <None Remove="Menu\Tagging\Revit26_Plugin.RoofTag_V062\**" />
@@ -238,6 +253,9 @@
 	  <None Remove="Menu\ViewTools\Place\**" />
 	  <None Remove="Menu\ViewTools\Place_00\**" />
 	  <None Remove="Menu\ViewTools\Place_01\APUS_302\**" />
+	  <None Remove="Menu\ViewTools\Place_01\APUS_V3007Evening\**" />
+	  <None Remove="Menu\ViewTools\Place_01\APUS_V307-Succes\**" />
+	  <None Remove="Menu\ViewTools\Place_01\APUS_V307\**" />
 	  <None Remove="Menu\ViewTools\Place_01\Calloutcopv02\**" />
 	  <None Remove="Menu\ViewTools\Place_01\Calloutcopv2\**" />
 	  <None Remove="Menu\ViewTools\Place_01\CalloutCOP_V004\**" />
@@ -305,7 +323,10 @@
 	  <Page Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_003\**" />
 	  <Page Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\AutoSloperAndDetail_V5_00\**" />
+	  <Page Remove="Menu\Setup\CreateWorksetsFromLinkedFilesV005\**" />
+	  <Page Remove="Menu\Setup\CreateWorksetsFromLinkedFilesV05\**" />
 	  <Page Remove="Menu\Setup\WorksetAdvanced_V001\**" />
+	  <Page Remove="Menu\Setup\WorksetAdvanced_V002\**" />
 	  <Page Remove="Menu\Setup\WorksetAdvanced_V02\**" />
 	  <Page Remove="Menu\Tagging\NewFolder\**" />
 	  <Page Remove="Menu\Tagging\Revit26_Plugin.RoofTag_V062\**" />
@@ -320,6 +341,9 @@
 	  <Page Remove="Menu\ViewTools\Place\**" />
 	  <Page Remove="Menu\ViewTools\Place_00\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\APUS_302\**" />
+	  <Page Remove="Menu\ViewTools\Place_01\APUS_V3007Evening\**" />
+	  <Page Remove="Menu\ViewTools\Place_01\APUS_V307-Succes\**" />
+	  <Page Remove="Menu\ViewTools\Place_01\APUS_V307\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\Calloutcopv02\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\Calloutcopv2\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\CalloutCOP_V004\**" />
@@ -356,7 +380,7 @@
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\DijkstraPathEngine.cs" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\InverseBoolConverter.cs" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\LogColorHelper.cs" />
-	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03_00\DijkstraPathEngine - Copy.cs" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_Point_03_00\DijkstraPathEngine - Copy.cs" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSloperDrain_04\AutoSloperDrain_04.cs" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSloperDrain_04\DrainDetectionService.cs" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSloperDrain_04\DrainItem.cs" />
@@ -372,7 +396,6 @@
 	  <Compile Remove="Menu\RoofTools\SlopeDirections_V03\TransactionHandlers.cs" />
 	  <Compile Remove="Menu\RoofTools\SlopeDirections_V03\ViewModels.cs" />
 	  <Compile Remove="Menu\RoofTools\SlopeDirections_V04\TransactionHandlers.cs" />
-	  <Compile Remove="Menu\Setup\CreateWorksetsFromLinkedFilesV05\WorksetAssignmentService.cs" />
 	  <Compile Remove="Resources\App.xaml.cs" />
 	</ItemGroup>
 	<ItemGroup>

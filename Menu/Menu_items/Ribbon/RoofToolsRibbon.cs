@@ -20,6 +20,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             SlopeMenu.AddPushButton(new PushButtonData("Btn_RoofSloperClassic1_v2", "RoofSloperClassic1_v2(Point)", assemblyPath, "Revit26_Plugin.Commands.RoofSloperClassic1_v2"));
             SlopeMenu.AddPushButton(new PushButtonData("Btn_RoofSloperClassic_02", "RoofSloperClassic_02(Point)", assemblyPath, "Revit26_Plugin.Commands.RoofSloperClassic_02"));
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeCommand_03", "AutoSlopeCommand_03(Point)", assemblyPath, "Revit22_Plugin.AutoSlopeV3.AutoSlopeCommand_03"));
+            SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeCommand_03_04", "AutoSlopeCommand_03_04(Point)", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.Commands.AutoSlopeCommand"));
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSloperDrain_04", "AutoSloperDrain_04(Drain)", assemblyPath, "Revit22_Plugin.Asd.Commands.AutoSloperDrain_04"));
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSloperDrain_04_01", "AutoSloperDrain_04_01(Drain)", assemblyPath, "Revit22_Plugin.Asd_V4_01.Commands.AutoSloperDrain_04_01"));
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlope04_02", "AutoSlope04_02(Drain)", assemblyPath, "Revit22_Plugin.V4_02.Commands.AutoSlopeCommand"));

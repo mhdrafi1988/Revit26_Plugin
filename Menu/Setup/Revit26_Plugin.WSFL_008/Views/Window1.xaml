@@ -1,0 +1,98 @@
+﻿<mah:MetroWindow
+    x:Class="Revit26_Plugin.WSFL_008.Views.WorksetSelectorWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Create Worksets from Linked Files"
+    Height="600"
+    Width="900"
+    WindowStartupLocation="CenterOwner"
+    ResizeMode="CanResize">
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="160"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ===================== -->
+        <!-- Workset Name Pattern -->
+        <!-- ===================== -->
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+            <TextBlock Text="Workset Pattern:"
+                       VerticalAlignment="Center"
+                       Margin="0,0,8,0"/>
+
+            <TextBox Width="320"
+                     Text="{Binding Pattern, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <TextBlock Text="  Use {name} for link name"
+                       VerticalAlignment="Center"
+                       Margin="10,0,0,0"
+                       Opacity="0.6"/>
+        </StackPanel>
+
+        <!-- ================= -->
+        <!-- Linked Files Grid -->
+        <!-- ================= -->
+        <DataGrid Grid.Row="1"
+                  ItemsSource="{Binding Items}"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  HeadersVisibility="Column"
+                  SelectionMode="Extended"
+                  Margin="0,0,0,10">
+
+            <DataGrid.Columns>
+                <DataGridCheckBoxColumn Header="Create"
+                                        Binding="{Binding IsSelected}"
+                                        Width="80"/>
+
+                <DataGridTextColumn Header="Link Name"
+                                    Binding="{Binding LinkName}"
+                                    IsReadOnly="True"
+                                    Width="*"/>
+
+                <DataGridTextColumn Header="Preview Workset Name"
+                                    Binding="{Binding PreviewName}"
+                                    IsReadOnly="True"
+                                    Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- ========= -->
+        <!-- Live Log -->
+        <!-- ========= -->
+        <GroupBox Grid.Row="2"
+                  Header="Live Log"
+                  Margin="0,0,0,10">
+
+            <ListBox x:Name="LogList"
+                     ItemsSource="{Binding Log}"
+                     FontFamily="Consolas"
+                     FontSize="12"/>
+        </GroupBox>
+
+        <!-- ========= -->
+        <!-- Buttons -->
+        <!-- ========= -->
+        <StackPanel Grid.Row="3"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+
+            <Button Content="Create Worksets"
+                    Width="150"
+                    Margin="0,0,8,0"
+                    Command="{Binding CreateCommand}"/>
+
+            <Button Content="Close"
+                    Width="90"
+                    Command="{Binding CloseCommand}"/>
+        </StackPanel>
+    </Grid>
+</mah:MetroWindow>
