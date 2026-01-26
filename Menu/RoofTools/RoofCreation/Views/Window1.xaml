@@ -1,0 +1,130 @@
+﻿<Window x:Class="Revit26_Plugin.RoofFromFloor.Views.RoofFromFloorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Create Roof from Floor Profiles"
+        Height="720"
+        Width="1100"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResize">
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="220"/>
+        </Grid.RowDefinitions>
+
+        <!-- ================= HEADER ================= -->
+        <Border Grid.Row="0"
+                Background="#1F2937"
+                CornerRadius="6"
+                Padding="12"
+                Margin="0,0,0,10">
+            <TextBlock Text="Roof Creation from Floor Profiles (Revit 2026)"
+                       Foreground="White"
+                       FontSize="18"
+                       FontWeight="SemiBold"/>
+        </Border>
+
+        <!-- ================= STEP 1 ================= -->
+        <GroupBox Grid.Row="1"
+                  Header="Step 1 · Select Roof (Plan View Required)"
+                  Margin="0,0,0,10">
+
+            <Grid Margin="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="240"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="200"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Active View" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding ActiveViewName}"
+                               Margin="0,4,0,0"
+                               Foreground="{Binding ViewStatusColor}"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="Selected Roof" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding SelectedRoofName}"
+                               Margin="0,4,0,0"
+                               Foreground="{Binding RoofStatusColor}"/>
+                </StackPanel>
+
+                <Button Grid.Column="2"
+                        Content="Select Roof"
+                        Height="36"
+                        Command="{Binding SelectRoofCommand}"/>
+            </Grid>
+        </GroupBox>
+
+        <!-- ================= STEP 2 ================= -->
+        <GroupBox Grid.Row="2"
+                  Header="Step 2 · Linked Model  Execution">
+
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="240"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="200"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0"
+                               Text="Linked Instance"
+                               FontWeight="SemiBold"
+                               VerticalAlignment="Center"/>
+
+                    <TextBlock Grid.Column="1"
+                               Text="{Binding SelectedLinkName}"
+                               VerticalAlignment="Center"/>
+
+                    <Button Grid.Column="2"
+                            Content="Select Link"
+                            Height="32"
+                            Command="{Binding SelectLinkCommand}"/>
+                </Grid>
+
+                <StackPanel Grid.Row="1"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Right">
+
+                    <!-- 🔑 NO IsEnabled binding here -->
+                    <Button Content="Start Processing"
+                            Width="170"
+                            Height="38"
+                            Margin="0,0,10,0"
+                            Command="{Binding StartCommand}"/>
+
+                    <Button Content="Close"
+                            Width="120"
+                            Height="38"
+                            Command="{Binding CloseCommand}"/>
+                </StackPanel>
+            </Grid>
+        </GroupBox>
+
+        <!-- ================= LIVE LOG ================= -->
+        <GroupBox Grid.Row="3"
+                  Header="Live Log">
+
+            <Grid Margin="6">
+                <TextBox Text="{Binding LogText}"
+                         IsReadOnly="True"
+                         VerticalScrollBarVisibility="Auto"
+                         HorizontalScrollBarVisibility="Auto"
+                         FontFamily="Consolas"
+                         FontSize="12"
+                         Background="#0F172A"
+                         Foreground="#E5E7EB"/>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</Window>

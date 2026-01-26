@@ -1,3 +1,9 @@
+// =======================================================
+// File: AutoSlopeEngine.cs
+// Purpose: Core AutoSlope execution + metrics aggregation
+// Revit: 2026
+// =======================================================
+
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.AutoSlopeByPoint.Helpers;
@@ -20,7 +26,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint.Engine
             SlabShapeEditor editor = roof.GetSlabShapeEditor();
 
             // --------------------------------------------------
-            // RESET VERTICES (shape editing already enabled in Command)
+            // RESET VERTICES
             // --------------------------------------------------
             using (Transaction tx = new Transaction(doc, "Reset Roof Vertices"))
             {
@@ -36,16 +42,19 @@ namespace Revit26_Plugin.AutoSlopeByPoint.Engine
 
             double slopeFactor = data.SlopePercent / 100.0;
             double thresholdFt =
-                UnitUtils.ConvertToInternalUnits(data.ThresholdMeters, UnitTypeId.Meters);
+                UnitUtils.ConvertToInternalUnits(
+                    data.ThresholdMeters,
+                    UnitTypeId.Meters);
 
             Face topFace = AutoSlopeGeometry.GetTopFace(roof);
             if (topFace == null)
             {
-                data.Log(LogColorHelper.Red("Top face not found. Aborting."));
+                data.Log?.Invoke(LogColorHelper.Red("Top face not found. Aborting."));
                 return;
             }
 
-            var dijkstra = new DijkstraPathEngine(vertices, topFace, thresholdFt);
+            var dijkstra =
+                new DijkstraPathEngine(vertices, topFace, thresholdFt);
 
             HashSet<int> drainIndices = new();
             for (int i = 0; i < vertices.Count; i++)
@@ -62,8 +71,10 @@ namespace Revit26_Plugin.AutoSlopeByPoint.Engine
 
             int processed = 0;
             int skipped = 0;
-            double maxElevFt = 0;
-            double maxPathFt = 0;
+
+            double maxElevFt = 0.0;
+            double maxPathFt = 0.0;
+            double sumElevFt = 0.0;
 
             Stopwatch sw = Stopwatch.StartNew();
 
@@ -73,7 +84,8 @@ namespace Revit26_Plugin.AutoSlopeByPoint.Engine
 
                 for (int i = 0; i < vertices.Count; i++)
                 {
-                    double pathFt = dijkstra.ComputeShortestPath(i, drainIndices);
+                    double pathFt =
+                        dijkstra.ComputeShortestPath(i, drainIndices);
 
                     if (double.IsInfinity(pathFt) || pathFt > thresholdFt)
                     {
@@ -84,7 +96,9 @@ namespace Revit26_Plugin.AutoSlopeByPoint.Engine
                     double elevFt = pathFt * slopeFactor;
                     editor.ModifySubElement(vertices[i], elevFt);
 
+                    sumElevFt += elevFt;
                     processed++;
+
                     if (elevFt > maxElevFt) maxElevFt = elevFt;
                     if (pathFt > maxPathFt) maxPathFt = pathFt;
                 }
@@ -94,58 +108,65 @@ namespace Revit26_Plugin.AutoSlopeByPoint.Engine
 
             sw.Stop();
 
-            // ==================================================
-            // ?? UNIT SPLIT (THIS IS THE KEY CHANGE)
-            // ==================================================
+            // --------------------------------------------------
+            // METRICS
+            // --------------------------------------------------
+            int highest_mm =
+                (int)Math.Round(
+                    UnitUtils.ConvertFromInternalUnits(
+                        maxElevFt,
+                        UnitTypeId.Millimeters),
+                    MidpointRounding.AwayFromZero);
 
-            // Highest elevation ? MILLIMETERS
-            int highest_mm =(int)Math.Round(UnitUtils.ConvertFromInternalUnits(maxElevFt, UnitTypeId.Millimeters), MidpointRounding.AwayFromZero);
+            double avgElevFt =
+                processed > 0 ? sumElevFt / processed : 0.0;
 
-            // Longest path ? METERS (0.00)
-            double longest_m =Math.Round(UnitUtils.ConvertFromInternalUnits(maxPathFt, UnitTypeId.Meters),2,MidpointRounding.AwayFromZero);
             double longest_ft = maxPathFt;
 
+            double longest_m =
+                Math.Round(
+                    UnitUtils.ConvertFromInternalUnits(
+                        maxPathFt,
+                        UnitTypeId.Meters),
+                    2,
+                    MidpointRounding.AwayFromZero);
 
+            int durationSec =
+                (int)Math.Round(sw.Elapsed.TotalSeconds);
 
-            int durationSec = (int)Math.Round(sw.Elapsed.TotalSeconds);
-            string runDate = DateTime.Now.ToString("dd-MM-yy HH:mm");
-
-            // --------------------------------------------------
-            // UPDATE VIEWMODEL (UI)
-            // --------------------------------------------------
-            data.Vm.VerticesProcessed = processed;
-            data.Vm.VerticesSkipped = skipped;
-            data.Vm.HighestElevation_mm = highest_mm;
-            data.Vm.LongestPath_m = maxPathFt;
-            data.Vm.DrainCount = data.DrainPoints.Count;
-            data.Vm.RunDuration_sec = durationSec;
-            data.Vm.RunDate = runDate;
+            string runDate =
+                DateTime.Now.ToString("dd-MM-yy HH:mm");
 
             // --------------------------------------------------
-            // WRITE PARAMETERS TO ROOF
+            // UPDATE VIEWMODEL  ? FIXES SummaryText
+            // --------------------------------------------------
+            if (data?.Vm != null)
+            {
+                data.Vm.VerticesProcessed = processed;
+                data.Vm.VerticesSkipped = skipped;
+                data.Vm.DrainCount = data.DrainPoints.Count;
+                data.Vm.HighestElevation_mm = highest_mm;
+                data.Vm.AverageElevation_ft = avgElevFt;
+                data.Vm.LongestPath_m = longest_m;
+                data.Vm.RunDuration_sec = durationSec;
+                data.Vm.RunDate = runDate;
+            }
+
+            // --------------------------------------------------
+            // WRITE PARAMETERS
             // --------------------------------------------------
             AutoSlopeParameterWriter.WriteAll(
                 doc,
                 roof,
                 data,
                 highest_mm,
+                avgElevFt,
                 longest_ft,
                 processed,
                 skipped,
                 durationSec);
 
-            // --------------------------------------------------
-            // UI LOG
-            // --------------------------------------------------
-            data.Log(LogColorHelper.Cyan("===== AutoSlope Summary ====="));
-            data.Log(LogColorHelper.Green($"Vertices Processed : {processed}"));
-            data.Log(LogColorHelper.Yellow($"Vertices Skipped   : {skipped}"));
-            data.Log(LogColorHelper.Cyan($"Highest Elevation  : {highest_mm:0} mm"));
-            data.Log(LogColorHelper.Cyan($"Longest Path       : {longest_m:0.00} m"));
-            data.Log(LogColorHelper.Cyan($"Drain Count        : {data.DrainPoints.Count}"));
-            data.Log(LogColorHelper.Cyan($"Run Duration       : {durationSec} sec"));
-            data.Log(LogColorHelper.Cyan($"Run Date           : {runDate}"));
-            data.Log(LogColorHelper.Green("===== AutoSlope Finished ? ====="));
+            data.Log?.Invoke(LogColorHelper.Green("AutoSlope completed successfully."));
         }
     }
 }

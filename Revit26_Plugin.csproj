@@ -5,7 +5,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\01\23\005</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\01\26\005</BaseOutputPath>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
@@ -414,7 +414,6 @@
 	  <None Remove="Resources\Icons\DimMenu_32.png" />
 	  <None Remove="Resources\Icons\linematch32.png" />
 	  <None Remove="Resources\Icons\setting32.png" />
-	  <None Remove="Resources\Icons\setup32.png" />
 	  <None Remove="Resources\Icons\shapepoints32.png" />
 	</ItemGroup>
 	<ItemGroup>
@@ -435,7 +434,7 @@
 	  <EmbeddedResource Include="Resources\Icons\Place_32.png" />
 	  <EmbeddedResource Include="Resources\Icons\Rename_32.png" />
 	  <EmbeddedResource Include="Resources\Icons\Setting32.png" />
-	  <EmbeddedResource Include="Resources\Icons\Setup32.png" />
+	  <EmbeddedResource Include="Resources\Icons\Linker_32.png" />
 	  <EmbeddedResource Include="Resources\Icons\Shapepoints32.png" />
 	</ItemGroup>
 	<ItemGroup>
@@ -460,6 +459,7 @@
 	  <Folder Include="Menu\RoofTools\Lines\SlopeToDetailItem\" />
 	  <Folder Include="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\" />
 	  <Folder Include="Menu\RoofTools\RoofSlope\AutoSloperDrain_04\" />
+	  <Folder Include="Menu\Setup\CaddLInkToFamiliy\" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Update="Menu\RoofTools\CreasetoLines\Creaser_V08\CreaserSummaryWindow.xaml.cs">

@@ -15,7 +15,7 @@
         <!-- LEFT PANEL -->
         <StackPanel Grid.Column="0">
 
-            <TextBlock Text="Auto Sloper ?"
+            <TextBlock Text="Auto Sloper 03_04"
                        FontSize="26"
                        FontWeight="Bold"
                        Foreground="#3A6BFF"
