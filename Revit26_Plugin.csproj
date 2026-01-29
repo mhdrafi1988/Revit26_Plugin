@@ -5,7 +5,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\01\26\005</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\01\29\00</BaseOutputPath>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
@@ -58,7 +58,9 @@
 	  <Compile Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_002_01\**" />
 	  <Compile Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_003\**" />
 	  <Compile Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_Point_03_000\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSloperAndDetail_V5_00\**" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlope_ByPoint_0304_Succes\**" />
 	  <Compile Remove="Menu\Setup\CreateWorksetsFromLinkedFilesV005\**" />
 	  <Compile Remove="Menu\Setup\CreateWorksetsFromLinkedFilesV05\**" />
 	  <Compile Remove="Menu\Setup\WorksetAdvanced_V001\**" />
@@ -74,6 +76,8 @@
 	  <Compile Remove="Menu\Tagging\RoofTag_V06\Views\**" />
 	  <Compile Remove="Menu\Tagging\RoofTag_V4\**" />
 	  <Compile Remove="Menu\ViewTools\Create\**" />
+	  <Compile Remove="Menu\ViewTools\Create_01\CSFL_08_01\**" />
+	  <Compile Remove="Menu\ViewTools\Create_01\Revit26_Plugin.CSFL_V07\**" />
 	  <Compile Remove="Menu\ViewTools\Place\**" />
 	  <Compile Remove="Menu\ViewTools\Place_00\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\APUS_302\**" />
@@ -146,7 +150,9 @@
 	  <EmbeddedResource Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_002_01\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_003\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
+	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_Point_03_000\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\AutoSloperAndDetail_V5_00\**" />
+	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\AutoSlope_ByPoint_0304_Succes\**" />
 	  <EmbeddedResource Remove="Menu\Setup\CreateWorksetsFromLinkedFilesV005\**" />
 	  <EmbeddedResource Remove="Menu\Setup\CreateWorksetsFromLinkedFilesV05\**" />
 	  <EmbeddedResource Remove="Menu\Setup\WorksetAdvanced_V001\**" />
@@ -162,6 +168,8 @@
 	  <EmbeddedResource Remove="Menu\Tagging\RoofTag_V06\Views\**" />
 	  <EmbeddedResource Remove="Menu\Tagging\RoofTag_V4\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Create\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Create_01\CSFL_08_01\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Create_01\Revit26_Plugin.CSFL_V07\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_00\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_302\**" />
@@ -234,7 +242,9 @@
 	  <None Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_002_01\**" />
 	  <None Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_003\**" />
 	  <None Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
+	  <None Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_Point_03_000\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\AutoSloperAndDetail_V5_00\**" />
+	  <None Remove="Menu\RoofTools\RoofSlope\AutoSlope_ByPoint_0304_Succes\**" />
 	  <None Remove="Menu\Setup\CreateWorksetsFromLinkedFilesV005\**" />
 	  <None Remove="Menu\Setup\CreateWorksetsFromLinkedFilesV05\**" />
 	  <None Remove="Menu\Setup\WorksetAdvanced_V001\**" />
@@ -250,6 +260,8 @@
 	  <None Remove="Menu\Tagging\RoofTag_V06\Views\**" />
 	  <None Remove="Menu\Tagging\RoofTag_V4\**" />
 	  <None Remove="Menu\ViewTools\Create\**" />
+	  <None Remove="Menu\ViewTools\Create_01\CSFL_08_01\**" />
+	  <None Remove="Menu\ViewTools\Create_01\Revit26_Plugin.CSFL_V07\**" />
 	  <None Remove="Menu\ViewTools\Place\**" />
 	  <None Remove="Menu\ViewTools\Place_00\**" />
 	  <None Remove="Menu\ViewTools\Place_01\APUS_302\**" />
@@ -322,7 +334,9 @@
 	  <Page Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_002_01\**" />
 	  <Page Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_003\**" />
 	  <Page Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
+	  <Page Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_Point_03_000\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\AutoSloperAndDetail_V5_00\**" />
+	  <Page Remove="Menu\RoofTools\RoofSlope\AutoSlope_ByPoint_0304_Succes\**" />
 	  <Page Remove="Menu\Setup\CreateWorksetsFromLinkedFilesV005\**" />
 	  <Page Remove="Menu\Setup\CreateWorksetsFromLinkedFilesV05\**" />
 	  <Page Remove="Menu\Setup\WorksetAdvanced_V001\**" />
@@ -338,6 +352,8 @@
 	  <Page Remove="Menu\Tagging\RoofTag_V06\Views\**" />
 	  <Page Remove="Menu\Tagging\RoofTag_V4\**" />
 	  <Page Remove="Menu\ViewTools\Create\**" />
+	  <Page Remove="Menu\ViewTools\Create_01\CSFL_08_01\**" />
+	  <Page Remove="Menu\ViewTools\Create_01\Revit26_Plugin.CSFL_V07\**" />
 	  <Page Remove="Menu\ViewTools\Place\**" />
 	  <Page Remove="Menu\ViewTools\Place_00\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\APUS_302\**" />
@@ -457,6 +473,7 @@
 	<ItemGroup>
 	  <Folder Include="Menu\RoofTools\Lines\Creaser\" />
 	  <Folder Include="Menu\RoofTools\Lines\SlopeToDetailItem\" />
+	  <Folder Include="Menu\RoofTools\RoofCreation-working\RoofCreation\" />
 	  <Folder Include="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\" />
 	  <Folder Include="Menu\RoofTools\RoofSlope\AutoSloperDrain_04\" />
 	  <Folder Include="Menu\Setup\CaddLInkToFamiliy\" />

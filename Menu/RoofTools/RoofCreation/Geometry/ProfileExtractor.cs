@@ -1,9 +1,17 @@
+// ==================================================
+// File: ProfileExtractor.cs
+// ==================================================
+
 using Autodesk.Revit.DB;
 using Revit26_Plugin.RoofFromFloor.Models;
 using System.Collections.Generic;
 
 namespace Revit26_Plugin.RoofFromFloor.Geometry
 {
+    /// <summary>
+    /// Extracts roof footprint curves EXACTLY as defined in Revit.
+    /// Order and direction are preserved by design.
+    /// </summary>
     public static class ProfileExtractor
     {
         public static RoofMemoryContext ExtractRoofContext(
@@ -14,29 +22,24 @@ namespace Revit26_Plugin.RoofFromFloor.Geometry
             {
                 RoofId = roof.Id,
                 RoofLevel = doc.GetElement(roof.LevelId) as Level,
-                RoofBaseElevation = roof.get_Parameter(
-                    BuiltInParameter.ROOF_LEVEL_OFFSET_PARAM)?.AsDouble() ?? 0
+                RoofBaseElevation =
+                    roof.get_Parameter(
+                        BuiltInParameter.ROOF_LEVEL_OFFSET_PARAM)?.AsDouble() ?? 0
             };
 
-            // ---------------------------
-            // Bounding Box (model space)
-            // ---------------------------
             context.BoundingBox = roof.get_BoundingBox(null);
 
-            // ---------------------------
-            // Footprint Curves
-            // ---------------------------
-            var it = roof.GetProfiles().ForwardIterator();
-            while (it.MoveNext())
-            {
-                ModelCurveArray curveArray = it.Current as ModelCurveArray;
-                foreach (ModelCurve mc in curveArray)
-                {
-                    Curve flattened = FlattenCurveToZ(
-                        mc.GeometryCurve,
-                        context.RoofLevel.Elevation + context.RoofBaseElevation);
+            double targetZ =
+                context.RoofLevel.Elevation + context.RoofBaseElevation;
 
-                    context.RoofFootprintCurves.Add(flattened);
+            ModelCurveArrArray profiles = roof.GetProfiles();
+
+            foreach (ModelCurveArray loop in profiles)
+            {
+                foreach (ModelCurve mc in loop)
+                {
+                    Curve flat = FlattenCurveToZ(mc.GeometryCurve, targetZ);
+                    context.RoofFootprintCurves.Add(flat);
                 }
             }
 
@@ -48,10 +51,9 @@ namespace Revit26_Plugin.RoofFromFloor.Geometry
             XYZ p0 = curve.GetEndPoint(0);
             XYZ p1 = curve.GetEndPoint(1);
 
-            XYZ fp0 = new XYZ(p0.X, p0.Y, z);
-            XYZ fp1 = new XYZ(p1.X, p1.Y, z);
-
-            return Line.CreateBound(fp0, fp1);
+            return Line.CreateBound(
+                new XYZ(p0.X, p0.Y, z),
+                new XYZ(p1.X, p1.Y, z));
         }
     }
 }

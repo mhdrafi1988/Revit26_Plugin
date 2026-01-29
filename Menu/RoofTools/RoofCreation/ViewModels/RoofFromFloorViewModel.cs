@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -17,67 +16,77 @@ namespace Revit26_Plugin.RoofFromFloor.ViewModels
 {
     public partial class RoofFromFloorViewModel : ObservableObject
     {
-        private const bool DebugMode = true;
+        public bool DebugMode => true;
 
         private readonly UIApplication _uiApp;
         private readonly Window _window;
-
-        private readonly ExternalEvent _roofSelectEvent;
-        private readonly RoofSelectionHandler _roofSelectHandler;
-
-        private readonly ExternalEvent _linkSelectEvent;
-        private readonly LinkSelectionHandler _linkSelectHandler;
+        private readonly UiLogService _log;
 
         private RelayCommand _startCommand;
 
+        private readonly ExternalEvent _roofSelectEvent;
+        private readonly ExternalEvent _linkSelectEvent;
+        private readonly ExternalEvent _roofCreateEvent;
+
+        public RoofMemoryContext RoofContext => _roofContext;
+        public FootPrintRoof SelectedRoof => _selectedRoof;
+        public List<ProfileLoop> FloorProfiles => _floorProfiles;
+        public List<CurveLoop> CleanLoops => _cleanLoops;
+
         private FootPrintRoof _selectedRoof;
         private RevitLinkInstance _selectedLink;
-
         private RoofMemoryContext _roofContext;
         private List<ProfileLoop> _floorProfiles = new();
         private List<CurveLoop> _cleanLoops = new();
 
-        public RoofFromFloorViewModel(UIApplication uiApp, Window window)
+        public RoofFromFloorViewModel(UIApplication app, Window window)
         {
-            _uiApp = uiApp;
+            _uiApp = app;
             _window = window;
 
-            _roofSelectHandler = new RoofSelectionHandler { ViewModel = this };
-            _roofSelectEvent = ExternalEvent.Create(_roofSelectHandler);
+            _log = new UiLogService(
+                Application.Current.Dispatcher,
+                msg => LogText += msg + "\n");
 
-            _linkSelectHandler = new LinkSelectionHandler { ViewModel = this };
-            _linkSelectEvent = ExternalEvent.Create(_linkSelectHandler);
+            _roofSelectEvent = ExternalEvent.Create(
+                new RoofSelectionHandler { ViewModel = this });
+
+            _linkSelectEvent = ExternalEvent.Create(
+                new LinkSelectionHandler { ViewModel = this });
+
+            _roofCreateEvent = ExternalEvent.Create(
+                new RoofCreationHandler { ViewModel = this });
 
             UpdateActiveViewStatus();
-            Log("UI loaded. Switch to a Plan View, then select a roof.");
+            _log.Info("UI loaded. Switch to a Plan View, then select a roof.");
         }
 
-        // ================= UI PROPERTIES =================
+        // ---------- UI PROPERTIES ----------
 
-        [ObservableProperty] private string activeViewName = "Unknown";
+        [ObservableProperty] private string activeViewName;
         [ObservableProperty] private string selectedRoofName = "No roof selected";
         [ObservableProperty] private string selectedLinkName = "No link selected";
         [ObservableProperty] private string logText = "";
 
-        [ObservableProperty] private Brush viewStatusColor = Brushes.Orange;
+        [ObservableProperty] private Brush viewStatusColor;
         [ObservableProperty] private Brush roofStatusColor = Brushes.Orange;
 
         [ObservableProperty] private bool isPlanViewValid;
         [ObservableProperty] private bool isRoofSelected;
         [ObservableProperty] private bool canStart;
 
-        // ================= COMMANDS =================
+        // ---------- COMMANDS ----------
 
         public ICommand SelectRoofCommand => new RelayCommand(() =>
         {
-            Log("Launching roof selection...");
+            _log.Info("Launching roof selection...");
             _window.Hide();
             _roofSelectEvent.Raise();
         });
 
         public ICommand SelectLinkCommand => new RelayCommand(() =>
         {
-            Log("Launching link selection...");
+            _log.Info("Launching link selection...");
             _window.Hide();
             _linkSelectEvent.Raise();
         });
@@ -88,44 +97,34 @@ namespace Revit26_Plugin.RoofFromFloor.ViewModels
         public ICommand CloseCommand =>
             new RelayCommand(() => _window.Close());
 
-        // ================= CALLBACKS =================
+        // ---------- CALLBACKS ----------
 
-        public void SetSelectedRoof(RoofBase roof)
+        public void SetSelectedRoof(FootPrintRoof roof)
         {
             ShowWindow();
+            _selectedRoof = roof;
+            _roofContext = ProfileExtractor.ExtractRoofContext(
+                _uiApp.ActiveUIDocument.Document, roof);
 
-            if (roof is not FootPrintRoof fpRoof)
-            {
-                Log("? Only FootPrintRoof is supported.");
-                return;
-            }
-
-            _selectedRoof = fpRoof;
-
-            Document doc = _uiApp.ActiveUIDocument.Document;
-            _roofContext = ProfileExtractor.ExtractRoofContext(doc, fpRoof);
-
-            SelectedRoofName = fpRoof.Name;
+            SelectedRoofName = roof.Name;
             RoofStatusColor = Brushes.Green;
             IsRoofSelected = true;
 
-            Log("Roof selected successfully.");
-            Log($"Roof footprint curves: {_roofContext.RoofFootprintCurves.Count}");
-
+            _log.Info($"Roof selected. Footprint curves: {_roofContext.RoofFootprintCurves.Count}");
             UpdateCanStart();
         }
 
         public void SetSelectedLink(RevitLinkInstance link)
         {
             ShowWindow();
-
             _selectedLink = link;
             SelectedLinkName = link.Name;
 
-            Log($"Link selected: {link.Name}");
-
+            _log.Info($"Link selected: {link.Name}");
             UpdateCanStart();
         }
+
+        public void LogFromExternal(string msg) => _log.Info(msg);
 
         public void ShowWindow()
         {
@@ -136,77 +135,37 @@ namespace Revit26_Plugin.RoofFromFloor.ViewModels
             });
         }
 
-        public void LogFromExternal(string message)
-        {
-            Application.Current.Dispatcher.Invoke(() => Log(message));
-        }
-
-        // ================= MAIN =================
+        // ---------- START ----------
 
         private void OnStart()
         {
-            if (_roofContext == null || _selectedLink == null)
-            {
-                Log("? Missing roof or link context.");
-                return;
-            }
+            _log.Info("Extracting floor profiles...");
 
-            Document doc = _uiApp.ActiveUIDocument.Document;
-
-            Log("Extracting floor profiles...");
             _floorProfiles = FloorProfileService.ExtractFloorProfilesFromLink(
-                doc,
+                _uiApp.ActiveUIDocument.Document,
                 _selectedLink,
                 _roofContext.BoundingBox,
                 _roofContext.RoofLevel.Elevation + _roofContext.RoofBaseElevation);
 
-            Log($"Floor profiles: {_floorProfiles.Count}");
+            _log.Info($"Floor profiles: {_floorProfiles.Count}");
 
-            Log("Cleaning geometry...");
+            _log.Info("Cleaning geometry...");
             _cleanLoops = ProfileCleaner.CleanAndBuildLoops(
                 _roofContext.RoofFootprintCurves,
                 _floorProfiles);
 
-            Log($"Closed loops: {_cleanLoops.Count}");
+            _log.Info($"Closed loops: {_cleanLoops.Count}");
 
-            if (_cleanLoops.Count == 0)
-            {
-                Log("? No valid closed loops.");
-                return;
-            }
-
-            RoofType roofType =
-                doc.GetElement(_selectedRoof.GetTypeId()) as RoofType;
-
-            bool success = RoofCreationService.TryCreateFootprintRoof(
-                doc,
-                _cleanLoops,
-                roofType,
-                _roofContext.RoofLevel,
-                Log);
-
-            if (!success && DebugMode)
-            {
-                Log("?? Dumping debug geometry...");
-                View view = _uiApp.ActiveUIDocument.ActiveView;
-
-                CurveDumpService.DumpCurves(doc, view,
-                    _roofContext.RoofFootprintCurves, "DEBUG_Roof");
-
-                CurveDumpService.DumpCurves(doc, view,
-                    _floorProfiles.SelectMany(p => p.Curves), "DEBUG_Floors");
-
-                CurveDumpService.DumpCurves(doc, view,
-                    _cleanLoops.SelectMany(l => l), "DEBUG_Cleaned");
-            }
+            _window.Hide();
+            _roofCreateEvent.Raise();
         }
 
-        // ================= HELPERS =================
+        // ---------- HELPERS ----------
 
         private void UpdateActiveViewStatus()
         {
-            View view = _uiApp.ActiveUIDocument?.ActiveView;
-            ActiveViewName = view?.Name ?? "No Active View";
+            var view = _uiApp.ActiveUIDocument.ActiveView;
+            ActiveViewName = view.Name;
 
             IsPlanViewValid = view is ViewPlan;
             ViewStatusColor = IsPlanViewValid ? Brushes.Green : Brushes.Red;
@@ -215,12 +174,7 @@ namespace Revit26_Plugin.RoofFromFloor.ViewModels
         private void UpdateCanStart()
         {
             CanStart = IsPlanViewValid && IsRoofSelected && _selectedLink != null;
-            _startCommand?.NotifyCanExecuteChanged(); // ?? FIX
-        }
-
-        private void Log(string message)
-        {
-            LogText += $"[{DateTime.Now:HH:mm:ss}] {message}\n";
+            _startCommand?.NotifyCanExecuteChanged();
         }
     }
 }
