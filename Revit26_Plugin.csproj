@@ -5,7 +5,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\01\29\00</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\01\29\02</BaseOutputPath>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
@@ -58,11 +58,15 @@
 	  <Compile Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_002_01\**" />
 	  <Compile Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_003\**" />
 	  <Compile Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeByPoint\AutoSlopeCommand_Point_003_0\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_Point_03_000\**" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_Point_03_00\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSloperAndDetail_V5_00\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlope_ByPoint_0304_Succes\**" />
 	  <Compile Remove="Menu\Setup\CreateWorksetsFromLinkedFilesV005\**" />
 	  <Compile Remove="Menu\Setup\CreateWorksetsFromLinkedFilesV05\**" />
+	  <Compile Remove="Menu\Setup\DwgToLines_01\**" />
+	  <Compile Remove="Menu\Setup\DwgToLines_02\**" />
 	  <Compile Remove="Menu\Setup\WorksetAdvanced_V001\**" />
 	  <Compile Remove="Menu\Setup\WorksetAdvanced_V002\**" />
 	  <Compile Remove="Menu\Setup\WorksetAdvanced_V02\**" />
@@ -150,11 +154,15 @@
 	  <EmbeddedResource Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_002_01\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_003\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
+	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\AutoSlopeByPoint\AutoSlopeCommand_Point_003_0\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_Point_03_000\**" />
+	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_Point_03_00\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\AutoSloperAndDetail_V5_00\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\AutoSlope_ByPoint_0304_Succes\**" />
 	  <EmbeddedResource Remove="Menu\Setup\CreateWorksetsFromLinkedFilesV005\**" />
 	  <EmbeddedResource Remove="Menu\Setup\CreateWorksetsFromLinkedFilesV05\**" />
+	  <EmbeddedResource Remove="Menu\Setup\DwgToLines_01\**" />
+	  <EmbeddedResource Remove="Menu\Setup\DwgToLines_02\**" />
 	  <EmbeddedResource Remove="Menu\Setup\WorksetAdvanced_V001\**" />
 	  <EmbeddedResource Remove="Menu\Setup\WorksetAdvanced_V002\**" />
 	  <EmbeddedResource Remove="Menu\Setup\WorksetAdvanced_V02\**" />
@@ -242,11 +250,15 @@
 	  <None Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_002_01\**" />
 	  <None Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_003\**" />
 	  <None Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
+	  <None Remove="Menu\RoofTools\RoofSlope\AutoSlopeByPoint\AutoSlopeCommand_Point_003_0\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_Point_03_000\**" />
+	  <None Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_Point_03_00\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\AutoSloperAndDetail_V5_00\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\AutoSlope_ByPoint_0304_Succes\**" />
 	  <None Remove="Menu\Setup\CreateWorksetsFromLinkedFilesV005\**" />
 	  <None Remove="Menu\Setup\CreateWorksetsFromLinkedFilesV05\**" />
+	  <None Remove="Menu\Setup\DwgToLines_01\**" />
+	  <None Remove="Menu\Setup\DwgToLines_02\**" />
 	  <None Remove="Menu\Setup\WorksetAdvanced_V001\**" />
 	  <None Remove="Menu\Setup\WorksetAdvanced_V002\**" />
 	  <None Remove="Menu\Setup\WorksetAdvanced_V02\**" />
@@ -334,11 +346,15 @@
 	  <Page Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_002_01\**" />
 	  <Page Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_003\**" />
 	  <Page Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
+	  <Page Remove="Menu\RoofTools\RoofSlope\AutoSlopeByPoint\AutoSlopeCommand_Point_003_0\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_Point_03_000\**" />
+	  <Page Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_Point_03_00\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\AutoSloperAndDetail_V5_00\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\AutoSlope_ByPoint_0304_Succes\**" />
 	  <Page Remove="Menu\Setup\CreateWorksetsFromLinkedFilesV005\**" />
 	  <Page Remove="Menu\Setup\CreateWorksetsFromLinkedFilesV05\**" />
+	  <Page Remove="Menu\Setup\DwgToLines_01\**" />
+	  <Page Remove="Menu\Setup\DwgToLines_02\**" />
 	  <Page Remove="Menu\Setup\WorksetAdvanced_V001\**" />
 	  <Page Remove="Menu\Setup\WorksetAdvanced_V002\**" />
 	  <Page Remove="Menu\Setup\WorksetAdvanced_V02\**" />
@@ -396,7 +412,6 @@
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\DijkstraPathEngine.cs" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\InverseBoolConverter.cs" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\LogColorHelper.cs" />
-	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeCommand_Point_03_00\DijkstraPathEngine - Copy.cs" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSloperDrain_04\AutoSloperDrain_04.cs" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSloperDrain_04\DrainDetectionService.cs" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSloperDrain_04\DrainItem.cs" />
@@ -412,6 +427,7 @@
 	  <Compile Remove="Menu\RoofTools\SlopeDirections_V03\TransactionHandlers.cs" />
 	  <Compile Remove="Menu\RoofTools\SlopeDirections_V03\ViewModels.cs" />
 	  <Compile Remove="Menu\RoofTools\SlopeDirections_V04\TransactionHandlers.cs" />
+	  <Compile Remove="Menu\Setup\DwgToLines_03\ViewModels\DwgItemModel.cs" />
 	  <Compile Remove="Resources\App.xaml.cs" />
 	</ItemGroup>
 	<ItemGroup>
