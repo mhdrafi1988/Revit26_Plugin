@@ -1,182 +1,151 @@
+// =======================================================
+// File: TaggingService.cs
+// Project: Revit26_Plugin.RoofTag_V73
+// Layer: Services
+// =======================================================
+
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.RoofTag_V73.ViewModels;
+using Revit26_Plugin.DwgSymbolicConverter_V03.Models;
+using Revit26_Plugin.RoofTag_V73.Helpers;
+using Revit26_Plugin.RoofTag_V73.Models;
 using System;
-using System.IO;
+using System.Linq;
 
 namespace Revit26_Plugin.RoofTag_V73.Services
 {
     /// <summary>
-    /// Centralized service responsible for placing spot elevation tags
-    /// with ordered fallbacks and diagnostic logging.
+    /// Handles placement of roof tags aligned to sheet/view directions.
     /// </summary>
-    public static class TaggingService
+    public class TaggingService
     {
-        private static readonly string LogFile =
-            Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                "RoofTagV73_Log.txt");
+        private readonly UIApplication _uiApp;
 
-        // ================================================================
-        // MAIN ENTRY – per-point ordered fallback
-        // ================================================================
-        public static bool PlaceSpotTag(
-            Document doc,
-            Reference faceRef,
-            XYZ origin,
-            XYZ bend,
-            XYZ end,
-            RoofTagViewModel vm)
+        public TaggingService(UIApplication uiApp)
         {
-            if (doc == null || origin == null || vm == null)
-                return false;
-
-            View view = doc.ActiveView;
-            if (view == null)
-                return false;
-
-            // ------------------------------------------------------------
-            // 1?? Primary: Face reference (correct binding)
-            // ------------------------------------------------------------
-            if (faceRef != null)
-            {
-                if (TryPlace(doc, view, faceRef, origin, bend, end, vm, "FaceRef"))
-                    return true;
-            }
-
-            // ------------------------------------------------------------
-            // 2?? Fallback: Level plane
-            // ------------------------------------------------------------
-            Reference levelRef = GetLevelPlaneReference(doc, view);
-            if (levelRef != null)
-            {
-                if (TryPlace(doc, view, levelRef, origin, bend, end, vm, "LevelPlane"))
-                    return true;
-            }
-
-            // ------------------------------------------------------------
-            // 3?? Fallback: Sketch plane
-            // ------------------------------------------------------------
-            Reference sketchRef = GetSketchPlaneReference(view);
-            if (sketchRef != null)
-            {
-                if (TryPlace(doc, view, sketchRef, origin, bend, end, vm, "SketchPlane"))
-                    return true;
-            }
-
-            // ------------------------------------------------------------
-            // 4?? Final fallback: Origin-only (same face ref)
-            // ------------------------------------------------------------
-            if (faceRef != null)
-            {
-                if (TryPlace(doc, view, faceRef, origin, origin, origin, vm, "OriginOnly"))
-                    return true;
-            }
-
-            Log($"[FAIL] Unable to place spot elevation at {PointToString(origin)}");
-            return false;
+            _uiApp = uiApp ?? throw new ArgumentNullException(nameof(uiApp));
         }
 
-        // ================================================================
-        // SINGLE ATTEMPT
-        // ================================================================
-        private static bool TryPlace(
+        /// <summary>
+        /// Places a roof tag using sheet-aligned logic.
+        /// </summary>
+        public void PlaceRoofTag(
+            RoofBase roof,
+            View view,
+            ElementId tagTypeId,
+            TagPlacementCorner corner,
+            TagPlacementDirection direction,
+            bool useLeader)
+        {
+            UIDocument uiDoc = _uiApp.ActiveUIDocument;
+            Document doc = uiDoc.Document;
+
+            ValidateContext(doc, view, roof);
+
+            // --------------------------------------------------
+            // 1. Get TOP FACE reference (correct for roof tags)
+            // --------------------------------------------------
+            Reference topFaceRef =
+                HostObjectUtils.GetTopFaces(roof).FirstOrDefault();
+
+            if (topFaceRef == null)
+                throw new InvalidOperationException(
+                    "Failed to obtain top face reference from roof.");
+
+            // --------------------------------------------------
+            // 2. Calculate anchor point (roof top face centroid)
+            // --------------------------------------------------
+            XYZ anchorPoint =
+                GeometryHelper.GetRoofTopFaceCentroid(
+                    roof,
+                    topFaceRef,
+                    doc);
+
+            // --------------------------------------------------
+            // 3. Calculate sheet-aligned tag head position
+            // --------------------------------------------------
+            double offset =
+                GetPaperOffset(view, 3.0); // 3mm on paper (office standard)
+
+            XYZ tagHeadPosition =
+                GeometryHelper.CalculateTagPosition(
+                    anchorPoint,
+                    view,
+                    corner,
+                    direction,
+                    offset);
+
+            // --------------------------------------------------
+            // 4. Create tag (single safe transaction)
+            // --------------------------------------------------
+            using (Transaction tx =
+                   new Transaction(doc, "Place Roof Tag"))
+            {
+                tx.Start();
+
+                IndependentTag tag =
+                    IndependentTag.Create(
+                        doc,
+                        tagTypeId,
+                        view.Id,
+                        topFaceRef,
+                        useLeader,
+                        TagOrientation.Horizontal,
+                        tagHeadPosition);
+
+                if (tag == null)
+                    throw new InvalidOperationException(
+                        "Revit failed to create the roof tag.");
+
+                tx.Commit();
+            }
+        }
+
+        // ==================================================
+        // Validation & Utilities
+        // ==================================================
+
+        private static void ValidateContext(
             Document doc,
             View view,
-            Reference reference,
-            XYZ origin,
-            XYZ bend,
-            XYZ end,
-            RoofTagViewModel vm,
-            string label)
+            RoofBase roof)
         {
-            try
+            if (doc == null)
+                throw new ArgumentNullException(nameof(doc));
+
+            if (view == null)
+                throw new ArgumentNullException(nameof(view));
+
+            if (roof == null)
+                throw new ArgumentNullException(nameof(roof));
+
+            if (view.IsTemplate)
+                throw new InvalidOperationException(
+                    "Cannot place tags in a view template.");
+
+            // Supported view types for roof tags
+            if (view.ViewType != ViewType.FloorPlan &&
+                view.ViewType != ViewType.EngineeringPlan &&
+                view.ViewType != ViewType.CeilingPlan &&
+                view.ViewType != ViewType.Section &&
+                view.ViewType != ViewType.Elevation)
             {
-                SpotDimension tag =
-                    doc.Create.NewSpotElevation(
-                        view,
-                        reference,
-                        origin,
-                        bend,
-                        end,
-                        origin,
-                        vm.UseLeader);
-
-                if (tag != null)
-                {
-                    tag.ChangeTypeId(vm.SelectedSpotTagType.TagType.Id);
-                    Log($"[OK] {label}: {PointToString(origin)}");
-                    return true;
-                }
-            }
-            catch (Exception ex)
-            {
-                Log($"[ERR] {label}: {PointToString(origin)} | {ex.Message}");
-            }
-
-            return false;
-        }
-
-        // ================================================================
-        // LEVEL PLANE REFERENCE
-        // ================================================================
-        private static Reference GetLevelPlaneReference(Document doc, View view)
-        {
-            if (view.GenLevel == null)
-                return null;
-
-            try
-            {
-                Level lvl = doc.GetElement(view.GenLevel.Id) as Level;
-                if (lvl == null)
-                    return null;
-
-                Plane plane = Plane.CreateByNormalAndOrigin(
-                    XYZ.BasisZ,
-                    new XYZ(0, 0, lvl.Elevation));
-
-                string stable = plane.ToString();
-                return Reference.ParseFromStableRepresentation(doc, stable);
-            }
-            catch
-            {
-                return null;
+                throw new InvalidOperationException(
+                    $"Roof tags are not supported in view type: {view.ViewType}");
             }
         }
 
-        // ================================================================
-        // SKETCH PLANE REFERENCE
-        // ================================================================
-        private static Reference GetSketchPlaneReference(View view)
+        /// <summary>
+        /// Converts a paper distance (mm) to model distance (feet),
+        /// taking view scale into account.
+        /// </summary>
+        private static double GetPaperOffset(
+            View view,
+            double paperMm)
         {
-            if (view.SketchPlane == null)
-                return null;
-
-            try
-            {
-                Plane plane = view.SketchPlane.GetPlane();
-                string stable = plane.ToString();
-                return Reference.ParseFromStableRepresentation(view.Document, stable);
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        // ================================================================
-        // LOGGING
-        // ================================================================
-        private static void Log(string text)
-        {
-            File.AppendAllText(
-                LogFile,
-                $"{DateTime.Now:yyyy-MM-dd HH:mm:ss}  {text}{Environment.NewLine}");
-        }
-
-        private static string PointToString(XYZ p)
-        {
-            return $"({p.X:0.###}, {p.Y:0.###}, {p.Z:0.###})";
+            // Revit internal units = feet
+            // 1 foot = 304.8 mm
+            return (paperMm / 304.8) * view.Scale;
         }
     }
 }

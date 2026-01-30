@@ -1,18 +1,28 @@
-using Autodesk.Revit.Attributes;
+// =======================================================
+// File: RoofTagCommand.cs
+// Project: Revit26_Plugin.RoofTag_V73
+// Layer: Commands
+// Purpose: Entry point for Roof Tagging tool
+// =======================================================
+
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
-//using Revit22_Plugin.RoofTagV3;
-using Revit26_Plugin.RoofTag_V73.Helpers;
+using Revit26_Plugin.DwgSymbolicConverter_V03.Models;
+using Revit26_Plugin.RoofTag_V73.Models;
 using Revit26_Plugin.RoofTag_V73.Services;
-using Revit26_Plugin.RoofTag_V73.ViewModels;
-using Revit26_Plugin.RoofTag_V73.Views;
-using System.Collections.Generic;
+using System;
 using System.Linq;
 
 namespace Revit26_Plugin.RoofTag_V73.Commands
 {
-    [Transaction(TransactionMode.Manual)]
+    /// <summary>
+    /// External command entry point for roof tagging.
+    /// Responsible ONLY for:
+    /// - Context validation
+    /// - Element selection
+    /// - Calling TaggingService
+    /// </summary>
     public class RoofTagCommand : IExternalCommand
     {
         public Result Execute(
@@ -23,90 +33,117 @@ namespace Revit26_Plugin.RoofTag_V73.Commands
             UIApplication uiApp = commandData.Application;
             UIDocument uiDoc = uiApp.ActiveUIDocument;
             Document doc = uiDoc.Document;
+            View view = doc.ActiveView;
 
-            RoofBase roof = SelectionHelper.SelectRoof(uiDoc);
-            if (roof == null)
+            try
             {
-                TaskDialog.Show("RoofTag", "No roof selected.");
-                return Result.Cancelled;
-            }
-
-            SlabShapeEditor editor = roof.GetSlabShapeEditor();
-            if (!editor.IsEnabled)
-            {
-                using Transaction tx = new(doc, "Enable Slab Shape Editor");
-                tx.Start();
-                editor.Enable();
-                tx.Commit();
-            }
-
-            RoofTagWindow window = new(uiApp);
-            if (window.ShowDialog() != true)
-                return Result.Cancelled;
-
-            RoofTagViewModel vm = (RoofTagViewModel)window.DataContext;
-
-            List<XYZ> points = vm.UseManualMode
-                ? uiDoc.Selection
-                    .PickObjects(ObjectType.PointOnElement, "Select points on roof")
-                    .Select(r => r.GlobalPoint)
-                    .ToList()
-                : GeometryHelper.GetExactShapeVertices(roof);
-
-            if (points.Count == 0)
-            {
-                TaskDialog.Show("RoofTag", "No valid points found.");
-                return Result.Cancelled;
-            }
-
-            XYZ centroid = GetXYCentroid(points);
-            List<XYZ> boundary = GeometryHelper.BuildRoofBoundaryXY(roof);
-
-            int success = 0;
-            int fail = 0;
-
-            using Transaction txPlace = new(doc, "Place Roof Tags");
-            txPlace.Start();
-
-            foreach (XYZ pt in points)
-            {
-                if (!GeometryHelper.GetTaggingReferenceOnRoof(
-                    roof, pt, out Reference faceRef, out XYZ projected))
+                // --------------------------------------------------
+                // 1. Validate active view
+                // --------------------------------------------------
+                if (view == null || view.IsTemplate)
                 {
-                    fail++;
-                    continue;
+                    TaskDialog.Show(
+                        "Roof Tag",
+                        "Please run the command in a valid plan, section, or elevation view.");
+                    return Result.Cancelled;
                 }
 
-                XYZ bend = GeometryHelper.ComputeBendPoint(
-                    projected, centroid, vm.BendOffsetFt, vm.BendInward);
+                // --------------------------------------------------
+                // 2. Ask user to select a roof
+                // --------------------------------------------------
+                Reference pickedRef = uiDoc.Selection.PickObject(
+                    ObjectType.Element,
+                    new RoofSelectionFilter(),
+                    "Select a roof to tag");
 
-                XYZ end = GeometryHelper.ComputeEndPointWithAngle(
-                    projected,
-                    bend,
-                    vm.SelectedAngle,
-                    vm.EndOffsetFt,
-                    GeometryHelper.GetOutwardDirectionForPoint(pt, boundary, centroid),
-                    vm.BendInward);
+                if (pickedRef == null)
+                    return Result.Cancelled;
 
-                end = GeometryHelper.AdjustForBoundaryCollisions(bend, end, boundary);
+                RoofBase roof =
+                    doc.GetElement(pickedRef) as RoofBase;
 
-                if (TaggingService.PlaceSpotTag(doc, faceRef, projected, bend, end, vm))
-                    success++;
-                else
-                    fail++;
+                if (roof == null)
+                {
+                    TaskDialog.Show(
+                        "Roof Tag",
+                        "Selected element is not a roof.");
+                    return Result.Failed;
+                }
+
+                // --------------------------------------------------
+                // 3. Resolve tag type (first available roof tag)
+                // --------------------------------------------------
+                ElementId roofTagTypeId =
+                    new FilteredElementCollector(doc)
+                        .OfClass(typeof(FamilySymbol))
+                        .OfCategory(BuiltInCategory.OST_RoofTags)
+                        .Cast<FamilySymbol>()
+                        .FirstOrDefault()
+                        ?.Id;
+
+                if (roofTagTypeId == null)
+                {
+                    TaskDialog.Show(
+                        "Roof Tag",
+                        "No roof tag family loaded in this project.");
+                    return Result.Failed;
+                }
+
+                // --------------------------------------------------
+                // 4. Define placement intent (TEMP DEFAULTS)
+                // (Later this comes from ViewModel / UI)
+                // --------------------------------------------------
+                TagPlacementCorner corner =
+                    TagPlacementCorner.TopRight;
+
+                TagPlacementDirection direction =
+                    TagPlacementDirection.Outward;
+
+                bool useLeader = true;
+
+                // --------------------------------------------------
+                // 5. Call tagging service
+                // --------------------------------------------------
+                TaggingService service =
+                    new TaggingService(uiApp);
+
+                service.PlaceRoofTag(
+                    roof,
+                    view,
+                    roofTagTypeId,
+                    corner,
+                    direction,
+                    useLeader);
+
+                return Result.Succeeded;
             }
-
-            txPlace.Commit();
-
-            TaskDialog.Show("RoofTag", $"Placed: {success}\nFailed: {fail}");
-            return Result.Succeeded;
+            catch (Autodesk.Revit.Exceptions.OperationCanceledException)
+            {
+                // User pressed ESC
+                return Result.Cancelled;
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Result.Failed;
+            }
         }
 
-        private static XYZ GetXYCentroid(List<XYZ> points)
+        // ==================================================
+        // Selection Filter
+        // ==================================================
+
+        private class RoofSelectionFilter : ISelectionFilter
         {
-            double x = points.Sum(p => p.X);
-            double y = points.Sum(p => p.Y);
-            return new XYZ(x / points.Count, y / points.Count, 0);
+            public bool AllowElement(Element elem)
+            {
+                return elem is RoofBase;
+            }
+
+            public bool AllowReference(Reference reference, XYZ position)
+            {
+                return false;
+            }
         }
     }
 }
