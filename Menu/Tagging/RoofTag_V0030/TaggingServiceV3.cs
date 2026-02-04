@@ -8,12 +8,11 @@ namespace Revit22_Plugin.RoofTagV3
     public static class TaggingServiceV3
     {
         private static readonly string LogFile =
-            Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                "RoofTagV3_Log.txt");
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+            "RoofTagV3_Log.txt");
 
         // ================================================================
-        // MAIN ENTRY – per-point ordered fallback
+        // MAIN ENTRY (multi-strategy placement)
         // ================================================================
         public static bool PlaceSpotTag(
             Document doc,
@@ -23,52 +22,39 @@ namespace Revit22_Plugin.RoofTagV3
             XYZ end,
             RoofTagViewModelV3 vm)
         {
-            if (doc == null || origin == null)
-                return false;
-
             View view = doc.ActiveView;
-            if (view == null)
-                return false;
 
-            // ------------------------------------------------------------
-            // 1️⃣ Primary: Face reference (correct binding)
-            // ------------------------------------------------------------
+            // --- Strategy 1: Use face reference directly ---
             if (faceRef != null)
             {
                 if (TryPlace(doc, view, faceRef, origin, bend, end, vm, "FaceRef"))
                     return true;
             }
 
-            // ------------------------------------------------------------
-            // 2️⃣ Fallback: Level plane
-            // ------------------------------------------------------------
-            Reference levelRef = GetLevelPlaneReference(doc, view);
-            if (levelRef != null)
+            // --- Strategy 2: Try Level-based reference ---
+            Reference lvlRef = GetLevelPlaneReference(doc, view);
+            if (lvlRef != null)
             {
-                if (TryPlace(doc, view, levelRef, origin, bend, end, vm, "LevelPlane"))
+                if (TryPlace(doc, view, lvlRef, origin, bend, end, vm, "LevelPlane"))
                     return true;
             }
 
-            // ------------------------------------------------------------
-            // 3️⃣ Fallback: Sketch plane
-            // ------------------------------------------------------------
-            Reference sketchRef = GetSketchPlaneReference(view);
-            if (sketchRef != null)
+            // --- Strategy 3: Try SketchPlane reference ---
+            Reference planeRef = GetSketchPlaneReference(view);
+            if (planeRef != null)
             {
-                if (TryPlace(doc, view, sketchRef, origin, bend, end, vm, "SketchPlane"))
+                if (TryPlace(doc, view, planeRef, origin, bend, end, vm, "SketchPlane"))
                     return true;
             }
 
-            // ------------------------------------------------------------
-            // 4️⃣ Final fallback: Origin-only (same face ref)
-            // ------------------------------------------------------------
+            // --- Strategy 4: Last fallback → use faceRef but origin-only ---
             if (faceRef != null)
             {
                 if (TryPlace(doc, view, faceRef, origin, origin, origin, vm, "OriginOnly"))
                     return true;
             }
 
-            Log($"[FAIL] Unable to place spot elevation at {PointToString(origin)}");
+            Log($"[FAIL] Unable to place tag at {PointToString(origin)}");
             return false;
         }
 
@@ -88,49 +74,41 @@ namespace Revit22_Plugin.RoofTagV3
             try
             {
                 SpotDimension tag =
-                    doc.Create.NewSpotElevation(
-                        view,
-                        reference,
-                        origin,
-                        bend,
-                        end,
-                        origin,
-                        vm.UseLeader);
+                    doc.Create.NewSpotElevation(view, reference, origin, bend, end, origin, vm.UseLeader);
 
                 if (tag != null)
                 {
                     tag.ChangeTypeId(vm.SelectedSpotTagType.TagType.Id);
-                    Log($"[OK] {label}: {PointToString(origin)}");
+                    Log($"[OK] {label}: Tag placed at {PointToString(origin)}");
                     return true;
                 }
             }
             catch (Exception ex)
             {
-                Log($"[ERR] {label}: {PointToString(origin)} | {ex.Message}");
+                Log($"[ERR] {label}: FAILED at {PointToString(origin)} | {ex.Message}");
             }
-
             return false;
         }
 
         // ================================================================
-        // LEVEL PLANE REFERENCE
+        // LEVEL REFERENCE (Revit 2022 compatible)
         // ================================================================
         private static Reference GetLevelPlaneReference(Document doc, View view)
         {
-            if (view.GenLevel == null)
-                return null;
+            if (view.GenLevel == null) return null;
 
             try
             {
                 Level lvl = doc.GetElement(view.GenLevel.Id) as Level;
-                if (lvl == null)
-                    return null;
+                if (lvl == null) return null;
 
-                Plane plane = Plane.CreateByNormalAndOrigin(
+                // Build work plane at level elevation
+                Plane p = Plane.CreateByNormalAndOrigin(
                     XYZ.BasisZ,
                     new XYZ(0, 0, lvl.Elevation));
 
-                string stable = plane.ToString();
+                // Convert Plane to stable rep.
+                string stable = p.ToString();
                 return Reference.ParseFromStableRepresentation(doc, stable);
             }
             catch
@@ -140,17 +118,16 @@ namespace Revit22_Plugin.RoofTagV3
         }
 
         // ================================================================
-        // SKETCH PLANE REFERENCE
+        // SKETCHPLANE REFERENCE (Revit 2022 compatible)
         // ================================================================
         private static Reference GetSketchPlaneReference(View view)
         {
-            if (view.SketchPlane == null)
-                return null;
+            if (view.SketchPlane == null) return null;
 
             try
             {
-                Plane plane = view.SketchPlane.GetPlane();
-                string stable = plane.ToString();
+                Plane p = view.SketchPlane.GetPlane();
+                string stable = p.ToString();
                 return Reference.ParseFromStableRepresentation(view.Document, stable);
             }
             catch
@@ -164,8 +141,7 @@ namespace Revit22_Plugin.RoofTagV3
         // ================================================================
         private static void Log(string text)
         {
-            File.AppendAllText(
-                LogFile,
+            File.AppendAllText(LogFile,
                 $"{DateTime.Now:yyyy-MM-dd HH:mm:ss}  {text}{Environment.NewLine}");
         }
 

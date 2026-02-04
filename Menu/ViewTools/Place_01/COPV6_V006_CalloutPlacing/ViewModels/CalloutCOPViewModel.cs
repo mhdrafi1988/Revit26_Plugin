@@ -71,13 +71,12 @@ namespace Revit26_Plugin.CalloutCOP_V06.ViewModels
             LogInfo("Callout COP V06 initialized.");
         }
 
-        partial void OnSheetFilterTextChanged(string _) => ViewsCollection.Refresh();
-        partial void OnShowPlacedChanged(bool _) => ViewsCollection.Refresh();
-        partial void OnShowUnplacedChanged(bool _) => ViewsCollection.Refresh();
-        partial void OnShowSectionsChanged(bool _) => ViewsCollection.Refresh();
-        partial void OnShowElevationsChanged(bool _) => ViewsCollection.Refresh();
-
-        partial void OnCalloutSizeChanged(double _) => IsSizeAutoSuggested = false;
+        partial void OnSheetFilterTextChanged(string value) => ViewsCollection.Refresh();
+        partial void OnShowPlacedChanged(bool value) => ViewsCollection.Refresh();
+        partial void OnShowUnplacedChanged(bool value) => ViewsCollection.Refresh();
+        partial void OnShowSectionsChanged(bool value) => ViewsCollection.Refresh();
+        partial void OnShowElevationsChanged(bool value) => ViewsCollection.Refresh();
+        partial void OnCalloutSizeChanged(double value) => IsSizeAutoSuggested = false;
 
         private bool CanPlaceCallouts() => !IsRunning;
 

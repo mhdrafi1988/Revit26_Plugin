@@ -34,9 +34,9 @@ namespace Revit22_Plugin.Asd_V4_01.Services
                 }
 
                 Parameter pSlope = roof.LookupParameter("AutoSlope_SlopePercent");
-                Parameter pHigh = roof.LookupParameter("AutoSlope_HighestElevation_m");
-                Parameter pThreshold = roof.LookupParameter("AutoSlope_Threshold_m");
-                Parameter pLongest = roof.LookupParameter("AutoSlope_LongestPath_m");
+                Parameter pHigh = roof.LookupParameter("AutoSlope_HighestElevation");
+                Parameter pThreshold = roof.LookupParameter("AutoSlope_Threshold");
+                Parameter pLongest = roof.LookupParameter("AutoSlope_LongestPath");
                 Parameter pProcessed = roof.LookupParameter("AutoSlope_VerticesProcessed");
                 Parameter pSkipped = roof.LookupParameter("AutoSlope_VerticesSkipped");
                 Parameter pDrainCount = roof.LookupParameter("AutoSlope_DrainCount");
@@ -74,9 +74,9 @@ namespace Revit22_Plugin.Asd_V4_01.Services
 
                     // Numeric values
                     TrySet(pSlope, data.SlopePercent, "AutoSlope_SlopePercent");
-                    TrySet(pHigh, highestElevationMeters, "AutoSlope_HighestElevation_m");
-                    TrySet(pThreshold, data.ThresholdMeters, "AutoSlope_Threshold_m");
-                    TrySet(pLongest, longestPathMeters, "AutoSlope_LongestPath_m");
+                    TrySet(pHigh, highestElevationMeters, "AutoSlope_HighestElevation_");
+                    TrySet(pThreshold, data.ThresholdMeters, "AutoSlope_Threshold");
+                    TrySet(pLongest, longestPathMeters, "AutoSlope_LongestPath");
                     TrySet(pProcessed, processed, "AutoSlope_VerticesProcessed");
                     TrySet(pSkipped, skipped, "AutoSlope_VerticesSkipped");
                     TrySet(pDrainCount, data.DrainPoints.Count, "AutoSlope_DrainCount");

@@ -27,7 +27,7 @@ namespace Revit26_Plugin.DwgSymbolicConverter_V03.ViewModels
             ConvertCommand = new RelayCommand(Convert, () => SelectedCad != null);
         }
 
-        partial void OnSelectedCadChanged(CadImportItem v)
+        partial void OnSelectedCadChanged(CadImportItem value)
             => ConvertCommand.NotifyCanExecuteChanged();
 
         private void Convert()

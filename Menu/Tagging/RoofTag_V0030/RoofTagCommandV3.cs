@@ -2,20 +2,15 @@
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
-using Revit22_Plugin.RoofTagV3;
-using Revit26_Plugin.RoofTag_V03.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.RoofTag_V03.Commands
+namespace Revit22_Plugin.RoofTagV3
 {
     [Transaction(TransactionMode.Manual)]
     public class RoofTagCommandV3 : IExternalCommand
     {
-        public Result Execute(
-            ExternalCommandData commandData,
-            ref string message,
-            ElementSet elements)
+        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             UIApplication uiApp = commandData.Application;
             UIDocument uiDoc = uiApp.ActiveUIDocument;
@@ -28,111 +23,122 @@ namespace Revit26_Plugin.RoofTag_V03.Commands
                 return Result.Cancelled;
             }
 
-            SlabShapeEditor editor = roof.GetSlabShapeEditor();
-            if (!editor.IsEnabled)
+            SlabShapeEditor slabShapeEditor = roof.GetSlabShapeEditor();
+            if (!slabShapeEditor.IsEnabled)
             {
                 using (Transaction tx = new Transaction(doc, "Enable Slab Shape Editor"))
                 {
                     tx.Start();
-                    editor.Enable();
+                    slabShapeEditor.Enable();
                     tx.Commit();
                 }
             }
 
             RoofTagWindowV3 window = new RoofTagWindowV3(uiApp);
-            if (window.ShowDialog() != true)
+            bool? result = window.ShowDialog();
+            if (result != true)
                 return Result.Cancelled;
 
             RoofTagViewModelV3 vm = (RoofTagViewModelV3)window.DataContext;
 
-            List<XYZ> points;
+            List<XYZ> finalPoints = new List<XYZ>();
 
             if (vm.UseManualMode)
             {
-                IList<Reference> refs =
-                    uiDoc.Selection.PickObjects(ObjectType.PointOnElement, "Select points on roof");
+                TaskDialog.Show("RoofTag V3", "Select roof vertices. Press ESC when done.");
+                try
+                {
+                    IList<Reference> refs = uiDoc.Selection.PickObjects(ObjectType.PointOnElement, "Select points on roof");
 
-                points = refs.Select(r => r.GlobalPoint).ToList();
+                    List<SlabShapeVertex> vertices = slabShapeEditor
+                        .SlabShapeVertices.Cast<SlabShapeVertex>().ToList();
+
+                    foreach (Reference r in refs)
+                    {
+                        XYZ clicked = r.GlobalPoint;
+
+                        SlabShapeVertex nearest = vertices
+                            .OrderBy(v => v.Position.DistanceTo(clicked))
+                            .FirstOrDefault();
+
+                        if (nearest != null)
+                            finalPoints.Add(nearest.Position);
+                    }
+                }
+                catch { }
+
+                if (finalPoints.Count == 0)
+                {
+                    TaskDialog.Show("RoofTag V3", "No valid points selected.");
+                    return Result.Cancelled;
+                }
             }
             else
             {
-                points = Revit26_Plugin.RoofTag_V03.Helpers.GeometryHelperV3.GetExactShapeVertices(roof);
+                finalPoints = GeometryHelperV3.GetExactShapeVertices(roof);
+                if (finalPoints.Count == 0)
+                {
+                    TaskDialog.Show("RoofTag V3", "No roof vertices found.");
+                    return Result.Cancelled;
+                }
             }
-
-            if (points.Count == 0)
-            {
-                TaskDialog.Show("RoofTag V3", "No valid points found.");
-                return Result.Cancelled;
-            }
-
-            XYZ centroid = GetXYCentroid(points);
-            List<XYZ> boundary = Revit26_Plugin.RoofTag_V03.Helpers.GeometryHelperV3.BuildRoofBoundaryXY(roof);
 
             int success = 0;
             int fail = 0;
+
+            View view = uiDoc.ActiveView;
+            XYZ centroid = GeometryHelperV3.GetXYCentroid(finalPoints);
+
+            List<XYZ> roofBoundary = GeometryHelperV3.BuildRoofBoundaryXY(roof);
 
             using (Transaction tx = new Transaction(doc, "Place Roof Tags V3"))
             {
                 tx.Start();
 
-                foreach (XYZ pt in points)
+                foreach (XYZ pt in finalPoints)
                 {
-                    bool ok = Revit26_Plugin.RoofTag_V03.Helpers.GeometryHelperV3.GetTaggingReferenceOnRoof(
-                        roof,
-                        pt,
-                        out Reference faceRef,
-                        out XYZ projected);
+                    XYZ projected;
+                    Reference faceRef;
+                    GeometryHelperV3.GetTaggingReferenceOnRoof(roof, pt, out projected, out faceRef);
 
-                    if (!ok)
+                    if (projected == null || faceRef == null)
                     {
                         fail++;
                         continue;
                     }
 
-                    XYZ bend = Revit26_Plugin.RoofTag_V03.Helpers.GeometryHelperV3.ComputeBendPoint(
+                    XYZ bend = GeometryHelperV3.ComputeBendPoint(
                         projected,
                         centroid,
                         vm.BendOffsetFt,
                         vm.BendInward);
 
-                    XYZ end = Revit26_Plugin.RoofTag_V03.Helpers.GeometryHelperV3.ComputeEndPointWithAngle(
+                    XYZ end = GeometryHelperV3.ComputeEndPointWithAngle(
                         projected,
                         bend,
                         vm.SelectedAngle,
                         vm.EndOffsetFt,
-                        Revit26_Plugin.RoofTag_V03.Helpers.GeometryHelperV3.GetOutwardDirectionForPoint(pt, boundary, centroid),
-                        vm.BendInward);
+                        GeometryHelperV3.GetOutwardDirectionForPoint(pt, roofBoundary, centroid),
+                        vm.BendInward   // NEW PARAM
+                    );
 
-                    end = Revit26_Plugin.RoofTag_V03.Helpers.GeometryHelperV3.AdjustForBoundaryCollisions(bend, end, boundary);
+                    end = GeometryHelperV3.AdjustForBoundaryCollisions(bend, end, roofBoundary);
 
-                    if (TaggingServiceV3.PlaceSpotTag(doc, faceRef, projected, bend, end, vm))
-                        success++;
-                    else
-                        fail++;
+                    bool placed = TaggingServiceV3.PlaceSpotTag(doc, faceRef, projected, bend, end, vm);
+
+                    if (placed) success++;
+                    else fail++;
                 }
 
                 tx.Commit();
             }
 
-            TaskDialog.Show("RoofTag V3",
-                $"Placed: {success}\nFailed: {fail}");
+            TaskDialog.Show("RoofTag V3 Summary",
+                $"Total: {finalPoints.Count}\n" +
+                $"✔ Placed: {success}\n" +
+                $"✘ Failed:  {fail}");
 
             return Result.Succeeded;
-        }
-
-        private static XYZ GetXYCentroid(List<XYZ> points)
-        {
-            if (points == null || points.Count == 0)
-                return XYZ.Zero;
-
-            double sumX = 0, sumY = 0;
-            foreach (var pt in points)
-            {
-                sumX += pt.X;
-                sumY += pt.Y;
-            }
-            double count = points.Count;
-            return new XYZ(sumX / count, sumY / count, 0);
         }
     }
 }

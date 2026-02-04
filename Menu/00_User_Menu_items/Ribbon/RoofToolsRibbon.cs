@@ -20,6 +20,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             SlopeMenu.AddPushButton(new PushButtonData("Btn_RoofSloperClassic1_v2", "RoofSloperClassic1_v2(Point)", assemblyPath, "Revit26_Plugin.Commands.RoofSloperClassic1_v2"));
             SlopeMenu.AddPushButton(new PushButtonData("Btn_RoofSloperClassic_02", "RoofSloperClassic_02(Point)", assemblyPath, "Revit26_Plugin.Commands.RoofSloperClassic_02"));
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint", "AutoSlopeByPoint_00_00(Classic)", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.Commands.AutoSlopeCommand"));
+            SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint_04", "AutoSlopeByPoint_00_04(Classic)", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint_04.Commands.AutoSlopeCommand"));
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeCommand_03_07", "AutoSlopeCommand_03_07(Point)", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint_30_07.Commands.AutoSlopeCommand"));
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSloperDrain_04", "AutoSloperDrain_04(Drain)", assemblyPath, "Revit22_Plugin.Asd.Commands.AutoSloperDrain_04"));
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSloperDrain_04_01", "AutoSloperDrain_04_01(Drain)", assemblyPath, "Revit22_Plugin.Asd_V4_01.Commands.AutoSloperDrain_04_01"));
@@ -60,14 +61,20 @@ namespace Revit26_Plugin.Menu.Ribbon
             PulldownButton tagMenu = panel.AddItem(new PulldownButtonData("RoofTagMenu", "Tag")) as PulldownButton;
             tagMenu.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Addtag32.png");
             //tagMenu.LargeImage = IconManager.ToBitmapSource(Properties.Resources.addtag32);
+
             //tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagAll", "Tag All Roof Points 1.0", assemblyPath, "Revit22_Plugin.WorksetFromLinked.Commands.CreateWorksetsFromLinkedFiles"));
             tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV3", "Roof Tag Command V3", assemblyPath, "Revit22_Plugin.RoofTagV3.RoofTagCommandV3"));
-            tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV4", "Roof Tag Command V4", assemblyPath, "Revit22_Plugin.RoofTagV4.RoofTagCommandV4"));
-            tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV7", "RoofTagCommandV7", assemblyPath, "Revit22_Plugin.RoofTagV7.Commands.RoofTagCommandV7"));
-            tagMenu.AddPushButton(new PushButtonData("Btn_DtlLineDimCommand_V03", "DtlLineDimCommand_V03", assemblyPath, "Revit26_Plugin.DtlLineDim_V03.Commands.SelectRoofAndPlaceEdgeDetailsCommand"));            
-            tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommand_V61", "RoofTagCommand_V61", assemblyPath, "Revit26_Plugin.RoofTag_V61.Commands.RoofTagCommand_V61"));
-            tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV3_00", "RoofTagCommandV3_00", assemblyPath, "Revit26_Plugin.RoofTag_V03.Commands.RoofTagCommandV3"));
-            tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommand_v73", "RoofTagCommand_73 WIP", assemblyPath, "Revit26_Plugin.RoofTag_V73.Commands.RoofTagCommand"));
+            tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV90", "Roof Tag Command V90", assemblyPath, "Revit22_Plugin.RoofTag_V90.RoofTagCommandV3"));
+            tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV91", "Roof Tag Command V91", assemblyPath, "Revit26_Plugin.RoofTag_V03.Commands.RoofTagCommandV3"));
+            tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV_001", "Roof Tag Command V001", assemblyPath, "RoofTagV3.Commands.RoofTagCommand"));
+            //tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV4", "Roof Tag Command V4", assemblyPath, "Revit22_Plugin.RoofTagV4.RoofTagCommandV4"));
+            //tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV7", "RoofTagCommandV7", assemblyPath, "Revit22_Plugin.RoofTagV7.Commands.RoofTagCommandV7"));
+            //tagMenu.AddPushButton(new PushButtonData("Btn_DtlLineDimCommand_V03", "DtlLineDimCommand_V03", assemblyPath, "Revit26_Plugin.DtlLineDim_V03.Commands.SelectRoofAndPlaceEdgeDetailsCommand"));            
+            //tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommand_V61", "RoofTagCommand_V61", assemblyPath, "Revit26_Plugin.RoofTag_V61.Commands.RoofTagCommand_V61"));
+            //tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV3_00", "RoofTagCommandV3_00", assemblyPath, "Revit26_Plugin.RoofTag_V03.Commands.RoofTagCommandV3"));
+
+            tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommand_V082", "RoofTagCommand_V082 WIP", assemblyPath, "Revit26_Plugin.RoofTag_V082.Commands.RoofTagCommand"));
+
             //setup.AddPushButton(new PushButtonData("Btn_CreateWorksetsFromLinkedFilesv02", "Create Worksets FromLinked Files v02", assemblyPath, "Revit26_Plugin.WSAV02.CreateWorksetsFromLinkedFilesv02"));
 
             /*

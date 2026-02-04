@@ -1,0 +1,334 @@
+﻿<Window x:Class="Revit26_Plugin.AutoSlopeByPoint_04.UI.Views.AutoSlopeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Auto Slope Engine - Revit 2026"
+        Width="1100"
+        Height="750"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanResize"
+        Background="#F5F5F5">
+
+    <Window.Resources>
+        <Style x:Key="HeaderText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#2C3E50"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+        </Style>
+
+        <Style x:Key="LabelText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#34495E"/>
+            <Setter Property="Margin" Value="0,0,0,4"/>
+        </Style>
+
+        <Style x:Key="InputControl" TargetType="Control">
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Margin" Value="0,0,0,16"/>
+        </Style>
+
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Background" Value="#3498DB"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="20,0"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#2980B9"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="#95A5A6"/>
+                    <Setter Property="Cursor" Value="Arrow"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ExportButton" TargetType="Button">
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Background" Value="#27AE60"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#229954"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="#95A5A6"/>
+                    <Setter Property="Cursor" Value="Arrow"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ClearLogButton" TargetType="Button">
+            <Setter Property="Width" Value="60"/>
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="Background" Value="#E74C3C"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <Style x:Key="BrowseButton" TargetType="Button">
+            <Setter Property="Width" Value="70"/>
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="Background" Value="#3498DB"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <Style x:Key="GroupBoxHeader" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#2C3E50"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+
+        <Style x:Key="CheckBoxStyle" TargetType="CheckBox">
+            <Setter Property="Margin" Value="0,0,0,10"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="15">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- LEFT PANEL - CONTROLS -->
+        <Border Grid.Column="0" 
+                Background="White" 
+                CornerRadius="5"
+                Padding="15"
+                BorderBrush="#DDD" 
+                BorderThickness="1">
+            <StackPanel>
+                <TextBlock Text="Auto Slope Engine"
+                           FontSize="24"
+                           FontWeight="Bold"
+                           Foreground="#2C3E50"
+                           Margin="0,0,0,20"/>
+
+                <TextBlock Text="Slope Percentage"
+                           Style="{StaticResource LabelText}"/>
+                <ComboBox Style="{StaticResource InputControl}"
+                          ItemsSource="{Binding SlopeOptions}"
+                          SelectedItem="{Binding SlopePercent, Mode=TwoWay}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding StringFormat={}{0}%}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
+                <TextBlock Text="Threshold Distance (meters)"
+                           Style="{StaticResource LabelText}"/>
+                <TextBox Style="{StaticResource InputControl}"
+                         Text="{Binding ThresholdMeters, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <GroupBox Header="Export Settings" 
+                          FontWeight="Bold"
+                          Margin="0,0,0,15">
+                    <GroupBox.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" Style="{StaticResource GroupBoxHeader}"/>
+                        </DataTemplate>
+                    </GroupBox.HeaderTemplate>
+                    <StackPanel>
+                        <CheckBox Content="Export results to CSV"
+                                  IsChecked="{Binding ExportToCsv}"
+                                  Style="{StaticResource CheckBoxStyle}"
+                                  ToolTip="Always creates: RoofId_Slope_Date.csv with 7 columns"/>
+
+                        <CheckBox Content="Also create detailed version"
+                                  IsChecked="{Binding IncludeVertexDetails}"
+                                  Style="{StaticResource CheckBoxStyle}"
+                                  IsEnabled="{Binding ExportToCsv}"
+                                  ToolTip="Creates an additional file: RoofId_Slope_Date_DETAILED.csv with all columns"/>
+
+                        <TextBlock Text="Export Folder"
+                                   Style="{StaticResource LabelText}"/>
+
+                        <DockPanel LastChildFill="True" Margin="0,0,0,8">
+                            <Button Content="Browse" 
+                                    DockPanel.Dock="Right"
+                                    Style="{StaticResource BrowseButton}"
+                                    Margin="5,0,0,0"
+                                    Command="{Binding BrowseFolderCommand}"/>
+                            <TextBox Text="{Binding ExportFolderPath, Mode=TwoWay}"
+                                     VerticalContentAlignment="Center"
+                                     IsReadOnly="True"
+                                     Background="#F8F8F8"/>
+                        </DockPanel>
+
+                        <Button Content="Export Summary"
+                                Style="{StaticResource ExportButton}"
+                                Margin="0,5,0,0"
+                                Command="{Binding ExportResultsCommand}"
+                                ToolTip="Manually export summary results to CSV"/>
+                    </StackPanel>
+                </GroupBox>
+
+                <Button Content="RUN AUTOSLOPE"
+                        Command="{Binding RunCommand}"
+                        ToolTip="Calculate and apply slope to roof">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+                            <Setter Property="Background" Value="#27AE60"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding HasRun}" Value="True">
+                                    <Setter Property="IsEnabled" Value="False"/>
+                                    <Setter Property="Background" Value="#95A5A6"/>
+                                    <Setter Property="Content" Value="PROCESSING..."/>
+                                </DataTrigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#229954"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+                <Border Margin="0,20,0,0" 
+                        Padding="10" 
+                        Background="#F8F9FA" 
+                        CornerRadius="3">
+                    <StackPanel>
+                        <TextBlock Text="Status" 
+                                   FontWeight="Bold" 
+                                   Foreground="#2C3E50"
+                                   Margin="0,0,0,5"/>
+                        <TextBlock FontSize="11">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="#27AE60"/>
+                                    <Setter Property="Text" Value="Ready to run"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding HasRun}" Value="True">
+                                            <Setter Property="Foreground" Value="#E67E22"/>
+                                            <Setter Property="Text" Value="Processing..."/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+
+                <TextBlock Text="Note: Ensure roof shape editing is enabled"
+                           FontStyle="Italic"
+                           Foreground="#7F8C8D"
+                           Margin="0,15,0,0"
+                           TextWrapping="Wrap"
+                           FontSize="11"/>
+            </StackPanel>
+        </Border>
+
+        <!-- RIGHT PANEL - RESULTS -->
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="250"/>
+            </Grid.RowDefinitions>
+
+            <!-- Live Log Panel -->
+            <Border Grid.Row="0" 
+                    Background="White" 
+                    CornerRadius="5"
+                    BorderBrush="#DDD" 
+                    BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0" 
+                            Background="#2C3E50" 
+                            CornerRadius="5,5,0,0"
+                            Padding="10">
+                        <DockPanel>
+                            <TextBlock Text="Live Processing Log" 
+                                       Foreground="White"
+                                       FontWeight="Bold"
+                                       FontSize="14"/>
+                            <Button Content="Clear" 
+                                    DockPanel.Dock="Right"
+                                    Style="{StaticResource ClearLogButton}"
+                                    Command="{Binding ClearLogCommand}"/>
+                        </DockPanel>
+                    </Border>
+
+                    <ScrollViewer Grid.Row="1" 
+                                  VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Auto"
+                                  Padding="5">
+                        <TextBox x:Name="LogTextBox"
+                                 Text="{Binding LogText, Mode=OneWay}"
+                                 Background="#1E1E1E"
+                                 Foreground="#CCCCCC"
+                                 FontFamily="Consolas"
+                                 FontSize="12"
+                                 IsReadOnly="True"
+                                 AcceptsReturn="True"
+                                 TextWrapping="Wrap"
+                                 BorderThickness="0"
+                                 VerticalAlignment="Top"/>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+
+            <!-- Summary Panel -->
+            <Border Grid.Row="2" 
+                    Background="White" 
+                    CornerRadius="5"
+                    BorderBrush="#DDD" 
+                    BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0" 
+                            Background="#3498DB" 
+                            CornerRadius="5,5,0,0"
+                            Padding="10">
+                        <DockPanel>
+                            <TextBlock Text="Results Summary" 
+                                       Foreground="White"
+                                       FontWeight="Bold"
+                                       FontSize="14"/>
+                        </DockPanel>
+                    </Border>
+
+                    <ScrollViewer Grid.Row="1" 
+                                  VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Auto"
+                                  Padding="5">
+                        <TextBox Text="{Binding SummaryText, Mode=OneWay}"
+                                 FontFamily="Consolas"
+                                 FontSize="12"
+                                 IsReadOnly="True"
+                                 AcceptsReturn="True"
+                                 TextWrapping="Wrap"
+                                 BorderThickness="0"
+                                 Background="#F8F9FA"
+                                 Padding="10"/>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

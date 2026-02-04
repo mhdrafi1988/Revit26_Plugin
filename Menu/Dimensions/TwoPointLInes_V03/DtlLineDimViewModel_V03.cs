@@ -60,10 +60,10 @@ namespace Revit26_Plugin.DtlLineDim_V03.ViewModels
                 StatusLog);
         }
 
-        partial void OnSelectedDetailItemTypeChanged(ComboItem _) =>
+        partial void OnSelectedDetailItemTypeChanged(ComboItem value) =>
             GenerateDimensionsCommand.NotifyCanExecuteChanged();
 
-        partial void OnSelectedDimensionTypeChanged(ComboItem _) =>
+        partial void OnSelectedDimensionTypeChanged(ComboItem value) =>
             GenerateDimensionsCommand.NotifyCanExecuteChanged();
     }
 }
