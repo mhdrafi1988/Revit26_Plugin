@@ -5,7 +5,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\04\00\00</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\05\00\00</BaseOutputPath>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
@@ -84,6 +84,9 @@
 	  <Compile Remove="Menu\Setup\WorksetAdvanced_V02\**" />
 	  <Compile Remove="Menu\Tagging\Revit26_Plugin.RoofTag_V062\**" />
 	  <Compile Remove="Menu\Tagging\Revit26_Plugin.RoofTag_V61\**" />
+	  <Compile Remove="Menu\Tagging\RoofTagV42\**" />
+	  <Compile Remove="Menu\Tagging\RoofTag_40\**" />
+	  <Compile Remove="Menu\Tagging\RoofTag_V00300\**" />
 	  <Compile Remove="Menu\Tagging\RoofTag_V0030\**" />
 	  <Compile Remove="Menu\Tagging\RoofTag_V0030_Working on curves\**" />
 	  <Compile Remove="Menu\Tagging\RoofTag_V003\**" />
@@ -101,6 +104,7 @@
 	  <Compile Remove="Menu\ViewTools\Place_00\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\APUS_302\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V3007Evening\**" />
+	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V30311\APUS_V30311\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V307-Succes\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V307\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\Calloutcopv02\**" />
@@ -195,6 +199,9 @@
 	  <EmbeddedResource Remove="Menu\Setup\WorksetAdvanced_V02\**" />
 	  <EmbeddedResource Remove="Menu\Tagging\Revit26_Plugin.RoofTag_V062\**" />
 	  <EmbeddedResource Remove="Menu\Tagging\Revit26_Plugin.RoofTag_V61\**" />
+	  <EmbeddedResource Remove="Menu\Tagging\RoofTagV42\**" />
+	  <EmbeddedResource Remove="Menu\Tagging\RoofTag_40\**" />
+	  <EmbeddedResource Remove="Menu\Tagging\RoofTag_V00300\**" />
 	  <EmbeddedResource Remove="Menu\Tagging\RoofTag_V0030\**" />
 	  <EmbeddedResource Remove="Menu\Tagging\RoofTag_V0030_Working on curves\**" />
 	  <EmbeddedResource Remove="Menu\Tagging\RoofTag_V003\**" />
@@ -212,6 +219,7 @@
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_00\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_302\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_V3007Evening\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_V30311\APUS_V30311\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_V307-Succes\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_V307\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\Calloutcopv02\**" />
@@ -306,6 +314,9 @@
 	  <None Remove="Menu\Setup\WorksetAdvanced_V02\**" />
 	  <None Remove="Menu\Tagging\Revit26_Plugin.RoofTag_V062\**" />
 	  <None Remove="Menu\Tagging\Revit26_Plugin.RoofTag_V61\**" />
+	  <None Remove="Menu\Tagging\RoofTagV42\**" />
+	  <None Remove="Menu\Tagging\RoofTag_40\**" />
+	  <None Remove="Menu\Tagging\RoofTag_V00300\**" />
 	  <None Remove="Menu\Tagging\RoofTag_V0030\**" />
 	  <None Remove="Menu\Tagging\RoofTag_V0030_Working on curves\**" />
 	  <None Remove="Menu\Tagging\RoofTag_V003\**" />
@@ -323,6 +334,7 @@
 	  <None Remove="Menu\ViewTools\Place_00\**" />
 	  <None Remove="Menu\ViewTools\Place_01\APUS_302\**" />
 	  <None Remove="Menu\ViewTools\Place_01\APUS_V3007Evening\**" />
+	  <None Remove="Menu\ViewTools\Place_01\APUS_V30311\APUS_V30311\**" />
 	  <None Remove="Menu\ViewTools\Place_01\APUS_V307-Succes\**" />
 	  <None Remove="Menu\ViewTools\Place_01\APUS_V307\**" />
 	  <None Remove="Menu\ViewTools\Place_01\Calloutcopv02\**" />
@@ -417,6 +429,9 @@
 	  <Page Remove="Menu\Setup\WorksetAdvanced_V02\**" />
 	  <Page Remove="Menu\Tagging\Revit26_Plugin.RoofTag_V062\**" />
 	  <Page Remove="Menu\Tagging\Revit26_Plugin.RoofTag_V61\**" />
+	  <Page Remove="Menu\Tagging\RoofTagV42\**" />
+	  <Page Remove="Menu\Tagging\RoofTag_40\**" />
+	  <Page Remove="Menu\Tagging\RoofTag_V00300\**" />
 	  <Page Remove="Menu\Tagging\RoofTag_V0030\**" />
 	  <Page Remove="Menu\Tagging\RoofTag_V0030_Working on curves\**" />
 	  <Page Remove="Menu\Tagging\RoofTag_V003\**" />
@@ -434,6 +449,7 @@
 	  <Page Remove="Menu\ViewTools\Place_00\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\APUS_302\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\APUS_V3007Evening\**" />
+	  <Page Remove="Menu\ViewTools\Place_01\APUS_V30311\APUS_V30311\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\APUS_V307-Succes\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\APUS_V307\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\Calloutcopv02\**" />
@@ -553,7 +569,7 @@
 	  <Folder Include="Menu\RoofTools\RoofSlope\AutoSlopeCommand_03\" />
 	  <Folder Include="Menu\RoofTools\RoofSlope\AutoSloperDrain_04\" />
 	  <Folder Include="Menu\Setup\CaddLInkToFamiliy\" />
-	  <Folder Include="Menu\Tagging\RoofTag_40\Helpers\" />
+	  <Folder Include="Menu\ViewTools\Place_01\APUS_V30311\" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Update="Menu\RoofTools\CreasetoLines\Creaser_V08\CreaserSummaryWindow.xaml.cs">
