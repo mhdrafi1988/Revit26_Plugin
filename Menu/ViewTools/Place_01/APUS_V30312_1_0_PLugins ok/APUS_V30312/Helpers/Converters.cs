@@ -1,55 +1,62 @@
-using Revit26_Plugin.APUS_V312.ViewModels;
 using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
+using Revit26_Plugin.APUS_V312.ViewModels;
 
 namespace Revit26_Plugin.APUS_V312.Views
 {
     /// <summary>
-    /// Inverts boolean value (true ? false, false ? true)
-    /// Used to enable controls when NOT placing
+    /// Inverts a boolean value (true becomes false, false becomes true)
     /// </summary>
     public class BooleanToNotConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is bool boolValue)
-                return !boolValue;
-            return true;
+            if (value is bool b)
+                return !b;
+            return value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is bool boolValue)
-                return !boolValue;
-            return false;
+            if (value is bool b)
+                return !b;
+            return value;
         }
     }
 
     /// <summary>
-    /// Converts boolean to Visibility (true ? Visible, false ? Collapsed)
+    /// Converts boolean to Visibility (Visible/Collapsed)
     /// </summary>
     public class BooleanToVisibilityConverter : IValueConverter
     {
+        public bool Invert { get; set; }
+
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is bool boolValue && boolValue)
-                return Visibility.Visible;
+            if (value is bool boolValue)
+            {
+                bool result = Invert ? !boolValue : boolValue;
+                return result ? Visibility.Visible : Visibility.Collapsed;
+            }
             return Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is Visibility visibility)
-                return visibility == Visibility.Visible;
+            {
+                bool result = visibility == Visibility.Visible;
+                return Invert ? !result : result;
+            }
             return false;
         }
     }
 
     /// <summary>
-    /// Converts LogLevel to Brush color
+    /// Converts LogLevel enum to Brush color for UI display
     /// </summary>
     public class LogLevelToBrushConverter : IValueConverter
     {

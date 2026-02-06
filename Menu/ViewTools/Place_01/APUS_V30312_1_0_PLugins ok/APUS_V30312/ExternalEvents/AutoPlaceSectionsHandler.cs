@@ -5,9 +5,7 @@ using Revit26_Plugin.APUS_V312.Services;
 using Revit26_Plugin.APUS_V312.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Reflection;
 
 namespace Revit26_Plugin.APUS_V312.ExternalEvents
 {
@@ -15,9 +13,6 @@ namespace Revit26_Plugin.APUS_V312.ExternalEvents
     /// GRID-based auto placement of section views.
     /// This handler intentionally mirrors the proven V311 logic flow:
     /// Selection ? Filter ? Sort ? Multi-sheet Grid Placement.
-    /// 
-    /// All UI values are read safely via reflection to avoid
-    /// hard dependencies on ViewModel properties.
     /// </summary>
     public class AutoPlaceSectionsHandler : IExternalEventHandler
     {
@@ -78,7 +73,7 @@ namespace Revit26_Plugin.APUS_V312.ExternalEvents
                 }
 
                 // --------------------------------------------------
-                // 3. Spatial sorting (Y tolerance via reflection)
+                // 3. Spatial sorting (Y tolerance)
                 // --------------------------------------------------
                 View referenceView = uidoc.ActiveView;
                 if (referenceView == null)
@@ -88,8 +83,7 @@ namespace Revit26_Plugin.APUS_V312.ExternalEvents
                     return;
                 }
 
-                double yToleranceMm =
-                    ReadDouble(ViewModel, "YToleranceMm", "SortToleranceMm");
+                double yToleranceMm = ViewModel.YToleranceMm;
 
                 var sorted =
                     SectionSortingService
@@ -139,12 +133,12 @@ namespace Revit26_Plugin.APUS_V312.ExternalEvents
                     }
 
                     // --------------------------------------------------
-                    // Read sheet margins (mm) via reflection
+                    // Read sheet margins (mm)
                     // --------------------------------------------------
-                    double leftMm = ReadDouble(ViewModel, "LeftMarginMm", "OffsetLeftMm");
-                    double rightMm = ReadDouble(ViewModel, "RightMarginMm", "OffsetRightMm");
-                    double topMm = ReadDouble(ViewModel, "TopMarginMm", "OffsetTopMm");
-                    double bottomMm = ReadDouble(ViewModel, "BottomMarginMm", "OffsetBottomMm");
+                    double leftMm = ViewModel.LeftMarginMm;
+                    double rightMm = ViewModel.RightMarginMm;
+                    double topMm = ViewModel.TopMarginMm;
+                    double bottomMm = ViewModel.BottomMarginMm;
 
                     // --------------------------------------------------
                     // Calculate placement area ONCE
@@ -164,13 +158,10 @@ namespace Revit26_Plugin.APUS_V312.ExternalEvents
                     doc.Delete(tempSheet.Id);
 
                     // --------------------------------------------------
-                    // Read grid gaps (mm) via reflection
+                    // Read grid gaps (mm)
                     // --------------------------------------------------
-                    double horizontalGapMm =
-                        ReadDouble(ViewModel, "HorizontalGapMm", "GapHorizontalMm");
-
-                    double verticalGapMm =
-                        ReadDouble(ViewModel, "VerticalGapMm", "GapVerticalMm");
+                    double horizontalGapMm = ViewModel.HorizontalGapMm;
+                    double verticalGapMm = ViewModel.VerticalGapMm;
 
                     // --------------------------------------------------
                     // GRID-BASED MULTI-SHEET PLACEMENT
@@ -257,47 +248,6 @@ namespace Revit26_Plugin.APUS_V312.ExternalEvents
         public string GetName()
         {
             return "APUS – Auto Place Sections Handler (Grid)";
-        }
-
-        // --------------------------------------------------
-        // Reflection helper (safe, reusable)
-        // --------------------------------------------------
-        private static double ReadDouble(object obj, params string[] propertyNames)
-        {
-            if (obj == null)
-                return 0;
-
-            Type t = obj.GetType();
-
-            foreach (string name in propertyNames)
-            {
-                PropertyInfo pi =
-                    t.GetProperty(name, BindingFlags.Instance | BindingFlags.Public);
-
-                if (pi == null)
-                    continue;
-
-                object value = pi.GetValue(obj);
-                if (value == null)
-                    return 0;
-
-                if (value is double d)
-                    return d;
-
-                if (value is int i)
-                    return i;
-
-                if (double.TryParse(
-                        value.ToString(),
-                        NumberStyles.Any,
-                        CultureInfo.InvariantCulture,
-                        out double parsed))
-                    return parsed;
-
-                return 0;
-            }
-
-            return 0;
         }
     }
 }

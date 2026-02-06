@@ -4,7 +4,7 @@ using System.Windows.Data;
 
 namespace Revit26_Plugin.APUS_V312.Views
 {
-    public class BooleanToNotConverterV2 : IValueConverter
+    public class BooleanToNotConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

@@ -5,7 +5,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\05\00\00</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\06\00\00</BaseOutputPath>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
@@ -105,6 +105,7 @@
 	  <Compile Remove="Menu\ViewTools\Place_01\APUS_302\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V3007Evening\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V30311\APUS_V30311\**" />
+	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V30312_1_0_PLugins ok\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V307-Succes\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V307\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\Calloutcopv02\**" />
@@ -220,6 +221,7 @@
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_302\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_V3007Evening\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_V30311\APUS_V30311\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_V30312_1_0_PLugins ok\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_V307-Succes\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_V307\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\Calloutcopv02\**" />
@@ -335,6 +337,7 @@
 	  <None Remove="Menu\ViewTools\Place_01\APUS_302\**" />
 	  <None Remove="Menu\ViewTools\Place_01\APUS_V3007Evening\**" />
 	  <None Remove="Menu\ViewTools\Place_01\APUS_V30311\APUS_V30311\**" />
+	  <None Remove="Menu\ViewTools\Place_01\APUS_V30312_1_0_PLugins ok\**" />
 	  <None Remove="Menu\ViewTools\Place_01\APUS_V307-Succes\**" />
 	  <None Remove="Menu\ViewTools\Place_01\APUS_V307\**" />
 	  <None Remove="Menu\ViewTools\Place_01\Calloutcopv02\**" />
@@ -450,6 +453,7 @@
 	  <Page Remove="Menu\ViewTools\Place_01\APUS_302\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\APUS_V3007Evening\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\APUS_V30311\APUS_V30311\**" />
+	  <Page Remove="Menu\ViewTools\Place_01\APUS_V30312_1_0_PLugins ok\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\APUS_V307-Succes\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\APUS_V307\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\Calloutcopv02\**" />
@@ -504,6 +508,13 @@
 	  <Compile Remove="Menu\RoofTools\SlopeDirections_V03\ViewModels.cs" />
 	  <Compile Remove="Menu\RoofTools\SlopeDirections_V04\TransactionHandlers.cs" />
 	  <Compile Remove="Menu\Setup\DwgToLines_03\ViewModels\DwgItemModel.cs" />
+	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V30312\Helpers\BooleanToNotConverter.cs" />
+	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V30312\Helpers\BooleanToVisibilityConverter.cs" />
+	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V30312\Helpers\LogLevelToBrushConverter.cs" />
+	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V30313\ExternalEvents\AutoPlaceSectionsHandler.cs" />
+	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V30313\Helpers\BooleanToNotConverter.cs" />
+	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V30313\Helpers\BooleanToVisibilityConverter.cs" />
+	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V30313\Helpers\LogLevelToBrushConverter.cs" />
 	  <Compile Remove="Resources\App.xaml.cs" />
 	</ItemGroup>
 	<ItemGroup>

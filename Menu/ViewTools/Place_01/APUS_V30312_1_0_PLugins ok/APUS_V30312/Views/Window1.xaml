@@ -95,34 +95,34 @@
 
                         <StackPanel Grid.Column="0">
                             <TextBlock Text="Left Margin"/>
-                            <TextBox Text="{Binding LeftMarginMm}"
+                            <TextBox Text="{Binding LeftMarginMm, UpdateSourceTrigger=PropertyChanged}"
                                      IsEnabled="{Binding IsPlacing, Converter={StaticResource BooleanToNotConverter}}"/>
                             <TextBlock Text="Top Margin"/>
-                            <TextBox Text="{Binding TopMarginMm}"
+                            <TextBox Text="{Binding TopMarginMm, UpdateSourceTrigger=PropertyChanged}"
                                      IsEnabled="{Binding IsPlacing, Converter={StaticResource BooleanToNotConverter}}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="1" Margin="10,0,0,0">
                             <TextBlock Text="Right Margin"/>
-                            <TextBox Text="{Binding RightMarginMm}"
+                            <TextBox Text="{Binding RightMarginMm, UpdateSourceTrigger=PropertyChanged}"
                                      IsEnabled="{Binding IsPlacing, Converter={StaticResource BooleanToNotConverter}}"/>
                             <TextBlock Text="Bottom Margin"/>
-                            <TextBox Text="{Binding BottomMarginMm}"
+                            <TextBox Text="{Binding BottomMarginMm, UpdateSourceTrigger=PropertyChanged}"
                                      IsEnabled="{Binding IsPlacing, Converter={StaticResource BooleanToNotConverter}}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="2" Margin="10,0,0,0">
                             <TextBlock Text="Horizontal Gap"/>
-                            <TextBox Text="{Binding HorizontalGapMm}"
+                            <TextBox Text="{Binding HorizontalGapMm, UpdateSourceTrigger=PropertyChanged}"
                                      IsEnabled="{Binding IsPlacing, Converter={StaticResource BooleanToNotConverter}}"/>
                             <TextBlock Text="Vertical Gap"/>
-                            <TextBox Text="{Binding VerticalGapMm}"
+                            <TextBox Text="{Binding VerticalGapMm, UpdateSourceTrigger=PropertyChanged}"
                                      IsEnabled="{Binding IsPlacing, Converter={StaticResource BooleanToNotConverter}}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="3" Margin="10,0,0,0">
                             <TextBlock Text="Y Tolerance"/>
-                            <TextBox Text="{Binding YToleranceMm}"
+                            <TextBox Text="{Binding YToleranceMm, UpdateSourceTrigger=PropertyChanged}"
                                      IsEnabled="{Binding IsPlacing, Converter={StaticResource BooleanToNotConverter}}"/>
                         </StackPanel>
                     </Grid>
@@ -145,7 +145,7 @@
             <DataGrid.Columns>
 
                 <DataGridCheckBoxColumn Width="40"
-                                        Binding="{Binding IsSelected, Mode=TwoWay}"
+                                        Binding="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         IsReadOnly="{Binding IsPlacing}"/>
 
                 <DataGridTextColumn Header="Section"
@@ -183,15 +183,15 @@
 
                 <!-- Progress Bar -->
                 <ProgressBar DockPanel.Dock="Top"
-                             Value="{Binding Progress.Current}"
-                             Maximum="{Binding Progress.Total}"
+                             Value="{Binding Progress.Current, Mode=OneWay}"
+                             Maximum="{Binding Progress.Total, Mode=OneWay}"
                              Height="20"
                              Margin="0,0,0,5"
                              Visibility="{Binding IsPlacing, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
                 <!-- Progress Text -->
                 <TextBlock DockPanel.Dock="Top"
-                           Text="{Binding Progress.Current, StringFormat=Progress: {0}/{1}}"
+                           Text="{Binding Progress.Current, StringFormat=Progress: {0}/{1}, Mode=OneWay}"
                            HorizontalAlignment="Center"
                            Margin="0,0,0,5"
                            Visibility="{Binding IsPlacing, Converter={StaticResource BooleanToVisibilityConverter}}"/>
