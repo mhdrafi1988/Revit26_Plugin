@@ -1,3 +1,4 @@
+using Revit26_Plugin.APUS_V313.Enums;
 using Revit26_Plugin.APUS_V313.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ namespace Revit26_Plugin.APUS_V313.Services
         public static List<SectionItemViewModel> Apply(
             IEnumerable<SectionItemViewModel> source,
             string placementScope,
-            string placementState,
+            PlacementFilterState placementState,
             string sheetNumber)
         {
             if (source == null)
@@ -44,8 +45,8 @@ namespace Revit26_Plugin.APUS_V313.Services
             // --------------------------------------------------
             result = placementState switch
             {
-                "Placed Only" => result.Where(x => x.IsPlaced),
-                "Unplaced Only" => result.Where(x => !x.IsPlaced),
+                PlacementFilterState.PlacedOnly => result.Where(x => x.IsPlaced),
+                PlacementFilterState.UnplacedOnly => result.Where(x => !x.IsPlaced),
                 _ => result // "All" or null
             };
 

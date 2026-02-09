@@ -28,7 +28,20 @@ namespace Revit26_Plugin.APUS_V313.Views
             WindowStartupLocation = WindowStartupLocation.CenterOwner;
             ShowInTaskbar = false;
 
-            Loaded += (_, __) => Activate();
+            // Load data asynchronously when window is loaded
+            Loaded += async (_, __) =>
+            {
+                try
+                {
+                    Activate();
+                    await viewModel.LoadDataAsync();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to load data: {ex.Message}", "Error",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            };
         }
 
         protected override void OnClosed(EventArgs e)

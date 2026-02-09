@@ -1,4 +1,5 @@
 using Autodesk.Revit.DB;
+using Revit26_Plugin.APUS_V313.Constants;
 using Revit26_Plugin.APUS_V313.ViewModels;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,17 +17,20 @@ namespace Revit26_Plugin.APUS_V313.Services
 
         public List<SectionItemViewModel> Collect()
         {
-            // ----------------------------------------
-            // Collect all sheets and their placed views
-            // ----------------------------------------
-            var sheetViewMap = new Dictionary<ElementId, ViewSheet>();
+            // Use a single collector for better performance
+            var collector = new FilteredElementCollector(_doc);
 
-            var sheets = new FilteredElementCollector(_doc)
+            // Collect ALL sheets first (this is usually a small list)
+            var allSheets = collector
                 .OfClass(typeof(ViewSheet))
-                .Cast<ViewSheet>();
+                .Cast<ViewSheet>()
+                .ToList();
 
-            foreach (var sheet in sheets)
+            // Create view-sheet mapping
+            var sheetViewMap = new Dictionary<ElementId, ViewSheet>();
+            foreach (var sheet in allSheets)
             {
+                // GetAllPlacedViews is efficient - it returns cached data
                 foreach (var viewId in sheet.GetAllPlacedViews())
                 {
                     if (!sheetViewMap.ContainsKey(viewId))
@@ -34,10 +38,11 @@ namespace Revit26_Plugin.APUS_V313.Services
                 }
             }
 
-            // ----------------------------------------
-            // Collect section views
-            // ----------------------------------------
-            var sections = new FilteredElementCollector(_doc)
+            // Clear collector and reuse for sections
+            collector = new FilteredElementCollector(_doc);
+
+            // Collect section views with optimized filtering
+            var sections = collector
                 .OfClass(typeof(ViewSection))
                 .Cast<ViewSection>()
                 .Where(v =>
@@ -46,10 +51,8 @@ namespace Revit26_Plugin.APUS_V313.Services
                     v.GetPrimaryViewId() == ElementId.InvalidElementId)
                 .ToList();
 
-            // ----------------------------------------
-            // Build ViewModels
-            // ----------------------------------------
-            var result = new List<SectionItemViewModel>();
+            // Build results
+            var result = new List<SectionItemViewModel>(sections.Count);
 
             foreach (var section in sections)
             {
@@ -58,7 +61,7 @@ namespace Revit26_Plugin.APUS_V313.Services
                 bool isPlaced = sheet != null;
                 string sheetNumber = isPlaced ? sheet.SheetNumber : string.Empty;
 
-                string scope = section.LookupParameter("Placement_Scope")?.AsString();
+                string scope = section.LookupParameter(ParameterNames.PlacementScope)?.AsString();
 
                 result.Add(
                     new SectionItemViewModel(

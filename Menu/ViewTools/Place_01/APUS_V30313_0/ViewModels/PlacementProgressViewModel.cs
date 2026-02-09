@@ -1,3 +1,4 @@
+using Revit26_Plugin.APUS_V313.Enums;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -33,17 +34,21 @@ namespace Revit26_Plugin.APUS_V313.ViewModels
             }
         }
 
-        private bool _isCancelled;
-        public bool IsCancelled
+        private ProgressState _state = ProgressState.NotStarted;
+        public ProgressState State
         {
-            get => _isCancelled;
-            private set
+            get => _state;
+            set
             {
-                if (_isCancelled == value) return;
-                _isCancelled = value;
+                if (_state == value) return;
+                _state = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(IsCancelled)); // Keep for compatibility
             }
         }
+
+        // Keep for backward compatibility
+        public bool IsCancelled => State == ProgressState.Cancelled;
 
         /// <summary>
         /// Initialize progress state.
@@ -52,7 +57,7 @@ namespace Revit26_Plugin.APUS_V313.ViewModels
         {
             Total = totalCount;
             Current = 0;
-            IsCancelled = false;
+            State = ProgressState.Running;
         }
 
         /// <summary>
@@ -61,7 +66,14 @@ namespace Revit26_Plugin.APUS_V313.ViewModels
         public void Step()
         {
             if (Current < Total)
+            {
                 Current++;
+
+                if (Current >= Total && State == ProgressState.Running)
+                {
+                    State = ProgressState.Completed;
+                }
+            }
         }
 
         /// <summary>
@@ -69,7 +81,15 @@ namespace Revit26_Plugin.APUS_V313.ViewModels
         /// </summary>
         public void Cancel()
         {
-            IsCancelled = true;
+            State = ProgressState.Cancelled;
+        }
+
+        /// <summary>
+        /// Mark as failed.
+        /// </summary>
+        public void Fail()
+        {
+            State = ProgressState.Failed;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -1,5 +1,6 @@
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using Revit26_Plugin.APUS_V313.Enums;
 using Revit26_Plugin.APUS_V313.Models;
 using Revit26_Plugin.APUS_V313.Services;
 using Revit26_Plugin.APUS_V313.ViewModels;
@@ -22,13 +23,10 @@ namespace Revit26_Plugin.APUS_V313.ExternalEvents
 
         public void Execute(UIApplication uiapp)
         {
-            if (ViewModel == null ||
-                SortedSections == null ||
-                SortedSections.Count == 0 ||
-                TitleBlock == null ||
-                PlacementArea == null)
+            var validationResult = ValidatePlacementParameters();
+            if (validationResult != PlacementValidationState.Valid)
             {
-                ViewModel?.LogError("Invalid placement parameters.");
+                HandleValidationError(validationResult);
                 return;
             }
 
@@ -60,6 +58,12 @@ namespace Revit26_Plugin.APUS_V313.ExternalEvents
 
                     tx.Commit();
 
+                    // Update progress state based on result
+                    if (!summary.Success)
+                    {
+                        ViewModel.Progress.Fail();
+                    }
+
                     // Log results
                     if (summary.Success)
                     {
@@ -86,6 +90,7 @@ namespace Revit26_Plugin.APUS_V313.ExternalEvents
             }
             catch (Exception ex)
             {
+                ViewModel.Progress.Fail();
                 ViewModel.LogError($"Placement failed with error: {ex.Message}");
                 ViewModel.LogError($"Stack trace: {ex.StackTrace}");
             }
@@ -101,6 +106,38 @@ namespace Revit26_Plugin.APUS_V313.ExternalEvents
                     PlacementArea = null;
                 });
             }
+        }
+
+        private PlacementValidationState ValidatePlacementParameters()
+        {
+            if (ViewModel == null)
+                return PlacementValidationState.GeneralError;
+
+            if (SortedSections == null || SortedSections.Count == 0)
+                return PlacementValidationState.NoSections;
+
+            if (TitleBlock == null)
+                return PlacementValidationState.NoTitleBlock;
+
+            if (PlacementArea == null)
+                return PlacementValidationState.NoPlacementArea;
+
+            return PlacementValidationState.Valid;
+        }
+
+        private void HandleValidationError(PlacementValidationState validationState)
+        {
+            var errorMessage = validationState switch
+            {
+                PlacementValidationState.NoSections => "No sections to place.",
+                PlacementValidationState.NoTitleBlock => "No title block selected.",
+                PlacementValidationState.NoPlacementArea => "Invalid placement area.",
+                PlacementValidationState.InvalidParameters => "Invalid placement parameters.",
+                _ => "General validation error."
+            };
+
+            ViewModel?.LogError(errorMessage);
+            ViewModel?.Progress.Fail();
         }
 
         public string GetName()
