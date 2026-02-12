@@ -1,17 +1,19 @@
 // File: MultiSheetBinPlacementService.cs
+// REFACTORED - Works within transaction, no transaction management
 using Autodesk.Revit.DB;
+using Revit26_Plugin.APUS_V314.ExternalEvents;
 using Revit26_Plugin.APUS_V314.Helpers;
 using Revit26_Plugin.APUS_V314.Models;
 using Revit26_Plugin.APUS_V314.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace Revit26_Plugin.APUS_V314.Services
 {
     /// <summary>
-    /// Bin packing placement across multiple sheets
+    /// Bin packing placement across multiple sheets.
+    /// CRITICAL: Assumes active transaction exists.
     /// </summary>
     public class MultiSheetBinPlacementService
     {
@@ -20,74 +22,73 @@ namespace Revit26_Plugin.APUS_V314.Services
 
         public MultiSheetBinPlacementService(Document doc)
         {
-            _doc = doc;
+            _doc = doc ?? throw new ArgumentNullException(nameof(doc));
             _sheetCreator = new SheetCreationService(doc);
         }
 
-        public void Place(
-            IList<SectionItemViewModel> sections,
-            FamilySymbol titleBlock,
-            SheetPlacementArea area,
-            double gapMm,
-            AutoPlaceSectionsViewModel vm,
-            ref int placedCount,
-            ref int failedCount,
-            ref HashSet<string> sheetNumbers)
+        public SectionPlacementHandler.PlacementResult Place(
+            SectionPlacementHandler.PlacementContext context,
+            List<SectionItemViewModel> sections)
         {
+            var result = new SectionPlacementHandler.PlacementResult();
+
             if (sections == null || !sections.Any())
             {
-                vm.LogWarning("No sections to place.");
-                return;
+                context.ViewModel?.LogWarning("No sections to place.");
+                result.ErrorMessage = "No sections to place";
+                return result;
             }
 
             try
             {
-                // Read offsets from ViewModel
-                var offsets = ReadOffsetsFromViewModel(vm);
-                double gapFt = UnitConversionHelper.MmToFeet(gapMm);
+                // Calculate offsets and usable area
+                var offsets = CalculateOffsets(context.ViewModel);
+                double gapFt = UnitConversionHelper.MmToFeet(context.HorizontalGapMm);
 
-                // Calculate usable packing area
-                double usableWidth = area.Width - offsets.LeftFt - offsets.RightFt;
-                double usableHeight = area.Height - offsets.TopFt - offsets.BottomFt;
+                double usableWidth = context.PlacementArea.Width - offsets.LeftFt - offsets.RightFt;
+                double usableHeight = context.PlacementArea.Height - offsets.TopFt - offsets.BottomFt;
 
                 if (usableWidth <= 0 || usableHeight <= 0)
                 {
-                    vm.LogError("Invalid usable area after offsets.");
-                    return;
+                    context.ViewModel?.LogError("Invalid usable area after offsets.");
+                    result.ErrorMessage = "Invalid usable area";
+                    return result;
                 }
 
-                vm.LogInfo($"Bin packing area: {usableWidth:F2} × {usableHeight:F2} ft");
+                context.ViewModel?.LogInfo($"Bin packing area: {usableWidth:F2} × {usableHeight:F2} ft");
 
-                int sheetIndex = 1;
-                int detailIndex = 0;
                 int sectionIndex = 0;
+                int sheetCount = 0;
 
                 while (sectionIndex < sections.Count)
                 {
-                    if (vm.Progress.IsCancelled)
+                    if (context.ViewModel?.Progress.IsCancelled == true)
                     {
-                        vm.LogWarning("Placement cancelled.");
+                        context.ViewModel?.LogWarning("Placement cancelled.");
                         break;
                     }
 
-                    // Create new sheet
-                    ViewSheet sheet = _sheetCreator.Create(titleBlock, sheetIndex++);
-                    vm.LogInfo($"CREATED SHEET: {sheet.SheetNumber}");
-                    sheetNumbers.Add(sheet.SheetNumber);
+                    // Create new sheet with unique number
+                    string sheetNumber = context.SheetNumberService.GetNextAvailableSheetNumber("AP");
+                    context.SheetNumberService.TryReserveSheetNumber(sheetNumber);
+
+                    var sheet = _sheetCreator.Create(context.TitleBlock, sheetNumber, $"APUS-{sheetNumber}");
+                    context.ViewModel?.LogInfo($"Created sheet: {sheet.SheetNumber}");
 
                     // Create bin packer for this sheet
                     var packer = new BinPackerService(usableWidth, usableHeight);
 
                     // Place views on current sheet
+                    int viewsPlacedOnSheet = 0;
                     while (sectionIndex < sections.Count)
                     {
                         var item = sections[sectionIndex];
 
-                        if (!Viewport.CanAddViewToSheet(_doc, sheet.Id, item.View.Id))
+                        if (!CanPlaceView(item.View, sheet.Id))
                         {
-                            vm.LogWarning($"SKIPPED (already placed): {item.ViewName}");
+                            context.ViewModel?.LogWarning($"SKIPPED (already placed): {item.ViewName}");
                             sectionIndex++;
-                            failedCount++;
+                            result.FailedCount++;
                             continue;
                         }
 
@@ -99,45 +100,127 @@ namespace Revit26_Plugin.APUS_V314.Services
                         if (!packer.TryPack(w, h, out double packX, out double packY))
                         {
                             // Current sheet is full
-                            vm.LogInfo($"Sheet {sheet.SheetNumber} full ({packer.CalculateEfficiency(0):P0})");
+                            double efficiency = packer.CalculateEfficiency(
+                                CalculatePlacedArea(packer, usableWidth, usableHeight));
+                            context.ViewModel?.LogInfo(
+                                $"Sheet {sheet.SheetNumber} full ({efficiency:P0})");
                             break;
                         }
 
-                        // Convert to sheet coordinates
-                        double sheetX = area.Origin.X + offsets.LeftFt + packX;
-                        double sheetY = area.Origin.Y - offsets.TopFt - packY;
+                        // Calculate position and create viewport
+                        bool placed = PlaceViewport(
+                            sheet,
+                            item,
+                            context.PlacementArea,
+                            offsets,
+                            packX,
+                            packY,
+                            w,
+                            h,
+                            context.GetNextDetailNumber());
 
-                        // Viewport center
-                        XYZ center = new XYZ(
-                            sheetX + w / 2,
-                            sheetY - h / 2,
-                            0);
+                        if (placed)
+                        {
+                            context.ViewModel?.LogInfo(
+                                $"BIN PACKED: {item.ViewName} on {sheet.SheetNumber}");
+                            context.ViewModel?.Progress.Step();
 
-                        Viewport vp = Viewport.Create(_doc, sheet.Id, item.View.Id, center);
-
-                        // Set detail number
-                        detailIndex++;
-                        var detailParam = vp.get_Parameter(BuiltInParameter.VIEWPORT_DETAIL_NUMBER);
-                        if (detailParam != null && !detailParam.IsReadOnly)
-                            detailParam.Set(detailIndex.ToString());
-
-                        vm.LogInfo($"BIN PACKED: {item.ViewName} on {sheet.SheetNumber}");
-                        vm.Progress.Step();
-
-                        placedCount++;
-                        sectionIndex++;
+                            result.PlacedCount++;
+                            result.SheetNumbers.Add(sheet.SheetNumber);
+                            sectionIndex++;
+                            viewsPlacedOnSheet++;
+                        }
+                        else
+                        {
+                            context.ViewModel?.LogWarning(
+                                $"FAILED: Could not place {item.ViewName}");
+                            sectionIndex++;
+                            result.FailedCount++;
+                        }
                     }
 
-                    // Calculate and log packing efficiency
-                    double efficiency = packer.CalculateEfficiency(CalculatePlacedArea(packer, usableWidth, usableHeight));
-                    vm.LogInfo($"Packing efficiency: {efficiency:P0}");
+                    // If no views placed on this sheet, remove it
+                    if (viewsPlacedOnSheet == 0)
+                    {
+                        _doc.Delete(sheet.Id);
+                        context.ViewModel?.LogWarning(
+                            $"Removed empty sheet: {sheet.SheetNumber}");
+                    }
+                    else
+                    {
+                        sheetCount++;
+                    }
+
+                    // Log sheet efficiency
+                    double sheetEfficiency = packer.CalculateEfficiency(
+                        CalculatePlacedArea(packer, usableWidth, usableHeight));
+                    context.ViewModel?.LogInfo(
+                        $"Sheet {sheet.SheetNumber} efficiency: {sheetEfficiency:P0}");
                 }
 
-                vm.LogInfo($"Bin packing complete: {placedCount} placed, {failedCount} failed");
+                context.ViewModel?.LogInfo(
+                    $"Bin packing complete: {result.PlacedCount} placed, {result.FailedCount} failed on {sheetCount} sheets");
+
+                return result;
             }
             catch (Exception ex)
             {
-                vm.LogError($"Bin packing failed: {ex.Message}");
+                context.ViewModel?.LogError($"Bin packing failed: {ex.Message}");
+                result.ErrorMessage = ex.Message;
+                return result;
+            }
+        }
+
+        private bool CanPlaceView(ViewSection view, ElementId sheetId)
+        {
+            try
+            {
+                return Viewport.CanAddViewToSheet(_doc, sheetId, view.Id);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private bool PlaceViewport(
+            ViewSheet sheet,
+            SectionItemViewModel item,
+            SheetPlacementArea area,
+            Offsets offsets,
+            double packX,
+            double packY,
+            double widthWithGap,
+            double heightWithGap,
+            int detailNumber)
+        {
+            try
+            {
+                // Convert to sheet coordinates
+                double sheetX = area.Origin.X + offsets.LeftFt + packX;
+                double sheetY = area.Origin.Y - offsets.TopFt - packY;
+
+                // Calculate viewport center
+                XYZ center = new XYZ(
+                    sheetX + widthWithGap / 2,
+                    sheetY - heightWithGap / 2,
+                    0);
+
+                // Create viewport
+                var vp = Viewport.Create(_doc, sheet.Id, item.View.Id, center);
+
+                // Set detail number
+                var detailParam = vp.get_Parameter(BuiltInParameter.VIEWPORT_DETAIL_NUMBER);
+                if (detailParam != null && !detailParam.IsReadOnly)
+                {
+                    detailParam.Set(detailNumber.ToString());
+                }
+
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
 
@@ -148,43 +231,15 @@ namespace Revit26_Plugin.APUS_V314.Services
             return binArea - freeArea;
         }
 
-        private Offsets ReadOffsetsFromViewModel(AutoPlaceSectionsViewModel vm)
+        private Offsets CalculateOffsets(AutoPlaceSectionsViewModel vm)
         {
-            var offsets = new Offsets();
-
-            // Use reflection to read offset properties
-            var vmType = vm.GetType();
-
-            offsets.LeftFt = UnitConversionHelper.MmToFeet(ReadDoubleProperty(vmType, vm,
-                "LeftMarginMm", "OffsetLeftMm", "PlacementOffsetLeftMm"));
-
-            offsets.RightFt = UnitConversionHelper.MmToFeet(ReadDoubleProperty(vmType, vm,
-                "RightMarginMm", "OffsetRightMm", "PlacementOffsetRightMm"));
-
-            offsets.TopFt = UnitConversionHelper.MmToFeet(ReadDoubleProperty(vmType, vm,
-                "TopMarginMm", "OffsetTopMm", "PlacementOffsetTopMm"));
-
-            offsets.BottomFt = UnitConversionHelper.MmToFeet(ReadDoubleProperty(vmType, vm,
-                "BottomMarginMm", "OffsetBottomMm", "PlacementOffsetBottomMm"));
-
-            return offsets;
-        }
-
-        private double ReadDoubleProperty(Type type, object obj, params string[] propertyNames)
-        {
-            foreach (var name in propertyNames)
+            return new Offsets
             {
-                var prop = type.GetProperty(name, BindingFlags.Public | BindingFlags.Instance);
-                if (prop != null)
-                {
-                    var value = prop.GetValue(obj);
-                    if (value is double d) return d;
-                    if (value is int i) return i;
-                    if (value != null && double.TryParse(value.ToString(), out double parsed))
-                        return parsed;
-                }
-            }
-            return 0;
+                LeftFt = UnitConversionHelper.MmToFeet(vm?.LeftMarginMm ?? 40),
+                RightFt = UnitConversionHelper.MmToFeet(vm?.RightMarginMm ?? 150),
+                TopFt = UnitConversionHelper.MmToFeet(vm?.TopMarginMm ?? 40),
+                BottomFt = UnitConversionHelper.MmToFeet(vm?.BottomMarginMm ?? 100)
+            };
         }
 
         private struct Offsets

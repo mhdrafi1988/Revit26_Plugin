@@ -1,5 +1,5 @@
 // File: PlacementProgressViewModel.cs
-using Revit26_Plugin.APUS_V314.ViewModels;
+// FIX: Make setters public for UI updates
 using System.ComponentModel;
 
 namespace Revit26_Plugin.APUS_V314.ViewModels
@@ -10,14 +10,14 @@ namespace Revit26_Plugin.APUS_V314.ViewModels
         public int Total
         {
             get => _total;
-            private set => SetField(ref _total, value);
+            set => SetField(ref _total, value);  // Made setter public
         }
 
         private int _current;
         public int Current
         {
             get => _current;
-            private set => SetField(ref _current, value);
+            set => SetField(ref _current, value);  // Made setter public
         }
 
         private bool _isCancelled;
@@ -93,8 +93,5 @@ namespace Revit26_Plugin.APUS_V314.ViewModels
         /// Check if operation should continue
         /// </summary>
         public bool ShouldContinue => !IsCancelled && Current < Total;
-
-
     }
-
 }

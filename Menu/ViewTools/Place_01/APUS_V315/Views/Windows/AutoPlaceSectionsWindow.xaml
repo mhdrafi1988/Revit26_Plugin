@@ -1,0 +1,491 @@
+﻿<Window x:Class="Revit26_Plugin.APUS_V315.Views.Windows.AutoPlaceSectionsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:Revit26_Plugin.APUS_V315.Views.Converters"
+        xmlns:enums="clr-namespace:Revit26_Plugin.APUS_V315.Models.Enums"
+        Title="APUS V315 - Auto Place Sections"
+        Height="950" Width="1300"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResize"
+        MinHeight="800" MinWidth="1200"
+        Background="#F9F9F9">
+
+    <Window.Resources>
+        <!-- Converters -->
+        <converters:LogLevelToBrushConverter x:Key="LogLevelToBrushConverter"/>
+        <converters:PluginStateConverter x:Key="PluginStateConverter"/>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <converters:BooleanToNotConverter x:Key="BooleanToNotConverter"/>
+        <converters:BoolToColorConverter x:Key="BoolToColorConverter" TrueColor="Green" FalseColor="Gray"/>
+        <converters:PlacementAlgorithmConverter x:Key="PlacementAlgorithmConverter"/>
+        <converters:AlgorithmDescriptionConverter x:Key="AlgorithmDescriptionConverter"/>
+        <converters:ViewSizeConverter x:Key="ViewSizeConverter"/>
+
+        <!-- Styles -->
+        <Style x:Key="SectionHeaderStyle" TargetType="Border">
+            <Setter Property="Background" Value="#F0F0F0"/>
+            <Setter Property="BorderBrush" Value="#DDDDDD"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="Padding" Value="10,8"/>
+        </Style>
+
+        <Style x:Key="StatusIndicatorStyle" TargetType="Border">
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="250"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Style="{StaticResource SectionHeaderStyle}" Margin="0,0,0,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="📐" FontSize="24" Margin="0,0,10,0"/>
+                    <TextBlock Text="APUS V315 - Auto Place Sections" 
+                               FontSize="18" FontWeight="SemiBold"/>
+
+                    <Border Style="{StaticResource StatusIndicatorStyle}" 
+                            Background="{Binding CurrentState, Converter={StaticResource PluginStateConverter}, ConverterParameter=StatusColor}"
+                            Margin="20,0,0,0">
+                        <TextBlock Text="{Binding CurrentState}" 
+                                   FontWeight="SemiBold"
+                                   Foreground="White"/>
+                    </Border>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="🔄 Refresh" 
+                            Command="{Binding RefreshCommand}"
+                            Padding="10,5" Margin="0,0,5,0"
+                            IsEnabled="{Binding CanRefresh}"/>
+                    <Button Content="✓ Select All" 
+                            Command="{Binding SelectAllCommand}"
+                            Padding="10,5" Margin="5,0,5,0"
+                            IsEnabled="{Binding IsUiEnabled}"/>
+                    <Button Content="✗ Clear" 
+                            Command="{Binding ClearSelectionCommand}"
+                            Padding="10,5" Margin="5,0,0,0"
+                            IsEnabled="{Binding IsUiEnabled}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Filters -->
+        <Border Grid.Row="1" BorderBrush="#EEEEEE" BorderThickness="0,0,0,1" Padding="0,0,0,10" Margin="0,0,0,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="Selected: " FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding FilteredSections.Count, StringFormat={}{0} sections}"/>
+                    <TextBlock Text=" | " Margin="10,0"/>
+                    <TextBlock Text="{Binding SelectedSectionsCount, StringFormat={}{0} selected}" 
+                               Foreground="#2196F3" FontWeight="Bold"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <ComboBox ItemsSource="{Binding PlacementScopes}" 
+                              SelectedItem="{Binding SelectedPlacementScope}"
+                              Width="180" Margin="0,0,10,0"
+                              IsEnabled="{Binding IsUiEnabled}"/>
+                    <ComboBox ItemsSource="{Binding PlacementStates}" 
+                              SelectedItem="{Binding SelectedPlacementState}"
+                              Width="150" Margin="0,0,10,0"
+                              IsEnabled="{Binding IsUiEnabled}"/>
+                    <ComboBox ItemsSource="{Binding SheetNumberOptions}" 
+                              SelectedItem="{Binding SheetNumberFilter}"
+                              Width="150"
+                              IsEnabled="{Binding IsUiEnabled}"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="Algorithm: " FontWeight="SemiBold" Margin="0,0,5,0"/>
+                    <ComboBox ItemsSource="{Binding AvailableAlgorithms}" 
+                              SelectedItem="{Binding SelectedAlgorithm}"
+                              Width="150"
+                              IsEnabled="{Binding IsUiEnabled}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Converter={StaticResource PlacementAlgorithmConverter}}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="2" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Sections DataGrid -->
+            <Border Grid.Column="0" BorderBrush="#DDDDDD" BorderThickness="1" CornerRadius="4" Margin="0,0,5,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0" Style="{StaticResource SectionHeaderStyle}">
+                        <TextBlock Text="Available Sections" FontWeight="SemiBold" FontSize="14"/>
+                    </Border>
+
+                    <DataGrid Grid.Row="1" 
+                              x:Name="SectionsDataGrid"
+                              ItemsSource="{Binding FilteredSections}"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              IsReadOnly="True"
+                              SelectionMode="Extended"
+                              SelectionUnit="FullRow"
+                              GridLinesVisibility="Horizontal"
+                              RowDetailsVisibilityMode="Collapsed"
+                              VirtualizingStackPanel.IsVirtualizing="True"
+                              BorderThickness="0">
+
+                        <DataGrid.Columns>
+                            <DataGridCheckBoxColumn Width="40" 
+                                                    Binding="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                    Header="✓"/>
+
+                            <DataGridTextColumn Header="Section Name" 
+                                                Binding="{Binding ViewName}" 
+                                                Width="*"/>
+
+                            <DataGridTextColumn Header="Scope" 
+                                                Binding="{Binding PlacementScope}" 
+                                                Width="120"/>
+
+                            <DataGridTextColumn Header="Scale" 
+                                                Binding="{Binding ScaleDisplay}" 
+                                                Width="80"/>
+
+                            <DataGridTextColumn Header="Sheet" 
+                                                Binding="{Binding SheetNumber}" 
+                                                Width="100">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" 
+                                                Value="{Binding IsPlaced, Converter={StaticResource BoolToColorConverter}}"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+
+                            <DataGridTextColumn Header="Size" 
+                                                Binding="{Binding View, Converter={StaticResource ViewSizeConverter}}" 
+                                                Width="120"/>
+                        </DataGrid.Columns>
+
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="Background" Value="White"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPlaced}" Value="True">
+                                        <Setter Property="Background" Value="#F5F5F5"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                        <Setter Property="Background" Value="#E3F2FD"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+                    </DataGrid>
+                </Grid>
+            </Border>
+
+            <!-- Settings Panel -->
+            <Border Grid.Column="1" BorderBrush="#DDDDDD" BorderThickness="1" CornerRadius="4" Margin="5,0,0,0">
+                <TabControl BorderThickness="0">
+                    <TabItem Header="Layout">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="10">
+                            <StackPanel>
+                                <GroupBox Header="Title Block" Margin="0,0,0,10">
+                                    <ComboBox ItemsSource="{Binding TitleBlocks}" 
+                                              SelectedItem="{Binding SelectedTitleBlock}"
+                                              DisplayMemberPath="DisplayName"
+                                              IsEnabled="{Binding IsUiEnabled}"/>
+                                </GroupBox>
+
+                                <GroupBox Header="Margins (mm)" Margin="0,0,0,10">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,5,5">
+                                            <TextBlock Text="Left" Margin="0,0,0,2"/>
+                                            <TextBox Text="{Binding LeftMarginMm, UpdateSourceTrigger=PropertyChanged}"
+                                                     IsEnabled="{Binding IsUiEnabled}"/>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Row="0" Grid.Column="1" Margin="5,0,0,5">
+                                            <TextBlock Text="Right" Margin="0,0,0,2"/>
+                                            <TextBox Text="{Binding RightMarginMm, UpdateSourceTrigger=PropertyChanged}"
+                                                     IsEnabled="{Binding IsUiEnabled}"/>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,5,5,0">
+                                            <TextBlock Text="Top" Margin="0,0,0,2"/>
+                                            <TextBox Text="{Binding TopMarginMm, UpdateSourceTrigger=PropertyChanged}"
+                                                     IsEnabled="{Binding IsUiEnabled}"/>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Row="1" Grid.Column="1" Margin="5,5,0,0">
+                                            <TextBlock Text="Bottom" Margin="0,0,0,2"/>
+                                            <TextBox Text="{Binding BottomMarginMm, UpdateSourceTrigger=PropertyChanged}"
+                                                     IsEnabled="{Binding IsUiEnabled}"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </GroupBox>
+
+                                <GroupBox Header="Spacing (mm)" Margin="0,0,0,10">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Grid.Column="0" Margin="0,0,5,0">
+                                            <TextBlock Text="Horizontal Gap" Margin="0,0,0,2"/>
+                                            <TextBox Text="{Binding HorizontalGapMm, UpdateSourceTrigger=PropertyChanged}"
+                                                     IsEnabled="{Binding IsUiEnabled}"/>
+                                            <TextBlock Text="Y Tolerance" Margin="0,10,0,2"/>
+                                            <TextBox Text="{Binding YToleranceMm, UpdateSourceTrigger=PropertyChanged}"
+                                                     IsEnabled="{Binding IsUiEnabled}"/>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="1" Margin="5,0,0,0">
+                                            <TextBlock Text="Vertical Gap" Margin="0,0,0,2"/>
+                                            <TextBox Text="{Binding VerticalGapMm, UpdateSourceTrigger=PropertyChanged}"
+                                                     IsEnabled="{Binding IsUiEnabled}"/>
+                                            <CheckBox Content="Open sheets after placement" 
+                                                      IsChecked="{Binding OpenSheetsAfterPlacement}"
+                                                      Margin="0,15,0,0"
+                                                      IsEnabled="{Binding IsUiEnabled}"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </GroupBox>
+
+                                <CheckBox Content="Skip already placed views" 
+                                          IsChecked="{Binding SkipPlacedViews}"
+                                          Margin="0,5"
+                                          IsEnabled="{Binding IsUiEnabled}"/>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+
+                    <TabItem Header="Algorithm">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="10">
+                            <StackPanel>
+                                <GroupBox Header="Placement Algorithm">
+                                    <StackPanel>
+                                        <ComboBox ItemsSource="{Binding AvailableAlgorithms}" 
+                                                  SelectedItem="{Binding SelectedAlgorithm}"
+                                                  IsEnabled="{Binding IsUiEnabled}"
+                                                  Margin="0,0,0,10">
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Converter={StaticResource PlacementAlgorithmConverter}}"/>
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
+                                        </ComboBox>
+
+                                        <TextBlock Text="{Binding SelectedAlgorithm, Converter={StaticResource AlgorithmDescriptionConverter}}" 
+                                                   TextWrapping="Wrap"
+                                                   Foreground="#666666"
+                                                   FontStyle="Italic"/>
+                                    </StackPanel>
+                                </GroupBox>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+
+                    <TabItem Header="Summary">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="10">
+                            <StackPanel>
+                                <GroupBox Header="Placement Summary">
+                                    <StackPanel>
+                                        <TextBlock Margin="0,5">
+                                            <Run FontWeight="SemiBold" Text="Selected Sections: "/>
+                                            <Run Text="{Binding SelectedSectionsCount}"/>
+                                        </TextBlock>
+                                        <TextBlock Margin="0,5">
+                                            <Run FontWeight="SemiBold" Text="Estimated Sheets: "/>
+                                            <Run Text="{Binding EstimatedSheets, FallbackValue=0}"/>
+                                        </TextBlock>
+                                        <TextBlock Margin="0,5">
+                                            <Run FontWeight="SemiBold" Text="Estimated Time: "/>
+                                            <Run Text="{Binding EstimatedTime, FallbackValue=0s}"/>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </GroupBox>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+                </TabControl>
+            </Border>
+        </Grid>
+
+        <!-- Footer - Log and Progress -->
+        <Border Grid.Row="3" BorderBrush="#DDDDDD" BorderThickness="1" CornerRadius="4">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Progress Bar -->
+                <Border Grid.Row="0" Style="{StaticResource SectionHeaderStyle}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                            <ProgressBar Value="{Binding Progress.Current}" 
+                                         Maximum="{Binding Progress.Total}" 
+                                         Width="300" Height="20"
+                                         Visibility="{Binding ShowProgress, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <ProgressBar.Style>
+                                    <Style TargetType="ProgressBar">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding CurrentState}" Value="Processing">
+                                                <Setter Property="Foreground" Value="#4CAF50"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding CurrentState}" Value="Cancelling">
+                                                <Setter Property="Foreground" Value="#FF9800"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ProgressBar.Style>
+                            </ProgressBar>
+
+                            <TextBlock Text="{Binding Progress.CurrentOperation}" 
+                                       Margin="10,0,0,0"
+                                       Foreground="#666666"
+                                       FontStyle="Italic"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <Button Content="🚀 Place Sections" 
+                                    Command="{Binding PlaceCommand}"
+                                    Background="#4CAF50" 
+                                    Foreground="White" 
+                                    FontWeight="Bold"
+                                    Padding="15,8"
+                                    Margin="0,0,10,0"
+                                    IsEnabled="{Binding CanPlace}"/>
+
+                            <Button Content="✕ Cancel" 
+                                    Command="{Binding CancelCommand}"
+                                    Background="#F44336" 
+                                    Foreground="White"
+                                    Padding="15,8"
+                                    Margin="0,0,10,0"
+                                    Visibility="{Binding ShowCancelButton, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                            <Button Content="Close" 
+                                    Click="CloseButton_Click"
+                                    Padding="15,8"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Log List -->
+                <Grid Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0" Background="#F5F5F5" BorderBrush="#DDDDDD" BorderThickness="0,0,0,1" Padding="10,5">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Text="Live Log" FontWeight="SemiBold"/>
+
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <Button Content="Clear" 
+                                        Command="{Binding ClearLogCommand}"
+                                        Background="Transparent" 
+                                        BorderThickness="0"
+                                        Margin="0,0,10,0"/>
+                                <Button Content="Export" 
+                                        Command="{Binding ExportLogCommand}"
+                                        Background="Transparent" 
+                                        BorderThickness="0"
+                                        Margin="0,0,10,0"/>
+                                <Button Content="Copy" 
+                                        Command="{Binding CopyLogsCommand}"
+                                        Background="Transparent" 
+                                        BorderThickness="0"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <ListBox Grid.Row="1" 
+                             x:Name="LogListBox"
+                             ItemsSource="{Binding LogEntries}"
+                             VirtualizingStackPanel.IsVirtualizing="True"
+                             VirtualizingStackPanel.VirtualizationMode="Recycling"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto"
+                             BorderThickness="0"
+                             Background="White">
+
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="2,1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Column="0" 
+                                               Text="{Binding TimeStampString}"
+                                               Foreground="#666666" 
+                                               FontFamily="Consolas" 
+                                               Margin="5,0,10,0"/>
+
+                                    <TextBlock Grid.Column="1" 
+                                               Text="{Binding Message}"
+                                               TextWrapping="Wrap"
+                                               Foreground="{Binding Level, Converter={StaticResource LogLevelToBrushConverter}}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

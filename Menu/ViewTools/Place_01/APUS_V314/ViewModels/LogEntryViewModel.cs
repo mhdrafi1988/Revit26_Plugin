@@ -1,17 +1,8 @@
 // File: LogEntryViewModel.cs
-using Revit26_Plugin.SectionManager_V07.ViewModels;
 using System;
 
 namespace Revit26_Plugin.APUS_V314.ViewModels
 {
-    public enum LogLevel
-    {
-        Info,
-        Warning,
-        Error,
-        Success
-    }
-
     public class LogEntryViewModel : BaseViewModel
     {
         private DateTime _timestamp;

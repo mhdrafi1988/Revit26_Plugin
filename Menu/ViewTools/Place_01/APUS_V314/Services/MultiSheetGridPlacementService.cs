@@ -1,111 +1,130 @@
 // File: MultiSheetGridPlacementService.cs
+// NEW - Complete implementation
 using Autodesk.Revit.DB;
+using Revit26_Plugin.APUS_V314.ExternalEvents;
+using Revit26_Plugin.APUS_V314.Helpers; // Added for UnitConversionHelper
 using Revit26_Plugin.APUS_V314.Models;
 using Revit26_Plugin.APUS_V314.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Revit26_Plugin.APUS_V314.Services
 {
     /// <summary>
-    /// Multi-sheet grid placement orchestrator
+    /// Multi-sheet grid placement service
+    /// CRITICAL: Assumes active transaction exists.
     /// </summary>
     public class MultiSheetGridPlacementService
     {
         private readonly Document _doc;
         private readonly SheetCreationService _sheetCreator;
-        private readonly GridPlacementService _placer;
+        private readonly GridPlacementService _gridPlacer;
 
         public MultiSheetGridPlacementService(Document doc)
         {
-            _doc = doc;
+            _doc = doc ?? throw new ArgumentNullException(nameof(doc));
             _sheetCreator = new SheetCreationService(doc);
-            _placer = new GridPlacementService(doc);
+            _gridPlacer = new GridPlacementService(doc);
         }
 
-        public void Place(
-            IList<SectionItemViewModel> sortedSections,
-            FamilySymbol titleBlock,
-            SheetPlacementArea area,
-            double horizontalGapMm,
-            double verticalGapMm,
-            AutoPlaceSectionsViewModel vm,
-            ref int placedCount,
-            ref int failedCount,
-            ref HashSet<string> sheetNumbers)
+        public SectionPlacementHandler.PlacementResult Place(
+            SectionPlacementHandler.PlacementContext context,
+            List<SectionItemViewModel> sections)
         {
-            if (sortedSections == null || sortedSections.Count == 0)
+            var result = new SectionPlacementHandler.PlacementResult();
+
+            if (sections == null || !sections.Any())
             {
-                vm.LogWarning("No sections to place.");
-                return;
+                context.ViewModel?.LogWarning("No sections to place.");
+                result.ErrorMessage = "No sections to place";
+                return result;
             }
 
             try
             {
-                // Calculate grid layout
+                // Calculate optimal grid layout for first sheet
                 if (!GridLayoutCalculationService.TryCalculate(
-                    sortedSections,
-                    area,
-                    horizontalGapMm,
-                    verticalGapMm,
+                    sections,
+                    context.PlacementArea,
+                    context.HorizontalGapMm,
+                    context.VerticalGapMm,
                     out double cellWidth,
                     out double cellHeight,
                     out int columns,
-                    out int rows))
+                    out int rows,
+                    context.ViewModel))
                 {
-                    vm.LogError("Grid calculation failed.");
-                    return;
+                    result.ErrorMessage = "Failed to calculate grid layout";
+                    return result;
                 }
 
-                vm.LogInfo($"GRID LAYOUT: {columns} columns × {rows} rows, Cell: {cellWidth:F2}×{cellHeight:F2} ft");
-
-                int index = 0;
-                int detailIndex = 0;
-                int sheetIndex = 1;
-
-                while (index < sortedSections.Count)
+                var layout = new GridLayoutCalculationService.GridLayout
                 {
-                    if (vm.Progress.IsCancelled)
-                    {
-                        vm.LogWarning("Placement cancelled.");
+                    Columns = columns,
+                    Rows = rows,
+                    CellWidth = cellWidth,
+                    CellHeight = cellHeight,
+                    HorizontalGap = UnitConversionHelper.MmToFeet(context.HorizontalGapMm),
+                    VerticalGap = UnitConversionHelper.MmToFeet(context.VerticalGapMm)
+                };
+
+                context.ViewModel?.LogInfo(
+                    $"Grid layout: {columns} cols × {rows} rows per sheet, " +
+                    $"Cell: {cellWidth:F2}×{cellHeight:F2} ft");
+
+                int sectionIndex = 0;
+                int sheetCount = 0;
+
+                while (sectionIndex < sections.Count)
+                {
+                    if (context.ViewModel?.Progress.IsCancelled == true)
                         break;
-                    }
 
                     // Create new sheet
-                    ViewSheet sheet = _sheetCreator.Create(titleBlock, sheetIndex++);
-                    vm.LogInfo($"CREATED SHEET: {sheet.SheetNumber}");
-                    sheetNumbers.Add(sheet.SheetNumber);
+                    string sheetNumber = context.SheetNumberService.GetNextAvailableSheetNumber("GR");
+                    context.SheetNumberService.TryReserveSheetNumber(sheetNumber);
 
-                    // Place views on current sheet
-                    int placed = _placer.PlaceAdaptiveOnSheet(
+                    var sheet = _sheetCreator.Create(context.TitleBlock, sheetNumber, $"Grid-{sheetNumber}");
+                    context.ViewModel?.LogInfo($"Created sheet: {sheet.SheetNumber}");
+
+                    // Place views on this sheet
+                    int placed = _gridPlacer.PlaceOnSheet(
                         sheet,
-                        sortedSections.ToList(),
-                        index,
-                        area,
-                        cellWidth,
-                        horizontalGapMm,
-                        verticalGapMm,
-                        columns,
-                        vm,
-                        ref detailIndex);
+                        sections,
+                        sectionIndex,
+                        context,
+                        layout,
+                        result);
 
                     if (placed == 0)
                     {
-                        vm.LogWarning($"No views fit on sheet {sheet.SheetNumber}");
+                        // Remove empty sheet
                         _doc.Delete(sheet.Id);
-                        sheetNumbers.Remove(sheet.SheetNumber);
+                        context.ViewModel?.LogWarning($"No views placed on sheet {sheet.SheetNumber}, removing");
                         break;
                     }
 
-                    index += placed;
-                    placedCount += placed;
+                    sectionIndex += placed;
+                    result.PlacedCount += placed;
+                    result.SheetNumbers.Add(sheet.SheetNumber);
+                    sheetCount++;
+
+                    context.ViewModel?.LogInfo(
+                        $"Placed {placed} views on sheet {sheet.SheetNumber}, " +
+                        $"total: {result.PlacedCount}/{sections.Count}");
                 }
 
-                vm.LogInfo($"Grid placement completed: {placedCount} placed, {failedCount} failed");
+                context.ViewModel?.LogInfo(
+                    $"Grid placement complete: {result.PlacedCount} views on {sheetCount} sheets");
+
+                return result;
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
-                vm.LogError($"Grid placement failed: {ex.Message}");
+                context.ViewModel?.LogError($"Grid placement failed: {ex.Message}");
+                result.ErrorMessage = ex.Message;
+                return result;
             }
         }
     }

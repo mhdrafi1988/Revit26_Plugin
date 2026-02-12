@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="WindowTitle" xml:space="preserve">
+    <value>APUS V315 - Auto Place Sections</value>
+  </data>
+  <data name="PlaceButtonText" xml:space="preserve">
+    <value>🚀 Place Sections</value>
+  </data>
+  <data name="CancelButtonText" xml:space="preserve">
+    <value>✕ Cancel</value>
+  </data>
+  <data name="RefreshButtonText" xml:space="preserve">
+    <value>🔄 Refresh</value>
+  </data>
+  <data name="SelectAllText" xml:space="preserve">
+    <value>✓ Select All</value>
+  </data>
+  <data name="ClearSelectionText" xml:space="preserve">
+    <value>✗ Clear</value>
+  </data>
+  <data name="CloseButtonText" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="LogTitle" xml:space="preserve">
+    <value>Live Log</value>
+  </data>
+  <data name="ClearLogText" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="ExportLogText" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="CopyLogText" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="ConfirmCloseTitle" xml:space="preserve">
+    <value>Confirm Close</value>
+  </data>
+  <data name="ConfirmCloseMessage" xml:space="preserve">
+    <value>Placement is in progress. Are you sure you want to cancel and close?</value>
+  </data>
+  <data name="ErrorNoDocument" xml:space="preserve">
+    <value>No active Revit document found.</value>
+  </data>
+  <data name="ErrorFamilyDocument" xml:space="preserve">
+    <value>This command only works in project documents, not family documents.</value>
+  </data>
+  <data name="ErrorNoTitleBlock" xml:space="preserve">
+    <value>Please select a title block.</value>
+  </data>
+  <data name="WarningNoSections" xml:space="preserve">
+    <value>No sections selected for placement.</value>
+  </data>
+  <data name="StatusReady" xml:space="preserve">
+    <value>Ready</value>
+  </data>
+  <data name="StatusInitializing" xml:space="preserve">
+    <value>Initializing...</value>
+  </data>
+  <data name="StatusProcessing" xml:space="preserve">
+    <value>Processing...</value>
+  </data>
+  <data name="StatusCancelling" xml:space="preserve">
+    <value>Cancelling...</value>
+  </data>
+  <data name="StatusCompleted" xml:space="preserve">
+    <value>Completed</value>
+  </data>
+  <data name="StatusError" xml:space="preserve">
+    <value>Error</value>
+  </data>
+</root>

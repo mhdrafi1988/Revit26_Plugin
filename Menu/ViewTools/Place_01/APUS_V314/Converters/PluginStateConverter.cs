@@ -1,4 +1,3 @@
-// File: PluginStateConverter.cs
 using Revit26_Plugin.APUS_V314.ViewModels;
 using System;
 using System.Globalization;
@@ -18,16 +17,21 @@ namespace Revit26_Plugin.APUS_V314.Converters
 
                 return param switch
                 {
-                    // UI Enable/Disable - ALL ENABLED
-                    "IsEnabled" => true, // ALWAYS TRUE
+                    // UI Enable/Disable
+                    "IsEnabled" => state == PluginState.Idle ||
+                                  state == PluginState.ReadyToPlace ||
+                                  state == PluginState.Completed ||
+                                  state == PluginState.Error,
 
                     "IsProcessing" => state == PluginState.Processing ||
                                      state == PluginState.Cancelling,
 
-                    // Button always enabled
-                    "PlaceButtonEnabled" => true, // ALWAYS TRUE
+                    "PlaceButtonEnabled" => state == PluginState.ReadyToPlace,
 
-                    "RefreshButtonEnabled" => true, // ALWAYS TRUE
+                    "RefreshButtonEnabled" => state == PluginState.Idle ||
+                                             state == PluginState.ReadyToPlace ||
+                                             state == PluginState.Completed ||
+                                             state == PluginState.Error,
 
                     // Visibility - Return Visibility directly
                     "ShowProgress" => (state == PluginState.Processing ||

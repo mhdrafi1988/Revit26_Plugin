@@ -5,7 +5,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\10\00\04</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\11\00\05</BaseOutputPath>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
@@ -112,6 +112,9 @@
 	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V30313_0\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V307-Succes\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V307\**" />
+	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V314\**" />
+	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V315\**" />
+	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V316\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\Calloutcopv02\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\Calloutcopv2\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\CalloutCOP_V004\**" />
@@ -232,6 +235,9 @@
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_V30313_0\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_V307-Succes\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_V307\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_V314\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_V315\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_V316\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\Calloutcopv02\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\Calloutcopv2\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\CalloutCOP_V004\**" />
@@ -352,6 +358,9 @@
 	  <None Remove="Menu\ViewTools\Place_01\APUS_V30313_0\**" />
 	  <None Remove="Menu\ViewTools\Place_01\APUS_V307-Succes\**" />
 	  <None Remove="Menu\ViewTools\Place_01\APUS_V307\**" />
+	  <None Remove="Menu\ViewTools\Place_01\APUS_V314\**" />
+	  <None Remove="Menu\ViewTools\Place_01\APUS_V315\**" />
+	  <None Remove="Menu\ViewTools\Place_01\APUS_V316\**" />
 	  <None Remove="Menu\ViewTools\Place_01\Calloutcopv02\**" />
 	  <None Remove="Menu\ViewTools\Place_01\Calloutcopv2\**" />
 	  <None Remove="Menu\ViewTools\Place_01\CalloutCOP_V004\**" />
@@ -472,6 +481,9 @@
 	  <Page Remove="Menu\ViewTools\Place_01\APUS_V30313_0\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\APUS_V307-Succes\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\APUS_V307\**" />
+	  <Page Remove="Menu\ViewTools\Place_01\APUS_V314\**" />
+	  <Page Remove="Menu\ViewTools\Place_01\APUS_V315\**" />
+	  <Page Remove="Menu\ViewTools\Place_01\APUS_V316\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\Calloutcopv02\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\Calloutcopv2\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\CalloutCOP_V004\**" />

@@ -1,5 +1,7 @@
 // File: GridPlacementService.cs
+// REFACTORED - Works within transaction
 using Autodesk.Revit.DB;
+using Revit26_Plugin.APUS_V314.ExternalEvents;
 using Revit26_Plugin.APUS_V314.Helpers;
 using Revit26_Plugin.APUS_V314.Models;
 using Revit26_Plugin.APUS_V314.ViewModels;
@@ -11,6 +13,7 @@ namespace Revit26_Plugin.APUS_V314.Services
 {
     /// <summary>
     /// Grid placement with fixed column width and adaptive row height
+    /// CRITICAL: Assumes active transaction exists.
     /// </summary>
     public class GridPlacementService
     {
@@ -18,28 +21,30 @@ namespace Revit26_Plugin.APUS_V314.Services
 
         public GridPlacementService(Document doc)
         {
-            _doc = doc;
+            _doc = doc ?? throw new ArgumentNullException(nameof(doc));
         }
 
         public int PlaceOnSheet(
             ViewSheet sheet,
             IList<SectionItemViewModel> sections,
             int startIndex,
-            SheetPlacementArea area,
+            SectionPlacementHandler.PlacementContext context,
             GridLayoutCalculationService.GridLayout layout,
-            AutoPlaceSectionsViewModel vm,
-            ref int detailIndex)
+            SectionPlacementHandler.PlacementResult result)
         {
             if (sections == null || !sections.Any())
                 return 0;
 
             int placed = 0;
             int currentIndex = startIndex;
-            double currentY = area.Origin.Y;
+            double currentY = context.PlacementArea.Origin.Y;
             int currentRow = 0;
 
             while (currentIndex < sections.Count && currentRow < layout.Rows)
             {
+                if (context.ViewModel?.Progress.IsCancelled == true)
+                    break;
+
                 // Get views for current row
                 var rowItems = sections
                     .Skip(currentIndex)
@@ -55,7 +60,7 @@ namespace Revit26_Plugin.APUS_V314.Services
                     .Max() + layout.VerticalGap;
 
                 // Check vertical fit
-                if (currentY - rowHeight < area.Bottom)
+                if (currentY - rowHeight < context.PlacementArea.Bottom)
                     break;
 
                 // Place each view in the row
@@ -63,9 +68,10 @@ namespace Revit26_Plugin.APUS_V314.Services
                 {
                     var item = rowItems[col];
 
-                    if (!Viewport.CanAddViewToSheet(_doc, sheet.Id, item.View.Id))
+                    if (!CanPlaceView(item.View, sheet.Id))
                     {
-                        vm.LogWarning($"SKIPPED (already placed): {item.ViewName}");
+                        context.ViewModel?.LogWarning($"SKIPPED (already placed): {item.ViewName}");
+                        result.FailedCount++;
                         currentIndex++;
                         continue;
                     }
@@ -73,7 +79,7 @@ namespace Revit26_Plugin.APUS_V314.Services
                     var footprint = ViewSizeService.Calculate(item.View);
 
                     // Calculate position
-                    double x = area.Origin.X + col * (layout.CellWidth + layout.HorizontalGap);
+                    double x = context.PlacementArea.Origin.X + col * (layout.CellWidth + layout.HorizontalGap);
                     double centerX = x + layout.CellWidth / 2;
 
                     // Bottom-align view in cell
@@ -83,16 +89,17 @@ namespace Revit26_Plugin.APUS_V314.Services
                     XYZ center = new XYZ(centerX, centerY, 0);
 
                     // Create viewport
-                    Viewport vp = Viewport.Create(_doc, sheet.Id, item.View.Id, center);
+                    var vp = Viewport.Create(_doc, sheet.Id, item.View.Id, center);
 
                     // Set detail number
-                    detailIndex++;
+                    int detailNumber = context.GetNextDetailNumber();
                     var detailParam = vp.get_Parameter(BuiltInParameter.VIEWPORT_DETAIL_NUMBER);
                     if (detailParam != null && !detailParam.IsReadOnly)
-                        detailParam.Set(detailIndex.ToString());
+                        detailParam.Set(detailNumber.ToString());
 
-                    vm.LogInfo($"PLACED: {item.ViewName} on {sheet.SheetNumber} (Detail {detailIndex})");
-                    vm.Progress.Step();
+                    context.ViewModel?.LogInfo(
+                        $"GRID PLACED: {item.ViewName} on {sheet.SheetNumber} (Detail {detailNumber})");
+                    context.ViewModel?.Progress.Step();
 
                     placed++;
                     currentIndex++;
@@ -105,88 +112,16 @@ namespace Revit26_Plugin.APUS_V314.Services
             return placed;
         }
 
-        public int PlaceAdaptiveOnSheet(
-            ViewSheet sheet,
-            List<SectionItemViewModel> sections,
-            int startIndex,
-            SheetPlacementArea area,
-            double cellWidth,
-            double horizontalGapMm,
-            double verticalGapMm,
-            int columns,
-            AutoPlaceSectionsViewModel vm,
-            ref int detailIndex)
+        private bool CanPlaceView(ViewSection view, ElementId sheetId)
         {
-            double gapX = UnitConversionHelper.MmToFeet(horizontalGapMm);
-            double gapY = UnitConversionHelper.MmToFeet(verticalGapMm);
-
-            double currentY = area.Origin.Y;
-            int placed = 0;
-            int index = startIndex;
-
-            while (index < sections.Count)
+            try
             {
-                // Take next row
-                var rowItems = sections
-                    .Skip(index)
-                    .Take(columns)
-                    .ToList();
-
-                if (!rowItems.Any())
-                    break;
-
-                // Calculate adaptive row height
-                double rowHeight = rowItems
-                    .Select(x => ViewSizeService.Calculate(x.View).HeightFt)
-                    .Max() + gapY;
-
-                // Check vertical fit
-                if (currentY - rowHeight < area.Bottom)
-                    break;
-
-                // Place row
-                for (int col = 0; col < rowItems.Count; col++)
-                {
-                    var item = rowItems[col];
-
-                    if (!Viewport.CanAddViewToSheet(_doc, sheet.Id, item.View.Id))
-                    {
-                        vm.LogWarning($"SKIPPED (already placed): {item.ViewName}");
-                        index++;
-                        continue;
-                    }
-
-                    var footprint = ViewSizeService.Calculate(item.View);
-
-                    // Horizontal position
-                    double x = area.Origin.X + col * (cellWidth + gapX);
-
-                    // Bottom-aligned position
-                    double viewTopY = currentY - (rowHeight - footprint.HeightFt - gapY / 2);
-                    double viewCenterY = viewTopY - (footprint.HeightFt / 2);
-
-                    // Center in cell
-                    double centerX = x + cellWidth / 2;
-                    XYZ center = new XYZ(centerX, viewCenterY, 0);
-
-                    Viewport vp = Viewport.Create(_doc, sheet.Id, item.View.Id, center);
-
-                    detailIndex++;
-                    var detailParam = vp.get_Parameter(BuiltInParameter.VIEWPORT_DETAIL_NUMBER);
-                    if (detailParam != null && !detailParam.IsReadOnly)
-                        detailParam.Set(detailIndex.ToString());
-
-                    vm.LogInfo($"PLACED: {item.ViewName} on {sheet.SheetNumber}");
-                    vm.Progress.Step();
-
-                    placed++;
-                    index++;
-                }
-
-                currentY -= rowHeight;
+                return Viewport.CanAddViewToSheet(_doc, sheetId, view.Id);
             }
-
-            return placed;
+            catch
+            {
+                return false;
+            }
         }
     }
 }
