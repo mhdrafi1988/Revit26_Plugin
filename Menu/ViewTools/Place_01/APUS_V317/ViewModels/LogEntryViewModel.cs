@@ -1,5 +1,6 @@
 // File: LogEntryViewModel.cs
 using System;
+using Revit26_Plugin.APUS_V317.Models;
 
 namespace Revit26_Plugin.APUS_V317.ViewModels
 {

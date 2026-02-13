@@ -6,6 +6,8 @@ namespace Revit26_Plugin.APUS_V317.Models
         Grid,
         BinPacking,
         ReadingOrder,
-        AdaptiveGrid
+        AdaptiveGrid,
+        ReadingOrderBinPacking,
+        MultiSheetOptimizer  // New multi-sheet optimizer
     }
 }

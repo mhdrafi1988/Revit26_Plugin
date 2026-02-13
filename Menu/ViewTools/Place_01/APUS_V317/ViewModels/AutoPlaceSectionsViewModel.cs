@@ -1,5 +1,5 @@
 ﻿// File: AutoPlaceSectionsViewModel.cs
-// FIXED: Proper refresh logic using UIApplication.PostCommand
+// UPDATED: Added MultiStrategyShelf algorithm support
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.Input;
 using Revit26_Plugin.APUS_V317.Commands;
@@ -18,15 +18,9 @@ using System.Windows.Threading;
 
 namespace Revit26_Plugin.APUS_V317.ViewModels
 {
-    public enum LogLevel
-    {
-        Info,
-        Warning,
-        Error,
-        Success
-    }
+   
 
-    public class AutoPlaceSectionsViewModel : BaseViewModel
+      public class AutoPlaceSectionsViewModel : BaseViewModel
     {
         private const string ALL = "All";
         private readonly UIDocument _uidoc;
@@ -139,13 +133,16 @@ namespace Revit26_Plugin.APUS_V317.ViewModels
             }
         }
 
+        // UPDATED: Added MultiStrategyShelf to AvailableAlgorithms
         public ObservableCollection<PlacementAlgorithm> AvailableAlgorithms { get; } =
             new ObservableCollection<PlacementAlgorithm>
             {
                 PlacementAlgorithm.Grid,
                 PlacementAlgorithm.BinPacking,
                 PlacementAlgorithm.ReadingOrder,
-                PlacementAlgorithm.AdaptiveGrid
+                PlacementAlgorithm.AdaptiveGrid,
+                PlacementAlgorithm.ReadingOrderBinPacking,
+                PlacementAlgorithm.MultiSheetOptimizer  // NEW
             };
 
         // ===================== LAYOUT SETTINGS (mm) =====================
@@ -258,36 +255,51 @@ namespace Revit26_Plugin.APUS_V317.ViewModels
         // ---------------- CALCULATED PROPERTIES ----------------
         public int SelectedSectionsCount => FilteredSections?.Cast<SectionItemViewModel>().Count(x => x.IsSelected) ?? 0;
 
+        // UPDATED: Added MultiStrategyShelf to EstimatedSheets
         public int EstimatedSheets
         {
             get
             {
                 if (SelectedSectionsCount == 0) return 0;
-                int viewsPerSheet = SelectedAlgorithm switch
+
+                switch (SelectedAlgorithm)
                 {
-                    PlacementAlgorithm.Grid => 8,
-                    PlacementAlgorithm.BinPacking => 12,
-                    PlacementAlgorithm.ReadingOrder => 10,
-                    PlacementAlgorithm.AdaptiveGrid => 11,
-                    _ => 10
-                };
-                return (int)Math.Ceiling(SelectedSectionsCount / (double)viewsPerSheet);
+                    case PlacementAlgorithm.MultiSheetOptimizer:
+                        return (int)Math.Ceiling(SelectedSectionsCount / 12.0); // Efficient packing
+                    case PlacementAlgorithm.ReadingOrderBinPacking:
+                        return 1;
+                    case PlacementAlgorithm.Grid:
+                        return (int)Math.Ceiling(SelectedSectionsCount / 8.0);
+                    case PlacementAlgorithm.BinPacking:
+                        return (int)Math.Ceiling(SelectedSectionsCount / 12.0);
+                    case PlacementAlgorithm.ReadingOrder:
+                        return (int)Math.Ceiling(SelectedSectionsCount / 10.0);
+                    case PlacementAlgorithm.AdaptiveGrid:
+                        return (int)Math.Ceiling(SelectedSectionsCount / 11.0);
+                    default:
+                        return (int)Math.Ceiling(SelectedSectionsCount / 10.0);
+                }
             }
         }
 
+        // UPDATED: Added MultiStrategyShelf to EstimatedTime
         public string EstimatedTime
         {
             get
             {
                 if (SelectedSectionsCount == 0) return "0s";
+
                 double secondsPerView = SelectedAlgorithm switch
                 {
+                    PlacementAlgorithm.MultiSheetOptimizer => 3.0, // Slightly slower due to 5 strategies
+                    PlacementAlgorithm.ReadingOrderBinPacking => 2.2,
                     PlacementAlgorithm.Grid => 2.0,
                     PlacementAlgorithm.BinPacking => 3.5,
                     PlacementAlgorithm.ReadingOrder => 2.5,
                     PlacementAlgorithm.AdaptiveGrid => 3.0,
                     _ => 2.5
                 };
+
                 int totalSeconds = (int)(SelectedSectionsCount * secondsPerView);
                 if (totalSeconds > 60)
                 {

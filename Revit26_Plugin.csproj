@@ -5,7 +5,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\11\00\05</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\13\00\05</BaseOutputPath>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
@@ -109,6 +109,7 @@
 	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V30312_1_00\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V30312_1_0_PLugins ok\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V30313\**" />
+	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V30313_00\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V30313_0\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V307-Succes\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V307\**" />
@@ -232,6 +233,7 @@
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_V30312_1_00\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_V30312_1_0_PLugins ok\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_V30313\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_V30313_00\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_V30313_0\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_V307-Succes\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_V307\**" />
@@ -355,6 +357,7 @@
 	  <None Remove="Menu\ViewTools\Place_01\APUS_V30312_1_00\**" />
 	  <None Remove="Menu\ViewTools\Place_01\APUS_V30312_1_0_PLugins ok\**" />
 	  <None Remove="Menu\ViewTools\Place_01\APUS_V30313\**" />
+	  <None Remove="Menu\ViewTools\Place_01\APUS_V30313_00\**" />
 	  <None Remove="Menu\ViewTools\Place_01\APUS_V30313_0\**" />
 	  <None Remove="Menu\ViewTools\Place_01\APUS_V307-Succes\**" />
 	  <None Remove="Menu\ViewTools\Place_01\APUS_V307\**" />
@@ -478,6 +481,7 @@
 	  <Page Remove="Menu\ViewTools\Place_01\APUS_V30312_1_00\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\APUS_V30312_1_0_PLugins ok\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\APUS_V30313\**" />
+	  <Page Remove="Menu\ViewTools\Place_01\APUS_V30313_00\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\APUS_V30313_0\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\APUS_V307-Succes\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\APUS_V307\**" />

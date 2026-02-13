@@ -14,15 +14,14 @@ namespace Revit26_Plugin.APUS_V317.Services
             public SectionItemViewModel Item { get; }
             public double X { get; }
             public double Y { get; }
+            public double YBucket { get; set; }
 
-            public SortedSection(
-                SectionItemViewModel item,
-                double x,
-                double y)
+            public SortedSection(SectionItemViewModel item, double x, double y)
             {
                 Item = item;
                 X = x;
                 Y = y;
+                YBucket = y;
             }
         }
 
@@ -40,7 +39,8 @@ namespace Revit26_Plugin.APUS_V317.Services
 
             double tol = Math.Max(yToleranceMm, 1.0) / 304.8; // Convert mm to feet
 
-            return items
+            // First pass: assign Y buckets
+            var sections = items
                 .Select(item =>
                 {
                     XYZ marker = GetMarkerPoint(item.View);
@@ -48,15 +48,46 @@ namespace Revit26_Plugin.APUS_V317.Services
 
                     double rawX = v.DotProduct(right);
                     double rawY = v.DotProduct(up);
-
-                    // Snap Y into tolerance buckets
                     double yBucket = Math.Round(rawY / tol) * tol;
 
                     return new SortedSection(item, rawX, yBucket);
                 })
-                .OrderByDescending(p => p.Y) // top → bottom
-                .ThenBy(p => p.X)             // left → right
                 .ToList();
+
+            // Group by Y bucket
+            var groups = sections
+                .GroupBy(s => s.YBucket)
+                .OrderByDescending(g => g.Key) // Top to bottom
+                .ToList();
+
+            var result = new List<SortedSection>();
+
+            foreach (var group in groups)
+            {
+                // WITHIN EACH ROW: Sort by HEIGHT DESCENDING (tallest first)
+                var rowItems = group
+                    .OrderByDescending(s => GetViewHeight(s.Item.View)) // Tallest first
+                    .ThenBy(s => s.X) // Then left to right as tiebreaker
+                    .ToList();
+
+                result.AddRange(rowItems);
+            }
+
+            return result;
+        }
+
+        private static double GetViewHeight(ViewSection view)
+        {
+            try
+            {
+                var bb = view.CropBox;
+                if (bb != null)
+                {
+                    return bb.Max.Y - bb.Min.Y;
+                }
+            }
+            catch { }
+            return 0;
         }
 
         private static XYZ GetMarkerPoint(ViewSection view)

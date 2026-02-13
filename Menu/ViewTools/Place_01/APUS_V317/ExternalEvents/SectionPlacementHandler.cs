@@ -1,5 +1,5 @@
 ﻿// File: SectionPlacementHandler.cs
-// FIXED: Proper transaction for temporary sheet operations
+// UPDATED: Added MultiSheetOptimizer algorithm support
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.APUS_V317.Helpers;
@@ -287,7 +287,7 @@ namespace Revit26_Plugin.APUS_V317.ExternalEvents
                     SheetNumberService = new SheetNumberService(doc)
                 };
 
-                // Execute algorithm
+                // Execute algorithm based on selection
                 switch (ViewModel.SelectedAlgorithm)
                 {
                     case PlacementAlgorithm.Grid:
@@ -308,6 +308,17 @@ namespace Revit26_Plugin.APUS_V317.ExternalEvents
                     case PlacementAlgorithm.ReadingOrder:
                         var readingOrderPlacer = new SheetPlacementService(doc);
                         result = readingOrderPlacer.PlaceOnMultipleSheets(context, data.Sections);
+                        break;
+
+                    case PlacementAlgorithm.ReadingOrderBinPacking:
+                        var readingBinPlacer = new ReadingOrderBinPlacementService(doc);
+                        result = readingBinPlacer.Place(context, data.Sections, data.ReferenceView);
+                        break;
+
+                    // NEW: Multi-Sheet Optimizer
+                    case PlacementAlgorithm.MultiSheetOptimizer:
+                        var multiSheetOptimizer = new MultiSheetOptimizerService(doc);
+                        result = multiSheetOptimizer.Place(context, data.Sections, data.ReferenceView);
                         break;
 
                     default:

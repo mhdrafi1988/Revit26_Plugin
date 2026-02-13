@@ -1,4 +1,4 @@
-// File: PlacementAlgorithmConverter.cs
+﻿// File: PlacementAlgorithmConverter.cs
 using Revit26_Plugin.APUS_V317.Models;
 using System;
 using System.Globalization;
@@ -18,6 +18,8 @@ namespace Revit26_Plugin.APUS_V317.Converters
                     PlacementAlgorithm.BinPacking => "Bin Packing",
                     PlacementAlgorithm.ReadingOrder => "Reading Order",
                     PlacementAlgorithm.AdaptiveGrid => "Adaptive Grid",
+                    PlacementAlgorithm.ReadingOrderBinPacking => "Reading Order + Bin",
+                    PlacementAlgorithm.MultiSheetOptimizer => "📚 Multi-Sheet Optimizer",
                     _ => algorithm.ToString()
                 };
             }
@@ -35,6 +37,8 @@ namespace Revit26_Plugin.APUS_V317.Converters
                     "Bin Packing" => PlacementAlgorithm.BinPacking,
                     "Reading Order" => PlacementAlgorithm.ReadingOrder,
                     "Adaptive Grid" => PlacementAlgorithm.AdaptiveGrid,
+                    "Reading Order + Bin" => PlacementAlgorithm.ReadingOrderBinPacking,
+                    "📚 Multi-Sheet Optimizer" => PlacementAlgorithm.MultiSheetOptimizer,
                     _ => PlacementAlgorithm.Grid
                 };
             }

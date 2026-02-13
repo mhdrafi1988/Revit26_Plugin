@@ -238,5 +238,37 @@ namespace Revit26_Plugin.APUS_V317.ViewModels
         {
             return $"{ViewName} (ID: {ViewId})";
         }
+        // Add to SectionItemViewModel.cs - for tracking sort positions in logs
+
+        private double _sortX;
+        /// <summary>
+        /// X coordinate for sorting (set during reading order calculation)
+        /// </summary>
+        public double SortX
+        {
+            get => _sortX;
+            set => SetProperty(ref _sortX, value);
+        }
+
+        private double _sortY;
+        /// <summary>
+        /// Y coordinate for sorting (set during reading order calculation)
+        /// </summary>
+        public double SortY
+        {
+            get => _sortY;
+            set => SetProperty(ref _sortY, value);
+        }
+
+        private int _sortIndex;
+        /// <summary>
+        /// Position in sorted order (1-based)
+        /// </summary>
+        public int SortIndex
+        {
+            get => _sortIndex;
+            set => SetProperty(ref _sortIndex, value);
+        }
     }
+
 }
