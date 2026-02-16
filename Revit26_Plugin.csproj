@@ -116,6 +116,8 @@
 	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V314\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V315\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V316\**" />
+	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V317\Services\PlacingAlgorithms\**" />
+	  <Compile Remove="Menu\ViewTools\Place_01\APUS_V318\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\Calloutcopv02\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\Calloutcopv2\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\CalloutCOP_V004\**" />
@@ -240,6 +242,8 @@
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_V314\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_V315\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_V316\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_V317\Services\PlacingAlgorithms\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\APUS_V318\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\Calloutcopv02\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\Calloutcopv2\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\CalloutCOP_V004\**" />
@@ -364,6 +368,8 @@
 	  <None Remove="Menu\ViewTools\Place_01\APUS_V314\**" />
 	  <None Remove="Menu\ViewTools\Place_01\APUS_V315\**" />
 	  <None Remove="Menu\ViewTools\Place_01\APUS_V316\**" />
+	  <None Remove="Menu\ViewTools\Place_01\APUS_V317\Services\PlacingAlgorithms\**" />
+	  <None Remove="Menu\ViewTools\Place_01\APUS_V318\**" />
 	  <None Remove="Menu\ViewTools\Place_01\Calloutcopv02\**" />
 	  <None Remove="Menu\ViewTools\Place_01\Calloutcopv2\**" />
 	  <None Remove="Menu\ViewTools\Place_01\CalloutCOP_V004\**" />
@@ -488,6 +494,8 @@
 	  <Page Remove="Menu\ViewTools\Place_01\APUS_V314\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\APUS_V315\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\APUS_V316\**" />
+	  <Page Remove="Menu\ViewTools\Place_01\APUS_V317\Services\PlacingAlgorithms\**" />
+	  <Page Remove="Menu\ViewTools\Place_01\APUS_V318\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\Calloutcopv02\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\Calloutcopv2\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\CalloutCOP_V004\**" />

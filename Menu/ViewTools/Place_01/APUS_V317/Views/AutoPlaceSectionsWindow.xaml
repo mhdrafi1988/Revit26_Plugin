@@ -5,7 +5,7 @@
         xmlns:converters="clr-namespace:Revit26_Plugin.APUS_V317.Converters"
         xmlns:viewModels="clr-namespace:Revit26_Plugin.APUS_V317.ViewModels"
         xmlns:models="clr-namespace:Revit26_Plugin.APUS_V317.Models"
-        Title="APUS V314 - Auto Place Sections"
+        Title="APUS V314 - Smart Shelf Optimizer"
         Height="950" Width="1300"
         WindowStartupLocation="CenterOwner"
         ResizeMode="CanResize"
@@ -81,8 +81,8 @@
 
                 <!-- Title and Status -->
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="📐" FontSize="24" Margin="0,0,10,0"/>
-                    <TextBlock Text="APUS V314 - Auto Place Sections" 
+                    <TextBlock Text="🧠" FontSize="24" Margin="0,0,10,0"/>
+                    <TextBlock Text="APUS V314 - Smart Shelf Optimizer" 
                                FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
 
                     <TextBlock Text="•" Margin="15,0,10,0" FontSize="20" VerticalAlignment="Center"/>
@@ -161,7 +161,7 @@
                     <TextBlock Text="Algorithm: " FontWeight="Bold" Margin="0,0,5,0"/>
                     <ComboBox ItemsSource="{Binding AvailableAlgorithms}" 
                               SelectedItem="{Binding SelectedAlgorithm}"
-                              Width="150" ToolTip="Select placement algorithm"
+                              Width="180" ToolTip="Select placement algorithm"
                               IsEnabled="{Binding CurrentState, Converter={StaticResource StateConverter}, ConverterParameter=IsEnabled}"/>
                 </StackPanel>
             </Grid>
@@ -368,7 +368,7 @@
                                     </Grid>
                                 </GroupBox>
 
-                                <!-- Advanced Options (Collapsible) -->
+                                <!-- Advanced Options -->
                                 <Expander Header="Advanced Options" Margin="0,10,0,0" IsExpanded="False">
                                     <StackPanel>
                                         <CheckBox Content="Maintain aspect ratio" 
@@ -389,19 +389,103 @@
                         </ScrollViewer>
                     </TabItem>
 
-                    <!-- TAB 2: Algorithm Settings -->
-                    <TabItem Header="Algorithm">
+                    <!-- TAB 2: Smart Optimizer Settings -->
+                    <TabItem Header="Smart Optimizer" IsSelected="True">
                         <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="5">
                             <StackPanel>
-                                <GroupBox Header="Placement Algorithm">
+                                <!-- Smart Optimizer Info -->
+                                <GroupBox Header="🧠 Smart Shelf Optimizer">
                                     <StackPanel>
-                                        <ComboBox ItemsSource="{Binding AvailableAlgorithms}" 
-                                                  SelectedItem="{Binding SelectedAlgorithm}"
+                                        <TextBlock TextWrapping="Wrap" Margin="0,0,0,10">
+                                            The Smart Optimizer tests 5 different sorting strategies and gap variations to find the optimal layout for your sections:
+                                        </TextBlock>
+
+                                        <Border Background="#F0F8FF" Padding="10" CornerRadius="4" Margin="0,0,0,10">
+                                            <StackPanel>
+                                                <TextBlock Text="✓ Reading Order (Top→Bottom, Left→Right)" Margin="0,2" FontWeight="SemiBold"/>
+                                                <TextBlock Text="✓ Largest First (by area)" Margin="0,2" FontWeight="SemiBold"/>
+                                                <TextBlock Text="✓ Smallest First (by area)" Margin="0,2" FontWeight="SemiBold"/>
+                                                <TextBlock Text="✓ Tallest First (by height)" Margin="0,2" FontWeight="SemiBold"/>
+                                                <TextBlock Text="✓ Widest First (by width)" Margin="0,2" FontWeight="SemiBold"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </StackPanel>
+                                </GroupBox>
+
+                                <!-- Grid Configuration -->
+                                <GroupBox Header="Grid Configuration" Margin="0,10,0,0">
+                                    <StackPanel>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+
+                                            <!-- Rows -->
+                                            <TextBlock Text="Rows:" Grid.Row="0" Grid.Column="0" 
+                                                       VerticalAlignment="Center" Margin="0,0,5,10" FontWeight="Bold"/>
+                                            <TextBox Text="{Binding GridRows, UpdateSourceTrigger=PropertyChanged}" 
+                                                     Grid.Row="0" Grid.Column="1" Margin="0,0,0,10"
+                                                     IsEnabled="{Binding EnableGridInput}"/>
+
+                                            <!-- Columns -->
+                                            <TextBlock Text="Columns:" Grid.Row="1" Grid.Column="0" 
+                                                       VerticalAlignment="Center" Margin="0,0,5,10" FontWeight="Bold"/>
+                                            <TextBox Text="{Binding GridColumns, UpdateSourceTrigger=PropertyChanged}" 
+                                                     Grid.Row="1" Grid.Column="1" Margin="0,0,0,10"
+                                                     IsEnabled="{Binding EnableGridInput}"/>
+
+                                            <!-- Max Views -->
+                                            <TextBlock Text="Max views per sheet:" Grid.Row="2" Grid.Column="0" 
+                                                       VerticalAlignment="Center" Margin="0,0,5,0" FontWeight="SemiBold"/>
+                                            <TextBlock Text="{Binding MaxViewsPerSheet}" Grid.Row="2" Grid.Column="1" 
+                                                       VerticalAlignment="Center" FontWeight="Bold" Foreground="#4CAF50"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </GroupBox>
+
+                                <!-- Multi-Sheet Settings -->
+                                <GroupBox Header="Multi-Sheet Settings" Margin="0,10,0,0">
+                                    <StackPanel>
+                                        <CheckBox Content="Place to multiple sheets" 
+                                                  IsChecked="{Binding PlaceToMultipleSheets}"
+                                                  Margin="0,5,0,10"
+                                                  ToolTip="When checked, continues placing on new sheets until all sections are placed"
                                                   IsEnabled="{Binding CurrentState, Converter={StaticResource StateConverter}, ConverterParameter=IsEnabled}"/>
 
-                                        <TextBlock Text="{Binding SelectedAlgorithm, Converter={StaticResource AlgorithmDescriptionConverter}}" 
-                                                   Margin="0,10,0,0" TextWrapping="Wrap" FontStyle="Italic"
-                                                   Foreground="#666666"/>
+                                        <Grid Margin="0,5,0,0" IsEnabled="{Binding PlaceToMultipleSheets}">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+
+                                            <TextBlock Text="Max sheets:" Grid.Row="0" Grid.Column="0" 
+                                                       VerticalAlignment="Center" Margin="0,0,10,10"/>
+                                            <TextBox Text="{Binding MaxSheets}" Grid.Row="0" Grid.Column="1" 
+                                                     Margin="0,0,0,10" Width="80" HorizontalAlignment="Left"/>
+
+                                            <TextBlock Grid.Row="1" Grid.ColumnSpan="2" 
+                                                       Text="Note: In single-sheet mode, only the best layout for one sheet is used. Remaining sections are skipped."
+                                                       TextWrapping="Wrap" FontStyle="Italic" Foreground="#666666" Margin="0,5"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </GroupBox>
+
+                                <!-- Gap Optimization Info -->
+                                <GroupBox Header="Gap Optimization" Margin="0,10,0,0">
+                                    <StackPanel>
+                                        <TextBlock Text="Gaps are automatically adjusted within ±10% of your specified values to optimize layout."
+                                                   TextWrapping="Wrap" Margin="0,0,0,10"/>
+                                        <TextBlock Text="Minimum gap: 3mm" FontWeight="Bold" Foreground="#4CAF50"/>
                                     </StackPanel>
                                 </GroupBox>
                             </StackPanel>
@@ -420,8 +504,37 @@
                                                    Margin="0,0,0,5"/>
                                         <TextBlock Text="{Binding EstimatedTime, StringFormat=Estimated Time: {0}}"
                                                    Margin="0,0,0,5"/>
-                                        <TextBlock Text="Layout Efficiency: 85%" 
-                                                   Margin="0,0,0,5" Foreground="Green"/>
+
+                                        <!-- Mode Indicator -->
+                                        <Border Margin="0,10,0,0" Padding="8" 
+                                                Background="{Binding PlaceToMultipleSheets, Converter={StaticResource BoolToColorConverter}}" 
+                                                BorderBrush="#4CAF50" BorderThickness="1" CornerRadius="4">
+                                            <TextBlock Text="{Binding PlaceToMultipleSheets, StringFormat=Mode: Multi-sheet: {0}}" 
+                                                       FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                        </Border>
+
+                                        <!-- Grid Info -->
+                                        <Border Margin="0,10,0,0" Padding="8" Background="#F0F8FF" 
+                                                BorderBrush="#2196F3" BorderThickness="1" CornerRadius="4">
+                                            <StackPanel>
+                                                <TextBlock Text="Grid Configuration:" FontWeight="Bold" Margin="0,0,0,5"/>
+                                                <TextBlock Text="{Binding GridRows, StringFormat=  • Rows: {0}}"/>
+                                                <TextBlock Text="{Binding GridColumns, StringFormat=  • Columns: {0}}"/>
+                                                <TextBlock Text="{Binding MaxViewsPerSheet, StringFormat=  • Max views per sheet: {0}}" 
+                                                           FontWeight="SemiBold" Foreground="#4CAF50"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </StackPanel>
+                                </GroupBox>
+
+                                <GroupBox Header="Smart Optimizer Features" Margin="0,10,0,0">
+                                    <StackPanel>
+                                        <TextBlock Text="✓ 5 Sorting Strategies Tested" Margin="0,2"/>
+                                        <TextBlock Text="✓ Gap Optimization (±10%)" Margin="0,2"/>
+                                        <TextBlock Text="✓ Bottom Alignment within Rows" Margin="0,2"/>
+                                        <TextBlock Text="✓ Left Alignment within Columns" Margin="0,2"/>
+                                        <TextBlock Text="✓ Space Filling Algorithm" Margin="0,2"/>
+                                        <TextBlock Text="✓ No Overlap Guarantee" Margin="0,2" FontWeight="Bold" Foreground="#4CAF50"/>
                                     </StackPanel>
                                 </GroupBox>
                             </StackPanel>
@@ -485,10 +598,10 @@
                         <!-- Action Buttons -->
                         <StackPanel Grid.Column="1" Orientation="Horizontal">
                             <!-- Place Button -->
-                            <Button Content="🚀 Start Placement" 
+                            <Button Content="🚀 Start Smart Placement" 
                                     Command="{Binding PlaceCommand}"
                                     Background="#4CAF50" Foreground="White" FontWeight="Bold"
-                                    ToolTip="Start placing selected sections"
+                                    ToolTip="Start smart placement with 5 strategies"
                                     IsEnabled="{Binding CurrentState, Converter={StaticResource StateConverter}, ConverterParameter=PlaceButtonEnabled}">
                                 <Button.Style>
                                     <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
@@ -497,7 +610,7 @@
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding CurrentState}" Value="Processing">
                                                 <Setter Property="Background" Value="#FF9800"/>
-                                                <Setter Property="Content" Value="⏳ Processing..."/>
+                                                <Setter Property="Content" Value="⏳ Optimizing..."/>
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
@@ -536,7 +649,7 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock Text="Live Log" FontWeight="Bold"/>
+                            <TextBlock Text="Live Log - Strategy Testing  Placement Updates" FontWeight="Bold"/>
 
                             <StackPanel Grid.Column="1" Orientation="Horizontal">
                                 <Button Content="Clear Log" 
