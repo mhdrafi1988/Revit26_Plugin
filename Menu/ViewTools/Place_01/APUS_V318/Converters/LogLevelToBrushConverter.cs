@@ -1,11 +1,12 @@
 // File: LogLevelToBrushConverter.cs
-using Revit26_Plugin.APUS_V317.ViewModels;
+using Revit26_Plugin.APUS_V318.ViewModels;
+using Revit26_Plugin.APUS_V318.Models;
 using System;
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace Revit26_Plugin.APUS_V317.Converters
+namespace Revit26_Plugin.APUS_V318.Converters
 {
     public class LogLevelToBrushConverter : IValueConverter
     {

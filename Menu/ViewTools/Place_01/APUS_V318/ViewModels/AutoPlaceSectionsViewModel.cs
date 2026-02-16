@@ -1,11 +1,10 @@
 ﻿// File: AutoPlaceSectionsViewModel.cs
-// FIXED: Proper refresh logic using UIApplication.PostCommand
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.APUS_V317.Commands;
-using Revit26_Plugin.APUS_V317.ExternalEvents;
-using Revit26_Plugin.APUS_V317.Models;
-using Revit26_Plugin.APUS_V317.Services;
+using Revit26_Plugin.APUS_V318.Commands;
+using Revit26_Plugin.APUS_V318.ExternalEvents;
+using Revit26_Plugin.APUS_V318.Models;
+using Revit26_Plugin.APUS_V318.Services;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -16,16 +15,8 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
 
-namespace Revit26_Plugin.APUS_V317.ViewModels
+namespace Revit26_Plugin.APUS_V318.ViewModels
 {
-    public enum LogLevel
-    {
-        Info,
-        Warning,
-        Error,
-        Success
-    }
-
     public class AutoPlaceSectionsViewModel : BaseViewModel
     {
         private const string ALL = "All";
@@ -37,6 +28,70 @@ namespace Revit26_Plugin.APUS_V317.ViewModels
         private string _statusMessage = "Ready";
         private string _copyableLogText = string.Empty;
         private bool _isLogExpanded = true;
+
+        // ===================== GRID PLACEMENT PROPERTIES =====================
+        private bool _useGridPlacement = true; // Always true now
+        private int _gridColumns = 4;
+        private int _gridRows = 4;
+        private bool _enableGridInput = true;
+
+        public bool UseGridPlacement
+        {
+            get => _useGridPlacement;
+            set
+            {
+                if (SetField(ref _useGridPlacement, value))
+                {
+                    EnableGridInput = value;
+                    OnPropertyChanged(nameof(CanPlace));
+                    OnPropertyChanged(nameof(EnableGridInput));
+                    OnPropertyChanged(nameof(MaxViewsPerSheet));
+                    CommandManager.InvalidateRequerySuggested();
+                }
+            }
+        }
+
+        public int GridColumns
+        {
+            get => _gridColumns;
+            set
+            {
+                if (value >= 1 && value <= 8) // Limit between 1-8 columns
+                {
+                    if (SetField(ref _gridColumns, value))
+                    {
+                        OnPropertyChanged(nameof(MaxViewsPerSheet));
+                        OnPropertyChanged(nameof(EstimatedSheets));
+                        OnPropertyChanged(nameof(EstimatedTime));
+                    }
+                }
+            }
+        }
+
+        public int GridRows
+        {
+            get => _gridRows;
+            set
+            {
+                if (value >= 1 && value <= 8) // Limit between 1-8 rows
+                {
+                    if (SetField(ref _gridRows, value))
+                    {
+                        OnPropertyChanged(nameof(MaxViewsPerSheet));
+                        OnPropertyChanged(nameof(EstimatedSheets));
+                        OnPropertyChanged(nameof(EstimatedTime));
+                    }
+                }
+            }
+        }
+
+        public bool EnableGridInput
+        {
+            get => _enableGridInput;
+            private set => SetField(ref _enableGridInput, value);
+        }
+
+        public int MaxViewsPerSheet => GridColumns * GridRows;
 
         // ---------------- DATA COLLECTIONS (Pre-loaded) ----------------
         public ObservableCollection<SectionItemViewModel> Sections { get; } = new();
@@ -109,6 +164,14 @@ namespace Revit26_Plugin.APUS_V317.ViewModels
             set => SetField(ref _createBackupSheets, value);
         }
 
+        // NEW: Multi-sheet option
+        private bool _placeToMultipleSheets = false;
+        public bool PlaceToMultipleSheets
+        {
+            get => _placeToMultipleSheets;
+            set => SetField(ref _placeToMultipleSheets, value);
+        }
+
         // ---------------- TITLE BLOCK ----------------
         private TitleBlockItemViewModel _selectedTitleBlock;
         public TitleBlockItemViewModel SelectedTitleBlock
@@ -124,8 +187,8 @@ namespace Revit26_Plugin.APUS_V317.ViewModels
             }
         }
 
-        // ---------------- PLACEMENT ALGORITHM ----------------
-        private PlacementAlgorithm _selectedAlgorithm = PlacementAlgorithm.ReadingOrder;
+        // ---------------- PLACEMENT ALGORITHM (Simplified - always Grid) ----------------
+        private PlacementAlgorithm _selectedAlgorithm = PlacementAlgorithm.Grid;
         public PlacementAlgorithm SelectedAlgorithm
         {
             get => _selectedAlgorithm;
@@ -133,19 +196,23 @@ namespace Revit26_Plugin.APUS_V317.ViewModels
             {
                 if (SetField(ref _selectedAlgorithm, value))
                 {
+                    // Always force Grid placement
+                    _selectedAlgorithm = PlacementAlgorithm.Grid;
+                    UseGridPlacement = true;
+
                     OnPropertyChanged(nameof(EstimatedSheets));
                     OnPropertyChanged(nameof(EstimatedTime));
+                    OnPropertyChanged(nameof(CanPlace));
+                    CommandManager.InvalidateRequerySuggested();
                 }
             }
         }
 
+        // Single algorithm available
         public ObservableCollection<PlacementAlgorithm> AvailableAlgorithms { get; } =
             new ObservableCollection<PlacementAlgorithm>
             {
-                PlacementAlgorithm.Grid,
-                PlacementAlgorithm.BinPacking,
-                PlacementAlgorithm.ReadingOrder,
-                PlacementAlgorithm.AdaptiveGrid
+                PlacementAlgorithm.Grid
             };
 
         // ===================== LAYOUT SETTINGS (mm) =====================
@@ -263,15 +330,12 @@ namespace Revit26_Plugin.APUS_V317.ViewModels
             get
             {
                 if (SelectedSectionsCount == 0) return 0;
-                int viewsPerSheet = SelectedAlgorithm switch
+
+                if (PlaceToMultipleSheets)
                 {
-                    PlacementAlgorithm.Grid => 8,
-                    PlacementAlgorithm.BinPacking => 12,
-                    PlacementAlgorithm.ReadingOrder => 10,
-                    PlacementAlgorithm.AdaptiveGrid => 11,
-                    _ => 10
-                };
-                return (int)Math.Ceiling(SelectedSectionsCount / (double)viewsPerSheet);
+                    return (int)Math.Ceiling(SelectedSectionsCount / (double)MaxViewsPerSheet);
+                }
+                return 1; // Single sheet mode
             }
         }
 
@@ -280,15 +344,10 @@ namespace Revit26_Plugin.APUS_V317.ViewModels
             get
             {
                 if (SelectedSectionsCount == 0) return "0s";
-                double secondsPerView = SelectedAlgorithm switch
-                {
-                    PlacementAlgorithm.Grid => 2.0,
-                    PlacementAlgorithm.BinPacking => 3.5,
-                    PlacementAlgorithm.ReadingOrder => 2.5,
-                    PlacementAlgorithm.AdaptiveGrid => 3.0,
-                    _ => 2.5
-                };
+
+                double secondsPerView = 2.0; // Grid algorithm is fast
                 int totalSeconds = (int)(SelectedSectionsCount * secondsPerView);
+
                 if (totalSeconds > 60)
                 {
                     int minutes = totalSeconds / 60;
@@ -390,6 +449,8 @@ namespace Revit26_Plugin.APUS_V317.ViewModels
             LogInfo("✅ UI READY - Data pre-loaded from Revit context");
             LogInfo($"📊 Sections: {Sections.Count} total, {Sections.Count(s => !s.IsPlaced)} unplaced");
             LogInfo($"🏷️ Title blocks: {TitleBlocks.Count}");
+            LogInfo($"📐 Grid default: {GridRows}×{GridColumns} (max {MaxViewsPerSheet} views per sheet)");
+            LogInfo($"📄 Multi-sheet mode: {(PlaceToMultipleSheets ? "Enabled" : "Disabled (single sheet)")}");
 
             CurrentState = PluginState.ReadyToPlace;
         }
@@ -518,11 +579,9 @@ namespace Revit26_Plugin.APUS_V317.ViewModels
 
             try
             {
-                // METHOD 1: Use UIApplication.PostCommand with RevitCommandId
                 var uiApp = _uidoc.Application;
 
-                // Look up the command by ID - you need to register this in your .addin file
-                var commandId = RevitCommandId.LookupCommandId("Custom.APUS_V317.AutoPlaceSections");
+                var commandId = RevitCommandId.LookupCommandId("Custom.APUS_V318.AutoPlaceSections");
 
                 if (commandId != null && uiApp.CanPostCommand(commandId))
                 {
@@ -531,7 +590,6 @@ namespace Revit26_Plugin.APUS_V317.ViewModels
                 }
                 else
                 {
-                    // METHOD 2: Use the static Invoke method
                     LogInfo("Command ID not found, using direct invocation...");
                     var result = AutoPlaceSectionsCommand.Invoke(uiApp);
 
@@ -558,7 +616,6 @@ namespace Revit26_Plugin.APUS_V317.ViewModels
             {
                 LogError($"❌ Refresh failed: {ex.Message}");
 
-                // METHOD 3: Emergency fallback - create new instance directly
                 try
                 {
                     LogInfo("Attempting emergency direct execution...");
@@ -573,7 +630,6 @@ namespace Revit26_Plugin.APUS_V317.ViewModels
                 {
                     LogError($"❌ All refresh methods failed: {innerEx.Message}");
 
-                    // Notify user to restart the command manually
                     System.Windows.MessageBox.Show(
                         "Could not automatically refresh. Please close this window and restart the command from the Revit ribbon.",
                         "APUS V314 - Refresh Failed",
@@ -663,7 +719,9 @@ namespace Revit26_Plugin.APUS_V317.ViewModels
         {
             var sb = new StringBuilder();
             sb.AppendLine("📋 PLACEMENT CONFIGURATION:");
-            sb.AppendLine($"   • Algorithm: {SelectedAlgorithm}");
+            sb.AppendLine($"   • Algorithm: Grid");
+            sb.AppendLine($"   • Grid: {GridRows}×{GridColumns} (max {MaxViewsPerSheet} per sheet)");
+            sb.AppendLine($"   • Multi-sheet mode: {(PlaceToMultipleSheets ? "Enabled" : "Disabled (single sheet)")}");
             sb.AppendLine($"   • Sections to place: {sectionCount}");
             sb.AppendLine($"   • Title block: {SelectedTitleBlock?.DisplayName ?? "None selected"}");
             sb.AppendLine($"   • Margins: L={LeftMarginMm}mm, R={RightMarginMm}mm, T={TopMarginMm}mm, B={BottomMarginMm}mm");

@@ -1,14 +1,14 @@
 ﻿// File: SmartSheetOptimizerService.cs
 using Autodesk.Revit.DB;
-using Revit26_Plugin.APUS_V317.ExternalEvents;
-using Revit26_Plugin.APUS_V317.Helpers;
-using Revit26_Plugin.APUS_V317.Models;
-using Revit26_Plugin.APUS_V317.ViewModels;
+using Revit26_Plugin.APUS_V318.ExternalEvents;
+using Revit26_Plugin.APUS_V318.Helpers;
+using Revit26_Plugin.APUS_V318.Models;
+using Revit26_Plugin.APUS_V318.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.APUS_V317.Services
+namespace Revit26_Plugin.APUS_V318.Services
 {
     /// <summary>
     /// SMART SHEET OPTIMIZER - Places maximum views on ONE sheet with 95% utilization target
@@ -24,7 +24,7 @@ namespace Revit26_Plugin.APUS_V317.Services
     /// ✓ ONE SHEET ONLY - skip remaining sections
     /// ✓ Live UI updates with all details
     /// </summary>
-    public class MultiStrategyShelfLayoutService
+    public class SmartSheetOptimizerService
     {
         private readonly Document _doc;
         private const double ROW_TOLERANCE_MM = 50; // Tolerance for grouping into same row
@@ -33,7 +33,7 @@ namespace Revit26_Plugin.APUS_V317.Services
         private const int MAX_RETRY_ATTEMPTS = 3; // Try 3 times to improve
         private const double IMPROVEMENT_THRESHOLD = 5; // Need 5% improvement to continue trying
 
-        public MultiStrategyShelfLayoutService(Document doc)
+        public SmartSheetOptimizerService(Document doc)
         {
             _doc = doc ?? throw new ArgumentNullException(nameof(doc));
         }
@@ -109,13 +109,10 @@ namespace Revit26_Plugin.APUS_V317.Services
 
                 // Track best result across all attempts
                 SheetPlacementResult bestResult = null;
-                int attemptNumber = 0;
+                double previousUtilization = 0; // FIX: Initialize variable
 
-                // Try different strategies to achieve 95%
-                while (attemptNumber < MAX_RETRY_ATTEMPTS)
+                for (int attemptNumber = 1; attemptNumber <= MAX_RETRY_ATTEMPTS; attemptNumber++)
                 {
-                    attemptNumber++;
-
                     context.ViewModel?.LogInfo($"\n   📌 ATTEMPT {attemptNumber}/{MAX_RETRY_ATTEMPTS}");
 
                     // For each attempt, try different gap variations
@@ -150,14 +147,19 @@ namespace Revit26_Plugin.APUS_V317.Services
                         break;
                     }
 
-                    // Check if we're making meaningful progress
-                    if (attemptNumber > 1 && bestResult.BestUtilization - previousUtilization < IMPROVEMENT_THRESHOLD)
+                    // Check if we're making meaningful progress (only if we have a previous utilization)
+                    if (attemptNumber > 1)
                     {
-                        context.ViewModel?.LogInfo($"      ⏹️ Stopping - improvement less than {IMPROVEMENT_THRESHOLD}%");
-                        break;
+                        double improvement = bestResult.BestUtilization - previousUtilization;
+                        if (improvement < IMPROVEMENT_THRESHOLD)
+                        {
+                            context.ViewModel?.LogInfo($"      ⏹️ Stopping - improvement less than {IMPROVEMENT_THRESHOLD}% ({improvement:F1}%)");
+                            break;
+                        }
                     }
 
-                    double previousUtilization = bestResult.BestUtilization;
+                    // Store current utilization for next iteration comparison
+                    previousUtilization = bestResult.BestUtilization;
                 }
 
                 // ----- STAGE 4: CREATE SHEET WITH BEST RESULT -----
@@ -330,8 +332,9 @@ namespace Revit26_Plugin.APUS_V317.Services
                 // Calculate row height (tallest view in row)
                 double rowHeight = row.Items.Max(i => i.Height);
 
-                // Check if row fits vertically
-                if (currentY - rowHeight < startY - usableHeight)
+                // Check if row fits vertically (including gap for next row)
+                double spaceNeeded = rowHeight + gapV;
+                if (currentY - spaceNeeded < startY - usableHeight)
                 {
                     break;
                 }
@@ -344,15 +347,16 @@ namespace Revit26_Plugin.APUS_V317.Services
 
                 foreach (var item in rowItems)
                 {
-                    // Check if item fits horizontally
-                    if (currentX + item.Width > startX + usableWidth)
+                    // Check if item fits horizontally (including gap for next item)
+                    double spaceNeededH = item.Width + gapH;
+                    if (currentX + spaceNeededH > startX + usableWidth)
                     {
                         continue;
                     }
 
-                    // Calculate position (LEFT ALIGNED)
+                    // Calculate position (LEFT ALIGNED, BOTTOM ALIGNED)
                     double centerX = currentX + item.Width / 2;
-                    double centerY = rowBottomY + item.Height / 2; // BOTTOM ALIGNED
+                    double centerY = rowBottomY + item.Height / 2;
 
                     placements.Add(new PlacementData
                     {

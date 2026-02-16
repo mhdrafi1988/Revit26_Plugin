@@ -1,14 +1,14 @@
 ﻿// File: ReadingOrderBinPlacementService.cs
 using Autodesk.Revit.DB;
-using Revit26_Plugin.APUS_V317.ExternalEvents;
-using Revit26_Plugin.APUS_V317.Helpers;
-using Revit26_Plugin.APUS_V317.Models;
-using Revit26_Plugin.APUS_V317.ViewModels;
+using Revit26_Plugin.APUS_V318.ExternalEvents;
+using Revit26_Plugin.APUS_V318.Helpers;
+using Revit26_Plugin.APUS_V318.Models;
+using Revit26_Plugin.APUS_V318.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.APUS_V317.Services
+namespace Revit26_Plugin.APUS_V318.Services
 {
     /// <summary>
     /// SHELF LAYOUT ALGORITHM:

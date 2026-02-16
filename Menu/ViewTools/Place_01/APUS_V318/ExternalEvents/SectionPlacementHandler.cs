@@ -1,16 +1,15 @@
 ﻿// File: SectionPlacementHandler.cs
-// FIXED: Proper transaction for temporary sheet operations
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.APUS_V317.Helpers;
-using Revit26_Plugin.APUS_V317.Models;
-using Revit26_Plugin.APUS_V317.Services;
-using Revit26_Plugin.APUS_V317.ViewModels;
+using Revit26_Plugin.APUS_V318.Helpers;
+using Revit26_Plugin.APUS_V318.Models;
+using Revit26_Plugin.APUS_V318.Services;
+using Revit26_Plugin.APUS_V318.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.APUS_V317.ExternalEvents
+namespace Revit26_Plugin.APUS_V318.ExternalEvents
 {
     /// <summary>
     /// SINGLE SOURCE OF TRUTH for Revit document modification.
@@ -51,19 +50,19 @@ namespace Revit26_Plugin.APUS_V317.ExternalEvents
             }
 
             // --- STAGE 3: TRANSACTION GROUP - ALL OR NOTHING ---
-            using (var transactionGroup = new TransactionGroup(doc, "APUS V314 – Multi-Sheet Section Placement"))
+            using (var transactionGroup = new TransactionGroup(doc, "APUS V314 – Grid Section Placement"))
             {
                 try
                 {
                     transactionGroup.Start();
 
-                    using (var transaction = new Transaction(doc, "Place Sections"))
+                    using (var transaction = new Transaction(doc, "Place Sections in Grid"))
                     {
                         transaction.Start();
 
                         try
                         {
-                            // Execute placement - all services work within this transaction
+                            // Execute grid placement - all services work within this transaction
                             var placementResult = ExecutePlacementAlgorithm(
                                 doc,
                                 placementData,
@@ -153,7 +152,7 @@ namespace Revit26_Plugin.APUS_V317.ExternalEvents
                 return result;
             }
 
-            // 5. Calculate placement area using TEMPORARY sheet - NOW WITH PROPER TRANSACTION
+            // 5. Calculate placement area using TEMPORARY sheet
             var placementArea = CalculatePlacementArea(doc, titleBlock);
             if (placementArea == null)
             {
@@ -161,7 +160,7 @@ namespace Revit26_Plugin.APUS_V317.ExternalEvents
                 return result;
             }
 
-            // 6. Check spatial sorting (don't modify document)
+            // 6. Check reference view for spatial sorting
             var referenceView = uidoc.ActiveView;
             if (referenceView == null)
             {
@@ -169,13 +168,8 @@ namespace Revit26_Plugin.APUS_V317.ExternalEvents
                 return result;
             }
 
-            var sorted = SectionSortingService
-                .SortLeftToRight(filtered, referenceView, ViewModel.YToleranceMm)
-                .Select(x => x.Item)
-                .ToList();
-
             result.IsValid = true;
-            result.FilteredSections = sorted;
+            result.FilteredSections = filtered; // Will be sorted in placement service
             result.TitleBlock = titleBlock;
             result.PlacementArea = placementArea;
 
@@ -270,7 +264,7 @@ namespace Revit26_Plugin.APUS_V317.ExternalEvents
         {
             var result = new PlacementResult();
 
-            ViewModel?.LogInfo($"🚀 Executing placement algorithm: {ViewModel.SelectedAlgorithm}");
+            ViewModel?.LogInfo($"🚀 Executing GRID placement algorithm");
             ViewModel.Progress.Reset(data.Sections.Count);
 
             try
@@ -287,33 +281,15 @@ namespace Revit26_Plugin.APUS_V317.ExternalEvents
                     SheetNumberService = new SheetNumberService(doc)
                 };
 
-                // Execute algorithm
-                switch (ViewModel.SelectedAlgorithm)
-                {
-                    case PlacementAlgorithm.Grid:
-                        var gridPlacer = new MultiSheetGridPlacementService(doc);
-                        result = gridPlacer.Place(context, data.Sections);
-                        break;
-
-                    case PlacementAlgorithm.AdaptiveGrid:
-                        var adaptivePlacer = new AdaptiveGridPlacementService(doc);
-                        result = adaptivePlacer.PlaceSections(context, data.Sections);
-                        break;
-
-                    case PlacementAlgorithm.BinPacking:
-                        var binPlacer = new MultiSheetBinPlacementService(doc);
-                        result = binPlacer.Place(context, data.Sections);
-                        break;
-
-                    case PlacementAlgorithm.ReadingOrder:
-                        var readingOrderPlacer = new SheetPlacementService(doc);
-                        result = readingOrderPlacer.PlaceOnMultipleSheets(context, data.Sections);
-                        break;
-
-                    default:
-                        result.ErrorMessage = $"Unknown algorithm: {ViewModel.SelectedAlgorithm}";
-                        return result;
-                }
+                // Use simplified grid placement service
+                var gridPlacer = new SimpleGridPlacementService(doc);
+                result = gridPlacer.Place(
+                    context,
+                    data.Sections,
+                    data.ReferenceView,
+                    ViewModel.GridRows,      // User-defined rows
+                    ViewModel.GridColumns,    // User-defined columns
+                    ViewModel.PlaceToMultipleSheets);  // Multi-sheet option
 
                 return result;
             }
@@ -352,7 +328,7 @@ namespace Revit26_Plugin.APUS_V317.ExternalEvents
             ViewModel.LogInfo($"Sheets used: {sheetList}");
         }
 
-        public string GetName() => "APUS V314 – Section Placement Handler";
+        public string GetName() => "APUS V314 – Grid Section Placement Handler";
 
         // Helper classes
         private class ValidationResult

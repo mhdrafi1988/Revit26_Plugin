@@ -1,0 +1,669 @@
+﻿<Window x:Class="Revit26_Plugin.APUS_V318.Views.AutoPlaceSectionsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:Revit26_Plugin.APUS_V318.Views"
+        xmlns:converters="clr-namespace:Revit26_Plugin.APUS_V318.Converters"
+        xmlns:viewModels="clr-namespace:Revit26_Plugin.APUS_V318.ViewModels"
+        xmlns:models="clr-namespace:Revit26_Plugin.APUS_V318.Models"
+        Title="APUS V314 - Grid Section Placement"
+        Height="950" Width="1300"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResize"
+        MinHeight="800" MinWidth="1200">
+
+    <Window.Resources>
+        <!-- Converters -->
+        <converters:PluginStateConverter x:Key="StateConverter"/>
+        <converters:BooleanToVisibilityConverter x:Key="BoolToVis"/>
+        <converters:LogLevelToBrushConverter x:Key="LogColorConverter"/>
+        <converters:BoolToColorConverter x:Key="BoolToColorConverter" TrueColor="Green" FalseColor="Gray"/>
+        <converters:ViewSizeConverter x:Key="ViewSizeConverter"/>
+        <converters:PlacementAlgorithmConverter x:Key="PlacementAlgorithmConverter"/>
+
+        <!-- Style for GroupBox headers -->
+        <Style TargetType="GroupBox">
+            <Setter Property="Margin" Value="0,0,0,10"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#CCCCCC"/>
+        </Style>
+
+        <!-- Style for TextBox -->
+        <Style TargetType="TextBox">
+            <Setter Property="Margin" Value="0,2,0,5"/>
+            <Setter Property="Padding" Value="3"/>
+            <Setter Property="MinHeight" Value="24"/>
+        </Style>
+
+        <!-- Style for ComboBox -->
+        <Style TargetType="ComboBox">
+            <Setter Property="Margin" Value="0,2,0,5"/>
+            <Setter Property="Padding" Value="3"/>
+            <Setter Property="MinHeight" Value="26"/>
+        </Style>
+
+        <!-- Style for Buttons -->
+        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Margin" Value="5,0,0,0"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="MinWidth" Value="80"/>
+        </Style>
+
+        <!-- Style for Status Indicator -->
+        <Style x:Key="StatusIndicatorStyle" TargetType="Border">
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Header/Status -->
+            <RowDefinition Height="Auto"/>
+            <!-- Quick Controls -->
+            <RowDefinition Height="*"/>
+            <!-- Main Content -->
+            <RowDefinition Height="250"/>
+            <!-- Log/Progress -->
+        </Grid.RowDefinitions>
+
+        <!-- ================= HEADER / STATUS BAR ================= -->
+        <Border Grid.Row="0" Background="#F5F5F5" BorderBrush="#DDDDDD" BorderThickness="0,0,0,1" 
+                Padding="10,8" Margin="0,0,0,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Title and Status -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="📐" FontSize="24" Margin="0,0,10,0"/>
+                    <TextBlock Text="APUS V314 - Grid Section Placement" 
+                               FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
+
+                    <TextBlock Text="•" Margin="15,0,10,0" FontSize="20" VerticalAlignment="Center"/>
+
+                    <!-- Status Indicator -->
+                    <Border Style="{StaticResource StatusIndicatorStyle}" 
+                            Background="{Binding CurrentState, Converter={StaticResource StateConverter}, ConverterParameter=StatusColor}">
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse Width="8" Height="8" Margin="0,0,5,0"
+                                     Fill="{Binding CurrentState, Converter={StaticResource StateConverter}, ConverterParameter=StatusDotColor}"/>
+                            <TextBlock Text="{Binding CurrentState}" 
+                                       FontWeight="SemiBold"
+                                       Foreground="White"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Quick Actions -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="Refresh Data" 
+                            Command="{Binding RefreshCommand}"
+                            ToolTip="Reload sections and title blocks"
+                            IsEnabled="{Binding CurrentState, Converter={StaticResource StateConverter}, ConverterParameter=RefreshButtonEnabled}"/>
+
+                    <Button Content="Select All" 
+                            Command="{Binding SelectAllCommand}"
+                            ToolTip="Select all filtered sections"
+                            IsEnabled="{Binding CurrentState, Converter={StaticResource StateConverter}, ConverterParameter=IsEnabled}"/>
+
+                    <Button Content="Clear Selection" 
+                            Command="{Binding ClearSelectionCommand}"
+                            ToolTip="Clear all selections"
+                            IsEnabled="{Binding CurrentState, Converter={StaticResource StateConverter}, ConverterParameter=IsEnabled}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ================= QUICK CONTROLS ================= -->
+        <Border Grid.Row="1" BorderBrush="#EEEEEE" BorderThickness="0,0,0,1" Padding="0,0,0,10" Margin="0,0,0,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Selected Count -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="Selected: " FontWeight="Bold"/>
+                    <TextBlock Text="{Binding FilteredSections.Count, StringFormat={}{0} sections}"/>
+                    <TextBlock Text=" | " Margin="5,0"/>
+                    <TextBlock Text="{Binding SelectedSectionsCount, StringFormat={}{0} selected}" 
+                               Foreground="Blue" FontWeight="Bold"/>
+                </StackPanel>
+
+                <!-- Quick Filters -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <ComboBox ItemsSource="{Binding PlacementScopes}" 
+                              SelectedItem="{Binding SelectedPlacementScope}"
+                              Width="180" ToolTip="Filter by Placement Scope"
+                              IsEnabled="{Binding CurrentState, Converter={StaticResource StateConverter}, ConverterParameter=IsEnabled}"/>
+
+                    <ComboBox ItemsSource="{Binding PlacementStates}" 
+                              SelectedItem="{Binding SelectedPlacementState}"
+                              Width="150" Margin="10,0,0,0" ToolTip="Filter by Placement State"
+                              IsEnabled="{Binding CurrentState, Converter={StaticResource StateConverter}, ConverterParameter=IsEnabled}"/>
+
+                    <ComboBox ItemsSource="{Binding SheetNumberOptions}" 
+                              SelectedItem="{Binding SheetNumberFilter}"
+                              Width="150" Margin="10,0,0,0" ToolTip="Filter by Sheet Number"
+                              IsEnabled="{Binding CurrentState, Converter={StaticResource StateConverter}, ConverterParameter=IsEnabled}"/>
+                </StackPanel>
+
+                <!-- Algorithm Selection (Simplified - always Grid) -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="Algorithm: " FontWeight="Bold" Margin="0,0,5,0"/>
+                    <ComboBox ItemsSource="{Binding AvailableAlgorithms}" 
+                              SelectedItem="{Binding SelectedAlgorithm}"
+                              Width="150" ToolTip="Grid placement only"
+                              IsEnabled="False" Background="#F0F0F0"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ================= MAIN CONTENT AREA ================= -->
+        <Grid Grid.Row="2" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <!-- Sections List -->
+                <ColumnDefinition Width="2*"/>
+                <!-- Settings Panel -->
+            </Grid.ColumnDefinitions>
+
+            <!-- LEFT PANEL: Sections List -->
+            <Border Grid.Column="0" BorderBrush="#DDDDDD" BorderThickness="1" CornerRadius="4" Margin="0,0,5,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- List Header -->
+                    <Border Grid.Row="0" Background="#F8F8F8" BorderBrush="#DDDDDD" BorderThickness="0,0,0,1" 
+                            Padding="10,5">
+                        <TextBlock Text="Available Sections" FontWeight="Bold" FontSize="14"/>
+                    </Border>
+
+                    <!-- DataGrid -->
+                    <DataGrid Grid.Row="1" 
+                              x:Name="SectionsDataGrid"
+                              ItemsSource="{Binding FilteredSections}"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              SelectionMode="Extended"
+                              IsReadOnly="True"
+                              IsEnabled="{Binding CurrentState, Converter={StaticResource StateConverter}, ConverterParameter=IsEnabled}"
+                              SelectionUnit="FullRow"
+                              GridLinesVisibility="Horizontal"
+                              RowDetailsVisibilityMode="Collapsed"
+                              VirtualizingStackPanel.IsVirtualizing="True"
+                              VirtualizingStackPanel.VirtualizationMode="Recycling"
+                              ScrollViewer.VerticalScrollBarVisibility="Auto"
+                              ScrollViewer.HorizontalScrollBarVisibility="Auto">
+
+                        <DataGrid.Columns>
+                            <DataGridCheckBoxColumn Width="40" 
+                                                    Binding="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                    Header="✓"/>
+
+                            <DataGridTextColumn Header="Section Name" 
+                                                Binding="{Binding ViewName}" 
+                                                Width="2*"
+                                                IsReadOnly="True"/>
+
+                            <DataGridTextColumn Header="Scope" 
+                                                Binding="{Binding PlacementScope}" 
+                                                Width="120"
+                                                IsReadOnly="True"/>
+
+                            <DataGridTextColumn Header="Scale" 
+                                                Binding="{Binding Scale, StringFormat=1:{0}}" 
+                                                Width="80"
+                                                IsReadOnly="True"/>
+
+                            <DataGridTextColumn Header="Sheet" 
+                                                Binding="{Binding SheetNumber}" 
+                                                Width="100"
+                                                IsReadOnly="True">
+                                <DataGridTextColumn.CellStyle>
+                                    <Style TargetType="DataGridCell">
+                                        <Setter Property="Foreground">
+                                            <Setter.Value>
+                                                <Binding Path="IsPlaced">
+                                                    <Binding.Converter>
+                                                        <converters:BoolToColorConverter TrueColor="Green" FalseColor="Gray"/>
+                                                    </Binding.Converter>
+                                                </Binding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.CellStyle>
+                            </DataGridTextColumn>
+
+                            <DataGridCheckBoxColumn Header="Placed" 
+                                                    Width="70"
+                                                    Binding="{Binding IsPlaced, Mode=OneWay}" 
+                                                    IsReadOnly="True"/>
+
+                            <DataGridTemplateColumn Header="Size" Width="100">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding View, Converter={StaticResource ViewSizeConverter}}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="BorderBrush" Value="Transparent"/>
+                                <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPlaced}" Value="True">
+                                        <Setter Property="Background" Value="#F0F8FF"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                        <Setter Property="Background" Value="#E3F2FD"/>
+                                    </DataTrigger>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#F5F5F5"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+                    </DataGrid>
+                </Grid>
+            </Border>
+
+            <!-- RIGHT PANEL: Settings -->
+            <Border Grid.Column="1" BorderBrush="#DDDDDD" BorderThickness="1" CornerRadius="4" Margin="5,0,0,0">
+                <TabControl TabStripPlacement="Top" BorderThickness="0">
+
+                    <!-- TAB 1: Title Block & Layout -->
+                    <TabItem Header="Layout">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="5">
+                            <StackPanel>
+                                <!-- Title Block Selection -->
+                                <GroupBox Header="Title Block">
+                                    <ComboBox ItemsSource="{Binding TitleBlocks}" 
+                                              SelectedItem="{Binding SelectedTitleBlock}"
+                                              DisplayMemberPath="DisplayName"
+                                              IsEnabled="{Binding CurrentState, Converter={StaticResource StateConverter}, ConverterParameter=IsEnabled}"/>
+                                </GroupBox>
+
+                                <!-- Sheet Margins -->
+                                <GroupBox Header="Sheet Margins (mm)">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <StackPanel Grid.Row="0" Grid.Column="0">
+                                            <TextBlock Text="Left Margin"/>
+                                            <TextBox Text="{Binding LeftMarginMm, UpdateSourceTrigger=PropertyChanged}"
+                                                     IsEnabled="{Binding CurrentState, Converter={StaticResource StateConverter}, ConverterParameter=IsEnabled}"/>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Row="0" Grid.Column="1" Margin="10,0,0,0">
+                                            <TextBlock Text="Right Margin"/>
+                                            <TextBox Text="{Binding RightMarginMm, UpdateSourceTrigger=PropertyChanged}"
+                                                     IsEnabled="{Binding CurrentState, Converter={StaticResource StateConverter}, ConverterParameter=IsEnabled}"/>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Row="1" Grid.Column="0">
+                                            <TextBlock Text="Top Margin"/>
+                                            <TextBox Text="{Binding TopMarginMm, UpdateSourceTrigger=PropertyChanged}"
+                                                     IsEnabled="{Binding CurrentState, Converter={StaticResource StateConverter}, ConverterParameter=IsEnabled}"/>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Row="1" Grid.Column="1" Margin="10,0,0,0">
+                                            <TextBlock Text="Bottom Margin"/>
+                                            <TextBox Text="{Binding BottomMarginMm, UpdateSourceTrigger=PropertyChanged}"
+                                                     IsEnabled="{Binding CurrentState, Converter={StaticResource StateConverter}, ConverterParameter=IsEnabled}"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </GroupBox>
+
+                                <!-- Gaps & Tolerance -->
+                                <GroupBox Header="Spacing &amp; Tolerance (mm)">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Text="Horizontal Gap"/>
+                                            <TextBox Text="{Binding HorizontalGapMm, UpdateSourceTrigger=PropertyChanged}"
+                                                     IsEnabled="{Binding CurrentState, Converter={StaticResource StateConverter}, ConverterParameter=IsEnabled}"/>
+
+                                            <TextBlock Text="Vertical Gap"/>
+                                            <TextBox Text="{Binding VerticalGapMm, UpdateSourceTrigger=PropertyChanged}"
+                                                     IsEnabled="{Binding CurrentState, Converter={StaticResource StateConverter}, ConverterParameter=IsEnabled}"/>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                                            <TextBlock Text="Y Tolerance"/>
+                                            <TextBox Text="{Binding YToleranceMm, UpdateSourceTrigger=PropertyChanged}"
+                                                     ToolTip="Grouping tolerance for spatial sorting"
+                                                     IsEnabled="{Binding CurrentState, Converter={StaticResource StateConverter}, ConverterParameter=IsEnabled}"/>
+
+                                            <CheckBox Content="Open sheets after placement" 
+                                                      IsChecked="{Binding OpenSheetsAfterPlacement}"
+                                                      Margin="0,15,0,0"
+                                                      IsEnabled="{Binding CurrentState, Converter={StaticResource StateConverter}, ConverterParameter=IsEnabled}"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </GroupBox>
+
+                                <!-- Advanced Options -->
+                                <Expander Header="Advanced Options" Margin="0,10,0,0" IsExpanded="False">
+                                    <StackPanel>
+                                        <CheckBox Content="Maintain aspect ratio" 
+                                                  IsChecked="{Binding MaintainAspectRatio}"
+                                                  Margin="0,5"/>
+                                        <CheckBox Content="Allow rotation" 
+                                                  IsChecked="{Binding AllowRotation}"
+                                                  Margin="0,5"/>
+                                        <CheckBox Content="Skip already placed views" 
+                                                  IsChecked="{Binding SkipPlacedViews}"
+                                                  Margin="0,5"/>
+                                    </StackPanel>
+                                </Expander>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+
+                    <!-- TAB 2: Grid Settings -->
+                    <TabItem Header="Grid Settings">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="5">
+                            <StackPanel>
+                                <!-- Grid Configuration -->
+                                <GroupBox Header="Grid Configuration">
+                                    <StackPanel>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+
+                                            <!-- Rows -->
+                                            <TextBlock Text="Rows:" Grid.Row="0" Grid.Column="0" 
+                                                       VerticalAlignment="Center" Margin="0,0,5,10" FontWeight="Bold"/>
+                                            <TextBox Text="{Binding GridRows, UpdateSourceTrigger=PropertyChanged}" 
+                                                     Grid.Row="0" Grid.Column="1" Margin="0,0,0,10"
+                                                     IsEnabled="{Binding EnableGridInput}"/>
+
+                                            <!-- Columns -->
+                                            <TextBlock Text="Columns:" Grid.Row="1" Grid.Column="0" 
+                                                       VerticalAlignment="Center" Margin="0,0,5,10" FontWeight="Bold"/>
+                                            <TextBox Text="{Binding GridColumns, UpdateSourceTrigger=PropertyChanged}" 
+                                                     Grid.Row="1" Grid.Column="1" Margin="0,0,0,10"
+                                                     IsEnabled="{Binding EnableGridInput}"/>
+
+                                            <!-- Max Views -->
+                                            <TextBlock Text="Max views per sheet:" Grid.Row="2" Grid.Column="0" 
+                                                       VerticalAlignment="Center" Margin="0,0,5,10" FontWeight="SemiBold"/>
+                                            <TextBlock Text="{Binding MaxViewsPerSheet}" Grid.Row="2" Grid.Column="1" 
+                                                       VerticalAlignment="Center" FontWeight="Bold" Foreground="#4CAF50"
+                                                       Margin="0,0,0,10"/>
+
+                                            <!-- Multi-sheet Option -->
+                                            <CheckBox Content="Place to multiple sheets" 
+                                                      Grid.Row="3" Grid.ColumnSpan="2"
+                                                      IsChecked="{Binding PlaceToMultipleSheets}"
+                                                      Margin="0,10,0,0"
+                                                      ToolTip="When checked, continues placing on new sheets until all sections are placed. When unchecked, only uses one sheet."
+                                                      IsEnabled="{Binding EnableGridInput}"/>
+                                        </Grid>
+
+                                        <TextBlock Text="Views are placed in strict reading order (Top→Bottom, Left→Right) and evenly distributed in grid cells." 
+                                                   Margin="0,15,0,0" TextWrapping="Wrap" FontStyle="Italic" Foreground="#666666"/>
+                                    </StackPanel>
+                                </GroupBox>
+
+                                <!-- Placement Summary -->
+                                <GroupBox Header="Placement Summary" Margin="0,10,0,0">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding SelectedSectionsCount, StringFormat=Selected Sections: {0}}"
+                                                   FontWeight="Bold" Margin="0,0,0,5"/>
+                                        <TextBlock Text="{Binding EstimatedSheets, StringFormat=Estimated Sheets: {0}}"
+                                                   Margin="0,0,0,5"/>
+                                        <TextBlock Text="{Binding EstimatedTime, StringFormat=Estimated Time: {0}}"
+                                                   Margin="0,0,0,5"/>
+
+                                        <!-- Mode Indicator -->
+                                        <Border Margin="0,10,0,0" Padding="5" 
+                                                Background="{Binding PlaceToMultipleSheets, Converter={StaticResource BoolToColorConverter}}" 
+                                                BorderBrush="#4CAF50" BorderThickness="1" CornerRadius="3">
+                                            <TextBlock Text="{Binding PlaceToMultipleSheets, StringFormat=Mode: {0}}" 
+                                                       FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                        </Border>
+                                    </StackPanel>
+                                </GroupBox>
+
+                                <!-- Algorithm Description -->
+                                <GroupBox Header="Placement Rules" Margin="0,10,0,0">
+                                    <StackPanel>
+                                        <TextBlock Text="✓ Strict reading order: Left → Right, Top → Bottom" 
+                                                   Margin="0,0,0,5"/>
+                                        <TextBlock Text="✓ Even distribution within grid cells" 
+                                                   Margin="0,0,0,5"/>
+                                        <TextBlock Text="✓ Bottom-aligned within rows, Left-aligned within columns" 
+                                                   Margin="0,0,0,5"/>
+                                        <TextBlock Text="✓ User gaps respected (±10% tolerance if needed)" 
+                                                   Margin="0,0,0,5"/>
+                                        <TextBlock Text="✓ No overlap guarantee" 
+                                                   Margin="0,0,0,5"/>
+                                    </StackPanel>
+                                </GroupBox>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+                </TabControl>
+            </Border>
+        </Grid>
+
+        <!-- ================= FOOTER: LOG & CONTROLS ================= -->
+        <Border Grid.Row="3" BorderBrush="#DDDDDD" BorderThickness="1" CornerRadius="4">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <!-- Progress/Buttons -->
+                    <RowDefinition Height="*"/>
+                    <!-- Log Area -->
+                </Grid.RowDefinitions>
+
+                <!-- Progress and Action Buttons -->
+                <Border Grid.Row="0" Background="#F9F9F9" BorderBrush="#DDDDDD" BorderThickness="0,0,0,1" 
+                        Padding="10,8">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Progress Section -->
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                            <!-- Progress Bar -->
+                            <ProgressBar Value="{Binding Progress.Current, Mode=OneWay}" 
+                                         Maximum="{Binding Progress.Total}" 
+                                         Width="300" Height="20"
+                                         Visibility="{Binding ShowProgress, Converter={StaticResource BoolToVis}}">
+                                <ProgressBar.Style>
+                                    <Style TargetType="ProgressBar">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding CurrentState}" Value="Processing">
+                                                <Setter Property="Foreground" Value="#4CAF50"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding CurrentState}" Value="Cancelling">
+                                                <Setter Property="Foreground" Value="#FF9800"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ProgressBar.Style>
+                            </ProgressBar>
+
+                            <!-- Progress Text -->
+                            <TextBlock Text="{Binding Progress.Current, StringFormat=Progress: {0}/{1}, Mode=OneWay}" 
+                                       Margin="10,0,0,0" VerticalAlignment="Center"
+                                       Visibility="{Binding ShowProgress, Converter={StaticResource BoolToVis}}"/>
+
+                            <!-- Status Messages -->
+                            <TextBlock Text="{Binding StatusMessage}" 
+                                       Margin="20,0,0,0" VerticalAlignment="Center"
+                                       Foreground="#666666" FontStyle="Italic"/>
+                        </StackPanel>
+
+                        <!-- Action Buttons -->
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <!-- Place Button -->
+                            <Button Content="🚀 Start Placement" 
+                                    Command="{Binding PlaceCommand}"
+                                    Background="#4CAF50" Foreground="White" FontWeight="Bold"
+                                    ToolTip="Start placing selected sections in grid"
+                                    IsEnabled="{Binding CurrentState, Converter={StaticResource StateConverter}, ConverterParameter=PlaceButtonEnabled}">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                        <Setter Property="Background" Value="#4CAF50"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding CurrentState}" Value="Processing">
+                                                <Setter Property="Background" Value="#FF9800"/>
+                                                <Setter Property="Content" Value="⏳ Processing..."/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+
+                            <!-- Cancel Button -->
+                            <Button Content="✕ Cancel" 
+                                    Command="{Binding CancelCommand}"
+                                    Background="#F44336" Foreground="White"
+                                    ToolTip="Cancel current operation"
+                                    Visibility="{Binding ShowCancelButton, Converter={StaticResource BoolToVis}}"/>
+
+                            <!-- Close Button -->
+                            <Button Content="Close" 
+                                    Click="CloseButton_Click"
+                                    Margin="10,0,0,0"
+                                    IsEnabled="{Binding CurrentState, Converter={StaticResource StateConverter}, ConverterParameter=IsEnabled}"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Log Display Area with Real-time Updates -->
+                <Grid Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Log Header -->
+                    <Border Grid.Row="0" Background="#F0F0F0" BorderBrush="#DDDDDD" BorderThickness="0,0,0,1" 
+                            Padding="10,5">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Text="Live Log - Real-time placement updates" FontWeight="Bold"/>
+
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <Button Content="Clear Log" 
+                                        Command="{Binding ClearLogCommand}"
+                                        ToolTip="Clear all log entries"
+                                        Style="{StaticResource {x:Type Button}}" 
+                                        Background="Transparent" BorderThickness="0"
+                                        Padding="5,2"/>
+                                <Button Content="Export Log" 
+                                        Command="{Binding ExportLogCommand}"
+                                        ToolTip="Export log to file"
+                                        Style="{StaticResource {x:Type Button}}" 
+                                        Background="Transparent" BorderThickness="0"
+                                        Padding="5,2"/>
+                                <Button Content="📋 Copy" 
+                                        Command="{Binding CopyLogsCommand}"
+                                        ToolTip="Copy logs to clipboard"
+                                        Style="{StaticResource {x:Type Button}}" 
+                                        Background="Transparent" BorderThickness="0"
+                                        Padding="5,2"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- Log ListBox with Real-time Updates and Auto-scroll -->
+                    <ListBox Grid.Row="1" 
+                             x:Name="LogListBox"
+                             ItemsSource="{Binding LogEntries}" 
+                             VirtualizingStackPanel.IsVirtualizing="True"
+                             VirtualizingStackPanel.VirtualizationMode="Recycling"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto"
+                             ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                             BorderThickness="0"
+                             Background="White"
+                             SelectionMode="Single">
+
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="2,1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Timestamp -->
+                                    <TextBlock Grid.Column="0" 
+                                               Text="{Binding Timestamp, StringFormat=HH:mm:ss}"
+                                               Foreground="#666666" 
+                                               FontFamily="Consolas" 
+                                               Margin="5,0,10,0"
+                                               VerticalAlignment="Center"/>
+
+                                    <!-- Message with Color -->
+                                    <TextBlock Grid.Column="1" 
+                                               Text="{Binding Message}"
+                                               TextWrapping="Wrap"
+                                               Foreground="{Binding Level, Converter={StaticResource LogColorConverter}}"
+                                               VerticalAlignment="Center"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Setter Property="Focusable" Value="False"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#F5F5F5"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                    </ListBox>
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
