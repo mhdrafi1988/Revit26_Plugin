@@ -1,16 +1,22 @@
 ﻿using Autodesk.Revit.DB;
-using Revit22_Plugin.Asd.Models;
-using Revit22_Plugin.Asd.Services;
+using Revit26_Plugin.Asd_19.Models;
+using Revit26_Plugin.Asd_19.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit22_Plugin.Asd.Services
+namespace Revit26_Plugin.Asd_19.Services
 {
     public class RoofSlopeProcessorService
     {
         private readonly GraphBuilderService _graphBuilder;
         private readonly PathSolverService _pathSolver;
+
+        // Store last export data
+        private List<DrainVertexData> _lastExportData;
+        private int _lastRunDuration;
+
+        public int LastRunDuration => _lastRunDuration;
 
         public RoofSlopeProcessorService()
         {
@@ -25,8 +31,10 @@ namespace Revit22_Plugin.Asd.Services
             int modifiedCount = 0;
             double maxOffset = 0;
             double longestPath = 0;
+            DateTime startTime = DateTime.Now;
 
-            using (var transaction = new Transaction(doc, "Apply Roof Slopes"))
+            // Use a single transaction for the entire slope application process
+            using (var transaction = new Transaction(doc, "Auto Roof Sloper - Apply Slopes"))
             {
                 transaction.Start();
 
@@ -52,32 +60,18 @@ namespace Revit22_Plugin.Asd.Services
                     int slopeModifiedCount = ApplyElevationsWithDrainHierarchy(roofData.Roof, pathResults, selectedDrainVertices, slopePercentage, logAction, out maxOffset, out longestPath);
                     modifiedCount += slopeModifiedCount;
 
+                    // Collect export data
+                    _lastExportData = CollectVertexExportData(pathResults, selectedDrainVertices, roofData.Vertices, selectedDrains, slopePercentage);
+                    _lastRunDuration = (int)(DateTime.Now - startTime).TotalSeconds;
+
                     transaction.Commit();
 
                     logAction($"SUCCESS: Set {selectedDrainVertices.Count} drain vertices to zero + modified {slopeModifiedCount} slope vertices");
                     logAction($"Maximum offset: {maxOffset:F1} mm");
                     logAction($"Longest drainage path: {longestPath:F2} meters");
 
-                    // ✅ Update the "Comments" parameter with applied slope, max offset, and date
-                    try
-                    {
-                        Parameter commentParam = roofData.Roof.LookupParameter("Comments");
-                        if (commentParam != null && !commentParam.IsReadOnly)
-                        {
-                            string date = DateTime.Now.ToString("dd-MMM-yyyy HH:mm");
-                            string value = $"Applied slope: {slopePercentage:F1}% on {date}\nMax offset: {maxOffset:F3} mm";
-                            commentParam.Set(value);
-                            logAction($"✓ Updated roof Comments parameter:\n{value}");
-                        }
-                        else
-                        {
-                            logAction("⚠ Comments parameter not found or read-only — skipping update.");
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        logAction($"✗ Failed to update Comments parameter: {ex.Message}");
-                    }
+                    // Update all parameters in a separate transaction
+                    UpdateRoofParameters(roofData.Roof, modifiedCount, maxOffset, longestPath, slopePercentage, startTime, selectedDrains.Count, logAction);
                 }
                 catch (Exception ex)
                 {
@@ -88,6 +82,160 @@ namespace Revit22_Plugin.Asd.Services
             }
 
             return (modifiedCount, maxOffset, longestPath);
+        }
+
+        /// <summary>
+        /// Get the last export data
+        /// </summary>
+        public List<DrainVertexData> GetLastExportData()
+        {
+            return _lastExportData;
+        }
+
+        /// <summary>
+        /// Collect vertex data for CSV export
+        /// </summary>
+        private List<DrainVertexData> CollectVertexExportData(
+            Dictionary<SlabShapeVertex, (DrainItem drain, double totalDistance, List<XYZ> path)> pathResults,
+            HashSet<SlabShapeVertex> drainVertices,
+            List<SlabShapeVertex> allVertices,
+            List<DrainItem> selectedDrains,
+            double slopePercentage)
+        {
+            var vertexDataList = new List<DrainVertexData>();
+
+            foreach (var kvp in pathResults)
+            {
+                var vertex = kvp.Key;
+                var totalDistance = kvp.Value.totalDistance;
+                var drain = kvp.Value.drain;
+                var path = kvp.Value.path;
+
+                bool wasProcessed = !drainVertices.Contains(vertex) && drain != null;
+
+                int vertexIndex = allVertices.IndexOf(vertex);
+                double elevationMm = wasProcessed ? slopePercentage / 100.0 * totalDistance * 304.8 : 0;
+
+                // Find nearest drain index
+                int drainIndex = -1;
+                string drainSize = "";
+                string drainShape = "";
+
+                if (drain != null)
+                {
+                    drainIndex = selectedDrains.IndexOf(drain);
+                    drainSize = drain.SizeCategory;
+                    drainShape = drain.ShapeType;
+                }
+
+                // Calculate direction vector
+                XYZ direction = XYZ.Zero;
+                if (wasProcessed && path != null && path.Count >= 2)
+                {
+                    direction = (path[path.Count - 1] - path[0]).Normalize();
+                }
+
+                vertexDataList.Add(new DrainVertexData
+                {
+                    VertexIndex = vertexIndex,
+                    Position = vertex.Position,
+                    PathLengthMeters = totalDistance * 0.3048,
+                    ElevationOffsetMm = elevationMm,
+                    NearestDrainId = drainIndex + 1, // 1-based for readability
+                    DrainSize = drainSize,
+                    DrainShape = drainShape,
+                    DirectionVector = direction,
+                    WasProcessed = wasProcessed
+                });
+            }
+
+            return vertexDataList;
+        }
+
+        /// <summary>
+        /// Update all custom parameters on the roof element after successful slope calculation
+        /// </summary>
+        private void UpdateRoofParameters(RoofBase roof, int modifiedCount, double maxOffset, double longestPath,
+            double slopePercentage, DateTime startTime, int drainCount, Action<string> logAction)
+        {
+            var doc = roof.Document;
+            double durationSeconds = (DateTime.Now - startTime).TotalSeconds;
+
+            using (var paramTransaction = new Transaction(doc, "Auto Roof Sloper - Update Parameters"))
+            {
+                paramTransaction.Start();
+
+                try
+                {
+                    // Get the highest elevation achieved (max offset is already in mm)
+                    double highestElevationMm = maxOffset;
+
+                    // Count vertices processed (total vertices)
+                    int verticesProcessed = modifiedCount;
+
+                    // Count vertices skipped (if any)
+                    int verticesSkipped = 0; // You can calculate this if needed
+
+                    // Current date/time for the run
+                    string runDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+                    // Update parameters
+                    SetParameterValue(roof, "AutoSlope_HighestElevation", highestElevationMm / 304.8); // Convert to feet for Revit
+                    SetParameterValue(roof, "AutoSlope_VerticesProcessed", verticesProcessed);
+                    SetParameterValue(roof, "AutoSlope_VerticesSkipped", verticesSkipped);
+                    SetParameterValue(roof, "AutoSlope_DrainCount", drainCount);
+                    SetParameterValue(roof, "AutoSlope_RunDuration_sec", durationSeconds);
+                    SetParameterValue(roof, "AutoSlope_Status", "Completed");
+                    SetParameterValue(roof, "AutoSlope_LongestPath", longestPath); // Already in meters
+                    SetParameterValue(roof, "AutoSlope_SlopePercent", slopePercentage);
+                    SetParameterValue(roof, "AutoSlope_Threshold", 100.0); // Default threshold value
+                    SetParameterValue(roof, "AutoSlope_RunDate", runDate);
+
+                    logAction("✓ Updated roof parameters with calculation results:");
+                    logAction($"  - Highest Elevation: {highestElevationMm:F2} mm");
+                    logAction($"  - Vertices Processed: {verticesProcessed}");
+                    logAction($"  - Drain Count: {drainCount}");
+                    logAction($"  - Run Duration: {durationSeconds:F2} seconds");
+                    logAction($"  - Run Date: {runDate}");
+
+                    paramTransaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    paramTransaction.RollBack();
+                    logAction($"✗ Failed to update roof parameters: {ex.Message}");
+                    logAction("  Note: This doesn't affect the slope calculation results.");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Helper method to set parameter values safely
+        /// </summary>
+        private void SetParameterValue(Element element, string paramName, object value)
+        {
+            Parameter param = element.LookupParameter(paramName);
+            if (param != null && !param.IsReadOnly)
+            {
+                switch (param.StorageType)
+                {
+                    case StorageType.String:
+                        param.Set(value?.ToString() ?? "");
+                        break;
+                    case StorageType.Double:
+                        if (value is double doubleValue)
+                            param.Set(doubleValue);
+                        else if (value is int intValue)
+                            param.Set(Convert.ToDouble(intValue));
+                        break;
+                    case StorageType.Integer:
+                        if (value is int intVal)
+                            param.Set(intVal);
+                        else if (value is double doubleVal)
+                            param.Set(Convert.ToInt32(doubleVal));
+                        break;
+                }
+            }
         }
 
         /// <summary>

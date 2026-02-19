@@ -1,6 +1,6 @@
 ﻿using System.Windows.Media;
 
-namespace Revit22_Plugin.Asd.Models
+namespace Revit26_Plugin.Asd_19.Models
 {
     public class LogMessage
     {

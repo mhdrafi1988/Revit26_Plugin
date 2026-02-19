@@ -5,7 +5,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\18\00\00</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\20\00\00</BaseOutputPath>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
@@ -81,6 +81,7 @@
 	  <Compile Remove="Menu\RoofTools\RoofSlope\ByDrains_00\AutoSloperDrain_04_000\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\ByDrains_00\AutoSloperDrain_04_001\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\ByDrains_00\AutoSloperDrain_04_002\**" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\ByDrains_0\AutoSloperDrain_04_001\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\ByPoints\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\ByPoints_000\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\ByPoints_00\**" />
@@ -219,6 +220,7 @@
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\ByDrains_00\AutoSloperDrain_04_000\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\ByDrains_00\AutoSloperDrain_04_001\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\ByDrains_00\AutoSloperDrain_04_002\**" />
+	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\ByDrains_0\AutoSloperDrain_04_001\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\ByPoints\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\ByPoints_000\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\ByPoints_00\**" />
@@ -357,6 +359,7 @@
 	  <None Remove="Menu\RoofTools\RoofSlope\ByDrains_00\AutoSloperDrain_04_000\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\ByDrains_00\AutoSloperDrain_04_001\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\ByDrains_00\AutoSloperDrain_04_002\**" />
+	  <None Remove="Menu\RoofTools\RoofSlope\ByDrains_0\AutoSloperDrain_04_001\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\ByPoints\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\ByPoints_000\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\ByPoints_00\**" />
@@ -495,6 +498,7 @@
 	  <Page Remove="Menu\RoofTools\RoofSlope\ByDrains_00\AutoSloperDrain_04_000\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\ByDrains_00\AutoSloperDrain_04_001\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\ByDrains_00\AutoSloperDrain_04_002\**" />
+	  <Page Remove="Menu\RoofTools\RoofSlope\ByDrains_0\AutoSloperDrain_04_001\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\ByPoints\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\ByPoints_000\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\ByPoints_00\**" />

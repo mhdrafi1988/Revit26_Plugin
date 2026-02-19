@@ -1,5 +1,6 @@
 ﻿// File: DrainVertexData.cs
 // Location: Revit26_Plugin.Asd_19.Models
+// THIS IS THE ONLY DEFINITION - DELETE ANY OTHER COPIES
 
 using Autodesk.Revit.DB;
 
@@ -39,8 +40,8 @@ namespace Revit26_Plugin.Asd_19.Models
 
         /// <summary>Formatted direction vector for CSV export</summary>
         public string Direction =>
-            DirectionVector != null ?
-            $"{DirectionVector.X:F3},{DirectionVector.Y:F3},{DirectionVector.Z:F3}" :
+            this.DirectionVector != null ?
+            $"{this.DirectionVector.X:F3},{this.DirectionVector.Y:F3},{this.DirectionVector.Z:F3}" :
             "0,0,0";
 
         /// <summary>Returns a string representation of the vertex data</summary>

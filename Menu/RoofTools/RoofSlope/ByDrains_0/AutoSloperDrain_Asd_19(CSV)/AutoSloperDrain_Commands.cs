@@ -2,11 +2,11 @@
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
-using Revit22_Plugin.Asd.ViewModels;
-using Revit22_Plugin.Asd.Views;
+using Revit26_Plugin.Asd_19.ViewModels;
+using Revit26_Plugin.Asd_19.Views;
 using System.Windows;
 
-namespace Revit22_Plugin.Asd.Commands
+namespace Revit26_Plugin.Asd_19.Commands
 {
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]
@@ -67,7 +67,7 @@ namespace Revit22_Plugin.Asd.Commands
 
         private void InitializeRoofGeometry(RoofBase roof, Document doc)
         {
-            using (Transaction tx = new Transaction(doc, "Initialize Roof Geometry"))
+            using (Transaction tx = new Transaction(doc, "Auto Roof Sloper - Initialize Geometry"))
             {
                 tx.Start();
 
