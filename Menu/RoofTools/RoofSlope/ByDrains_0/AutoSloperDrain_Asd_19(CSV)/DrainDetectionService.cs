@@ -8,8 +8,12 @@ namespace Revit26_Plugin.Asd_19.Services
 {
     public class DrainDetectionService
     {
-        public List<DrainItem> DetectDrainsFromRoof(RoofBase roof, Face ignoredTopFace)
+        private const double TOLERANCE_MM = 5.0; // 5mm tolerance for drain vertex detection
+        private List<SlabShapeVertex> _allShapeVertices; // Store all shape vertices for detection
+
+        public List<DrainItem> DetectDrainsFromRoof(RoofBase roof, Face ignoredTopFace, List<SlabShapeVertex> allShapeVertices = null)
         {
+            _allShapeVertices = allShapeVertices ?? new List<SlabShapeVertex>();
             var drains = new List<DrainItem>();
 
             try
@@ -22,7 +26,7 @@ namespace Revit26_Plugin.Asd_19.Services
                 {
                     if (go is Solid solid && solid.Faces.Size > 0)
                     {
-                        // ✅ Only upward-facing roof surfaces (no bottoms)
+                        // Only upward-facing roof surfaces (no bottoms)
                         var topFaces = GetUpwardFaces(solid, 0.1); // normal.Z ≥ 0.1 ⇒ facing up (≈6° slope)
 
                         foreach (var face in topFaces)
@@ -75,7 +79,7 @@ namespace Revit26_Plugin.Asd_19.Services
             return list;
         }
 
-        // ✅ Robust loop-to-drain logic
+        // ✅ Updated to find shape vertices within 5mm of the loop
         private DrainItem CreateDrainFromEdgeLoop(EdgeArray loop, Face face)
         {
             try
@@ -98,47 +102,91 @@ namespace Revit26_Plugin.Asd_19.Services
 
                 if (pts.Count < 3) return null;
 
-                // 🔵 tolerant circular detection
-                var circ = TryArcClusterCircle(arcs);
-                if (circ != null)
-                {
-                    var (center, radiusFt) = circ.Value;
-                    double diaMm = radiusFt * 2 * 304.8;
-                    if (diaMm >= 5 && diaMm <= 2000)
-                        return new DrainItem(center, diaMm, diaMm, "Circle");
-                }
-
-                // 🟣 best-fit circle from points (splines, segmented loops)
-                var fit = TryBestFitCircle(pts);
-                if (fit != null)
-                {
-                    var (cpt, rFt, err) = fit.Value;
-                    if (rFt > 0 && (err / rFt) < 0.08)
-                    {
-                        double diaMm = rFt * 2 * 304.8;
-                        if (diaMm >= 5 && diaMm <= 2000)
-                            return new DrainItem(cpt, diaMm, diaMm, "Circle");
-                    }
-                }
-
-                // 🟩 fallback: bounding box
+                // Calculate bounding box dimensions for size validation
                 double minX = pts.Min(p => p.X), maxX = pts.Max(p => p.X);
                 double minY = pts.Min(p => p.Y), maxY = pts.Max(p => p.Y);
-                double minZ = pts.Min(p => p.Z), maxZ = pts.Max(p => p.Z);
 
-                double w = (maxX - minX) * 304.8;
-                double h = (maxY - minY) * 304.8;
+                double w = (maxX - minX) * 304.8; // Width in mm
+                double h = (maxY - minY) * 304.8; // Height in mm
+
+                // Validate size range
                 if (w < 5 || h < 5 || w > 2000 || h > 2000) return null;
 
-                var centerPt = new XYZ((minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2);
+                // NEW: Find all shape vertices within 5mm of this loop
+                var drainVertices = FindShapeVerticesOnLoop(curves, _allShapeVertices);
 
-                string shape = (Math.Abs(w - h) < 5) ? "Square" :
-                               curves.All(c => c is Line) ? "Rectangle" :
-                               arcs.Count > 0 ? "Mixed Shape" : "Polygon";
+                // Determine shape type
+                string shape = DetermineShapeType(curves, arcs, w, h);
 
-                return new DrainItem(centerPt, w, h, shape);
+                // Create drain item with the found vertices
+                return new DrainItem(drainVertices, curves, w, h, shape);
             }
             catch { return null; }
+        }
+
+        // NEW: Find shape vertices within 5mm tolerance of any curve in the loop
+        private List<SlabShapeVertex> FindShapeVerticesOnLoop(List<Curve> loopCurves, List<SlabShapeVertex> allVertices)
+        {
+            var matchingVertices = new List<SlabShapeVertex>();
+            double toleranceFeet = TOLERANCE_MM / 304.8;
+
+            if (allVertices == null || allVertices.Count == 0)
+                return matchingVertices;
+
+            foreach (var vertex in allVertices)
+            {
+                if (vertex?.Position == null) continue;
+
+                foreach (var curve in loopCurves)
+                {
+                    try
+                    {
+                        double distance = curve.Distance(vertex.Position);
+                        if (distance < toleranceFeet)
+                        {
+                            matchingVertices.Add(vertex);
+                            break; // Found a match, no need to check other curves
+                        }
+                    }
+                    catch
+                    {
+                        // Skip problematic curves
+                    }
+                }
+            }
+
+            return matchingVertices;
+        }
+
+        // NEW: Determine shape type based on curves and dimensions
+        private string DetermineShapeType(List<Curve> curves, List<Arc> arcs, double widthMm, double heightMm)
+        {
+            // Try circular detection first
+            var circ = TryArcClusterCircle(arcs);
+            if (circ != null)
+            {
+                return "Circle";
+            }
+
+            // Check if it's a square (within 5mm tolerance)
+            if (Math.Abs(widthMm - heightMm) < 5)
+            {
+                return "Square";
+            }
+
+            // Check if all curves are lines
+            if (curves.All(c => c is Line))
+            {
+                return "Rectangle";
+            }
+
+            // Mixed shape with arcs
+            if (arcs.Count > 0)
+            {
+                return "Mixed Shape";
+            }
+
+            return "Polygon";
         }
 
         private XYZ ProjectToFace(Face face, XYZ p)
@@ -247,25 +295,12 @@ namespace Revit26_Plugin.Asd_19.Services
             return drains.Where(d => d.SizeCategory == filter).ToList();
         }
 
+        // UPDATED: Use pre-identified drain vertices instead of searching
         public List<SlabShapeVertex> FindVerticesForDrain(DrainItem drain, List<SlabShapeVertex> allVertices, Face topFace)
         {
-            var found = new List<SlabShapeVertex>();
-            double wFt = drain.Width / 304.8, hFt = drain.Height / 304.8;
-            double halfW = wFt / 2, halfH = hFt / 2;
-            double minX = drain.CenterPoint.X - halfW, maxX = drain.CenterPoint.X + halfW;
-            double minY = drain.CenterPoint.Y - halfH, maxY = drain.CenterPoint.Y + halfH;
-
-            foreach (var v in allVertices)
-            {
-                if (v?.Position == null) continue;
-                if (v.Position.X >= minX && v.Position.X <= maxX &&
-                    v.Position.Y >= minY && v.Position.Y <= maxY)
-                {
-                    try { if (topFace.Project(v.Position) != null) found.Add(v); }
-                    catch { found.Add(v); }
-                }
-            }
-            return found;
+            // Simply return the pre-identified drain vertices
+            // These were already found during detection using 5mm tolerance
+            return drain.DrainVertices ?? new List<SlabShapeVertex>();
         }
     }
 }

@@ -215,6 +215,7 @@ namespace Revit26_Plugin.Asd_19.ViewModels
             AddLog("=== Auto Roof Sloper Initialized ===");
             AddLog("All vertices reset to zero elevation");
             AddLog("Detecting inner loop openings on top surface...");
+            AddLog("Using 5mm tolerance to identify shape editing vertices on drain loops");
             AddLog($"Default export folder: {ExportFolderPath}");
 
             // Initialize with selected roof
@@ -232,9 +233,11 @@ namespace Revit26_Plugin.Asd_19.ViewModels
                 _currentRoof = new RoofData { Roof = roof };
                 AnalyzeRoofGeometry(_currentRoof);
 
-                // Detect drains from inner loops only
+                // Detect drains from inner loops only - PASS THE VERTICES for 5mm tolerance detection
                 AddLog("Scanning for inner loop openings (excluding perimeter)...");
-                var detectedDrains = _drainService.DetectDrainsFromRoof(roof, _currentRoof.TopFace);
+                AddLog("Finding shape editing vertices within 5mm tolerance of drain openings...");
+
+                var detectedDrains = _drainService.DetectDrainsFromRoof(roof, _currentRoof.TopFace, _currentRoof.Vertices);
                 _currentRoof.DetectedDrains = detectedDrains;
 
                 // Update UI
@@ -242,8 +245,18 @@ namespace Revit26_Plugin.Asd_19.ViewModels
                 foreach (var drain in detectedDrains)
                 {
                     AllDrains.Add(drain);
-                    AddLog($"Found opening: {drain.SizeCategory} at ({drain.CenterPoint.X:F0}, {drain.CenterPoint.Y:F0})mm");
-                    AddLog($"  - Corners calculated for accurate distance measurement");
+
+                    // Log drain information with vertex count
+                    int vertexCount = drain.DrainVertices?.Count ?? 0;
+                    AddLog($"Found opening: {drain.SizeCategory} ({drain.ShapeType}) with {vertexCount} shape vertices within 5mm tolerance");
+                    AddLog($"  - Center at ({drain.CenterPoint.X:F0}, {drain.CenterPoint.Y:F0}, {drain.CenterPoint.Z:F0}) mm");
+
+                    // Log first few vertex positions for verification
+                    if (vertexCount > 0)
+                    {
+                        var firstVertex = drain.DrainVertices.First();
+                        AddLog($"  - Sample vertex at ({firstVertex.Position.X * 304.8:F0}, {firstVertex.Position.Y * 304.8:F0}, {firstVertex.Position.Z * 304.8:F0}) mm");
+                    }
                 }
 
                 // Update filters
@@ -256,10 +269,12 @@ namespace Revit26_Plugin.Asd_19.ViewModels
 
                 if (detectedDrains.Count > 0)
                 {
+                    int totalDrainVertices = detectedDrains.Sum(d => d.DrainVertices?.Count ?? 0);
                     AddLog($"✓ Completed: Found {detectedDrains.Count} inner loop openings");
+                    AddLog($"✓ Total {totalDrainVertices} shape vertices identified as drain points (5mm tolerance)");
                     AddLog("✓ Perimeter curves excluded");
                     AddLog("✓ All duplicates removed");
-                    AddLog("✓ Drain corner points calculated for accurate slope calculation");
+                    AddLog("✓ Drain vertices will be set to ZERO elevation during slope application");
                 }
                 else
                 {
@@ -348,7 +363,7 @@ namespace Revit26_Plugin.Asd_19.ViewModels
                     roofData.Vertices.Add(vertex);
                 }
 
-                AddLog($"Found {roofData.Vertices.Count} vertices on roof");
+                AddLog($"Found {roofData.Vertices.Count} shape editing vertices on roof");
                 AddLog($"Top face area: {CalculateFaceArea(roofData.TopFace):F2} m²");
             }
             catch (Exception ex)
@@ -558,7 +573,7 @@ namespace Revit26_Plugin.Asd_19.ViewModels
                     longestPath = vertexDataList.Where(v => v.WasProcessed).Max(v => v.PathLengthMeters);
                 }
 
-                // Export summary - UPDATED to pass slopePercent parameter
+                // Export summary
                 var metrics = new DrainExportMetrics
                 {
                     ProcessedVertices = processedVertices,
@@ -580,7 +595,7 @@ namespace Revit26_Plugin.Asd_19.ViewModels
                     double.Parse(SlopeInput),
                     AddLog);
 
-                // Show success message with file locations (same as Part 01)
+                // Show success message with file locations
                 AddLog($"✓ Export completed successfully!");
                 if (!string.IsNullOrEmpty(exportedFile))
                 {
@@ -592,7 +607,7 @@ namespace Revit26_Plugin.Asd_19.ViewModels
                 }
                 AddLog($"  - Location: {ExportFolderPath}");
 
-                // Optional: Ask to open folder (same as Part 01)
+                // Optional: Ask to open folder
                 var result = MessageBox.Show(
                     "Export completed successfully!\n\nDo you want to open the export folder?",
                     "Export Complete",
@@ -611,7 +626,7 @@ namespace Revit26_Plugin.Asd_19.ViewModels
         }
 
         /// <summary>
-        /// Updated ApplySlopes method - permanently disables button after execution
+        /// Updated ApplySlopes method - uses pre-identified drain vertices
         /// </summary>
         private void ApplySlopes()
         {
@@ -637,8 +652,12 @@ namespace Revit26_Plugin.Asd_19.ViewModels
                     return;
                 }
 
+                // Count total drain vertices that will be set to zero
+                int totalDrainVertices = selectedDrains.Sum(d => d.DrainVertices?.Count ?? 0);
+
                 AddLog($"Applying {slopePercentage}% slope to {selectedDrains.Count} drains...");
-                AddLog("Using drain corner points for accurate distance calculation...");
+                AddLog($"Found {totalDrainVertices} shape vertices on selected drain loops (5mm tolerance)");
+                AddLog("These vertices will be set to ZERO elevation as drain points");
                 AddLog("Processing... (this may take a moment)");
 
                 // Process slopes and get results
@@ -652,9 +671,9 @@ namespace Revit26_Plugin.Asd_19.ViewModels
                 AddLog($"✓ SUCCESS: Modified {results.modifiedCount} vertices");
                 AddLog($"✓ Maximum elevation offset: {results.maxOffset:F1} mm");
                 AddLog($"✓ Longest drainage path: {results.longestPath:F2} meters");
-                AddLog($"✓ Slope calculation based on nearest drain corners (accurate drainage)");
+                AddLog($"✓ Slope calculation based on {totalDrainVertices} drain vertices (accurate drainage)");
 
-                // Auto-export if enabled (same as Part 01)
+                // Auto-export if enabled
                 if (ExportToCsv && !string.IsNullOrEmpty(ExportFolderPath))
                 {
                     AddLog("📊 Auto-exporting results...");
@@ -698,7 +717,10 @@ namespace Revit26_Plugin.Asd_19.ViewModels
             }
             FilteredDrainsView.Refresh();
             UpdateSelectedCount();
-            AddLog("All drains selected");
+
+            int totalVertices = AllDrains.Sum(d => d.DrainVertices?.Count ?? 0);
+            AddLog($"All {AllDrains.Count} drains selected ({totalVertices} total drain vertices)");
+
             ((RelayCommand)ApplySlopesCommand).RaiseCanExecuteChanged();
             ((RelayCommand)ExportResultsCommand).RaiseCanExecuteChanged();
         }
@@ -724,7 +746,11 @@ namespace Revit26_Plugin.Asd_19.ViewModels
             }
             FilteredDrainsView.Refresh();
             UpdateSelectedCount();
-            AddLog("Selection inverted");
+
+            int selectedCount = AllDrains.Count(d => d.IsSelected);
+            int totalVertices = AllDrains.Where(d => d.IsSelected).Sum(d => d.DrainVertices?.Count ?? 0);
+            AddLog($"Selection inverted: {selectedCount} drains selected ({totalVertices} total drain vertices)");
+
             ((RelayCommand)ApplySlopesCommand).RaiseCanExecuteChanged();
             ((RelayCommand)ExportResultsCommand).RaiseCanExecuteChanged();
         }

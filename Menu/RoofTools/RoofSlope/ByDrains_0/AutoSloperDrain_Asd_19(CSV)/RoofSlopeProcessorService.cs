@@ -43,15 +43,23 @@ namespace Revit26_Plugin.Asd_19.Services
                     logAction("Building connectivity graph for pathfinding...");
                     var graph = _graphBuilder.BuildGraph(roofData.Vertices, roofData.TopFace);
 
-                    // Step 1: Identify all vertices that belong to SELECTED drain loops and set them to ZERO
-                    var selectedDrainVertices = IdentifyDrainLoopVertices(roofData, selectedDrains, logAction);
+                    // Step 1: Get all drain vertices from SELECTED drains (already identified with 5mm tolerance)
+                    var selectedDrainVertices = new HashSet<SlabShapeVertex>();
+                    foreach (var drain in selectedDrains)
+                    {
+                        foreach (var vertex in drain.DrainVertices)
+                        {
+                            selectedDrainVertices.Add(vertex);
+                        }
+                        logAction($"Drain {drain.SizeCategory} has {drain.DrainVertices.Count} vertices within 5mm tolerance");
+                    }
 
                     logAction($"Found {selectedDrainVertices.Count} vertices on selected drain loops - setting to ZERO elevation");
                     SetDrainLoopVerticesToZero(roofData.Roof, selectedDrainVertices, logAction);
                     modifiedCount += selectedDrainVertices.Count;
 
-                    // Step 2: Create drain targets from SELECTED drains only
-                    var drainTargets = CreateDrainTargetsFromSelectedDrains(selectedDrains, roofData.Vertices, selectedDrainVertices, logAction);
+                    // Step 2: Create drain targets from SELECTED drains using their vertices
+                    var drainTargets = CreateDrainTargetsFromSelectedDrains(selectedDrains, logAction);
 
                     logAction($"Computing paths to {drainTargets.Count} drain targets for {roofData.Vertices.Count} vertices...");
                     var pathResults = ComputeShortestPaths(roofData.Vertices, drainTargets, graph, selectedDrainVertices, logAction);
@@ -239,88 +247,6 @@ namespace Revit26_Plugin.Asd_19.Services
         }
 
         /// <summary>
-        /// Identify all vertices that belong to SELECTED drain loops
-        /// </summary>
-        private HashSet<SlabShapeVertex> IdentifyDrainLoopVertices(RoofData roofData, List<DrainItem> selectedDrains, Action<string> logAction)
-        {
-            var drainVertices = new HashSet<SlabShapeVertex>();
-
-            try
-            {
-                var doc = roofData.Roof.Document;
-                var topFace = roofData.TopFace;
-
-                foreach (var drain in selectedDrains)
-                {
-                    logAction($"Finding vertices for selected drain: {drain.SizeCategory} at ({drain.CenterPoint.X:F2}, {drain.CenterPoint.Y:F2})");
-
-                    // Find vertices that are within the drain boundary
-                    var verticesInDrain = FindVerticesInDrainArea(roofData.Vertices, drain, topFace);
-
-                    foreach (var vertex in verticesInDrain)
-                    {
-                        drainVertices.Add(vertex);
-                    }
-
-                    logAction($"Found {verticesInDrain.Count} vertices for drain {drain.SizeCategory}");
-                }
-            }
-            catch (Exception ex)
-            {
-                logAction($"WARNING: Could not identify all drain loop vertices: {ex.Message}");
-            }
-
-            return drainVertices;
-        }
-
-        /// <summary>
-        /// Find vertices that are within the drain boundary area
-        /// </summary>
-        private List<SlabShapeVertex> FindVerticesInDrainArea(List<SlabShapeVertex> vertices, DrainItem drain, Face topFace)
-        {
-            var drainVertices = new List<SlabShapeVertex>();
-
-            // Convert drain dimensions to feet for comparison
-            double drainWidthFt = drain.Width / 304.8;
-            double drainHeightFt = drain.Height / 304.8;
-            double halfWidth = drainWidthFt / 2;
-            double halfHeight = drainHeightFt / 2;
-
-            // Define drain boundary in local coordinates
-            double minX = drain.CenterPoint.X - halfWidth;
-            double maxX = drain.CenterPoint.X + halfWidth;
-            double minY = drain.CenterPoint.Y - halfHeight;
-            double maxY = drain.CenterPoint.Y + halfHeight;
-
-            foreach (var vertex in vertices)
-            {
-                if (vertex?.Position == null) continue;
-
-                // Check if vertex is within drain boundary
-                if (vertex.Position.X >= minX && vertex.Position.X <= maxX &&
-                    vertex.Position.Y >= minY && vertex.Position.Y <= maxY)
-                {
-                    // Additional check: project to face to ensure it's on the opening
-                    try
-                    {
-                        var projection = topFace.Project(vertex.Position);
-                        if (projection != null)
-                        {
-                            drainVertices.Add(vertex);
-                        }
-                    }
-                    catch
-                    {
-                        // If projection fails, still include the vertex if it's within bounds
-                        drainVertices.Add(vertex);
-                    }
-                }
-            }
-
-            return drainVertices;
-        }
-
-        /// <summary>
         /// Set all vertices on selected drain loops to ZERO elevation
         /// </summary>
         private void SetDrainLoopVerticesToZero(RoofBase roof, HashSet<SlabShapeVertex> drainVertices, Action<string> logAction)
@@ -342,19 +268,17 @@ namespace Revit26_Plugin.Asd_19.Services
         }
 
         /// <summary>
-        /// Create drain targets from SELECTED drains only
+        /// UPDATED: Create drain targets from SELECTED drains using their pre-identified vertices
         /// </summary>
-        private List<DrainTarget> CreateDrainTargetsFromSelectedDrains(List<DrainItem> selectedDrains, List<SlabShapeVertex> vertices, HashSet<SlabShapeVertex> drainVertices, Action<string> logAction)
+        private List<DrainTarget> CreateDrainTargetsFromSelectedDrains(List<DrainItem> selectedDrains, Action<string> logAction)
         {
             var drainTargets = new List<DrainTarget>();
             int targetCount = 0;
 
             foreach (var drain in selectedDrains)
             {
-                // Use the drain vertices as targets for path finding
-                var verticesForThisDrain = drainVertices.ToList(); // All drain vertices are potential targets
-
-                foreach (var drainVertex in verticesForThisDrain)
+                // Use the pre-identified drain vertices (found with 5mm tolerance)
+                foreach (var drainVertex in drain.DrainVertices)
                 {
                     drainTargets.Add(new DrainTarget
                     {
@@ -366,7 +290,7 @@ namespace Revit26_Plugin.Asd_19.Services
                     targetCount++;
                 }
 
-                logAction($"Created {verticesForThisDrain.Count} targets for drain {drain.SizeCategory}");
+                logAction($"Created {drain.DrainVertices.Count} targets for drain {drain.SizeCategory}");
             }
 
             logAction($"Total drain targets created: {targetCount}");

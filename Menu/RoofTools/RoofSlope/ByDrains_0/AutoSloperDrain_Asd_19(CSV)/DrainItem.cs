@@ -1,17 +1,24 @@
 ﻿using Autodesk.Revit.DB;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Revit26_Plugin.Asd_19.Services
 {
     public class DrainItem
     {
-        public XYZ CenterPoint { get; set; }
+        public XYZ CenterPoint { get; set; } // Keep for backward compatibility
         public double Width { get; set; } // in mm
         public double Height { get; set; } // in mm
         public string SizeCategory => $"{Width:F0} x {Height:F0} mm";
-        public string ShapeType { get; set; } = "Unknown"; // New property for shape type
+        public string ShapeType { get; set; } = "Unknown";
         public bool IsSelected { get; set; } = true;
         public ElementId ElementId { get; set; }
+
+        // NEW: Store the actual shape editing vertices that belong to this drain
+        public List<SlabShapeVertex> DrainVertices { get; set; }
+
+        // NEW: Store the loop curves for accurate distance checking
+        public List<Curve> LoopCurves { get; set; }
 
         // Store corner points for accurate distance calculation
         public List<XYZ> CornerPoints { get; set; }
@@ -20,6 +27,32 @@ namespace Revit26_Plugin.Asd_19.Services
         public int DrainId { get; set; }
         private static int _nextDrainId = 1;
 
+        // Constructor with drain vertices
+        public DrainItem(List<SlabShapeVertex> drainVertices, List<Curve> loopCurves,
+                        double width, double height, string shapeType, ElementId id = null)
+        {
+            DrainVertices = drainVertices ?? new List<SlabShapeVertex>();
+            LoopCurves = loopCurves ?? new List<Curve>();
+            Width = width;
+            Height = height;
+            ShapeType = shapeType;
+            ElementId = id;
+            DrainId = _nextDrainId++;
+
+            // Calculate center point as average of all drain vertices
+            if (drainVertices != null && drainVertices.Count > 0)
+            {
+                CenterPoint = new XYZ(
+                    drainVertices.Average(v => v.Position.X),
+                    drainVertices.Average(v => v.Position.Y),
+                    drainVertices.Average(v => v.Position.Z)
+                );
+            }
+
+            CornerPoints = CalculateCornerPoints();
+        }
+
+        // Legacy constructor for backward compatibility
         public DrainItem(XYZ center, double width, double height, ElementId id = null)
         {
             CenterPoint = center;
@@ -27,6 +60,8 @@ namespace Revit26_Plugin.Asd_19.Services
             Height = height;
             ElementId = id;
             DrainId = _nextDrainId++;
+            DrainVertices = new List<SlabShapeVertex>();
+            LoopCurves = new List<Curve>();
             CornerPoints = CalculateCornerPoints();
         }
 
@@ -38,6 +73,8 @@ namespace Revit26_Plugin.Asd_19.Services
             ShapeType = shapeType;
             ElementId = id;
             DrainId = _nextDrainId++;
+            DrainVertices = new List<SlabShapeVertex>();
+            LoopCurves = new List<Curve>();
             CornerPoints = CalculateCornerPoints();
         }
 
@@ -77,6 +114,30 @@ namespace Revit26_Plugin.Asd_19.Services
             }
 
             return nearestCorner;
+        }
+
+        // NEW: Check if a vertex belongs to this drain (within 5mm tolerance)
+        public bool ContainsVertex(SlabShapeVertex vertex, double toleranceMm = 5.0)
+        {
+            if (vertex?.Position == null || LoopCurves == null) return false;
+
+            double toleranceFeet = toleranceMm / 304.8;
+
+            foreach (var curve in LoopCurves)
+            {
+                try
+                {
+                    double distance = curve.Distance(vertex.Position);
+                    if (distance < toleranceFeet)
+                        return true;
+                }
+                catch
+                {
+                    // Skip problematic curves
+                }
+            }
+
+            return false;
         }
     }
 }
