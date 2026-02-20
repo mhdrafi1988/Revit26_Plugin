@@ -15,6 +15,34 @@ namespace Revit26_Plugin.Asd_19.Services
     public static class CsvExportHelper
     {
         /// <summary>
+        /// Generate unique filename by adding timestamp if file exists
+        /// </summary>
+        private static string GetUniqueFilePath(string filePath)
+        {
+            if (!File.Exists(filePath))
+                return filePath;
+
+            string directory = Path.GetDirectoryName(filePath);
+            string fileNameWithoutExt = Path.GetFileNameWithoutExtension(filePath);
+            string extension = Path.GetExtension(filePath);
+
+            // Add current time in HHmmss format
+            string timeStamp = DateTime.Now.ToString("HHmmss");
+            string newFileName = $"{fileNameWithoutExt}_{timeStamp}{extension}";
+            string newFilePath = Path.Combine(directory, newFileName);
+
+            // If even that exists (rare, but possible in same second), add milliseconds
+            if (File.Exists(newFilePath))
+            {
+                timeStamp = DateTime.Now.ToString("HHmmssfff");
+                newFileName = $"{fileNameWithoutExt}_{timeStamp}{extension}";
+                newFilePath = Path.Combine(directory, newFileName);
+            }
+
+            return newFilePath;
+        }
+
+        /// <summary>
         /// Export detailed vertex data including all vertices with full information
         /// </summary>
         public static string ExportDetailedVertexData(
@@ -35,6 +63,16 @@ namespace Revit26_Plugin.Asd_19.Services
                 string dateStr = DateTime.Now.ToString("dd-MM-yy");
                 string fileName = $"{roofId}_{slopeStr}_{dateStr}_DETAILED.csv";
                 string filePath = Path.Combine(config.ExportPath, fileName);
+
+                // Check if file exists and generate unique path with timestamp
+                string originalPath = filePath;
+                filePath = GetUniqueFilePath(filePath);
+
+                if (filePath != originalPath)
+                {
+                    string timeAdded = Path.GetFileNameWithoutExtension(filePath).Split('_').Last();
+                    logAction?.Invoke($"ℹ File already exists, adding timestamp: {timeAdded}");
+                }
 
                 var csvLines = new List<string>
                 {
@@ -144,6 +182,16 @@ namespace Revit26_Plugin.Asd_19.Services
                 string fileName = $"{roofId}_{slopeStr}_{dateStr}.csv";
                 string filePath = Path.Combine(config.ExportPath, fileName);
 
+                // Check if file exists and generate unique path with timestamp
+                string originalPath = filePath;
+                filePath = GetUniqueFilePath(filePath);
+
+                if (filePath != originalPath)
+                {
+                    string timeAdded = Path.GetFileNameWithoutExtension(filePath).Split('_').Last();
+                    logAction?.Invoke($"ℹ File already exists, adding timestamp: {timeAdded}");
+                }
+
                 var csvLines = new List<string>
                 {
                     "VertexIndex,PathLength_Meters,SlopePercent,ElevationOffset_mm,NearestDrainId,DrainSize,DrainShape,Direction"
@@ -208,6 +256,16 @@ namespace Revit26_Plugin.Asd_19.Services
                 string dateStr = DateTime.Now.ToString("dd-MM-yy");
                 string fileName = $"{roofId}_{slopeStr}_{dateStr}_SUMMARY.csv";
                 string filePath = Path.Combine(config.ExportPath, fileName);
+
+                // Check if file exists and generate unique path with timestamp
+                string originalPath = filePath;
+                filePath = GetUniqueFilePath(filePath);
+
+                if (filePath != originalPath)
+                {
+                    string timeAdded = Path.GetFileNameWithoutExtension(filePath).Split('_').Last();
+                    logAction?.Invoke($"ℹ File already exists, adding timestamp: {timeAdded}");
+                }
 
                 var lines = new[]
                 {

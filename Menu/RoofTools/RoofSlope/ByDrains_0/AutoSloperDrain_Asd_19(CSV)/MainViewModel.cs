@@ -27,6 +27,24 @@ namespace Revit26_Plugin.Asd_19.ViewModels
         private string _selectedSizeFilter = "All";
         private string _logText = "";
 
+        // Flag to track if slope has been applied (permanently disabled)
+        private bool _slopeApplied;
+        public bool SlopeApplied
+        {
+            get => _slopeApplied;
+            set
+            {
+                _slopeApplied = value;
+                OnPropertyChanged(nameof(SlopeApplied));
+
+                // Update command's can-execute state
+                ((RelayCommand)ApplySlopesCommand).RaiseCanExecuteChanged();
+
+                // Also update Export button state if needed
+                ((RelayCommand)ExportResultsCommand).RaiseCanExecuteChanged();
+            }
+        }
+
         public ICommand ApplySlopesCommand { get; }
         public ICommand SelectAllCommand { get; }
         public ICommand SelectNoneCommand { get; }
@@ -559,7 +577,7 @@ namespace Revit26_Plugin.Asd_19.ViewModels
                     exportConfig,
                     metrics,
                     _currentRoof.Roof,
-                    double.Parse(SlopeInput),  // ADDED this parameter
+                    double.Parse(SlopeInput),
                     AddLog);
 
                 // Show success message with file locations (same as Part 01)
@@ -592,6 +610,9 @@ namespace Revit26_Plugin.Asd_19.ViewModels
             }
         }
 
+        /// <summary>
+        /// Updated ApplySlopes method - permanently disables button after execution
+        /// </summary>
         private void ApplySlopes()
         {
             try
@@ -618,6 +639,7 @@ namespace Revit26_Plugin.Asd_19.ViewModels
 
                 AddLog($"Applying {slopePercentage}% slope to {selectedDrains.Count} drains...");
                 AddLog("Using drain corner points for accurate distance calculation...");
+                AddLog("Processing... (this may take a moment)");
 
                 // Process slopes and get results
                 var results = _slopeService.ProcessRoofSlopes(_currentRoof, selectedDrains, slopePercentage, AddLog);
@@ -641,6 +663,10 @@ namespace Revit26_Plugin.Asd_19.ViewModels
 
                 // Update CanExecute for Export button
                 ((RelayCommand)ExportResultsCommand).RaiseCanExecuteChanged();
+
+                // PERMANENTLY DISABLE THE APPLY SLOPE BUTTON
+                SlopeApplied = true;
+                AddLog("🔒 Apply Slope button has been permanently disabled (operation completed)");
             }
             catch (Exception ex)
             {
@@ -654,9 +680,14 @@ namespace Revit26_Plugin.Asd_19.ViewModels
             CloseWindow?.Invoke();
         }
 
+        /// <summary>
+        /// Updated CanApplySlopes method - checks if slope has already been applied
+        /// </summary>
         private bool CanApplySlopes()
         {
-            return _currentRoof != null && AllDrains.Any(d => d.IsSelected);
+            return _currentRoof != null &&
+                   AllDrains.Any(d => d.IsSelected) &&
+                   !SlopeApplied; // Permanently disabled after first application
         }
 
         private void SelectAllDrains()
