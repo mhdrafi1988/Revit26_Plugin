@@ -66,7 +66,10 @@ namespace Revit26_Plugin.Asd_19.Core.Parameters
                 TrySetString(roof, AppConstants.Param_RunDate,
                     DateTime.Now.ToString("dd-MM-yy HH:mm"),
                     ref successCount, ref failCount);
-
+                // Version parameter - track plugin version
+                TrySetString(roof, AppConstants.Param_Versions,
+                    "P.04.00", // or your current version number
+                    ref successCount, ref failCount);
                 // Status parameter - calculate based on success/failure
                 int statusValue = CalculateStatusValue(successCount, failCount);
                 TrySetInt(roof, AppConstants.Param_Status, statusValue, ref successCount, ref failCount);

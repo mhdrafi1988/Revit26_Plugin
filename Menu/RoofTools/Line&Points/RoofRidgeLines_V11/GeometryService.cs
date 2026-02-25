@@ -20,16 +20,20 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines_V11.Services
             XYZ dir = (p2 - p1).Normalize();
             XYZ perp = new XYZ(-dir.Y, dir.X, 0);
 
-            double r = 50000;
+            double r = 50000; // Large enough to intersect roof boundaries
             Line ray = Line.CreateBound(mid - perp * r, mid + perp * r);
 
             foreach (Curve c in GetRoofEdges(roof))
             {
                 if (c.Intersect(ray, out IntersectionResultArray arr) == SetComparisonResult.Overlap)
                 {
-                    XYZ hit = arr.Cast<IntersectionResult>().First().XYZPoint;
-                    result.Add(doc.Create.NewDetailCurve(view,
-                        Line.CreateBound(mid, hit)) as DetailLine);
+                    // Get ALL intersection points (not just the first one)
+                    foreach (IntersectionResult ir in arr)
+                    {
+                        XYZ hit = ir.XYZPoint;
+                        result.Add(doc.Create.NewDetailCurve(view,
+                            Line.CreateBound(mid, hit)) as DetailLine);
+                    }
                 }
             }
             return result;
@@ -39,33 +43,53 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines_V11.Services
             Document doc, RoofBase roof, List<DetailLine> lines, double meters)
         {
             if (!lines.Any()) return 0;
+
             var editor = roof.GetSlabShapeEditor();
             editor.Enable();
 
-            double step = UnitUtils.ConvertToInternalUnits(meters, UnitTypeId.Meters);
             int count = 0;
 
+            // Add points ONLY at the intersection points with roof profiles
             foreach (var dl in lines)
             {
                 Line ln = dl.GeometryCurve as Line;
-                int steps = (int)(ln.Length / step);
+                if (ln == null) continue;
 
-                for (int i = 0; i <= steps; i++)
-                {
-                    XYZ pt = ln.GetEndPoint(0) + ln.Direction * step * i;
-                    editor.AddPoint(pt);
-                    count++;
-                }
+                // The end point of each perpendicular line is on the roof edge (intersection point)
+                XYZ intersectionPoint = ln.GetEndPoint(1); // The far end point (on roof edge)
+                editor.AddPoint(intersectionPoint);
+                count++;
             }
+
             return count;
         }
 
         private static IEnumerable<Curve> GetRoofEdges(RoofBase roof)
         {
             var geo = roof.get_Geometry(new Options());
-            return geo.OfType<Solid>()
-                .SelectMany(s => s.Edges.Cast<Edge>())
-                .Select(e => e.AsCurve());
+            if (geo == null) yield break;
+
+            foreach (var obj in geo)
+            {
+                if (obj is Solid solid)
+                {
+                    foreach (Edge edge in solid.Edges)
+                    {
+                        yield return edge.AsCurve();
+                    }
+                }
+                else if (obj is GeometryInstance inst)
+                {
+                    var instGeo = inst.GetInstanceGeometry();
+                    foreach (var instSolid in instGeo.OfType<Solid>())
+                    {
+                        foreach (Edge edge in instSolid.Edges)
+                        {
+                            yield return edge.AsCurve();
+                        }
+                    }
+                }
+            }
         }
     }
 }

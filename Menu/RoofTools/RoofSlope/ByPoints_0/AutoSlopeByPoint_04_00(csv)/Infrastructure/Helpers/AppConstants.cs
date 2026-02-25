@@ -12,6 +12,7 @@
         public const string Param_Threshold = "AutoSlope_Threshold";
         public const string Param_RunDate = "AutoSlope_RunDate";
         public const string Param_Status = "AutoSlope_Status";
+        public const string Param_Versions = "AutoSlope_Versions";
 
         public const int Status_OK = 1;
         public const int Status_Partial = 2;

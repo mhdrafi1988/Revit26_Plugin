@@ -12,14 +12,15 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Parameters
     public static class AutoSlopeParameterWriter
     {
         public static void WriteAll(
-            Document doc,
-            RoofBase roof,
-            AutoSlopePayload data,
-            double highestElevation_mm,
-            double longestPath_m,
-            int processed,
-            int skipped,
-            int runDuration_sec)
+    Document doc,
+    RoofBase roof,
+    AutoSlopePayload data,
+    double highestElevation_mm,
+    double longestPath_m,
+    int processed,
+    int skipped,
+    int runDuration_sec,
+    string version = "P.04.00") // ADD THIS PARAMETER WITH DEFAULT VALUE
         {
             if (doc == null || roof == null)
                 return;
@@ -65,6 +66,13 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Parameters
 
                 TrySetString(roof, "AutoSlope_RunDate",
                     DateTime.Now.ToString("dd-MM-yy HH:mm"),
+                    ref successCount, ref failCount);
+                TrySetString(roof, "AutoSlope_RunDate",
+                    DateTime.Now.ToString("dd-MM-yy HH:mm"),
+                    ref successCount, ref failCount);
+
+                TrySetString(roof, "AutoSlope_Versions",
+                    version,
                     ref successCount, ref failCount);
 
                 int statusValue = successCount == 0 ? 3 : failCount > 0 ? 2 : 1;

@@ -198,6 +198,7 @@ namespace Revit26_Plugin.Asd_19.Services
                     SetParameterValue(roof, "AutoSlope_SlopePercent", slopePercentage);
                     SetParameterValue(roof, "AutoSlope_Threshold", 100.0); // Default threshold value
                     SetParameterValue(roof, "AutoSlope_RunDate", runDate);
+                    SetParameterValue(roof, "AutoSlope_Versions", "D.04.00"); // ADD THIS LINE
 
                     logAction("✓ Updated roof parameters with calculation results:");
                     logAction($"  - Highest Elevation: {highestElevationMm:F2} mm");
@@ -205,6 +206,7 @@ namespace Revit26_Plugin.Asd_19.Services
                     logAction($"  - Drain Count: {drainCount}");
                     logAction($"  - Run Duration: {durationSeconds:F2} seconds");
                     logAction($"  - Run Date: {runDate}");
+                    logAction($"  - Version: D.04.00"); // ADD THIS LINE
 
                     paramTransaction.Commit();
                 }

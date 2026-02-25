@@ -24,10 +24,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             ViewCreate.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Create_32.png");
 
             ViewCreate.AddPushButton(new PushButtonData("Btn_CSFL_V07", "Create Sections From Detail Lines V07", assemblyPath, "Revit26_Plugin.CSFL_V07.Commands.CreateSectionsFromDetailLines"));
-            ViewCreate.AddPushButton(new PushButtonData("Btn_CSFL_V08", "Create Sections From Detail Lines V08", assemblyPath, "Revit26_Plugin.CSFL_08.Commands.CreateSectionsFromDetailLinesCommand"));
-
-
-
+           
             PulldownButton ViewPlace = panel.AddItem(new PulldownButtonData("Place", "Place")) as PulldownButton;
             ViewPlace.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Place_32.png");
             

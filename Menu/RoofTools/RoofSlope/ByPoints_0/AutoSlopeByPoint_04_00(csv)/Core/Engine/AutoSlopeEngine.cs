@@ -146,7 +146,8 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Engine
             data.Vm.RunDate = runDate;
 
             AutoSlopeParameterWriter.WriteAll(
-                doc, roof, data, highest_mm, maxPathFt, processed, skipped, durationSec);
+                doc, roof, data, highest_mm, maxPathFt, processed, skipped, durationSec,"P.04.00");
+
 
             if (data.ExportConfig?.ExportToCsv == true)
             {
