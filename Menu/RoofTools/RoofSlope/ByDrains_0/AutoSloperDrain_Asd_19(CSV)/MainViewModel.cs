@@ -86,7 +86,7 @@ namespace Revit26_Plugin.Asd_19.ViewModels
             }
         }
 
-        private bool _includeVertexDetails = false;
+        private bool _includeVertexDetails = true;
         public bool IncludeVertexDetails
         {
             get => _includeVertexDetails;
