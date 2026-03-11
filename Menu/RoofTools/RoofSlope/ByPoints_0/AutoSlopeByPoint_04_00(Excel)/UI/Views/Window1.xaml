@@ -145,8 +145,8 @@
                         </DataTemplate>
                     </GroupBox.HeaderTemplate>
                     <StackPanel>
-                        <CheckBox Content="Export results to CSV"
-                                  IsChecked="{Binding ExportToCsv}"
+                        <CheckBox Content="Export results to Excel"
+                                  IsChecked="{Binding ExportToExcel}"
                                   Style="{StaticResource CheckBoxStyle}"
                                   ToolTip="Always creates: RoofId_Slope_Date.csv with 7 columns"/>
 

@@ -10,7 +10,7 @@ namespace Revit26_Plugin.RoofFromFloor.Geometry
 {
     /// <summary>
     /// Extracts roof footprint curves EXACTLY as defined in Revit.
-    /// Order and direction are preserved by design.
+    /// Used only to define the bounding area for floor extraction.
     /// </summary>
     public static class ProfileExtractor
     {

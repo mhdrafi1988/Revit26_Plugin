@@ -11,52 +11,19 @@ namespace Revit26_Plugin.RoofFromFloor.Geometry
             List<Curve> roofCurves,
             List<ProfileLoop> floorProfiles)
         {
-            // Roof is authoritative
+            // Collect all curves
             var allCurves = new List<Curve>();
             allCurves.AddRange(roofCurves);
 
             foreach (var fp in floorProfiles)
                 allCurves.AddRange(fp.Curves);
 
-            // 1?? Remove overlapping curves
-            allCurves = RemoveOverlaps(allCurves, roofCurves);
-
-            // 2?? Snap endpoints
+            // Snap endpoints
             allCurves = SnapEndpoints(allCurves);
 
-            // 3?? Build closed loops
+            // Build closed loops
             return BuildClosedLoops(allCurves);
         }
-
-        // --------------------------------------------------
-
-        private static List<Curve> RemoveOverlaps(
-            List<Curve> curves,
-            List<Curve> roofCurves)
-        {
-            var result = new List<Curve>();
-
-            foreach (var c in curves)
-            {
-                bool overlap = result.Any(r => CurveUtils.AreCurvesOverlapping(r, c));
-
-                if (!overlap)
-                {
-                    result.Add(c);
-                }
-                else
-                {
-                    // Prefer roof curve
-                    bool isRoofCurve = roofCurves.Any(r => CurveUtils.AreCurvesOverlapping(r, c));
-                    if (isRoofCurve)
-                        result.Add(c);
-                }
-            }
-
-            return result;
-        }
-
-        // --------------------------------------------------
 
         private static List<Curve> SnapEndpoints(List<Curve> curves)
         {
@@ -82,8 +49,6 @@ namespace Revit26_Plugin.RoofFromFloor.Geometry
 
             return snapped;
         }
-
-        // --------------------------------------------------
 
         private static List<CurveLoop> BuildClosedLoops(List<Curve> curves)
         {

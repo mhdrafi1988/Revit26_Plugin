@@ -13,9 +13,9 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Models
         public string FileNamePrefix { get; set; } = "AutoSlope_";
         public bool IncludeTimestamp { get; set; } = true;
 
-        // CSV Export Specific (for backward compatibility with AutoSlopeEngine.cs)
-        public bool ExportToCsv { get; set; } = true; // Add this
-        public bool IncludeVertexDetails { get; set; } = true; // Add this
+        // Excel Export Specific
+        public bool ExportToExcel { get; set; } = true;
+        public bool IncludeVertexDetails { get; set; } = true;
 
         // Data Content Options
         public bool ExportRoofGeometry { get; set; } = true;
@@ -96,8 +96,8 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Models
             return $"{FileNamePrefix}{timestamp}";
         }
 
-        // Helper property to check if CSV export is enabled based on Format
-        public bool IsCsvExportEnabled => Format == ExportFormat.CSV || ExportToCsv;
+        // Helper property to check if Excel export is enabled
+        public bool IsExcelExportEnabled => Format == ExportFormat.Excel || ExportToExcel;
     }
 
     // Supporting Enums

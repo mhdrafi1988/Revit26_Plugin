@@ -65,14 +65,27 @@ namespace Revit26_Plugin.CSFL_V07.Services.Creation
                 return SectionCreationResult.Fail("Failed to create section.");
             }
 
+            // Set the view name
             section.Name = _naming.Generate(
                 _plan,
                 o.Prefix,
                 req.SourceLine.Id,
                 out renamed);
 
+            // Apply template if selected
             if (o.Template != null)
                 section.ViewTemplateId = o.Template.Id;
+
+            // Set the view scale (1:100 = 100, 1:200 = 200, etc.)
+            // "Hide at coarser than" is typically set in the view template or view type
+            // But we can also set the scale directly
+            section.Scale = o.ViewScale;
+
+            // If you need to set "Hide at coarser than" specifically,
+            // you might need to set a parameter:
+            // Parameter hideParam = section.get_Parameter(BuiltInParameter.VIEW_HIDE_AT_SCALE);
+            // if (hideParam != null && hideParam.IsReadOnly == false)
+            //     hideParam.Set(o.ViewScale); // Or set to 500 for 1:500
 
             st.Commit();
             return SectionCreationResult.Ok(section);

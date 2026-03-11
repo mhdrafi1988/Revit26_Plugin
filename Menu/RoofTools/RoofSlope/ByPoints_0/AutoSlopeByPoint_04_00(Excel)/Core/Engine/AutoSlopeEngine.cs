@@ -146,17 +146,17 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Engine
             data.Vm.RunDate = runDate;
 
             AutoSlopeParameterWriter.WriteAll(
-                doc, roof, data, highest_mm, maxPathFt, processed, skipped, durationSec,"P.04.00");
+                doc, roof, data, highest_mm, maxPathFt, processed, skipped, durationSec, "P.04.00");
 
-
-            if (data.ExportConfig?.ExportToCsv == true)
+            // Export to Excel if enabled
+            if (data.ExportConfig?.ExportToExcel == true)
             {
-                string compactPath = CsvExportHelper.ExportCompactVertexData(
+                string compactPath = ExcelExportHelper.ExportCompactVertexData(
                     data, vertexDataList, roof, data.SlopePercent);
 
                 if (!string.IsNullOrEmpty(compactPath))
                 {
-                    data.Log(LogColorHelper.Green($"? Compact vertex data exported to: {compactPath}"));
+                    data.Log(LogColorHelper.Green($"✅ Compact Excel data exported to: {compactPath}"));
                     data.Log(LogColorHelper.Cyan($"  • Sorted by PathLength_Meters (longest first)"));
                     data.Log(LogColorHelper.Cyan($"  • Contains {processed} processed vertices"));
 
@@ -173,13 +173,14 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Engine
 
                 if (data.ExportConfig.IncludeVertexDetails)
                 {
-                    string detailedPath = CsvExportHelper.ExportDetailedVertexData(
+                    string detailedPath = ExcelExportHelper.ExportDetailedVertexData(
                         data, vertexDataList, roof, data.DrainPoints, data.SlopePercent);
 
                     if (!string.IsNullOrEmpty(detailedPath))
                     {
-                        data.Log(LogColorHelper.Green($"? Detailed vertex data exported to: {detailedPath}"));
+                        data.Log(LogColorHelper.Green($"✅ Detailed Excel data exported to: {detailedPath}"));
                         data.Log(LogColorHelper.Cyan($"  • Contains {vertexDataList.Count} total vertices ({processed} processed, {skipped} skipped)"));
+                        data.Log(LogColorHelper.Cyan($"  • Multiple sheets: Summary, Drain Points, Vertices, Statistics"));
                     }
                 }
             }
@@ -192,8 +193,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Engine
             data.Log(LogColorHelper.Cyan($"Drain Count        : {data.DrainPoints.Count}"));
             data.Log(LogColorHelper.Cyan($"Run Duration       : {durationSec} sec"));
             data.Log(LogColorHelper.Cyan($"Run Date           : {runDate}"));
-
-            data.Log(LogColorHelper.Green("===== AutoSlope Finished ? ====="));
+            data.Log(LogColorHelper.Green("===== AutoSlope Finished Successfully ====="));
         }
 
         private static int FindNearestDrainIndex(XYZ vertexPos, List<XYZ> drainPoints)

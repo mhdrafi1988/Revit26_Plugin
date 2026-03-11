@@ -58,7 +58,7 @@ namespace Revit26_Plugin.RoofFromFloor.ViewModels
                 new RoofCreationHandler { ViewModel = this });
 
             UpdateActiveViewStatus();
-            _log.Info("UI loaded. Switch to a Plan View, then select a roof.");
+            _log.Info("UI loaded. Switch to a Plan View, then select a roof to define the area.");
         }
 
         // ---------- UI PROPERTIES ----------
@@ -79,7 +79,7 @@ namespace Revit26_Plugin.RoofFromFloor.ViewModels
 
         public ICommand SelectRoofCommand => new RelayCommand(() =>
         {
-            _log.Info("Launching roof selection...");
+            _log.Info("Launching roof selection (to define extraction area)...");
             _window.Hide();
             _roofSelectEvent.Raise();
         });
@@ -110,7 +110,7 @@ namespace Revit26_Plugin.RoofFromFloor.ViewModels
             RoofStatusColor = Brushes.Green;
             IsRoofSelected = true;
 
-            _log.Info($"Roof selected. Footprint curves: {_roofContext.RoofFootprintCurves.Count}");
+            _log.Info($"Roof selected. Bounding box will be used to filter floors.");
             UpdateCanStart();
         }
 
@@ -139,7 +139,8 @@ namespace Revit26_Plugin.RoofFromFloor.ViewModels
 
         private void OnStart()
         {
-            _log.Info("Extracting floor profiles...");
+            _log.Info("========== EXTRACTING FLOORS FROM LINK ==========");
+            _log.Info("Extracting floor profiles from linked model...");
 
             _floorProfiles = FloorProfileService.ExtractFloorProfilesFromLink(
                 _uiApp.ActiveUIDocument.Document,
@@ -147,14 +148,19 @@ namespace Revit26_Plugin.RoofFromFloor.ViewModels
                 _roofContext.BoundingBox,
                 _roofContext.RoofLevel.Elevation + _roofContext.RoofBaseElevation);
 
-            _log.Info($"Floor profiles: {_floorProfiles.Count}");
+            _log.Info($"Floor profiles found: {_floorProfiles.Count}");
 
-            _log.Info("Cleaning geometry...");
-            _cleanLoops = ProfileCleaner.CleanAndBuildLoops(
-                _roofContext.RoofFootprintCurves,
-                _floorProfiles);
+            // Log floor profile details
+            int floorCurveCount = 0;
+            foreach (var profile in _floorProfiles)
+            {
+                floorCurveCount += profile.Curves.Count;
+                _log.Info($"  Profile has {profile.Curves.Count} curves");
+            }
+            _log.Info($"Total floor curves: {floorCurveCount}");
 
-            _log.Info($"Closed loops: {_cleanLoops.Count}");
+            _log.Info("========== EXTRACTION COMPLETE ==========");
+            _log.Info($"Ready to create {floorCurveCount} floor curves (overlaps will be removed during creation)");
 
             _window.Hide();
             _roofCreateEvent.Raise();

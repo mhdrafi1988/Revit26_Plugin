@@ -48,7 +48,8 @@ namespace Revit26_Plugin.CSFL_V07.Services.Orchestration
                 _vm.SelectedSectionType,
                 _vm.SelectedTemplate,
                 _vm.OpenAllAfterCreate,
-                _vm.DeleteLinesAfterCreate);
+                _vm.DeleteLinesAfterCreate,
+                _vm.ViewScale); // Pass view scale
 
             var orientSvc = new SectionOrientationService();
             var hostSvc = new HostElementSearchService(_doc);

@@ -1,15 +1,21 @@
 ﻿using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.Input;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using Revit26_Plugin.AutoSlopeByPoint_04.Core.Models;
 using Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.ExternalEvents;
 using Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
+using System.Drawing;
 
 namespace Revit26_Plugin.AutoSlopeByPoint_04.UI.ViewModels
 {
@@ -42,14 +48,14 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.UI.ViewModels
             set { _exportFolderPath = value; Raise(); }
         }
 
-        private bool _exportToCsv = true;
-        public bool ExportToCsv
+        private bool _exportToExcel = true;
+        public bool ExportToExcel
         {
-            get => _exportToCsv;
-            set { _exportToCsv = value; Raise(); }
+            get => _exportToExcel;
+            set { _exportToExcel = value; Raise(); }
         }
 
-        private bool _includeVertexDetails = false;
+        private bool _includeVertexDetails = true;
         public bool IncludeVertexDetails
         {
             get => _includeVertexDetails;
@@ -172,6 +178,9 @@ Export Folder      : {ExportFolderPath}";
             List<XYZ> drainPoints,
             Action<string> log)
         {
+            // Set EPPlus license context - FULLY QUALIFIED to avoid ambiguity
+            OfficeOpenXml.ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+
             UIDoc = uidoc;
             App = app;
             RoofId = roofId;
@@ -192,7 +201,7 @@ Export Folder      : {ExportFolderPath}";
             LogText = "";
             AddLog("Starting AutoSlope...");
 
-            if (ExportToCsv && !Directory.Exists(ExportFolderPath))
+            if (ExportToExcel && !Directory.Exists(ExportFolderPath))
             {
                 try
                 {
@@ -216,7 +225,7 @@ Export Folder      : {ExportFolderPath}";
                 ExportConfig = new ExportConfig
                 {
                     ExportPath = ExportFolderPath,
-                    ExportToCsv = ExportToCsv,
+                    ExportToExcel = ExportToExcel,
                     IncludeVertexDetails = IncludeVertexDetails
                 }
             };
@@ -251,30 +260,55 @@ Export Folder      : {ExportFolderPath}";
             try
             {
                 var filePath = DialogService.ShowSaveFileDialog(
-                    "CSV files (*.csv)|*.csv|All files (*.*)|*.*",
+                    "Excel files (*.xlsx)|*.xlsx|All files (*.*)|*.*",
                     ExportFolderPath,
-                    $"AutoSlope_Results_{DateTime.Now:yyyyMMdd_HHmmss}.csv");
+                    $"AutoSlope_Results_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx");
 
                 if (!string.IsNullOrEmpty(filePath))
                 {
-                    var exportData = new List<string>
+                    // Use fully qualified namespace
+                    using (var package = new OfficeOpenXml.ExcelPackage())
                     {
-                        "AutoSlope Results Export",
-                        $"Export Date: {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
-                        "",
-                        "SUMMARY",
-                        $"Vertices Processed,{VerticesProcessed}",
-                        $"Vertices Skipped,{VerticesSkipped}",
-                        $"Drain Count,{DrainCount}",
-                        $"Highest Elevation (mm),{HighestElevation_mm:0}",
-                        $"Longest Path (m),{LongestPath_m:0.00}",
-                        $"Run Duration (sec),{RunDuration_sec}",
-                        $"Run Date,{RunDate}",
-                        $"Slope Percentage,{SlopePercent}",
-                        $"Threshold (m),{ThresholdMeters}"
-                    };
+                        var sheet = package.Workbook.Worksheets.Add("AutoSlope Results");
 
-                    File.WriteAllLines(filePath, exportData);
+                        // Title
+                        sheet.Cells[1, 1].Value = "AutoSlope Results Export";
+                        sheet.Cells[1, 1, 1, 2].Merge = true;
+                        sheet.Cells[1, 1].Style.Font.Bold = true;
+                        sheet.Cells[1, 1].Style.Font.Size = 14;
+
+                        // Export Date
+                        sheet.Cells[2, 1].Value = "Export Date:";
+                        sheet.Cells[2, 1].Style.Font.Bold = true;
+                        sheet.Cells[2, 2].Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+                        // Headers
+                        int row = 4;
+                        sheet.Cells[row, 1].Value = "Parameter";
+                        sheet.Cells[row, 2].Value = "Value";
+                        sheet.Cells[row, 1, row, 2].Style.Font.Bold = true;
+                        sheet.Cells[row, 1, row, 2].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                        sheet.Cells[row, 1, row, 2].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
+                        row++;
+
+                        // Add summary data
+                        AddSummaryRow(sheet, ref row, "Vertices Processed", VerticesProcessed);
+                        AddSummaryRow(sheet, ref row, "Vertices Skipped", VerticesSkipped);
+                        AddSummaryRow(sheet, ref row, "Drain Count", DrainCount);
+                        AddSummaryRow(sheet, ref row, "Highest Elevation (mm)", $"{HighestElevation_mm:0}");
+                        AddSummaryRow(sheet, ref row, "Longest Path (m)", $"{LongestPath_m:0.00}");
+                        AddSummaryRow(sheet, ref row, "Run Duration (sec)", RunDuration_sec);
+                        AddSummaryRow(sheet, ref row, "Run Date", RunDate);
+                        AddSummaryRow(sheet, ref row, "Slope Percentage", $"{SlopePercent}%");
+                        AddSummaryRow(sheet, ref row, "Threshold (m)", ThresholdMeters);
+                        AddSummaryRow(sheet, ref row, "Export Folder", ExportFolderPath);
+
+                        // Auto-fit columns
+                        sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
+
+                        package.SaveAs(new FileInfo(filePath));
+                    }
+
                     AddLog($"Results exported to: {filePath}");
                 }
             }
@@ -282,6 +316,14 @@ Export Folder      : {ExportFolderPath}";
             {
                 AddLog($"Error exporting results: {ex.Message}");
             }
+        }
+
+        private void AddSummaryRow(OfficeOpenXml.ExcelWorksheet sheet, ref int row, string label, object value)
+        {
+            sheet.Cells[row, 1].Value = label;
+            sheet.Cells[row, 1].Style.Font.Bold = true;
+            sheet.Cells[row, 2].Value = value;
+            row++;
         }
 
         private void AddLog(string message)

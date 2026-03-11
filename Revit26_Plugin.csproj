@@ -5,7 +5,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\28\00\00</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\12\01</BaseOutputPath>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
@@ -58,6 +58,9 @@
 	  <Compile Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_002_01\**" />
 	  <Compile Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_003\**" />
 	  <Compile Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
+	  <Compile Remove="Menu\RoofTools\RoofCreation\Create_Detail_LInes_From Roof\**" />
+	  <Compile Remove="Menu\RoofTools\RoofCreation\RoofCreation_Detail_LInes\**" />
+	  <Compile Remove="Menu\RoofTools\RoofCreation\RoofCreation_working_02\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeByPoint\AutoSlopeByPoint_04\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeByPoint\AutoSlopeByPoint_Classic%28WIP%29\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\AutoSlopeByPoint\AutoSlopeByPoint_Classic\**" />
@@ -197,6 +200,9 @@
 	  <EmbeddedResource Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_002_01\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_003\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
+	  <EmbeddedResource Remove="Menu\RoofTools\RoofCreation\Create_Detail_LInes_From Roof\**" />
+	  <EmbeddedResource Remove="Menu\RoofTools\RoofCreation\RoofCreation_Detail_LInes\**" />
+	  <EmbeddedResource Remove="Menu\RoofTools\RoofCreation\RoofCreation_working_02\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\AutoSlopeByPoint\AutoSlopeByPoint_04\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\AutoSlopeByPoint\AutoSlopeByPoint_Classic%28WIP%29\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\AutoSlopeByPoint\AutoSlopeByPoint_Classic\**" />
@@ -336,6 +342,9 @@
 	  <None Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_002_01\**" />
 	  <None Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_003\**" />
 	  <None Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
+	  <None Remove="Menu\RoofTools\RoofCreation\Create_Detail_LInes_From Roof\**" />
+	  <None Remove="Menu\RoofTools\RoofCreation\RoofCreation_Detail_LInes\**" />
+	  <None Remove="Menu\RoofTools\RoofCreation\RoofCreation_working_02\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\AutoSlopeByPoint\AutoSlopeByPoint_04\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\AutoSlopeByPoint\AutoSlopeByPoint_Classic%28WIP%29\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\AutoSlopeByPoint\AutoSlopeByPoint_Classic\**" />
@@ -475,6 +484,9 @@
 	  <Page Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_002_01\**" />
 	  <Page Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_003\**" />
 	  <Page Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
+	  <Page Remove="Menu\RoofTools\RoofCreation\Create_Detail_LInes_From Roof\**" />
+	  <Page Remove="Menu\RoofTools\RoofCreation\RoofCreation_Detail_LInes\**" />
+	  <Page Remove="Menu\RoofTools\RoofCreation\RoofCreation_working_02\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\AutoSlopeByPoint\AutoSlopeByPoint_04\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\AutoSlopeByPoint\AutoSlopeByPoint_Classic%28WIP%29\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\AutoSlopeByPoint\AutoSlopeByPoint_Classic\**" />
@@ -654,6 +666,7 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+	  <PackageReference Include="EPPlus" Version="5.8.17" />
 	  <PackageReference Include="MahApps.Metro" Version="2.4.11" />
 	  <PackageReference Include="MahApps.Metro.IconPacks" Version="6.2.1" />
 	  <PackageReference Include="MaterialDesignColors" Version="5.3.0" />
@@ -669,6 +682,7 @@
 	  <Folder Include="Menu\RoofTools\RoofSlope\ByDrains\V5_00\Properties\" />
 	  <Folder Include="Menu\RoofTools\RoofSlope\ByDrains\V5_00\UI\Resources\" />
 	  <Folder Include="Menu\Setup\CaddLInkToFamiliy\" />
+	  <Folder Include="ViewModels\" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Update="Menu\RoofTools\CreasetoLines\Creaser_V08\CreaserSummaryWindow.xaml.cs">

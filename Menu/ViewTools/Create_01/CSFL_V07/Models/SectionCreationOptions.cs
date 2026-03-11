@@ -17,6 +17,7 @@ namespace Revit26_Plugin.CSFL_V07.Models
         public SnapSourceMode SnapSource { get; }
         public ViewFamilyType SectionType { get; }
         public View Template { get; }
+        public int ViewScale { get; } // New property for view scale
 
         public bool OpenAfterCreate { get; }
         public bool DeleteLinesAfterCreate { get; }
@@ -31,7 +32,8 @@ namespace Revit26_Plugin.CSFL_V07.Models
             ViewFamilyType sectionType,
             View template,
             bool openAfterCreate,
-            bool deleteLinesAfterCreate)
+            bool deleteLinesAfterCreate,
+            int viewScale) // Added viewScale parameter
         {
             Prefix = prefix;
             FarClipMm = farClipMm;
@@ -43,6 +45,7 @@ namespace Revit26_Plugin.CSFL_V07.Models
             Template = template;
             OpenAfterCreate = openAfterCreate;
             DeleteLinesAfterCreate = deleteLinesAfterCreate;
+            ViewScale = viewScale;
         }
     }
 }

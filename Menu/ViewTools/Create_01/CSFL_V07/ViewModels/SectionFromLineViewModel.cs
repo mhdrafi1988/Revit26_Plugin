@@ -51,6 +51,9 @@ namespace Revit26_Plugin.CSFL_V07.ViewModels
         [ObservableProperty] private View selectedTemplate;
         [ObservableProperty] private SnapSourceMode selectedSnapSource;
 
+        // New property for view scale
+        [ObservableProperty] private int viewScale = 100; // Default 1:100
+
         // ================= LIVE LOG =================
 
         /// <summary>
@@ -87,7 +90,7 @@ namespace Revit26_Plugin.CSFL_V07.ViewModels
             if (doc == null)
                 throw new ArgumentNullException(nameof(doc));
 
-            // Section types
+            // Section types - collect ALL section types
             SectionTypes = new ObservableCollection<ViewFamilyType>(
                 new FilteredElementCollector(doc)
                     .OfClass(typeof(ViewFamilyType))
@@ -95,7 +98,12 @@ namespace Revit26_Plugin.CSFL_V07.ViewModels
                     .Where(v => v.ViewFamily == ViewFamily.Section)
                     .OrderBy(v => v.Name));
 
-            SelectedSectionType = SectionTypes.FirstOrDefault();
+            // Try to set "Detail Section" as default if it exists
+            var detailSectionType = SectionTypes.FirstOrDefault(v =>
+                v.Name.Contains("Detail", StringComparison.OrdinalIgnoreCase) ||
+                v.Name.Contains("Detail Section", StringComparison.OrdinalIgnoreCase));
+
+            SelectedSectionType = detailSectionType ?? SectionTypes.FirstOrDefault();
 
             // Section view templates
             ViewTemplates = new ObservableCollection<View>(
@@ -140,6 +148,9 @@ namespace Revit26_Plugin.CSFL_V07.ViewModels
 
             else if (SelectedSectionType == null)
                 errorMessage = "No Section Type selected.";
+
+            else if (ViewScale <= 0)
+                errorMessage = "View Scale must be greater than 0.";
 
             return errorMessage == null;
         }
