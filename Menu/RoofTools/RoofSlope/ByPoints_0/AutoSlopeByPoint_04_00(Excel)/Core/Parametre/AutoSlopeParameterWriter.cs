@@ -57,7 +57,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Parameters
                     ref successCount, ref failCount);
 
                 TrySetDouble(roof, "AutoSlope_SlopePercent",
-                    data.SlopePercent,
+                    data.SlopePercent/100.0,
                     ref successCount, ref failCount);
 
                 TrySetDouble(roof, "AutoSlope_Threshold",
@@ -66,10 +66,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Parameters
 
                 TrySetString(roof, "AutoSlope_RunDate",
                     DateTime.Now.ToString("dd-MM-yy HH:mm"),
-                    ref successCount, ref failCount);
-                TrySetString(roof, "AutoSlope_RunDate",
-                    DateTime.Now.ToString("dd-MM-yy HH:mm"),
-                    ref successCount, ref failCount);
+                    ref successCount, ref failCount);                
 
                 TrySetString(roof, "AutoSlope_Versions",
                     version,

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Revit26_Plugin.WSAV02.Models
+namespace Revit26_Plugin.WSAV03.Models
 {
     public class WorksetItem : INotifyPropertyChanged
     {

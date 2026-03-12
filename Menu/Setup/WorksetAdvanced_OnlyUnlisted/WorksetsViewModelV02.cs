@@ -1,19 +1,19 @@
 ﻿using Autodesk.Revit.UI;
-using Revit26_Plugin.WSAV02.Helpers;
-using Revit26_Plugin.WSAV02.Models;
-using Revit26_Plugin.WSAV02.Services;
+using Revit26_Plugin.WSAV03.Helpers;
+using Revit26_Plugin.WSAV03.Models;
+using Revit26_Plugin.WSAV03.Services;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
 
-namespace Revit26_Plugin.WSAV02.ViewModels
+namespace Revit26_Plugin.WSAV03.ViewModels
 {
     public class WorksetsViewModel : INotifyPropertyChanged
     {
         private readonly UIDocument _uidoc;
-        private readonly WorksetServiceWSAV02 _svc;
+        private readonly WorksetServiceWSAV03 _svc;
 
         public ObservableCollection<WorksetItem> Items { get; }
             = new ObservableCollection<WorksetItem>();
@@ -43,7 +43,7 @@ namespace Revit26_Plugin.WSAV02.ViewModels
         public WorksetsViewModel(ExternalCommandData cmd)
         {
             _uidoc = cmd.Application.ActiveUIDocument;
-            _svc = new WorksetServiceWSAV02(LogMessages);
+            _svc = new WorksetServiceWSAV03(LogMessages);
 
             // Load Linked Files
             var links = _svc.GetLinkedFileNames(_uidoc.Document);
@@ -69,9 +69,9 @@ namespace Revit26_Plugin.WSAV02.ViewModels
 
             UpdatePreviewNames();
 
-            CreateCommand = new RelayCommandWSAV02(_ => CreateWorksets());
-            ReSyncCommand = new RelayCommandWSAV02(_ => ReSync());
-            CloseCommand = new RelayCommandWSAV02(_ => RequestClose?.Invoke(true));
+            CreateCommand = new RelayCommandWSAV03(_ => CreateWorksets());
+            ReSyncCommand = new RelayCommandWSAV03(_ => ReSync());
+            CloseCommand = new RelayCommandWSAV03(_ => RequestClose?.Invoke(true));
         }
 
         private void UpdatePreviewNames()

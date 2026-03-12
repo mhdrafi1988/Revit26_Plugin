@@ -5,13 +5,13 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 
-namespace Revit26_Plugin.WSAV02.Services
+namespace Revit26_Plugin.WSAV03.Services
 {
-    public class WorksetServiceWSAV02
+    public class WorksetServiceWSAV03
     {
         private readonly ObservableCollection<string> _log;
 
-        public WorksetServiceWSAV02(ObservableCollection<string> logMessages)
+        public WorksetServiceWSAV03(ObservableCollection<string> logMessages)
         {
             _log = logMessages;
         }

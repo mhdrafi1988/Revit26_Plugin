@@ -1,4 +1,5 @@
 ﻿using Autodesk.Revit.DB;
+using System;
 
 namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Models
 {
@@ -7,7 +8,14 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Models
         public int VertexIndex { get; set; }
         public XYZ Position { get; set; }
         public double PathLengthMeters { get; set; }
-        public double ElevationOffsetMm { get; set; }
+
+        private double _elevationOffsetMm;
+        public double ElevationOffsetMm
+        {
+            get => Math.Round(_elevationOffsetMm, 0);
+            set => _elevationOffsetMm = value;
+        }
+
         public int NearestDrainIndex { get; set; }
         public XYZ DirectionVector { get; set; }
         public bool WasProcessed { get; set; }
