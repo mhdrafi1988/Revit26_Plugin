@@ -16,30 +16,31 @@
             <!-- Buttons -->
         </Grid.RowDefinitions>
 
-        <!-- 🔹 Header -->
+        <!-- Header -->
         <TextBlock Text="Roof Loop Analyzer"
                    FontWeight="Bold"
                    FontSize="18"
                    Margin="0 0 0 10" />
 
-        <!-- 🔹 Loop Data Table -->
+        <!-- Loop Data Table -->
         <DataGrid Grid.Row="1"
                   ItemsSource="{Binding Loops}"
                   AutoGenerateColumns="False"
                   CanUserAddRows="False"
+                  CanUserDeleteRows="False"
                   Margin="0 0 0 10"
-                  IsReadOnly="False" SelectionChanged="DataGrid_SelectionChanged">
+                  SelectionMode="Single">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Index" Binding="{Binding Index}" IsReadOnly="True" Width="60"/>
                 <DataGridTextColumn Header="Loop Type" Binding="{Binding LoopType}" IsReadOnly="True" Width="80"/>
-                <DataGridTextColumn Header="Perimeter (mm)" Binding="{Binding PerimeterMm}" IsReadOnly="True" Width="120"/>
+                <DataGridTextColumn Header="Perimeter (mm)" Binding="{Binding PerimeterMm, StringFormat={}{0:F2}}" IsReadOnly="True" Width="120"/>
                 <DataGridTextColumn Header="Shape Type" Binding="{Binding LoopShapeType}" IsReadOnly="True" Width="100"/>
-                <DataGridCheckBoxColumn Header="Selected" Binding="{Binding IsCircular}" Width="100"/>
-                <DataGridTextColumn Header="Recommended Points" Binding="{Binding RecommendedPoints}" Width="150"/>
+                <DataGridCheckBoxColumn Header="Selected" Binding="{Binding IsSelected}" Width="80"/>
+                <DataGridTextColumn Header="Division Points" Binding="{Binding RecommendedPoints, UpdateSourceTrigger=PropertyChanged}" Width="120"/>
             </DataGrid.Columns>
         </DataGrid>
 
-        <!-- 🔹 Summary Text -->
+        <!-- Summary Text -->
         <TextBlock Grid.Row="2"
                    Text="{Binding Summary}"
                    TextWrapping="Wrap"
@@ -47,7 +48,7 @@
                    Margin="0 0 0 10"
                    Foreground="DarkGreen" />
 
-        <!-- 🔹 Buttons -->
+        <!-- Buttons -->
         <StackPanel Grid.Row="3"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right"

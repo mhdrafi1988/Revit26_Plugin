@@ -5,6 +5,7 @@ using Revit22_Plugin.PDCV1.Models;
 using Revit22_Plugin.PDCV1.Services;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
 
 namespace Revit22_Plugin.PDCV1.ViewModels
 {
@@ -13,7 +14,7 @@ namespace Revit22_Plugin.PDCV1.ViewModels
         private readonly Document _doc;
         private readonly RoofBase _roof;
         private readonly RoofGeometryService _geometryService;
-        private readonly c _divisionService;
+        private readonly LoopDivisionService _divisionService;  // Fixed: Changed from 'c' to LoopDivisionService
 
         public ObservableCollection<RoofLoopModel> Loops { get; set; }
 
@@ -32,7 +33,7 @@ namespace Revit22_Plugin.PDCV1.ViewModels
             _doc = doc;
             _roof = roof;
             _geometryService = new RoofGeometryService();
-            _divisionService = new c();
+            _divisionService = new LoopDivisionService();  // Fixed: Changed from 'c' to LoopDivisionService
             Loops = new ObservableCollection<RoofLoopModel>();
 
             AnalyzeCommand = new RelayCommand(AnalyzeRoof);
@@ -48,11 +49,12 @@ namespace Revit22_Plugin.PDCV1.ViewModels
 
             foreach (var loop in innerLoops)
             {
-                if (loop.LoopShapeType == "Circular")
-                {
-                    loop.RecommendedPoints = 2;
-                }
-                else
+                // Set default values for all loops
+                loop.RecommendedPoints = 3;  // Default to 3 points
+                loop.IsSelected = true;       // Default to selected
+
+                // Override RecommendedPoints based on shape type if needed
+                if (loop.LoopShapeType != "Circular")
                 {
                     loop.RecommendedPoints = 0;
                 }
@@ -70,16 +72,28 @@ namespace Revit22_Plugin.PDCV1.ViewModels
                       $"Circular: {circular}, Rectangle: {rectangles}, Other: {others}";
         }
 
-
-        private void ApplyDivisions()
+        private async void ApplyDivisions()
         {
-            var validLoops = Loops.Where(l => l.RecommendedPoints >= 1 && l.IsCircular).ToList();
+            var validLoops = Loops.Where(l => l.RecommendedPoints >= 1 && l.IsSelected).ToList();
+
+            if (!validLoops.Any())
+            {
+                Summary += "\n\n⚠️ No loops selected for division.";
+                return;
+            }
 
             int totalPoints = validLoops.Sum(l => l.RecommendedPoints);
 
-            _divisionService.AddDivisionPoints(_doc, _roof, validLoops.Cast<Revit22_Plugin.PDCV1.Models.RoofLoopModel>());
+            // Show progress
+            Summary += $"\n\n⏳ Adding {totalPoints} division points...";
 
-            Summary += $"\n\n📌 Division Points Applied Successfully.\n" +
+            // Run in background to keep UI responsive
+            await Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                _divisionService.AddDivisionPoints(_doc, _roof, validLoops);  // Fixed: Removed unnecessary cast
+            }, System.Windows.Threading.DispatcherPriority.Background);
+
+            Summary += $"\n\n✅ Division Points Applied Successfully!\n" +
                        $"Total Points Added: {totalPoints}";
         }
     }

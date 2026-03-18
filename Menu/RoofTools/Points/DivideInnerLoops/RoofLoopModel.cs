@@ -1,5 +1,6 @@
 ﻿using Autodesk.Revit.DB;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace Revit22_Plugin.PDCV1.Models
 {
@@ -11,7 +12,21 @@ namespace Revit22_Plugin.PDCV1.Models
         public bool IsCircular { get; set; }
         public string LoopShapeType { get; set; } // Circular / Rectangle / Other
 
-        private int _recommendedPoints = 2;
+        private bool _isSelected = true;  // Default to true
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set
+            {
+                if (_isSelected != value)
+                {
+                    _isSelected = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private int _recommendedPoints = 3;  // Default to 3
         public int RecommendedPoints
         {
             get => _recommendedPoints;
@@ -20,7 +35,7 @@ namespace Revit22_Plugin.PDCV1.Models
                 if (_recommendedPoints != value)
                 {
                     _recommendedPoints = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RecommendedPoints)));
+                    OnPropertyChanged();
                 }
             }
         }
@@ -28,5 +43,10 @@ namespace Revit22_Plugin.PDCV1.Models
         public CurveLoop Geometry { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

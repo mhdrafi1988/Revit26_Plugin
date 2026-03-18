@@ -1,0 +1,79 @@
+﻿<Window x:Class="Revit26_Plugin.AddPointOnintersections.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Add Points On Intersections"
+        Height="560"
+        Width="760"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanResize">
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="12"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="12"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="12"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Padding="12" BorderBrush="#D0D0D0" BorderThickness="1" CornerRadius="6">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="220"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="8"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="8"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="8"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Selected Roof ElementId:" FontWeight="SemiBold"/>
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SelectedRoofElementId}"/>
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Selected Detail Lines:" FontWeight="SemiBold"/>
+                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedDetailLineCount}"/>
+
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="Shape Points Added:" FontWeight="SemiBold"/>
+                <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding ShapePointsAddedCount}"/>
+
+                <TextBlock Grid.Row="6" Grid.Column="0" Text="0 Elevation Difference:" FontWeight="SemiBold"/>
+                <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding ZeroElevationConfirmed}"/>
+            </Grid>
+        </Border>
+
+        <TextBlock Grid.Row="2"
+                   Text="Live Log"
+                   FontSize="14"
+                   FontWeight="SemiBold"/>
+
+        <Border Grid.Row="4" BorderBrush="#D0D0D0" BorderThickness="1" CornerRadius="6" Padding="8">
+            <ListBox ItemsSource="{Binding Logs}"
+                     FontFamily="Consolas"
+                     FontSize="12"/>
+        </Border>
+
+        <DockPanel Grid.Row="6" LastChildFill="False">
+            <TextBlock VerticalAlignment="Center"
+                       Foreground="DarkSlateGray"
+                       Text="{Binding IsBusy, StringFormat=Busy: {0}}"/>
+
+            <Button Content="Execute"
+                    Width="120"
+                    Height="34"
+                    Margin="12,0,0,0"
+                    HorizontalAlignment="Right"
+                    DockPanel.Dock="Right"
+                    Command="{Binding ExecuteCommand}"/>
+        </DockPanel>
+    </Grid>
+</Window>

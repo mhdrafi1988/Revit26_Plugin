@@ -82,53 +82,39 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines_V11.Services
                 }
             }
 
-            // Fixed length for fallback (3 meters)
-            double fixedLength = UnitUtils.ConvertToInternalUnits(3, UnitTypeId.Meters);
+            // FALLBACK: If no intersections found or only one side found, create fixed length lines
+            double fixedLength = UnitUtils.ConvertToInternalUnits(3, UnitTypeId.Meters); // 3 meters
 
-            // Handle left side - extend to boundary if found, otherwise use fixed length
+            // Handle left side
             if (leftHits.Any())
             {
-                // Find the farthest left intersection point to extend to the outer boundary
-                var farthestLeft = leftHits.OrderByDescending(p => p.DistanceTo(mid)).First();
-                result.Add(CreateDetailLine(doc, view, mid, farthestLeft));
-
-                // Optional: Log or track that we used boundary
-                Logger.LogException(new Exception($"Left side extended to boundary at distance: {mid.DistanceTo(farthestLeft)} feet"), "Boundary extension - left");
+                var closestLeft = leftHits.OrderBy(p => p.DistanceTo(mid)).First();
+                result.Add(CreateDetailLine(doc, view, mid, closestLeft));
             }
             else
             {
-                // Create fixed length line on left side (3 meters)
+                // Create fixed length line on left side
                 XYZ leftPoint = mid - perp * fixedLength;
                 result.Add(CreateDetailLine(doc, view, mid, leftPoint));
-
-                // Optional: Log that we used fallback
-                Logger.LogException(new Exception("Left side used fixed length (3m) - no boundary found"), "Fallback used - left");
             }
 
-            // Handle right side - extend to boundary if found, otherwise use fixed length
+            // Handle right side
             if (rightHits.Any())
             {
-                // Find the farthest right intersection point to extend to the outer boundary
-                var farthestRight = rightHits.OrderByDescending(p => p.DistanceTo(mid)).First();
-                result.Add(CreateDetailLine(doc, view, mid, farthestRight));
-
-                // Optional: Log or track that we used boundary
-                Logger.LogException(new Exception($"Right side extended to boundary at distance: {mid.DistanceTo(farthestRight)} feet"), "Boundary extension - right");
+                var closestRight = rightHits.OrderBy(p => p.DistanceTo(mid)).First();
+                result.Add(CreateDetailLine(doc, view, mid, closestRight));
             }
             else
             {
-                // Create fixed length line on right side (3 meters)
+                // Create fixed length line on right side
                 XYZ rightPoint = mid + perp * fixedLength;
                 result.Add(CreateDetailLine(doc, view, mid, rightPoint));
-
-                // Optional: Log that we used fallback
-                Logger.LogException(new Exception("Right side used fixed length (3m) - no boundary found"), "Fallback used - right");
             }
 
             return result;
         }
 
-        // Overload that always uses fixed length (for testing or specific use cases)
+        // NEW: Overload that always uses fixed length (for testing or specific use cases)
         public static List<DetailLine> CreateFixedLengthPerpendicularLines(
             Document doc, View view, XYZ p1, XYZ p2, double lengthInMeters = 3)
         {
@@ -149,7 +135,7 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines_V11.Services
             return result;
         }
 
-        // Hybrid approach - try boundary first, if fails use fixed length
+        // NEW: Hybrid approach - try boundary first, if fails use fixed length
         public static List<DetailLine> CreatePerpendicularLinesWithFallback(
             Document doc, View view, RoofBase roof, XYZ p1, XYZ p2, double fallbackLengthMeters = 3)
         {
@@ -157,16 +143,16 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines_V11.Services
 
             try
             {
-                // First attempt: try to find actual roof boundaries and extend to them
+                // First attempt: try to find actual roof boundaries
                 result = CreatePerpendicularLines(doc, view, roof, p1, p2);
 
-                // Verify we got valid lines (either boundary or fallback)
+                // Check if we got valid intersections (not just the fallback points)
                 XYZ mid = (p1 + p2) / 2;
                 XYZ dir = (p2 - p1).Normalize();
                 XYZ perp = new XYZ(-dir.Y, dir.X, 0);
 
-                bool hasValidLeftLine = false;
-                bool hasValidRightLine = false;
+                bool hasValidLeftBoundary = false;
+                bool hasValidRightBoundary = false;
 
                 foreach (var line in result)
                 {
@@ -176,29 +162,33 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines_V11.Services
                     XYZ endPoint = ln.GetEndPoint(1);
                     XYZ direction = (endPoint - mid).Normalize();
 
-                    // Check the direction of this line
+                    // Check if this line points to a real boundary (not just fixed length)
                     double dotProduct = direction.DotProduct(perp);
+                    double length = mid.DistanceTo(endPoint);
+                    double fixedLength = UnitUtils.ConvertToInternalUnits(fallbackLengthMeters, UnitTypeId.Meters);
 
-                    if (dotProduct < 0) // Left side
-                        hasValidLeftLine = true;
-                    else if (dotProduct > 0) // Right side
-                        hasValidRightLine = true;
+                    if (Math.Abs(Math.Abs(dotProduct) - 1) < 0.01 && length > fixedLength * 1.1) // More than 10% longer than fixed
+                    {
+                        if (dotProduct > 0)
+                            hasValidRightBoundary = true;
+                        else
+                            hasValidLeftBoundary = true;
+                    }
                 }
 
-                // If we're missing either side, recreate with proper fallback
-                if (!hasValidLeftLine || !hasValidRightLine)
+                // If we're missing boundaries, create fixed length lines for missing sides
+                if (!hasValidLeftBoundary || !hasValidRightBoundary)
                 {
+                    // Clear and recreate with proper combination
                     result.Clear();
 
                     double fixedLength = UnitUtils.ConvertToInternalUnits(fallbackLengthMeters, UnitTypeId.Meters);
 
-                    // Get fresh boundary results
-                    var boundaryResult = CreatePerpendicularLines(doc, view, roof, p1, p2);
-
-                    // Left side
-                    if (!hasValidLeftLine)
+                    // Always create left side (fixed or try boundary again)
+                    if (hasValidLeftBoundary)
                     {
-                        // Try to find a left boundary line from fresh results
+                        // Left boundary already existed in previous result, but we need to re-fetch it
+                        var boundaryResult = CreatePerpendicularLines(doc, view, roof, p1, p2);
                         var leftBoundary = boundaryResult.FirstOrDefault(l =>
                         {
                             Line ln = l.GeometryCurve as Line;
@@ -209,27 +199,16 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines_V11.Services
 
                         if (leftBoundary != null)
                             result.Add(leftBoundary);
-                        else
-                            result.Add(CreateDetailLine(doc, view, mid, mid - perp * fixedLength));
                     }
                     else
                     {
-                        // Keep existing left line
-                        var existingLeft = result.FirstOrDefault(l =>
-                        {
-                            Line ln = l.GeometryCurve as Line;
-                            if (ln == null) return false;
-                            XYZ end = ln.GetEndPoint(1);
-                            return (end - mid).DotProduct(perp) < 0;
-                        });
-                        if (existingLeft != null)
-                            result.Add(existingLeft);
+                        result.Add(CreateDetailLine(doc, view, mid, mid - perp * fixedLength));
                     }
 
                     // Right side
-                    if (!hasValidRightLine)
+                    if (hasValidRightBoundary)
                     {
-                        // Try to find a right boundary line from fresh results
+                        var boundaryResult = CreatePerpendicularLines(doc, view, roof, p1, p2);
                         var rightBoundary = boundaryResult.FirstOrDefault(l =>
                         {
                             Line ln = l.GeometryCurve as Line;
@@ -240,21 +219,10 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines_V11.Services
 
                         if (rightBoundary != null)
                             result.Add(rightBoundary);
-                        else
-                            result.Add(CreateDetailLine(doc, view, mid, mid + perp * fixedLength));
                     }
                     else
                     {
-                        // Keep existing right line
-                        var existingRight = result.FirstOrDefault(l =>
-                        {
-                            Line ln = l.GeometryCurve as Line;
-                            if (ln == null) return false;
-                            XYZ end = ln.GetEndPoint(1);
-                            return (end - mid).DotProduct(perp) > 0;
-                        });
-                        if (existingRight != null)
-                            result.Add(existingRight);
+                        result.Add(CreateDetailLine(doc, view, mid, mid + perp * fixedLength));
                     }
                 }
             }
@@ -266,45 +234,6 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines_V11.Services
             }
 
             return result;
-        }
-
-        // New method to get the exact boundary intersection points
-        public static List<XYZ> GetBoundaryIntersectionPoints(
-            Document doc, RoofBase roof, XYZ p1, XYZ p2)
-        {
-            var result = new List<XYZ>();
-            XYZ mid = (p1 + p2) / 2;
-            XYZ dir = (p2 - p1).Normalize();
-            XYZ perp = new XYZ(-dir.Y, dir.X, 0);
-
-            // Get roof bounds
-            BoundingBoxXYZ bbox = roof?.get_BoundingBox(doc.ActiveView);
-            if (bbox == null) return result;
-
-            double roofSize = Math.Max(bbox.Max.X - bbox.Min.X, bbox.Max.Y - bbox.Min.Y);
-            double r = roofSize * 2.0; // Extend beyond roof bounds
-            Line ray = Line.CreateBound(mid - perp * r, mid + perp * r);
-
-            // Find intersections with roof edges
-            var roofEdges = GetRoofEdges(roof).ToList();
-
-            foreach (Curve c in roofEdges)
-            {
-                if (c == null) continue;
-
-                IntersectionResultArray arr;
-                SetComparisonResult compare = c.Intersect(ray, out arr);
-
-                if (compare == SetComparisonResult.Overlap && arr != null && arr.Size > 0)
-                {
-                    foreach (IntersectionResult ir in arr)
-                    {
-                        result.Add(ir.XYZPoint);
-                    }
-                }
-            }
-
-            return result.Distinct().ToList();
         }
 
         // Update AddShapePoints to handle fallback lines correctly

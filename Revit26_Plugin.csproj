@@ -5,11 +5,12 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\12\04</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\18\03</BaseOutputPath>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
 	  <Compile Remove="Menu\Dimensions\TwoPOintLInes_V02\**" />
+	  <Compile Remove="Menu\Dimensions\TwoPointLInes_V03\**" />
 	  <Compile Remove="Menu\RoofTools\CreasetoLines\CreaserAdvCommand\**" />
 	  <Compile Remove="Menu\RoofTools\CreasetoLines\CreaserV02\**" />
 	  <Compile Remove="Menu\RoofTools\CreasetoLines\CreaserV03\**" />
@@ -152,6 +153,7 @@
 	  <Compile Remove="Menu\ViewTools\Rename\**" />
 	  <EmbeddedResource Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
 	  <EmbeddedResource Remove="Menu\Dimensions\TwoPOintLInes_V02\**" />
+	  <EmbeddedResource Remove="Menu\Dimensions\TwoPointLInes_V03\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\CreasetoLines\CreaserAdvCommand\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\CreasetoLines\CreaserV02\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\CreasetoLines\CreaserV03\**" />
@@ -294,6 +296,7 @@
 	  <EmbeddedResource Remove="Menu\ViewTools\Rename\**" />
 	  <None Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
 	  <None Remove="Menu\Dimensions\TwoPOintLInes_V02\**" />
+	  <None Remove="Menu\Dimensions\TwoPointLInes_V03\**" />
 	  <None Remove="Menu\RoofTools\CreasetoLines\CreaserAdvCommand\**" />
 	  <None Remove="Menu\RoofTools\CreasetoLines\CreaserV02\**" />
 	  <None Remove="Menu\RoofTools\CreasetoLines\CreaserV03\**" />
@@ -436,6 +439,7 @@
 	  <None Remove="Menu\ViewTools\Rename\**" />
 	  <Page Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
 	  <Page Remove="Menu\Dimensions\TwoPOintLInes_V02\**" />
+	  <Page Remove="Menu\Dimensions\TwoPointLInes_V03\**" />
 	  <Page Remove="Menu\RoofTools\CreasetoLines\CreaserAdvCommand\**" />
 	  <Page Remove="Menu\RoofTools\CreasetoLines\CreaserV02\**" />
 	  <Page Remove="Menu\RoofTools\CreasetoLines\CreaserV03\**" />
@@ -686,9 +690,6 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Update="Menu\RoofTools\CreasetoLines\Creaser_V08\CreaserSummaryWindow.xaml.cs">
-	    <SubType>Code</SubType>
-	  </Compile>
-	  <Compile Update="Menu\RoofTools\Line&amp;Points\RoofRidgeLines_V11\SummaryWindow.xaml.cs">
 	    <SubType>Code</SubType>
 	  </Compile>
 	  <Compile Update="Menu\RoofTools\Line&amp;Points\RoofRidgeLines_V12\Views\SummaryWindow.xaml.cs">
