@@ -10,7 +10,15 @@ namespace Revit26_Plugin.AddPointOnintersections.Services
 {
     public class RoofIntersectionService
     {
-        private const double PointTolerance = 1e-6;
+        private const double XyTolerance = 1e-6;
+
+        // Exact add is attempted first.
+        // If Revit rejects a boundary point, try a very small move along the selected detail line
+        // on both sides to land on the editable top face.
+        private static readonly double[] BoundaryFallbackOffsetsFeet =
+        {
+            1e-4, 5e-4, 1e-3
+        };
 
         public AddPointsExecutionResult Execute(RoofSelectionContext context, Action<string> log)
         {
@@ -47,14 +55,11 @@ namespace Revit26_Plugin.AddPointOnintersections.Services
             using (Transaction tx01 = new Transaction(doc, "Transaction 01 - Enable roof shape editing"))
             {
                 tx01.Start();
-
                 shapeEditor.Enable();
-
                 tx01.Commit();
             }
 
             log?.Invoke("Transaction 01 committed: shape editing enabled.");
-
             log?.Invoke("Starting Transaction 02: find intersections and add shape points.");
 
             List<Curve> boundaryCurves = GetAllRoofBoundaryCurves(roof, log);
@@ -65,8 +70,8 @@ namespace Revit26_Plugin.AddPointOnintersections.Services
 
             log?.Invoke($"Roof boundary curves collected: {boundaryCurves.Count}.");
 
-            List<XYZ> uniqueIntersectionPoints = CollectUniqueIntersectionPoints(detailLines, boundaryCurves, log);
-            log?.Invoke($"Valid unique intersection points found: {uniqueIntersectionPoints.Count}.");
+            List<IntersectionCandidate> candidates = CollectIntersectionCandidates(detailLines, boundaryCurves, log);
+            log?.Invoke($"Unique intersection points found: {candidates.Count}.");
 
             int addedCount = 0;
             bool zeroElevationConfirmed = true;
@@ -75,27 +80,34 @@ namespace Revit26_Plugin.AddPointOnintersections.Services
             {
                 tx02.Start();
 
-                foreach (XYZ point in uniqueIntersectionPoints)
+                foreach (IntersectionCandidate candidate in candidates)
                 {
                     try
                     {
-                        SlabShapeVertex vertex = shapeEditor.AddPoint(point);
+                        SlabShapeVertex vertex = TryAddPoint(shapeEditor, candidate, log);
 
                         if (vertex == null)
                         {
-                            log?.Invoke($"Skipped point (not created by Revit): {CurveProjectionHelper.ToReadable(point)}");
+                            log?.Invoke(
+                                $"Skipped intersection. Revit did not create a shape point for " +
+                                $"{CurveProjectionHelper.ToReadable(candidate.ExactPoint)}.");
                             continue;
                         }
 
                         shapeEditor.ModifySubElement(vertex, 0.0);
                         addedCount++;
 
-                        log?.Invoke($"Point added at {CurveProjectionHelper.ToReadable(point)} with elevation delta 0.0.");
+                        log?.Invoke(
+                            $"Point added. Exact intersection: {CurveProjectionHelper.ToReadable(candidate.ExactPoint)} | " +
+                            $"Created point: {CurveProjectionHelper.ToReadable(candidate.CreatedPoint)} | " +
+                            $"Detail line: {candidate.DetailLineId.Value}.");
                     }
                     catch (Exception ex)
                     {
                         zeroElevationConfirmed = false;
-                        log?.Invoke($"Failed to add point at {CurveProjectionHelper.ToReadable(point)}. Reason: {ex.Message}");
+                        log?.Invoke(
+                            $"Failed to add point at {CurveProjectionHelper.ToReadable(candidate.ExactPoint)}. " +
+                            $"Reason: {ex.Message}");
                     }
                 }
 
@@ -146,12 +158,12 @@ namespace Revit26_Plugin.AddPointOnintersections.Services
             return curves;
         }
 
-        private static List<XYZ> CollectUniqueIntersectionPoints(
+        private static List<IntersectionCandidate> CollectIntersectionCandidates(
             List<DetailLine> detailLines,
             List<Curve> boundaryCurves,
             Action<string> log)
         {
-            List<XYZ> result = new List<XYZ>();
+            List<IntersectionCandidate> allCandidates = new List<IntersectionCandidate>();
 
             foreach (DetailLine detailLine in detailLines)
             {
@@ -173,14 +185,34 @@ namespace Revit26_Plugin.AddPointOnintersections.Services
                     continue;
                 }
 
-                int lineHitCount = 0;
+                XYZ planDirection;
+                try
+                {
+                    planDirection = GetPlanDirection(flattenedDetailCurve);
+                }
+                catch (Exception ex)
+                {
+                    log?.Invoke($"Skipped detail line {detailLine.Id.Value}: {ex.Message}");
+                    continue;
+                }
+
+                List<IntersectionCandidate> lineCandidates = new List<IntersectionCandidate>();
 
                 foreach (Curve boundaryCurve in boundaryCurves)
                 {
+                    Curve flattenedBoundaryCurve;
                     try
                     {
-                        Curve flattenedBoundaryCurve = CurveProjectionHelper.CreateFlattenedCurve(boundaryCurve);
+                        flattenedBoundaryCurve = CurveProjectionHelper.CreateFlattenedCurve(boundaryCurve);
+                    }
+                    catch (Exception ex)
+                    {
+                        log?.Invoke($"Skipped one boundary curve during flattening: {ex.Message}");
+                        continue;
+                    }
 
+                    try
+                    {
                         SetComparisonResult comparison = flattenedBoundaryCurve.Intersect(
                             flattenedDetailCurve,
                             out IntersectionResultArray intersectionResults);
@@ -192,22 +224,26 @@ namespace Revit26_Plugin.AddPointOnintersections.Services
 
                         for (int i = 0; i < intersectionResults.Size; i++)
                         {
-                            IntersectionResult ir = intersectionResults.get_Item(i);
-                            if (ir == null || ir.UVPoint == null)
+                            IntersectionResult result = intersectionResults.get_Item(i);
+                            if (!TryCreateCandidate(
+                                    detailLine.Id,
+                                    detailCurve,
+                                    flattenedDetailCurve,
+                                    boundaryCurve,
+                                    result,
+                                    planDirection,
+                                    out IntersectionCandidate candidate,
+                                    log))
                             {
                                 continue;
                             }
 
-                            double boundaryParameter = ir.UVPoint.U;
-                            XYZ original3dPoint = boundaryCurve.Evaluate(boundaryParameter, false);
-
-                            if (ContainsPoint(result, original3dPoint))
+                            if (ContainsCandidate(lineCandidates, candidate.ExactPoint))
                             {
                                 continue;
                             }
 
-                            result.Add(original3dPoint);
-                            lineHitCount++;
+                            lineCandidates.Add(candidate);
                         }
                     }
                     catch (Exception ex)
@@ -216,18 +252,190 @@ namespace Revit26_Plugin.AddPointOnintersections.Services
                     }
                 }
 
-                log?.Invoke($"Detail line {detailLine.Id.Value}: intersections accepted = {lineHitCount}.");
+                lineCandidates = lineCandidates
+                    .OrderBy(x => x.DetailParameter)
+                    .ToList();
+
+                foreach (IntersectionCandidate lineCandidate in lineCandidates)
+                {
+                    if (ContainsCandidate(allCandidates, lineCandidate.ExactPoint))
+                    {
+                        continue;
+                    }
+
+                    allCandidates.Add(lineCandidate);
+                }
+
+                log?.Invoke($"Detail line {detailLine.Id.Value}: intersections accepted = {lineCandidates.Count}.");
             }
 
-            return result;
+            return allCandidates;
         }
 
-        private static bool ContainsPoint(IEnumerable<XYZ> points, XYZ candidate)
+        private static bool TryCreateCandidate(
+            ElementId detailLineId,
+            Curve originalDetailCurve,
+            Curve flattenedDetailCurve,
+            Curve originalBoundaryCurve,
+            IntersectionResult result,
+            XYZ planDirection,
+            out IntersectionCandidate candidate,
+            Action<string> log)
         {
-            return points.Any(p =>
-                Math.Abs(p.X - candidate.X) <= PointTolerance &&
-                Math.Abs(p.Y - candidate.Y) <= PointTolerance &&
-                Math.Abs(p.Z - candidate.Z) <= PointTolerance);
+            candidate = null;
+
+            if (result?.XYZPoint == null || result.UVPoint == null)
+            {
+                return false;
+            }
+
+            XYZ flatIntersectionPoint = result.XYZPoint;
+
+            // U belongs to the first curve passed to Intersect() => boundary curve.
+            double boundaryParameter = result.UVPoint.U;
+
+            // V belongs to the second curve passed to Intersect() => detail curve.
+            double detailParameter = result.UVPoint.V;
+
+            XYZ rebuiltBoundaryPoint;
+            try
+            {
+                rebuiltBoundaryPoint = originalBoundaryCurve.Evaluate(boundaryParameter, false);
+            }
+            catch (Exception ex)
+            {
+                log?.Invoke($"Rejected one intersection: failed to evaluate boundary curve. Reason: {ex.Message}");
+                return false;
+            }
+
+            XYZ rebuiltFlatPoint = new XYZ(rebuiltBoundaryPoint.X, rebuiltBoundaryPoint.Y, 0.0);
+            XYZ exactFlatPoint = new XYZ(flatIntersectionPoint.X, flatIntersectionPoint.Y, 0.0);
+
+            if (!CurveProjectionHelper.IsAlmostEqualXY(rebuiltFlatPoint, exactFlatPoint, XyTolerance))
+            {
+                log?.Invoke(
+                    $"Rejected one intersection due to XY mismatch. " +
+                    $"Expected {CurveProjectionHelper.ToReadable(exactFlatPoint)}, " +
+                    $"rebuilt {CurveProjectionHelper.ToReadable(rebuiltFlatPoint)}.");
+                return false;
+            }
+
+            XYZ exactPoint = rebuiltBoundaryPoint;
+
+            // Validate that the point still lies on the selected detail line in plan.
+            if (!IsPointOnFlattenedCurve(flattenedDetailCurve, exactFlatPoint))
+            {
+                log?.Invoke(
+                    $"Rejected one intersection because it does not lie on the flattened detail line: " +
+                    $"{CurveProjectionHelper.ToReadable(exactPoint)}.");
+                return false;
+            }
+
+            candidate = new IntersectionCandidate(
+                detailLineId,
+                exactPoint,
+                detailParameter,
+                planDirection);
+
+            return true;
+        }
+
+        private static SlabShapeVertex TryAddPoint(
+            SlabShapeEditor shapeEditor,
+            IntersectionCandidate candidate,
+            Action<string> log)
+        {
+            // 1) Exact point first.
+            SlabShapeVertex vertex = shapeEditor.AddPoint(candidate.ExactPoint);
+            if (vertex != null)
+            {
+                candidate.CreatedPoint = candidate.ExactPoint;
+                return vertex;
+            }
+
+            log?.Invoke(
+                $"Exact point was rejected by Revit at {CurveProjectionHelper.ToReadable(candidate.ExactPoint)}. " +
+                $"Trying boundary fallback on both sides of the detail line.");
+
+            // 2) Revit often rejects boundary points. Try both directions along the detail line.
+            foreach (double offset in BoundaryFallbackOffsetsFeet)
+            {
+                XYZ plus = candidate.ExactPoint + (candidate.DetailPlanDirection * offset);
+                vertex = shapeEditor.AddPoint(plus);
+                if (vertex != null)
+                {
+                    candidate.CreatedPoint = plus;
+                    log?.Invoke(
+                        $"Fallback succeeded at +{offset:0.######} ft from the exact intersection: " +
+                        $"{CurveProjectionHelper.ToReadable(plus)}.");
+                    return vertex;
+                }
+
+                XYZ minus = candidate.ExactPoint - (candidate.DetailPlanDirection * offset);
+                vertex = shapeEditor.AddPoint(minus);
+                if (vertex != null)
+                {
+                    candidate.CreatedPoint = minus;
+                    log?.Invoke(
+                        $"Fallback succeeded at -{offset:0.######} ft from the exact intersection: " +
+                        $"{CurveProjectionHelper.ToReadable(minus)}.");
+                    return vertex;
+                }
+            }
+
+            return null;
+        }
+
+        private static bool ContainsCandidate(IEnumerable<IntersectionCandidate> candidates, XYZ point)
+        {
+            return candidates.Any(x => CurveProjectionHelper.IsAlmostEqualXY(x.ExactPoint, point, XyTolerance));
+        }
+
+        private static bool IsPointOnFlattenedCurve(Curve flattenedCurve, XYZ flatPoint)
+        {
+            IntersectionResult projection = flattenedCurve.Project(flatPoint);
+            if (projection?.XYZPoint == null)
+            {
+                return false;
+            }
+
+            return CurveProjectionHelper.IsAlmostEqualXY(projection.XYZPoint, flatPoint, XyTolerance);
+        }
+
+        private static XYZ GetPlanDirection(Curve flattenedCurve)
+        {
+            XYZ start = flattenedCurve.GetEndPoint(0);
+            XYZ end = flattenedCurve.GetEndPoint(1);
+            XYZ vector = new XYZ(end.X - start.X, end.Y - start.Y, 0.0);
+
+            if (vector.GetLength() <= XyTolerance)
+            {
+                throw new InvalidOperationException("Detail line has zero plan length.");
+            }
+
+            return vector.Normalize();
+        }
+
+        private sealed class IntersectionCandidate
+        {
+            public IntersectionCandidate(
+                ElementId detailLineId,
+                XYZ exactPoint,
+                double detailParameter,
+                XYZ detailPlanDirection)
+            {
+                DetailLineId = detailLineId;
+                ExactPoint = exactPoint ?? throw new ArgumentNullException(nameof(exactPoint));
+                DetailParameter = detailParameter;
+                DetailPlanDirection = detailPlanDirection ?? throw new ArgumentNullException(nameof(detailPlanDirection));
+                CreatedPoint = exactPoint;
+            }
+
+            public ElementId DetailLineId { get; }
+            public XYZ ExactPoint { get; }
+            public double DetailParameter { get; }
+            public XYZ DetailPlanDirection { get; }
+            public XYZ CreatedPoint { get; set; }
         }
     }
 }
