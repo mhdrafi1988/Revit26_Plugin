@@ -117,7 +117,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
                     sheet.Cells["A1"].Style.Fill.PatternType = ExcelFillStyle.Solid;
                     sheet.Cells["A1"].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightBlue);
 
-                    // Headers - Updated columns (removed DrainElementId and PointIndex, added RoofTypeName, BaseLevel, BaseOffset_mm)
+                    // Headers - Updated columns
                     string[] headers = {
                         "RoofElementId",
                         "RoofTypeName",
@@ -126,7 +126,6 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
                         "PathLength_Meters",
                         "SlopePercent",
                         "ElevationOffset_mm",
-                        //"Direction"
                     };
 
                     for (int i = 0; i < headers.Length; i++)
@@ -153,7 +152,6 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
                         sheet.Cells[row, 5].Value = Math.Round(vertex.PathLengthMeters, 2);
                         sheet.Cells[row, 6].Value = slopePercent;
                         sheet.Cells[row, 7].Value = Math.Round(vertex.ElevationOffsetMm, 0); // Rounded to 0 decimal places
-                        //sheet.Cells[row, 8].Value = vertex.Direction;
                         row++;
                     }
 
@@ -231,6 +229,11 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
             AddInfoRow(sheet, ref row, "Base Offset (mm):", Math.Round(baseOffset, 0).ToString());
             AddInfoRow(sheet, ref row, "Slope Percentage:", $"{slopePercent}%");
             AddInfoRow(sheet, ref row, "Threshold Distance:", $"{payload.ThresholdMeters} meters");
+            AddInfoRow(sheet, ref row, "Drain Tolerance Enabled:", payload.EnableDrainTolerance ? "Yes" : "No");
+            if (payload.EnableDrainTolerance)
+            {
+                AddInfoRow(sheet, ref row, "Drain Tolerance Radius:", $"{payload.DrainToleranceMm} mm");
+            }
             AddInfoRow(sheet, ref row, "Total Vertices:", vertexData.Count.ToString());
             AddInfoRow(sheet, ref row, "Processed Vertices:", vertexData.Count(v => v.WasProcessed).ToString());
             AddInfoRow(sheet, ref row, "Skipped Vertices:", vertexData.Count(v => !v.WasProcessed).ToString());
@@ -286,7 +289,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
                 baseOffset = UnitUtils.ConvertFromInternalUnits(offsetParam.AsDouble(), UnitTypeId.Millimeters);
             }
 
-            // Updated headers - removed DrainElementId and PointIndex, added RoofTypeName, BaseLevel, BaseOffset_mm
+            // Updated headers
             string[] headers = {
                 "RoofElementId",
                 "RoofTypeName",
@@ -295,7 +298,6 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
                 "PathLength_Meters",
                 "SlopePercent",
                 "ElevationOffset_mm",
-                //"Direction",
                 "WasProcessed",
                 "Position_X",
                 "Position_Y",
@@ -326,7 +328,6 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
                 sheet.Cells[row, 5].Value = Math.Round(vertex.PathLengthMeters, 2);
                 sheet.Cells[row, 6].Value = slopePercent;
                 sheet.Cells[row, 7].Value = Math.Round(vertex.ElevationOffsetMm, 0); // Rounded to 0 decimal places
-                //sheet.Cells[row, 8].Value = vertex.Direction;
                 sheet.Cells[row, 8].Value = vertex.WasProcessed ? "YES" : "NO";
                 sheet.Cells[row, 9].Value = Math.Round(vertex.Position.X, 3);
                 sheet.Cells[row, 10].Value = Math.Round(vertex.Position.Y, 3);
@@ -335,8 +336,8 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
                 // Color rows based on WasProcessed
                 if (!vertex.WasProcessed)
                 {
-                    sheet.Cells[row, 1, row, 12].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                    sheet.Cells[row, 1, row, 12].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightYellow);
+                    sheet.Cells[row, 1, row, 11].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    sheet.Cells[row, 1, row, 11].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightYellow);
                 }
 
                 row++;
@@ -377,6 +378,10 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
                     Math.Round(processed.Average(v => v.ElevationOffsetMm), 0), "mm");
                 AddStatRow(sheet, ref row, "Maximum Elevation Offset",
                     Math.Round(processed.Max(v => v.ElevationOffsetMm), 0), "mm");
+                AddStatRow(sheet, ref row, "Minimum Elevation Offset",
+                    Math.Round(processed.Min(v => v.ElevationOffsetMm), 0), "mm");
+                AddStatRow(sheet, ref row, "Elevation Offset Range",
+                    Math.Round(processed.Max(v => v.ElevationOffsetMm) - processed.Min(v => v.ElevationOffsetMm), 0), "mm");
             }
 
             sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
@@ -432,6 +437,11 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
                     AddStatRow(sheet, ref row, "Run Date", DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"), "");
                     AddStatRow(sheet, ref row, "Slope Percentage", payload.SlopePercent, "%");
                     AddStatRow(sheet, ref row, "Threshold Distance", payload.ThresholdMeters, "meters");
+                    AddStatRow(sheet, ref row, "Drain Tolerance Enabled", payload.EnableDrainTolerance ? "Yes" : "No", "");
+                    if (payload.EnableDrainTolerance)
+                    {
+                        AddStatRow(sheet, ref row, "Drain Tolerance Radius", payload.DrainToleranceMm, "mm");
+                    }
                     AddStatRow(sheet, ref row, "Vertices Processed", metrics.Processed, "count");
                     AddStatRow(sheet, ref row, "Vertices Skipped", metrics.Skipped, "count");
                     AddStatRow(sheet, ref row, "Drain Points", payload.DrainPoints.Count, "count");

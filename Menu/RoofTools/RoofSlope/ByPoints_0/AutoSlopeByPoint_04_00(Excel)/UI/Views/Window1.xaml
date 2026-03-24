@@ -96,6 +96,8 @@
             <Setter Property="Margin" Value="0,0,0,10"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
+
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </Window.Resources>
 
     <Grid Margin="15">
@@ -112,126 +114,169 @@
                 Padding="15"
                 BorderBrush="#DDD" 
                 BorderThickness="1">
-            <StackPanel>
-                <TextBlock Text="Auto Slope Engine"
-                           FontSize="24"
-                           FontWeight="Bold"
-                           Foreground="#2C3E50"
-                           Margin="0,0,0,20"/>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock Text="Auto Slope Engine"
+                               FontSize="24"
+                               FontWeight="Bold"
+                               Foreground="#2C3E50"
+                               Margin="0,0,0,20"/>
 
-                <TextBlock Text="Slope Percentage"
-                           Style="{StaticResource LabelText}"/>
-                <ComboBox Style="{StaticResource InputControl}"
-                          ItemsSource="{Binding SlopeOptions}"
-                          SelectedItem="{Binding SlopePercent, Mode=TwoWay}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding StringFormat={}{0}%}"/>
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
+                    <TextBlock Text="Slope Percentage"
+                               Style="{StaticResource LabelText}"/>
+                    <ComboBox Style="{StaticResource InputControl}"
+                              ItemsSource="{Binding SlopeOptions}"
+                              SelectedItem="{Binding SlopePercent, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding StringFormat={}{0}%}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
 
-                <TextBlock Text="Threshold Distance (meters)"
-                           Style="{StaticResource LabelText}"/>
-                <TextBox Style="{StaticResource InputControl}"
-                         Text="{Binding ThresholdMeters, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Text="Threshold Distance (meters)"
+                               Style="{StaticResource LabelText}"/>
+                    <TextBox Style="{StaticResource InputControl}"
+                             Text="{Binding ThresholdMeters, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <GroupBox Header="Export Settings" 
-                          FontWeight="Bold"
-                          Margin="0,0,0,15">
-                    <GroupBox.HeaderTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding}" Style="{StaticResource GroupBoxHeader}"/>
-                        </DataTemplate>
-                    </GroupBox.HeaderTemplate>
-                    <StackPanel>
-                        <CheckBox Content="Export results to Excel"
-                                  IsChecked="{Binding ExportToExcel}"
-                                  Style="{StaticResource CheckBoxStyle}"
-                                  ToolTip="Always creates: RoofId_Slope_Date.csv with 7 columns"/>
+                    <!-- Drain Tolerance Section -->
+                    <Border Margin="0,5,0,10" 
+                            Padding="8" 
+                            Background="#F8F9FA" 
+                            CornerRadius="3"
+                            BorderBrush="#E0E0E0" 
+                            BorderThickness="1">
+                        <StackPanel>
+                            <CheckBox Content="Enable Drain Tolerance Detection" 
+                                      IsChecked="{Binding EnableDrainTolerance}"
+                                      Style="{StaticResource CheckBoxStyle}"
+                                      FontWeight="SemiBold"
+                                      ToolTip="Automatically detect existing drain elements within the specified radius of selected points"/>
 
-                        <CheckBox Content="Also create detailed version"
-                                  IsChecked="{Binding IncludeVertexDetails}"
-                                  Style="{StaticResource CheckBoxStyle}"
-                                  IsEnabled="{Binding ExportToCsv}"
-                                  ToolTip="Creates an additional file: RoofId_Slope_Date_DETAILED.csv with all columns"/>
+                            <DockPanel LastChildFill="True" Margin="0,5,0,0">
+                                <TextBlock Text="Tolerance Radius:" 
+                                           DockPanel.Dock="Left"
+                                           Style="{StaticResource LabelText}"
+                                           Margin="0,0,10,0"
+                                           VerticalAlignment="Center"/>
+                                <TextBox Text="{Binding DrainToleranceMm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         Width="80"
+                                         Height="28"
+                                         VerticalContentAlignment="Center"
+                                         IsEnabled="{Binding EnableDrainTolerance}"
+                                         Margin="0,0,5,0"/>
+                                <TextBlock Text="mm" 
+                                           VerticalAlignment="Center"
+                                           FontSize="11"
+                                           Foreground="#7F8C8D"/>
+                            </DockPanel>
 
-                        <TextBlock Text="Export Folder"
-                                   Style="{StaticResource LabelText}"/>
+                            <TextBlock Text="Finds existing drain elements (plumbing fixtures, roof drains) within radius of selected points"
+                                       FontSize="10"
+                                       Foreground="#7F8C8D"
+                                       TextWrapping="Wrap"
+                                       Margin="0,5,0,0"
+                                       Visibility="{Binding EnableDrainTolerance, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Border>
 
-                        <DockPanel LastChildFill="True" Margin="0,0,0,8">
-                            <Button Content="Browse" 
-                                    DockPanel.Dock="Right"
-                                    Style="{StaticResource BrowseButton}"
-                                    Margin="5,0,0,0"
-                                    Command="{Binding BrowseFolderCommand}"/>
-                            <TextBox Text="{Binding ExportFolderPath, Mode=TwoWay}"
-                                     VerticalContentAlignment="Center"
-                                     IsReadOnly="True"
-                                     Background="#F8F8F8"/>
-                        </DockPanel>
+                    <GroupBox Header="Export Settings" 
+                              FontWeight="Bold"
+                              Margin="0,0,0,15">
+                        <GroupBox.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" Style="{StaticResource GroupBoxHeader}"/>
+                            </DataTemplate>
+                        </GroupBox.HeaderTemplate>
+                        <StackPanel>
+                            <CheckBox Content="Export results to Excel"
+                                      IsChecked="{Binding ExportToExcel}"
+                                      Style="{StaticResource CheckBoxStyle}"
+                                      ToolTip="Always creates: RoofId_Slope_Date.csv with 7 columns"/>
 
-                        <Button Content="Export Summary"
-                                Style="{StaticResource ExportButton}"
-                                Margin="0,5,0,0"
-                                Command="{Binding ExportResultsCommand}"
-                                ToolTip="Manually export summary results to CSV"/>
-                    </StackPanel>
-                </GroupBox>
+                            <CheckBox Content="Also create detailed version"
+                                      IsChecked="{Binding IncludeVertexDetails}"
+                                      Style="{StaticResource CheckBoxStyle}"
+                                      IsEnabled="{Binding ExportToCsv}"
+                                      ToolTip="Creates an additional file: RoofId_Slope_Date_DETAILED.csv with all columns"/>
 
-                <Button Content="RUN AUTOSLOPE"
-                        Command="{Binding RunCommand}"
-                        ToolTip="Calculate and apply slope to roof">
-                    <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
-                            <Setter Property="Background" Value="#27AE60"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding HasRun}" Value="True">
-                                    <Setter Property="IsEnabled" Value="False"/>
-                                    <Setter Property="Background" Value="#95A5A6"/>
-                                    <Setter Property="Content" Value="PROCESSING..."/>
-                                </DataTrigger>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="#229954"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                </Button>
+                            <TextBlock Text="Export Folder"
+                                       Style="{StaticResource LabelText}"/>
 
-                <Border Margin="0,20,0,0" 
-                        Padding="10" 
-                        Background="#F8F9FA" 
-                        CornerRadius="3">
-                    <StackPanel>
-                        <TextBlock Text="Status" 
-                                   FontWeight="Bold" 
-                                   Foreground="#2C3E50"
-                                   Margin="0,0,0,5"/>
-                        <TextBlock FontSize="11">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="Foreground" Value="#27AE60"/>
-                                    <Setter Property="Text" Value="Ready to run"/>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding HasRun}" Value="True">
-                                            <Setter Property="Foreground" Value="#E67E22"/>
-                                            <Setter Property="Text" Value="Processing..."/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-                    </StackPanel>
-                </Border>
+                            <DockPanel LastChildFill="True" Margin="0,0,0,8">
+                                <Button Content="Browse" 
+                                        DockPanel.Dock="Right"
+                                        Style="{StaticResource BrowseButton}"
+                                        Margin="5,0,0,0"
+                                        Command="{Binding BrowseFolderCommand}"/>
+                                <TextBox Text="{Binding ExportFolderPath, Mode=TwoWay}"
+                                         VerticalContentAlignment="Center"
+                                         IsReadOnly="True"
+                                         Background="#F8F8F8"/>
+                            </DockPanel>
 
-                <TextBlock Text="Note: Ensure roof shape editing is enabled"
-                           FontStyle="Italic"
-                           Foreground="#7F8C8D"
-                           Margin="0,15,0,0"
-                           TextWrapping="Wrap"
-                           FontSize="11"/>
-            </StackPanel>
+                            <Button Content="Export Summary"
+                                    Style="{StaticResource ExportButton}"
+                                    Margin="0,5,0,0"
+                                    Command="{Binding ExportResultsCommand}"
+                                    ToolTip="Manually export summary results to CSV"/>
+                        </StackPanel>
+                    </GroupBox>
+
+                    <Button Content="RUN AUTOSLOPE"
+                            Command="{Binding RunCommand}"
+                            ToolTip="Calculate and apply slope to roof">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+                                <Setter Property="Background" Value="#27AE60"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding HasRun}" Value="True">
+                                        <Setter Property="IsEnabled" Value="False"/>
+                                        <Setter Property="Background" Value="#95A5A6"/>
+                                        <Setter Property="Content" Value="PROCESSING..."/>
+                                    </DataTrigger>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#229954"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+
+                    <Border Margin="0,20,0,0" 
+                            Padding="10" 
+                            Background="#F8F9FA" 
+                            CornerRadius="3">
+                        <StackPanel>
+                            <TextBlock Text="Status" 
+                                       FontWeight="Bold" 
+                                       Foreground="#2C3E50"
+                                       Margin="0,0,0,5"/>
+                            <TextBlock FontSize="11">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" Value="#27AE60"/>
+                                        <Setter Property="Text" Value="Ready to run"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding HasRun}" Value="True">
+                                                <Setter Property="Foreground" Value="#E67E22"/>
+                                                <Setter Property="Text" Value="Processing..."/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Text="Note: Ensure roof shape editing is enabled"
+                               FontStyle="Italic"
+                               Foreground="#7F8C8D"
+                               Margin="0,15,0,0"
+                               TextWrapping="Wrap"
+                               FontSize="11"/>
+                </StackPanel>
+            </ScrollViewer>
         </Border>
 
         <!-- RIGHT PANEL - RESULTS -->

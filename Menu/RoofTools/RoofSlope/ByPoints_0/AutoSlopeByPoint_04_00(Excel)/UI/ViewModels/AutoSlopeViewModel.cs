@@ -41,6 +41,20 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.UI.ViewModels
             set { _thresholdMeters = value; Raise(); }
         }
 
+        private int _drainToleranceMm = 500;
+        public int DrainToleranceMm
+        {
+            get => _drainToleranceMm;
+            set { _drainToleranceMm = value; Raise(); }
+        }
+
+        private bool _enableDrainTolerance = false;
+        public bool EnableDrainTolerance
+        {
+            get => _enableDrainTolerance;
+            set { _enableDrainTolerance = value; Raise(); }
+        }
+
         private string _exportFolderPath;
         public string ExportFolderPath
         {
@@ -227,7 +241,9 @@ Export Folder      : {ExportFolderPath}";
                     ExportPath = ExportFolderPath,
                     ExportToExcel = ExportToExcel,
                     IncludeVertexDetails = IncludeVertexDetails
-                }
+                },
+                EnableDrainTolerance = EnableDrainTolerance,
+                DrainToleranceMm = DrainToleranceMm
             };
 
             AutoSlopeEventManager.Event.Raise();
@@ -301,6 +317,8 @@ Export Folder      : {ExportFolderPath}";
                         AddSummaryRow(sheet, ref row, "Run Date", RunDate);
                         AddSummaryRow(sheet, ref row, "Slope Percentage", $"{SlopePercent}%");
                         AddSummaryRow(sheet, ref row, "Threshold (m)", ThresholdMeters);
+                        AddSummaryRow(sheet, ref row, "Drain Tolerance Enabled", EnableDrainTolerance ? "Yes" : "No");
+                        AddSummaryRow(sheet, ref row, "Drain Tolerance (mm)", EnableDrainTolerance ? DrainToleranceMm.ToString() : "N/A");
                         AddSummaryRow(sheet, ref row, "Export Folder", ExportFolderPath);
 
                         // Auto-fit columns

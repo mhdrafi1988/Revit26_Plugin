@@ -13,6 +13,8 @@
         public const string Param_RunDate = "AutoSlope_RunDate";
         public const string Param_Status = "AutoSlope_Status";
         public const string Param_Versions = "AutoSlope_Versions";
+        public const string Param_DrainToleranceMm = "AutoSlope_DrainToleranceMm";
+        public const string Param_DrainToleranceEnabled = "AutoSlope_DrainToleranceEnabled";
 
         public const int Status_OK = 1;
         public const int Status_Partial = 2;
@@ -20,6 +22,7 @@
 
         public const double DefaultSlopePercent = 1.5;
         public const int DefaultThresholdMeters = 50;
+        public const int DefaultDrainToleranceMm = 500;
         public const string DefaultExportFolder = "AutoSlope_Reports";
 
         public const string Color_Success = "#2ECC71";

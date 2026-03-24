@@ -3,6 +3,7 @@
 using Revit26_Plugin.AutoSlopeByPoint_04.UI.ViewModels;
 using System;
 using System.Collections.Generic;
+
 namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Models
 {
     public class AutoSlopePayload
@@ -14,5 +15,9 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Models
         public Action<string> Log { get; set; }
         public AutoSlopeViewModel Vm { get; set; }
         public ExportConfig ExportConfig { get; set; }
+
+        // New properties for drain tolerance
+        public bool EnableDrainTolerance { get; set; }
+        public double DrainToleranceMm { get; set; }
     }
 }
