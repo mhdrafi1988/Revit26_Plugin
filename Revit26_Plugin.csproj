@@ -5,7 +5,9 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\2026\25</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\Desktop\ddd</BaseOutputPath>
+		<PackageId />
+		<AssemblyName>Revit26_Plugin</AssemblyName>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
