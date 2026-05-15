@@ -134,7 +134,7 @@
                         </ComboBox.ItemTemplate>
                     </ComboBox>
 
-                    <TextBlock Text="Threshold Distance (meters)"
+                    <TextBlock Text="Threshold Distance (Meters)"
                                Style="{StaticResource LabelText}"/>
                     <TextBox Style="{StaticResource InputControl}"
                              Text="{Binding ThresholdMeters, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>

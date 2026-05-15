@@ -33,6 +33,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.UI.ViewModels
             get => _slopePercent;
             set { _slopePercent = value; Raise(); }
         }
+        public string AppliedSlopeDisplay => $"{SlopePercent}%";
 
         private int _thresholdMeters = 50;
         public int ThresholdMeters
@@ -139,7 +140,8 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.UI.ViewModels
         }
 
         public string SummaryText =>
-$@"Vertices Processed : {VerticesProcessed}
+$@"Applied Slope Percentage : {AppliedSlopeDisplay}
+Vertices Processed : {VerticesProcessed}
 Vertices Skipped   : {VerticesSkipped}
 Drain Count        : {DrainCount}
 Highest Elevation  : {HighestElevationDisplay}

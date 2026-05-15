@@ -265,6 +265,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Engine
             }
 
             data.Log(LogColorHelper.Cyan("===== AutoSlope Summary ====="));
+            data.Log(LogColorHelper.Green($"Applied Slope Percentage : {data.SlopePercent}%"));
             data.Log(LogColorHelper.Green($"Vertices Processed : {processed}"));
             data.Log(LogColorHelper.Yellow($"Vertices Skipped   : {skipped}"));
             data.Log(LogColorHelper.Cyan($"Highest Elevation  : {highest_mm:0} mm"));

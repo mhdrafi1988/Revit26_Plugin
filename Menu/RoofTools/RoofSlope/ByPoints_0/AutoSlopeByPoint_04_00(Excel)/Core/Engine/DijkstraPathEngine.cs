@@ -36,7 +36,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Engine
                 {
                     XYZ b = _verts[j].Position;
                     double dist = a.DistanceTo(b);
-                    if (dist < 0.5 || dist > _edgeThresholdFt) continue;
+                    if (dist < 0.005 || dist > _edgeThresholdFt) continue;
                     if (!IsValidEdge(a, b)) continue;
                     _adj[i].Add(j);
                     _adj[j].Add(i);

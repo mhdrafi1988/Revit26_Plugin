@@ -60,6 +60,10 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Parameters
                 TrySetDouble(roof, "AutoSlope_SlopePercent",
                     data.SlopePercent / 100.0,
                     ref successCount, ref failCount);
+                // ★ NEW: Text parameter with % symbol ★
+                TrySetString(roof, "AutoSlope_SlopePercent_Text",
+                    $"{data.SlopePercent}%",  // This creates "1.5%", "2%", etc.
+                    ref successCount, ref failCount);
 
                 TrySetDouble(roof, "AutoSlope_Threshold",
                     data.ThresholdMeters * 1000.0,

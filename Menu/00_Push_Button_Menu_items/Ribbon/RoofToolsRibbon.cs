@@ -35,8 +35,8 @@ namespace Revit26_Plugin.Menu.Ribbon
             PulldownButton ShapepointMenu = panel.AddItem(new PulldownButtonData("ShapepointMenu", "Shape Points")) as PulldownButton;
             ShapepointMenu.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Shapepoints32.png");
 
-            ShapepointMenu.AddPushButton(new PushButtonData("Btn_RoofCircleDividerV1", "Circle Divider 1.0", assemblyPath, "Revit22_Plugin.PDCV1.Commands.RoofLoopAnalyzerCommand_01"));//Working
-            ShapepointMenu.AddPushButton(new PushButtonData("Btn_PointOnBoundary", "Point on  Boundry", assemblyPath, "Revit26_Plugin.AddPointOnintersections.Commands.AddPointOnIntersectionsCommand"));
+            ShapepointMenu.AddPushButton(new PushButtonData("Btn_RoofCircleDividerV1", "Inner Loop Divider 1.0", assemblyPath, "Revit22_Plugin.PDCV1.Commands.RoofLoopAnalyzerCommand_01"));//Working
+            ShapepointMenu.AddPushButton(new PushButtonData("Btn_PointOnBoundary", "Point on  Boundry(Roof & Detail LIne)", assemblyPath, "Revit26_Plugin.AddPointOnintersections.Commands.AddPointOnIntersectionsCommand"));
 
             PulldownButton LineAndPoint = panel.AddItem(new PulldownButtonData("LineAndPointMenu", "Line & PointMenu")) as PulldownButton;
             LineAndPoint.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Linematch32.png");
