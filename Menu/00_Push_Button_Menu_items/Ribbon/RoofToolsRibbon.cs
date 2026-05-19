@@ -16,7 +16,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             PulldownButton SlopeMenu = panel.AddItem(new PulldownButtonData("RoofSlopeMenu", "Auto SLope")) as PulldownButton;
             SlopeMenu.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Autoslope32.png");
 
-            //BY Point
+            //Slope BY Point
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeCommand_03_07", "AutoSlopeCommand_03_07(Point)**", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint_30_07.Commands.AutoSlopeCommand"));
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint_04", "AutoSlope(ByPoint)00_04_Excel(Classic)", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint_04.Commands.AutoSlopeCommand"));
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint", "AutoSlopeByPoint_00_00(Classic)", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.Commands.AutoSlopeCommand"));
@@ -24,12 +24,14 @@ namespace Revit26_Plugin.Menu.Ribbon
             SlopeMenu.AddPushButton(new PushButtonData("Btn_RoofSloperClassic1_v2", "RoofSloperClassic1_V2_CSV(Point)", assemblyPath, "Revit26_Plugin.Commands.RoofSloperClassic1_v2"));
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPointThenDirection_00", "AutoSlopeByPointThenDirection_00", assemblyPath, "Revit26_Plugin.AutoSlopeByPointThenDirection_00.Commands.AutoSlopeCommand"));
 
-            //BY Drain 
+            //Slope BY Drain 
             //SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSloperDrain_04_00", "AutoSloperDrain_04_00(Drain*)", assemblyPath, "Revit22_Plugin.Asd.Commands.AutoSloperDrain_04"));
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSloperDrain_Asd_19", "AutoSloperDrain_Asd_19_CSV(Drain)", assemblyPath, "Revit26_Plugin.Asd_19.Commands.AutoSloperDrain_04"));
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSloperDrain_04_01", "AutoSloperDrain_04_01(Drain)", assemblyPath, "Revit22_Plugin.Asd_V4_01.Commands.AutoSloperDrain_04_01"));
-            //And Detail
+           
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSloperAndDetail", "AutoSloperAndDetail", assemblyPath, "Revit26_Plugin.V5_00.Commands.AutoSlopeCommand"));
+            
+            //Create RoofAnd Detail
             SlopeMenu.AddPushButton(new PushButtonData("LaunchRoofFromFloorCommand", "LaunchRoofFromFloorCommand", assemblyPath, "Revit26_Plugin.RoofFromFloor.Commands.LaunchRoofFromFloorCommand"));
 
             PulldownButton ShapepointMenu = panel.AddItem(new PulldownButtonData("ShapepointMenu", "Shape Points")) as PulldownButton;
