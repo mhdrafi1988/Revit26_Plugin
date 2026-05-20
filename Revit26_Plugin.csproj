@@ -5,7 +5,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\Release\net8.0-windows\180506_01</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\Release\net8.0-windows\20_03</BaseOutputPath>
 		<PackageId />
 		<AssemblyName>Revit26_Plugin</AssemblyName>
 	</PropertyGroup>
@@ -60,6 +60,7 @@
 	  <Compile Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_02\**" />
 	  <Compile Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_002_01\**" />
 	  <Compile Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_003\**" />
+	  <Compile Remove="Menu\RoofTools\Lines\wip\**" />
 	  <Compile Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
 	  <Compile Remove="Menu\RoofTools\RoofCreation\Create_Detail_LInes_From Roof\**" />
 	  <Compile Remove="Menu\RoofTools\RoofCreation\RoofCreation_Detail_LInes\**" />
@@ -203,6 +204,7 @@
 	  <EmbeddedResource Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_02\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_002_01\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_003\**" />
+	  <EmbeddedResource Remove="Menu\RoofTools\Lines\wip\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofCreation\Create_Detail_LInes_From Roof\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofCreation\RoofCreation_Detail_LInes\**" />
@@ -346,6 +348,7 @@
 	  <None Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_02\**" />
 	  <None Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_002_01\**" />
 	  <None Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_003\**" />
+	  <None Remove="Menu\RoofTools\Lines\wip\**" />
 	  <None Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
 	  <None Remove="Menu\RoofTools\RoofCreation\Create_Detail_LInes_From Roof\**" />
 	  <None Remove="Menu\RoofTools\RoofCreation\RoofCreation_Detail_LInes\**" />
@@ -489,6 +492,7 @@
 	  <Page Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_02\**" />
 	  <Page Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_002_01\**" />
 	  <Page Remove="Menu\RoofTools\Lines\SlopeToDetailItem_00\CreasToDetalLines_003\**" />
+	  <Page Remove="Menu\RoofTools\Lines\wip\**" />
 	  <Page Remove="Menu\RoofTools\Points\CircleDividerv2\**" />
 	  <Page Remove="Menu\RoofTools\RoofCreation\Create_Detail_LInes_From Roof\**" />
 	  <Page Remove="Menu\RoofTools\RoofCreation\RoofCreation_Detail_LInes\**" />

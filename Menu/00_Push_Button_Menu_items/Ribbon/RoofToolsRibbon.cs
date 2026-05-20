@@ -46,6 +46,8 @@ namespace Revit26_Plugin.Menu.Ribbon
             //LineAndPointMenu.AddPushButton(new PushButtonData("Btn_RoofRidgeCommand_03", "RoofRidgeCommand_03", assemblyPath, "Revit22_Plugin.RRLPV3.Commands.RoofRidgeCommand_03"));//Working
             LineAndPoint.AddPushButton(new PushButtonData("Btn_RoofRidgeCommand_V11", "Ridge Points & Lines By Two Points_V11", assemblyPath, "Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines_V11.Commands.RoofRidgeCommand_V11"));//Working
             LineAndPoint.AddPushButton(new PushButtonData("Btn_RoofRidgeCommand_V04", "Ridge Points & Lines By Two Points_V04", assemblyPath, "Revit26_Plugin.RRLPV4.Commands.RoofRidgeCommand_04"));//Working
+            LineAndPoint.AddPushButton(new PushButtonData("CreateLinkedMechanical_V001", "CreateLinkedMechanical_V001 ##", assemblyPath, "Revit26_Plugin.LinesFromMechanical.V001.Commands.CreateLinkedMechanicalCirclesCommand"));//Working
+            LineAndPoint.AddPushButton(new PushButtonData("CreateLinkedMechanical_V003", "CreateLinkedMechanical_V03 ##", assemblyPath, "Revit26_Plugin.LinesFromMechanical.V003.Commands.CreateLinkedMechanicalCirclesCommand"));//Working
 
             PulldownButton SlopeLinerMenu = panel.AddItem(new PulldownButtonData("SlopeLiner", "SlopeLiner")) as PulldownButton;
             SlopeLinerMenu.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Addlines_32.png");
