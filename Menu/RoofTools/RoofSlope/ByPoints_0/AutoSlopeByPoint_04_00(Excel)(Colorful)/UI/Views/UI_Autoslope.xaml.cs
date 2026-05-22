@@ -24,7 +24,11 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.UI.Views
 
         private void AddLog(string message)
         {
-            Dispatcher.Invoke(() => { });
+            Dispatcher.Invoke(() =>
+            {
+                // This method is called from the ViewModel
+                // The ViewModel already handles adding to LogText
+            });
         }
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
