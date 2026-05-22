@@ -5,7 +5,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\Release\net8.0-windows\21_04</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\Release\net8.0-windows\22_00</BaseOutputPath>
 		<PackageId />
 		<AssemblyName>Revit26_Plugin</AssemblyName>
 	</PropertyGroup>
@@ -92,6 +92,7 @@
 	  <Compile Remove="Menu\RoofTools\RoofSlope\ByPoints\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\ByPoints_000\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\ByPoints_00\**" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPointTwoSlopes_01_00%28Excel%29TwoSlopes\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\DijkstraPath2_2026\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\RoofSloperClassic1_0\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\RoofSloperClassic2\**" />
@@ -236,6 +237,7 @@
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\ByPoints\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\ByPoints_000\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\ByPoints_00\**" />
+	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPointTwoSlopes_01_00%28Excel%29TwoSlopes\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\DijkstraPath2_2026\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\RoofSloperClassic1_0\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\RoofSloperClassic2\**" />
@@ -380,6 +382,7 @@
 	  <None Remove="Menu\RoofTools\RoofSlope\ByPoints\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\ByPoints_000\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\ByPoints_00\**" />
+	  <None Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPointTwoSlopes_01_00%28Excel%29TwoSlopes\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\DijkstraPath2_2026\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\RoofSloperClassic1_0\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\RoofSloperClassic2\**" />
@@ -524,6 +527,7 @@
 	  <Page Remove="Menu\RoofTools\RoofSlope\ByPoints\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\ByPoints_000\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\ByPoints_00\**" />
+	  <Page Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPointTwoSlopes_01_00%28Excel%29TwoSlopes\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\DijkstraPath2_2026\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\RoofSloperClassic1_0\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\RoofSloperClassic2\**" />
@@ -692,6 +696,7 @@
 	  <Folder Include="Menu\RoofTools\RoofSlope\ByDrains\V5_00\Properties\" />
 	  <Folder Include="Menu\RoofTools\RoofSlope\ByDrains\V5_00\UI\Resources\" />
 	  <Folder Include="Menu\Setup\CaddLInkToFamiliy\" />
+	  <Folder Include="Shared\" />
 	  <Folder Include="ViewModels\" />
 	</ItemGroup>
 	<ItemGroup>
