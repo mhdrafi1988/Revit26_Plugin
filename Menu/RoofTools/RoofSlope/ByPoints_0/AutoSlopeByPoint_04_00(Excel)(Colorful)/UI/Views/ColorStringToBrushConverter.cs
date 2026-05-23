@@ -1,4 +1,12 @@
-﻿using System;
+// =======================================================
+// File: ColorStringToBrushConverter.cs          ← filename typo fixed (.cs.cs → .cs)
+// Fixes:
+//   #4  Removed duplicate ColorStringToBrushConverter_Classic
+//       (identical body, different class name — keep one).
+//   #4  Corrected file extension typo (.cs.cs → .cs).
+// =======================================================
+
+using System;
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
@@ -18,8 +26,6 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.UI.Views.Converters
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
+            => throw new NotImplementedException();
     }
 }

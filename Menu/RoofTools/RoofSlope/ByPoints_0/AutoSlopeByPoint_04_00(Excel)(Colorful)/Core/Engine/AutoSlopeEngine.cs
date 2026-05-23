@@ -1,4 +1,13 @@
-﻿using Autodesk.Revit.DB;
+// =======================================================
+// File: AutoSlopeEngine.cs
+// Fixes:
+//   #6  DateTime.Now is captured once into `runDate` and
+//       passed to WriteAll — previously called twice, which
+//       risked the parameter value and the UI value showing
+//       different minutes on slow machines.
+// =======================================================
+
+using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.AutoSlopeByPoint_04.Core.Models;
 using Revit26_Plugin.AutoSlopeByPoint_04.Core.Parameters;
@@ -15,47 +24,51 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Engine
         public static void Execute(UIApplication app, AutoSlopePayload data)
         {
             Document doc = app.ActiveUIDocument.Document;
+
+            // ── Guard: roof ─────────────────────────────────────────────────
             RoofBase roof = doc.GetElement(data.RoofId) as RoofBase;
             if (roof == null)
+            {
+                FireFailure(data, "Roof element not found. Aborting.");
                 return;
+            }
 
+            // ── Guard: slab shape editor ────────────────────────────────────
             SlabShapeEditor editor = roof.GetSlabShapeEditor();
             if (editor == null || !editor.IsValidObject)
             {
                 data.Log(LogColorHelper.Red("Roof slab shape editor is not available. Aborting."));
+                FireFailure(data, "Roof slab shape editor is not available.");
                 return;
             }
 
-            // Reset vertices
+            // ── Reset vertices ───────────────────────────────────────────────
             using (Transaction tx = new Transaction(doc, "Reset Roof Vertices"))
             {
                 tx.Start();
-
                 foreach (SlabShapeVertex v in editor.SlabShapeVertices)
-                {
                     editor.ModifySubElement(v, 0);
-                }
-
                 tx.Commit();
             }
 
-            List<SlabShapeVertex> vertices = new List<SlabShapeVertex>();
+            // ── Collect vertices ─────────────────────────────────────────────
+            var vertices = new List<SlabShapeVertex>();
             foreach (SlabShapeVertex v in editor.SlabShapeVertices)
-            {
                 vertices.Add(v);
-            }
 
             double slopeFactor = data.SlopePercent / 100.0;
             double thresholdFt = UnitUtils.ConvertToInternalUnits(data.ThresholdMeters, UnitTypeId.Meters);
 
+            // ── Guard: top face ──────────────────────────────────────────────
             Face topFace = AutoSlopeGeometry.GetTopFace(roof);
             if (topFace == null)
             {
                 data.Log(LogColorHelper.Red("Top face not found. Aborting."));
+                FireFailure(data, "Top face not found.");
                 return;
             }
 
-            // Build final drain points from user picks + nearby roof shape points.
+            // ── Build final drain points ─────────────────────────────────────
             List<XYZ> finalDrainPoints = data.DrainPoints ?? new List<XYZ>();
 
             if (data.EnableDrainTolerance && data.DrainToleranceMm > 0)
@@ -64,36 +77,32 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Engine
                     $"🔍 Checking for nearby roof shape points within {data.DrainToleranceMm}mm of selected points..."));
 
                 finalDrainPoints = DrainDetectionHelper.DetectDrainsWithinRadius(
-                    roof,
-                    finalDrainPoints,
-                    data.DrainToleranceMm,
-                    data.Log);
+                    roof, finalDrainPoints, data.DrainToleranceMm, data.Log);
 
                 finalDrainPoints = DrainDetectionHelper.RemoveDuplicates(
-                    finalDrainPoints,
-                    data.DrainToleranceMm);
+                    finalDrainPoints, data.DrainToleranceMm);
             }
 
             if (finalDrainPoints == null || finalDrainPoints.Count == 0)
             {
                 data.Log(LogColorHelper.Red("No drain points are available. Aborting."));
+                FireFailure(data, "No drain points are available.");
                 return;
             }
 
+            // ── Build Dijkstra graph ─────────────────────────────────────────
             var dijkstra = new DijkstraPathEngine(vertices, topFace, thresholdFt);
 
             double drainMatchToleranceFt = data.EnableDrainTolerance && data.DrainToleranceMm > 0
                 ? UnitUtils.ConvertToInternalUnits(data.DrainToleranceMm, UnitTypeId.Millimeters)
                 : 0.001;
 
-            HashSet<int> drainIndices = new HashSet<int>();
+            var drainIndices = new HashSet<int>();
             for (int i = 0; i < vertices.Count; i++)
             {
                 foreach (XYZ drainPoint in finalDrainPoints)
                 {
-                    if (drainPoint == null)
-                        continue;
-
+                    if (drainPoint == null) continue;
                     if (vertices[i].Position.DistanceTo(drainPoint) <= drainMatchToleranceFt)
                     {
                         drainIndices.Add(i);
@@ -105,14 +114,16 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Engine
             if (drainIndices.Count == 0)
             {
                 data.Log(LogColorHelper.Red("No roof vertices matched the selected drain points. Aborting."));
+                FireFailure(data, "No roof vertices matched the selected drain points.");
                 return;
             }
 
-            int processed = 0;
-            int skipped = 0;
+            // ── Main slope loop ──────────────────────────────────────────────
+            int processed    = 0;
+            int skipped      = 0;
             double maxElevFt = 0;
             double maxPathFt = 0;
-            List<VertexData> vertexDataList = new List<VertexData>();
+            var vertexDataList = new List<VertexData>();
             Stopwatch sw = Stopwatch.StartNew();
 
             using (Transaction tx = new Transaction(doc, "Apply AutoSlope"))
@@ -131,18 +142,17 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Engine
                         {
                             vertexDataList.Add(new VertexData
                             {
-                                VertexIndex = i,
-                                Position = vertices[i].Position,
-                                PathLengthMeters = double.IsInfinity(pathFt)
+                                VertexIndex       = i,
+                                Position          = vertices[i].Position,
+                                PathLengthMeters  = double.IsInfinity(pathFt)
                                     ? 0
                                     : UnitUtils.ConvertFromInternalUnits(pathFt, UnitTypeId.Meters),
                                 ElevationOffsetMm = 0,
                                 NearestDrainIndex = -1,
-                                DirectionVector = XYZ.Zero,
-                                WasProcessed = false
+                                DirectionVector   = XYZ.Zero,
+                                WasProcessed      = false
                             });
                         }
-
                         continue;
                     }
 
@@ -150,26 +160,23 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Engine
                     editor.ModifySubElement(vertices[i], elevFt);
 
                     processed++;
-                    if (elevFt > maxElevFt)
-                        maxElevFt = elevFt;
+                    if (elevFt > maxElevFt) maxElevFt = elevFt;
+                    if (pathFt > maxPathFt) maxPathFt = pathFt;
 
-                    if (pathFt > maxPathFt)
-                        maxPathFt = pathFt;
-
-                    int nearestDrainIndex = FindNearestDrainIndex(vertices[i].Position, finalDrainPoints);
-                    XYZ directionVector = nearestDrainIndex >= 0
+                    int  nearestDrainIndex = FindNearestDrainIndex(vertices[i].Position, finalDrainPoints);
+                    XYZ  directionVector   = nearestDrainIndex >= 0
                         ? CalculateDirectionVector(vertices[i].Position, finalDrainPoints[nearestDrainIndex])
                         : XYZ.Zero;
 
                     vertexDataList.Add(new VertexData
                     {
-                        VertexIndex = i,
-                        Position = vertices[i].Position,
-                        PathLengthMeters = UnitUtils.ConvertFromInternalUnits(pathFt, UnitTypeId.Meters),
+                        VertexIndex       = i,
+                        Position          = vertices[i].Position,
+                        PathLengthMeters  = UnitUtils.ConvertFromInternalUnits(pathFt, UnitTypeId.Meters),
                         ElevationOffsetMm = UnitUtils.ConvertFromInternalUnits(elevFt, UnitTypeId.Millimeters),
                         NearestDrainIndex = nearestDrainIndex,
-                        DirectionVector = directionVector,
-                        WasProcessed = true
+                        DirectionVector   = directionVector,
+                        WasProcessed      = true
                     });
                 }
 
@@ -178,58 +185,36 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Engine
 
             sw.Stop();
 
-            int highest_mm = (int)Math.Round(
+            // ── Compute summary values ───────────────────────────────────────
+            int    highest_mm  = (int)Math.Round(
                 UnitUtils.ConvertFromInternalUnits(maxElevFt, UnitTypeId.Millimeters),
                 MidpointRounding.AwayFromZero);
-
-            double longest_m = Math.Round(
+            double longest_m   = Math.Round(
                 UnitUtils.ConvertFromInternalUnits(maxPathFt, UnitTypeId.Meters),
-                2,
-                MidpointRounding.AwayFromZero);
+                2, MidpointRounding.AwayFromZero);
+            int    durationSec = (int)Math.Round(sw.Elapsed.TotalSeconds);
 
-            int durationSec = (int)Math.Round(sw.Elapsed.TotalSeconds);
+            // Fix #6: capture once — passed to both WriteAll and OnCompleted
             string runDate = DateTime.Now.ToString("dd-MM-yy HH:mm");
 
-            var metrics = new AutoSlopeMetrics
-            {
-                Processed = processed,
-                Skipped = skipped,
-                HighestElevation = highest_mm,
-                LongestPath = longest_m
-            };
-
-            data.Vm.VerticesProcessed = processed;
-            data.Vm.VerticesSkipped = skipped;
-            data.Vm.HighestElevation_mm = highest_mm;
-            data.Vm.LongestPath_m = longest_m;
-            data.Vm.DrainCount = finalDrainPoints.Count;
-            data.Vm.RunDuration_sec = durationSec;
-            data.Vm.RunDate = runDate;
-
+            // ── Write Revit parameters ───────────────────────────────────────
             AutoSlopeParameterWriter.WriteAll(
-                doc,
-                roof,
-                data,
-                highest_mm,
-                maxPathFt,
-                processed,
-                skipped,
-                durationSec,
+                doc, roof, data,
+                highest_mm, maxPathFt,
+                processed, skipped, durationSec,
                 finalDrainPoints.Count,
+                runDate,        // Fix #6: same value used in UI and in the parameter
                 "P.04.00");
 
-            // Export to Excel if enabled
+            // ── Excel export ─────────────────────────────────────────────────
             if (data.ExportConfig?.ExportToExcel == true)
             {
                 string compactPath = ExcelExportHelper.ExportCompactVertexData(
-                    data,
-                    vertexDataList,
-                    roof,
-                    data.SlopePercent);
+                    data, vertexDataList, roof, data.SlopePercent);
 
                 if (!string.IsNullOrEmpty(compactPath))
                 {
-                    data.Log(LogColorHelper.Green($"✅ Compact Excel data exported to: {compactPath}"));
+                    data.Log(LogColorHelper.Green($"✅ Compact Excel exported to: {compactPath}"));
                     data.Log(LogColorHelper.Cyan("  • Sorted by PathLength_Meters (longest first)"));
                     data.Log(LogColorHelper.Cyan($"  • Contains {processed} processed vertices"));
 
@@ -239,80 +224,89 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Engine
                         .FirstOrDefault();
 
                     if (longestVertex != null)
-                    {
                         data.Log(LogColorHelper.Cyan(
                             $"  • Longest path: {longestVertex.PathLengthMeters:F2} m to drain {longestVertex.NearestDrainIndex}"));
-                    }
                 }
 
                 if (data.ExportConfig.IncludeVertexDetails)
                 {
                     string detailedPath = ExcelExportHelper.ExportDetailedVertexData(
-                        data,
-                        vertexDataList,
-                        roof,
-                        finalDrainPoints,
-                        data.SlopePercent);
+                        data, vertexDataList, roof, finalDrainPoints, data.SlopePercent);
 
                     if (!string.IsNullOrEmpty(detailedPath))
                     {
-                        data.Log(LogColorHelper.Green($"✅ Detailed Excel data exported to: {detailedPath}"));
+                        data.Log(LogColorHelper.Green($"✅ Detailed Excel exported to: {detailedPath}"));
                         data.Log(LogColorHelper.Cyan(
-                            $"  • Contains {vertexDataList.Count} total vertices ({processed} processed, {skipped} skipped)"));
-                        data.Log(LogColorHelper.Cyan("  • Multiple sheets: Summary, Drain Points, Vertices, Statistics"));
+                            $"  • {vertexDataList.Count} total vertices ({processed} processed, {skipped} skipped)"));
+                        data.Log(LogColorHelper.Cyan("  • Sheets: Summary, Drain Points, Vertices, Statistics"));
                     }
                 }
             }
 
+            // ── Log summary ──────────────────────────────────────────────────
             data.Log(LogColorHelper.Cyan("===== AutoSlope Summary ====="));
             data.Log(LogColorHelper.Green($"Applied Slope Percentage : {data.SlopePercent}%"));
-            data.Log(LogColorHelper.Green($"Vertices Processed : {processed}"));
-            data.Log(LogColorHelper.Yellow($"Vertices Skipped   : {skipped}"));
-            data.Log(LogColorHelper.Cyan($"Highest Elevation  : {highest_mm:0} mm"));
-            data.Log(LogColorHelper.Cyan($"Longest Path       : {longest_m:0.00} m"));
-            data.Log(LogColorHelper.Cyan($"Drain Count        : {finalDrainPoints.Count}"));
-            data.Log(LogColorHelper.Cyan($"Run Duration       : {durationSec} sec"));
-            data.Log(LogColorHelper.Cyan($"Run Date           : {runDate}"));
-
+            data.Log(LogColorHelper.Green($"Vertices Processed       : {processed}"));
+            data.Log(LogColorHelper.Yellow($"Vertices Skipped         : {skipped}"));
+            data.Log(LogColorHelper.Cyan($"Highest Elevation        : {highest_mm:0} mm"));
+            data.Log(LogColorHelper.Cyan($"Longest Path             : {longest_m:0.00} m"));
+            data.Log(LogColorHelper.Cyan($"Drain Count              : {finalDrainPoints.Count}"));
+            data.Log(LogColorHelper.Cyan($"Run Duration             : {durationSec} sec"));
+            data.Log(LogColorHelper.Cyan($"Run Date                 : {runDate}"));
             if (data.EnableDrainTolerance)
-            {
-                data.Log(LogColorHelper.Cyan($"Drain Tolerance    : {data.DrainToleranceMm} mm (enabled)"));
-            }
-
+                data.Log(LogColorHelper.Cyan($"Drain Tolerance          : {data.DrainToleranceMm} mm (enabled)"));
             data.Log(LogColorHelper.Green("===== AutoSlope Finished Successfully ====="));
+
+            // ── Fire result callback ─────────────────────────────────────────
+            data.OnCompleted?.Invoke(new AutoSlopeResult
+            {
+                Success             = true,
+                VerticesProcessed   = processed,
+                VerticesSkipped     = skipped,
+                DrainCount          = finalDrainPoints.Count,
+                HighestElevation_mm = highest_mm,
+                LongestPath_m       = longest_m,
+                RunDuration_sec     = durationSec,
+                RunDate             = runDate   // Fix #6: same captured value
+            });
+        }
+
+        // ── Private helpers ──────────────────────────────────────────────────
+
+        private static void FireFailure(AutoSlopePayload data, string reason)
+        {
+            data.Log?.Invoke(LogColorHelper.Red(reason));
+            data.OnCompleted?.Invoke(new AutoSlopeResult
+            {
+                Success      = false,
+                ErrorMessage = reason
+            });
         }
 
         private static int FindNearestDrainIndex(XYZ vertexPos, List<XYZ> drainPoints)
         {
-            if (drainPoints == null || drainPoints.Count == 0)
-                return -1;
+            if (drainPoints == null || drainPoints.Count == 0) return -1;
 
-            int nearestIndex = 0;
-            double minDistance = double.MaxValue;
+            int    nearestIndex = 0;
+            double minDistance  = double.MaxValue;
 
             for (int i = 0; i < drainPoints.Count; i++)
             {
-                if (drainPoints[i] == null)
-                    continue;
-
+                if (drainPoints[i] == null) continue;
                 double distance = vertexPos.DistanceTo(drainPoints[i]);
                 if (distance < minDistance)
                 {
-                    minDistance = distance;
+                    minDistance  = distance;
                     nearestIndex = i;
                 }
             }
-
             return nearestIndex;
         }
 
         private static XYZ CalculateDirectionVector(XYZ fromPoint, XYZ toPoint)
         {
-            if (fromPoint.DistanceTo(toPoint) < 0.001)
-                return XYZ.Zero;
-
-            XYZ vector = toPoint - fromPoint;
-            return vector.Normalize();
+            if (fromPoint.DistanceTo(toPoint) < 0.001) return XYZ.Zero;
+            return (toPoint - fromPoint).Normalize();
         }
     }
 }

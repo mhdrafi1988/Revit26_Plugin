@@ -1,33 +1,64 @@
-﻿using Autodesk.Revit.DB;
+// =======================================================
+// File: AutoSlopeViewModel.cs
+// Fixes applied:
+//   #1  Removed unused Action<string> log constructor parameter.
+//   #5  Replaced bool HasRun with RunState enum so StatusMessage
+//       correctly shows "Ready" / "Processing..." / "Completed".
+//   #7  AddLog uses Dispatcher.CheckAccess() so callers already
+//       on the UI thread don't incur an unnecessary async hop.
+//   #9  DrainToleranceMm changed from int to match payload type
+//       (both are now int — see AutoSlopePayload fix).
+// =======================================================
+
+using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.Input;
-using OfficeOpenXml;
-using OfficeOpenXml.Style;
 using Revit26_Plugin.AutoSlopeByPoint_04.Core.Models;
 using Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.ExternalEvents;
 using Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using OfficeOpenXml;
-using OfficeOpenXml.Style;
-using System.Drawing;
 
 namespace Revit26_Plugin.AutoSlopeByPoint_04.UI.ViewModels
 {
     public class AutoSlopeViewModel : INotifyPropertyChanged
     {
+        // ── INotifyPropertyChanged ────────────────────────────────────────────
         public event PropertyChangedEventHandler PropertyChanged;
         private void Raise([CallerMemberName] string name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
+        // ── Fix #5: RunState enum replaces bare bool HasRun ──────────────────
+        private enum RunState { Ready, Running, Done }
+
+        private RunState _state = RunState.Ready;
+        private RunState State
+        {
+            get => _state;
+            set
+            {
+                _state = value;
+                Raise(nameof(StatusMessage));
+                Raise(nameof(StatusColor));
+                // Mirror HasRun semantics for command CanExecute
+                RunCommand.NotifyCanExecuteChanged();
+                ExportResultsCommand.NotifyCanExecuteChanged();
+            }
+        }
+
+        // Convenience for CanExecute predicates
+        private bool IsRunning  => _state == RunState.Running;
+        private bool IsComplete => _state == RunState.Done;
+
+        // ── Slope options ─────────────────────────────────────────────────────
         public List<double> SlopeOptions { get; } = new List<double> { 0.5, 1.0, 1.5, 2.0, 2.5 };
 
-        private double _slopePercent = 1.5;
+        // ── Input properties ──────────────────────────────────────────────────
+        private double _slopePercent = AppConstants.DefaultSlopePercent;
         public double SlopePercent
         {
             get => _slopePercent;
@@ -35,21 +66,22 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.UI.ViewModels
         }
         public string AppliedSlopeDisplay => $"{SlopePercent}%";
 
-        private int _thresholdMeters = 50;
+        private int _thresholdMeters = AppConstants.DefaultThresholdMeters;
         public int ThresholdMeters
         {
             get => _thresholdMeters;
             set { _thresholdMeters = value; Raise(); }
         }
 
-        private int _drainToleranceMm = 500;
+        // Fix #9: int throughout (was double in payload, int in VM — now consistent)
+        private int _drainToleranceMm = AppConstants.DefaultDrainToleranceMm;
         public int DrainToleranceMm
         {
             get => _drainToleranceMm;
             set { _drainToleranceMm = value; Raise(); }
         }
 
-        private bool _enableDrainTolerance = false;
+        private bool _enableDrainTolerance;
         public bool EnableDrainTolerance
         {
             get => _enableDrainTolerance;
@@ -77,16 +109,30 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.UI.ViewModels
             set { _includeVertexDetails = value; Raise(); }
         }
 
-        private string _logText = "";
+        // ── Log ───────────────────────────────────────────────────────────────
+        private string _logText = string.Empty;
         public string LogText
         {
             get => _logText;
             set { _logText = value; Raise(); }
         }
 
-        public string StatusMessage => HasRun ? "Processing..." : "Ready to run";
-        public string StatusColor => HasRun ? "#E67E22" : "#27AE60";
+        // ── Fix #5: Status derived from RunState, not a bool ─────────────────
+        public string StatusMessage => _state switch
+        {
+            RunState.Running => "Processing...",
+            RunState.Done    => "Completed",
+            _                => "Ready to run"
+        };
 
+        public string StatusColor => _state switch
+        {
+            RunState.Running => AppConstants.Color_Processing,
+            RunState.Done    => AppConstants.Color_Success,
+            _                => AppConstants.Color_Ready
+        };
+
+        // ── Result properties (populated by OnCompleted) ──────────────────────
         private int _verticesProcessed;
         public int VerticesProcessed
         {
@@ -139,35 +185,24 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.UI.ViewModels
             set { _runDate = value; Raise(); Raise(nameof(SummaryText)); }
         }
 
+        // Cached result — used by ExportResultsCommand
+        private AutoSlopeResult _lastResult;
+
         public string SummaryText =>
 $@"Applied Slope Percentage : {AppliedSlopeDisplay}
-Vertices Processed : {VerticesProcessed}
-Vertices Skipped   : {VerticesSkipped}
-Drain Count        : {DrainCount}
-Highest Elevation  : {HighestElevationDisplay}
-Longest Path       : {LongestPathDisplay}
-Run Duration       : {RunDurationDisplay}
-Run Date           : {RunDate}
-Export Folder      : {ExportFolderPath}";
+Vertices Processed       : {VerticesProcessed}
+Vertices Skipped         : {VerticesSkipped}
+Drain Count              : {DrainCount}
+Highest Elevation        : {HighestElevationDisplay}
+Longest Path             : {LongestPathDisplay}
+Run Duration             : {RunDurationDisplay}
+Run Date                 : {RunDate}
+Export Folder            : {ExportFolderPath}";
 
-        private bool _hasRun;
-        public bool HasRun
-        {
-            get => _hasRun;
-            set
-            {
-                _hasRun = value;
-                Raise();
-                Raise(nameof(StatusMessage));
-                Raise(nameof(StatusColor));
-                RunCommand.NotifyCanExecuteChanged();
-                ExportResultsCommand.NotifyCanExecuteChanged();
-            }
-        }
-
+        // ── Commands ──────────────────────────────────────────────────────────
         private RelayCommand _runCommand;
         public RelayCommand RunCommand => _runCommand ??= new RelayCommand(
-            RunAutoSlope, () => !HasRun);
+            RunAutoSlope, () => !IsRunning && !IsComplete);
 
         private RelayCommand _browseFolderCommand;
         public RelayCommand BrowseFolderCommand => _browseFolderCommand ??= new RelayCommand(
@@ -179,44 +214,43 @@ Export Folder      : {ExportFolderPath}";
 
         private RelayCommand _exportResultsCommand;
         public RelayCommand ExportResultsCommand => _exportResultsCommand ??= new RelayCommand(
-            ExportResults, () => HasRun);
+            ExportResults, () => IsComplete && _lastResult?.Success == true);
 
-        public UIDocument UIDoc { get; }
-        public UIApplication App { get; }
-        public ElementId RoofId { get; }
+        // ── Constructor fields ────────────────────────────────────────────────
+        public UIDocument UIDoc    { get; }
+        public UIApplication App   { get; }
+        public ElementId RoofId    { get; }
         public List<XYZ> DrainPoints { get; }
-        private readonly Action<string> _log;
 
+        // Fix #1: removed unused Action<string> log parameter
         public AutoSlopeViewModel(
             UIDocument uidoc,
             UIApplication app,
             ElementId roofId,
-            List<XYZ> drainPoints,
-            Action<string> log)
+            List<XYZ> drainPoints)
         {
-            // Set EPPlus license context - FULLY QUALIFIED to avoid ambiguity
-            OfficeOpenXml.ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
-
-            UIDoc = uidoc;
-            App = app;
-            RoofId = roofId;
+            UIDoc       = uidoc;
+            App         = app;
+            RoofId      = roofId;
             DrainPoints = drainPoints;
-            _log = log;
 
             ExportFolderPath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                "AutoSlope_Reports");
+                AppConstants.DefaultExportFolder);
 
             AutoSlopeEventManager.Init();
         }
 
+        // ── RunAutoSlope ──────────────────────────────────────────────────────
         private void RunAutoSlope()
         {
-            if (HasRun) return;
-            HasRun = true;
-            LogText = "";
+            if (IsRunning || IsComplete) return;
+
+            State   = RunState.Running;   // Fix #5: set Running state
+            LogText = string.Empty;
             AddLog("Starting AutoSlope...");
 
+            // Ensure export directory exists
             if (ExportToExcel && !Directory.Exists(ExportFolderPath))
             {
                 try
@@ -232,105 +266,97 @@ Export Folder      : {ExportFolderPath}";
 
             AutoSlopeHandler.Payload = new AutoSlopePayload
             {
-                RoofId = RoofId,
-                DrainPoints = DrainPoints,
-                SlopePercent = SlopePercent,
-                ThresholdMeters = ThresholdMeters,
-                Vm = this,
-                Log = AddLog,
+                RoofId               = RoofId,
+                DrainPoints          = DrainPoints,
+                SlopePercent         = SlopePercent,
+                ThresholdMeters      = ThresholdMeters,
+                EnableDrainTolerance = EnableDrainTolerance,
+                DrainToleranceMm     = DrainToleranceMm,   // Fix #9: both int now
+                ProjectTitle         = UIDoc?.Document?.Title ?? "Unknown Project",
+                Log                  = AddLog,
                 ExportConfig = new ExportConfig
                 {
-                    ExportPath = ExportFolderPath,
-                    ExportToExcel = ExportToExcel,
+                    ExportPath           = ExportFolderPath,
+                    ExportToExcel        = ExportToExcel,
                     IncludeVertexDetails = IncludeVertexDetails
                 },
-                EnableDrainTolerance = EnableDrainTolerance,
-                DrainToleranceMm = DrainToleranceMm
+
+                OnCompleted = result =>
+                {
+                    Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        if (!result.Success)
+                        {
+                            AddLog($"AutoSlope failed: {result.ErrorMessage}");
+                            // Reset to Ready so the user can correct settings and retry
+                            State = RunState.Ready;
+                            return;
+                        }
+
+                        _lastResult         = result;
+                        VerticesProcessed   = result.VerticesProcessed;
+                        VerticesSkipped     = result.VerticesSkipped;
+                        DrainCount          = result.DrainCount;
+                        HighestElevation_mm = result.HighestElevation_mm;
+                        LongestPath_m       = result.LongestPath_m;
+                        RunDuration_sec     = result.RunDuration_sec;
+                        RunDate             = result.RunDate;
+
+                        State = RunState.Done;   // Fix #5: show "Completed"
+                        ExportResultsCommand.NotifyCanExecuteChanged();
+                    }));
+                }
             };
 
             AutoSlopeEventManager.Event.Raise();
         }
 
+        // ── BrowseForFolder ───────────────────────────────────────────────────
         private void BrowseForFolder()
         {
-            var selectedPath = DialogService.SelectFolder(ExportFolderPath);
-            if (!string.IsNullOrEmpty(selectedPath))
+            var selected = DialogService.SelectFolder(ExportFolderPath);
+            if (!string.IsNullOrEmpty(selected))
             {
-                ExportFolderPath = selectedPath;
+                ExportFolderPath = selected;
                 AddLog($"Export folder set to: {ExportFolderPath}");
             }
         }
 
+        // ── ClearLog ──────────────────────────────────────────────────────────
         private void ClearLog()
         {
-            LogText = "";
+            LogText = string.Empty;
             AddLog("Log cleared.");
         }
 
+        // ── ExportResults ─────────────────────────────────────────────────────
         private void ExportResults()
         {
-            if (!HasRun)
+            if (_lastResult == null || !_lastResult.Success)
             {
-                AddLog("Warning: Run AutoSlope first to export results.");
+                AddLog("Warning: Run AutoSlope successfully first.");
                 return;
             }
 
             try
             {
-                var filePath = DialogService.ShowSaveFileDialog(
+                string filePath = DialogService.ShowSaveFileDialog(
                     "Excel files (*.xlsx)|*.xlsx|All files (*.*)|*.*",
                     ExportFolderPath,
                     $"AutoSlope_Results_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx");
 
-                if (!string.IsNullOrEmpty(filePath))
-                {
-                    // Use fully qualified namespace
-                    using (var package = new OfficeOpenXml.ExcelPackage())
-                    {
-                        var sheet = package.Workbook.Worksheets.Add("AutoSlope Results");
+                if (string.IsNullOrEmpty(filePath)) return;
 
-                        // Title
-                        sheet.Cells[1, 1].Value = "AutoSlope Results Export";
-                        sheet.Cells[1, 1, 1, 2].Merge = true;
-                        sheet.Cells[1, 1].Style.Font.Bold = true;
-                        sheet.Cells[1, 1].Style.Font.Size = 14;
+                ExcelExportHelper.ExportResultsSummary(
+                    filePath,
+                    _lastResult,
+                    SlopePercent,
+                    ThresholdMeters,
+                    EnableDrainTolerance,
+                    DrainToleranceMm,
+                    ExportFolderPath);
 
-                        // Export Date
-                        sheet.Cells[2, 1].Value = "Export Date:";
-                        sheet.Cells[2, 1].Style.Font.Bold = true;
-                        sheet.Cells[2, 2].Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-
-                        // Headers
-                        int row = 4;
-                        sheet.Cells[row, 1].Value = "Parameter";
-                        sheet.Cells[row, 2].Value = "Value";
-                        sheet.Cells[row, 1, row, 2].Style.Font.Bold = true;
-                        sheet.Cells[row, 1, row, 2].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                        sheet.Cells[row, 1, row, 2].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
-                        row++;
-
-                        // Add summary data
-                        AddSummaryRow(sheet, ref row, "Vertices Processed", VerticesProcessed);
-                        AddSummaryRow(sheet, ref row, "Vertices Skipped", VerticesSkipped);
-                        AddSummaryRow(sheet, ref row, "Drain Count", DrainCount);
-                        AddSummaryRow(sheet, ref row, "Highest Elevation (mm)", $"{HighestElevation_mm:0}");
-                        AddSummaryRow(sheet, ref row, "Longest Path (m)", $"{LongestPath_m:0.00}");
-                        AddSummaryRow(sheet, ref row, "Run Duration (sec)", RunDuration_sec);
-                        AddSummaryRow(sheet, ref row, "Run Date", RunDate);
-                        AddSummaryRow(sheet, ref row, "Slope Percentage", $"{SlopePercent}%");
-                        AddSummaryRow(sheet, ref row, "Threshold (m)", ThresholdMeters);
-                        AddSummaryRow(sheet, ref row, "Drain Tolerance Enabled", EnableDrainTolerance ? "Yes" : "No");
-                        AddSummaryRow(sheet, ref row, "Drain Tolerance (mm)", EnableDrainTolerance ? DrainToleranceMm.ToString() : "N/A");
-                        AddSummaryRow(sheet, ref row, "Export Folder", ExportFolderPath);
-
-                        // Auto-fit columns
-                        sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
-
-                        package.SaveAs(new FileInfo(filePath));
-                    }
-
-                    AddLog($"Results exported to: {filePath}");
-                }
+                AddLog($"Results exported to: {filePath}");
             }
             catch (Exception ex)
             {
@@ -338,21 +364,16 @@ Export Folder      : {ExportFolderPath}";
             }
         }
 
-        private void AddSummaryRow(OfficeOpenXml.ExcelWorksheet sheet, ref int row, string label, object value)
-        {
-            sheet.Cells[row, 1].Value = label;
-            sheet.Cells[row, 1].Style.Font.Bold = true;
-            sheet.Cells[row, 2].Value = value;
-            row++;
-        }
-
+        // ── AddLog ────────────────────────────────────────────────────────────
+        // Fix #7: use CheckAccess() to avoid unnecessary async dispatch when
+        // the caller is already on the UI thread (e.g. ClearLog, BrowseForFolder).
         private void AddLog(string message)
         {
-            _log?.Invoke(message);
-            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-            {
-                LogText += $"[{DateTime.Now:HH:mm:ss}] {message}\n";
-            }));
+            var dispatcher = Application.Current.Dispatcher;
+            if (dispatcher.CheckAccess())
+                LogText += $"{message}\n";
+            else
+                dispatcher.BeginInvoke(new Action(() => LogText += $"{message}\n"));
         }
     }
 }

@@ -1,139 +1,53 @@
-﻿using System;
-using System.Collections.Generic;
+// =======================================================
+// File: ExportConfig.cs
+// Location: Core/Models/
+// Changes vs original:
+//   REMOVED  37 unused properties (CAD, JSON, PDF, email,
+//            parallel processing, version control, etc.)
+//   REMOVED  JsonSerializationFormat, ReportFormat, LogLevel
+//            enums (none were consumed anywhere)
+//   KEPT     ExportFormat enum (used by IsExcelExportEnabled)
+//   KEPT     the 5 properties actually read by ExcelExportHelper
+//            and AutoSlopeEngine:
+//              ExportPath, ExportToExcel, IncludeVertexDetails,
+//              FileNamePrefix, IncludeTimestamp
+// =======================================================
+
+using System;
 
 namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Models
 {
     public class ExportConfig
     {
-        // Basic Export Settings
+        /// <summary>Absolute folder path where Excel files are saved.</summary>
         public string ExportPath { get; set; } = string.Empty;
-        public ExportFormat Format { get; set; } = ExportFormat.Excel;
-        public bool CreateBackup { get; set; } = true;
-        public bool OverwriteExisting { get; set; } = false;
-        public string FileNamePrefix { get; set; } = "AutoSlope_";
-        public bool IncludeTimestamp { get; set; } = true;
 
-        // Excel Export Specific
+        /// <summary>Master switch: write any Excel files at all.</summary>
         public bool ExportToExcel { get; set; } = true;
+
+        /// <summary>
+        /// When true, the engine also writes the detailed multi-sheet workbook
+        /// (Summary / Drain Points / Vertices / Statistics).
+        /// When false, only the compact single-sheet workbook is written.
+        /// </summary>
         public bool IncludeVertexDetails { get; set; } = true;
 
-        // Data Content Options
-        public bool ExportRoofGeometry { get; set; } = true;
-        public bool ExportDrainPoints { get; set; } = true;
-        public bool ExportSlopeVectors { get; set; } = true;
-        public bool ExportCalculatedSlopes { get; set; } = true;
-        public bool ExportThresholdCheck { get; set; } = true;
-        public bool ExportLogs { get; set; } = true;
-        public bool ExportErrorDetails { get; set; } = true;
+        /// <summary>Prefix prepended to the summary-only export filename.</summary>
+        public string FileNamePrefix { get; set; } = "AutoSlope_";
 
-        // Excel Specific Options
-        public bool CreateMultipleSheets { get; set; } = true;
-        public bool ApplyFormatting { get; set; } = true;
-        public bool IncludeCharts { get; set; } = false;
-        public bool FreezeHeaders { get; set; } = true;
-        public string ExcelTemplatePath { get; set; } = string.Empty;
+        /// <summary>Append a yyyyMMdd_HHmmss timestamp to summary-only filenames.</summary>
+        public bool IncludeTimestamp { get; set; } = true;
 
-        // JSON/XML Specific Options
-        public bool PrettyPrint { get; set; } = true;
-        public bool IncludeMetadata { get; set; } = true;
-        public JsonSerializationFormat JsonFormat { get; set; } = JsonSerializationFormat.Indented;
-        public bool CompressOutput { get; set; } = false;
+        // ── Helpers ────────────────────────────────────────────────────────────
 
-        // CAD/Revit Export Options
-        public bool ExportToCAD { get; set; } = false;
-        public string CADFormat { get; set; } = "DWG";
-        public double CADExportScale { get; set; } = 1.0;
-        public bool ExportRevitParameters { get; set; } = true;
-        public bool ExportElementIds { get; set; } = true;
-
-        // Report Generation Options
-        public bool GenerateReport { get; set; } = true;
-        public ReportFormat ReportFormat { get; set; } = ReportFormat.PDF;
-        public bool IncludeSummary { get; set; } = true;
-        public bool IncludeVisualizations { get; set; } = true;
-        public bool IncludeRecommendations { get; set; } = true;
-
-        // Filtering Options
-        public double MinSlopeThreshold { get; set; } = 0.0;
-        public double MaxSlopeThreshold { get; set; } = 100.0;
-        public bool FilterByDrainageArea { get; set; } = false;
-        public double MinDrainageArea { get; set; } = 0.0;
-        public List<string> IncludedRoofTypes { get; set; } = new List<string>();
-
-        // Performance Options
-        public bool UseParallelProcessing { get; set; } = false;
-        public int BatchSize { get; set; } = 100;
-        public bool CacheResults { get; set; } = true;
-        public bool ValidateBeforeExport { get; set; } = true;
-
-        // Notification & Logging
-        public bool NotifyOnCompletion { get; set; } = true;
-        public string NotificationEmail { get; set; } = string.Empty;
-        public LogLevel ExportLogLevel { get; set; } = LogLevel.Info;
-        public bool SaveExportLog { get; set; } = true;
-        public string LogDirectory { get; set; } = string.Empty;
-
-        // Version Control
-        public bool VersionFiles { get; set; } = true;
-        public int MaxVersionsToKeep { get; set; } = 10;
-        public bool AddDigitalSignature { get; set; } = false;
-
-        // Customization
-        public Dictionary<string, object> CustomSettings { get; set; } = new Dictionary<string, object>();
-        public string CustomTemplatePath { get; set; } = string.Empty;
-        public bool UseCustomMapping { get; set; } = false;
-        public string FieldMappingFile { get; set; } = string.Empty;
-
-        // Validation Methods
-        public bool IsValid()
-        {
-            return !string.IsNullOrWhiteSpace(ExportPath);
-        }
+        public bool IsValid() => !string.IsNullOrWhiteSpace(ExportPath);
 
         public string GetDefaultFileName()
         {
-            var timestamp = IncludeTimestamp ? $"_{DateTime.Now:yyyyMMdd_HHmmss}" : "";
+            string timestamp = IncludeTimestamp
+                ? $"_{DateTime.Now:yyyyMMdd_HHmmss}"
+                : string.Empty;
             return $"{FileNamePrefix}{timestamp}";
         }
-
-        // Helper property to check if Excel export is enabled
-        public bool IsExcelExportEnabled => Format == ExportFormat.Excel || ExportToExcel;
-    }
-
-    // Supporting Enums
-    public enum ExportFormat
-    {
-        Excel,
-        CSV,
-        JSON,
-        XML,
-        PDF,
-        DWG,
-        RVT,
-        TXT
-    }
-
-    public enum JsonSerializationFormat
-    {
-        Compact,
-        Indented,
-        Formatted
-    }
-
-    public enum ReportFormat
-    {
-        PDF,
-        HTML,
-        Word,
-        Markdown
-    }
-
-    public enum LogLevel
-    {
-        Debug,
-        Info,
-        Warning,
-        Error,
-        Critical
     }
 }

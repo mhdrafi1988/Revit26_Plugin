@@ -50,7 +50,7 @@
                         <StackPanel Style="{StaticResource FieldRow}">
                             <TextBlock Text="Percentage" Style="{StaticResource FieldLabel}"/>
                             <ComboBox ItemsSource="{Binding SlopeOptions}"
-                                      SelectedItem="{Binding SelectedSlopePercent, Mode=TwoWay}">
+                                      SelectedItem="{Binding SlopePercent, Mode=TwoWay}">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding StringFormat={}{0}%}"/>
@@ -246,7 +246,7 @@
                 <Border Style="{StaticResource MetricCard}" Margin="3,0,0,0">
                     <StackPanel>
                         <TextBlock Text="Percentage 1 applied" Style="{StaticResource MetricLabel}"/>
-                        <TextBlock Text="{Binding SelectedSlopePercent, FallbackValue=0, StringFormat=F1}" Style="{StaticResource MetricNumberSuccess}"/>
+                        <TextBlock Text="{Binding SlopePercent, FallbackValue=0, StringFormat=F1}" Style="{StaticResource MetricNumberSuccess}"/>
                         <TextBlock Text="Percent" Style="{StaticResource MetricUnit}"/>
                     </StackPanel>
                 </Border>
