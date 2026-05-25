@@ -6,8 +6,15 @@
 //       correctly shows "Ready" / "Processing..." / "Completed".
 //   #7  AddLog uses Dispatcher.CheckAccess() so callers already
 //       on the UI thread don't incur an unnecessary async hop.
-//   #9  DrainToleranceMm changed from int to match payload type
-//       (both are now int — see AutoSlopePayload fix).
+//   #9  DrainToleranceMm is int throughout (matches payload + AppConstants).
+//   #10 Removed debug AddLog spam from property setters; debug
+//       logging is now only emitted at meaningful flow boundaries.
+//   #11 Added AvgSlopePercent and Percentage2Applied properties
+//       so the XAML bindings resolve without FallbackValue fallback.
+//   #12 Exposed IsRunning and IsComplete as public bool properties
+//       so XAML DataTriggers can bind to them directly.
+//   #12 StatusColor is a SolidColorBrush string sourced from
+//       AppConstants so it is consistent with the resource dictionary.
 // =======================================================
 
 using Autodesk.Revit.DB;
@@ -32,7 +39,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.UI.ViewModels
         private void Raise([CallerMemberName] string name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
-        // ── Fix #5: RunState enum replaces bare bool HasRun ──────────────────
+        // ── Fix #5 / #12: RunState enum replaces bare bool HasRun ────────────
         private enum RunState { Ready, Running, Done }
 
         private RunState _state = RunState.Ready;
@@ -44,15 +51,16 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.UI.ViewModels
                 _state = value;
                 Raise(nameof(StatusMessage));
                 Raise(nameof(StatusColor));
-                // Mirror HasRun semantics for command CanExecute
+                Raise(nameof(IsRunning));       // Fix #12: XAML DataTrigger support
+                Raise(nameof(IsComplete));      // Fix #12: XAML DataTrigger support
                 RunCommand.NotifyCanExecuteChanged();
                 ExportResultsCommand.NotifyCanExecuteChanged();
             }
         }
 
-        // Convenience for CanExecute predicates
-        private bool IsRunning  => _state == RunState.Running;
-        private bool IsComplete => _state == RunState.Done;
+        // Fix #12: public so XAML DataTriggers can bind
+        public bool IsRunning  => _state == RunState.Running;
+        public bool IsComplete => _state == RunState.Done;
 
         // ── Slope options ─────────────────────────────────────────────────────
         public List<double> SlopeOptions { get; } = new List<double> { 0.5, 1.0, 1.5, 2.0, 2.5 };
@@ -62,7 +70,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.UI.ViewModels
         public double SlopePercent
         {
             get => _slopePercent;
-            set { _slopePercent = value; Raise(); }
+            set { _slopePercent = value; Raise(); Raise(nameof(AppliedSlopeDisplay)); }
         }
         public string AppliedSlopeDisplay => $"{SlopePercent}%";
 
@@ -73,7 +81,6 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.UI.ViewModels
             set { _thresholdMeters = value; Raise(); }
         }
 
-        // Fix #9: int throughout (was double in payload, int in VM — now consistent)
         private int _drainToleranceMm = AppConstants.DefaultDrainToleranceMm;
         public int DrainToleranceMm
         {
@@ -117,7 +124,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.UI.ViewModels
             set { _logText = value; Raise(); }
         }
 
-        // ── Fix #5: Status derived from RunState, not a bool ─────────────────
+        // ── Fix #5: Status derived from RunState ──────────────────────────────
         public string StatusMessage => _state switch
         {
             RunState.Running => "Processing...",
@@ -147,11 +154,20 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.UI.ViewModels
             set { _verticesSkipped = value; Raise(); Raise(nameof(SummaryText)); }
         }
 
-        private int _drainCount;
-        public int DrainCount
+        private int _pickedDrainCount;
+        /// <summary>Count of drains the user picked — before tolerance expansion.</summary>
+        public int PIckedDrainCount
         {
-            get => _drainCount;
-            set { _drainCount = value; Raise(); Raise(nameof(SummaryText)); }
+            get => _pickedDrainCount;
+            set { _pickedDrainCount = value; Raise(); Raise(nameof(SummaryText)); }
+        }
+
+        private int _finalDrainCount;
+        /// <summary>Full drain list count after tolerance expansion + deduplication.</summary>
+        public int FinalDrainCount
+        {
+            get => _finalDrainCount;
+            set { _finalDrainCount = value; Raise(); Raise(nameof(SummaryText)); }
         }
 
         private double _highestElevation_mm;
@@ -185,6 +201,22 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.UI.ViewModels
             set { _runDate = value; Raise(); Raise(nameof(SummaryText)); }
         }
 
+        // Fix #11: AvgSlopePercent — received from engine result
+        private double _avgSlopePercent;
+        public double AvgSlopePercent
+        {
+            get => _avgSlopePercent;
+            set { _avgSlopePercent = value; Raise(); Raise(nameof(SummaryText)); }
+        }
+
+        // Fix #11: Percentage2Applied — received from engine result
+        private double _percentage2Applied;
+        public double Percentage2Applied
+        {
+            get => _percentage2Applied;
+            set { _percentage2Applied = value; Raise(); Raise(nameof(SummaryText)); }
+        }
+
         // Cached result — used by ExportResultsCommand
         private AutoSlopeResult _lastResult;
 
@@ -192,7 +224,10 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.UI.ViewModels
 $@"Applied Slope Percentage : {AppliedSlopeDisplay}
 Vertices Processed       : {VerticesProcessed}
 Vertices Skipped         : {VerticesSkipped}
-Drain Count              : {DrainCount}
+Picked Drain Count       : {PIckedDrainCount}
+Final Drain Count        : {FinalDrainCount}
+Avg Slope Applied        : {AvgSlopePercent:F1}%
+Percentage 2 Applied     : {Percentage2Applied:F1}%
 Highest Elevation        : {HighestElevationDisplay}
 Longest Path             : {LongestPathDisplay}
 Run Duration             : {RunDurationDisplay}
@@ -217,22 +252,26 @@ Export Folder            : {ExportFolderPath}";
             ExportResults, () => IsComplete && _lastResult?.Success == true);
 
         // ── Constructor fields ────────────────────────────────────────────────
-        public UIDocument UIDoc    { get; }
-        public UIApplication App   { get; }
-        public ElementId RoofId    { get; }
+        public UIDocument UIDoc   { get; }
+        public UIApplication App  { get; }
+        public ElementId RoofId   { get; }
         public List<XYZ> DrainPoints { get; }
 
-        // Fix #1: removed unused Action<string> log parameter
         public AutoSlopeViewModel(
             UIDocument uidoc,
             UIApplication app,
             ElementId roofId,
             List<XYZ> drainPoints)
         {
-            UIDoc       = uidoc;
-            App         = app;
-            RoofId      = roofId;
+            UIDoc      = uidoc;
+            App        = app;
+            RoofId     = roofId;
             DrainPoints = drainPoints;
+
+            // Initialise both counts from raw user selection.
+            // FinalDrainCount is updated by OnCompleted after the engine runs.
+            PIckedDrainCount = drainPoints?.Count ?? 0;
+            FinalDrainCount  = drainPoints?.Count ?? 0;
 
             ExportFolderPath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
@@ -246,11 +285,10 @@ Export Folder            : {ExportFolderPath}";
         {
             if (IsRunning || IsComplete) return;
 
-            State   = RunState.Running;   // Fix #5: set Running state
+            State   = RunState.Running;
             LogText = string.Empty;
             AddLog("Starting AutoSlope...");
 
-            // Ensure export directory exists
             if (ExportToExcel && !Directory.Exists(ExportFolderPath))
             {
                 try
@@ -266,18 +304,19 @@ Export Folder            : {ExportFolderPath}";
 
             AutoSlopeHandler.Payload = new AutoSlopePayload
             {
-                RoofId               = RoofId,
-                DrainPoints          = DrainPoints,
-                SlopePercent         = SlopePercent,
-                ThresholdMeters      = ThresholdMeters,
+                RoofId              = RoofId,
+                PickedDrainPoints   = DrainPoints,
+                DrainPoints         = DrainPoints,
+                SlopePercent        = SlopePercent,
+                ThresholdMeters     = ThresholdMeters,
                 EnableDrainTolerance = EnableDrainTolerance,
-                DrainToleranceMm     = DrainToleranceMm,   // Fix #9: both int now
-                ProjectTitle         = UIDoc?.Document?.Title ?? "Unknown Project",
-                Log                  = AddLog,
+                DrainToleranceMm    = DrainToleranceMm,
+                ProjectTitle        = UIDoc?.Document?.Title ?? "Unknown Project",
+                Log                 = AddLog,
                 ExportConfig = new ExportConfig
                 {
-                    ExportPath           = ExportFolderPath,
-                    ExportToExcel        = ExportToExcel,
+                    ExportPath          = ExportFolderPath,
+                    ExportToExcel       = ExportToExcel,
                     IncludeVertexDetails = IncludeVertexDetails
                 },
 
@@ -288,22 +327,27 @@ Export Folder            : {ExportFolderPath}";
                         if (!result.Success)
                         {
                             AddLog($"AutoSlope failed: {result.ErrorMessage}");
-                            // Reset to Ready so the user can correct settings and retry
-                            State = RunState.Ready;
+                            State = RunState.Ready;   // allow retry
                             return;
                         }
 
-                        _lastResult         = result;
-                        VerticesProcessed   = result.VerticesProcessed;
-                        VerticesSkipped     = result.VerticesSkipped;
-                        DrainCount          = result.DrainCount;
-                        HighestElevation_mm = result.HighestElevation_mm;
-                        LongestPath_m       = result.LongestPath_m;
-                        RunDuration_sec     = result.RunDuration_sec;
-                        RunDate             = result.RunDate;
+                        _lastResult = result;
 
-                        State = RunState.Done;   // Fix #5: show "Completed"
+                        VerticesProcessed  = result.VerticesProcessed;
+                        VerticesSkipped    = result.VerticesSkipped;
+                        PIckedDrainCount   = result.PickedDrainCount;
+                        FinalDrainCount    = result.FinalDrainCount;   // full drain list count
+                        HighestElevation_mm = result.HighestElevation_mm;
+                        LongestPath_m      = result.LongestPath_m;
+                        RunDuration_sec    = result.RunDuration_sec;
+                        RunDate            = result.RunDate;
+                        AvgSlopePercent    = result.AvgSlopePercent;
+                        Percentage2Applied = result.Percentage2Applied;
+
+                        State = RunState.Done;
                         ExportResultsCommand.NotifyCanExecuteChanged();
+
+                        AddLog($"✅ Done — FinalDrainCount = {FinalDrainCount}");
                     }));
                 }
             };
@@ -365,8 +409,7 @@ Export Folder            : {ExportFolderPath}";
         }
 
         // ── AddLog ────────────────────────────────────────────────────────────
-        // Fix #7: use CheckAccess() to avoid unnecessary async dispatch when
-        // the caller is already on the UI thread (e.g. ClearLog, BrowseForFolder).
+        // Fix #7: CheckAccess() avoids unnecessary async hop when already on UI thread.
         private void AddLog(string message)
         {
             var dispatcher = Application.Current.Dispatcher;

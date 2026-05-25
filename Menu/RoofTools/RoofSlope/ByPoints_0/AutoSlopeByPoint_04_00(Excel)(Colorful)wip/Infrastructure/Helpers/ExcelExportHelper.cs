@@ -72,20 +72,20 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
                     sheet.Cells[row, 1, row, 2].Style.Fill.BackgroundColor.SetColor(DrawingColor.LightGray);
                     row++;
 
-                    AddRow(sheet, ref row, "Vertices Processed",     result.VerticesProcessed);
-                    AddRow(sheet, ref row, "Vertices Skipped",       result.VerticesSkipped);
-                    AddRow(sheet, ref row, "Drain Count",            result.DrainCount);
+                    AddRow(sheet, ref row, "Vertices Processed", result.VerticesProcessed);
+                    AddRow(sheet, ref row, "Vertices Skipped", result.VerticesSkipped);
+                    AddRow(sheet, ref row, "Final Drain Count", result.FinalDrainCount);
                     AddRow(sheet, ref row, "Highest Elevation (mm)", $"{result.HighestElevation_mm:0}");
-                    AddRow(sheet, ref row, "Longest Path (m)",       $"{result.LongestPath_m:0.00}");
-                    AddRow(sheet, ref row, "Run Duration (sec)",     result.RunDuration_sec);
-                    AddRow(sheet, ref row, "Run Date",               result.RunDate);
-                    AddRow(sheet, ref row, "Slope Percentage",       $"{slopePercent}%");
-                    AddRow(sheet, ref row, "Threshold (m)",          thresholdMeters);
+                    AddRow(sheet, ref row, "Longest Path (m)", $"{result.LongestPath_m:0.00}");
+                    AddRow(sheet, ref row, "Run Duration (sec)", result.RunDuration_sec);
+                    AddRow(sheet, ref row, "Run Date", result.RunDate);
+                    AddRow(sheet, ref row, "Slope Percentage", $"{slopePercent}%");
+                    AddRow(sheet, ref row, "Threshold (m)", thresholdMeters);
                     AddRow(sheet, ref row, "Drain Tolerance Enabled",
                         enableDrainTolerance ? "Yes" : "No");
                     AddRow(sheet, ref row, "Drain Tolerance (mm)",
                         enableDrainTolerance ? drainToleranceMm.ToString() : "N/A");
-                    AddRow(sheet, ref row, "Export Folder",          exportFolderPath);
+                    AddRow(sheet, ref row, "Export Folder", exportFolderPath);
 
                     sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
                     package.SaveAs(new FileInfo(filePath));
@@ -111,24 +111,24 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
 
             try
             {
-                string roofId   = roof.Id.Value.ToString();
+                string roofId = roof.Id.Value.ToString();
                 string slopeStr = slopePercent.ToString("0.00", CultureInfo.InvariantCulture);
-                string dateStr  = DateTime.Now.ToString("dd-MM-yy");
+                string dateStr = DateTime.Now.ToString("dd-MM-yy");
                 string fileName = $"{roofId}_{slopeStr}_{dateStr}_DETAILED.xlsx";
                 string filePath = GetUniqueFilePath(Path.Combine(payload.ExportConfig.ExportPath, fileName));
 
                 using (var package = new ExcelPackage())
                 {
-                    var summarySheet  = package.Workbook.Worksheets.Add("Summary");
+                    var summarySheet = package.Workbook.Worksheets.Add("Summary");
                     FillSummarySheet(summarySheet, payload, vertexData, roof, drainPoints, slopePercent);
 
-                    var drainSheet    = package.Workbook.Worksheets.Add("Drain Points");
+                    var drainSheet = package.Workbook.Worksheets.Add("Drain Points");
                     FillDrainPointsSheet(drainSheet, drainPoints);
 
                     var verticesSheet = package.Workbook.Worksheets.Add("Vertices");
                     FillVerticesSheet(verticesSheet, vertexData, roof, slopePercent);
 
-                    var statsSheet    = package.Workbook.Worksheets.Add("Statistics");
+                    var statsSheet = package.Workbook.Worksheets.Add("Statistics");
                     FillStatisticsSheet(statsSheet, vertexData);
 
                     package.SaveAs(new FileInfo(filePath));
@@ -154,10 +154,10 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
 
             try
             {
-                string roofId        = roof.Id.Value.ToString();
-                string roofType      = roof.Name ?? "Unknown";
+                string roofId = roof.Id.Value.ToString();
+                string roofType = roof.Name ?? "Unknown";
                 string baseLevelName = "Unknown";
-                double baseOffset    = 0;
+                double baseOffset = 0;
 
                 if (roof.LevelId != null && roof.LevelId != ElementId.InvalidElementId)
                 {
@@ -170,7 +170,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
                     baseOffset = UnitUtils.ConvertFromInternalUnits(offsetParam.AsDouble(), UnitTypeId.Millimeters);
 
                 string slopeStr = slopePercent.ToString("0.00", CultureInfo.InvariantCulture);
-                string dateStr  = DateTime.Now.ToString("dd-MM-yy");
+                string dateStr = DateTime.Now.ToString("dd-MM-yy");
                 string fileName = $"{roofId}_{slopeStr}_{dateStr}.xlsx";
                 string filePath = GetUniqueFilePath(Path.Combine(payload.ExportConfig.ExportPath, fileName));
 
@@ -262,9 +262,9 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
             sheet.Cells[row, 1].Style.Font.Size = 16;
             row += 2;
 
-            string roofType      = roof.Name ?? "Unknown";
+            string roofType = roof.Name ?? "Unknown";
             string baseLevelName = "Unknown";
-            double baseOffset    = 0;
+            double baseOffset = 0;
 
             if (roof.LevelId != null && roof.LevelId != ElementId.InvalidElementId)
             {
@@ -276,21 +276,21 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
             if (offsetParam != null && offsetParam.HasValue)
                 baseOffset = UnitUtils.ConvertFromInternalUnits(offsetParam.AsDouble(), UnitTypeId.Millimeters);
 
-            AddInfoRow(sheet, ref row, "Generated:",               DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"));
-            AddInfoRow(sheet, ref row, "Revit Document:",          roof.Document.Title);
-            AddInfoRow(sheet, ref row, "Roof ElementId:",          roof.Id.Value.ToString());
-            AddInfoRow(sheet, ref row, "Roof Type Name:",          roofType);
-            AddInfoRow(sheet, ref row, "Base Level:",              baseLevelName);
-            AddInfoRow(sheet, ref row, "Base Offset (mm):",        Math.Round(baseOffset, 0).ToString());
-            AddInfoRow(sheet, ref row, "Slope Percentage:",        $"{slopePercent}%");
-            AddInfoRow(sheet, ref row, "Threshold Distance:",      $"{payload.ThresholdMeters} meters");
+            AddInfoRow(sheet, ref row, "Generated:", DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"));
+            AddInfoRow(sheet, ref row, "Revit Document:", roof.Document.Title);
+            AddInfoRow(sheet, ref row, "Roof ElementId:", roof.Id.Value.ToString());
+            AddInfoRow(sheet, ref row, "Roof Type Name:", roofType);
+            AddInfoRow(sheet, ref row, "Base Level:", baseLevelName);
+            AddInfoRow(sheet, ref row, "Base Offset (mm):", Math.Round(baseOffset, 0).ToString());
+            AddInfoRow(sheet, ref row, "Slope Percentage:", $"{slopePercent}%");
+            AddInfoRow(sheet, ref row, "Threshold Distance:", $"{payload.ThresholdMeters} meters");
             AddInfoRow(sheet, ref row, "Drain Tolerance Enabled:", payload.EnableDrainTolerance ? "Yes" : "No");
             if (payload.EnableDrainTolerance)
                 AddInfoRow(sheet, ref row, "Drain Tolerance Radius:", $"{payload.DrainToleranceMm} mm");
-            AddInfoRow(sheet, ref row, "Total Vertices:",          vertexData.Count.ToString());
-            AddInfoRow(sheet, ref row, "Processed Vertices:",      vertexData.Count(v => v.WasProcessed).ToString());
-            AddInfoRow(sheet, ref row, "Skipped Vertices:",        vertexData.Count(v => !v.WasProcessed).ToString());
-            AddInfoRow(sheet, ref row, "Drain Points Count:",      drainPoints.Count.ToString());
+            AddInfoRow(sheet, ref row, "Total Vertices:", vertexData.Count.ToString());
+            AddInfoRow(sheet, ref row, "Processed Vertices:", vertexData.Count(v => v.WasProcessed).ToString());
+            AddInfoRow(sheet, ref row, "Skipped Vertices:", vertexData.Count(v => !v.WasProcessed).ToString());
+            AddInfoRow(sheet, ref row, "Drain Points Count:", drainPoints.Count.ToString());
 
             sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
         }
@@ -322,9 +322,9 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
             ExcelWorksheet sheet, List<VertexData> vertexData,
             RoofBase roof, double slopePercent)
         {
-            string roofType      = roof.Name ?? "Unknown";
+            string roofType = roof.Name ?? "Unknown";
             string baseLevelName = "Unknown";
-            double baseOffset    = 0;
+            double baseOffset = 0;
 
             if (roof.LevelId != null && roof.LevelId != ElementId.InvalidElementId)
             {
@@ -359,15 +359,15 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
             int row = 2;
             foreach (var v in sorted)
             {
-                sheet.Cells[row, 1].Value  = roof.Id.Value;
-                sheet.Cells[row, 2].Value  = roofType;
-                sheet.Cells[row, 3].Value  = baseLevelName;
-                sheet.Cells[row, 4].Value  = Math.Round(baseOffset, 0);
-                sheet.Cells[row, 5].Value  = Math.Round(v.PathLengthMeters, 2);
-                sheet.Cells[row, 6].Value  = slopePercent;
-                sheet.Cells[row, 7].Value  = Math.Round(v.ElevationOffsetMm, 0);
-                sheet.Cells[row, 8].Value  = v.WasProcessed ? "YES" : "NO";
-                sheet.Cells[row, 9].Value  = Math.Round(v.Position.X, 3);
+                sheet.Cells[row, 1].Value = roof.Id.Value;
+                sheet.Cells[row, 2].Value = roofType;
+                sheet.Cells[row, 3].Value = baseLevelName;
+                sheet.Cells[row, 4].Value = Math.Round(baseOffset, 0);
+                sheet.Cells[row, 5].Value = Math.Round(v.PathLengthMeters, 2);
+                sheet.Cells[row, 6].Value = slopePercent;
+                sheet.Cells[row, 7].Value = Math.Round(v.ElevationOffsetMm, 0);
+                sheet.Cells[row, 8].Value = v.WasProcessed ? "YES" : "NO";
+                sheet.Cells[row, 9].Value = Math.Round(v.Position.X, 3);
                 sheet.Cells[row, 10].Value = Math.Round(v.Position.Y, 3);
                 sheet.Cells[row, 11].Value = Math.Round(v.Position.Z, 3);
 
@@ -396,9 +396,9 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
             var processed = vertexData.Where(v => v.WasProcessed).ToList();
             int row = 2;
 
-            AddStatRow(sheet, ref row, "Total Vertices",    vertexData.Count,                        "count");
-            AddStatRow(sheet, ref row, "Processed Vertices",processed.Count,                         "count");
-            AddStatRow(sheet, ref row, "Skipped Vertices",  vertexData.Count(v => !v.WasProcessed),  "count");
+            AddStatRow(sheet, ref row, "Total Vertices", vertexData.Count, "count");
+            AddStatRow(sheet, ref row, "Processed Vertices", processed.Count, "count");
+            AddStatRow(sheet, ref row, "Skipped Vertices", vertexData.Count(v => !v.WasProcessed), "count");
 
             if (processed.Any())
             {
@@ -454,12 +454,12 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
         {
             if (!File.Exists(path)) return path;
 
-            string dir   = Path.GetDirectoryName(path) ?? string.Empty;
-            string stem  = Path.GetFileNameWithoutExtension(path);
-            string ext   = Path.GetExtension(path);
+            string dir = Path.GetDirectoryName(path) ?? string.Empty;
+            string stem = Path.GetFileNameWithoutExtension(path);
+            string ext = Path.GetExtension(path);
 
             // Strip any existing _NN suffix so we always start from the base name
-            var match    = Regex.Match(stem, @"^(.*?)_(\d{2})$");
+            var match = Regex.Match(stem, @"^(.*?)_(\d{2})$");
             string baseStem = match.Success ? match.Groups[1].Value : stem;
 
             for (int i = 1; i <= 99; i++)
