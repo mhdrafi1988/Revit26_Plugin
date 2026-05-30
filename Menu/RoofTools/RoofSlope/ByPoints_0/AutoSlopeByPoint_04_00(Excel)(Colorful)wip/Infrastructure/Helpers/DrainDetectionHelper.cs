@@ -180,7 +180,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
         /// </summary>
         private static string GetPointKey(XYZ point, double toleranceFt)
         {
-            double bucket = Math.Max(toleranceFt * 0.5, 1e-9);
+            double bucket = 0.03240420;
 
             double x = Math.Round(point.X / bucket) * bucket;
             double y = Math.Round(point.Y / bucket) * bucket;
