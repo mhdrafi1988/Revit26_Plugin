@@ -1,0 +1,22 @@
+﻿using Autodesk.Revit.UI;
+using Revit26_Plugin.Resources.Icons;
+using System;
+using System.Reflection;
+using System.Windows.Markup;
+
+namespace Revit26_Plugin.Menu.Ribbon
+{
+    public static class QuickAccessRibbon
+    {
+
+        public static void Build(UIControlledApplication app, string tabName, string assemblyPath)
+        {
+            RibbonPanel panel = app.CreateRibbonPanel(tabName, "QuickAcces");
+
+            PushButton auto_slope_button = panel.AddItem(new PushButtonData("Btn_AutoSlopeByPoint_04", "Auto Slope Point", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint_04.Commands.AutoSlopeCommand")) as PushButton;
+            auto_slope_button.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.AutoslopeV2_32.png");
+            PushButton auto_slope_V5_button = panel.AddItem(new PushButtonData("Btn_AutoSlopeByPoint_05", "Auto Slope Point Ridge", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.WithRidge.Commands.AutoSlopeCommand")) as PushButton;
+            auto_slope_V5_button.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.AutoslopeV5_32.png");
+        }
+    }
+}

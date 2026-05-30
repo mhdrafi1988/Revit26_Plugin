@@ -1,23 +1,22 @@
 // =======================================================
 // File: AutoSlopeParameterWriter.cs
-// Fixes:
-//   #6  WriteAll now accepts a runDate string instead of
-//       calling DateTime.Now independently. The engine
-//       captures the date once and passes it here, so the
-//       parameter value in Revit always matches the value
-//       shown in the UI.
+// Namespace: Revit26_Plugin.AutoSlopeByPoint.WithRidge
+// Changes:
+//   + ridgeCount parameter added to WriteAll.
+//   + Param_HighestElevation now uses TrySetDouble with
+//     UnitUtils conversion (Length shared parameter fix).
+//   + Param_RidgeCount written to roof element.
 // =======================================================
 
 using Autodesk.Revit.DB;
-using Revit26_Plugin.AutoSlopeByPoint_04.Core.Models;
-using Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers;
+using Revit26_Plugin.AutoSlopeByPoint.WithRidge.Core.Models;
+using Revit26_Plugin.AutoSlopeByPoint.WithRidge.Infrastructure.Helpers;
 using System;
 
-namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Parameters
+namespace Revit26_Plugin.AutoSlopeByPoint.WithRidge.Core.Parameters
 {
     public static class AutoSlopeParameterWriter
     {
-        // Fix #6: runDate parameter added — no longer calls DateTime.Now internally
         public static void WriteAll(
             Document doc,
             RoofBase roof,
@@ -28,19 +27,20 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Parameters
             int skipped,
             int runDuration_sec,
             int finalDrainCount,
-            string runDate,            // ← new: supplied by AutoSlopeEngine
-            string version = "P.04.00")
+            int ridgeCount,
+            string runDate,
+            string version = "P.WithRidge.01")
         {
-            if (doc == null || roof == null)
-                return;
+            if (doc == null || roof == null) return;
 
             int successCount = 0;
-            int failCount    = 0;
+            int failCount = 0;
 
             using (Transaction tx = new Transaction(doc, "AutoSlope – Update Roof Parameters"))
             {
                 tx.Start();
 
+                // HighestElevation: shared param is Length type → must convert mm to feet
                 TrySetDouble(roof,
                     AppConstants.Param_HighestElevation,
                     UnitUtils.ConvertToInternalUnits(highestElevation_mm, UnitTypeId.Millimeters),
@@ -86,7 +86,6 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Parameters
                     data.ThresholdMeters * 1000.0,
                     ref successCount, ref failCount);
 
-                // Fix #6: use the runDate passed in rather than a second DateTime.Now
                 TrySetString(roof,
                     AppConstants.Param_RunDate,
                     runDate,
@@ -107,6 +106,12 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Parameters
                     data.EnableDrainTolerance ? 1 : 0,
                     ref successCount, ref failCount);
 
+                // Ridge count
+                TrySetInt(roof,
+                    AppConstants.Param_RidgeCount,
+                    ridgeCount,
+                    ref successCount, ref failCount);
+
                 int statusValue = successCount == 0
                     ? AppConstants.Status_Failed
                     : failCount > 0
@@ -124,7 +129,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Parameters
             data?.Log($"AutoSlope Parameters: {successCount} updated, {failCount} skipped");
         }
 
-        // ── Private helpers ──────────────────────────────────────────────────
+        // ── Private helpers with diagnostic logging ──────────────────────────
 
         private static void TrySetInt(
             Element elem, string paramName, int value,
@@ -133,12 +138,25 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Parameters
             try
             {
                 Parameter p = elem.LookupParameter(paramName);
-                if (p == null || p.IsReadOnly || p.StorageType != StorageType.Integer)
-                { fail++; return; }
+                if (p == null)
+                {
+                    System.Diagnostics.Debug.Print($"PARAM NULL: {paramName}");
+                    fail++; return;
+                }
+                if (p.IsReadOnly || p.StorageType != StorageType.Integer)
+                {
+                    System.Diagnostics.Debug.Print(
+                        $"PARAM REJECTED: {paramName} IsReadOnly={p.IsReadOnly} StorageType={p.StorageType}");
+                    fail++; return;
+                }
                 p.Set(value);
                 ok++;
             }
-            catch { fail++; }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.Print($"PARAM EXCEPTION: {paramName} → {ex.Message}");
+                fail++;
+            }
         }
 
         private static void TrySetDouble(
@@ -148,12 +166,25 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Parameters
             try
             {
                 Parameter p = elem.LookupParameter(paramName);
-                if (p == null || p.IsReadOnly || p.StorageType != StorageType.Double)
-                { fail++; return; }
+                if (p == null)
+                {
+                    System.Diagnostics.Debug.Print($"PARAM NULL: {paramName}");
+                    fail++; return;
+                }
+                if (p.IsReadOnly || p.StorageType != StorageType.Double)
+                {
+                    System.Diagnostics.Debug.Print(
+                        $"PARAM REJECTED: {paramName} IsReadOnly={p.IsReadOnly} StorageType={p.StorageType}");
+                    fail++; return;
+                }
                 p.Set(value);
                 ok++;
             }
-            catch { fail++; }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.Print($"PARAM EXCEPTION: {paramName} → {ex.Message}");
+                fail++;
+            }
         }
 
         private static void TrySetString(
@@ -163,12 +194,25 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Parameters
             try
             {
                 Parameter p = elem.LookupParameter(paramName);
-                if (p == null || p.IsReadOnly || p.StorageType != StorageType.String)
-                { fail++; return; }
+                if (p == null)
+                {
+                    System.Diagnostics.Debug.Print($"PARAM NULL: {paramName}");
+                    fail++; return;
+                }
+                if (p.IsReadOnly || p.StorageType != StorageType.String)
+                {
+                    System.Diagnostics.Debug.Print(
+                        $"PARAM REJECTED: {paramName} IsReadOnly={p.IsReadOnly} StorageType={p.StorageType}");
+                    fail++; return;
+                }
                 p.Set(value);
                 ok++;
             }
-            catch { fail++; }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.Print($"PARAM EXCEPTION: {paramName} → {ex.Message}");
+                fail++;
+            }
         }
     }
 }

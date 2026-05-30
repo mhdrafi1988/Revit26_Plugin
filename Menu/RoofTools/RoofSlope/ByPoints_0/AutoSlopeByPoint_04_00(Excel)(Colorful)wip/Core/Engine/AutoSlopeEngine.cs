@@ -6,6 +6,26 @@
 //       risked the parameter value and the UI value showing
 //       different minutes on slow machines.
 //   #10 Added debug logging to track drain count flow
+//
+// NEW CHANGES:
+//   After tx.Commit() on the slope transaction, the engine
+//   now re-reads SlabShapeVertices from the editor to get
+//   the actual committed positions from Revit.
+//
+//   Two things are done with the refreshed data:
+//
+//   1. ElevationFromModel_mm is populated on every
+//      VertexData entry — this is the value Revit actually
+//      stored, converted from internal feet to mm.
+//      It is stored alongside ElevationOffsetMm (calculated)
+//      so both appear as separate columns in Excel.
+//
+//   2. maxElevFt is recomputed from the refreshed vertex
+//      Z values (relative to drain Z baseline), rather than
+//      from the in-loop accumulator. This means
+//      HighestElevation written to the Revit parameter and
+//      shown in the UI now reflects what is actually in the
+//      model, not what the engine assumed it wrote.
 // =======================================================
 
 using Autodesk.Revit.DB;
@@ -128,10 +148,15 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Engine
             // ── Main slope loop ──────────────────────────────────────────────
             int processed = 0;
             int skipped = 0;
-            double maxElevFt = 0;
             double maxPathFt = 0;
             var vertexDataList = new List<VertexData>();
             Stopwatch sw = Stopwatch.StartNew();
+
+            // Capture the drain Z baseline (average Z of all drain vertices)
+            // used later to compute elevation offset from the refreshed model.
+            double drainBaselineZFt = drainIndices.Count > 0
+                ? drainIndices.Average(idx => vertices[idx].Position.Z)
+                : 0;
 
             using (Transaction tx = new Transaction(doc, "Apply AutoSlope"))
             {
@@ -155,6 +180,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Engine
                                     ? 0
                                     : UnitUtils.ConvertFromInternalUnits(pathFt, UnitTypeId.Meters),
                                 ElevationOffsetMm = 0,
+                                ElevationFromModel_mm = 0,  // will be confirmed after re-read
                                 NearestDrainIndex = -1,
                                 DirectionVector = XYZ.Zero,
                                 WasProcessed = false
@@ -167,7 +193,6 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Engine
                     editor.ModifySubElement(vertices[i], elevFt);
 
                     processed++;
-                    if (elevFt > maxElevFt) maxElevFt = elevFt;
                     if (pathFt > maxPathFt) maxPathFt = pathFt;
 
                     int nearestDrainIndex = FindNearestDrainIndex(vertices[i].Position, finalDrainPoints);
@@ -181,6 +206,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Engine
                         Position = vertices[i].Position,
                         PathLengthMeters = UnitUtils.ConvertFromInternalUnits(pathFt, UnitTypeId.Meters),
                         ElevationOffsetMm = UnitUtils.ConvertFromInternalUnits(elevFt, UnitTypeId.Millimeters),
+                        ElevationFromModel_mm = 0,  // populated after commit below
                         NearestDrainIndex = nearestDrainIndex,
                         DirectionVector = directionVector,
                         WasProcessed = true
@@ -190,9 +216,69 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Engine
                 tx.Commit();
             }
 
+            // ── NEW: Re-read vertices from Revit after commit ─────────────────
+            // The vertices list captured before the transaction has stale Z values.
+            // Re-reading SlabShapeVertices gives us the actual committed positions.
+            // We build an index→Z lookup from the refreshed list, then:
+            //   (a) populate ElevationFromModel_mm on every VertexData entry
+            //   (b) recompute maxElevFt from actual model values (not the loop accumulator)
+            double maxElevFt = 0;
+
+            var refreshedVertices = new List<SlabShapeVertex>();
+            foreach (SlabShapeVertex v in editor.SlabShapeVertices)
+                refreshedVertices.Add(v);
+
+            data.Log(LogColorHelper.Cyan($"DEBUG: Refreshed vertex count after commit = {refreshedVertices.Count}"));
+
+            // Build index lookup: VertexIndex → refreshed Z (in internal feet)
+            // Matching is by position XY proximity since index order is stable
+            // after a reset-then-write cycle, but XY match is safer.
+            var refreshedZByIndex = new Dictionary<int, double>();
+            for (int i = 0; i < refreshedVertices.Count; i++)
+            {
+                // Match refreshed vertex to original by XY proximity (Z changed, XY did not)
+                for (int j = 0; j < vertices.Count; j++)
+                {
+                    double xyDist = Math.Sqrt(
+                        Math.Pow(refreshedVertices[i].Position.X - vertices[j].Position.X, 2) +
+                        Math.Pow(refreshedVertices[i].Position.Y - vertices[j].Position.Y, 2));
+
+                    if (xyDist < 0.001)  // within ~0.3mm in XY
+                    {
+                        refreshedZByIndex[j] = refreshedVertices[i].Position.Z;
+                        break;
+                    }
+                }
+            }
+
+            // Populate ElevationFromModel_mm and recompute maxElevFt
+            foreach (var vd in vertexDataList)
+            {
+                if (!vd.WasProcessed) continue;
+
+                if (refreshedZByIndex.TryGetValue(vd.VertexIndex, out double refreshedZFt))
+                {
+                    double elevFromModelFt = refreshedZFt - drainBaselineZFt;
+                    vd.ElevationFromModel_mm = UnitUtils.ConvertFromInternalUnits(
+                        elevFromModelFt, UnitTypeId.Millimeters);
+
+                    if (elevFromModelFt > maxElevFt)
+                        maxElevFt = elevFromModelFt;
+                }
+                else
+                {
+                    // Fallback: re-read not available for this vertex, use calculated value
+                    vd.ElevationFromModel_mm = vd.ElevationOffsetMm;
+                    data.Log(LogColorHelper.Yellow(
+                        $"WARN: Could not match refreshed vertex for index {vd.VertexIndex}, using calculated value."));
+                }
+            }
+
+            data.Log(LogColorHelper.Cyan($"DEBUG: maxElevFt from model re-read = {maxElevFt:F6} ft"));
+
             sw.Stop();
 
-            // ── Compute summary values ───────────────────────────────────────
+            // ── Compute summary values from MODEL (not accumulator) ───────────
             int highest_mm = (int)Math.Round(
                 UnitUtils.ConvertFromInternalUnits(maxElevFt, UnitTypeId.Millimeters),
                 MidpointRounding.AwayFromZero);
@@ -255,7 +341,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Engine
             data.Log(LogColorHelper.Green($"Applied Slope Percentage : {data.SlopePercent}%"));
             data.Log(LogColorHelper.Green($"Vertices Processed       : {processed}"));
             data.Log(LogColorHelper.Yellow($"Vertices Skipped         : {skipped}"));
-            data.Log(LogColorHelper.Cyan($"Highest Elevation        : {highest_mm:0} mm"));
+            data.Log(LogColorHelper.Cyan($"Highest Elevation        : {highest_mm:0} mm  ← from model re-read"));
             data.Log(LogColorHelper.Cyan($"Longest Path             : {longest_m:0.00} m"));
             data.Log(LogColorHelper.Cyan($"Picked Drain Count       : {data.PickedDrainPoints?.Count ?? 0}"));
             data.Log(LogColorHelper.Cyan($"Final Drain Count        : {finalDrainPoints.Count}"));
