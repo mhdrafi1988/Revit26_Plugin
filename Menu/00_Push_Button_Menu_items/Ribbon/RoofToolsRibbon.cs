@@ -28,6 +28,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             //Slope BY Drain 
             //SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSloperDrain_04_00", "AutoSloperDrain_04_00(Drain*)", assemblyPath, "Revit22_Plugin.Asd.Commands.AutoSloperDrain_04"));
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSloperDrain_Asd_19", "AutoSloperDrain_Asd_19_CSV(Drain)", assemblyPath, "Revit26_Plugin.Asd_19.Commands.AutoSloperDrain_04"));
+            SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSloperDrain_Asd_20", "AutoSloperDrain_Asd_20_CSV(Drain)", assemblyPath, "Revit26_Plugin.AutoSlopeByDrain_21.Commands.ShowAutoSlopeWindowCommand"));
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSloperDrain_04_01", "AutoSloperDrain_04_01(Drain)", assemblyPath, "Revit22_Plugin.Asd_V4_01.Commands.AutoSloperDrain_04_01"));
            
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSloperAndDetail", "AutoSloperAndDetail", assemblyPath, "Revit26_Plugin.V5_00.Commands.AutoSlopeCommand"));

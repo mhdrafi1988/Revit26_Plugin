@@ -5,7 +5,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\Release\net8.0-windows\30_00</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\Release\net8.0-windows\06_01_00</BaseOutputPath>
 		<PackageId />
 		<AssemblyName>Revit26_Plugin</AssemblyName>
 	</PropertyGroup>
@@ -90,12 +90,16 @@
 	  <Compile Remove="Menu\RoofTools\RoofSlope\ByDrains_00\AutoSloperDrain_04_001\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\ByDrains_00\AutoSloperDrain_04_002\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\ByDrains_0\AutoSloperDrain_04_001\**" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\ByDrains_0\DRAIN2\**" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\ByDrains_0\Revit26_Plugin.Asd_20\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\ByPoints\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\ByPoints_000\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\ByPoints_00\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPointTwoSlopes_01_00%28Excel%29TwoSlopes\**" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_00%28Excel%29%28Colorful%29wip\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_00%28Excel%29%28Colorful%29\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_00%28Excel%29\UI\Views\BAck up\**" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_0000\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\DijkstraPath2_2026\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\RoofSloperClassic1_0\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\RoofSloperClassic2\**" />
@@ -158,6 +162,7 @@
 	  <Compile Remove="Menu\ViewTools\Place_01\Section_V3\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\Section_V4\**" />
 	  <Compile Remove="Menu\ViewTools\Rename\**" />
+	  <Compile Remove="ViewModels\**" />
 	  <EmbeddedResource Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
 	  <EmbeddedResource Remove="Menu\Dimensions\TwoPOintLInes_V02\**" />
 	  <EmbeddedResource Remove="Menu\Dimensions\TwoPointLInes_V03\**" />
@@ -238,12 +243,16 @@
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\ByDrains_00\AutoSloperDrain_04_001\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\ByDrains_00\AutoSloperDrain_04_002\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\ByDrains_0\AutoSloperDrain_04_001\**" />
+	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\ByDrains_0\DRAIN2\**" />
+	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\ByDrains_0\Revit26_Plugin.Asd_20\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\ByPoints\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\ByPoints_000\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\ByPoints_00\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPointTwoSlopes_01_00%28Excel%29TwoSlopes\**" />
+	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_00%28Excel%29%28Colorful%29wip\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_00%28Excel%29%28Colorful%29\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_00%28Excel%29\UI\Views\BAck up\**" />
+	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_0000\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\DijkstraPath2_2026\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\RoofSloperClassic1_0\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\RoofSloperClassic2\**" />
@@ -306,6 +315,7 @@
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\Section_V3\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\Section_V4\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Rename\**" />
+	  <EmbeddedResource Remove="ViewModels\**" />
 	  <None Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
 	  <None Remove="Menu\Dimensions\TwoPOintLInes_V02\**" />
 	  <None Remove="Menu\Dimensions\TwoPointLInes_V03\**" />
@@ -386,12 +396,16 @@
 	  <None Remove="Menu\RoofTools\RoofSlope\ByDrains_00\AutoSloperDrain_04_001\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\ByDrains_00\AutoSloperDrain_04_002\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\ByDrains_0\AutoSloperDrain_04_001\**" />
+	  <None Remove="Menu\RoofTools\RoofSlope\ByDrains_0\DRAIN2\**" />
+	  <None Remove="Menu\RoofTools\RoofSlope\ByDrains_0\Revit26_Plugin.Asd_20\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\ByPoints\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\ByPoints_000\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\ByPoints_00\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPointTwoSlopes_01_00%28Excel%29TwoSlopes\**" />
+	  <None Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_00%28Excel%29%28Colorful%29wip\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_00%28Excel%29%28Colorful%29\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_00%28Excel%29\UI\Views\BAck up\**" />
+	  <None Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_0000\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\DijkstraPath2_2026\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\RoofSloperClassic1_0\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\RoofSloperClassic2\**" />
@@ -454,6 +468,7 @@
 	  <None Remove="Menu\ViewTools\Place_01\Section_V3\**" />
 	  <None Remove="Menu\ViewTools\Place_01\Section_V4\**" />
 	  <None Remove="Menu\ViewTools\Rename\**" />
+	  <None Remove="ViewModels\**" />
 	  <Page Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
 	  <Page Remove="Menu\Dimensions\TwoPOintLInes_V02\**" />
 	  <Page Remove="Menu\Dimensions\TwoPointLInes_V03\**" />
@@ -534,12 +549,16 @@
 	  <Page Remove="Menu\RoofTools\RoofSlope\ByDrains_00\AutoSloperDrain_04_001\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\ByDrains_00\AutoSloperDrain_04_002\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\ByDrains_0\AutoSloperDrain_04_001\**" />
+	  <Page Remove="Menu\RoofTools\RoofSlope\ByDrains_0\DRAIN2\**" />
+	  <Page Remove="Menu\RoofTools\RoofSlope\ByDrains_0\Revit26_Plugin.Asd_20\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\ByPoints\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\ByPoints_000\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\ByPoints_00\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPointTwoSlopes_01_00%28Excel%29TwoSlopes\**" />
+	  <Page Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_00%28Excel%29%28Colorful%29wip\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_00%28Excel%29%28Colorful%29\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_00%28Excel%29\UI\Views\BAck up\**" />
+	  <Page Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_0000\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\DijkstraPath2_2026\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\RoofSloperClassic1_0\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\RoofSloperClassic2\**" />
@@ -602,6 +621,7 @@
 	  <Page Remove="Menu\ViewTools\Place_01\Section_V3\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\Section_V4\**" />
 	  <Page Remove="Menu\ViewTools\Rename\**" />
+	  <Page Remove="ViewModels\**" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Remove="App - Copy.cs" />
@@ -639,6 +659,7 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Page Remove="Resources\App.xaml" />
+	  <Page Remove="Shared\SharedStyles.xaml" />
 	</ItemGroup>
 	<ItemGroup>
 	  <EmbeddedResource Include="Resources\Icons\Addlines_32.png" />
@@ -680,8 +701,11 @@
 	  <Folder Include="Menu\RoofTools\Lines\Creaser\" />
 	  <Folder Include="Menu\RoofTools\Lines\SlopeToDetailItem\" />
 	  <Folder Include="Menu\Setup\CaddLInkToFamiliy\" />
-	  <Folder Include="Shared\" />
-	  <Folder Include="ViewModels\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Resource Include="Shared\SharedStyles.xaml">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Resource>
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Update="Menu\RoofTools\CreasetoLines\Creaser_V08\CreaserSummaryWindow.xaml.cs">

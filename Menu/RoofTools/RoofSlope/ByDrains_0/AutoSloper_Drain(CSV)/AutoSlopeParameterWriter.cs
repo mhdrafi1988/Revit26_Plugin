@@ -29,50 +29,50 @@ namespace Revit26_Plugin.Asd_19.Core.Parameters
                 tx.Start();
 
                 // Integer parameters
-                TrySetInt(roof, AppConstants.Param_HighestElevation,
+                TrySetInt(roof, DrainItem.Param_HighestElevation,
                     (int)Math.Round(metrics.HighestElevationMm),
                     ref successCount, ref failCount);
 
-                TrySetInt(roof, AppConstants.Param_VerticesProcessed,
+                TrySetInt(roof, DrainItem.Param_VerticesProcessed,
                     metrics.ProcessedVertices,
                     ref successCount, ref failCount);
 
-                TrySetInt(roof, AppConstants.Param_VerticesSkipped,
+                TrySetInt(roof, DrainItem.Param_VerticesSkipped,
                     metrics.SkippedVertices,
                     ref successCount, ref failCount);
 
-                TrySetInt(roof, AppConstants.Param_DrainCount,
+                TrySetInt(roof, DrainItem.Param_DrainCount,
                     metrics.DrainCount,
                     ref successCount, ref failCount);
 
-                TrySetInt(roof, AppConstants.Param_RunDuration,
+                TrySetInt(roof, DrainItem.Param_RunDuration,
                     metrics.RunDurationSec,
                     ref successCount, ref failCount);
 
                 // Double parameters (stored in Revit internal units - feet)
-                TrySetDouble(roof, AppConstants.Param_LongestPath,
+                TrySetDouble(roof, DrainItem.Param_LongestPath,
                     metrics.LongestPathM, // Store in meters (Revit can display with unit)
                     ref successCount, ref failCount);
 
-                TrySetDouble(roof, AppConstants.Param_SlopePercent,
+                TrySetDouble(roof, DrainItem.Param_SlopePercent,
                     slopePercent,
                     ref successCount, ref failCount);
 
-                TrySetDouble(roof, AppConstants.Param_Threshold,
+                TrySetDouble(roof, DrainItem.Param_Threshold,
                     thresholdMeters, // Store in meters
                     ref successCount, ref failCount);
 
                 // String parameters
-                TrySetString(roof, AppConstants.Param_RunDate,
+                TrySetString(roof, DrainItem.Param_RunDate,
                     DateTime.Now.ToString("dd-MM-yy HH:mm"),
                     ref successCount, ref failCount);
                 // Version parameter - track plugin version
-                TrySetString(roof, AppConstants.Param_Versions,
+                TrySetString(roof, DrainItem.Param_Versions,
                     "P.04.00", // or your current version number
                     ref successCount, ref failCount);
                 // Status parameter - calculate based on success/failure
                 int statusValue = CalculateStatusValue(successCount, failCount);
-                TrySetInt(roof, AppConstants.Param_Status, statusValue, ref successCount, ref failCount);
+                TrySetInt(roof, DrainItem.Param_Status, statusValue, ref successCount, ref failCount);
 
                 tx.Commit();
             }
@@ -89,9 +89,9 @@ namespace Revit26_Plugin.Asd_19.Core.Parameters
 
         private int CalculateStatusValue(int successCount, int failCount)
         {
-            if (successCount == 0) return AppConstants.Status_Failed;
-            if (failCount > 0) return AppConstants.Status_Partial;
-            return AppConstants.Status_OK;
+            if (successCount == 0) return DrainItem.Status_Failed;
+            if (failCount > 0) return DrainItem.Status_Partial;
+            return DrainItem.Status_OK;
         }
 
         private void TrySetInt(Element elem, string paramName, int value,
