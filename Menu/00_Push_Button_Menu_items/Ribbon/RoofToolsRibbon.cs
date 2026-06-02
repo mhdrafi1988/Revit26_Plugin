@@ -28,7 +28,9 @@ namespace Revit26_Plugin.Menu.Ribbon
             //Slope BY Drain 
             //SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSloperDrain_04_00", "AutoSloperDrain_04_00(Drain*)", assemblyPath, "Revit22_Plugin.Asd.Commands.AutoSloperDrain_04"));
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSloperDrain_Asd_19", "AutoSloperDrain_Asd_19_CSV(Drain)", assemblyPath, "Revit26_Plugin.Asd_19.Commands.AutoSloperDrain_04"));
+            SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSloperDrain_Asd_19a", "AutoSloperDrain_Asd_19a_CSV(Drain)", assemblyPath, "Revit26_Plugin.Asd_19a.Commands.AutoSloperDrain_04"));
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSloperDrain_Asd_20", "AutoSloperDrain_Asd_20_CSV(Drain)", assemblyPath, "Revit26_Plugin.AutoSlopeByDrain_21.Commands.ShowAutoSlopeWindowCommand"));
+            SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSloperDrain_Asd_22", "AutoSloperDrain_Asd_22_CSV(Drain)", assemblyPath, "Revit26_Plugin.AutoSlopeByDrain_22.Commands.AutoSloperDrain_04"));
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSloperDrain_04_01", "AutoSloperDrain_04_01(Drain)", assemblyPath, "Revit22_Plugin.Asd_V4_01.Commands.AutoSloperDrain_04_01"));
            
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSloperAndDetail", "AutoSloperAndDetail", assemblyPath, "Revit26_Plugin.V5_00.Commands.AutoSlopeCommand"));
@@ -40,6 +42,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             ShapepointMenu.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Shapepoints32.png");
 
             ShapepointMenu.AddPushButton(new PushButtonData("Btn_RoofCircleDividerV1", "Inner Loop Divider 1.0", assemblyPath, "Revit22_Plugin.PDCV1.Commands.RoofLoopAnalyzerCommand_01"));//Working
+            ShapepointMenu.AddPushButton(new PushButtonData("Btn_PDCV2", "Inner Loop Divider 2.0", assemblyPath, "Revit26_Plugin.PDCV2.Commands.RoofLoopAnalyzerCommand"));//Working
             ShapepointMenu.AddPushButton(new PushButtonData("Btn_PointOnBoundary", "Point on  Boundry(Roof & Detail LIne)", assemblyPath, "Revit26_Plugin.AddPointOnintersections.Commands.AddPointOnIntersectionsCommand"));
 
             PulldownButton LineAndPoint = panel.AddItem(new PulldownButtonData("LineAndPointMenu", "Line & PointMenu")) as PulldownButton;

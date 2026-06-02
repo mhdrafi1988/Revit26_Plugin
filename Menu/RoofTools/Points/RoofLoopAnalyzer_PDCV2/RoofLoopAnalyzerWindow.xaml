@@ -1,0 +1,224 @@
+<Window x:Class="Revit26_Plugin.PDCV2.Views.RoofLoopAnalyzerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Roof Loop Analyzer — PDCV2"
+        Width="720" Height="580"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanResizeWithGrip"
+        Background="#1E1E2E">
+
+    <Window.Resources>
+        <!-- Base text style -->
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#CDD6F4"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize"   Value="13"/>
+        </Style>
+
+        <!-- Header label -->
+        <Style x:Key="HeaderLabel" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#89DCEB"/>
+            <Setter Property="FontSize"   Value="12"/>
+        </Style>
+
+        <!-- Action button -->
+        <Style x:Key="ActionButton" TargetType="Button">
+            <Setter Property="Foreground"         Value="#1E1E2E"/>
+            <Setter Property="Background"         Value="#89B4FA"/>
+            <Setter Property="FontFamily"         Value="Segoe UI"/>
+            <Setter Property="FontSize"           Value="13"/>
+            <Setter Property="FontWeight"         Value="SemiBold"/>
+            <Setter Property="Padding"            Value="18,6"/>
+            <Setter Property="BorderThickness"    Value="0"/>
+            <Setter Property="Cursor"             Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="4"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#B4BEFE"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#74C7EC"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Close button -->
+        <Style x:Key="CloseButton" TargetType="Button" BasedOn="{StaticResource ActionButton}">
+            <Setter Property="Background" Value="#45475A"/>
+            <Setter Property="Foreground" Value="#CDD6F4"/>
+        </Style>
+
+        <!-- DataGrid -->
+        <Style TargetType="DataGrid">
+            <Setter Property="Background"            Value="#181825"/>
+            <Setter Property="Foreground"            Value="#CDD6F4"/>
+            <Setter Property="BorderBrush"           Value="#313244"/>
+            <Setter Property="BorderThickness"       Value="1"/>
+            <Setter Property="RowBackground"         Value="#1E1E2E"/>
+            <Setter Property="AlternatingRowBackground" Value="#181825"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="#313244"/>
+            <Setter Property="VerticalGridLinesBrush"   Value="#313244"/>
+            <Setter Property="FontFamily"            Value="Segoe UI"/>
+            <Setter Property="FontSize"              Value="12"/>
+        </Style>
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Background"   Value="#313244"/>
+            <Setter Property="Foreground"   Value="#89DCEB"/>
+            <Setter Property="FontWeight"   Value="SemiBold"/>
+            <Setter Property="Padding"      Value="8,4"/>
+            <Setter Property="BorderBrush"  Value="#45475A"/>
+            <Setter Property="BorderThickness" Value="0,0,1,1"/>
+        </Style>
+        <Style TargetType="DataGridCell">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding"         Value="6,3"/>
+            <Setter Property="Foreground"      Value="#CDD6F4"/>
+        </Style>
+
+        <!-- ComboBox -->
+        <Style TargetType="ComboBox">
+            <Setter Property="Background"        Value="#313244"/>
+            <Setter Property="Foreground"        Value="#CDD6F4"/>
+            <Setter Property="BorderBrush"       Value="#45475A"/>
+            <Setter Property="FontFamily"        Value="Segoe UI"/>
+            <Setter Property="FontSize"          Value="13"/>
+            <Setter Property="Height"            Value="30"/>
+            <Setter Property="Padding"           Value="6,0"/>
+        </Style>
+
+        <!-- Log TextBox -->
+        <Style x:Key="LogBox" TargetType="TextBox">
+            <Setter Property="Background"        Value="#11111B"/>
+            <Setter Property="Foreground"        Value="#A6E3A1"/>
+            <Setter Property="FontFamily"        Value="Consolas"/>
+            <Setter Property="FontSize"          Value="11"/>
+            <Setter Property="BorderBrush"       Value="#313244"/>
+            <Setter Property="BorderThickness"   Value="1"/>
+            <Setter Property="IsReadOnly"        Value="True"/>
+            <Setter Property="TextWrapping"      Value="Wrap"/>
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="Padding"           Value="6"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>   <!-- Title -->
+            <RowDefinition Height="Auto"/>   <!-- Controls row -->
+            <RowDefinition Height="*"  MinHeight="140"/>   <!-- DataGrid -->
+            <RowDefinition Height="8"/>
+            <RowDefinition Height="Auto"/>   <!-- Log label -->
+            <RowDefinition Height="130"/>    <!-- Log area -->
+            <RowDefinition Height="12"/>
+            <RowDefinition Height="Auto"/>   <!-- Bottom buttons -->
+        </Grid.RowDefinitions>
+
+        <!-- ── Title ── -->
+        <TextBlock Grid.Row="0"
+                   Text="Roof Loop Analyzer"
+                   FontSize="18" FontWeight="Bold"
+                   Foreground="#CBA6F7"
+                   Margin="0,0,0,12"/>
+
+        <!-- ── Controls row: Analyze | Points dropdown | Apply ── -->
+        <Grid Grid.Row="1" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    Content="🔍  Analyze Roof"
+                    Style="{StaticResource ActionButton}"
+                    Command="{Binding AnalyzeCommand}"/>
+
+            <!-- Division point count label + dropdown -->
+            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="Division Points:" VerticalAlignment="Center" Margin="0,0,8,0"
+                           Style="{StaticResource HeaderLabel}"/>
+                <ComboBox Width="70"
+                          ItemsSource="{Binding PointCountOptions}"
+                          SelectedItem="{Binding SelectedPointCount, Mode=TwoWay}"/>
+            </StackPanel>
+
+            <Button Grid.Column="4"
+                    Content="⚡  Apply Divisions"
+                    Style="{StaticResource ActionButton}"
+                    Background="#A6E3A1"
+                    Command="{Binding ApplyDivisionCommand}"/>
+        </Grid>
+
+        <!-- ── DataGrid ── -->
+        <DataGrid Grid.Row="2"
+                  ItemsSource="{Binding Loops}"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  SelectionMode="Single"
+                  HeadersVisibility="Column">
+
+            <DataGrid.Columns>
+
+                <!-- Select checkbox -->
+                <DataGridTemplateColumn Header="Select" Width="55">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTextColumn Header="#"          Binding="{Binding Index}"         Width="35"  IsReadOnly="True"/>
+                <DataGridTextColumn Header="Type"       Binding="{Binding LoopType}"       Width="55"  IsReadOnly="True"/>
+                <DataGridTextColumn Header="Shape"      Binding="{Binding LoopShapeType}"  Width="85"  IsReadOnly="True"/>
+                <DataGridTextColumn Header="Perimeter (mm)"
+                                    Binding="{Binding PerimeterMm, StringFormat=N0}"
+                                    Width="120" IsReadOnly="True"/>
+
+                <!-- Points — read-only display; global dropdown controls the value -->
+                <DataGridTextColumn Header="Points"
+                                    Binding="{Binding RecommendedPoints}"
+                                    Width="60"  IsReadOnly="True"/>
+
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- ── Log label ── -->
+        <TextBlock Grid.Row="4"
+                   Text="Activity Log"
+                   Style="{StaticResource HeaderLabel}"
+                   Margin="0,0,0,4"/>
+
+        <!-- ── Log TextBox (auto-scroll handled in code-behind) ── -->
+        <TextBox Grid.Row="5"
+                 x:Name="LogTextBox"
+                 Style="{StaticResource LogBox}"
+                 Text="{Binding LogText, Mode=OneWay}"
+                 TextChanged="LogTextBox_TextChanged"/>
+
+        <!-- ── Bottom buttons ── -->
+        <StackPanel Grid.Row="7" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Close"
+                    Style="{StaticResource CloseButton}"
+                    Width="80"
+                    Click="Close_Click"/>
+        </StackPanel>
+
+    </Grid>
+</Window>

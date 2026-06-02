@@ -24,8 +24,24 @@ namespace Revit26_Plugin.Asd_19.Services
             _pathSolver = new PathSolverService();
         }
 
+        /// <summary>
+        /// Process slopes for the roof.
+        /// </summary>
+        /// <param name="connectionThresholdMeters">
+        ///     Max vertex-to-vertex connection distance in meters, supplied by the user.
+        /// </param>
+        /// <param name="pathSampleCount">
+        ///     Number of interior points sampled along each candidate edge to verify
+        ///     it lies on the roof face. Passed through to GraphBuilderService.
+        ///     Recommended range: 5-20. Higher = stricter, slower.
+        /// </param>
         public (int modifiedCount, double maxOffset, double longestPath) ProcessRoofSlopes(
-            RoofData roofData, List<DrainItem> selectedDrains, double slopePercentage, Action<string> logAction)
+            RoofData roofData,
+            List<DrainItem> selectedDrains,
+            double slopePercentage,
+            Action<string> logAction,
+            double connectionThresholdMeters = 30.0,
+            int pathSampleCount = 5)
         {
             var doc = roofData.Roof.Document;
             int modifiedCount = 0;
@@ -33,17 +49,18 @@ namespace Revit26_Plugin.Asd_19.Services
             double longestPath = 0;
             DateTime startTime = DateTime.Now;
 
-            // Use a single transaction for the entire slope application process
             using (var transaction = new Transaction(doc, "Auto Roof Sloper - Apply Slopes"))
             {
                 transaction.Start();
 
                 try
                 {
-                    logAction("Building connectivity graph for pathfinding...");
-                    var graph = _graphBuilder.BuildGraph(roofData.Vertices, roofData.TopFace);
+                    logAction($"Building connectivity graph (threshold: {connectionThresholdMeters:F1} m, samples per edge: {pathSampleCount})...");
 
-                    // Step 1: Get all drain vertices from SELECTED drains (already identified with 5mm tolerance)
+                    // Pass the user-supplied threshold (in meters) to BuildGraph
+                    var graph = _graphBuilder.BuildGraph(roofData.Vertices, roofData.TopFace, connectionThresholdMeters, pathSampleCount);
+
+                    // Step 1: Get all drain vertices from SELECTED drains
                     var selectedDrainVertices = new HashSet<SlabShapeVertex>();
                     foreach (var drain in selectedDrains)
                     {
@@ -58,7 +75,7 @@ namespace Revit26_Plugin.Asd_19.Services
                     SetDrainLoopVerticesToZero(roofData.Roof, selectedDrainVertices, logAction);
                     modifiedCount += selectedDrainVertices.Count;
 
-                    // Step 2: Create drain targets from SELECTED drains using their vertices
+                    // Step 2: Create drain targets from SELECTED drains
                     var drainTargets = CreateDrainTargetsFromSelectedDrains(selectedDrains, logAction);
 
                     logAction($"Computing paths to {drainTargets.Count} drain targets for {roofData.Vertices.Count} vertices...");
@@ -92,17 +109,11 @@ namespace Revit26_Plugin.Asd_19.Services
             return (modifiedCount, maxOffset, longestPath);
         }
 
-        /// <summary>
-        /// Get the last export data
-        /// </summary>
         public List<DrainVertexData> GetLastExportData()
         {
             return _lastExportData;
         }
 
-        /// <summary>
-        /// Collect vertex data for CSV export
-        /// </summary>
         private List<DrainVertexData> CollectVertexExportData(
             Dictionary<SlabShapeVertex, (DrainItem drain, double totalDistance, List<XYZ> path)> pathResults,
             HashSet<SlabShapeVertex> drainVertices,
@@ -124,7 +135,6 @@ namespace Revit26_Plugin.Asd_19.Services
                 int vertexIndex = allVertices.IndexOf(vertex);
                 double elevationMm = wasProcessed ? slopePercentage / 100.0 * totalDistance * 304.8 : 0;
 
-                // Find nearest drain index
                 int drainIndex = -1;
                 string drainSize = "";
                 string drainShape = "";
@@ -136,7 +146,6 @@ namespace Revit26_Plugin.Asd_19.Services
                     drainShape = drain.ShapeType;
                 }
 
-                // Calculate direction vector
                 XYZ direction = XYZ.Zero;
                 if (wasProcessed && path != null && path.Count >= 2)
                 {
@@ -149,7 +158,7 @@ namespace Revit26_Plugin.Asd_19.Services
                     Position = vertex.Position,
                     PathLengthMeters = totalDistance * 0.3048,
                     ElevationOffsetMm = elevationMm,
-                    NearestDrainId = drainIndex + 1, // 1-based for readability
+                    NearestDrainId = drainIndex + 1,
                     DrainSize = drainSize,
                     DrainShape = drainShape,
                     DirectionVector = direction,
@@ -160,9 +169,6 @@ namespace Revit26_Plugin.Asd_19.Services
             return vertexDataList;
         }
 
-        /// <summary>
-        /// Update all custom parameters on the roof element after successful slope calculation
-        /// </summary>
         private void UpdateRoofParameters(RoofBase roof, int modifiedCount, double maxOffset, double longestPath,
             double slopePercentage, DateTime startTime, int drainCount, Action<string> logAction)
         {
@@ -175,103 +181,65 @@ namespace Revit26_Plugin.Asd_19.Services
 
                 try
                 {
-                    // Get the highest elevation achieved (max offset is already in mm)
                     double highestElevationMm = maxOffset;
-
-                    // Count vertices processed (total vertices)
                     int verticesProcessed = modifiedCount;
-
-                    // Count vertices skipped (if any)
-                    int verticesSkipped = 0; // You can calculate this if needed
-
-                    // Current date/time for the run
+                    int verticesSkipped = 0;
                     string runDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
-                    // Update parameters
-                    SetParameterValue(roof, "AutoSlope_HighestElevation", highestElevationMm / 304.8); // Convert to feet for Revit
-                    SetParameterValue(roof, "AutoSlope_VerticesProcessed", verticesProcessed);
-                    SetParameterValue(roof, "AutoSlope_VerticesSkipped", verticesSkipped);
-                    SetParameterValue(roof, "AutoSlope_DrainCount", drainCount);
-                    SetParameterValue(roof, "AutoSlope_RunDuration_sec", durationSeconds);
-                    SetParameterValue(roof, "AutoSlope_Status", "Completed");
-                    SetParameterValue(roof, "AutoSlope_LongestPath", longestPath); // Already in meters
-                    SetParameterValue(roof, "AutoSlope_SlopePercent", slopePercentage);
-                    SetParameterValue(roof, "AutoSlope_Threshold", 100.0); // Default threshold value
-                    SetParameterValue(roof, "AutoSlope_RunDate", runDate);
-                    SetParameterValue(roof, "AutoSlope_Versions", "D.04.00"); // ADD THIS LINE
+                    var metrics = new DrainExportMetrics
+                    {
+                        ProcessedVertices = verticesProcessed,
+                        SkippedVertices = verticesSkipped,
+                        DrainCount = drainCount,
+                        HighestElevationMm = highestElevationMm,
+                        LongestPathM = longestPath,
+                        SlopePercent = slopePercentage,
+                        RunDurationSec = (int)durationSeconds,
+                        RunDate = runDate
+                    };
 
-                    logAction("✓ Updated roof parameters with calculation results:");
-                    logAction($"  - Highest Elevation: {highestElevationMm:F2} mm");
-                    logAction($"  - Vertices Processed: {verticesProcessed}");
-                    logAction($"  - Drain Count: {drainCount}");
-                    logAction($"  - Run Duration: {durationSeconds:F2} seconds");
-                    logAction($"  - Run Date: {runDate}");
-                    logAction($"  - Version: D.04.00"); // ADD THIS LINE
+                    var paramWriter = new Revit26_Plugin.Asd_19.Core.Parameters.AutoSlopeParameterWriter();
+                    var writeResult = paramWriter.WriteAll(
+                        doc,
+                        roof,
+                        metrics,
+                        slopePercentage,
+                        0.0,
+                        logAction);
 
                     paramTransaction.Commit();
+                    logAction($"Parameters updated: {writeResult.SuccessCount} written, {writeResult.FailCount} skipped");
                 }
                 catch (Exception ex)
                 {
                     paramTransaction.RollBack();
-                    logAction($"✗ Failed to update roof parameters: {ex.Message}");
-                    logAction("  Note: This doesn't affect the slope calculation results.");
+                    logAction($"WARNING: Parameter update failed - {ex.Message}");
                 }
             }
         }
 
-        /// <summary>
-        /// Helper method to set parameter values safely
-        /// </summary>
-        private void SetParameterValue(Element element, string paramName, object value)
-        {
-            Parameter param = element.LookupParameter(paramName);
-            if (param != null && !param.IsReadOnly)
-            {
-                switch (param.StorageType)
-                {
-                    case StorageType.String:
-                        param.Set(value?.ToString() ?? "");
-                        break;
-                    case StorageType.Double:
-                        if (value is double doubleValue)
-                            param.Set(doubleValue);
-                        else if (value is int intValue)
-                            param.Set(Convert.ToDouble(intValue));
-                        break;
-                    case StorageType.Integer:
-                        if (value is int intVal)
-                            param.Set(intVal);
-                        else if (value is double doubleVal)
-                            param.Set(Convert.ToInt32(doubleVal));
-                        break;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Set all vertices on selected drain loops to ZERO elevation
-        /// </summary>
         private void SetDrainLoopVerticesToZero(RoofBase roof, HashSet<SlabShapeVertex> drainVertices, Action<string> logAction)
         {
+            var slabShapeEditor = roof.GetSlabShapeEditor();
             int setToZeroCount = 0;
-
-            var slabShapeEditor = roof.GetSlabShapeEditor(); // Get the editor once
 
             foreach (var vertex in drainVertices)
             {
-                if (vertex != null)
+                if (vertex == null) continue;
+                try
                 {
                     slabShapeEditor.ModifySubElement(vertex, 0.0);
                     setToZeroCount++;
+                }
+                catch (Exception ex)
+                {
+                    logAction($"WARNING: Could not set drain vertex to zero: {ex.Message}");
                 }
             }
 
             logAction($"Set {setToZeroCount} drain loop vertices to ZERO elevation");
         }
 
-        /// <summary>
-        /// UPDATED: Create drain targets from SELECTED drains using their pre-identified vertices
-        /// </summary>
         private List<DrainTarget> CreateDrainTargetsFromSelectedDrains(List<DrainItem> selectedDrains, Action<string> logAction)
         {
             var drainTargets = new List<DrainTarget>();
@@ -279,15 +247,14 @@ namespace Revit26_Plugin.Asd_19.Services
 
             foreach (var drain in selectedDrains)
             {
-                // Use the pre-identified drain vertices (found with 5mm tolerance)
                 foreach (var drainVertex in drain.DrainVertices)
                 {
                     drainTargets.Add(new DrainTarget
                     {
                         Vertex = drainVertex,
-                        CornerPoint = drainVertex.Position, // Use vertex position
+                        CornerPoint = drainVertex.Position,
                         ParentDrain = drain,
-                        VertexToCornerDistance = 0.0 // Zero since we're using the vertex itself
+                        VertexToCornerDistance = 0.0
                     });
                     targetCount++;
                 }
@@ -309,21 +276,18 @@ namespace Revit26_Plugin.Asd_19.Services
             var results = new Dictionary<SlabShapeVertex, (DrainItem, double, List<XYZ>)>();
             int processedCount = 0;
 
-            // Group drain targets by vertex for efficient lookup
             var targetsByVertex = drainTargets.GroupBy(t => t.Vertex).ToDictionary(g => g.Key, g => g.ToList());
 
             foreach (var vertex in vertices)
             {
                 if (vertex?.Position == null) continue;
 
-                // Skip vertices that are part of drain loops (they're already at zero)
                 if (excludedVertices.Contains(vertex))
                 {
-                    results[vertex] = (null, 0, null); // Mark as drain vertex
+                    results[vertex] = (null, 0, null);
                     continue;
                 }
 
-                // Find shortest path to any drain target
                 var shortestPathInfo = FindShortestPathToAnyDrainTarget(vertex, targetsByVertex, graph);
 
                 if (shortestPathInfo.drain != null)
@@ -356,13 +320,10 @@ namespace Revit26_Plugin.Asd_19.Services
                 var drainVertex = targetEntry.Key;
                 var targets = targetEntry.Value;
 
-                // Find shortest path from start vertex to this drain vertex
                 var path = _pathSolver.DijkstraPath(startVertex, drainVertex, graph);
                 if (path != null && path.Count >= 2)
                 {
                     double pathDistance = CalculatePathLength(path);
-
-                    // Use the first target (all targets for this vertex have same parent drain)
                     var target = targets.First();
                     double totalDistance = pathDistance + target.VertexToCornerDistance;
 
@@ -403,7 +364,7 @@ namespace Revit26_Plugin.Asd_19.Services
             maxOffset = 0;
             longestPath = 0;
 
-            var slabShapeEditor = roof.GetSlabShapeEditor(); // Get the editor once
+            var slabShapeEditor = roof.GetSlabShapeEditor();
 
             foreach (var kvp in pathResults)
             {
@@ -413,31 +374,24 @@ namespace Revit26_Plugin.Asd_19.Services
 
                 if (vertex == null) continue;
 
-                // Skip vertices that are part of drain loops (already set to zero)
                 if (drainVertices.Contains(vertex))
                     continue;
 
-                // Skip vertices with no path to drain
                 if (drain == null)
                     continue;
 
-                // Track longest path (in meters)
                 double pathLengthMeters = totalDistance * 0.3048;
                 if (pathLengthMeters > longestPath)
                     longestPath = pathLengthMeters;
 
-                // Calculate elevation based on distance and slope
                 double slopeRatio = slopePercentage / 100.0;
-                double elevationChange = slopeRatio * totalDistance * 304.8; // Convert to mm
-                double newElevation = elevationChange;
-
-                // Apply the elevation (in feet, as Revit expects)
-                double newElevationFeet = newElevation / 304.8;
+                double elevationChange = slopeRatio * totalDistance * 304.8;
+                double newElevationFeet = elevationChange / 304.8;
                 slabShapeEditor.ModifySubElement(vertex, newElevationFeet);
                 modifiedCount++;
 
-                if (newElevation > maxOffset)
-                    maxOffset = newElevation;
+                if (elevationChange > maxOffset)
+                    maxOffset = elevationChange;
             }
 
             logAction($"Applied slopes to {modifiedCount} non-drain vertices");

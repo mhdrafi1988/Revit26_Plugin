@@ -8,7 +8,28 @@ namespace Revit26_Plugin.Asd_19.Services
 {
     public class GraphBuilderService
     {
-        public Dictionary<SlabShapeVertex, List<SlabShapeVertex>> BuildGraph(List<SlabShapeVertex> vertices, Face topFace)
+        /// <summary>
+        /// Builds the vertex connectivity graph.
+        /// </summary>
+        /// <param name="vertices">All slab shape vertices on the roof.</param>
+        /// <param name="topFace">The top face of the roof.</param>
+        /// <param name="connectionThresholdMeters">
+        ///     Maximum distance in METERS between two vertices before they are
+        ///     considered disconnected. Comes from the user's UI input.
+        ///     Internally converted to Revit internal units (feet).
+        /// </param>
+        /// <param name="pathSampleCount">
+        ///     Number of points sampled along the straight line between two vertices
+        ///     to verify the edge lies on the roof face.
+        ///     Higher = stricter check, catches edges crossing holes or voids.
+        ///     Lower = faster but may allow invalid edges on complex roofs.
+        ///     Minimum clamped to 2. Recommended range: 5-20.
+        /// </param>
+        public Dictionary<SlabShapeVertex, List<SlabShapeVertex>> BuildGraph(
+            List<SlabShapeVertex> vertices,
+            Face topFace,
+            double connectionThresholdMeters = 30.0,
+            int pathSampleCount = 5)
         {
             var graph = new Dictionary<SlabShapeVertex, List<SlabShapeVertex>>();
 
@@ -16,7 +37,11 @@ namespace Revit26_Plugin.Asd_19.Services
             {
                 if (vertices == null || topFace == null) return graph;
 
-                double connectionThreshold = 100.0; // Adjust based on your roof scale
+                // Convert user-supplied meters to Revit internal units (feet)
+                double connectionThresholdFeet = connectionThresholdMeters / 0.3048;
+
+                // Clamp sample count to a safe minimum
+                int clampedSamples = Math.Max(2, pathSampleCount);
 
                 foreach (var vertex in vertices)
                 {
@@ -28,11 +53,11 @@ namespace Revit26_Plugin.Asd_19.Services
                     {
                         if (other?.Position == null || vertex == other) continue;
 
-                        // Check distance threshold
-                        if (vertex.Position.DistanceTo(other.Position) > connectionThreshold) continue;
+                        // Check distance threshold (Revit coordinates are in feet)
+                        if (vertex.Position.DistanceTo(other.Position) > connectionThresholdFeet) continue;
 
                         // Check if connection is valid (lies on face)
-                        if (IsValidConnection(vertex.Position, other.Position, topFace))
+                        if (IsValidConnection(vertex.Position, other.Position, topFace, clampedSamples))
                         {
                             graph[vertex].Add(other);
                         }
@@ -47,7 +72,13 @@ namespace Revit26_Plugin.Asd_19.Services
             }
         }
 
-        private bool IsValidConnection(XYZ start, XYZ end, Face face)
+        /// <summary>
+        /// Samples sampleCount evenly-spaced interior points along the line A->B
+        /// and rejects the edge if any point falls outside the roof face.
+        /// Points are placed at t = i / (sampleCount + 1) so they are always
+        /// strictly inside the segment, never at the endpoints themselves.
+        /// </summary>
+        private bool IsValidConnection(XYZ start, XYZ end, Face face, int sampleCount)
         {
             try
             {
@@ -56,9 +87,11 @@ namespace Revit26_Plugin.Asd_19.Services
                 Line line = Line.CreateBound(start, end);
                 if (line == null) return false;
 
-                // Sample points along the line to ensure it lies on the face
-                for (double t = 0.1; t < 1.0; t += 0.2)
+                // Distribute sample points evenly across the interior of the segment.
+                double step = 1.0 / (sampleCount + 1);
+                for (int i = 1; i <= sampleCount; i++)
                 {
+                    double t = step * i;
                     XYZ testPoint = line.Evaluate(t, true);
                     if (!IsPointOnFace(testPoint, face))
                         return false;

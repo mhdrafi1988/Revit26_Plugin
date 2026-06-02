@@ -36,6 +36,8 @@ namespace Revit26_Plugin.Asd_19.ViewModels
             {
                 _slopeApplied = value;
                 OnPropertyChanged(nameof(SlopeApplied));
+                OnPropertyChanged(nameof(LongestPathDisplay));
+                OnPropertyChanged(nameof(MaxOffsetDisplay));
 
                 // Update command's can-execute state
                 ((RelayCommand)ApplySlopesCommand).RaiseCanExecuteChanged();
@@ -115,6 +117,45 @@ namespace Revit26_Plugin.Asd_19.ViewModels
 
         public List<string> SlopeOptions { get; } = new List<string> { "1.0", "1.5", "2.0", "2.5", "3.0" };
 
+        // ── Connection Threshold (meters) ─────────────────────────────────────
+        // Controls the maximum distance between two roof vertices that are still
+        // considered "connected" when building the pathfinding graph.
+        // Larger values = more connections = longer potential paths.
+        // Smaller values = fewer connections = graph limited to nearby vertices.
+        private string _connectionThresholdInput = "30";
+        public string ConnectionThresholdInput
+        {
+            get => _connectionThresholdInput;
+            set
+            {
+                _connectionThresholdInput = value;
+                OnPropertyChanged(nameof(ConnectionThresholdInput));
+                if (double.TryParse(value, out double meters) && meters > 0)
+                {
+                    AddLog($"Connection threshold set to: {meters:F1} m");
+                }
+            }
+        }
+
+        // ── Path Sample Count ─────────────────────────────────────────────────
+        // Number of points tested along each candidate edge to confirm it lies
+        // on the roof face. More samples = stricter check, slower build.
+        // Minimum 2. Recommended 5-20 for typical roofs.
+        private string _pathSampleCountInput = "50";
+        public string PathSampleCountInput
+        {
+            get => _pathSampleCountInput;
+            set
+            {
+                _pathSampleCountInput = value;
+                OnPropertyChanged(nameof(PathSampleCountInput));
+                if (int.TryParse(value, out int n) && n >= 2)
+                {
+                    AddLog($"Path sample count set to: {n}");
+                }
+            }
+        }
+
         public string SelectedSizeFilter
         {
             get => _selectedSizeFilter;
@@ -147,6 +188,34 @@ namespace Revit26_Plugin.Asd_19.ViewModels
                 OnPropertyChanged(nameof(RoofInfo));
             }
         }
+
+        private double _autoSlope_LongestPath;
+        public double AutoSlope_LongestPath
+        {
+            get => _autoSlope_LongestPath;
+            set
+            {
+                _autoSlope_LongestPath = value;
+                OnPropertyChanged(nameof(AutoSlope_LongestPath));
+                OnPropertyChanged(nameof(LongestPathDisplay));
+            }
+        }
+
+        private double _autoSlope_HighestElevation;
+        public double AutoSlope_HighestElevation
+        {
+            get => _autoSlope_HighestElevation;
+            set
+            {
+                _autoSlope_HighestElevation = value;
+                OnPropertyChanged(nameof(AutoSlope_HighestElevation));
+                OnPropertyChanged(nameof(MaxOffsetDisplay));
+            }
+        }
+
+        // Display properties — show N/A until slope is applied
+        public string LongestPathDisplay => SlopeApplied ? _autoSlope_LongestPath.ToString("F2") : "N/A";
+        public string MaxOffsetDisplay => SlopeApplied ? _autoSlope_HighestElevation.ToString("F0") : "N/A";
 
         private string _resultsInfo;
         public string ResultsInfo
@@ -660,8 +729,28 @@ namespace Revit26_Plugin.Asd_19.ViewModels
                 AddLog("These vertices will be set to ZERO elevation as drain points");
                 AddLog("Processing... (this may take a moment)");
 
+                // Parse connection threshold (meters)
+                if (!double.TryParse(ConnectionThresholdInput, out double connectionThresholdM) || connectionThresholdM <= 0)
+                {
+                    AddLog("✗ ERROR: Please enter a valid positive connection threshold in meters.");
+                    return;
+                }
+
+                // Parse path sample count
+                if (!int.TryParse(PathSampleCountInput, out int pathSamples) || pathSamples < 2)
+                {
+                    AddLog("✗ ERROR: Path sample count must be a whole number of 2 or more.");
+                    return;
+                }
+
+                AddLog($"Connection threshold: {connectionThresholdM:F1} m  |  Path samples: {pathSamples}");
+
                 // Process slopes and get results
-                var results = _slopeService.ProcessRoofSlopes(_currentRoof, selectedDrains, slopePercentage, AddLog);
+                var results = _slopeService.ProcessRoofSlopes(_currentRoof, selectedDrains, slopePercentage, AddLog, connectionThresholdM, pathSamples);
+
+                // Map results to named ViewModel properties (mirrors Revit parameter names)
+                AutoSlope_LongestPath = results.longestPath;
+                AutoSlope_HighestElevation = results.maxOffset;
 
                 // Update results display
                 ResultsInfo = $"Results: {results.modifiedCount} vertices modified | " +

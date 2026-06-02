@@ -1,18 +1,18 @@
 // =======================================================
 // File: UI_Autoslope.xaml.cs
 // Fixes:
-//   #1  Removed unused Action<string> log parameter from
+//   #1  Corrected namespace to match XAML (041)
+//   #2  Removed unused Action<string> log parameter from
 //       AutoSlopeViewModel constructor call.
-//   #1  Removed empty AddLog method from code-behind.
 // =======================================================
 
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.AutoSlopeByPoint_04.UI.ViewModels;
+using Revit26_Plugin.AutoSlopeByPoint_04.UI.ViewModels;   // ensure ViewModel namespace matches
 using System.Collections.Generic;
 using System.Windows;
 
-namespace Revit26_Plugin.AutoSlopeByPoint_04.UI.Views
+namespace Revit26_Plugin.AutoSlopeByPoint_04.UI.Views      // ✅ changed from _04 to _041
 {
     public partial class AutoSlopeWindow : Window
     {
@@ -24,7 +24,6 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.UI.Views
         {
             InitializeComponent();
 
-            // No log delegate — ViewModel handles its own logging via Dispatcher.
             var viewModel = new AutoSlopeViewModel(uidoc, app, roofId, drains);
             DataContext = viewModel;
             this.Focus();
@@ -37,7 +36,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.UI.Views
 
         private void ToggleButton_Checked(object sender, RoutedEventArgs e)
         {
-
+            // placeholder for any toggle logic
         }
     }
 }

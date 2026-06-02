@@ -3,7 +3,7 @@
 
 namespace Revit26_Plugin.Asd_19.Infrastructure.Helpers
 {
-    public static class DrainItem
+    public static class AppConstants
     {
         // Parameter Names - Match Part 01 exactly
         public const string Param_HighestElevation = "AutoSlope_HighestElevation";
