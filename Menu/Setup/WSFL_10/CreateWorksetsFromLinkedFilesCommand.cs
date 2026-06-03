@@ -1,10 +1,10 @@
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.WSFL_008.ViewModels;
-using Revit26_Plugin.WSFL_008.Views;
+using Revit26_Plugin.WSFL_010.ViewModels;
+using Revit26_Plugin.WSFL_010.Views;
 
-namespace Revit26_Plugin.WSFL_008.Commands
+namespace Revit26_Plugin.WSFL_010.Commands
 {
     [Transaction(TransactionMode.Manual)]
     public class CreateWorksetsFromLinkedFiles : IExternalCommand
@@ -20,7 +20,7 @@ namespace Revit26_Plugin.WSFL_008.Commands
             if (doc == null || doc.IsFamilyDocument || !doc.IsWorkshared)
             {
                 TaskDialog.Show(
-                    "WSFL 008",
+                    "WSFL 009",
                     "Please open a workshared project file (not a family).");
                 return Result.Cancelled;
             }

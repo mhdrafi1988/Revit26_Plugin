@@ -1,12 +1,12 @@
-﻿using Autodesk.Revit.DB;
-using Revit26_Plugin.WSFL_009.Models;
-using Revit26_Plugin.WSFL_009.ViewModels;
+using Autodesk.Revit.DB;
+using Revit26_Plugin.WSFL_010.Models;
+using Revit26_Plugin.WSFL_010.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Revit26_Plugin.WSFL_009.Services
+namespace Revit26_Plugin.WSFL_010.Services
 {
     public class WorksetService
     {
@@ -17,6 +17,8 @@ namespace Revit26_Plugin.WSFL_009.Services
         {
             _log = logger;
         }
+
+        // ─── Queries ──────────────────────────────────────────────────────────
 
         public List<string> GetLinkedFileNames(Document doc)
         {
@@ -29,10 +31,10 @@ namespace Revit26_Plugin.WSFL_009.Services
         }
 
         public bool HasInstances(Document doc, string linkName)
-        {
-            var instances = GetLinkInstances(doc, linkName);
-            return instances.Any();
-        }
+            => GetLinkInstances(doc, linkName).Any();
+
+        public int GetInstanceCount(Document doc, string linkName)
+            => GetLinkInstances(doc, linkName).Count;
 
         public string GetCurrentWorksetName(Document doc, string linkName)
         {
@@ -41,7 +43,6 @@ namespace Revit26_Plugin.WSFL_009.Services
             if (!instances.Any())
                 return "No instances";
 
-            var worksetIds = new HashSet<int>();
             var worksetNames = new HashSet<string>();
 
             foreach (var instance in instances)
@@ -50,21 +51,15 @@ namespace Revit26_Plugin.WSFL_009.Services
                 if (param != null && param.HasValue)
                 {
                     int wsId = param.AsInteger();
-                    worksetIds.Add(wsId);
-
                     Workset workset = new FilteredWorksetCollector(doc)
                         .FirstOrDefault(ws => ws.Id.IntegerValue == wsId);
-
                     if (workset != null)
                         worksetNames.Add(workset.Name);
                 }
             }
 
-            if (worksetNames.Count == 0)
-                return "None";
-            if (worksetNames.Count == 1)
-                return worksetNames.First();
-
+            if (worksetNames.Count == 0) return "None";
+            if (worksetNames.Count == 1) return worksetNames.First();
             return "MIXED";
         }
 
@@ -74,14 +69,43 @@ namespace Revit26_Plugin.WSFL_009.Services
                 .OfKind(WorksetKind.UserWorkset)
                 .FirstOrDefault(ws =>
                     ws.Name.Equals(worksetName, StringComparison.OrdinalIgnoreCase));
-
             return existing?.Name;
         }
+
+        /// <summary>
+        /// Returns true when every instance of linkName is already assigned to
+        /// a workset whose name equals proposedWorksetName (case-insensitive).
+        /// This is the Grid 1 "exact match" condition.
+        /// </summary>
+        public bool IsFullyAssigned(Document doc, string linkName, string proposedWorksetName)
+        {
+            var instances = GetLinkInstances(doc, linkName);
+            if (!instances.Any()) return false;
+
+            foreach (var instance in instances)
+            {
+                var param = instance.get_Parameter(BuiltInParameter.ELEM_PARTITION_PARAM);
+                if (param == null || !param.HasValue) return false;
+
+                int wsId = param.AsInteger();
+                Workset ws = new FilteredWorksetCollector(doc)
+                    .FirstOrDefault(w => w.Id.IntegerValue == wsId);
+
+                if (ws == null || !ws.Name.Equals(proposedWorksetName, StringComparison.OrdinalIgnoreCase))
+                    return false;
+            }
+
+            return true;
+        }
+
+        // ─── Name helpers ─────────────────────────────────────────────────────
 
         public void ResolveDuplicates(IEnumerable<WorksetItem> items)
         {
             var usedNames = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
-            var itemsToProcess = items.Where(i => !i.IsExistingWorkset).ToList();
+            var itemsToProcess = items
+                .Where(i => i.GridCategory != WorksetGridCategory.AlreadyAssigned)
+                .ToList();
 
             foreach (var item in itemsToProcess)
             {
@@ -97,7 +121,8 @@ namespace Revit26_Plugin.WSFL_009.Services
 
                 if (finalName != baseName)
                 {
-                    _log(new LogEntry(LogLevel.Warning, $"Duplicate name '{baseName}' → renamed to '{finalName}'"));
+                    _log(new LogEntry(LogLevel.Warning,
+                        $"Duplicate name '{baseName}' → renamed to '{finalName}'"));
                     item.ProposedWorksetName = finalName;
                 }
 
@@ -107,91 +132,109 @@ namespace Revit26_Plugin.WSFL_009.Services
 
         public string CleanName(string input)
         {
-            if (string.IsNullOrEmpty(input))
-                return "Workset";
+            if (string.IsNullOrEmpty(input)) return "Workset";
 
             string original = input;
             string cleaned = input;
 
-            // Invalid characters for Revit worksets
             char[] invalidChars = { ':', '{', '}', '[', ']', '|', ';', '<', '>', '?', '`', '~', '\t', '\n', '\r' };
-
             foreach (char c in invalidChars)
-            {
                 cleaned = cleaned.Replace(c, '-');
-            }
 
-            // Replace multiple consecutive hyphens with single hyphen
             while (cleaned.Contains("--"))
-            {
                 cleaned = cleaned.Replace("--", "-");
-            }
 
-            // Trim leading/trailing spaces and hyphens
             cleaned = cleaned.Trim().Trim('-');
 
-            // If result is empty, use default
             if (string.IsNullOrEmpty(cleaned))
-            {
                 cleaned = "Workset";
-            }
 
-            // Enforce 32 character limit
-            if (cleaned.Length > 32)
+            if (cleaned.Length > 150)
             {
-                string truncated = cleaned.Substring(0, 32);
-                _log(new LogEntry(LogLevel.Warning, $"Truncated '{cleaned}' to 32 chars: '{truncated}'"));
+                string truncated = cleaned.Substring(0, 150);
+                _log(new LogEntry(LogLevel.Warning,
+                    $"Truncated '{cleaned}' to 150 chars: '{truncated}'"));
                 cleaned = truncated;
             }
 
             if (original != cleaned)
-            {
                 _log(new LogEntry(LogLevel.Info, $"Cleaned name: '{original}' → '{cleaned}'"));
-            }
 
             return cleaned;
         }
 
-        public void CreateAndAssign(Document doc, IEnumerable<(string ProposedName, string LinkName)> items, WorksetsViewModel viewModel)
+        // ─── Write operations ─────────────────────────────────────────────────
+
+        /// <summary>
+        /// Creates worksets for Grid 2 selected items, then assigns all instances
+        /// from every grid (Grid 1 re-sync + Grid 2 new + Grid 3 if selected).
+        /// Called by both the "Create Worksets" and "Resync All" commands.
+        /// </summary>
+        public void CreateAndAssign(
+            Document doc,
+            IEnumerable<(string ProposedName, string LinkName, bool CreateNew)> items,
+            WorksetsViewModel viewModel)
         {
             _processedCount = 0;
-            int total = items.Count();
 
-            foreach (var (proposedName, linkName) in items)
+            foreach (var (proposedName, linkName, createNew) in items)
             {
                 _processedCount++;
 
-                using (Transaction tx = new Transaction(doc, $"Create workset: {proposedName}"))
+                using (Transaction tx = new Transaction(doc,
+                    createNew ? $"Create workset: {proposedName}" : $"Resync workset: {proposedName}"))
                 {
                     try
                     {
                         tx.Start();
 
-                        // Create workset (already validated that it doesn't exist)
-                        Workset workset = Workset.Create(doc, proposedName);
-                        _log(new LogEntry(LogLevel.Info, $"Created workset: '{proposedName}'"));
+                        WorksetId targetId;
 
-                        // Assign instances
-                        int assignedCount = AssignLinkInstances(doc, linkName, workset.Id);
-                        _log(new LogEntry(LogLevel.Info, $"Assigned {assignedCount} instances of '{linkName}' to workset '{proposedName}'"));
+                        if (createNew)
+                        {
+                            Workset workset = Workset.Create(doc, proposedName);
+                            targetId = workset.Id;
+                            _log(new LogEntry(LogLevel.Info, $"Created workset: '{proposedName}'"));
+                        }
+                        else
+                        {
+                            // Workset already exists — look it up
+                            Workset existing = new FilteredWorksetCollector(doc)
+                                .OfKind(WorksetKind.UserWorkset)
+                                .FirstOrDefault(ws =>
+                                    ws.Name.Equals(proposedName, StringComparison.OrdinalIgnoreCase));
+
+                            if (existing == null)
+                            {
+                                _log(new LogEntry(LogLevel.Error,
+                                    $"Workset '{proposedName}' not found — skipped."));
+                                tx.RollBack();
+                                continue;
+                            }
+
+                            targetId = existing.Id;
+                        }
+
+                        int assignedCount = AssignLinkInstances(doc, linkName, targetId);
+                        _log(new LogEntry(LogLevel.Info,
+                            $"Assigned {assignedCount} instance(s) of '{linkName}' → '{proposedName}'"));
 
                         tx.Commit();
                     }
                     catch (Exception ex)
                     {
                         tx.RollBack();
-                        _log(new LogEntry(LogLevel.Error, $"Failed to create workset '{proposedName}': {ex.Message}"));
-                        // Continue with next workset
+                        _log(new LogEntry(LogLevel.Error,
+                            $"Failed on '{proposedName}': {ex.Message}"));
                     }
                 }
 
-                // Keep UI responsive after every 5 worksets
                 if (_processedCount % 5 == 0)
-                {
                     viewModel?.KeepUIResponsive();
-                }
             }
         }
+
+        // ─── Private helpers ──────────────────────────────────────────────────
 
         private int AssignLinkInstances(Document doc, string linkName, WorksetId worksetId)
         {
