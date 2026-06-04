@@ -5,7 +5,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\Release\net8.0-windows\06_02_10</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\Release\net8.0-windows\04-06-05</BaseOutputPath>
 		<PackageId />
 		<AssemblyName>Revit26_Plugin</AssemblyName>
 	</PropertyGroup>
@@ -700,6 +700,7 @@
 	  <PackageReference Include="MahApps.Metro.IconPacks" Version="6.2.1" />
 	  <PackageReference Include="MaterialDesignColors" Version="5.3.0" />
 	  <PackageReference Include="MaterialDesignThemes" Version="5.3.0" />
+	  <PackageReference Include="MIConvexHull" Version="1.1.19.1019" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="Menu\RoofTools\Lines\Creaser\" />
