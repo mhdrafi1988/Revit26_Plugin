@@ -22,6 +22,12 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines_V51.Services
         /// • 3+ groups, collinear  → N-1 perpendicular bisectors (Cases 2 &amp; 3).
         /// • 3+ groups, all circumcenters co-located within 10 mm → convex-hull bisector rays
         ///                           (Case 5 – rectangle / symmetric polygon).
+        ///   This is detected in TWO places:
+        ///     a) After a successful MIConvexHull run (near-symmetric but not degenerate).
+        ///     b) Inside the catch block when MIConvexHull throws on a perfectly co-circular
+        ///        layout (e.g. a perfect rectangle). In that case we manually fan-triangulate
+        ///        from vertex[0] to compute circumcenters and check co-location before
+        ///        falling back to the collinear bisector path.
         /// • 3+ groups, normal     → full Voronoi; null-adjacency half-edges emitted
         ///                           as outward rays using boundary-edge perpendicular bisector
         ///                           (Cases 4 &amp; 5 general).
@@ -53,8 +59,10 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines_V51.Services
             }
 
             // ── Full Voronoi ──────────────────────────────────────────────────────
-            // MIConvexHull throws ConvexHullGenerationException for near-collinear
-            // inputs that slipped past AreCollinear. Fall back to collinear path.
+            // MIConvexHull throws ConvexHullGenerationException for perfectly co-circular
+            // inputs (e.g. 4 drains on a rectangle). That is NOT the same as collinear —
+            // the correct fallback is GenerateConvexHullBisectorRays, not the collinear path.
+            // We detect that case inside the catch block via manual fan-triangulation.
             // NOTE: VoronoiMesh is a static class — var is required, no generic type decl.
             try
             {
@@ -156,10 +164,23 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines_V51.Services
             }
             catch (ConvexHullGenerationException)
             {
-                // Near-collinear degenerate layout — treat as collinear
+                // MIConvexHull throws for perfectly co-circular layouts (e.g. a rectangle).
+                // This is NOT the same as collinear — check using manual fan-triangulation
+                // before falling back to the collinear bisector path.
+                var manualCircumcenters = ComputeCircumcentersManually(vertices);
+                if (manualCircumcenters != null && AllColocated(manualCircumcenters, 10.0 / 304.8))
+                {
+                    // Co-circular layout (rectangle / symmetric polygon) — use convex hull rays
+                    GenerateConvexHullBisectorRays(groups, manualCircumcenters[0], result);
+                    return;
+                }
+
+                // Truly near-collinear degenerate layout that slipped past AreCollinear
                 GenerateMidlinesForCollinearGroups(groups, result);
             }
         }
+
+        // ── Co-location check ─────────────────────────────────────────────────────
 
         /// <summary>
         /// Returns true when every circumcenter in the list is within <paramref name="snapTol"/>
@@ -173,6 +194,34 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines_V51.Services
             var first = circumcenters[0];
             return circumcenters.All(cc => Dist2D(cc, first) < snapTol);
         }
+
+        // ── Manual circumcenter fan-triangulation ─────────────────────────────────
+
+        /// <summary>
+        /// Fan-triangulates the point set from vertex[0] and computes the circumcenter
+        /// of each triangle. Used inside the ConvexHullGenerationException catch block
+        /// to distinguish a perfectly co-circular layout (rectangle → convex hull rays)
+        /// from a truly near-collinear degenerate layout (→ collinear bisectors).
+        ///
+        /// Returns null if fewer than 3 vertices are present (cannot triangulate).
+        /// </summary>
+        private static List<XYZ> ComputeCircumcentersManually(List<Vertex2D> vertices)
+        {
+            if (vertices.Count < 3) return null;
+
+            var result = new List<XYZ>();
+            for (int i = 1; i + 1 < vertices.Count; i++)
+            {
+                var cc = ComputeCircumcenter(
+                    vertices[0].Position,
+                    vertices[i].Position,
+                    vertices[i + 1].Position);
+                result.Add(new XYZ(cc.x, cc.y, 0));
+            }
+            return result;
+        }
+
+        // ── Convex-hull bisector rays (Case 5 – co-circular / rectangle) ──────────
 
         /// <summary>
         /// For degenerate cases (e.g. rectangle) where all circumcenters collapse to a

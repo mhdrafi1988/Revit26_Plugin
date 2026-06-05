@@ -43,7 +43,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint.WithRidge.Infrastructure.Helpers
         public const string DefaultExportFolder         = "AutoSlope_Reports";
 
         // Ridge detection defaults
-        public const bool DefaultRidgeDetectionEnabled  = false;  // off until user enables
+        public const bool DefaultRidgeDetectionEnabled  = true;  // on until user DISABLE
         public const int  DefaultDrainGroupRadiusMm     = 500;    // drains within 500 mm = same group
         public const int  DefaultRidgeLineToleranceMm   = 500;    // vertices within 500 mm of ridge line
 

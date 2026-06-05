@@ -44,54 +44,72 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines_V51.Services
             var collector = new List<(XYZ point, List<int> groupIndices, string note)>();
 
             // ── 1. Clip each raw edge ─────────────────────────────────────────────
+            // Non-convex boundaries (notched/L-shaped roofs) can produce multiple
+            // entry/exit intersection pairs per edge. We handle this by sorting all
+            // intersections by parametric position t along the segment, then emitting
+            // one clipped sub-segment per entry→exit pair.
             foreach (var edge in result.RawVoronoiEdges)
             {
-                // Find which two groups own this edge (nearest sites to the edge midpoint)
-                var mid = Midpoint(edge.Start, edge.End);
-                var nearest = FindTwoNearestGroups(mid, groups);
+                var nearest = FindTwoNearestGroups(Midpoint(edge.Start, edge.End), groups);
+
+                var segDir = new XYZ(edge.End.X - edge.Start.X, edge.End.Y - edge.Start.Y, 0);
+                double segLen = segDir.GetLength();
+                if (segLen < 1e-9) continue;
+
+                // Collect all boundary intersections with their parametric t values
+                var tHits = new List<double>();
+                int n = boundaryPolygon.Count;
+                for (int pi = 0; pi < n; pi++)
+                {
+                    var c = boundaryPolygon[pi];
+                    var d = boundaryPolygon[(pi + 1) % n];
+                    if (TrySegmentIntersectParametric(edge.Start, edge.End, c, d, out double t, out XYZ _))
+                        tHits.Add(t);
+                }
+
+                // Deduplicate t values that are very close (corner double-hits)
+                tHits.Sort();
+                var tUnique = new List<double>();
+                foreach (var t in tHits)
+                    if (tUnique.Count == 0 || t - tUnique[tUnique.Count - 1] > SnapTolerance / segLen)
+                        tUnique.Add(t);
 
                 bool startInside = PointInPolygon(edge.Start, boundaryPolygon);
-                bool endInside = PointInPolygon(edge.End, boundaryPolygon);
 
-                if (startInside && endInside)
+                // ── Event walk: sort crossings, toggle inside/outside, emit inside intervals ──
+                var intervals = new List<(double tA, double tB)>();
+                double tStart2 = 0.0;
+                bool curInside = startInside;
+
+                foreach (double tCross in tUnique)
                 {
-                    // Fully inside — accept
-                    result.ClippedEdges.Add(edge);
+                    if (curInside)
+                        intervals.Add((tStart2, tCross));
+                    curInside = !curInside;
+                    tStart2 = tCross;
                 }
-                else if (!startInside && !endInside)
+                if (curInside)
+                    intervals.Add((tStart2, 1.0));
+
+                // Emit one clipped edge per inside interval
+                foreach (var (tA, tB) in intervals)
                 {
-                    // Both outside — check if segment crosses boundary.
-                    // FIX C: deduplicate intersections before counting so that a segment
-                    // touching a polygon corner (hit by two adjacent edges) is not counted
-                    // as two distinct intersection points.
-                    var rawIntersections = SegmentPolygonIntersections(edge.Start, edge.End, boundaryPolygon);
-                    var intersections = DeduplicatePoints(rawIntersections, SnapTolerance);
+                    if (tB - tA < SnapTolerance / segLen) continue; // degenerate interval
 
-                    if (intersections.Count >= 2)
-                    {
-                        // Segment passes through the polygon (entry + exit)
-                        result.ClippedEdges.Add((intersections[0], intersections[1]));
-                        AddPoint(collector, intersections[0], nearest, "Boundary clip (pass-through start)", SnapTolerance);
-                        AddPoint(collector, intersections[1], nearest, "Boundary clip (pass-through end)", SnapTolerance);
-                    }
-                    // Else: fully outside — discard
-                }
-                else
-                {
-                    // Partially inside — clip to boundary.
-                    // FIX C: also deduplicate here to avoid picking a spurious corner duplicate
-                    // as the clip point when the inside end is exactly on the boundary.
-                    var rawIntersections = SegmentPolygonIntersections(edge.Start, edge.End, boundaryPolygon);
-                    var intersections = DeduplicatePoints(rawIntersections, SnapTolerance);
+                    var ptA = new XYZ(edge.Start.X + tA * segDir.X,
+                                      edge.Start.Y + tA * segDir.Y, 0);
+                    var ptB = new XYZ(edge.Start.X + tB * segDir.X,
+                                      edge.Start.Y + tB * segDir.Y, 0);
 
-                    XYZ insideEnd = startInside ? edge.Start : edge.End;
-                    XYZ clipPoint = intersections.Count > 0 ? intersections[0] : null;
+                    if (Dist2D(ptA, ptB) < SnapTolerance) continue;
 
-                    if (clipPoint != null)
-                    {
-                        result.ClippedEdges.Add((insideEnd, clipPoint));
-                        AddPoint(collector, clipPoint, nearest, "Boundary clip intersection", SnapTolerance);
-                    }
+                    result.ClippedEdges.Add((ptA, ptB));
+
+                    // Clip points at boundary crossings become shape points
+                    if (tA > 1e-9)
+                        AddPoint(collector, ptA, nearest, "Boundary clip intersection", SnapTolerance);
+                    if (tB < 1.0 - 1e-9)
+                        AddPoint(collector, ptB, nearest, "Boundary clip intersection", SnapTolerance);
                 }
             }
 
@@ -196,6 +214,28 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines_V51.Services
             if (Math.Abs(denom) < 1e-10) return false; // parallel
 
             double t = ((c.X - a.X) * s2 - (c.Y - a.Y) * s1) / denom;
+            double u = ((c.X - a.X) * r2 - (c.Y - a.Y) * r1) / denom;
+
+            if (t < 0 || t > 1 || u < 0 || u > 1) return false;
+
+            ip = new XYZ(a.X + t * r1, a.Y + t * r2, 0);
+            return true;
+        }
+
+        /// <summary>
+        /// Like TrySegmentIntersect but also returns the parametric t value along
+        /// segment a→b. Used by the non-convex boundary clipper to sort crossings.
+        /// </summary>
+        private static bool TrySegmentIntersectParametric(
+            XYZ a, XYZ b, XYZ c, XYZ d, out double t, out XYZ ip)
+        {
+            t = 0; ip = null;
+            double r1 = b.X - a.X, r2 = b.Y - a.Y;
+            double s1 = d.X - c.X, s2 = d.Y - c.Y;
+            double denom = r1 * s2 - r2 * s1;
+            if (Math.Abs(denom) < 1e-10) return false;
+
+            t = ((c.X - a.X) * s2 - (c.Y - a.Y) * s1) / denom;
             double u = ((c.X - a.X) * r2 - (c.Y - a.Y) * r1) / denom;
 
             if (t < 0 || t > 1 || u < 0 || u > 1) return false;

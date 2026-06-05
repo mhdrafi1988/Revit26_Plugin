@@ -5,7 +5,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\Release\net8.0-windows\04-06-05</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\Release\net8.0-windows\05-06-07</BaseOutputPath>
 		<PackageId />
 		<AssemblyName>Revit26_Plugin</AssemblyName>
 	</PropertyGroup>
@@ -159,6 +159,7 @@
 	  <Compile Remove="Menu\ViewTools\Place_01\PlaceUnplacedSectionsv4\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\Revit26_Plugin.SectionPlacement_V01\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\SectionAdvancedWorking_02\**" />
+	  <Compile Remove="Menu\ViewTools\Place_01\SectionAdvancedWorking_02_00\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\SectionPlacement_V001\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\Section_V3\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\Section_V4\**" />
@@ -313,6 +314,7 @@
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\PlaceUnplacedSectionsv4\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\Revit26_Plugin.SectionPlacement_V01\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\SectionAdvancedWorking_02\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\SectionAdvancedWorking_02_00\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\SectionPlacement_V001\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\Section_V3\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\Section_V4\**" />
@@ -467,6 +469,7 @@
 	  <None Remove="Menu\ViewTools\Place_01\PlaceUnplacedSectionsv4\**" />
 	  <None Remove="Menu\ViewTools\Place_01\Revit26_Plugin.SectionPlacement_V01\**" />
 	  <None Remove="Menu\ViewTools\Place_01\SectionAdvancedWorking_02\**" />
+	  <None Remove="Menu\ViewTools\Place_01\SectionAdvancedWorking_02_00\**" />
 	  <None Remove="Menu\ViewTools\Place_01\SectionPlacement_V001\**" />
 	  <None Remove="Menu\ViewTools\Place_01\Section_V3\**" />
 	  <None Remove="Menu\ViewTools\Place_01\Section_V4\**" />
@@ -621,6 +624,7 @@
 	  <Page Remove="Menu\ViewTools\Place_01\PlaceUnplacedSectionsv4\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\Revit26_Plugin.SectionPlacement_V01\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\SectionAdvancedWorking_02\**" />
+	  <Page Remove="Menu\ViewTools\Place_01\SectionAdvancedWorking_02_00\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\SectionPlacement_V001\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\Section_V3\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\Section_V4\**" />
@@ -655,6 +659,7 @@
 	  <None Remove="Resources\Icons\AutoslopeV2_32.png" />
 	  <None Remove="Resources\Icons\AutoslopeV2_64.png" />
 	  <None Remove="Resources\Icons\AutoslopeV5_32.png" />
+	  <None Remove="Resources\Icons\AutoslopeV6_32.png" />
 	  <None Remove="Resources\Icons\converter32.png" />
 	  <None Remove="Resources\Icons\DimMenu_32.png" />
 	  <None Remove="Resources\Icons\linematch32.png" />
@@ -673,6 +678,7 @@
 	  <EmbeddedResource Include="Resources\Icons\Autoslope32.png" />
 	  <EmbeddedResource Include="Resources\Icons\AutoslopeV2_32.png" />
 	  <EmbeddedResource Include="Resources\Icons\AutoslopeV5_32.png" />
+	  <EmbeddedResource Include="Resources\Icons\AutoslopeV6_32.png" />
 	  <EmbeddedResource Include="Resources\Icons\Converter32.png" />
 	  <EmbeddedResource Include="Resources\Icons\Create_32.png" />
 	  <EmbeddedResource Include="Resources\Icons\DimMenu_32.png" />

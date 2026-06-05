@@ -33,7 +33,8 @@ namespace Revit26_Plugin.Menu.Ribbon
             //ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_313", "AutoPlaceSectionsCommand_313 #", assemblyPath, "Revit26_Plugin.APUS_V313.Commands.AutoPlaceSectionsCommand"));
             ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_314", "AutoPlaceSectionsCommand_314 #", assemblyPath, "Revit26_Plugin.APUS_V314.Commands.AutoPlaceSectionsCommand"));
             ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_317", "AutoPlaceSectionsCommand_317 #", assemblyPath, "Revit26_Plugin.APUS_V317.Commands.AutoPlaceSectionsCommand"));
-            ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_318", "AutoPlaceSectionsCommand_318_Grid Only #", assemblyPath, "Revit26_Plugin.APUS_V318.Commands.AutoPlaceSectionsCommand"));
+            ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_320", "AutoPlaceSectionsCommand_320_Grid Only #", assemblyPath, "Revit26_Plugin.APUS_V320.Commands.AutoPlaceSectionsCommand"));
+            ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_330", "AutoPlaceSectionsCommand_330 ONE  #", assemblyPath, "Revit26_Plugin.APUS_V330.Commands.AutoPlaceSectionsCommand"));
 
             ViewPlace.AddPushButton(new PushButtonData("Btn_COPV6", "COPV6 #", assemblyPath, "Revit26_Plugin.CalloutCOP_V06.Commands.CalloutCOPCommand"));
         }
