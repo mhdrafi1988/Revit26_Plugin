@@ -1,0 +1,635 @@
+<Window x:Class="Revit26_Plugin.PonitOnCurvesInnerandOuter.V01.Views.RoofLoopAnalyzerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:models="clr-namespace:Revit26_Plugin.PonitOnCurvesInnerandOuter.V01.Models"
+        Title="Roof Loop Analyzer — Inner &amp; Outer V01"
+        Width="1020" Height="660"
+        MinWidth="800" MinHeight="500"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanResizeWithGrip"
+        Background="#F5F5F5"
+        FontFamily="Segoe UI">
+
+    <Window.Resources>
+
+        <!-- ── Colours ── -->
+        <SolidColorBrush x:Key="WinBg"          Color="#F5F5F5"/>
+        <SolidColorBrush x:Key="PanelBg"         Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="BorderBrush"      Color="#D0D0D0"/>
+        <SolidColorBrush x:Key="TextPrimary"      Color="#1A1A1A"/>
+        <SolidColorBrush x:Key="TextSecondary"    Color="#555555"/>
+        <SolidColorBrush x:Key="TextMuted"        Color="#888888"/>
+        <SolidColorBrush x:Key="AccentBlue"       Color="#1976D2"/>
+        <SolidColorBrush x:Key="AccentBlueHover"  Color="#1565C0"/>
+        <SolidColorBrush x:Key="AccentGreen"      Color="#388E3C"/>
+        <SolidColorBrush x:Key="AccentGreenHover" Color="#2E7D32"/>
+        <SolidColorBrush x:Key="BtnGrey"          Color="#E0E0E0"/>
+        <SolidColorBrush x:Key="BtnGreyHover"     Color="#BDBDBD"/>
+        <SolidColorBrush x:Key="GridHeader"       Color="#EEEEEE"/>
+        <SolidColorBrush x:Key="GridRowAlt"       Color="#FAFAFA"/>
+        <SolidColorBrush x:Key="GroupHeaderBg"    Color="#E3F2FD"/>
+        <SolidColorBrush x:Key="SubGroupHeaderBg" Color="#F1F8E9"/>
+        <SolidColorBrush x:Key="SelectedRowBg"    Color="#C8E6C9"/>
+        <SolidColorBrush x:Key="LogBg"            Color="#FAFAFA"/>
+        <SolidColorBrush x:Key="LogFg"            Color="#2E7D32"/>
+
+        <!-- ── Base TextBlock ── -->
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
+            <Setter Property="FontFamily"  Value="Segoe UI"/>
+            <Setter Property="FontSize"    Value="13"/>
+        </Style>
+
+        <!-- ── Label variant ── -->
+        <Style x:Key="Label" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="Foreground"  Value="{StaticResource TextSecondary}"/>
+            <Setter Property="FontSize"    Value="12"/>
+            <Setter Property="FontWeight"  Value="SemiBold"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <!-- ── Muted label ── -->
+        <Style x:Key="Muted" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="Foreground" Value="{StaticResource TextMuted}"/>
+            <Setter Property="FontSize"   Value="11"/>
+        </Style>
+
+        <!-- ── Action button (blue) ── -->
+        <Style x:Key="BtnBlue" TargetType="Button">
+            <Setter Property="Foreground"      Value="White"/>
+            <Setter Property="Background"      Value="{StaticResource AccentBlue}"/>
+            <Setter Property="FontFamily"      Value="Segoe UI"/>
+            <Setter Property="FontSize"        Value="13"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="Padding"         Value="18,7"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="4" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{StaticResource AccentBlueHover}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ── Apply button (green) ── -->
+        <Style x:Key="BtnGreen" TargetType="Button" BasedOn="{StaticResource BtnBlue}">
+            <Setter Property="Background" Value="{StaticResource AccentGreen}"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource AccentGreenHover}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- ── Small grey button (for Select All / None in group headers) ── -->
+        <Style x:Key="BtnSmall" TargetType="Button">
+            <Setter Property="Foreground"      Value="{StaticResource TextSecondary}"/>
+            <Setter Property="Background"      Value="{StaticResource BtnGrey}"/>
+            <Setter Property="FontFamily"      Value="Segoe UI"/>
+            <Setter Property="FontSize"        Value="11"/>
+            <Setter Property="Padding"         Value="7,3"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush"     Value="{StaticResource BorderBrush}"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="3" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{StaticResource BtnGreyHover}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ── Close button ── -->
+        <Style x:Key="BtnClose" TargetType="Button" BasedOn="{StaticResource BtnSmall}">
+            <Setter Property="FontSize"  Value="13"/>
+            <Setter Property="Padding"   Value="16,7"/>
+        </Style>
+
+        <!-- ── Mode toggle button in rows ── -->
+        <Style x:Key="ModeToggle" TargetType="ToggleButton">
+            <Setter Property="FontFamily"      Value="Segoe UI"/>
+            <Setter Property="FontSize"        Value="11"/>
+            <Setter Property="Padding"         Value="6,2"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush"     Value="{StaticResource BorderBrush}"/>
+            <Setter Property="Background"      Value="{StaticResource BtnGrey}"/>
+            <Setter Property="Foreground"      Value="{StaticResource TextSecondary}"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="3" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter Property="Background" Value="{StaticResource AccentBlue}"/>
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="BorderBrush" Value="{StaticResource AccentBlue}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ── Compact TextBox for numeric input in rows ── -->
+        <Style x:Key="NumBox" TargetType="TextBox">
+            <Setter Property="Width"           Value="52"/>
+            <Setter Property="Height"          Value="22"/>
+            <Setter Property="Padding"         Value="3,1"/>
+            <Setter Property="FontSize"        Value="12"/>
+            <Setter Property="FontFamily"      Value="Segoe UI"/>
+            <Setter Property="BorderBrush"     Value="{StaticResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background"      Value="White"/>
+            <Setter Property="Foreground"      Value="{StaticResource TextPrimary}"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="TextAlignment"   Value="Center"/>
+        </Style>
+
+        <!-- ── DataGrid ── -->
+        <Style TargetType="DataGrid">
+            <Setter Property="Background"               Value="{StaticResource PanelBg}"/>
+            <Setter Property="Foreground"               Value="{StaticResource TextPrimary}"/>
+            <Setter Property="BorderBrush"              Value="{StaticResource BorderBrush}"/>
+            <Setter Property="BorderThickness"          Value="1"/>
+            <Setter Property="RowBackground"            Value="White"/>
+            <Setter Property="AlternatingRowBackground" Value="{StaticResource GridRowAlt}"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="{StaticResource BorderBrush}"/>
+            <Setter Property="VerticalGridLinesBrush"   Value="{StaticResource BorderBrush}"/>
+            <Setter Property="FontFamily"               Value="Segoe UI"/>
+            <Setter Property="FontSize"                 Value="12"/>
+            <Setter Property="GridLinesVisibility"      Value="Horizontal"/>
+            <Setter Property="SelectionMode"            Value="Single"/>
+            <Setter Property="SelectionUnit"            Value="FullRow"/>
+            <Setter Property="RowHeight"                Value="30"/>
+        </Style>
+
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Background"      Value="{StaticResource GridHeader}"/>
+            <Setter Property="Foreground"      Value="{StaticResource TextPrimary}"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="FontSize"        Value="12"/>
+            <Setter Property="Padding"         Value="8,5"/>
+            <Setter Property="BorderBrush"     Value="{StaticResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="0,0,1,1"/>
+        </Style>
+
+        <Style TargetType="DataGridCell">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding"         Value="4,2"/>
+            <Setter Property="Foreground"      Value="{StaticResource TextPrimary}"/>
+        </Style>
+
+        <!-- ── Log TextBox ── -->
+        <Style x:Key="LogBox" TargetType="TextBox">
+            <Setter Property="Background"                  Value="{StaticResource LogBg}"/>
+            <Setter Property="Foreground"                  Value="{StaticResource LogFg}"/>
+            <Setter Property="FontFamily"                  Value="Consolas"/>
+            <Setter Property="FontSize"                    Value="11"/>
+            <Setter Property="BorderBrush"                 Value="{StaticResource BorderBrush}"/>
+            <Setter Property="BorderThickness"             Value="1"/>
+            <Setter Property="IsReadOnly"                  Value="True"/>
+            <Setter Property="TextWrapping"                Value="Wrap"/>
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="Padding"                     Value="6"/>
+        </Style>
+
+        <!-- ── Row style: green background when selected ── -->
+        <Style x:Key="GreenRowStyle" TargetType="DataGridRow">
+            <Setter Property="Background" Value="White"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                    <Setter Property="Background" Value="{StaticResource SelectedRowBg}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- ── Shape badge ── -->
+        <Style x:Key="ShapeBadge" TargetType="Border">
+            <Setter Property="CornerRadius" Value="3"/>
+            <Setter Property="Padding"      Value="5,1"/>
+            <Setter Property="Background"   Value="#F5F5F5"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding LoopShapeType}" Value="Circular">
+                    <Setter Property="Background" Value="#E8F5E9"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding LoopShapeType}" Value="Oval">
+                    <Setter Property="Background" Value="#E0F2F1"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding LoopShapeType}" Value="Rectangle">
+                    <Setter Property="Background" Value="#E3F2FD"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding LoopShapeType}" Value="Arc">
+                    <Setter Property="Background" Value="#FFF3E0"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ShapeBadgeText" TargetType="TextBlock">
+            <Setter Property="FontSize"   Value="11"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#757575"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding LoopShapeType}" Value="Circular">
+                    <Setter Property="Foreground" Value="#388E3C"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding LoopShapeType}" Value="Oval">
+                    <Setter Property="Foreground" Value="#00796B"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding LoopShapeType}" Value="Rectangle">
+                    <Setter Property="Foreground" Value="#1976D2"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding LoopShapeType}" Value="Arc">
+                    <Setter Property="Foreground" Value="#E65100"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+    </Window.Resources>
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>   <!-- Title + subtitle -->
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="Auto"/>   <!-- Controls bar -->
+            <RowDefinition Height="8"/>
+            <RowDefinition Height="Auto"/>   <!-- Summary bar -->
+            <RowDefinition Height="8"/>
+            <RowDefinition Height="*" MinHeight="160"/>  <!-- DataGrid -->
+            <RowDefinition Height="8"/>
+            <RowDefinition Height="Auto"/>   <!-- Log label -->
+            <RowDefinition Height="5"/>      <!-- GridSplitter -->
+            <RowDefinition Height="120" MinHeight="60"/>  <!-- Log -->
+            <RowDefinition Height="12"/>
+            <RowDefinition Height="Auto"/>   <!-- Bottom buttons -->
+        </Grid.RowDefinitions>
+
+        <!-- ══ Title ══ -->
+        <StackPanel Grid.Row="0">
+            <TextBlock Text="Roof Loop Analyzer — Inner &amp; Outer"
+                       FontSize="19" FontWeight="Bold"
+                       Foreground="{StaticResource AccentBlue}"/>
+            <TextBlock Text="All loops (Inner + Outer) are listed. Use per-row mode to set division by Count or by Distance."
+                       Style="{StaticResource Muted}" Margin="0,2,0,0"/>
+        </StackPanel>
+
+        <!-- ══ Controls bar ══ -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center">
+            <Button Content="🔍  Analyze Roof"
+                    Style="{StaticResource BtnBlue}"
+                    Command="{Binding AnalyzeCommand}"/>
+            <TextBlock Text="Select a roof in Revit, then click Analyze."
+                       Style="{StaticResource Muted}"
+                       VerticalAlignment="Center" Margin="14,0,0,0"/>
+        </StackPanel>
+
+        <!-- ══ Summary bar ══ -->
+        <Border Grid.Row="4"
+                Background="#E3F2FD" CornerRadius="4" Padding="10,5">
+            <TextBlock Text="{Binding SummaryText}"
+                       FontSize="12" Foreground="{StaticResource AccentBlue}"/>
+        </Border>
+
+        <!-- ══ DataGrid with grouping ══ -->
+        <DataGrid Grid.Row="6"
+                  ItemsSource="{Binding GroupedLoops}"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  HeadersVisibility="Column"
+                  RowStyle="{StaticResource GreenRowStyle}">
+
+            <!-- ── Group header template (two levels) ── -->
+            <DataGrid.GroupStyle>
+
+                <!-- Level 1: LoopType (Outer / Inner) -->
+                <GroupStyle>
+                    <GroupStyle.ContainerStyle>
+                        <Style TargetType="GroupItem">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="GroupItem">
+                                        <Expander IsExpanded="True">
+                                            <Expander.Header>
+                                                <Border Background="{StaticResource GroupHeaderBg}"
+                                                        CornerRadius="3" Padding="8,5"
+                                                        MinWidth="600">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <TextBlock Grid.Column="0"
+                                                                   Text="{Binding Name}"
+                                                                   FontSize="13" FontWeight="Bold"
+                                                                   Foreground="{StaticResource AccentBlue}"
+                                                                   VerticalAlignment="Center"/>
+                                                        <TextBlock Grid.Column="1"
+                                                                   Text="{Binding ItemCount, StringFormat=' ({0} loops)'}"
+                                                                   FontSize="12" Foreground="{StaticResource TextMuted}"
+                                                                   VerticalAlignment="Center" Margin="6,0,0,0"/>
+
+                                                        <!-- Select All / None for this LoopType group -->
+                                                        <StackPanel Grid.Column="2" Orientation="Horizontal">
+                                                            <Button Content="All"
+                                                                    Style="{StaticResource BtnSmall}"
+                                                                    Command="{Binding DataContext.SelectAllInGroupCommand,
+                                                                        RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                                    CommandParameter="{Binding Name}"
+                                                                    Margin="0,0,4,0"/>
+                                                            <Button Content="None"
+                                                                    Style="{StaticResource BtnSmall}"
+                                                                    Command="{Binding DataContext.SelectNoneInGroupCommand,
+                                                                        RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                                    CommandParameter="{Binding Name}"/>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </Border>
+                                            </Expander.Header>
+                                            <ItemsPresenter/>
+                                        </Expander>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GroupStyle.ContainerStyle>
+                </GroupStyle>
+
+                <!-- Level 2: LoopShapeType (Circular, Oval, …) -->
+                <GroupStyle>
+                    <GroupStyle.ContainerStyle>
+                        <Style TargetType="GroupItem">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="GroupItem">
+                                        <Expander IsExpanded="True">
+                                            <Expander.Header>
+                                                <Border Background="{StaticResource SubGroupHeaderBg}"
+                                                        CornerRadius="3" Padding="12,4"
+                                                        MinWidth="580">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                                            <TextBlock Text="{Binding Name}"
+                                                                       FontSize="12" FontWeight="SemiBold"
+                                                                       Foreground="{StaticResource AccentGreen}"
+                                                                       VerticalAlignment="Center"/>
+                                                            <TextBlock Text="{Binding ItemCount, StringFormat=' — {0} loop(s)'}"
+                                                                       FontSize="11" Foreground="{StaticResource TextMuted}"
+                                                                       VerticalAlignment="Center"/>
+                                                        </StackPanel>
+
+                                                        <!-- Select All / None for this Shape sub-group -->
+                                                        <StackPanel Grid.Column="2" Orientation="Horizontal">
+                                                            <Button Content="All"
+                                                                    Style="{StaticResource BtnSmall}"
+                                                                    Command="{Binding DataContext.SelectAllInGroupCommand,
+                                                                        RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                                    CommandParameter="{Binding Name}"
+                                                                    Margin="0,0,4,0"/>
+                                                            <Button Content="None"
+                                                                    Style="{StaticResource BtnSmall}"
+                                                                    Command="{Binding DataContext.SelectNoneInGroupCommand,
+                                                                        RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                                    CommandParameter="{Binding Name}"/>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </Border>
+                                            </Expander.Header>
+                                            <ItemsPresenter/>
+                                        </Expander>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GroupStyle.ContainerStyle>
+                </GroupStyle>
+
+            </DataGrid.GroupStyle>
+
+            <!-- ══ Columns ══ -->
+            <DataGrid.Columns>
+
+                <!-- ✓ Checkbox -->
+                <DataGridTemplateColumn Header="✓" Width="38" CanUserSort="False">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- # Index -->
+                <DataGridTextColumn Header="#" Binding="{Binding Index}" Width="36" IsReadOnly="True"/>
+
+                <!-- Type (Outer/Inner) -->
+                <DataGridTextColumn Header="Type" Binding="{Binding LoopType}" Width="55" IsReadOnly="True"/>
+
+                <!-- Shape badge -->
+                <DataGridTemplateColumn Header="Shape" Width="90" IsReadOnly="True" CanUserSort="True" SortMemberPath="LoopShapeType">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource ShapeBadge}" HorizontalAlignment="Left">
+                                <TextBlock Text="{Binding LoopShapeType}"
+                                           Style="{StaticResource ShapeBadgeText}"/>
+                            </Border>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- Perimeter (m) -->
+                <DataGridTextColumn Header="Perimeter (m)"
+                                    Binding="{Binding PerimeterM, StringFormat=F3}"
+                                    Width="105" IsReadOnly="True"/>
+
+                <!-- Curved Length (m) -->
+                <DataGridTextColumn Header="Curved (m)"
+                                    Binding="{Binding CurvedLengthM, StringFormat=F3}"
+                                    Width="90" IsReadOnly="True"/>
+
+                <!-- ── Division Mode Toggle (By Count | By Distance) ── -->
+                <DataGridTemplateColumn Header="Mode" Width="95" CanUserSort="False">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ToggleButton IsChecked="{Binding IsDistanceMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          ToolTip="Click to toggle: By Count ↔ By Distance"
+                                          Margin="4,0">
+                                <ToggleButton.Style>
+                                    <Style TargetType="ToggleButton" BasedOn="{StaticResource ModeToggle}">
+                                        <Setter Property="Content" Value="By Count"/>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter Property="Content" Value="By Dist"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ToggleButton.Style>
+                            </ToggleButton>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- ── Count (always visible, editable when in Count mode) ── -->
+                <DataGridTemplateColumn Header="Count" Width="72" CanUserSort="False">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding ManualCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     IsEnabled="{Binding IsCountMode}"
+                                     VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox" BasedOn="{StaticResource NumBox}">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Opacity" Value="0.4"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- ── Max Spacing (m) — active when By Distance ── -->
+                <DataGridTemplateColumn Header="Max Spc (m)" Width="95" CanUserSort="False">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding MaxSpacingM, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat=F2}"
+                                     IsEnabled="{Binding IsDistanceMode}"
+                                     ToolTip="Max spacing in metres — points every ≤ this distance"
+                                     VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox" BasedOn="{StaticResource NumBox}">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Opacity" Value="0.4"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- ── Fixed Spacing (m) — active when By Distance ── -->
+                <DataGridTemplateColumn Header="Fixed Spc (m)" Width="100" CanUserSort="False">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding FixedSpacingM, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat=F2}"
+                                     IsEnabled="{Binding IsDistanceMode}"
+                                     ToolTip="Fixed spacing in metres — rounded to nearest whole point count"
+                                     VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox" BasedOn="{StaticResource NumBox}">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Opacity" Value="0.4"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- ── Computed points (result) ── -->
+                <DataGridTextColumn Header="# Points"
+                                    Binding="{Binding RecommendedPoints}"
+                                    Width="85" IsReadOnly="True">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FontWeight"  Value="SemiBold"/>
+                            <Setter Property="Foreground"  Value="{StaticResource AccentBlue}"/>
+                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                            <Setter Property="VerticalAlignment"   Value="Center"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- ══ Log label ══ -->
+        <TextBlock Grid.Row="8"
+                   Text="Activity Log"
+                   Style="{StaticResource Label}"
+                   Margin="0,0,0,4"/>
+
+        <!-- ══ Log TextBox ══ -->
+        <GridSplitter Grid.Row="9"
+                      Height="5"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Center"
+                      Background="{StaticResource BorderBrush}"
+                      Cursor="SizeNS"/>
+
+        <TextBox Grid.Row="10"
+                 x:Name="LogTextBox"
+                 Style="{StaticResource LogBox}"
+                 Text="{Binding LogText, Mode=OneWay}"
+                 TextChanged="LogTextBox_TextChanged"/>
+
+        <!-- ══ Bottom buttons ══ -->
+        <Grid Grid.Row="12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="12"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0"
+                       Text="All inputs in metres. Points placed on slab shape editor of the selected roof."
+                       Style="{StaticResource Muted}"
+                       VerticalAlignment="Center"/>
+
+            <Button Grid.Column="1"
+                    Content="⚡  Apply Divisions"
+                    Style="{StaticResource BtnGreen}"
+                    Command="{Binding ApplyDivisionCommand}"/>
+
+            <Button Grid.Column="3"
+                    Content="Close"
+                    Style="{StaticResource BtnClose}"
+                    Width="80"
+                    Click="Close_Click"/>
+        </Grid>
+
+    </Grid>
+</Window>

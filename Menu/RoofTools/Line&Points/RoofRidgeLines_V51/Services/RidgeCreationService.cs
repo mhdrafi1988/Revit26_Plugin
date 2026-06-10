@@ -7,8 +7,21 @@ using Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines_V51.Models;
 namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines_V51.Services
 {
     /// <summary>
-    /// TX-01 → SlabShapeEditor directly on the Roof element (Revit 2026 API).
-    /// TX-02 → Detail Lines, first available LineStyle, red per-element view override.
+    /// Correct transaction order:
+    ///   TX-01 → Detail Lines (view-based, must come first so the view is not yet modified by shape editing)
+    ///   TX-02 → SlabShapeEditor AddPoint on the Roof element (Revit 2026 API)
+    ///
+    /// Why this order?
+    ///   Revit's SlabShapeEditor.Enable() triggers a model regeneration that can invalidate
+    ///   the active view's element table.  Creating detail lines BEFORE enabling shape editing
+    ///   avoids a potential "view out of date" exception and matches Revit's recommended
+    ///   practice: view-only elements first, model geometry second.
+    ///
+    /// Shape-point Z level:
+    ///   AddPoint(XYZ) is called with Z = baseElevation (bounding-box Min.Z of the roof).
+    ///   The SlabShapeEditor ignores the Z value on input and resets every new vertex to the
+    ///   slab's base elevation automatically, but we pass the correct Z anyway so the intent
+    ///   is explicit and the point is never left at world zero (Z=0) by accident.
     /// </summary>
     public class RidgeCreationService
     {
@@ -18,71 +31,23 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines_V51.Services
             RoofBase roof,
             VoronoiRidgeResult result)
         {
-            ExecuteTx01_ShapePoints(doc, roof, result);
-            ExecuteTx02_DetailLines(doc, activeView, result);
+            // ── TX-01 first: view elements (detail lines) ─────────────────────────
+            ExecuteTx01_DetailLines(doc, activeView, result);
+
+            // ── TX-02 second: model geometry (slab shape points) ──────────────────
+            ExecuteTx02_ShapePoints(doc, roof, result);
         }
 
         // ── TX-01 ─────────────────────────────────────────────────────────────────
 
-        private void ExecuteTx01_ShapePoints(
-            Document doc,
-            RoofBase roof,
-            VoronoiRidgeResult result)
-        {
-            using (var tx = new Transaction(doc, "TX-01 | Create Voronoi Ridge Shape Points on Roof"))
-            {
-                tx.Start();
-
-                var editor = roof.GetSlabShapeEditor();
-                if (editor == null)
-                {
-                    System.Diagnostics.Debug.WriteLine(
-                        "[RidgeCreationService] TX-01: GetSlabShapeEditor() returned null. " +
-                        "Roof shape editing may not be available.");
-                    tx.Commit();
-                    return;
-                }
-
-                if (!editor.IsEnabled)
-                    editor.Enable();
-
-                double baseZ = GetElementBaseElevation(roof);
-                result.CreatedShapePointIds.Clear();
-
-                foreach (var pt in result.ShapePoints)
-                {
-                    try
-                    {
-                        // AddPoint is the correct API in Revit 2026
-                        SlabShapeVertex vertex = editor.AddPoint(new XYZ(pt.X, pt.Y, baseZ));
-                        if (vertex != null)
-                        {
-                            // Note: SlabShapeVertex does not expose ElementId.
-                            // If you need to track created points, you might store the vertex object or a hash.
-                            // For now, we skip adding to CreatedShapePointIds.
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        System.Diagnostics.Debug.WriteLine(
-                            $"[RidgeCreationService] TX-01 point skipped: {ex.Message}");
-                    }
-                }
-
-                tx.Commit();
-            }
-        }
-
-        // ── TX-02 ─────────────────────────────────────────────────────────────────
-
-        private void ExecuteTx02_DetailLines(
+        private void ExecuteTx01_DetailLines(
             Document doc,
             View activeView,
             VoronoiRidgeResult result)
         {
             ElementId lineStyleId = GetFirstLineStyleId(doc);
 
-            using (var tx = new Transaction(doc, "TX-02 | Create Voronoi Ridge Detail Lines"))
+            using (var tx = new Transaction(doc, "TX-01 | Create Voronoi Ridge Detail Lines"))
             {
                 tx.Start();
 
@@ -111,7 +76,63 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines_V51.Services
                     catch (Exception ex)
                     {
                         System.Diagnostics.Debug.WriteLine(
-                            $"[RidgeCreationService] TX-02 line skipped: {ex.Message}");
+                            $"[RidgeCreationService] TX-01 line skipped: {ex.Message}");
+                    }
+                }
+
+                tx.Commit();
+            }
+        }
+
+        // ── TX-02 ─────────────────────────────────────────────────────────────────
+
+        private void ExecuteTx02_ShapePoints(
+            Document doc,
+            RoofBase roof,
+            VoronoiRidgeResult result)
+        {
+            using (var tx = new Transaction(doc, "TX-02 | Create Voronoi Ridge Shape Points on Roof"))
+            {
+                tx.Start();
+
+                var editor = roof.GetSlabShapeEditor();
+                if (editor == null)
+                {
+                    System.Diagnostics.Debug.WriteLine(
+                        "[RidgeCreationService] TX-02: GetSlabShapeEditor() returned null. " +
+                        "Roof shape editing may not be available.");
+                    tx.Commit();
+                    return;
+                }
+
+                if (!editor.IsEnabled)
+                    editor.Enable();
+
+                // Use the roof's actual base elevation so points are never placed at Z = 0.
+                // The SlabShapeEditor will reset the vertex Z to the slab surface during
+                // regeneration, but passing the correct Z makes intent explicit and avoids
+                // a world-origin placement if the regeneration is deferred.
+                double baseZ = GetElementBaseElevation(roof);
+                result.CreatedShapePointIds.Clear();
+
+                foreach (var pt in result.ShapePoints)
+                {
+                    try
+                    {
+                        // Correct API in Revit 2026: AddPoint(XYZ)
+                        // Z is set to baseZ (not 0) — see class-level comment.
+                        SlabShapeVertex vertex = editor.AddPoint(new XYZ(pt.X, pt.Y, baseZ));
+                        if (vertex != null)
+                        {
+                            // SlabShapeVertex does not expose ElementId in the 2026 API.
+                            // Tracking is deferred; CreatedShapePointIds count stays at 0
+                            // unless a future API version surfaces an Id.
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine(
+                            $"[RidgeCreationService] TX-02 point skipped: {ex.Message}");
                     }
                 }
 

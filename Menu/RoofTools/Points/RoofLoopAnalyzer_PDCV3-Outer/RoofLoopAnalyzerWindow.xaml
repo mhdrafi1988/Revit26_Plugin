@@ -1,0 +1,290 @@
+<Window x:Class="Revit26_Plugin.PDCV3.Views.RoofLoopAnalyzerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Roof Loop Analyzer — PDCV2"
+        Width="820" Height="600"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanResizeWithGrip"
+        Background="#1E1E2E">
+
+    <Window.Resources>
+        <!-- Base text style -->
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#CDD6F4"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize"   Value="13"/>
+        </Style>
+
+        <!-- Header label -->
+        <Style x:Key="HeaderLabel" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#89DCEB"/>
+            <Setter Property="FontSize"   Value="12"/>
+        </Style>
+
+        <!-- Info label (muted) -->
+        <Style x:Key="InfoLabel" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="Foreground" Value="#6C7086"/>
+            <Setter Property="FontSize"   Value="11"/>
+        </Style>
+
+        <!-- Action button -->
+        <Style x:Key="ActionButton" TargetType="Button">
+            <Setter Property="Foreground"      Value="#1E1E2E"/>
+            <Setter Property="Background"      Value="#89B4FA"/>
+            <Setter Property="FontFamily"      Value="Segoe UI"/>
+            <Setter Property="FontSize"        Value="13"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="Padding"         Value="18,6"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="4"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#B4BEFE"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#74C7EC"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Close button -->
+        <Style x:Key="CloseButton" TargetType="Button" BasedOn="{StaticResource ActionButton}">
+            <Setter Property="Background" Value="#45475A"/>
+            <Setter Property="Foreground" Value="#CDD6F4"/>
+        </Style>
+
+        <!-- DataGrid -->
+        <Style TargetType="DataGrid">
+            <Setter Property="Background"               Value="#181825"/>
+            <Setter Property="Foreground"               Value="#CDD6F4"/>
+            <Setter Property="BorderBrush"              Value="#313244"/>
+            <Setter Property="BorderThickness"          Value="1"/>
+            <Setter Property="RowBackground"            Value="#1E1E2E"/>
+            <Setter Property="AlternatingRowBackground" Value="#181825"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="#313244"/>
+            <Setter Property="VerticalGridLinesBrush"   Value="#313244"/>
+            <Setter Property="FontFamily"               Value="Segoe UI"/>
+            <Setter Property="FontSize"                 Value="12"/>
+        </Style>
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Background"      Value="#313244"/>
+            <Setter Property="Foreground"      Value="#89DCEB"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="Padding"         Value="8,4"/>
+            <Setter Property="BorderBrush"     Value="#45475A"/>
+            <Setter Property="BorderThickness" Value="0,0,1,1"/>
+        </Style>
+        <Style TargetType="DataGridCell">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding"         Value="6,3"/>
+            <Setter Property="Foreground"      Value="#CDD6F4"/>
+        </Style>
+
+        <!-- ComboBox -->
+        <Style TargetType="ComboBox">
+            <Setter Property="Background"  Value="#313244"/>
+            <Setter Property="Foreground"  Value="#CDD6F4"/>
+            <Setter Property="BorderBrush" Value="#45475A"/>
+            <Setter Property="FontFamily"  Value="Segoe UI"/>
+            <Setter Property="FontSize"    Value="13"/>
+            <Setter Property="Height"      Value="30"/>
+            <Setter Property="Padding"     Value="6,0"/>
+        </Style>
+
+        <!-- Log TextBox -->
+        <Style x:Key="LogBox" TargetType="TextBox">
+            <Setter Property="Background"               Value="#11111B"/>
+            <Setter Property="Foreground"               Value="#A6E3A1"/>
+            <Setter Property="FontFamily"               Value="Consolas"/>
+            <Setter Property="FontSize"                 Value="11"/>
+            <Setter Property="BorderBrush"              Value="#313244"/>
+            <Setter Property="BorderThickness"          Value="1"/>
+            <Setter Property="IsReadOnly"               Value="True"/>
+            <Setter Property="TextWrapping"             Value="Wrap"/>
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="Padding"                  Value="6"/>
+        </Style>
+
+        <!-- Chip / pill badge -->
+        <Style x:Key="ShapeBadge" TargetType="Border">
+            <Setter Property="CornerRadius"  Value="3"/>
+            <Setter Property="Padding"       Value="5,1"/>
+            <Setter Property="Background"    Value="#313244"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>   <!-- Title -->
+            <RowDefinition Height="Auto"/>   <!-- Subtitle info bar -->
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="Auto"/>   <!-- Controls row -->
+            <RowDefinition Height="8"/>
+            <RowDefinition Height="*" MinHeight="140"/>  <!-- DataGrid -->
+            <RowDefinition Height="8"/>
+            <RowDefinition Height="Auto"/>   <!-- Log label -->
+            <RowDefinition Height="120"/>    <!-- Log area -->
+            <RowDefinition Height="12"/>
+            <RowDefinition Height="Auto"/>   <!-- Bottom buttons -->
+        </Grid.RowDefinitions>
+
+        <!-- ── Title ── -->
+        <TextBlock Grid.Row="0"
+                   Text="Roof Loop Analyzer"
+                   FontSize="18" FontWeight="Bold"
+                   Foreground="#CBA6F7"/>
+
+        <!-- ── Subtitle info bar ── -->
+        <TextBlock Grid.Row="1"
+                   Style="{StaticResource InfoLabel}"
+                   Text="Targets outer loops with curved segments (circles, ovals, arcs). Points are distributed along both curved and straight segments."
+                   TextWrapping="Wrap"/>
+
+        <!-- ── Controls row ── -->
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>   <!-- Analyze -->
+                <ColumnDefinition Width="20"/>
+                <!-- Density group -->
+                <ColumnDefinition Width="Auto"/>   <!-- label -->
+                <ColumnDefinition Width="6"/>
+                <ColumnDefinition Width="70"/>     <!-- dropdown -->
+                <ColumnDefinition Width="6"/>
+                <ColumnDefinition Width="Auto"/>   <!-- unit label -->
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="Auto"/>   <!-- hint -->
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>   <!-- Apply -->
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    Content="🔍  Analyze Roof"
+                    Style="{StaticResource ActionButton}"
+                    Command="{Binding AnalyzeCommand}"/>
+
+            <!-- Density label -->
+            <TextBlock Grid.Column="2"
+                       Text="Point Density:"
+                       Style="{StaticResource HeaderLabel}"
+                       VerticalAlignment="Center"/>
+
+            <!-- Density dropdown -->
+            <ComboBox Grid.Column="4"
+                      ItemsSource="{Binding DensityOptions}"
+                      SelectedItem="{Binding SelectedDensity, Mode=TwoWay}"/>
+
+            <!-- Unit label -->
+            <TextBlock Grid.Column="6"
+                       Text="pts / m"
+                       VerticalAlignment="Center"
+                       Foreground="#89DCEB"
+                       FontSize="12"/>
+
+            <!-- Dynamic hint: shows expected points for a sample perimeter -->
+            <StackPanel Grid.Column="8" Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="— count = density × perimeter (m)"
+                           Style="{StaticResource InfoLabel}"
+                           VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <Button Grid.Column="10"
+                    Content="⚡  Apply Divisions"
+                    Style="{StaticResource ActionButton}"
+                    Background="#A6E3A1"
+                    Command="{Binding ApplyDivisionCommand}"/>
+        </Grid>
+
+        <!-- ── DataGrid ── -->
+        <DataGrid Grid.Row="5"
+                  ItemsSource="{Binding Loops}"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  SelectionMode="Single"
+                  HeadersVisibility="Column">
+
+            <DataGrid.Columns>
+
+                <!-- Select checkbox -->
+                <DataGridTemplateColumn Header="✓" Width="40">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTextColumn Header="#"
+                                    Binding="{Binding Index}"
+                                    Width="35" IsReadOnly="True"/>
+
+                <DataGridTextColumn Header="Type"
+                                    Binding="{Binding LoopType}"
+                                    Width="55" IsReadOnly="True"/>
+
+                <!-- Shape column with colored badge -->
+                <DataGridTemplateColumn Header="Shape" Width="85">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource ShapeBadge}">
+                                <TextBlock Text="{Binding LoopShapeType}"
+                                           FontSize="11" FontWeight="SemiBold"
+                                           HorizontalAlignment="Center"/>
+                            </Border>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTextColumn Header="Perimeter (mm)"
+                                    Binding="{Binding PerimeterMm, StringFormat=N0}"
+                                    Width="115" IsReadOnly="True"/>
+
+                <!-- Curved arc length -->
+                <DataGridTextColumn Header="Curved Length (mm)"
+                                    Binding="{Binding CurvedLengthMm, StringFormat=N0}"
+                                    Width="130" IsReadOnly="True"/>
+
+                <!-- Points computed from density × perimeter -->
+                <DataGridTextColumn Header="Points (auto)"
+                                    Binding="{Binding RecommendedPoints}"
+                                    Width="90" IsReadOnly="True"/>
+
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- ── Log label ── -->
+        <TextBlock Grid.Row="7"
+                   Text="Activity Log"
+                   Style="{StaticResource HeaderLabel}"
+                   Margin="0,0,0,4"/>
+
+        <!-- ── Log TextBox ── -->
+        <TextBox Grid.Row="8"
+                 x:Name="LogTextBox"
+                 Style="{StaticResource LogBox}"
+                 Text="{Binding LogText, Mode=OneWay}"
+                 TextChanged="LogTextBox_TextChanged"/>
+
+        <!-- ── Bottom buttons ── -->
+        <StackPanel Grid.Row="10" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Close"
+                    Style="{StaticResource CloseButton}"
+                    Width="80"
+                    Click="Close_Click"/>
+        </StackPanel>
+
+    </Grid>
+</Window>
