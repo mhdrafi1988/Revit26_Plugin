@@ -17,13 +17,13 @@ namespace Revit26_Plugin.Menu.Ribbon
             SlopeMenu.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Autoslope32.png");
 
             //Slope BY Point
-            SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeCommand_03_07", "AutoSlopeCommand_03_07(Point)**", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint_30_07.Commands.AutoSlopeCommand"));
+            //SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeCommand_03_07", "AutoSlopeCommand_03_07(Point)**", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint_30_07.Commands.AutoSlopeCommand"));
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint_04", "AutoSlope(ByPoint)00_04_Excel(Classic)", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint_04.Commands.AutoSlopeCommand"));
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPointTwoSlopes_01_00", "AutoSlopeByPointTwoSlopes_01_00_Excel(WIP)", assemblyPath, "AutoSlopeByPointTwoSlopes_01_00.Commands.AutoSlopeCommand"));
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint", "AutoSlopeByPoint_00_00(Classic)", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.Commands.AutoSlopeCommand"));
-            SlopeMenu.AddPushButton(new PushButtonData("Btn_DijkstraPath2_2026", "DijkstraPath2_2026(Point)", assemblyPath, "Revit26_Plugin.Commands.DijkstraPath2_2026"));
-            SlopeMenu.AddPushButton(new PushButtonData("Btn_RoofSloperClassic1_v2", "RoofSloperClassic1_V2_CSV(Point)", assemblyPath, "Revit26_Plugin.Commands.RoofSloperClassic1_v2"));
-            SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPointThenDirection_00", "AutoSlopeByPointThenDirection_00", assemblyPath, "Revit26_Plugin.AutoSlopeByPointThenDirection_00.Commands.AutoSlopeCommand"));
+            //SlopeMenu.AddPushButton(new PushButtonData("Btn_DijkstraPath2_2026", "DijkstraPath2_2026(Point)", assemblyPath, "Revit26_Plugin.Commands.DijkstraPath2_2026"));
+            //SlopeMenu.AddPushButton(new PushButtonData("Btn_RoofSloperClassic1_v2", "RoofSloperClassic1_V2_CSV(Point)", assemblyPath, "Revit26_Plugin.Commands.RoofSloperClassic1_v2"));
+           // SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPointThenDirection_00", "AutoSlopeByPointThenDirection_00", assemblyPath, "Revit26_Plugin.AutoSlopeByPointThenDirection_00.Commands.AutoSlopeCommand"));
 
             //Slope BY Drain 
             //SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSloperDrain_04_00", "AutoSloperDrain_04_00(Drain*)", assemblyPath, "Revit22_Plugin.Asd.Commands.AutoSloperDrain_04"));

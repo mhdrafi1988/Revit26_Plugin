@@ -1,5 +1,16 @@
 // =======================================================
 // File: AutoSlopeViewModel.cs
+// NEW CHANGES:
+//   - IncludeVertexDetails (Detailed version) removed from UI
+//     and hardcoded to false in ExportConfig.
+//   - EnableDrainTolerance defaults to true.
+//   - DrainToleranceMm defaults to AppConstants.DefaultDrainToleranceMm (500).
+//   - ExportToExcel defaults to true (unchanged).
+//   - ExportResults now uses ExcelExportService instead of
+//     ExcelExportHelper directly (EPPlus isolation).
+//   - After a successful export, MessageBox.Show asks the user
+//     whether to open the file immediately.
+//
 // Fixes applied:
 //   #1  Removed unused Action<string> log constructor parameter.
 //   #5  Replaced bool HasRun with RunState enum so StatusMessage
@@ -82,7 +93,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.UI.ViewModels
             set { _drainToleranceMm = value; Raise(); }
         }
 
-        private bool _enableDrainTolerance;
+        private bool _enableDrainTolerance = true;
         public bool EnableDrainTolerance
         {
             get => _enableDrainTolerance;
@@ -103,12 +114,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.UI.ViewModels
             set { _exportToExcel = value; Raise(); }
         }
 
-        private bool _includeVertexDetails = true;
-        public bool IncludeVertexDetails
-        {
-            get => _includeVertexDetails;
-            set { _includeVertexDetails = value; Raise(); }
-        }
+        // Detailed vertex export removed from UI — compact export only.
 
         // ── Log ───────────────────────────────────────────────────────────────
         private string _logText = string.Empty;
@@ -310,7 +316,7 @@ Export Folder            : {ExportFolderPath}";
                 {
                     ExportPath = ExportFolderPath,
                     ExportToExcel = ExportToExcel,
-                    IncludeVertexDetails = IncludeVertexDetails
+                    IncludeVertexDetails = false   // detailed export removed from UI
                 },
 
                 OnCompleted = result =>
@@ -382,29 +388,35 @@ Export Folder            : {ExportFolderPath}";
                 return;
             }
 
-            try
+            string filePath = DialogService.ShowSaveFileDialog(
+                "Excel files (*.xlsx)|*.xlsx|All files (*.*)|*.*",
+                ExportFolderPath,
+                $"AutoSlope_Results_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx");
+
+            if (string.IsNullOrEmpty(filePath)) return;
+
+            string savedPath = ExcelExportService.ExportResultsSummary(
+                filePath,
+                _lastResult,
+                SlopePercent,
+                ThresholdMeters,
+                EnableDrainTolerance,
+                DrainToleranceMm,
+                ExportFolderPath,
+                AddLog);
+
+            if (!string.IsNullOrEmpty(savedPath))
             {
-                string filePath = DialogService.ShowSaveFileDialog(
-                    "Excel files (*.xlsx)|*.xlsx|All files (*.*)|*.*",
-                    ExportFolderPath,
-                    $"AutoSlope_Results_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx");
+                AddLog($"✅ Results exported to: {savedPath}");
 
-                if (string.IsNullOrEmpty(filePath)) return;
+                var answer = System.Windows.MessageBox.Show(
+                    "Excel file saved. Open it now?",
+                    "Export Complete",
+                    System.Windows.MessageBoxButton.YesNo,
+                    System.Windows.MessageBoxImage.Question);
 
-                ExcelExportHelper.ExportResultsSummary(
-                    filePath,
-                    _lastResult,
-                    SlopePercent,
-                    ThresholdMeters,
-                    EnableDrainTolerance,
-                    DrainToleranceMm,
-                    ExportFolderPath);
-
-                AddLog($"Results exported to: {filePath}");
-            }
-            catch (Exception ex)
-            {
-                AddLog($"Error exporting results: {ex.Message}");
+                if (answer == System.Windows.MessageBoxResult.Yes)
+                    System.Diagnostics.Process.Start(savedPath);
             }
         }
 

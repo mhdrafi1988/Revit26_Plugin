@@ -1,5 +1,11 @@
 // =======================================================
 // File: AutoSlopeEngine.cs
+// NEW CHANGE (EPPlus isolation):
+//   All ExcelExportHelper calls replaced with ExcelExportService.
+//   ExcelExportService checks whether EPPlus.dll is present
+//   before touching ExcelExportHelper. If the DLL is missing,
+//   export is silently skipped and the slope operation continues.
+//
 // Fixes:
 //   #6  DateTime.Now is captured once into `runDate` and
 //       passed to WriteAll – previously called twice, which
@@ -302,7 +308,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Engine
             // ── Excel export ─────────────────────────────────────────────────
             if (data.ExportConfig?.ExportToExcel == true)
             {
-                string compactPath = ExcelExportHelper.ExportCompactVertexData(
+                string compactPath = ExcelExportService.ExportCompactVertexData(
                     data, vertexDataList, roof, data.SlopePercent);
 
                 if (!string.IsNullOrEmpty(compactPath))
@@ -323,7 +329,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Engine
 
                 if (data.ExportConfig.IncludeVertexDetails)
                 {
-                    string detailedPath = ExcelExportHelper.ExportDetailedVertexData(
+                    string detailedPath = ExcelExportService.ExportDetailedVertexData(
                         data, vertexDataList, roof, finalDrainPoints, data.SlopePercent);
 
                     if (!string.IsNullOrEmpty(detailedPath))

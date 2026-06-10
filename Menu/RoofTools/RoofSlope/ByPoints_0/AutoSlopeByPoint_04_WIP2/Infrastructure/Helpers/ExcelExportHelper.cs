@@ -1,38 +1,27 @@
 // =======================================================
 // File: ExcelExportHelper.cs
-// Fixes:
-//   #8  GetUniqueFilePath rewritten as an iterative loop —
-//       no more unbounded recursion. Handles up to 99
-//       collisions then falls back to a time-based suffix.
-//   #10 ExportSummaryOnly filename: removed leading underscore
-//       from "_Summary_" so the default prefix "AutoSlope_"
-//       does not produce a double-underscore ("AutoSlope__Summary_").
-//
 // NEW CHANGES:
-//   ElevationOffset_mm column split into three columns in
-//   both compact and detailed (Vertices sheet) exports:
+//   Single combined workbook — two sheets in one file:
 //
-//     ElevCalc_mm   — elevation calculated from path × slope.
-//                     This is what the engine wrote to Revit.
-//     ElevModel_mm  — elevation read back from the roof vertex
-//                     AFTER tx.Commit(). Reflects what Revit
-//                     actually stored in the model.
-//     ElevDiff_mm   — ElevModel_mm minus ElevCalc_mm.
-//                     Zero = Revit accepted exactly what was written.
-//                     Non-zero = Revit silently adjusted the vertex.
+//   Sheet 1 "Vertex Data":
+//     All vertices including skipped ones.
+//     New columns added: VertexIndex, DrainIndex, WasProcessed.
+//     Skipped rows highlighted in light yellow.
+//     ElevCalc_mm, ElevModel_mm, ElevDiff_mm retained.
+//     ElevDiff_mm colour-coded green/orange.
 //
-//   ElevDiff_mm cells are coloured:
-//     Green  = 0 (exact match)
-//     Orange = non-zero difference (Revit adjusted)
+//   Sheet 2 "Run Summary":
+//     Parameter/value table — previously a separate file
+//     produced by ExportResultsSummary.
+//     Now generated alongside Sheet 1 in the same workbook.
 //
-//   Statistics sheet updated: all three elevation metrics
-//   (avg / max / min / range) are now shown for both
-//   ElevCalc_mm and ElevModel_mm side by side.
+//   ExportResultsSummary is kept for the "Export Results"
+//   button path but now delegates to ExportCompactVertexData
+//   so both sheets are always produced together.
 //
-// Note: AutoSlopeMetrics / ExportSummaryOnly are kept here
-//       so the file compiles if anything still references them,
-//       but see review issue #2 — they are dead code and can
-//       be deleted once confirmed unused.
+// Earlier fixes retained:
+//   #8  GetUniqueFilePath iterative — no unbounded recursion.
+//   ElevationOffset_mm split into ElevCalc/ElevModel/ElevDiff.
 // =======================================================
 
 using Autodesk.Revit.DB;
@@ -59,6 +48,11 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
 
         // ── Public export methods ────────────────────────────────────────────
 
+        /// <summary>
+        /// Called by the "Export Results" button in the ViewModel.
+        /// Produces the same combined two-sheet workbook as the
+        /// auto-export after Run, using a user-chosen file path.
+        /// </summary>
         public static string ExportResultsSummary(
             string filePath,
             AutoSlopeResult result,
@@ -68,47 +62,30 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
             int drainToleranceMm,
             string exportFolderPath)
         {
-            if (string.IsNullOrEmpty(filePath)) return null;
+            if (string.IsNullOrEmpty(filePath) || result == null) return null;
 
             try
             {
                 using (var package = new ExcelPackage())
                 {
-                    var sheet = package.Workbook.Worksheets.Add("AutoSlope Results");
+                    // Sheet 1 — vertex data not available from this call path,
+                    // so produce a clear placeholder telling the user to use
+                    // the auto-export file for full vertex data.
+                    var placeholderSheet = package.Workbook.Worksheets.Add("Vertex Data");
+                    placeholderSheet.Cells[1, 1].Value =
+                        "Full vertex data is in the auto-export file " +
+                        "generated immediately after Run.";
+                    placeholderSheet.Cells[1, 1].Style.Font.Italic = true;
+                    placeholderSheet.Cells[1, 1, 1, 5].Merge = true;
+                    placeholderSheet.Column(1).Width = 80;
 
-                    sheet.Cells[1, 1].Value = "AutoSlope Results Export";
-                    sheet.Cells[1, 1, 1, 2].Merge = true;
-                    sheet.Cells[1, 1].Style.Font.Bold = true;
-                    sheet.Cells[1, 1].Style.Font.Size = 14;
+                    // Sheet 2 — run summary
+                    var summarySheet = package.Workbook.Worksheets.Add("Run Summary");
+                    FillRunSummarySheet(
+                        summarySheet, result, slopePercent,
+                        thresholdMeters, enableDrainTolerance,
+                        drainToleranceMm, exportFolderPath);
 
-                    sheet.Cells[2, 1].Value = "Export Date:";
-                    sheet.Cells[2, 1].Style.Font.Bold = true;
-                    sheet.Cells[2, 2].Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-
-                    int row = 4;
-                    sheet.Cells[row, 1].Value = "Parameter";
-                    sheet.Cells[row, 2].Value = "Value";
-                    sheet.Cells[row, 1, row, 2].Style.Font.Bold = true;
-                    sheet.Cells[row, 1, row, 2].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                    sheet.Cells[row, 1, row, 2].Style.Fill.BackgroundColor.SetColor(DrawingColor.LightGray);
-                    row++;
-
-                    AddRow(sheet, ref row, "Vertices Processed", result.VerticesProcessed);
-                    AddRow(sheet, ref row, "Vertices Skipped", result.VerticesSkipped);
-                    AddRow(sheet, ref row, "Final Drain Count", result.FinalDrainCount);
-                    AddRow(sheet, ref row, "Highest Elevation (mm)", $"{result.HighestElevation_mm:0}");
-                    AddRow(sheet, ref row, "Longest Path (m)", $"{result.LongestPath_m:0.00}");
-                    AddRow(sheet, ref row, "Run Duration (sec)", result.RunDuration_sec);
-                    AddRow(sheet, ref row, "Run Date", result.RunDate);
-                    AddRow(sheet, ref row, "Slope Percentage", $"{slopePercent}%");
-                    AddRow(sheet, ref row, "Threshold (m)", thresholdMeters);
-                    AddRow(sheet, ref row, "Drain Tolerance Enabled",
-                        enableDrainTolerance ? "Yes" : "No");
-                    AddRow(sheet, ref row, "Drain Tolerance (mm)",
-                        enableDrainTolerance ? drainToleranceMm.ToString() : "N/A");
-                    AddRow(sheet, ref row, "Export Folder", exportFolderPath);
-
-                    sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
                     package.SaveAs(new FileInfo(filePath));
                 }
 
@@ -120,6 +97,12 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
             }
         }
 
+        /// <summary>
+        /// Previously produced a separate detailed workbook.
+        /// Now merged into ExportCompactVertexData as Sheet 1.
+        /// This method is kept so existing call sites compile —
+        /// it simply delegates to ExportCompactVertexData.
+        /// </summary>
         public static string ExportDetailedVertexData(
             AutoSlopePayload payload,
             List<VertexData> vertexData,
@@ -127,43 +110,16 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
             List<XYZ> drainPoints,
             double slopePercent)
         {
-            if (payload?.ExportConfig == null || !payload.ExportConfig.ExportToExcel || vertexData == null)
-                return null;
-
-            try
-            {
-                string roofId = roof.Id.Value.ToString();
-                string slopeStr = slopePercent.ToString("0.00", CultureInfo.InvariantCulture);
-                string dateStr = DateTime.Now.ToString("dd-MM-yy");
-                string fileName = $"{roofId}_{slopeStr}_{dateStr}_DETAILED.xlsx";
-                string filePath = GetUniqueFilePath(Path.Combine(payload.ExportConfig.ExportPath, fileName));
-
-                using (var package = new ExcelPackage())
-                {
-                    var summarySheet = package.Workbook.Worksheets.Add("Summary");
-                    FillSummarySheet(summarySheet, payload, vertexData, roof, drainPoints, slopePercent);
-
-                    var drainSheet = package.Workbook.Worksheets.Add("Drain Points");
-                    FillDrainPointsSheet(drainSheet, drainPoints);
-
-                    var verticesSheet = package.Workbook.Worksheets.Add("Vertices");
-                    FillVerticesSheet(verticesSheet, vertexData, roof, slopePercent);
-
-                    var statsSheet = package.Workbook.Worksheets.Add("Statistics");
-                    FillStatisticsSheet(statsSheet, vertexData);
-
-                    package.SaveAs(new FileInfo(filePath));
-                }
-
-                return filePath;
-            }
-            catch (Exception ex)
-            {
-                payload?.Log?.Invoke($"Detailed Excel Export Error: {ex.Message}");
-                return null;
-            }
+            // drainPoints not needed now — drain index is stored per-vertex
+            return ExportCompactVertexData(payload, vertexData, roof, slopePercent);
         }
 
+        /// <summary>
+        /// Produces a two-sheet workbook:
+        ///   Sheet 1 "Vertex Data"  — all vertices (processed + skipped),
+        ///                            with VertexIndex, DrainIndex, WasProcessed.
+        ///   Sheet 2 "Run Summary"  — parameter/value run summary table.
+        /// </summary>
         public static string ExportCompactVertexData(
             AutoSlopePayload payload,
             List<VertexData> vertexData,
@@ -176,6 +132,12 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
             try
             {
                 string roofId = roof.Id.Value.ToString();
+                string slopeStr = slopePercent.ToString("0.00", CultureInfo.InvariantCulture);
+                string dateStr = DateTime.Now.ToString("dd-MM-yy");
+                string fileName = $"{roofId}_{slopeStr}_{dateStr}.xlsx";
+                string filePath = GetUniqueFilePath(Path.Combine(payload.ExportConfig.ExportPath, fileName));
+
+                // ── Roof meta ────────────────────────────────────────────────
                 string roofType = roof.Name ?? "Unknown";
                 string baseLevelName = "Unknown";
                 double baseOffset = 0;
@@ -188,100 +150,145 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
 
                 Parameter offsetParam = roof.get_Parameter(BuiltInParameter.ROOF_CONSTRAINT_OFFSET_PARAM);
                 if (offsetParam != null && offsetParam.HasValue)
-                    baseOffset = UnitUtils.ConvertFromInternalUnits(offsetParam.AsDouble(), UnitTypeId.Millimeters);
-
-                string slopeStr = slopePercent.ToString("0.00", CultureInfo.InvariantCulture);
-                string dateStr = DateTime.Now.ToString("dd-MM-yy");
-                string fileName = $"{roofId}_{slopeStr}_{dateStr}.xlsx";
-                string filePath = GetUniqueFilePath(Path.Combine(payload.ExportConfig.ExportPath, fileName));
+                    baseOffset = UnitUtils.ConvertFromInternalUnits(
+                        offsetParam.AsDouble(), UnitTypeId.Millimeters);
 
                 using (var package = new ExcelPackage())
                 {
-                    var sheet = package.Workbook.Worksheets.Add("AutoSlope Data");
+                    // ════════════════════════════════════════════════════════
+                    // SHEET 1 — Vertex Data
+                    // ════════════════════════════════════════════════════════
+                    var vertSheet = package.Workbook.Worksheets.Add("Vertex Data");
 
-                    // Title row — widened to 9 columns to cover new elevation columns
-                    sheet.Cells["A1"].Value = "AUTOSLOPE COMPACT VERTEX EXPORT";
-                    sheet.Cells["A1:I1"].Merge = true;
-                    sheet.Cells["A1"].Style.Font.Bold = true;
-                    sheet.Cells["A1"].Style.Font.Size = 14;
-                    sheet.Cells["A1"].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                    sheet.Cells["A1"].Style.Fill.BackgroundColor.SetColor(DrawingColor.LightBlue);
+                    // Title
+                    vertSheet.Cells["A1"].Value = "AUTOSLOPE — VERTEX DATA";
+                    vertSheet.Cells["A1:L1"].Merge = true;
+                    vertSheet.Cells["A1"].Style.Font.Bold = true;
+                    vertSheet.Cells["A1"].Style.Font.Size = 14;
+                    vertSheet.Cells["A1"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    vertSheet.Cells["A1"].Style.Fill.BackgroundColor.SetColor(DrawingColor.LightBlue);
 
-                    // NEW: ElevationOffset_mm replaced by three columns:
-                    //   ElevCalc_mm  — from path × slope (what was written)
-                    //   ElevModel_mm — read back from Revit after commit
-                    //   ElevDiff_mm  — difference (0 = Revit accepted exactly)
+                    // Column headers
+                    // Columns: VertexIndex | DrainIndex | WasProcessed |
+                    //          RoofElementId | RoofTypeName | BaseLevel | LevelOffset_mm |
+                    //          PathLength_m | SlopePercent |
+                    //          ElevCalc_mm | ElevModel_mm | ElevDiff_mm
                     string[] headers =
                     {
-                        "RoofElementId", "RoofTypeName", "BaseLevel", "BaseOffset_mm",
-                        "PathLength_Meters", "SlopePercent",
+                        "VertexIndex", "DrainIndex", "WasProcessed",
+                        "RoofElementId", "RoofTypeName", "BaseLevel", "LevelOffset_mm",
+                        "PathLength_m", "SlopePercent",
                         "ElevCalc_mm", "ElevModel_mm", "ElevDiff_mm"
                     };
 
                     for (int i = 0; i < headers.Length; i++)
                     {
-                        sheet.Cells[3, i + 1].Value = headers[i];
-                        sheet.Cells[3, i + 1].Style.Font.Bold = true;
-                        sheet.Cells[3, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                        sheet.Cells[3, i + 1].Style.Fill.BackgroundColor.SetColor(DrawingColor.LightGray);
+                        var hCell = vertSheet.Cells[3, i + 1];
+                        hCell.Value = headers[i];
+                        hCell.Style.Font.Bold = true;
+                        hCell.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                        hCell.Style.Fill.BackgroundColor.SetColor(DrawingColor.LightGray);
                     }
 
-                    // Colour the three new header cells to make them stand out
-                    sheet.Cells[3, 7].Style.Fill.BackgroundColor.SetColor(DrawingColor.LightGreen);
-                    sheet.Cells[3, 8].Style.Fill.BackgroundColor.SetColor(DrawingColor.LightSkyBlue);
-                    sheet.Cells[3, 9].Style.Fill.BackgroundColor.SetColor(DrawingColor.LightYellow);
+                    // Highlight the three elevation headers
+                    vertSheet.Cells[3, 10].Style.Fill.BackgroundColor.SetColor(DrawingColor.LightGreen);
+                    vertSheet.Cells[3, 11].Style.Fill.BackgroundColor.SetColor(DrawingColor.LightSkyBlue);
+                    vertSheet.Cells[3, 12].Style.Fill.BackgroundColor.SetColor(DrawingColor.LightYellow);
 
-                    var sortedVertices = vertexData
+                    // Sort: processed first (longest path → shortest), then skipped
+                    var sorted = vertexData
                         .Where(v => v.WasProcessed)
                         .OrderByDescending(v => v.PathLengthMeters)
+                        .Concat(vertexData.Where(v => !v.WasProcessed))
                         .ToList();
 
                     int row = 4;
-                    foreach (var vertex in sortedVertices)
+                    foreach (var v in sorted)
                     {
-                        sheet.Cells[row, 1].Value = roof.Id.Value;
-                        sheet.Cells[row, 2].Value = roofType;
-                        sheet.Cells[row, 3].Value = baseLevelName;
-                        sheet.Cells[row, 4].Value = Math.Round(baseOffset, 0);
-                        sheet.Cells[row, 5].Value = Math.Round(vertex.PathLengthMeters, 2);
-                        sheet.Cells[row, 6].Value = slopePercent;
-                        sheet.Cells[row, 7].Value = Math.Round(vertex.ElevationOffsetMm, 0);
-                        sheet.Cells[row, 8].Value = Math.Round(vertex.ElevationFromModel_mm, 0);
+                        vertSheet.Cells[row, 1].Value = v.VertexIndex;
+                        // DrainIndex: -1 for skipped, show as "—" for clarity
+                        vertSheet.Cells[row, 2].Value = v.WasProcessed ? (object)v.NearestDrainIndex : "—";
+                        vertSheet.Cells[row, 3].Value = v.WasProcessed ? "YES" : "NO";
+                        vertSheet.Cells[row, 4].Value = roof.Id.Value;
+                        vertSheet.Cells[row, 5].Value = roofType;
+                        vertSheet.Cells[row, 6].Value = baseLevelName;
+                        vertSheet.Cells[row, 7].Value = Math.Round(baseOffset, 0);
+                        vertSheet.Cells[row, 8].Value = Math.Round(v.PathLengthMeters, 2);
+                        vertSheet.Cells[row, 9].Value = slopePercent;
+                        vertSheet.Cells[row, 10].Value = v.WasProcessed ? (object)Math.Round(v.ElevationOffsetMm, 0) : "—";
+                        vertSheet.Cells[row, 11].Value = v.WasProcessed ? (object)Math.Round(v.ElevationFromModel_mm, 0) : "—";
 
-                        double diff = Math.Round(vertex.ElevationDiff_mm, 0);
-                        sheet.Cells[row, 9].Value = diff;
-
-                        // Colour ElevDiff_mm: green = exact match, orange = Revit adjusted
-                        sheet.Cells[row, 9].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                        sheet.Cells[row, 9].Style.Fill.BackgroundColor.SetColor(
-                            diff == 0 ? DrawingColor.LightGreen : DrawingColor.Orange);
+                        if (v.WasProcessed)
+                        {
+                            double diff = Math.Round(v.ElevationDiff_mm, 0);
+                            vertSheet.Cells[row, 12].Value = diff;
+                            vertSheet.Cells[row, 12].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                            vertSheet.Cells[row, 12].Style.Fill.BackgroundColor.SetColor(
+                                diff == 0 ? DrawingColor.LightGreen : DrawingColor.Orange);
+                        }
+                        else
+                        {
+                            vertSheet.Cells[row, 12].Value = "—";
+                            // Highlight entire skipped row in light yellow
+                            vertSheet.Cells[row, 1, row, 12].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                            vertSheet.Cells[row, 1, row, 12].Style.Fill.BackgroundColor
+                                .SetColor(DrawingColor.LightYellow);
+                        }
 
                         row++;
                     }
 
+                    // Summary block below the data
                     row += 2;
-                    sheet.Cells[row, 1].Value = "SUMMARY";
-                    sheet.Cells[row, 1].Style.Font.Bold = true;
-                    sheet.Cells[row, 1].Style.Font.Size = 12;
-                    sheet.Cells[row + 1, 1].Value = "Total Processed Vertices:";
-                    sheet.Cells[row + 1, 2].Value = sortedVertices.Count;
+                    int processed = sorted.Count(v => v.WasProcessed);
+                    int skipped = sorted.Count(v => !v.WasProcessed);
+                    int adjusted = sorted.Count(v => v.WasProcessed && Math.Round(v.ElevationDiff_mm, 0) != 0);
 
-                    if (sortedVertices.Any())
+                    vertSheet.Cells[row, 1].Value = "SUMMARY";
+                    vertSheet.Cells[row, 1].Style.Font.Bold = true;
+                    vertSheet.Cells[row, 1].Style.Font.Size = 12;
+                    row++;
+                    vertSheet.Cells[row, 1].Value = "Total vertices:"; vertSheet.Cells[row, 2].Value = sorted.Count; row++;
+                    vertSheet.Cells[row, 1].Value = "Processed:"; vertSheet.Cells[row, 2].Value = processed; row++;
+                    vertSheet.Cells[row, 1].Value = "Skipped:"; vertSheet.Cells[row, 2].Value = skipped; row++;
+                    vertSheet.Cells[row, 1].Value = "Adjusted by Revit:"; vertSheet.Cells[row, 2].Value = adjusted;
+                    vertSheet.Cells[row, 3].Value = adjusted > 0 ? "⚠ check ElevDiff_mm" : "✓ none"; row++;
+
+                    if (processed > 0)
                     {
-                        sheet.Cells[row + 2, 1].Value = "Longest Path:";
-                        sheet.Cells[row + 2, 2].Value = sortedVertices.First().PathLengthMeters;
-                        sheet.Cells[row + 2, 3].Value = "m";
-                        sheet.Cells[row + 3, 1].Value = "Shortest Path:";
-                        sheet.Cells[row + 3, 2].Value = sortedVertices.Last().PathLengthMeters;
-                        sheet.Cells[row + 3, 3].Value = "m";
-
-                        int adjustedCount = sortedVertices.Count(v => Math.Round(v.ElevationDiff_mm, 0) != 0);
-                        sheet.Cells[row + 4, 1].Value = "Vertices adjusted by Revit:";
-                        sheet.Cells[row + 4, 2].Value = adjustedCount;
-                        sheet.Cells[row + 4, 3].Value = adjustedCount > 0 ? "⚠ check ElevDiff_mm column" : "✓ none";
+                        var processedRows = sorted.Where(v => v.WasProcessed).ToList();
+                        vertSheet.Cells[row, 1].Value = "Longest path (m):";
+                        vertSheet.Cells[row, 2].Value = Math.Round(processedRows.Max(v => v.PathLengthMeters), 2); row++;
+                        vertSheet.Cells[row, 1].Value = "Shortest path (m):";
+                        vertSheet.Cells[row, 2].Value = Math.Round(processedRows.Min(v => v.PathLengthMeters), 2); row++;
                     }
 
-                    sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
+                    vertSheet.Cells[vertSheet.Dimension.Address].AutoFitColumns();
+
+                    // ════════════════════════════════════════════════════════
+                    // SHEET 2 — Run Summary
+                    // ════════════════════════════════════════════════════════
+                    var summarySheet = package.Workbook.Worksheets.Add("Run Summary");
+
+                    // Build a lightweight AutoSlopeResult from the vertexData
+                    // so FillRunSummarySheet can use the shared helper.
+                    var syntheticResult = new AutoSlopeResult
+                    {
+                        Success = true,
+                        VerticesProcessed = processed,
+                        VerticesSkipped = skipped,
+                        RunDate = DateTime.Now.ToString("dd-MM-yy HH:mm")
+                    };
+
+                    FillRunSummarySheet(
+                        summarySheet,
+                        syntheticResult,
+                        slopePercent,
+                        (int)payload.ThresholdMeters,
+                        payload.EnableDrainTolerance,
+                        payload.DrainToleranceMm,
+                        payload.ExportConfig.ExportPath);
+
                     package.SaveAs(new FileInfo(filePath));
                 }
 
@@ -289,249 +296,79 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
             }
             catch (Exception ex)
             {
-                payload?.Log?.Invoke($"Compact Excel Export Error: {ex.Message}");
+                payload?.Log?.Invoke($"Excel Export Error: {ex.Message}");
                 return null;
             }
         }
-
         // ── Private sheet-fill helpers ───────────────────────────────────────
 
-        private static void FillSummarySheet(
-            ExcelWorksheet sheet, AutoSlopePayload payload,
-            List<VertexData> vertexData, RoofBase roof,
-            List<XYZ> drainPoints, double slopePercent)
+        /// <summary>
+        /// Fills a sheet with a two-column Parameter / Value run summary table.
+        /// Used by both the auto-export (Sheet 2) and the Export Results button.
+        /// </summary>
+        // ── Private sheet-fill helpers ───────────────────────────────────────
+
+        /// <summary>
+        /// Fills a sheet with a two-column Parameter / Value run summary table.
+        /// Used by both the auto-export (Sheet 2) and the Export Results button.
+        /// </summary>
+        private static void FillRunSummarySheet(
+            ExcelWorksheet sheet,
+            AutoSlopeResult result,
+            double slopePercent,
+            int thresholdMeters,
+            bool enableDrainTolerance,
+            int drainToleranceMm,
+            string exportFolderPath)
         {
-            int row = 1;
+            // Title
+            sheet.Cells[1, 1].Value = "AUTOSLOPE — RUN SUMMARY";
+            sheet.Cells[1, 1, 1, 2].Merge = true;
+            sheet.Cells[1, 1].Style.Font.Bold = true;
+            sheet.Cells[1, 1].Style.Font.Size = 14;
+            sheet.Cells[1, 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
+            sheet.Cells[1, 1].Style.Fill.BackgroundColor.SetColor(DrawingColor.LightBlue);
 
-            sheet.Cells[row, 1].Value = "AUTOSLOPE DETAILED VERTEX EXPORT";
-            sheet.Cells[row, 1, row, 4].Merge = true;
-            sheet.Cells[row, 1].Style.Font.Bold = true;
-            sheet.Cells[row, 1].Style.Font.Size = 16;
-            row += 2;
+            sheet.Cells[2, 1].Value = "Export Date:";
+            sheet.Cells[2, 1].Style.Font.Bold = true;
+            sheet.Cells[2, 2].Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
-            string roofType = roof.Name ?? "Unknown";
-            string baseLevelName = "Unknown";
-            double baseOffset = 0;
-
-            if (roof.LevelId != null && roof.LevelId != ElementId.InvalidElementId)
-            {
-                Level level = roof.Document.GetElement(roof.LevelId) as Level;
-                baseLevelName = level?.Name ?? "Unknown";
-            }
-
-            Parameter offsetParam = roof.get_Parameter(BuiltInParameter.ROOF_CONSTRAINT_OFFSET_PARAM);
-            if (offsetParam != null && offsetParam.HasValue)
-                baseOffset = UnitUtils.ConvertFromInternalUnits(offsetParam.AsDouble(), UnitTypeId.Millimeters);
-
-            AddInfoRow(sheet, ref row, "Generated:", DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"));
-            AddInfoRow(sheet, ref row, "Revit Document:", roof.Document.Title);
-            AddInfoRow(sheet, ref row, "Roof ElementId:", roof.Id.Value.ToString());
-            AddInfoRow(sheet, ref row, "Roof Type Name:", roofType);
-            AddInfoRow(sheet, ref row, "Base Level:", baseLevelName);
-            AddInfoRow(sheet, ref row, "Base Offset (mm):", Math.Round(baseOffset, 0).ToString());
-            AddInfoRow(sheet, ref row, "Slope Percentage:", $"{slopePercent}%");
-            AddInfoRow(sheet, ref row, "Threshold Distance:", $"{payload.ThresholdMeters} meters");
-            AddInfoRow(sheet, ref row, "Drain Tolerance Enabled:", payload.EnableDrainTolerance ? "Yes" : "No");
-            if (payload.EnableDrainTolerance)
-                AddInfoRow(sheet, ref row, "Drain Tolerance Radius:", $"{payload.DrainToleranceMm} mm");
-            AddInfoRow(sheet, ref row, "Total Vertices:", vertexData.Count.ToString());
-            AddInfoRow(sheet, ref row, "Processed Vertices:", vertexData.Count(v => v.WasProcessed).ToString());
-            AddInfoRow(sheet, ref row, "Skipped Vertices:", vertexData.Count(v => !v.WasProcessed).ToString());
-            AddInfoRow(sheet, ref row, "Drain Points Count:", drainPoints.Count.ToString());
-
-            // NEW: show count of vertices where Revit adjusted the elevation
-            int adjustedCount = vertexData.Count(v => v.WasProcessed && Math.Round(v.ElevationDiff_mm, 0) != 0);
-            AddInfoRow(sheet, ref row, "Vertices adjusted by Revit:", adjustedCount.ToString());
-
-            sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
-        }
-
-        private static void FillDrainPointsSheet(ExcelWorksheet sheet, List<XYZ> drainPoints)
-        {
-            string[] hdrs = { "DrainIndex", "X (m)", "Y (m)", "Z (m)" };
-            for (int i = 0; i < hdrs.Length; i++)
-            {
-                sheet.Cells[1, i + 1].Value = hdrs[i];
-                sheet.Cells[1, i + 1].Style.Font.Bold = true;
-                sheet.Cells[1, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                sheet.Cells[1, i + 1].Style.Fill.BackgroundColor.SetColor(DrawingColor.LightGray);
-            }
-
-            for (int i = 0; i < drainPoints.Count; i++)
-            {
-                var p = drainPoints[i];
-                sheet.Cells[i + 2, 1].Value = i;
-                sheet.Cells[i + 2, 2].Value = Math.Round(p.X, 3);
-                sheet.Cells[i + 2, 3].Value = Math.Round(p.Y, 3);
-                sheet.Cells[i + 2, 4].Value = Math.Round(p.Z, 3);
-            }
-
-            sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
-        }
-
-        private static void FillVerticesSheet(
-            ExcelWorksheet sheet, List<VertexData> vertexData,
-            RoofBase roof, double slopePercent)
-        {
-            string roofType = roof.Name ?? "Unknown";
-            string baseLevelName = "Unknown";
-            double baseOffset = 0;
-
-            if (roof.LevelId != null && roof.LevelId != ElementId.InvalidElementId)
-            {
-                Level level = roof.Document.GetElement(roof.LevelId) as Level;
-                baseLevelName = level?.Name ?? "Unknown";
-            }
-
-            Parameter offsetParam = roof.get_Parameter(BuiltInParameter.ROOF_CONSTRAINT_OFFSET_PARAM);
-            if (offsetParam != null && offsetParam.HasValue)
-                baseOffset = UnitUtils.ConvertFromInternalUnits(offsetParam.AsDouble(), UnitTypeId.Millimeters);
-
-            // NEW: ElevationOffset_mm replaced by ElevCalc_mm / ElevModel_mm / ElevDiff_mm
-            string[] headers =
-            {
-                "RoofElementId", "RoofTypeName", "BaseLevel", "BaseOffset_mm",
-                "PathLength_Meters", "SlopePercent",
-                "ElevCalc_mm", "ElevModel_mm", "ElevDiff_mm",
-                "WasProcessed", "Position_X", "Position_Y", "Position_Z"
-            };
-
-            for (int i = 0; i < headers.Length; i++)
-            {
-                sheet.Cells[1, i + 1].Value = headers[i];
-                sheet.Cells[1, i + 1].Style.Font.Bold = true;
-                sheet.Cells[1, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                sheet.Cells[1, i + 1].Style.Fill.BackgroundColor.SetColor(DrawingColor.LightGray);
-            }
-
-            // Colour new elevation header cells
-            sheet.Cells[1, 7].Style.Fill.BackgroundColor.SetColor(DrawingColor.LightGreen);
-            sheet.Cells[1, 8].Style.Fill.BackgroundColor.SetColor(DrawingColor.LightSkyBlue);
-            sheet.Cells[1, 9].Style.Fill.BackgroundColor.SetColor(DrawingColor.LightYellow);
-
-            var sorted = vertexData
-                .Where(v => v.WasProcessed).OrderByDescending(v => v.PathLengthMeters)
-                .Concat(vertexData.Where(v => !v.WasProcessed))
-                .ToList();
-
-            int row = 2;
-            foreach (var v in sorted)
-            {
-                sheet.Cells[row, 1].Value = roof.Id.Value;
-                sheet.Cells[row, 2].Value = roofType;
-                sheet.Cells[row, 3].Value = baseLevelName;
-                sheet.Cells[row, 4].Value = Math.Round(baseOffset, 0);
-                sheet.Cells[row, 5].Value = Math.Round(v.PathLengthMeters, 2);
-                sheet.Cells[row, 6].Value = slopePercent;
-                sheet.Cells[row, 7].Value = Math.Round(v.ElevationOffsetMm, 0);
-                sheet.Cells[row, 8].Value = Math.Round(v.ElevationFromModel_mm, 0);
-
-                double diff = Math.Round(v.ElevationDiff_mm, 0);
-                sheet.Cells[row, 9].Value = diff;
-                sheet.Cells[row, 9].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                sheet.Cells[row, 9].Style.Fill.BackgroundColor.SetColor(
-                    diff == 0 ? DrawingColor.LightGreen : DrawingColor.Orange);
-
-                sheet.Cells[row, 10].Value = v.WasProcessed ? "YES" : "NO";
-                sheet.Cells[row, 11].Value = Math.Round(v.Position.X, 3);
-                sheet.Cells[row, 12].Value = Math.Round(v.Position.Y, 3);
-                sheet.Cells[row, 13].Value = Math.Round(v.Position.Z, 3);
-
-                if (!v.WasProcessed)
-                {
-                    sheet.Cells[row, 1, row, 13].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                    sheet.Cells[row, 1, row, 13].Style.Fill.BackgroundColor.SetColor(DrawingColor.LightYellow);
-                }
-                row++;
-            }
-
-            sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
-        }
-
-        private static void FillStatisticsSheet(ExcelWorksheet sheet, List<VertexData> vertexData)
-        {
-            // NEW: four columns — Metric, Calculated (ElevCalc), Model (ElevModel), Unit
-            string[] hdrs = { "Metric", "ElevCalc_mm", "ElevModel_mm", "Unit" };
-            for (int i = 0; i < hdrs.Length; i++)
-            {
-                sheet.Cells[1, i + 1].Value = hdrs[i];
-                sheet.Cells[1, i + 1].Style.Font.Bold = true;
-                sheet.Cells[1, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                sheet.Cells[1, i + 1].Style.Fill.BackgroundColor.SetColor(DrawingColor.LightGray);
-            }
-            sheet.Cells[1, 2].Style.Fill.BackgroundColor.SetColor(DrawingColor.LightGreen);
-            sheet.Cells[1, 3].Style.Fill.BackgroundColor.SetColor(DrawingColor.LightSkyBlue);
-
-            var processed = vertexData.Where(v => v.WasProcessed).ToList();
-            int row = 2;
-
-            AddStatRow(sheet, ref row, "Total Vertices", vertexData.Count, null, "count");
-            AddStatRow(sheet, ref row, "Processed Vertices", processed.Count, null, "count");
-            AddStatRow(sheet, ref row, "Skipped Vertices", vertexData.Count(v => !v.WasProcessed), null, "count");
-
-            int adjustedCount = processed.Count(v => Math.Round(v.ElevationDiff_mm, 0) != 0);
-            AddStatRow(sheet, ref row, "Vertices adjusted by Revit", adjustedCount, null, "count");
-
-            if (processed.Any())
-            {
-                row++; // blank separator
-
-                AddStatRow(sheet, ref row, "Average Path Length",
-                    Math.Round(processed.Average(v => v.PathLengthMeters), 2), null, "meters");
-                AddStatRow(sheet, ref row, "Maximum Path Length",
-                    Math.Round(processed.Max(v => v.PathLengthMeters), 2), null, "meters");
-                AddStatRow(sheet, ref row, "Minimum Path Length",
-                    Math.Round(processed.Min(v => v.PathLengthMeters), 2), null, "meters");
-
-                row++; // blank separator
-
-                // NEW: show both calc and model values side by side
-                AddStatRow(sheet, ref row, "Average Elevation Offset",
-                    Math.Round(processed.Average(v => v.ElevationOffsetMm), 0),
-                    Math.Round(processed.Average(v => v.ElevationFromModel_mm), 0), "mm");
-                AddStatRow(sheet, ref row, "Maximum Elevation Offset",
-                    Math.Round(processed.Max(v => v.ElevationOffsetMm), 0),
-                    Math.Round(processed.Max(v => v.ElevationFromModel_mm), 0), "mm");
-                AddStatRow(sheet, ref row, "Minimum Elevation Offset",
-                    Math.Round(processed.Min(v => v.ElevationOffsetMm), 0),
-                    Math.Round(processed.Min(v => v.ElevationFromModel_mm), 0), "mm");
-                AddStatRow(sheet, ref row, "Elevation Offset Range",
-                    Math.Round(processed.Max(v => v.ElevationOffsetMm)
-                             - processed.Min(v => v.ElevationOffsetMm), 0),
-                    Math.Round(processed.Max(v => v.ElevationFromModel_mm)
-                             - processed.Min(v => v.ElevationFromModel_mm), 0), "mm");
-            }
-
-            sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
-        }
-
-        // ── Row helpers ──────────────────────────────────────────────────────
-
-        private static void AddRow(ExcelWorksheet sheet, ref int row, string label, object value)
-        {
-            sheet.Cells[row, 1].Value = label;
-            sheet.Cells[row, 1].Style.Font.Bold = true;
-            sheet.Cells[row, 2].Value = value;
+            // Header row
+            int row = 4;
+            sheet.Cells[row, 1].Value = "Parameter";
+            sheet.Cells[row, 2].Value = "Value";
+            sheet.Cells[row, 1, row, 2].Style.Font.Bold = true;
+            sheet.Cells[row, 1, row, 2].Style.Fill.PatternType = ExcelFillStyle.Solid;
+            sheet.Cells[row, 1, row, 2].Style.Fill.BackgroundColor.SetColor(DrawingColor.LightGray);
             row++;
+
+            AddInfoRow(sheet, ref row, "Run Date", result.RunDate ?? DateTime.Now.ToString("dd-MM-yy HH:mm"));
+            AddInfoRow(sheet, ref row, "Slope Percentage", $"{slopePercent}%");
+            AddInfoRow(sheet, ref row, "Threshold (m)", thresholdMeters.ToString());
+            AddInfoRow(sheet, ref row, "Drain Tolerance Enabled", enableDrainTolerance ? "Yes" : "No");
+            AddInfoRow(sheet, ref row, "Drain Tolerance (mm)", enableDrainTolerance ? drainToleranceMm.ToString() : "N/A");
+            row++; // blank separator
+            AddInfoRow(sheet, ref row, "Vertices Processed", result.VerticesProcessed.ToString());
+            AddInfoRow(sheet, ref row, "Vertices Skipped", result.VerticesSkipped.ToString());
+            AddInfoRow(sheet, ref row, "Picked Drain Count", result.PickedDrainCount.ToString());
+            AddInfoRow(sheet, ref row, "Final Drain Count", result.FinalDrainCount.ToString());
+            row++; // blank separator
+            AddInfoRow(sheet, ref row, "Highest Elevation (mm)", $"{result.HighestElevation_mm:0}");
+            AddInfoRow(sheet, ref row, "Longest Path (m)", $"{result.LongestPath_m:0.00}");
+            AddInfoRow(sheet, ref row, "Run Duration (sec)", result.RunDuration_sec.ToString());
+            row++; // blank separator
+            AddInfoRow(sheet, ref row, "Export Folder", exportFolderPath);
+
+            sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
         }
+
+        // ── Row helper ───────────────────────────────────────────────────────
 
         private static void AddInfoRow(ExcelWorksheet sheet, ref int row, string label, string value)
         {
             sheet.Cells[row, 1].Value = label;
             sheet.Cells[row, 1].Style.Font.Bold = true;
             sheet.Cells[row, 2].Value = value;
-            row++;
-        }
-
-        // Updated to accept both calc and model values (model is nullable for non-elevation rows)
-        private static void AddStatRow(ExcelWorksheet sheet, ref int row,
-            string metric, object calcValue, object modelValue, string unit)
-        {
-            sheet.Cells[row, 1].Value = metric;
-            sheet.Cells[row, 2].Value = calcValue;
-            if (modelValue != null)
-                sheet.Cells[row, 3].Value = modelValue;
-            sheet.Cells[row, 4].Value = unit;
             row++;
         }
 
@@ -544,7 +381,6 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
             string stem = Path.GetFileNameWithoutExtension(path);
             string ext = Path.GetExtension(path);
 
-            // Strip any existing _NN suffix so we always start from the base name
             var match = Regex.Match(stem, @"^(.*?)_(\d{2})$");
             string baseStem = match.Success ? match.Groups[1].Value : stem;
 
@@ -554,7 +390,6 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
                 if (!File.Exists(candidate)) return candidate;
             }
 
-            // Fallback: use a time-based suffix — virtually guaranteed to be unique
             return Path.Combine(dir, $"{baseStem}_{DateTime.Now:HHmmss}{ext}");
         }
     }

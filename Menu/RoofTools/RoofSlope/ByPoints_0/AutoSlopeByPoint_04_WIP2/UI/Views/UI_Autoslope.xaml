@@ -117,16 +117,6 @@
 
                         <Border Style="{StaticResource SeparatorLine}"/>
 
-                        <StackPanel Style="{StaticResource AppleToggleRow}">
-                            <TextBlock Text="Detailed version" Style="{StaticResource FieldValue}" VerticalAlignment="Center"/>
-                            <ToggleButton Style="{StaticResource AppleToggleButton}"
-                                          IsChecked="{Binding IncludeVertexDetails}"
-                                          IsEnabled="{Binding ExportToExcel}"
-                                          Margin="8,0,0,0"/>
-                        </StackPanel>
-
-                        <Border Style="{StaticResource SeparatorLine}"/>
-
                         <StackPanel Style="{StaticResource FieldRow}">
                             <TextBlock Text="Folder" Style="{StaticResource FieldLabel}"/>
                             <DockPanel LastChildFill="True">
