@@ -353,6 +353,33 @@ Export Folder            : {ExportFolderPath}";
                         State = RunState.Done;   // Fix #5: show "Completed"
                         ExportResultsCommand.NotifyCanExecuteChanged();
 
+                        // Ask user to open the auto-exported Excel file
+                        if (!string.IsNullOrEmpty(result.ExportedFilePath))
+                        {
+                            var answer = System.Windows.MessageBox.Show(
+                                "Excel file saved. Open it now?",
+                                "Export Complete",
+                                System.Windows.MessageBoxButton.YesNo,
+                                System.Windows.MessageBoxImage.Question);
+
+                            if (answer == System.Windows.MessageBoxResult.Yes)
+                            {
+                                AddLog($"DEBUG: Opening file: '{result.ExportedFilePath}'");
+                                try
+                                {
+                                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                                    {
+                                        FileName = result.ExportedFilePath,
+                                        UseShellExecute = true
+                                    });
+                                }
+                                catch (Exception ex)
+                                {
+                                    AddLog($"⚠ Could not open file: {ex.Message}");
+                                }
+                            }
+                        }
+
                         AddLog($"DEBUG: State set to Done, UI should now show FinalDrainCount={FinalDrainCount}");
                     }));
                 }
@@ -416,7 +443,11 @@ Export Folder            : {ExportFolderPath}";
                     System.Windows.MessageBoxImage.Question);
 
                 if (answer == System.Windows.MessageBoxResult.Yes)
-                    System.Diagnostics.Process.Start(savedPath);
+                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                    {
+                        FileName = savedPath,
+                        UseShellExecute = true
+                    });
             }
         }
 

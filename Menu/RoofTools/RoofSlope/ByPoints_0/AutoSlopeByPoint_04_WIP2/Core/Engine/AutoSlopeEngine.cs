@@ -306,9 +306,10 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Engine
                 "P.04.00");
 
             // ── Excel export ─────────────────────────────────────────────────
+            string compactPath = null;
             if (data.ExportConfig?.ExportToExcel == true)
             {
-                string compactPath = ExcelExportService.ExportCompactVertexData(
+                compactPath = ExcelExportService.ExportCompactVertexData(
                     data, vertexDataList, roof, data.SlopePercent);
 
                 if (!string.IsNullOrEmpty(compactPath))
@@ -370,7 +371,8 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Engine
                 HighestElevation_mm = highest_mm,
                 LongestPath_m = longest_m,
                 RunDuration_sec = durationSec,
-                RunDate = runDate
+                RunDate = runDate,
+                ExportedFilePath = compactPath   // passed to VM for open-file prompt
             });
 
             data.Log(LogColorHelper.Cyan("DEBUG: OnCompleted invoked successfully"));

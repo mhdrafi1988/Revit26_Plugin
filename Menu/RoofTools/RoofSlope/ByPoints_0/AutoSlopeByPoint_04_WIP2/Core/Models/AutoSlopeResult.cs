@@ -29,5 +29,11 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Core.Models
         public double LongestPath_m { get; set; }
         public int RunDuration_sec { get; set; }
         public string RunDate { get; set; }
+
+        /// <summary>
+        /// Path of the Excel file auto-exported after Run.
+        /// Null if export was skipped (ExportToExcel = false or EPPlus missing).
+        /// </summary>
+        public string ExportedFilePath { get; set; }
     }
 }
