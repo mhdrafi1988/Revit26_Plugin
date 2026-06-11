@@ -1,0 +1,477 @@
+<Window x:Class="Revit26_Plugin.SectionAutoRenamer._01.Views.SectionsListWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:conv="clr-namespace:Revit26_Plugin.SectionAutoRenamer._01.Views.Converters"
+        Title="Section Auto Renamer"
+        Height="780" Width="1100"
+        ResizeMode="CanResizeWithGrip"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Revit26_Plugin;component/Shared/SharedStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!--
+                Local converters — registered here on the Window, never in SharedStyles.
+                BoolToVisibility already exists in SharedStyles as a BooleanToVisibilityConverter.
+                Only the two plugin-specific converters are declared here.
+            -->
+            <conv:LogLevelToBrushConverter x:Key="LogBrush"/>
+            <conv:DupToVisibilityConverter x:Key="DupToVis"/>
+
+            <!-- Row style: drives background from IsSelected on the VM item, not WPF row selection -->
+            <Style x:Key="SarRowStyle" TargetType="DataGridRow" BasedOn="{StaticResource DataGridRowStyle}">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                        <Setter Property="Background" Value="#E6F1FB"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
+            <!-- Preview text: blue+medium when row is selected, muted when not -->
+            <Style x:Key="PreviewTextStyle" TargetType="TextBlock">
+                <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}"/>
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                        <Setter Property="Foreground" Value="#185FA5"/>
+                        <Setter Property="FontWeight"  Value="Medium"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Background="{StaticResource BrushSystemBackground}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>  <!-- 0 Title bar         -->
+            <RowDefinition Height="Auto"/>  <!-- 1 Filter bar        -->
+            <RowDefinition Height="Auto"/>  <!-- 2 Rename panel      -->
+            <RowDefinition Height="Auto"/>  <!-- 3 Selection toolbar -->
+            <RowDefinition Height="*"/>     <!-- 4 DataGrid          -->
+            <RowDefinition Height="Auto"/>  <!-- 5 Action bar        -->
+            <RowDefinition Height="110"/>   <!-- 6 Log panel         -->
+        </Grid.RowDefinitions>
+
+        <!-- ═══════════════════════════════════════════
+             ROW 0 — TITLE BAR
+        ═══════════════════════════════════════════ -->
+        <Border Grid.Row="0"
+                Background="{StaticResource BrushSystemSecondaryBackground}"
+                BorderBrush="{StaticResource BrushCardBorder}"
+                BorderThickness="0,0,0,1"
+                Padding="12,7">
+            <DockPanel>
+                <TextBlock Text="Section auto renamer"
+                           FontSize="13" FontWeight="SemiBold"
+                           Foreground="{StaticResource BrushTextPrimary}"
+                           VerticalAlignment="Center"/>
+
+                <!-- Dry run badge -->
+                <Border Margin="10,0,0,0" CornerRadius="10"
+                        Background="#FAEEDA" BorderBrush="#EF9F27" BorderThickness="0.5"
+                        Padding="8,2"
+                        Visibility="{Binding IsDryRun, Converter={StaticResource BoolToVisibility}}"
+                        VerticalAlignment="Center">
+                    <TextBlock Text="Dry run on" FontSize="11" Foreground="#633806"/>
+                </Border>
+
+                <!-- Sections count -->
+                <Border Margin="6,0,0,0" CornerRadius="10"
+                        Background="#E6F1FB" BorderBrush="#85B7EB" BorderThickness="0.5"
+                        Padding="8,2" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock FontSize="11" Foreground="#0C447C"
+                                   Text="{Binding Sections.Count, Mode=OneWay}"/>
+                        <TextBlock FontSize="11" Foreground="#0C447C" Text=" sections loaded"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Selected count badge (right-docked) -->
+                <Border DockPanel.Dock="Right" CornerRadius="10"
+                        Background="#E6F1FB" BorderBrush="#85B7EB" BorderThickness="0.5"
+                        Padding="9,2" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock FontSize="11" FontWeight="SemiBold" Foreground="#0C447C"
+                                   Text="{Binding SelectedCount, Mode=OneWay}"/>
+                        <TextBlock FontSize="11" FontWeight="SemiBold" Foreground="#0C447C"
+                                   Text=" selected"/>
+                    </StackPanel>
+                </Border>
+            </DockPanel>
+        </Border>
+
+        <!-- ═══════════════════════════════════════════
+             ROW 1 — FILTER BAR
+        ═══════════════════════════════════════════ -->
+        <Border Grid.Row="1"
+                Background="{StaticResource BrushSystemSecondaryBackground}"
+                BorderBrush="{StaticResource BrushCardBorder}"
+                BorderThickness="0,0,0,1"
+                Padding="12,7">
+            <WrapPanel Orientation="Horizontal" VerticalAlignment="Center">
+
+                <TextBlock Text="Sheet" Style="{StaticResource FieldLabel}"
+                           VerticalAlignment="Center" Margin="0,0,5,0"/>
+                <ComboBox Width="140" Margin="0,0,12,0"
+                          ItemsSource="{Binding SheetFilters}"
+                          SelectedItem="{Binding SelectedSheetFilter}"/>
+
+                <Border Width="0.5" Height="18" Background="{StaticResource BrushCardBorder}"
+                        Margin="0,0,12,0"/>
+
+                <TextBlock Text="Search" Style="{StaticResource FieldLabel}"
+                           VerticalAlignment="Center" Margin="0,0,5,0"/>
+                <TextBox Width="120" Margin="0,0,12,0"
+                         Style="{StaticResource StyledTextInput}"
+                         Text="{Binding SheetSearchText, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <Border Width="0.5" Height="18" Background="{StaticResource BrushCardBorder}"
+                        Margin="0,0,12,0"/>
+
+                <TextBlock Text="Dup. fix" Style="{StaticResource FieldLabel}"
+                           VerticalAlignment="Center" Margin="0,0,5,0"/>
+                <ComboBox Width="155" Margin="0,0,12,0"
+                          ItemsSource="{Binding DuplicateFixStrategies}"
+                          SelectedItem="{Binding DuplicateStrategy}"/>
+
+                <Border Width="0.5" Height="18" Background="{StaticResource BrushCardBorder}"
+                        Margin="0,0,12,0"/>
+
+                <CheckBox Content="Dry run"
+                          IsChecked="{Binding IsDryRun}"
+                          VerticalAlignment="Center"/>
+            </WrapPanel>
+        </Border>
+
+        <!-- ═══════════════════════════════════════════
+             ROW 2 — RENAME PANEL  (3 equal columns)
+        ═══════════════════════════════════════════ -->
+        <Border Grid.Row="2"
+                Background="{StaticResource BrushSystemSecondaryBackground}"
+                BorderBrush="{StaticResource BrushCardBorder}"
+                BorderThickness="0,0,0,1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="0.5"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="0.5"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Col 0: Prefix / Postfix -->
+                <StackPanel Grid.Column="0" Margin="12,8">
+                    <TextBlock Text="PREFIX / POSTFIX"
+                               FontSize="10" FontWeight="SemiBold"
+                               Foreground="{StaticResource BrushTextSecondary}"
+                               Margin="0,0,0,5"/>
+                    <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="52"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Prefix" Style="{StaticResource FieldLabel}" VerticalAlignment="Center"/>
+                        <TextBox Grid.Column="1" Style="{StaticResource StyledTextInput}"
+                                 Text="{Binding Prefix, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="52"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Postfix" Style="{StaticResource FieldLabel}" VerticalAlignment="Center"/>
+                        <TextBox Grid.Column="1" Style="{StaticResource StyledTextInput}"
+                                 Text="{Binding Postfix, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
+                </StackPanel>
+
+                <!-- Separator 1 -->
+                <Border Grid.Column="1" Background="{StaticResource BrushCardBorder}"/>
+
+                <!-- Col 2: Find / Replace -->
+                <StackPanel Grid.Column="2" Margin="12,8">
+                    <TextBlock Text="FIND / REPLACE"
+                               FontSize="10" FontWeight="SemiBold"
+                               Foreground="{StaticResource BrushTextSecondary}"
+                               Margin="0,0,0,5"/>
+                    <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="52"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Find" Style="{StaticResource FieldLabel}" VerticalAlignment="Center"/>
+                        <TextBox Grid.Column="1" Style="{StaticResource StyledTextInput}"
+                                 Text="{Binding FindText, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="52"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Replace" Style="{StaticResource FieldLabel}" VerticalAlignment="Center"/>
+                        <TextBox Grid.Column="1" Style="{StaticResource StyledTextInput}"
+                                 Text="{Binding ReplaceText, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
+                </StackPanel>
+
+                <!-- Separator 2 -->
+                <Border Grid.Column="3" Background="{StaticResource BrushCardBorder}"/>
+
+                <!-- Col 4: Options -->
+                <StackPanel Grid.Column="4" Margin="12,8">
+                    <TextBlock Text="OPTIONS"
+                               FontSize="10" FontWeight="SemiBold"
+                               Foreground="{StaticResource BrushTextSecondary}"
+                               Margin="0,0,0,5"/>
+                    <WrapPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <CheckBox Content="Serial" Margin="0,0,8,0"
+                                  IsChecked="{Binding AddSerial}" VerticalAlignment="Center"/>
+                        <TextBox Width="48" Style="{StaticResource StyledTextInput}"
+                                 Text="{Binding SerialFormat, UpdateSourceTrigger=PropertyChanged}"
+                                 IsEnabled="{Binding AddSerial}" Margin="0,0,8,0"/>
+                        <CheckBox Content="Detail no." Margin="0,0,8,0"
+                                  IsChecked="{Binding IncludeDetailNumber}" VerticalAlignment="Center"/>
+                        <CheckBox Content="Title case"
+                                  IsChecked="{Binding ApplyTitleCase}" VerticalAlignment="Center"/>
+                    </WrapPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="75"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Set selected" Style="{StaticResource FieldLabel}"
+                                   VerticalAlignment="Center"/>
+                        <TextBox Grid.Column="1" Style="{StaticResource StyledTextInput}"
+                                 Text="{Binding CommonEditName, UpdateSourceTrigger=PropertyChanged}"
+                                 ToolTip="Overwrites EditableName for all selected rows"/>
+                    </Grid>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ═══════════════════════════════════════════
+             ROW 3 — SELECTION TOOLBAR
+        ═══════════════════════════════════════════ -->
+        <Border Grid.Row="3"
+                Background="{StaticResource BrushSystemBackground}"
+                BorderBrush="{StaticResource BrushCardBorder}"
+                BorderThickness="0,0,0,1"
+                Padding="12,5">
+            <DockPanel>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                    <Button Content="Select all"  Margin="0,0,5,0"
+                            Command="{Binding SelectAllCommand}"
+                            Style="{StaticResource SmallSecondaryButton}"/>
+                    <Button Content="Select none" Margin="0,0,5,0"
+                            Command="{Binding SelectNoneCommand}"
+                            Style="{StaticResource SmallSecondaryButton}"/>
+                    <Button Content="Invert"      Margin="0,0,5,0"
+                            Command="{Binding InvertSelectionCommand}"
+                            Style="{StaticResource SmallSecondaryButton}"/>
+                    <Button Content="Reset selected names"
+                            Command="{Binding ResetSelectedNamesCommand}"
+                            Style="{StaticResource SmallSecondaryButton}"/>
+                </StackPanel>
+
+                <!-- Keyboard hints -->
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right"
+                            HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <TextBlock Text="↑↓ navigate"     FontSize="10" Margin="0,0,10,0"
+                               Foreground="{StaticResource BrushTextTertiary}"/>
+                    <TextBlock Text="Space toggle"    FontSize="10" Margin="0,0,10,0"
+                               Foreground="{StaticResource BrushTextTertiary}"/>
+                    <TextBlock Text="Shift+Click range" FontSize="10" Margin="0,0,10,0"
+                               Foreground="{StaticResource BrushTextTertiary}"/>
+                    <TextBlock Text="Ctrl+Click multi"  FontSize="10"
+                               Foreground="{StaticResource BrushTextTertiary}"/>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- ═══════════════════════════════════════════
+             ROW 4 — DATA GRID
+        ═══════════════════════════════════════════ -->
+        <DataGrid Grid.Row="4"
+                  x:Name="SectionsGrid"
+                  ItemsSource="{Binding SectionsView}"
+                  AutoGenerateColumns="False"
+                  SelectionMode="Extended"
+                  SelectionUnit="FullRow"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  CanUserReorderColumns="False"
+                  GridLinesVisibility="Horizontal"
+                  HorizontalGridLinesBrush="{StaticResource BrushSeparatorThin}"
+                  AlternatingRowBackground="{StaticResource BrushSystemSecondaryBackground}"
+                  AlternationCount="2"
+                  RowStyle="{StaticResource SarRowStyle}"
+                  ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
+                  CellStyle="{StaticResource DataGridCellStyle}"
+                  Background="{StaticResource BrushSystemBackground}"
+                  BorderThickness="0">
+
+            <DataGrid.Columns>
+
+                <!-- Checkbox column -->
+                <DataGridTemplateColumn Width="34" CanUserSort="False">
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <CheckBox HorizontalAlignment="Center"
+                                      Checked="HeaderCheckBox_Checked"
+                                      Unchecked="HeaderCheckBox_Unchecked"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}"
+                                      HorizontalAlignment="Center" VerticalAlignment="Center"
+                                      Margin="0,0,0,0"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- Original name -->
+                <DataGridTextColumn Header="Original name"
+                                    Binding="{Binding OriginalName}"
+                                    IsReadOnly="True"
+                                    Width="*"/>
+
+                <!-- Edit name -->
+                <DataGridTextColumn Header="Edit name"
+                                    Binding="{Binding EditableName, UpdateSourceTrigger=PropertyChanged}"
+                                    IsReadOnly="False"
+                                    Width="*">
+                    <DataGridTextColumn.EditingElementStyle>
+                        <Style TargetType="TextBox">
+                            <Setter Property="Background"      Value="#E6F1FB"/>
+                            <Setter Property="Foreground"      Value="#042C53"/>
+                            <Setter Property="BorderBrush"     Value="#378ADD"/>
+                            <Setter Property="BorderThickness" Value="1"/>
+                            <Setter Property="Padding"         Value="4,2"/>
+                        </Style>
+                    </DataGridTextColumn.EditingElementStyle>
+                </DataGridTextColumn>
+
+                <!-- Preview + dup badge -->
+                <DataGridTemplateColumn Header="Preview" Width="*" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="4,0">
+                                <TextBlock Text="{Binding PreviewName}"
+                                           Style="{StaticResource PreviewTextStyle}"
+                                           VerticalAlignment="Center"/>
+                                <Border Margin="5,0,0,0" CornerRadius="8"
+                                        Background="#FAECE7" BorderBrush="#F0997B" BorderThickness="0.5"
+                                        Padding="5,1"
+                                        Visibility="{Binding IsDuplicate, Converter={StaticResource DupToVis}}"
+                                        VerticalAlignment="Center">
+                                    <TextBlock Text="dup" FontSize="10" Foreground="#712B13"/>
+                                </Border>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- Sheet number -->
+                <DataGridTextColumn Header="Sheet no."
+                                    Binding="{Binding SheetNumber}"
+                                    IsReadOnly="True"
+                                    Width="90"/>
+
+                <!-- Pin indicator -->
+                <DataGridTemplateColumn Header="" Width="36" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="📌" FontSize="12"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                                       Visibility="{Binding IsPinned, Converter={StaticResource BoolToVisibility}}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- ═══════════════════════════════════════════
+             ROW 5 — ACTION BAR
+        ═══════════════════════════════════════════ -->
+        <Border Grid.Row="5"
+                Background="{StaticResource BrushSystemBackground}"
+                BorderBrush="{StaticResource BrushCardBorder}"
+                BorderThickness="0,1,0,0"
+                Padding="12,7">
+            <DockPanel>
+
+                <!-- Reset all — uses SecondaryButton with red foreground override -->
+                <Button DockPanel.Dock="Left"
+                        Command="{Binding ResetSelectedNamesCommand}"
+                        Style="{StaticResource SmallSecondaryButton}">
+                    <Button.Foreground>
+                        <SolidColorBrush Color="{StaticResource ColorDanger}"/>
+                    </Button.Foreground>
+                    <TextBlock Text="↺  Reset all names"
+                               Foreground="{StaticResource BrushDanger}"/>
+                </Button>
+
+                <!-- Right side -->
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal"
+                            HorizontalAlignment="Right" VerticalAlignment="Center">
+
+                    <!-- Dry run reminder tag -->
+                    <Border CornerRadius="10" Margin="0,0,10,0"
+                            Background="#FAEEDA" BorderBrush="#EF9F27" BorderThickness="0.5"
+                            Padding="9,3" VerticalAlignment="Center"
+                            Visibility="{Binding IsDryRun, Converter={StaticResource BoolToVisibility}}">
+                        <TextBlock FontSize="11" Foreground="#633806"
+                                   Text="Dry run — no changes will be saved"/>
+                    </Border>
+
+                    <!-- Commit button -->
+                    <Button Style="{StaticResource PrimaryButton}">
+                        <Button.Command>
+                            <Binding Path="CommitRenameCommand"/>
+                        </Button.Command>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Commit selected (" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding SelectedCount}" VerticalAlignment="Center"/>
+                            <TextBlock Text=")" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- ═══════════════════════════════════════════
+             ROW 6 — LOG PANEL
+        ═══════════════════════════════════════════ -->
+        <Border Grid.Row="6"
+                Background="{StaticResource BrushSystemSecondaryBackground}"
+                BorderBrush="{StaticResource BrushCardBorder}"
+                BorderThickness="0,1,0,0">
+            <ListBox x:Name="LogList"
+                     ItemsSource="{Binding Logs}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Padding="12,6"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel Margin="0,1">
+                            <Ellipse DockPanel.Dock="Left"
+                                     Width="6" Height="6" Margin="0,0,7,0"
+                                     VerticalAlignment="Center"
+                                     Fill="{Binding Level, Converter={StaticResource LogBrush}}"/>
+                            <TextBlock Text="{Binding Message}"
+                                       FontSize="11"
+                                       Foreground="{Binding Level, Converter={StaticResource LogBrush}}"
+                                       TextWrapping="NoWrap"/>
+                        </DockPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Border>
+
+    </Grid>
+</Window>

@@ -1,30 +1,13 @@
 ﻿// =======================================================
 // File: ExcelExportService.cs
-// Purpose:
-//   Isolation wrapper around ExcelExportHelper.
-//   Checks whether EPPlus.dll is present on disk BEFORE
-//   attempting any call into ExcelExportHelper.
+// MIGRATION: EPPlus → ClosedXML
 //
-//   Why this is needed:
-//   ExcelExportHelper references OfficeOpenXml types
-//   (EPPlus). If EPPlus.dll is missing, the CLR throws a
-//   FileNotFoundException the moment it tries to JIT any
-//   method that touches that class — BEFORE any try/catch
-//   inside the method can run. This wrapper is the only
-//   class AutoSlopeEngine and AutoSlopeViewModel call.
-//   ExcelExportHelper is never touched directly from
-//   outside this file.
+// Only change from the original:
+//   DLL check updated from "EPPlus.dll" → "ClosedXML.dll"
+//   Log message updated to match.
 //
-//   How it works:
-//   1. On first call, _isAvailable is resolved once via
-//      File.Exists on "EPPlus.dll" next to this plugin's
-//      DLL. The result is cached — no repeated disk checks.
-//   2. If EPPlus.dll is missing, a single clear log message
-//      is written and null is returned. The Revit operation
-//      continues normally.
-//   3. If EPPlus.dll is present, the call is forwarded to
-//      ExcelExportHelper inside a try/catch, so any runtime
-//      error (bad path, locked file, etc.) is also isolated.
+// Everything else (isolation pattern, caching, method
+// signatures) is identical.
 // =======================================================
 
 using Autodesk.Revit.DB;
@@ -38,27 +21,26 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
 {
     public static class ExcelExportService
     {
-        // ── EPPlus availability (resolved once, then cached) ─────────────────
+        // ── ClosedXML availability (resolved once, then cached) ──────────────
         private static bool? _isAvailable = null;
 
         private static bool IsAvailable(Action<string> log)
         {
             if (_isAvailable.HasValue) return _isAvailable.Value;
 
-            // Look for EPPlus.dll in the same folder as this plugin's DLL.
-            // That is where NuGet places it after the build copies output.
             string pluginFolder = Path.GetDirectoryName(
                 Assembly.GetExecutingAssembly().Location) ?? string.Empty;
 
-            string epPlusPath = Path.Combine(pluginFolder, "EPPlus.dll");
+            // ← changed from EPPlus.dll
+            string dllPath = Path.Combine(pluginFolder, "ClosedXML.dll");
 
-            _isAvailable = File.Exists(epPlusPath);
+            _isAvailable = File.Exists(dllPath);
 
             if (!_isAvailable.Value)
             {
                 log?.Invoke(
-                    $"⚠ Excel export skipped: EPPlus.dll not found in plugin folder." +
-                    $" Expected at: {epPlusPath}");
+                    $"⚠ Excel export skipped: ClosedXML.dll not found in plugin folder." +
+                    $" Expected at: {dllPath}");
             }
 
             return _isAvailable.Value;
@@ -66,11 +48,6 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
 
         // ── Public surface (mirrors the three methods used in the project) ───
 
-        /// <summary>
-        /// Exports a compact per-vertex sheet.
-        /// Returns the saved file path, or null if EPPlus is unavailable or
-        /// an error occurs.
-        /// </summary>
         public static string ExportCompactVertexData(
             AutoSlopePayload payload,
             List<VertexData> vertexData,
@@ -86,18 +63,11 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
             }
             catch (Exception ex)
             {
-                payload?.Log?.Invoke(
-                    $"⚠ Compact Excel export error: {ex.Message}");
+                payload?.Log?.Invoke($"⚠ Compact Excel export error: {ex.Message}");
                 return null;
             }
         }
 
-        /// <summary>
-        /// Exports a detailed multi-sheet workbook (Summary, Drain Points,
-        /// Vertices, Statistics).
-        /// Returns the saved file path, or null if EPPlus is unavailable or
-        /// an error occurs.
-        /// </summary>
         public static string ExportDetailedVertexData(
             AutoSlopePayload payload,
             List<VertexData> vertexData,
@@ -114,17 +84,11 @@ namespace Revit26_Plugin.AutoSlopeByPoint_04.Infrastructure.Helpers
             }
             catch (Exception ex)
             {
-                payload?.Log?.Invoke(
-                    $"⚠ Detailed Excel export error: {ex.Message}");
+                payload?.Log?.Invoke($"⚠ Detailed Excel export error: {ex.Message}");
                 return null;
             }
         }
 
-        /// <summary>
-        /// Exports a single summary sheet to a user-chosen file path.
-        /// Returns the saved file path, or null if EPPlus is unavailable or
-        /// an error occurs.
-        /// </summary>
         public static string ExportResultsSummary(
             string filePath,
             AutoSlopeResult result,

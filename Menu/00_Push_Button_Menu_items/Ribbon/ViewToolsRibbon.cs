@@ -15,10 +15,12 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             ViewRename.AddPushButton(new PushButtonData("Btn_BubbleRenumberCommandV3", "Bubble Renumber Command V3", assemblyPath, "Revit22_Plugin.SDRV3.BubbleRenumberCommandV3"));
             ViewRename.AddPushButton(new PushButtonData("Btn_BubbleRenumberCommandV4", "Bubble Renumber Command V4", assemblyPath, "Revit26_Plugin.SDRV4.commands.BubbleRenumberCommandV4"));
+            ViewRename.AddPushButton(new PushButtonData("Btn_BubbleRenumberCommand501", "Bubble Renumber Command V501", assemblyPath, "Revit26_Plugin.SectionAutoRenumber.Commands.SectionAutoRenumberCommand"));
             ViewRename.AddPushButton(new PushButtonData("Btn_SectionManagerRefactored", "Section Renamer 4.0 #4", assemblyPath, "Revit22_Plugin.SectionManagerMVVM_Refactored.SectionManagerCommandRefactored"));
             ViewRename.AddPushButton(new PushButtonData("Btn_SectionManagerRefactoredV2", "Section Renamer V2 4.0 #4", assemblyPath, "Revit26_Plugin.SectionRenamer_V02.SectionManagerEventManager"));
             ViewRename.AddPushButton(new PushButtonData("Btn_SectionManagerRefactoredV6", "Section Renamer V6 1.0 #6", assemblyPath, "Revit26_Plugin.SARV6.Commands.OpenSectionManagerCommand"));
             ViewRename.AddPushButton(new PushButtonData("Btn_SectionManagerRefactoredV7", "Section Renamer V7 **", assemblyPath, "Revit26_Plugin.SectionManager_V07.Commands.OpenSectionManagerCommand"));
+            ViewRename.AddPushButton(new PushButtonData("Btn_SectionAutoRenamer_08", "Section Auto Renamer v08 **", assemblyPath, "Revit26_Plugin.SectionAutoRenamer._01.Commands.OpenSectionManagerCommand"));
 
             PulldownButton ViewCreate = panel.AddItem(new PulldownButtonData("Create", "Create")) as PulldownButton;
             ViewCreate.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Create_32.png");
@@ -31,8 +33,8 @@ namespace Revit26_Plugin.Menu.Ribbon
             //ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_311", "AutoPlaceSectionsCommand_311 #", assemblyPath, "Revit26_Plugin.APUS_V311.Commands.AutoPlaceSectionsCommand"));
             //ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_312", "AutoPlaceSectionsCommand_312 #", assemblyPath, "Revit26_Plugin.APUS_V312.Commands.AutoPlaceSectionsCommand"));
             //ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_313", "AutoPlaceSectionsCommand_313 #", assemblyPath, "Revit26_Plugin.APUS_V313.Commands.AutoPlaceSectionsCommand"));
-            ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_314", "AutoPlaceSectionsCommand_314 #", assemblyPath, "Revit26_Plugin.APUS_V314.Commands.AutoPlaceSectionsCommand"));
-            ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_317", "AutoPlaceSectionsCommand_317 #", assemblyPath, "Revit26_Plugin.APUS_V317.Commands.AutoPlaceSectionsCommand"));
+            ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_314", "AutoPlaceSectionsCommand_314 ", assemblyPath, "Revit26_Plugin.APUS_V314.Commands.AutoPlaceSectionsCommand"));
+            ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_317", "AutoPlaceSectionsCommand_317 ", assemblyPath, "Revit26_Plugin.APUS_V317.Commands.AutoPlaceSectionsCommand"));
             ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_320", "AutoPlaceSectionsCommand_320_Grid Only #", assemblyPath, "Revit26_Plugin.APUS_V320.Commands.AutoPlaceSectionsCommand"));
             ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_330", "AutoPlaceSectionsCommand_330 ONE  #", assemblyPath, "Revit26_Plugin.APUS_V330.Commands.AutoPlaceSectionsCommand"));
 

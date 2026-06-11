@@ -5,7 +5,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\Release\net8.0-windows\10-06-012</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\Release\net8.0-windows\11-06-003</BaseOutputPath>
 		<PackageId />
 		<AssemblyName>Revit26_Plugin</AssemblyName>
 	</PropertyGroup>
@@ -114,6 +114,7 @@
 	  <Compile Remove="Menu\Setup\WorksetManager_01%28excluded%29\**" />
 	  <Compile Remove="Menu\Setup\WorksetRenamer\**" />
 	  <Compile Remove="Menu\Setup\WorksetRenamer_01\**" />
+	  <Compile Remove="Menu\Setup\WSFL_10\**" />
 	  <Compile Remove="Menu\Tagging\Revit26_Plugin.RoofTag_V062\**" />
 	  <Compile Remove="Menu\Tagging\Revit26_Plugin.RoofTag_V61\**" />
 	  <Compile Remove="Menu\Tagging\RoofTagV42\**" />
@@ -272,6 +273,7 @@
 	  <EmbeddedResource Remove="Menu\Setup\WorksetManager_01%28excluded%29\**" />
 	  <EmbeddedResource Remove="Menu\Setup\WorksetRenamer\**" />
 	  <EmbeddedResource Remove="Menu\Setup\WorksetRenamer_01\**" />
+	  <EmbeddedResource Remove="Menu\Setup\WSFL_10\**" />
 	  <EmbeddedResource Remove="Menu\Tagging\Revit26_Plugin.RoofTag_V062\**" />
 	  <EmbeddedResource Remove="Menu\Tagging\Revit26_Plugin.RoofTag_V61\**" />
 	  <EmbeddedResource Remove="Menu\Tagging\RoofTagV42\**" />
@@ -430,6 +432,7 @@
 	  <None Remove="Menu\Setup\WorksetManager_01%28excluded%29\**" />
 	  <None Remove="Menu\Setup\WorksetRenamer\**" />
 	  <None Remove="Menu\Setup\WorksetRenamer_01\**" />
+	  <None Remove="Menu\Setup\WSFL_10\**" />
 	  <None Remove="Menu\Tagging\Revit26_Plugin.RoofTag_V062\**" />
 	  <None Remove="Menu\Tagging\Revit26_Plugin.RoofTag_V61\**" />
 	  <None Remove="Menu\Tagging\RoofTagV42\**" />
@@ -588,6 +591,7 @@
 	  <Page Remove="Menu\Setup\WorksetManager_01%28excluded%29\**" />
 	  <Page Remove="Menu\Setup\WorksetRenamer\**" />
 	  <Page Remove="Menu\Setup\WorksetRenamer_01\**" />
+	  <Page Remove="Menu\Setup\WSFL_10\**" />
 	  <Page Remove="Menu\Tagging\Revit26_Plugin.RoofTag_V062\**" />
 	  <Page Remove="Menu\Tagging\Revit26_Plugin.RoofTag_V61\**" />
 	  <Page Remove="Menu\Tagging\RoofTagV42\**" />
@@ -680,7 +684,7 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Page Remove="Resources\App.xaml" />
-	  <Page Remove="Shared\SharedStyles.xaml" />
+	  <Page Remove="Shared\SharedStyles - Copy.xaml" />
 	</ItemGroup>
 	<ItemGroup>
 	  <EmbeddedResource Include="Resources\Icons\Addlines_32.png" />
@@ -712,8 +716,9 @@
 	  </Reference>
 	</ItemGroup>
 	<ItemGroup>
+	  <PackageReference Include="ClosedXML" Version="0.105.0" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-	  <PackageReference Include="EPPlus" Version="5.8.17" />
+	  <PackageReference Include="EPPlus" Version="8.6.0" />
 	  <PackageReference Include="MahApps.Metro" Version="2.4.11" />
 	  <PackageReference Include="MahApps.Metro.IconPacks" Version="6.2.1" />
 	  <PackageReference Include="MaterialDesignColors" Version="5.3.0" />
@@ -724,11 +729,6 @@
 	  <Folder Include="Menu\RoofTools\Lines\Creaser\" />
 	  <Folder Include="Menu\RoofTools\Lines\SlopeToDetailItem\" />
 	  <Folder Include="Menu\Setup\CaddLInkToFamiliy\" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Resource Include="Shared\SharedStyles.xaml">
-	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-	  </Resource>
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Update="Menu\RoofTools\CreasetoLines\Creaser_V08\CreaserSummaryWindow.xaml.cs">
