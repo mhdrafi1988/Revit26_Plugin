@@ -5,7 +5,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\Release\net8.0-windows\11-06-003</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\Release\net8.0-windows\15-06-001</BaseOutputPath>
 		<PackageId />
 		<AssemblyName>Revit26_Plugin</AssemblyName>
 	</PropertyGroup>
@@ -168,6 +168,7 @@
 	  <Compile Remove="Menu\ViewTools\Place_01\Section_V3\**" />
 	  <Compile Remove="Menu\ViewTools\Place_01\Section_V4\**" />
 	  <Compile Remove="Menu\ViewTools\Rename\**" />
+	  <Compile Remove="Menu\ViewTools\Rename_01\Section_Renamer_V09\**" />
 	  <Compile Remove="ViewModels\**" />
 	  <EmbeddedResource Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
 	  <EmbeddedResource Remove="Menu\Dimensions\TwoPOintLInes_V02\**" />
@@ -327,6 +328,7 @@
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\Section_V3\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Place_01\Section_V4\**" />
 	  <EmbeddedResource Remove="Menu\ViewTools\Rename\**" />
+	  <EmbeddedResource Remove="Menu\ViewTools\Rename_01\Section_Renamer_V09\**" />
 	  <EmbeddedResource Remove="ViewModels\**" />
 	  <None Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
 	  <None Remove="Menu\Dimensions\TwoPOintLInes_V02\**" />
@@ -486,6 +488,7 @@
 	  <None Remove="Menu\ViewTools\Place_01\Section_V3\**" />
 	  <None Remove="Menu\ViewTools\Place_01\Section_V4\**" />
 	  <None Remove="Menu\ViewTools\Rename\**" />
+	  <None Remove="Menu\ViewTools\Rename_01\Section_Renamer_V09\**" />
 	  <None Remove="ViewModels\**" />
 	  <Page Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
 	  <Page Remove="Menu\Dimensions\TwoPOintLInes_V02\**" />
@@ -645,6 +648,7 @@
 	  <Page Remove="Menu\ViewTools\Place_01\Section_V3\**" />
 	  <Page Remove="Menu\ViewTools\Place_01\Section_V4\**" />
 	  <Page Remove="Menu\ViewTools\Rename\**" />
+	  <Page Remove="Menu\ViewTools\Rename_01\Section_Renamer_V09\**" />
 	  <Page Remove="ViewModels\**" />
 	</ItemGroup>
 	<ItemGroup>
@@ -676,6 +680,7 @@
 	  <None Remove="Resources\Icons\AutoslopeV2_64.png" />
 	  <None Remove="Resources\Icons\AutoslopeV5_32.png" />
 	  <None Remove="Resources\Icons\AutoslopeV6_32.png" />
+	  <None Remove="Resources\Icons\AutoslopeV6_64.png" />
 	  <None Remove="Resources\Icons\converter32.png" />
 	  <None Remove="Resources\Icons\DimMenu_32.png" />
 	  <None Remove="Resources\Icons\linematch32.png" />
@@ -683,8 +688,10 @@
 	  <None Remove="Resources\Icons\shapepoints32.png" />
 	</ItemGroup>
 	<ItemGroup>
+	  <Page Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_WIP2\UI\Views\UI_Autoslope - Copy.xaml" />
 	  <Page Remove="Resources\App.xaml" />
 	  <Page Remove="Shared\SharedStyles - Copy.xaml" />
+	  <Page Remove="Shared\SharedStyles-backup.xaml" />
 	</ItemGroup>
 	<ItemGroup>
 	  <EmbeddedResource Include="Resources\Icons\Addlines_32.png" />
@@ -695,6 +702,7 @@
 	  <EmbeddedResource Include="Resources\Icons\AutoslopeV2_32.png" />
 	  <EmbeddedResource Include="Resources\Icons\AutoslopeV5_32.png" />
 	  <EmbeddedResource Include="Resources\Icons\AutoslopeV6_32.png" />
+	  <EmbeddedResource Include="Resources\Icons\AutoslopeV6_64.png" />
 	  <EmbeddedResource Include="Resources\Icons\Converter32.png" />
 	  <EmbeddedResource Include="Resources\Icons\Create_32.png" />
 	  <EmbeddedResource Include="Resources\Icons\DimMenu_32.png" />
@@ -718,7 +726,7 @@
 	<ItemGroup>
 	  <PackageReference Include="ClosedXML" Version="0.105.0" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-	  <PackageReference Include="EPPlus" Version="8.6.0" />
+	  <PackageReference Include="EPPlus" Version="5.8.0" />
 	  <PackageReference Include="MahApps.Metro" Version="2.4.11" />
 	  <PackageReference Include="MahApps.Metro.IconPacks" Version="6.2.1" />
 	  <PackageReference Include="MaterialDesignColors" Version="5.3.0" />

@@ -1,14 +1,14 @@
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.WorksetManager_05.ViewModels;
-using Revit26_Plugin.WorksetManager_05.Views;
+using Revit26_Plugin.WorksetManager_06.ViewModels;
+using Revit26_Plugin.WorksetManager_06.Views;
 
-namespace Revit26_Plugin.WorksetManager_05
+namespace Revit26_Plugin.WorksetManager_06
 {
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]
-    public class WorksetManagerCommand : IExternalCommand
+    public class CreateWorksetsFromLinkedFilesCommand : IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {

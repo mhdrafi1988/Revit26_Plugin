@@ -11,47 +11,39 @@ using System.Linq;
 namespace Revit26_Plugin.APUS_V320.Services
 {
     /// <summary>
-    /// SIMPLE GRID PLACEMENT SERVICE — adaptive fill layout, three-pass
-    ///
-    /// Algorithm
-    /// ─────────
-    /// Pass 1  Create all viewports at temporary stacked positions so
-    ///         Revit can compute their real rendered sizes (crop + title strip).
-    ///
-    /// Pass 2  Read GetBoxOutline() for every viewport.
-    ///         Pack viewports into rows greedily: add the next view to the
-    ///         current row if it still fits horizontally; otherwise start a
-    ///         new row.  Once all rows are known, scale row heights up
-    ///         uniformly so the total grid exactly fills the usable height.
-    ///         Within each row, distribute the inter-view gaps evenly so
-    ///         the row spans the full usable width.
-    ///
-    /// Pass 3  Move every viewport to its final position:
-    ///           Horizontal — left-edge of the view's slot in the row
-    ///           Vertical   — bottom-aligned within the row
+    /// SIMPLE GRID PLACEMENT SERVICE
+    /// Places sections in strict reading order within a user-defined grid
+    /// 
+    /// RULES:
+    /// ✓ User-defined rows and columns
+    /// ✓ Strict reading order: Left → Right, Top → Bottom
+    /// ✓ Even distribution within grid cells
+    /// ✓ Bottom-aligned within rows, Left-aligned within columns
+    /// ✓ Gaps respected with ±10% tolerance if needed
+    /// ✓ Optional multi-sheet placement
+    /// ✓ No overlap guarantee
     /// </summary>
     public class SimpleGridPlacementService
     {
         private readonly Document _doc;
+        private const double MIN_GAP_MM = 3;
+        private const double GAP_TOLERANCE = 0.10; // ±10%
 
         public SimpleGridPlacementService(Document doc)
         {
             _doc = doc ?? throw new ArgumentNullException(nameof(doc));
         }
 
-        // ── public entry point ────────────────────────────────────────
         public SectionPlacementHandler.PlacementResult Place(
             SectionPlacementHandler.PlacementContext context,
             List<SectionItemViewModel> sections,
             View referenceView,
-            int gridRows,        // kept for multi-sheet capacity logic
-            int gridColumns,     // kept for multi-sheet capacity logic
+            int gridRows,
+            int gridColumns,
             bool placeToMultipleSheets)
         {
-            var result = new SectionPlacementHandler.PlacementResult
-            {
-                SheetNumbers = new HashSet<string>()
-            };
+            var result = new SectionPlacementHandler.PlacementResult();
+            result.SheetNumbers = new HashSet<string>();
 
             if (sections == null || !sections.Any())
             {
@@ -61,47 +53,75 @@ namespace Revit26_Plugin.APUS_V320.Services
             }
 
             int maxViewsPerSheet = gridRows * gridColumns;
+
+            // Log initialization
             LogInitialization(context, sections, gridRows, gridColumns, maxViewsPerSheet, placeToMultipleSheets);
 
             try
             {
+                // STAGE 1: Sort sections in reading order
                 context.ViewModel?.LogInfo("\n📏 STAGE 1: Sorting sections in reading order...");
                 var sortedItems = PrepareItemsInReadingOrder(sections, referenceView, context);
-                if (!sortedItems.Any()) { result.ErrorMessage = "No valid items after sorting"; return result; }
 
+                if (!sortedItems.Any())
+                {
+                    result.ErrorMessage = "No valid items after sorting";
+                    return result;
+                }
+
+                // STAGE 2: Calculate sheet dimensions
                 var dimensions = CalculateSheetDimensions(context);
                 LogSheetDimensions(context, dimensions);
 
-                double hGap = UnitConversionHelper.MmToFeet(context.HorizontalGapMm);
-                double vGap = UnitConversionHelper.MmToFeet(context.VerticalGapMm);
-                context.ViewModel?.LogInfo($"\n   📐 MIN GAPS: H={hGap * 304.8:F0}mm, V={vGap * 304.8:F0}mm");
+                // STAGE 3: Calculate optimal grid cell sizes
+                if (!CalculateGridCells(dimensions, gridRows, gridColumns, context,
+                    out double cellWidth, out double cellHeight, out double hGap, out double vGap))
+                {
+                    result.ErrorMessage = "Failed to calculate grid layout";
+                    return result;
+                }
 
+                // STAGE 4: Process sheets
                 int totalPlaced = 0;
                 int sheetCount = 0;
                 int currentIndex = 0;
 
                 while (currentIndex < sortedItems.Count)
                 {
-                    if (context.ViewModel?.Progress.IsCancelled == true) break;
+                    if (context.ViewModel?.Progress.IsCancelled == true)
+                        break;
 
                     sheetCount++;
+
+                    // Calculate how many views go on this sheet
                     int viewsForThisSheet = placeToMultipleSheets
                         ? Math.Min(maxViewsPerSheet, sortedItems.Count - currentIndex)
-                        : sortedItems.Count - currentIndex; // fill the sheet completely
+                        : Math.Min(maxViewsPerSheet, sortedItems.Count);
 
-                    var itemsForSheet = sortedItems.Skip(currentIndex).Take(viewsForThisSheet).ToList();
+                    context.ViewModel?.LogInfo($"\n{'═',0} SHEET {sheetCount} - {gridRows}×{gridColumns} GRID {'═',60}");
+                    context.ViewModel?.LogInfo($"   • Placing views {currentIndex + 1} to {currentIndex + viewsForThisSheet}");
 
-                    context.ViewModel?.LogInfo($"\n{'═',0} SHEET {sheetCount} {'═',70}");
-                    context.ViewModel?.LogInfo($"   • Placing views {currentIndex + 1} to {currentIndex + itemsForSheet.Count}");
-
+                    // Create sheet
                     var sheet = CreateSheet(context, sheetCount);
-                    if (sheet == null) break;
+                    if (sheet == null)
+                        break;
 
+                    // Draw grid outline
                     DrawGridOutline(sheet, dimensions, context);
 
+                    // Place views on this sheet
                     var sheetResult = PlaceViewsOnSheet(
-                        sheet, itemsForSheet, dimensions,
-                        hGap, vGap, context, currentIndex + 1);
+                        sheet,
+                        sortedItems.Skip(currentIndex).Take(viewsForThisSheet).ToList(),
+                        dimensions,
+                        cellWidth,
+                        cellHeight,
+                        hGap,
+                        vGap,
+                        gridRows,
+                        gridColumns,
+                        context,
+                        currentIndex + 1);
 
                     if (sheetResult.PlacedCount > 0)
                     {
@@ -109,20 +129,28 @@ namespace Revit26_Plugin.APUS_V320.Services
                         result.PlacedCount = totalPlaced;
                         result.SheetNumbers.Add(sheet.SheetNumber);
                         currentIndex += sheetResult.PlacedCount;
+
                         LogSheetResult(context, sheetResult, sheetCount,
                             sortedItems.Count - currentIndex, placeToMultipleSheets);
                     }
                     else
                     {
+                        // Remove empty sheet
                         _doc.Delete(sheet.Id);
                         context.ViewModel?.LogWarning($"   ⚠️ No views placed on sheet {sheetCount} - removing");
-                        if (!placeToMultipleSheets) break;
+
+                        if (!placeToMultipleSheets)
+                            break;
                     }
 
-                    if (!placeToMultipleSheets) break;
+                    // If single sheet mode, stop after first sheet
+                    if (!placeToMultipleSheets)
+                        break;
                 }
 
+                // Final report
                 LogFinalReport(context, sections, totalPlaced, sheetCount, result);
+
                 return result;
             }
             catch (Exception ex)
@@ -133,261 +161,6 @@ namespace Revit26_Plugin.APUS_V320.Services
             }
         }
 
-        // ── three-pass adaptive fill ──────────────────────────────────
-        private SheetResult PlaceViewsOnSheet(
-            ViewSheet sheet,
-            List<SheetItem> items,
-            SheetDimensions dim,
-            double minHGap,
-            double minVGap,
-            SectionPlacementHandler.PlacementContext context,
-            int startNumber)
-        {
-            var result = new SheetResult();
-            var placedViewIds = new HashSet<ElementId>();
-
-            // ── PASS 1: create all viewports at temporary positions ───
-            // Stack them in a single column just inside the left margin
-            // so Revit accepts them (must be on-sheet) and can measure them.
-            context.ViewModel?.LogInfo($"\n   📦 PASS 1 — Creating viewports at temp positions...");
-
-            double tempX = dim.StartX + UnitConversionHelper.MmToFeet(5);
-            double tempYInc = UnitConversionHelper.MmToFeet(30); // 30 mm step
-            double tempY = dim.StartY - UnitConversionHelper.MmToFeet(15);
-
-            // vpList keeps creation order aligned with items
-            var vpList = new List<(Viewport vp, int itemIdx)>();
-
-            for (int i = 0; i < items.Count; i++)
-            {
-                var item = items[i];
-                int globalNum = startNumber + i;
-
-                try
-                {
-                    if (!CanPlaceView(item.Section.View, _doc, sheet.Id))
-                    {
-                        context.ViewModel?.LogWarning(
-                            $"      ⚠️ [{globalNum}] {item.ViewName} — already placed, skipping");
-                        vpList.Add((null, i));
-                        continue;
-                    }
-
-                    var vp = Viewport.Create(_doc, sheet.Id, item.Section.View.Id,
-                                             new XYZ(tempX, tempY - i * tempYInc, 0));
-
-                    int det = context.GetNextDetailNumber();
-                    var dp = vp.get_Parameter(BuiltInParameter.VIEWPORT_DETAIL_NUMBER);
-                    if (dp != null && !dp.IsReadOnly) dp.Set(det.ToString());
-
-                    placedViewIds.Add(item.Section.View.Id);
-                    vpList.Add((vp, i));
-
-                    context.ViewModel?.LogInfo(
-                        $"      ✅ [{globalNum}] {item.ViewName,-35} Detail: {det}");
-                    context.ViewModel?.Progress.Step();
-                }
-                catch (Exception ex)
-                {
-                    context.ViewModel?.LogError($"      ❌ [{globalNum}] {item.ViewName} — {ex.Message}");
-                    vpList.Add((null, i));
-                }
-            }
-
-            // ── PASS 2: read real sizes, build adaptive row layout ───
-            context.ViewModel?.LogInfo($"\n   📐 PASS 2 — Reading real sizes & computing layout...");
-
-            // vpSize[i] = real rendered (w, h) in feet; (0,0) if viewport was null
-            var vpSize = new (double w, double h)[items.Count];
-            foreach (var (vp, i) in vpList)
-            {
-                if (vp == null) continue;
-                var box = vp.GetBoxOutline();
-                if (box == null) continue;
-                vpSize[i] = (
-                    box.MaximumPoint.X - box.MinimumPoint.X,
-                    box.MaximumPoint.Y - box.MinimumPoint.Y);
-            }
-
-            // Greedy row packing ─────────────────────────────────────
-            // A row is a list of item indices.
-            // We add the next view to the current row if
-            //   sum_of_widths + (n-1)*minHGap <= usableWidth
-            // otherwise we start a new row.
-            var rows = new List<List<int>>();  // rows[r] = list of item indices
-            var currentRow = new List<int>();
-            double currentRowWidth = 0;
-
-            for (int i = 0; i < items.Count; i++)
-            {
-                if (vpList[i].vp == null) continue; // skip failed viewports
-
-                double w = vpSize[i].w;
-                double gapNeeded = currentRow.Count > 0 ? minHGap : 0;
-
-                if (currentRow.Count > 0 && currentRowWidth + gapNeeded + w > dim.UsableWidth + 1e-9)
-                {
-                    // Finish current row, start a new one
-                    rows.Add(currentRow);
-                    currentRow = new List<int>();
-                    currentRowWidth = 0;
-                }
-
-                currentRow.Add(i);
-                currentRowWidth += (currentRow.Count > 1 ? minHGap : 0) + w;
-            }
-            if (currentRow.Count > 0) rows.Add(currentRow);
-
-            int rowCount = rows.Count;
-
-            context.ViewModel?.LogInfo($"      Packed {placedViewIds.Count} views into {rowCount} rows:");
-            for (int r = 0; r < rowCount; r++)
-            {
-                double rowNatW = rows[r].Sum(i => vpSize[i].w) + minHGap * (rows[r].Count - 1);
-                double rowNatH = rows[r].Max(i => vpSize[i].h);
-                context.ViewModel?.LogInfo(
-                    $"        Row {r + 1}: {rows[r].Count} views  " +
-                    $"nat. {rowNatW * 304.8:F0}×{rowNatH * 304.8:F0} mm");
-            }
-
-            if (rowCount == 0)
-            {
-                result.PlacedCount = 0;
-                result.PlacedViewIds = placedViewIds;
-                return result;
-            }
-
-            // Natural row heights (tallest viewport in each row)
-            double[] rowNatHeight = new double[rowCount];
-            for (int r = 0; r < rowCount; r++)
-                rowNatHeight[r] = rows[r].Max(i => vpSize[i].h);
-
-            // Total natural height and available height
-            double totalNatH = rowNatHeight.Sum() + minVGap * (rowCount - 1);
-            double availH = dim.UsableHeight;
-
-            // Scale row heights up (or down) so they exactly fill availH
-            // Keep the proportional distribution between rows.
-            double vScale = availH / totalNatH;
-            double[] finalRowH = rowNatHeight.Select(h => h * vScale).ToArray();
-
-            // Adjusted vGap: keep original if scaling up, shrink proportionally if scaling down
-            double finalVGap = vScale >= 1.0 ? minVGap : minVGap * vScale;
-
-            // Verify total fits (re-check after gap adjustment)
-            double checkH = finalRowH.Sum() + finalVGap * (rowCount - 1);
-            if (checkH > availH + 1e-6)
-            {
-                // Re-scale heights to absorb any rounding
-                double adj = availH / checkH;
-                for (int r = 0; r < rowCount; r++) finalRowH[r] *= adj;
-                finalVGap *= adj;
-            }
-
-            // For each row: distribute horizontal gaps evenly so the row
-            // spans the full usable width.
-            // finalRowGap[r] = hGap between views in row r
-            double[] finalRowHGap = new double[rowCount];
-            // finalViewX[r][c] = left edge of view c in row r
-            var finalViewX = new List<double[]>();
-
-            for (int r = 0; r < rowCount; r++)
-            {
-                int n = rows[r].Count;
-                double sumW = rows[r].Sum(i => vpSize[i].w);
-                double gapSpace = dim.UsableWidth - sumW;
-
-                double gap;
-                double[] xs = new double[n];
-
-                if (n == 1)
-                {
-                    // Single view in row: centre it
-                    gap = 0;
-                    xs[0] = dim.StartX + (dim.UsableWidth - vpSize[rows[r][0]].w) / 2.0;
-                }
-                else
-                {
-                    // Distribute gap evenly between views
-                    gap = Math.Max(minHGap, gapSpace / (n - 1));
-                    double x = dim.StartX;
-                    for (int c = 0; c < n; c++)
-                    {
-                        xs[c] = x;
-                        x += vpSize[rows[r][c]].w + gap;
-                    }
-                }
-
-                finalRowHGap[r] = gap;
-                finalViewX.Add(xs);
-            }
-
-            // Row top-edge origins (Y decreases downward on sheet)
-            double[] rowTopY = new double[rowCount];
-            double y = dim.StartY;
-            for (int r = 0; r < rowCount; r++)
-            {
-                rowTopY[r] = y;
-                y -= finalRowH[r] + finalVGap;
-            }
-
-            context.ViewModel?.LogInfo($"\n      Final layout:");
-            for (int r = 0; r < rowCount; r++)
-                context.ViewModel?.LogInfo(
-                    $"        Row {r + 1}: height {finalRowH[r] * 304.8:F0} mm  " +
-                    $"hGap {finalRowHGap[r] * 304.8:F0} mm  top-Y {rowTopY[r] * 304.8:F0} mm");
-
-            // ── PASS 3: move every viewport to final position ─────────
-            context.ViewModel?.LogInfo($"\n   🎯 PASS 3 — Repositioning viewports...");
-
-            for (int r = 0; r < rowCount; r++)
-            {
-                double rowBottom = rowTopY[r] - finalRowH[r];
-
-                for (int c = 0; c < rows[r].Count; c++)
-                {
-                    int itemIdx = rows[r][c];
-                    var (vp, _) = vpList.First(x => x.itemIdx == itemIdx);
-                    if (vp == null) continue;
-
-                    var box = vp.GetBoxOutline();
-                    if (box == null) continue;
-
-                    double vpW = box.MaximumPoint.X - box.MinimumPoint.X;
-                    double vpH = box.MaximumPoint.Y - box.MinimumPoint.Y;
-
-                    // Target centre
-                    //   X: left edge of this view's slot + half view width
-                    //   Y: row bottom + half view height  (bottom-aligned)
-                    double targetCX = finalViewX[r][c] + vpSize[itemIdx].w / 2.0;
-                    double targetCY = rowBottom + vpH / 2.0;
-
-                    double currentCX = (box.MinimumPoint.X + box.MaximumPoint.X) / 2.0;
-                    double currentCY = (box.MinimumPoint.Y + box.MaximumPoint.Y) / 2.0;
-
-                    double dx = targetCX - currentCX;
-                    double dy = targetCY - currentCY;
-
-                    if (Math.Abs(dx) > 1e-9 || Math.Abs(dy) > 1e-9)
-                        ElementTransformUtils.MoveElement(_doc, vp.Id, new XYZ(dx, dy, 0));
-
-                    context.ViewModel?.LogInfo(
-                        $"      Row {r + 1} Col {c + 1}: " +
-                        $"centre ({targetCX * 304.8:F0}, {targetCY * 304.8:F0}) mm  " +
-                        $"size {vpW * 304.8:F0}×{vpH * 304.8:F0} mm");
-                }
-            }
-
-            DrawRowSeparators(sheet, dim, rowTopY, finalRowH, finalVGap, rowCount, context);
-            DrawViewportOutlines(sheet, context);
-
-            result.PlacedCount = placedViewIds.Count;
-            result.PlacedViewIds = placedViewIds;
-            result.Utilization = CalculateUtilization(placedViewIds, dim, context);
-            return result;
-        }
-
-        // ── reading order sort ────────────────────────────────────────
         private List<SheetItem> PrepareItemsInReadingOrder(
             List<SectionItemViewModel> sections,
             View referenceView,
@@ -402,236 +175,486 @@ namespace Revit26_Plugin.APUS_V320.Services
             {
                 var location = GetSectionLocation(section.View);
                 XYZ v = location - origin;
+
                 double x = v.DotProduct(right);
                 double y = v.DotProduct(up);
-                var fp = ViewSizeService.Calculate(section.View);
+
+                var footprint = ViewSizeService.Calculate(section.View);
 
                 items.Add(new SheetItem
                 {
                     Section = section,
                     X = x,
                     Y = y,
-                    Width = fp.WidthFt,
-                    Height = fp.HeightFt,
+                    Width = footprint.WidthFt,
+                    Height = footprint.HeightFt,
                     ViewId = section.View.Id,
                     ViewName = section.ViewName
                 });
             }
 
+            // Strict reading order: Top to Bottom, then Left to Right
             var sorted = items
-                .OrderByDescending(i => i.Y)
-                .ThenBy(i => i.X)
+                .OrderByDescending(item => item.Y)  // Top to bottom
+                .ThenBy(item => item.X)             // Left to right
                 .ToList();
 
+            // Log reading order
             context.ViewModel?.LogInfo($"\n📋 READING ORDER (Top 10):");
             for (int i = 0; i < Math.Min(10, sorted.Count); i++)
             {
-                var it = sorted[i];
-                context.ViewModel?.LogInfo(
-                    $"   #{i + 1,2}: {it.ViewName,-35}" +
-                    $"  Pos: ({it.X * 304.8:F0}, {it.Y * 304.8:F0}) mm" +
-                    $"  Footprint: {it.Width * 304.8:F0}×{it.Height * 304.8:F0} mm");
+                var item = sorted[i];
+                context.ViewModel?.LogInfo($"   #{i + 1,2}: {item.ViewName,-30} - Pos: ({item.X * 304.8:F0}, {item.Y * 304.8:F0}) mm");
             }
 
             return sorted;
         }
 
-        // ── sheet dimensions ──────────────────────────────────────────
+        private bool CalculateGridCells(
+            SheetDimensions dimensions,
+            int gridRows,
+            int gridColumns,
+            SectionPlacementHandler.PlacementContext context,
+            out double cellWidth,
+            out double cellHeight,
+            out double hGap,
+            out double vGap)
+        {
+            cellWidth = 0;
+            cellHeight = 0;
+            hGap = UnitConversionHelper.MmToFeet(context.HorizontalGapMm);
+            vGap = UnitConversionHelper.MmToFeet(context.VerticalGapMm);
+
+            // Calculate base cell dimensions
+            double totalGapsWidth = hGap * (gridColumns - 1);
+            double totalGapsHeight = vGap * (gridRows - 1);
+
+            cellWidth = (dimensions.UsableWidth - totalGapsWidth) / gridColumns;
+            cellHeight = (dimensions.UsableHeight - totalGapsHeight) / gridRows;
+
+            context.ViewModel?.LogInfo($"\n   📐 GRID CALCULATION:");
+            context.ViewModel?.LogInfo($"      • Base cell size: {cellWidth * 304.8:F0} × {cellHeight * 304.8:F0} mm");
+            context.ViewModel?.LogInfo($"      • Base gaps: H={hGap * 304.8:F0}mm, V={vGap * 304.8:F0}mm");
+
+            // Check if we need to adjust gaps
+            double minGapFt = UnitConversionHelper.MmToFeet(MIN_GAP_MM);
+            bool gapsAdjusted = false;
+
+            // Try to optimize gaps within ±10% tolerance
+            for (double gapMultiplier = 1.0; gapMultiplier <= 1.1; gapMultiplier += 0.02)
+            {
+                double testHGap = hGap * gapMultiplier;
+                double testVGap = vGap * gapMultiplier;
+
+                if (testHGap < minGapFt) testHGap = minGapFt;
+                if (testVGap < minGapFt) testVGap = minGapFt;
+
+                double testCellWidth = (dimensions.UsableWidth - testHGap * (gridColumns - 1)) / gridColumns;
+                double testCellHeight = (dimensions.UsableHeight - testVGap * (gridRows - 1)) / gridRows;
+
+                if (testCellWidth > 0 && testCellHeight > 0)
+                {
+                    if (Math.Abs(gapMultiplier - 1.0) > 0.01)
+                    {
+                        gapsAdjusted = true;
+                        hGap = testHGap;
+                        vGap = testVGap;
+                        cellWidth = testCellWidth;
+                        cellHeight = testCellHeight;
+                    }
+                    break;
+                }
+            }
+
+            if (gapsAdjusted)
+            {
+                context.ViewModel?.LogInfo($"      ⚙️ Gaps adjusted within ±10% tolerance:");
+                context.ViewModel?.LogInfo($"         • New gaps: H={hGap * 304.8:F0}mm, V={vGap * 304.8:F0}mm");
+                context.ViewModel?.LogInfo($"         • Final cell: {cellWidth * 304.8:F0} × {cellHeight * 304.8:F0} mm");
+            }
+
+            return cellWidth > 0 && cellHeight > 0;
+        }
+
+        private SheetResult PlaceViewsOnSheet(
+            ViewSheet sheet,
+            List<SheetItem> itemsForSheet,
+            SheetDimensions dimensions,
+            double cellWidth,
+            double cellHeight,
+            double hGap,
+            double vGap,
+            int gridRows,
+            int gridColumns,
+            SectionPlacementHandler.PlacementContext context,
+            int startNumber)
+        {
+            var result = new SheetResult();
+            var placedViewIds = new HashSet<ElementId>();
+
+            context.ViewModel?.LogInfo($"\n   📦 PLACING VIEWS:");
+
+            int viewIndex = 0;
+            for (int row = 0; row < gridRows && viewIndex < itemsForSheet.Count; row++)
+            {
+                for (int col = 0; col < gridColumns && viewIndex < itemsForSheet.Count; col++)
+                {
+                    var item = itemsForSheet[viewIndex];
+                    int globalNumber = startNumber + viewIndex;
+
+                    // Calculate cell position
+                    double cellX = dimensions.StartX + col * (cellWidth + hGap);
+                    double cellY = dimensions.StartY - row * (cellHeight + vGap);
+                    double cellBottomY = cellY - cellHeight;
+
+                    // Position view in cell (center)
+                    double centerX = cellX + cellWidth / 2;
+                    double centerY = cellBottomY + cellHeight / 2;
+
+                    try
+                    {
+                        if (!CanPlaceView(item.Section.View, _doc, sheet.Id))
+                        {
+                            context.ViewModel?.LogWarning($"      ⚠️ [{globalNumber}] {item.ViewName} - Cannot place (already placed)");
+                            viewIndex++;
+                            continue;
+                        }
+
+                        var vp = Viewport.Create(_doc, sheet.Id, item.Section.View.Id, new XYZ(centerX, centerY, 0));
+
+                        int detailNumber = context.GetNextDetailNumber();
+                        var detailParam = vp.get_Parameter(BuiltInParameter.VIEWPORT_DETAIL_NUMBER);
+                        if (detailParam != null && !detailParam.IsReadOnly)
+                        {
+                            detailParam.Set(detailNumber.ToString());
+                        }
+
+                        placedViewIds.Add(item.Section.View.Id);
+
+                        // Log placement with position
+                        context.ViewModel?.LogInfo(
+                            $"      ✅ [{globalNumber}] {item.ViewName,-30} - " +
+                            $"Cell ({row + 1},{col + 1}) - " +
+                            $"Pos: ({centerX * 304.8:F0}, {centerY * 304.8:F0}) mm - " +
+                            $"Detail: {detailNumber}");
+
+                        context.ViewModel?.Progress.Step();
+                        viewIndex++;
+                    }
+                    catch (Exception ex)
+                    {
+                        context.ViewModel?.LogError($"      ❌ [{globalNumber}] {item.ViewName} - Failed: {ex.Message}");
+                        viewIndex++;
+                    }
+                }
+            }
+
+            // Draw grid lines and cell outlines
+            DrawGridLines(sheet, dimensions, cellWidth, cellHeight, hGap, vGap, gridRows, gridColumns, context);
+            DrawViewportOutlines(sheet, context);
+
+            result.PlacedCount = placedViewIds.Count;
+            result.PlacedViewIds = placedViewIds;
+            result.Utilization = CalculateUtilization(placedViewIds, dimensions, context);
+
+            return result;
+        }
+
         private SheetDimensions CalculateSheetDimensions(SectionPlacementHandler.PlacementContext context)
         {
-            double left = UnitConversionHelper.MmToFeet(context.ViewModel?.LeftMarginMm ?? 40);
-            double right = UnitConversionHelper.MmToFeet(context.ViewModel?.RightMarginMm ?? 150);
-            double top = UnitConversionHelper.MmToFeet(context.ViewModel?.TopMarginMm ?? 40);
-            double bottom = UnitConversionHelper.MmToFeet(context.ViewModel?.BottomMarginMm ?? 100);
+            double leftMargin = UnitConversionHelper.MmToFeet(context.ViewModel?.LeftMarginMm ?? 40);
+            double rightMargin = UnitConversionHelper.MmToFeet(context.ViewModel?.RightMarginMm ?? 150);
+            double topMargin = UnitConversionHelper.MmToFeet(context.ViewModel?.TopMarginMm ?? 40);
+            double bottomMargin = UnitConversionHelper.MmToFeet(context.ViewModel?.BottomMarginMm ?? 100);
 
             return new SheetDimensions
             {
-                UsableWidth = context.PlacementArea.Width - left - right,
-                UsableHeight = context.PlacementArea.Height - top - bottom,
-                StartX = context.PlacementArea.Origin.X + left,
-                StartY = context.PlacementArea.Origin.Y - top
+                UsableWidth = context.PlacementArea.Width - leftMargin - rightMargin,
+                UsableHeight = context.PlacementArea.Height - topMargin - bottomMargin,
+                StartX = context.PlacementArea.Origin.X + leftMargin,
+                StartY = context.PlacementArea.Origin.Y - topMargin
             };
         }
 
-        // ── sheet creation ────────────────────────────────────────────
         private ViewSheet CreateSheet(SectionPlacementHandler.PlacementContext context, int sheetNumber)
         {
-            string num = context.SheetNumberService.GetNextAvailableSheetNumber($"GRID{sheetNumber}");
-            context.SheetNumberService.TryReserveSheetNumber(num);
-            return new SheetCreationService(_doc).Create(context.TitleBlock, num, $"Grid-{num}");
+            string sheetNumberStr = context.SheetNumberService.GetNextAvailableSheetNumber($"GRID{sheetNumber}");
+            context.SheetNumberService.TryReserveSheetNumber(sheetNumberStr);
+
+            var sheetCreator = new SheetCreationService(_doc);
+            return sheetCreator.Create(context.TitleBlock, sheetNumberStr, $"Grid-{sheetNumberStr}");
         }
 
-        // ── helpers ───────────────────────────────────────────────────
         private XYZ GetSectionLocation(ViewSection view)
         {
             try
             {
                 if (view.Location is LocationCurve lc && lc.Curve != null)
                     return lc.Curve.Evaluate(0.5, true);
+
                 BoundingBoxXYZ bb = view.CropBox;
-                if (bb != null) return (bb.Min + bb.Max) * 0.5;
+                if (bb != null)
+                    return (bb.Min + bb.Max) * 0.5;
             }
             catch { }
+
             return XYZ.Zero;
         }
 
         private bool CanPlaceView(ViewSection view, Document doc, ElementId sheetId)
         {
-            try { return Viewport.CanAddViewToSheet(doc, sheetId, view.Id); }
-            catch { return false; }
+            try
+            {
+                return Viewport.CanAddViewToSheet(doc, sheetId, view.Id);
+            }
+            catch
+            {
+                return false;
+            }
         }
 
-        private double CalculateUtilization(HashSet<ElementId> ids, SheetDimensions dim,
-            SectionPlacementHandler.PlacementContext ctx)
+        private double CalculateUtilization(HashSet<ElementId> placedViewIds, SheetDimensions dimensions, SectionPlacementHandler.PlacementContext context)
         {
             try
             {
-                double area = 0;
-                foreach (var id in ids)
-                    if (_doc.GetElement(id) is ViewSection v)
+                double totalViewArea = 0;
+                foreach (var viewId in placedViewIds)
+                {
+                    var view = _doc.GetElement(viewId) as ViewSection;
+                    if (view != null)
                     {
-                        var fp = ViewSizeService.Calculate(v);
-                        area += fp.WidthFt * fp.HeightFt;
+                        var footprint = ViewSizeService.Calculate(view);
+                        totalViewArea += footprint.WidthFt * footprint.HeightFt;
                     }
-                double sheetArea = dim.UsableWidth * dim.UsableHeight;
-                return sheetArea > 0 ? area * 100.0 / sheetArea : 0;
-            }
-            catch { return 0; }
-        }
-
-        // ── drawing ───────────────────────────────────────────────────
-        private void DrawGridOutline(ViewSheet sheet, SheetDimensions dim,
-            SectionPlacementHandler.PlacementContext ctx)
-        {
-            try
-            {
-                using var t = new Transaction(_doc, "Draw Grid Outline");
-                t.Start();
-                var pts = new[]
-                {
-                    new XYZ(dim.StartX,                   dim.StartY,                   0),
-                    new XYZ(dim.StartX + dim.UsableWidth,  dim.StartY,                   0),
-                    new XYZ(dim.StartX + dim.UsableWidth,  dim.StartY - dim.UsableHeight, 0),
-                    new XYZ(dim.StartX,                   dim.StartY - dim.UsableHeight, 0),
-                    new XYZ(dim.StartX,                   dim.StartY,                   0)
-                };
-                for (int i = 0; i < pts.Length - 1; i++)
-                    _doc.Create.NewDetailCurve(sheet, Line.CreateBound(pts[i], pts[i + 1]));
-                t.Commit();
-                ctx.ViewModel?.LogInfo("      📏 Grid outline drawn");
-            }
-            catch (Exception ex) { ctx.ViewModel?.LogWarning($"      ⚠️ Grid outline: {ex.Message}"); }
-        }
-
-        /// <summary>Draw horizontal separators between rows at the gap midpoints.</summary>
-        private void DrawRowSeparators(
-            ViewSheet sheet, SheetDimensions dim,
-            double[] rowTopY, double[] rowH, double vGap,
-            int rowCount, SectionPlacementHandler.PlacementContext ctx)
-        {
-            try
-            {
-                using var t = new Transaction(_doc, "Draw Row Separators");
-                t.Start();
-
-                double left = dim.StartX;
-                double right = dim.StartX + dim.UsableWidth;
-
-                for (int r = 1; r < rowCount; r++)
-                {
-                    // Separator at midpoint of the gap above row r
-                    double sepY = rowTopY[r] + vGap / 2.0;
-                    _doc.Create.NewDetailCurve(sheet,
-                        Line.CreateBound(new XYZ(left, sepY, 0), new XYZ(right, sepY, 0)));
                 }
 
-                t.Commit();
-                ctx.ViewModel?.LogInfo($"      📏 {rowCount - 1} row separator(s) drawn");
+                double sheetArea = dimensions.UsableWidth * dimensions.UsableHeight;
+                return sheetArea > 0 ? (totalViewArea * 100.0) / sheetArea : 0;
             }
-            catch (Exception ex) { ctx.ViewModel?.LogWarning($"      ⚠️ Row separators: {ex.Message}"); }
+            catch
+            {
+                return 0;
+            }
         }
 
-        private void DrawViewportOutlines(ViewSheet sheet, SectionPlacementHandler.PlacementContext ctx)
+        private void DrawGridOutline(ViewSheet sheet, SheetDimensions dimensions, SectionPlacementHandler.PlacementContext context)
         {
             try
             {
-                using var t = new Transaction(_doc, "Draw Viewport Outlines");
-                t.Start();
-
-                foreach (var vp in new FilteredElementCollector(_doc, sheet.Id)
-                    .OfClass(typeof(Viewport)).Cast<Viewport>())
+                using (Transaction t = new Transaction(_doc, "Draw Grid Outline"))
                 {
-                    var box = vp.GetBoxOutline();
-                    if (box == null) continue;
-                    var pts = new[]
+                    t.Start();
+
+                    var points = new List<XYZ>
                     {
-                        new XYZ(box.MinimumPoint.X, box.MinimumPoint.Y, 0),
-                        new XYZ(box.MaximumPoint.X, box.MinimumPoint.Y, 0),
-                        new XYZ(box.MaximumPoint.X, box.MaximumPoint.Y, 0),
-                        new XYZ(box.MinimumPoint.X, box.MaximumPoint.Y, 0),
-                        new XYZ(box.MinimumPoint.X, box.MinimumPoint.Y, 0)
+                        new XYZ(dimensions.StartX, dimensions.StartY, 0),
+                        new XYZ(dimensions.StartX + dimensions.UsableWidth, dimensions.StartY, 0),
+                        new XYZ(dimensions.StartX + dimensions.UsableWidth, dimensions.StartY - dimensions.UsableHeight, 0),
+                        new XYZ(dimensions.StartX, dimensions.StartY - dimensions.UsableHeight, 0),
+                        new XYZ(dimensions.StartX, dimensions.StartY, 0)
                     };
-                    for (int i = 0; i < pts.Length - 1; i++)
-                        _doc.Create.NewDetailCurve(sheet, Line.CreateBound(pts[i], pts[i + 1]));
+
+                    for (int i = 0; i < points.Count - 1; i++)
+                    {
+                        var line = Line.CreateBound(points[i], points[i + 1]);
+                        _doc.Create.NewDetailCurve(sheet, line);
+                    }
+
+                    t.Commit();
                 }
 
-                t.Commit();
-                ctx.ViewModel?.LogInfo("      📏 Viewport outlines drawn");
+                context.ViewModel?.LogInfo($"      📏 Grid outline drawn");
             }
-            catch (Exception ex) { ctx.ViewModel?.LogWarning($"      ⚠️ Viewport outlines: {ex.Message}"); }
+            catch (Exception ex)
+            {
+                context.ViewModel?.LogWarning($"      ⚠️ Could not draw grid outline: {ex.Message}");
+            }
         }
 
-        // ── logging ───────────────────────────────────────────────────
-        private void LogInitialization(SectionPlacementHandler.PlacementContext ctx,
-            List<SectionItemViewModel> sections, int rows, int cols, int max, bool multi)
+        private void DrawGridLines(
+            ViewSheet sheet,
+            SheetDimensions dimensions,
+            double cellWidth,
+            double cellHeight,
+            double hGap,
+            double vGap,
+            int gridRows,
+            int gridColumns,
+            SectionPlacementHandler.PlacementContext context)
         {
-            ctx.ViewModel?.LogInfo("════════════════════════════════════════════════");
-            ctx.ViewModel?.LogInfo("📚 SIMPLE GRID PLACEMENT SERVICE  (adaptive fill)");
-            ctx.ViewModel?.LogInfo("════════════════════════════════════════════════");
-            ctx.ViewModel?.LogInfo($"📊 Total sections: {sections.Count}");
-            ctx.ViewModel?.LogInfo($"📐 Max per sheet:  {max}  (from {rows}×{cols} setting)");
-            ctx.ViewModel?.LogInfo($"   • Mode:       {(multi ? "Multiple sheets" : "Fill one sheet")}");
-            ctx.ViewModel?.LogInfo($"   • Order:      Left→Right, Top→Bottom");
-            ctx.ViewModel?.LogInfo($"   • H-align:    distributed / centred within row");
-            ctx.ViewModel?.LogInfo($"   • V-align:    bottom-aligned, rows scaled to fill height");
-            ctx.ViewModel?.LogInfo($"   • Sizing:     real GetBoxOutline() — includes title strip");
+            try
+            {
+                using (Transaction t = new Transaction(_doc, "Draw Grid Lines"))
+                {
+                    t.Start();
+
+                    // Draw vertical grid lines
+                    double x = dimensions.StartX;
+                    for (int c = 0; c <= gridColumns; c++)
+                    {
+                        var start = new XYZ(x, dimensions.StartY, 0);
+                        var end = new XYZ(x, dimensions.StartY - dimensions.UsableHeight, 0);
+                        var line = Line.CreateBound(start, end);
+                        _doc.Create.NewDetailCurve(sheet, line);
+
+                        if (c < gridColumns)
+                        {
+                            x += cellWidth + hGap;
+                        }
+                    }
+
+                    // Draw horizontal grid lines
+                    double y = dimensions.StartY;
+                    for (int r = 0; r <= gridRows; r++)
+                    {
+                        var start = new XYZ(dimensions.StartX, y, 0);
+                        var end = new XYZ(dimensions.StartX + dimensions.UsableWidth, y, 0);
+                        var line = Line.CreateBound(start, end);
+                        _doc.Create.NewDetailCurve(sheet, line);
+
+                        if (r < gridRows)
+                        {
+                            y -= cellHeight + vGap;
+                        }
+                    }
+
+                    t.Commit();
+                }
+
+                context.ViewModel?.LogInfo($"      📏 Grid lines drawn for {gridColumns}×{gridRows} grid");
+            }
+            catch (Exception ex)
+            {
+                context.ViewModel?.LogWarning($"      ⚠️ Could not draw grid lines: {ex.Message}");
+            }
         }
 
-        private void LogSheetDimensions(SectionPlacementHandler.PlacementContext ctx, SheetDimensions d)
+        private void DrawViewportOutlines(ViewSheet sheet, SectionPlacementHandler.PlacementContext context)
         {
-            ctx.ViewModel?.LogInfo($"\n   📐 SHEET DIMENSIONS:");
-            ctx.ViewModel?.LogInfo($"      • Usable: {d.UsableWidth * 304.8:F0} × {d.UsableHeight * 304.8:F0} mm");
-            ctx.ViewModel?.LogInfo($"      • Origin: ({d.StartX * 304.8:F0}, {d.StartY * 304.8:F0}) mm");
+            try
+            {
+                using (Transaction t = new Transaction(_doc, "Draw Viewport Outlines"))
+                {
+                    t.Start();
+
+                    var viewports = new FilteredElementCollector(_doc, sheet.Id)
+                        .OfClass(typeof(Viewport))
+                        .Cast<Viewport>()
+                        .ToList();
+
+                    foreach (var vp in viewports)
+                    {
+                        var box = vp.GetBoxOutline();
+                        if (box == null) continue;
+
+                        var points = new List<XYZ>
+                        {
+                            new XYZ(box.MinimumPoint.X, box.MinimumPoint.Y, 0),
+                            new XYZ(box.MaximumPoint.X, box.MinimumPoint.Y, 0),
+                            new XYZ(box.MaximumPoint.X, box.MaximumPoint.Y, 0),
+                            new XYZ(box.MinimumPoint.X, box.MaximumPoint.Y, 0),
+                            new XYZ(box.MinimumPoint.X, box.MinimumPoint.Y, 0)
+                        };
+
+                        for (int i = 0; i < points.Count - 1; i++)
+                        {
+                            var line = Line.CreateBound(points[i], points[i + 1]);
+                            _doc.Create.NewDetailCurve(sheet, line);
+                        }
+                    }
+
+                    t.Commit();
+                }
+
+                context.ViewModel?.LogInfo($"      📏 Viewport outlines drawn");
+            }
+            catch (Exception ex)
+            {
+                context.ViewModel?.LogWarning($"      ⚠️ Could not draw viewport outlines: {ex.Message}");
+            }
         }
 
-        private void LogSheetResult(SectionPlacementHandler.PlacementContext ctx,
-            SheetResult r, int num, int remaining, bool multi)
+        #region Logging Methods
+
+        private void LogInitialization(
+            SectionPlacementHandler.PlacementContext context,
+            List<SectionItemViewModel> sections,
+            int gridRows,
+            int gridColumns,
+            int maxViewsPerSheet,
+            bool multipleSheets)
         {
-            ctx.ViewModel?.LogSuccess($"\n✅ Sheet {num} complete: {r.PlacedCount} views placed");
-            ctx.ViewModel?.LogInfo($"   • Utilization: {r.Utilization:F1}%");
-            if (multi) ctx.ViewModel?.LogInfo($"   • Remaining: {remaining}");
+            context.ViewModel?.LogInfo("════════════════════════════════════════════════");
+            context.ViewModel?.LogInfo("📚 SIMPLE GRID PLACEMENT SERVICE");
+            context.ViewModel?.LogInfo("════════════════════════════════════════════════");
+            context.ViewModel?.LogInfo($"📊 Total sections to place: {sections.Count}");
+            context.ViewModel?.LogInfo($"📐 Grid configuration: {gridRows} rows × {gridColumns} columns");
+            context.ViewModel?.LogInfo($"   • Max views per sheet: {maxViewsPerSheet}");
+            context.ViewModel?.LogInfo($"   • Placement mode: {(multipleSheets ? "Multiple sheets" : "Single sheet")}");
+            context.ViewModel?.LogInfo($"   • Reading order: Left → Right, Top → Bottom");
+            context.ViewModel?.LogInfo($"   • Alignment: Bottom within rows, Left within columns");
+            context.ViewModel?.LogInfo($"   • Gap tolerance: ±{GAP_TOLERANCE * 100}%");
         }
 
-        private void LogFinalReport(SectionPlacementHandler.PlacementContext ctx,
-            List<SectionItemViewModel> sections, int placed, int sheets,
+        private void LogSheetDimensions(SectionPlacementHandler.PlacementContext context, SheetDimensions dimensions)
+        {
+            context.ViewModel?.LogInfo($"\n   📐 SHEET DIMENSIONS:");
+            context.ViewModel?.LogInfo($"      • Usable width: {dimensions.UsableWidth * 304.8:F0} mm");
+            context.ViewModel?.LogInfo($"      • Usable height: {dimensions.UsableHeight * 304.8:F0} mm");
+            context.ViewModel?.LogInfo($"      • Start point: ({dimensions.StartX * 304.8:F0}, {dimensions.StartY * 304.8:F0}) mm");
+        }
+
+        private void LogSheetResult(
+            SectionPlacementHandler.PlacementContext context,
+            SheetResult result,
+            int sheetNumber,
+            int remaining,
+            bool multipleSheets)
+        {
+            context.ViewModel?.LogSuccess($"\n✅ Sheet {sheetNumber} complete: {result.PlacedCount} views placed");
+            context.ViewModel?.LogInfo($"   • Utilization: {result.Utilization:F1}%");
+
+            if (multipleSheets)
+            {
+                context.ViewModel?.LogInfo($"   • Remaining: {remaining}");
+            }
+        }
+
+        private void LogFinalReport(
+            SectionPlacementHandler.PlacementContext context,
+            List<SectionItemViewModel> sections,
+            int totalPlaced,
+            int sheetCount,
             SectionPlacementHandler.PlacementResult result)
         {
-            ctx.ViewModel?.LogInfo("\n📊 FINAL PLACEMENT REPORT");
-            ctx.ViewModel?.LogInfo("════════════════════════════════════════════════");
-            ctx.ViewModel?.LogInfo($"   • Total:   {sections.Count}");
-            ctx.ViewModel?.LogInfo($"   • Placed:  {placed}");
-            ctx.ViewModel?.LogInfo($"   • Sheets:  {sheets}");
-            if (placed < sections.Count)
+            context.ViewModel?.LogInfo("\n📊 FINAL PLACEMENT REPORT");
+            context.ViewModel?.LogInfo("════════════════════════════════════════════════");
+            context.ViewModel?.LogInfo($"   • Total sections: {sections.Count}");
+            context.ViewModel?.LogInfo($"   • Successfully placed: {totalPlaced}");
+            context.ViewModel?.LogInfo($"   • Sheets used: {sheetCount}");
+
+            if (totalPlaced < sections.Count)
             {
-                result.FailedCount = sections.Count - placed;
-                ctx.ViewModel?.LogWarning($"   • Skipped: {result.FailedCount}");
+                int skipped = sections.Count - totalPlaced;
+                context.ViewModel?.LogWarning($"   • Skipped: {skipped} (sheet capacity reached)");
+                result.FailedCount = skipped;
             }
-            else ctx.ViewModel?.LogSuccess("   • All sections placed successfully!");
+            else
+            {
+                context.ViewModel?.LogSuccess($"   • All sections placed successfully!");
+            }
+
             if (result.SheetNumbers.Any())
-                ctx.ViewModel?.LogInfo($"   • Sheet numbers: {string.Join(", ", result.SheetNumbers.OrderBy(s => s))}");
+            {
+                var sheetList = string.Join(", ", result.SheetNumbers.OrderBy(s => s));
+                context.ViewModel?.LogInfo($"   • Sheets: {sheetList}");
+            }
         }
 
-        // ── inner types ───────────────────────────────────────────────
+        #endregion
+
+        #region Helper Classes
+
         private class SheetItem
         {
             public SectionItemViewModel Section { get; set; }
@@ -653,9 +676,12 @@ namespace Revit26_Plugin.APUS_V320.Services
 
         private class SheetResult
         {
+            public string SheetNumber { get; set; }
             public int PlacedCount { get; set; }
             public double Utilization { get; set; }
             public HashSet<ElementId> PlacedViewIds { get; set; } = new HashSet<ElementId>();
         }
+
+        #endregion
     }
 }

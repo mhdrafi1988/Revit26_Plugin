@@ -1,9 +1,10 @@
 <mah:MetroWindow
-    x:Class="Revit26_Plugin.WorksetManager_05.Views.WorksetSelectorWindow"
+    x:Class="Revit26_Plugin.WorksetManager_06.Views.WorksetSelectorWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-    xmlns:local="clr-namespace:Revit26_Plugin.WorksetManager_05.Views"
+    xmlns:local="clr-namespace:Revit26_Plugin.WorksetManager_06.Views"
+    xmlns:shared="clr-namespace:Revit26_Plugin.Shared.Models"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -17,10 +18,10 @@
 
     <mah:MetroWindow.Resources>
         <!-- Converters registered here (never in a shared ResourceDictionary) -->
-        <local:BoolToVisibilityConverter         x:Key="BoolToVis"/>
-        <local:InverseBoolToVisibilityConverter  x:Key="InvBoolToVis"/>
-        <local:LogLevelToColorConverter          x:Key="LogLevelToColor"/>
-        <local:MixedWorksetToColorConverter      x:Key="MixedToColor"/>
+        <shared:BoolToVisibilityConverter         x:Key="BoolToVis"/>
+        <shared:InverseBoolToVisibilityConverter  x:Key="InvBoolToVis"/>
+        <shared:LogLevelToColorConverter          x:Key="LogLevelToColor"/>
+        <shared:MixedWorksetToColorConverter      x:Key="MixedToColor"/>
 
         <!-- ══ COLOR BRUSHES ══════════════════════════════════════════════════ -->
         <SolidColorBrush x:Key="BrushSystemBackground"          Color="#FFFFFF"/>

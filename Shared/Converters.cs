@@ -1,11 +1,10 @@
-using Revit26_Plugin.WorksetManager_05.Models;
 using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace Revit26_Plugin.WorksetManager_05.Views
+namespace Revit26_Plugin.Shared.Models
 {
     public class BoolToVisibilityConverter : IValueConverter
     {
@@ -31,12 +30,13 @@ namespace Revit26_Plugin.WorksetManager_05.Views
             => DependencyProperty.UnsetValue;
     }
 
-    /// <summary>INFO → cyan, WARNING → orange, ERROR → red.</summary>
+    /// <summary>INFO → cyan, WARNING → orange, ERROR → red, SUCCESS → green.</summary>
     public class LogLevelToColorConverter : IValueConverter
     {
         private static readonly SolidColorBrush BrushInfo    = new(Color.FromRgb(0x64, 0xD2, 0xFF));
         private static readonly SolidColorBrush BrushWarning = new(Color.FromRgb(0xFF, 0x9F, 0x0A));
         private static readonly SolidColorBrush BrushError   = new(Color.FromRgb(0xFF, 0x45, 0x3A));
+        private static readonly SolidColorBrush BrushSuccess = new(Color.FromRgb(0x4C, 0xC1, 0x8A));
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -45,6 +45,7 @@ namespace Revit26_Plugin.WorksetManager_05.Views
                 {
                     LogLevel.Warning => BrushWarning,
                     LogLevel.Error   => BrushError,
+                    LogLevel.Success => BrushSuccess,
                     _                => BrushInfo
                 };
             return BrushInfo;

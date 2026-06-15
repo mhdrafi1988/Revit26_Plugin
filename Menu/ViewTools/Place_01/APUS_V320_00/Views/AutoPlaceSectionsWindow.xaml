@@ -106,19 +106,14 @@
                             ToolTip="Reload sections and title blocks"
                             IsEnabled="{Binding CurrentState, Converter={StaticResource StateConverter}, ConverterParameter=RefreshButtonEnabled}"/>
 
-                    <Button Content="All" 
+                    <Button Content="Select All" 
                             Command="{Binding SelectAllCommand}"
                             ToolTip="Select all filtered sections"
                             IsEnabled="{Binding CurrentState, Converter={StaticResource StateConverter}, ConverterParameter=IsEnabled}"/>
 
-                    <Button Content="None" 
+                    <Button Content="Clear Selection" 
                             Command="{Binding ClearSelectionCommand}"
-                            ToolTip="Deselect all filtered sections"
-                            IsEnabled="{Binding CurrentState, Converter={StaticResource StateConverter}, ConverterParameter=IsEnabled}"/>
-
-                    <Button Content="Invert" 
-                            Command="{Binding InvertSelectionCommand}"
-                            ToolTip="Invert current selection"
+                            ToolTip="Clear all selections"
                             IsEnabled="{Binding CurrentState, Converter={StaticResource StateConverter}, ConverterParameter=IsEnabled}"/>
                 </StackPanel>
             </Grid>
@@ -202,7 +197,7 @@
                               CanUserAddRows="False"
                               CanUserDeleteRows="False"
                               SelectionMode="Extended"
-                              IsReadOnly="False"
+                              IsReadOnly="True"
                               IsEnabled="{Binding CurrentState, Converter={StaticResource StateConverter}, ConverterParameter=IsEnabled}"
                               SelectionUnit="FullRow"
                               GridLinesVisibility="Horizontal"
@@ -210,20 +205,12 @@
                               VirtualizingStackPanel.IsVirtualizing="True"
                               VirtualizingStackPanel.VirtualizationMode="Recycling"
                               ScrollViewer.VerticalScrollBarVisibility="Auto"
-                              ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                              SelectionChanged="SectionsDataGrid_SelectionChanged">
+                              ScrollViewer.HorizontalScrollBarVisibility="Auto">
 
                         <DataGrid.Columns>
-                            <!-- Single-click checkbox: use a template column so clicking once toggles immediately -->
-                            <DataGridTemplateColumn Width="40" Header="✓" CanUserSort="False">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                  HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                  Click="SectionCheckBox_Click"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
+                            <DataGridCheckBoxColumn Width="40" 
+                                                    Binding="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                    Header="✓"/>
 
                             <DataGridTextColumn Header="Section Name" 
                                                 Binding="{Binding ViewName}" 

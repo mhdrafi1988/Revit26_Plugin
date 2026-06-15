@@ -1,12 +1,13 @@
 using Autodesk.Revit.DB;
-using Revit26_Plugin.WorksetManager_05.Models;
-using Revit26_Plugin.WorksetManager_05.ViewModels;
+using Revit26_Plugin.WorksetManager_06.Models;
+using Revit26_Plugin.WorksetManager_06.ViewModels;
+using Revit26_Plugin.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Revit26_Plugin.WorksetManager_05.Services
+namespace Revit26_Plugin.WorksetManager_06.Services
 {
     public class WorksetService
     {

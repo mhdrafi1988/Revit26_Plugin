@@ -1,12 +1,12 @@
-﻿// File: AutoPlaceSectionsCommand.cs
-// V320 — All namespaces corrected. Fully qualified types eliminate ambiguity.
-
+// File: AutoPlaceSectionsCommand.cs
+// FIXED: Add proper command execution methods
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.APUS_V320.Services;
+using Revit26_Plugin.APUS_V320.ViewModels;
+using Revit26_Plugin.APUS_V320.Views;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Revit26_Plugin.APUS_V320.Commands
@@ -14,7 +14,7 @@ namespace Revit26_Plugin.APUS_V320.Commands
     /// <summary>
     /// Revit command entry point for Auto Place Sections.
     /// ALL Revit API calls happen HERE, on the Revit thread.
-    /// UI is created AFTER data is loaded — no Revit API calls after Show().
+    /// UI is created AFTER data is loaded.
     /// </summary>
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]
@@ -28,16 +28,12 @@ namespace Revit26_Plugin.APUS_V320.Commands
             return Execute(commandData.Application, ref message, elements, out _);
         }
 
-        /// <summary>
-        /// Main execution overload. Also used by the refresh operation.
-        /// Uses fully qualified type names throughout to prevent any
-        /// ambiguity between APUS_V318 and APUS_V320 types.
-        /// </summary>
+        // Additional overload for refresh operation
         public Result Execute(
             UIApplication uiApp,
             ref string message,
             ElementSet elements,
-            out Revit26_Plugin.APUS_V320.Views.AutoPlaceSectionsWindow createdWindow)
+            out AutoPlaceSectionsWindow createdWindow)
         {
             createdWindow = null;
 
@@ -47,70 +43,68 @@ namespace Revit26_Plugin.APUS_V320.Commands
 
                 if (uidoc == null || uidoc.Document == null)
                 {
-                    TaskDialog.Show("APUS V320", "No active Revit document found.");
+                    TaskDialog.Show("APUS V314", "No active Revit document found.");
                     return Result.Failed;
                 }
 
                 if (uidoc.Document.IsFamilyDocument)
                 {
-                    TaskDialog.Show("APUS V320",
+                    TaskDialog.Show("APUS V314",
                         "This command only works in project documents, not family documents.");
                     return Result.Failed;
                 }
 
-                // ── ALL REVIT API CALLS HERE (Revit thread — safe) ──────────
+                // --- ALL REVIT API CALLS HERE (Revit Thread, Safe) ---
 
-                // 1. Load sections with verified placement status
+                // 1. Load sections with VERIFIED placement status
                 var sectionService = new SectionCollectionService(uidoc.Document);
-                List<Revit26_Plugin.APUS_V320.ViewModels.SectionItemViewModel> sections
-                    = sectionService.Collect();
+                var sections = sectionService.Collect();
 
-                // 2. Load available title blocks
+                // 2. Load title blocks
                 var titleBlockService = new TitleBlockCollectionService(uidoc.Document);
                 var titleBlocks = titleBlockService.Collect();
 
-                // 3. Derive filter lists from collected data (no extra API calls)
-                List<string> sheetNumbers = sections
+                // 3. Collect unique sheet numbers and placement scopes for filters
+                var sheetNumbers = sections
                     .Where(s => !string.IsNullOrEmpty(s.SheetNumber))
                     .Select(s => s.SheetNumber)
                     .Distinct()
                     .OrderBy(s => s, StringComparer.Ordinal)
                     .ToList();
 
-                List<string> placementScopes = sections
+                var placementScopes = sections
                     .Where(s => !string.IsNullOrEmpty(s.PlacementScope))
                     .Select(s => s.PlacementScope)
                     .Distinct()
                     .OrderBy(s => s, StringComparer.Ordinal)
                     .ToList();
 
-                // ── UI CREATION — no Revit API calls beyond this point ───────
+                // --- UI CREATION (No Revit API calls) ---
 
-                var viewModel =
-                    new Revit26_Plugin.APUS_V320.ViewModels.AutoPlaceSectionsViewModel(
-                        uidoc,
-                        sections,
-                        titleBlocks,
-                        sheetNumbers,
-                        placementScopes);
+                // Create ViewModel with pre-loaded data
+                var viewModel = new AutoPlaceSectionsViewModel(
+                    uidoc,
+                    sections,
+                    titleBlocks,
+                    sheetNumbers,
+                    placementScopes);
 
-                createdWindow =
-                    new Revit26_Plugin.APUS_V320.Views.AutoPlaceSectionsWindow(viewModel);
-
+                // Launch UI - NO Revit API calls beyond this point
+                createdWindow = new AutoPlaceSectionsWindow(viewModel);
                 createdWindow.Show();
 
                 return Result.Succeeded;
             }
             catch (Exception ex)
             {
-                TaskDialog.Show("APUS V320 — Error",
+                TaskDialog.Show("APUS V314 � Error",
                     $"Failed to start Auto Place Sections:\n{ex.Message}");
                 return Result.Failed;
             }
         }
 
         /// <summary>
-        /// Invokes the command programmatically (e.g. from a ribbon refresh button).
+        /// Static method to invoke the command programmatically
         /// </summary>
         public static Result Invoke(UIApplication uiApp)
         {
@@ -120,6 +114,6 @@ namespace Revit26_Plugin.APUS_V320.Commands
             return command.Execute(uiApp, ref message, elements, out _);
         }
 
-        public string GetName() => "APUS V320 — Auto Place Sections";
+        public string GetName() => "APUS V314 � Auto Place Sections";
     }
 }

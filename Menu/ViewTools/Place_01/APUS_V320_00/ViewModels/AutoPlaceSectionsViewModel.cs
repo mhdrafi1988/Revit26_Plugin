@@ -364,7 +364,6 @@ namespace Revit26_Plugin.APUS_V320.ViewModels
         public IRelayCommand RefreshCommand { get; }
         public IRelayCommand SelectAllCommand { get; }
         public IRelayCommand ClearSelectionCommand { get; }
-        public IRelayCommand InvertSelectionCommand { get; }
         public IRelayCommand ClearLogCommand { get; }
         public IRelayCommand ExportLogCommand { get; }
         public IRelayCommand CopyLogsCommand { get; }
@@ -430,7 +429,6 @@ namespace Revit26_Plugin.APUS_V320.ViewModels
             RefreshCommand = new RelayCommand(ExecuteRefresh, () => CanRefresh);
             SelectAllCommand = new RelayCommand(ExecuteSelectAll, () => IsUiEnabled);
             ClearSelectionCommand = new RelayCommand(ExecuteClearSelection, () => IsUiEnabled);
-            InvertSelectionCommand = new RelayCommand(ExecuteInvertSelection, () => IsUiEnabled);
             ClearLogCommand = new RelayCommand(ExecuteClearLog);
             ExportLogCommand = new RelayCommand(ExecuteExportLog);
             CopyLogsCommand = new RelayCommand(ExecuteCopyLogs);
@@ -663,27 +661,6 @@ namespace Revit26_Plugin.APUS_V320.ViewModels
                 count++;
             }
             LogInfo($"✅ Cleared selection of {count} sections");
-            OnPropertyChanged(nameof(SelectedSectionsCount));
-            UpdateReadyState();
-        }
-
-        private void ExecuteInvertSelection()
-        {
-            int selected = 0, deselected = 0;
-            foreach (var item in FilteredSections.Cast<SectionItemViewModel>())
-            {
-                item.IsSelected = !item.IsSelected;
-                if (item.IsSelected) selected++; else deselected++;
-            }
-            LogInfo($"✅ Inverted selection: {selected} selected, {deselected} deselected");
-            OnPropertyChanged(nameof(SelectedSectionsCount));
-            UpdateReadyState();
-        }
-
-        // Called by the code-behind after a checkbox click or row selection change
-        // so the counter and state machine stay in sync without coupling to UI events.
-        public void NotifySelectionCountChanged()
-        {
             OnPropertyChanged(nameof(SelectedSectionsCount));
             UpdateReadyState();
         }
