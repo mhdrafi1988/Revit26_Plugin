@@ -1,0 +1,60 @@
+﻿<Window x:Class="Revit26_Plugin.DwgSymbolicConverter_V02.Views.DwgSymbolicConverterView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="DWG Converter"
+        Width="900"
+        Height="650"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="200"/>
+        </Grid.RowDefinitions>
+
+        <!-- DWG Selection -->
+        <GroupBox Header="DWG Files" Grid.Row="0">
+            <Grid Margin="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <ComboBox ItemsSource="{Binding CadItems}"
+                          SelectedItem="{Binding SelectedCad}"
+                          Height="28"/>
+
+                <Button Grid.Column="1"
+                        Margin="10,0,0,0"
+                        Padding="14,4"
+                        Content="Pick DWG"
+                        Command="{Binding PickCadCommand}"/>
+            </Grid>
+        </GroupBox>
+
+        <!-- Geometry Summary -->
+        <DataGrid Grid.Row="1"
+                  ItemsSource="{Binding GeometrySummary}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  Margin="0,10,0,10">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Type"
+                                    Binding="{Binding GeometryType}"
+                                    Width="*"/>
+                <DataGridTextColumn Header="Count"
+                                    Binding="{Binding Count}"
+                                    Width="120"/>
+                <DataGridTextColumn Header="Layer"
+                                    Binding="{Binding LayerName}"
+                                    Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Live Log -->
+        <GroupBox Header="Log" Grid.Row="2">
+            <ListBox ItemsSource="{Binding LiveLog}"/>
+        </GroupBox>
+    </Grid>
+</Window>

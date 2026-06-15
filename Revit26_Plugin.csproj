@@ -5,7 +5,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\Release\net8.0-windows\15-06-001</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\Release\net8.0-windows\15-06-002</BaseOutputPath>
 		<PackageId />
 		<AssemblyName>Revit26_Plugin</AssemblyName>
 	</PropertyGroup>
@@ -112,6 +112,7 @@
 	  <Compile Remove="Menu\Setup\WorksetAdvanced_V002\**" />
 	  <Compile Remove="Menu\Setup\WorksetAdvanced_V02\**" />
 	  <Compile Remove="Menu\Setup\WorksetManager_01%28excluded%29\**" />
+	  <Compile Remove="Menu\Setup\WorksetManager_05_01\**" />
 	  <Compile Remove="Menu\Setup\WorksetRenamer\**" />
 	  <Compile Remove="Menu\Setup\WorksetRenamer_01\**" />
 	  <Compile Remove="Menu\Setup\WSFL_10\**" />
@@ -272,6 +273,7 @@
 	  <EmbeddedResource Remove="Menu\Setup\WorksetAdvanced_V002\**" />
 	  <EmbeddedResource Remove="Menu\Setup\WorksetAdvanced_V02\**" />
 	  <EmbeddedResource Remove="Menu\Setup\WorksetManager_01%28excluded%29\**" />
+	  <EmbeddedResource Remove="Menu\Setup\WorksetManager_05_01\**" />
 	  <EmbeddedResource Remove="Menu\Setup\WorksetRenamer\**" />
 	  <EmbeddedResource Remove="Menu\Setup\WorksetRenamer_01\**" />
 	  <EmbeddedResource Remove="Menu\Setup\WSFL_10\**" />
@@ -432,6 +434,7 @@
 	  <None Remove="Menu\Setup\WorksetAdvanced_V002\**" />
 	  <None Remove="Menu\Setup\WorksetAdvanced_V02\**" />
 	  <None Remove="Menu\Setup\WorksetManager_01%28excluded%29\**" />
+	  <None Remove="Menu\Setup\WorksetManager_05_01\**" />
 	  <None Remove="Menu\Setup\WorksetRenamer\**" />
 	  <None Remove="Menu\Setup\WorksetRenamer_01\**" />
 	  <None Remove="Menu\Setup\WSFL_10\**" />
@@ -592,6 +595,7 @@
 	  <Page Remove="Menu\Setup\WorksetAdvanced_V002\**" />
 	  <Page Remove="Menu\Setup\WorksetAdvanced_V02\**" />
 	  <Page Remove="Menu\Setup\WorksetManager_01%28excluded%29\**" />
+	  <Page Remove="Menu\Setup\WorksetManager_05_01\**" />
 	  <Page Remove="Menu\Setup\WorksetRenamer\**" />
 	  <Page Remove="Menu\Setup\WorksetRenamer_01\**" />
 	  <Page Remove="Menu\Setup\WSFL_10\**" />

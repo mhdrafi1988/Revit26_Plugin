@@ -1,8 +1,9 @@
-using Autodesk.Revit.Attributes;
+﻿using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.WorksetManager.V06.ViewModels;
 using Revit26_Plugin.WorksetManager.V06.Views;
+using System.Windows.Interop;
 
 namespace Revit26_Plugin.WorksetManager.V06
 {
@@ -22,9 +23,12 @@ namespace Revit26_Plugin.WorksetManager.V06
             }
 
             var viewModel = new WorksetsViewModel(commandData);
-            var window    = new WorksetSelectorWindow(viewModel)
+            var window = new WorksetSelectorWindow(viewModel);
+
+            // ✅ Set owner using Revit's main window handle (fixes the "Cannot set Owner property" error)
+            new WindowInteropHelper(window)
             {
-                Owner = System.Windows.Application.Current.MainWindow
+                Owner = commandData.Application.MainWindowHandle
             };
 
             window.ShowDialog();

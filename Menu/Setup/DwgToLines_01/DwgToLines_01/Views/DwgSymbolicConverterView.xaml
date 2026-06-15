@@ -1,0 +1,194 @@
+﻿<Window x:Class="Revit26_Plugin.DwgSymbolicConverter_V01.Views.DwgSymbolicConverterView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        mc:Ignorable="d"
+        Title="DWG → Lines Converter"
+        Height="740"
+        Width="1000"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResize">
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Header -->
+            <RowDefinition Height="Auto"/>
+            <!-- CAD Info -->
+            <RowDefinition Height="*"/>
+            <!-- Options + Analysis -->
+            <RowDefinition Height="220"/>
+            <!-- Live Log -->
+        </Grid.RowDefinitions>
+
+        <!-- ================= HEADER ================= -->
+        <Border Grid.Row="0"
+                Padding="10"
+                Background="#2D2D30"
+                CornerRadius="4">
+            <TextBlock Text="DWG to Symbolic / Model Lines Converter"
+                       Foreground="White"
+                       FontSize="18"
+                       FontWeight="SemiBold"/>
+        </Border>
+
+        <!-- ================= CAD SELECTION INFO ================= -->
+        <GroupBox Grid.Row="1"
+                  Header="Selected CAD File"
+                  Margin="0,10,0,0">
+            <Grid Margin="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="160"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="File Name:"/>
+                <TextBlock Text="{Binding SelectedCadFileName}"
+                           Grid.Column="1"
+                           FontWeight="SemiBold"/>
+
+                <TextBlock Text="Element Id:" Grid.Row="1"/>
+                <TextBlock Text="{Binding SelectedCadElementId}"
+                           Grid.Row="1"
+                           Grid.Column="1"/>
+
+                <TextBlock Text="Import Type:" Grid.Row="2"/>
+                <TextBlock Text="{Binding CadImportType}"
+                           Grid.Row="2"
+                           Grid.Column="1"/>
+            </Grid>
+        </GroupBox>
+
+        <!-- ================= OPTIONS + ANALYSIS ================= -->
+        <Grid Grid.Row="2" Margin="0,10,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="380"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- ===== OPTIONS ===== -->
+            <GroupBox Header="Conversion Options"
+                      Grid.Column="0"
+                      Margin="0,0,10,0">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="10">
+
+                        <!-- Conversion Target -->
+                        <TextBlock Text="Conversion Target"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,4"/>
+                        <TextBlock Text="Family Editor only"
+                                   Foreground="DarkGreen"
+                                   Margin="10,0,0,12"/>
+
+                        <!-- Placement Mode -->
+                        <TextBlock Text="Placement Mode (Required)"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,6"/>
+
+                        <RadioButton Content="Symbolic Lines only (Ref. Level)"
+                                     GroupName="PlacementMode"
+                                     IsChecked="{Binding PlaceSymbolic}"
+                                     Margin="10,0,0,4"/>
+
+                        <RadioButton Content="Model Lines only (Family-wide)"
+                                     GroupName="PlacementMode"
+                                     IsChecked="{Binding PlaceModel}"
+                                     Margin="10,0,0,4"/>
+
+                        <RadioButton Content="Both Symbolic + Model Lines"
+                                     GroupName="PlacementMode"
+                                     IsChecked="{Binding PlaceBoth}"
+                                     Margin="10,0,0,12"/>
+
+                        <!-- Spline Handling -->
+                        <TextBlock Text="Spline Handling (Required)"
+                                   FontWeight="SemiBold"
+                                   Margin="0,4,0,6"/>
+
+                        <RadioButton Content="Preserve splines where possible (NurbSpline)"
+                                     GroupName="SplineMode"
+                                     IsChecked="{Binding PreserveSplinesMode}"
+                                     Margin="10,0,0,4"/>
+
+                        <TextBlock Text="• Falls back to tessellation if conversion fails"
+                                   FontSize="11"
+                                   Foreground="Gray"
+                                   Margin="24,0,0,6"/>
+
+                        <RadioButton Content="Tessellate splines into line segments"
+                                     GroupName="SplineMode"
+                                     IsChecked="{Binding TessellateSplinesMode}"
+                                     Margin="10,0,0,4"/>
+
+                        <TextBlock Text="• Guarantees placement, may reduce smoothness"
+                                   FontSize="11"
+                                   Foreground="Gray"
+                                   Margin="24,0,0,12"/>
+
+                        <!-- Process Button -->
+                        <Button Content="Process DWG"
+                                Height="36"
+                                FontWeight="SemiBold"
+                                Command="{Binding ProcessCommand}"
+                                IsEnabled="{Binding CanProcess}"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </GroupBox>
+
+            <!-- ===== GEOMETRY ANALYSIS ===== -->
+            <GroupBox Header="CAD Geometry Analysis"
+                      Grid.Column="1">
+                <DataGrid ItemsSource="{Binding GeometrySummary}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          Margin="8">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Geometry Type"
+                                            Binding="{Binding GeometryType}"
+                                            Width="*"/>
+                        <DataGridTextColumn Header="Count"
+                                            Binding="{Binding Count}"
+                                            Width="120"/>
+                        <DataGridTextColumn Header="Layer"
+                                            Binding="{Binding LayerName}"
+                                            Width="220"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </GroupBox>
+        </Grid>
+
+        <!-- ================= LIVE LOG ================= -->
+        <GroupBox Grid.Row="3"
+                  Header="Live Execution Log">
+            <Border BorderThickness="1"
+                    BorderBrush="#CCC"
+                    Margin="6">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding LogEntries}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Message}"
+                                           Foreground="{Binding LevelColor}"
+                                           FontFamily="Consolas"
+                                           FontSize="12"
+                                           TextWrapping="Wrap"
+                                           Margin="2"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Border>
+        </GroupBox>
+
+    </Grid>
+</Window>
