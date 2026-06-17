@@ -41,7 +41,10 @@ namespace Revit26_Plugin.Menu.Ribbon
             ShapepointMenu.AddPushButton(new PushButtonData("Btn_PDCV2", "Inner Loop Divider 2.0", assemblyPath, "Revit26_Plugin.PDCV2.Commands.RoofLoopAnalyzerCommand"));//Working
             ShapepointMenu.AddPushButton(new PushButtonData("Btn_PDCV3", "Outer Loop Divider 3.0", assemblyPath, "Revit26_Plugin.PDCV3.Commands.RoofLoopAnalyzerCommand"));//Working
             ShapepointMenu.AddPushButton(new PushButtonData("Btn_PonitOnCurvesInnerandOuter", "PonitOnCurvesInnerandOuter", assemblyPath, "Revit26_Plugin.PonitOnCurvesInnerandOuter.V01.Commands.RoofLoopAnalyzerCommand"));//Working
-            ShapepointMenu.AddPushButton(new PushButtonData("Btn_PointOnBoundary", "Point on  Boundry(Roof & Detail LIne)", assemblyPath, "Revit26_Plugin.AddPointOnintersections.Commands.AddPointOnIntersectionsCommand"));
+            ShapepointMenu.AddPushButton(new PushButtonData("Btn_PointOnBoundary_V01", "Point on  Boundry(Roof & Detail LIne)", assemblyPath, "Revit26_Plugin.AddPointOnintersections.Commands.AddPointOnIntersectionsCommand"));
+            ShapepointMenu.AddPushButton(new PushButtonData("Btn_PointOnBoundary_V02", "Perpendicular Point to Drain", assemblyPath, "Revit26_Plugin.PerpendicularPointoDrain.V01.Commands.PerpendicularPointoDrainCommand"));
+
+            
 
             PulldownButton LineAndPoint = panel.AddItem(new PulldownButtonData("LineAndPointMenu", "Line & PointMenu")) as PulldownButton;
             LineAndPoint.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Linematch32.png");
@@ -51,8 +54,13 @@ namespace Revit26_Plugin.Menu.Ribbon
             LineAndPoint.AddPushButton(new PushButtonData("Btn_RoofRidgeLines_V51", "Auto Ridger(Multiple Shapes)51", assemblyPath, "Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V51.Commands.RoofRidgeCommand"));//Working
             LineAndPoint.AddPushButton(new PushButtonData("Btn_RoofRidgeLines_V52", "Auto Ridger(Multiple Shapes)52", assemblyPath, "Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V52.Commands.RoofRidgeCommand"));//Working
             LineAndPoint.AddPushButton(new PushButtonData("Btn_RoofRidgeLines_V53", "Auto Ridger(Multiple Shapes)53", assemblyPath, "Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V53.Commands.RoofRidgeCommand"));//Working
-            LineAndPoint.AddPushButton(new PushButtonData("Btn_RoofRidgeLines_V54", "Auto Ridger(Multiple Shapes)54***", assemblyPath, "Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V54.Commands.RoofRidgeCommand"));//Working
-            LineAndPoint.AddPushButton(new PushButtonData("Btn_RoofRidgeLines_V55", "Auto Ridger(Multiple Shapes)55***", assemblyPath, "Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V55.Commands.RoofRidgeCommand"));//Working
+            LineAndPoint.AddPushButton(new PushButtonData("Btn_RoofRidgeLines_V54", "Auto Ridger(Multiple Shapes)54", assemblyPath, "Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V54.Commands.RoofRidgeCommand"));//Working
+            LineAndPoint.AddPushButton(new PushButtonData("Btn_RoofRidgeLines_V55", "Auto Ridger(Multiple Shapes)55", assemblyPath, "Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V55.Commands.RoofRidgeCommand"));//Working
+            LineAndPoint.AddPushButton(new PushButtonData("Btn_RoofRidgeLines_V56", "Auto Ridger(Multiple Shapes)56", assemblyPath, "Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V56.Commands.RoofRidgeCommand"));//Working
+            LineAndPoint.AddPushButton(new PushButtonData("Btn_RoofRidgeLines_V57", "Auto Ridger(Multiple Shapes)57##", assemblyPath, "Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V57.Commands.RoofRidgeCommand"));//Working
+            LineAndPoint.AddPushButton(new PushButtonData("Btn_RoofRidgeLines_V60", "Auto Ridger(Multiple Shapes)60##", assemblyPath, "Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V60.Commands.RoofRidgeCommand"));//Working
+
+
 
             PulldownButton SlopeLinerMenu = panel.AddItem(new PulldownButtonData("SlopeLiner", "SlopeLiner")) as PulldownButton;
             SlopeLinerMenu.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Addlines_32.png");

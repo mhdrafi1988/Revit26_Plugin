@@ -1,0 +1,100 @@
+<Window x:Class="Revit26_Plugin.PerpendicularPointoDrain.V01.Views.PerpendicularPointoDrainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Perpendicular Point to Drain (V01)"
+        Height="680" Width="820"
+        WindowStartupLocation="CenterScreen">
+
+    <!--
+        Merges your shared theme. If StandardDataGrid / DarkGhostButton / other named styles
+        from SharedStyles.xaml don't match these exact key names, just apply Style="{StaticResource ...}"
+        to the relevant controls below — left as plain controls here since the exact key names
+        weren't available when this was written.
+    -->
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Revit26_Plugin;component/Shared/SharedStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="130" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Background="#1E3A5F" Padding="10,8" Margin="0,0,0,12">
+            <TextBlock Text="Perpendicular point to drain (V01)" Foreground="White" FontWeight="Bold" FontSize="14" />
+        </Border>
+
+        <!-- Drain method + tolerance -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,10" VerticalAlignment="Center">
+            <TextBlock Text="Drain method:" VerticalAlignment="Center" Margin="0,0,6,0" />
+            <ComboBox Width="220" ItemsSource="{Binding DrainMethods}"
+                      SelectedItem="{Binding SelectedDrainMethod}" Margin="0,0,12,0" />
+            <Button Content="Detect" Command="{Binding DetectDrainsCommand}" Width="80" Margin="0,0,16,0" />
+            <TextBlock Text="{Binding DrainSummary}" VerticalAlignment="Center" Margin="0,0,24,0" />
+            <TextBlock Text="Tolerance (mm):" VerticalAlignment="Center" Margin="0,0,6,0" />
+            <TextBox Width="70" Text="{Binding ToleranceMm, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock Text="Search radius: auto (roof bounding diagonal)"
+                       VerticalAlignment="Center" Margin="16,0,0,0" Foreground="Gray" FontSize="11" />
+        </StackPanel>
+
+        <!-- Direction toggles + loop / vertex options -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,10">
+            <StackPanel Orientation="Vertical" Margin="0,0,24,0">
+                <TextBlock Text="Search directions (Project North)" Margin="0,0,0,6" FontSize="11" Foreground="Gray" />
+                <UniformGrid Rows="3" Columns="3" Width="180" Height="120">
+                    <ToggleButton Content="NW" IsChecked="{Binding IsNorthwestEnabled}" />
+                    <ToggleButton Content="N"  IsChecked="{Binding IsNorthEnabled}" />
+                    <ToggleButton Content="NE" IsChecked="{Binding IsNortheastEnabled}" />
+                    <ToggleButton Content="W"  IsChecked="{Binding IsWestEnabled}" />
+                    <Border Background="#1E3A5F" />
+                    <ToggleButton Content="E"  IsChecked="{Binding IsEastEnabled}" />
+                    <ToggleButton Content="SW" IsChecked="{Binding IsSouthwestEnabled}" />
+                    <ToggleButton Content="S"  IsChecked="{Binding IsSouthEnabled}" />
+                    <ToggleButton Content="SE" IsChecked="{Binding IsSoutheastEnabled}" />
+                </UniformGrid>
+            </StackPanel>
+
+            <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                <CheckBox Content="Include interior loops (every loop, every direction)"
+                          IsChecked="{Binding IncludeInteriorLoops}" Margin="0,0,0,8" />
+                <CheckBox Content="Skip if an existing vertex is within tolerance"
+                          IsChecked="{Binding SnapToVertex}" />
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Results grid -->
+        <DataGrid Grid.Row="3" ItemsSource="{Binding Results}" AutoGenerateColumns="False"
+                  IsReadOnly="True" Margin="0,0,0,10">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Group"          Binding="{Binding GroupLabel}" Width="70" />
+                <DataGridTextColumn Header="Direction"      Binding="{Binding Direction}"  Width="70" />
+                <DataGridTextColumn Header="Loop"           Binding="{Binding LoopLabel}"   Width="90" />
+                <DataGridTextColumn Header="Distance (mm)"  Binding="{Binding DistanceMm}"  Width="100" />
+                <DataGridTextColumn Header="Status"         Binding="{Binding Status}"      Width="*" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Log -->
+        <TextBox Grid.Row="4" x:Name="LogTextBox" Text="{Binding LogText}" IsReadOnly="True"
+                 TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
+                 FontFamily="Consolas" FontSize="11" Margin="0,0,0,10"
+                 TextChanged="LogTextBox_TextChanged" />
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Analyze"      Command="{Binding AnalyzeCommand}" Width="90"  Margin="0,0,8,0" />
+            <Button Content="Apply points" Command="{Binding ApplyCommand}"  Width="100" Margin="0,0,8,0" />
+            <Button Content="Close" Click="Close_Click" Width="80" />
+        </StackPanel>
+    </Grid>
+</Window>
