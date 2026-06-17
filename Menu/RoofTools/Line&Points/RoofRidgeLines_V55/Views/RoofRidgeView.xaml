@@ -1,0 +1,310 @@
+<mah:MetroWindow
+    x:Class="Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V55.Views.RoofRidgeView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:conv="clr-namespace:Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V55.Converters"
+    xmlns:shared="clr-namespace:Revit26_Plugin.Shared.Models"
+    mc:Ignorable="d"
+    Title="Roof Ridge — Voronoi Generation  [V55]"
+    Width="900" Height="720" MinWidth="700" MinHeight="560"
+    WindowStartupLocation="CenterScreen"
+    Background="{DynamicResource BrushSystemBackground}">
+
+    <mah:MetroWindow.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Revit26_Plugin;component/Shared/SharedStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <conv:InverseBoolConverter      x:Key="InverseBool"/>
+            <shared:BoolToVisibilityConverter x:Key="BoolToVis"/>
+        </ResourceDictionary>
+    </mah:MetroWindow.Resources>
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ── TITLE ───────────────────────────────────────────────────────── -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,12">
+            <TextBlock Text="Voronoi Ridge Generation  [V55]" Style="{StaticResource AppName}"/>
+            <TextBlock Text="Reset → Add Shape Points → Reset → Detail Lines" Style="{StaticResource AppSubtitle}"/>
+        </StackPanel>
+
+        <!-- ── 5 STATUS CARDS ──────────────────────────────────────────────── -->
+        <UniformGrid Grid.Row="1" Rows="1" Margin="0,0,0,12">
+
+            <!-- Card 1: First Reset -->
+            <Border Style="{StaticResource MetricCard}" Margin="0,0,6,0">
+                <DockPanel>
+                    <Border DockPanel.Dock="Top" Height="4" CornerRadius="8,8,0,0"
+                            Background="{StaticResource BrushNavyPrimary}" Margin="-12,-14,-12,10"/>
+                    <StackPanel>
+                        <TextBlock Text="FIRST RESET" Style="{StaticResource MetricLabel}"/>
+                        <TextBlock Text="{Binding FirstResetStatus}"
+                                   FontSize="12" FontWeight="SemiBold" TextWrapping="Wrap"
+                                   Foreground="{StaticResource BrushNavyPrimary}"/>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
+            <!-- Card 2: Calculated Points -->
+            <Border Style="{StaticResource MetricCard}" Margin="0,0,6,0">
+                <DockPanel>
+                    <Border DockPanel.Dock="Top" Height="4" CornerRadius="8,8,0,0"
+                            Background="{StaticResource BrushWarning}" Margin="-12,-14,-12,10"/>
+                    <StackPanel>
+                        <TextBlock Text="CALCULATED POINTS" Style="{StaticResource MetricLabel}"/>
+                        <TextBlock Text="{Binding TotalCalculatedPoints}" Style="{StaticResource MetricNumber}"/>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
+            <!-- Card 3: Added -->
+            <Border Style="{StaticResource MetricCard}" Margin="0,0,6,0">
+                <DockPanel>
+                    <Border DockPanel.Dock="Top" Height="4" CornerRadius="8,8,0,0"
+                            Background="{StaticResource BrushSuccess}" Margin="-12,-14,-12,10"/>
+                    <StackPanel>
+                        <TextBlock Text="ADDED ✓" Style="{StaticResource MetricLabel}"/>
+                        <TextBlock Text="{Binding TotalAddedPoints}"
+                                   Style="{StaticResource MetricNumberSuccess}"/>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
+            <!-- Card 4: Failed -->
+            <Border Style="{StaticResource MetricCard}" Margin="0,0,6,0">
+                <DockPanel>
+                    <Border DockPanel.Dock="Top" Height="4" CornerRadius="8,8,0,0"
+                            Background="{StaticResource BrushDanger}" Margin="-12,-14,-12,10"/>
+                    <StackPanel>
+                        <TextBlock Text="FAILED ✗" Style="{StaticResource MetricLabel}"/>
+                        <TextBlock Text="{Binding TotalFailedPoints}"
+                                   Style="{StaticResource MetricNumberDanger}"/>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
+            <!-- Card 5: Last Reset -->
+            <Border Style="{StaticResource MetricCard}" Margin="0,0,0,0">
+                <DockPanel>
+                    <Border DockPanel.Dock="Top" Height="4" CornerRadius="8,8,0,0"
+                            Background="{StaticResource BrushNavyPrimary}" Margin="-12,-14,-12,10"/>
+                    <StackPanel>
+                        <TextBlock Text="LAST RESET" Style="{StaticResource MetricLabel}"/>
+                        <TextBlock Text="{Binding LastResetStatus}"
+                                   FontSize="12" FontWeight="SemiBold" TextWrapping="Wrap"
+                                   Foreground="{StaticResource BrushNavyPrimary}"/>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
+        </UniformGrid>
+
+        <!-- ── SELECTION ───────────────────────────────────────────────────── -->
+        <Border Grid.Row="2" Style="{StaticResource AppIdentityCard}" Margin="0,0,0,8">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="ROOF"
+                           Style="{StaticResource SectionTitle}" Margin="0,0,0,4"/>
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="DRAINS"
+                           Style="{StaticResource SectionTitle}" Margin="8,0,0,4"/>
+
+                <Border Grid.Row="1" Grid.Column="0"
+                        Background="{StaticResource BrushSystemSecondaryBackground}"
+                        CornerRadius="6" Padding="8,6">
+                    <TextBlock Text="{Binding RoofDescription}"
+                               Style="{StaticResource FieldValue}"
+                               TextTrimming="CharacterEllipsis"/>
+                </Border>
+
+                <Button Grid.Row="1" Grid.Column="1" Content="Select Roof"
+                        Command="{Binding SelectRoofCommand}"
+                        Style="{StaticResource OutlineButton}" Margin="8,0,16,0"/>
+
+                <Border Grid.Row="1" Grid.Column="2"
+                        Background="{StaticResource BrushSystemSecondaryBackground}"
+                        CornerRadius="6" Padding="8,6" Margin="8,0,0,0">
+                    <TextBlock Style="{StaticResource FieldValue}">
+                        <Run Text="{Binding DrainCount}"/>
+                        <Run Text=" drain point(s) selected"/>
+                    </TextBlock>
+                </Border>
+
+                <Button Grid.Row="1" Grid.Column="3" Content="Select Drains"
+                        Command="{Binding SelectDrainsCommand}"
+                        Style="{StaticResource OutlineButton}" Margin="8,0,0,0"/>
+            </Grid>
+        </Border>
+
+        <!-- ── SETTINGS + RUN ──────────────────────────────────────────────── -->
+        <Border Grid.Row="3" Style="{StaticResource AppIdentityCard}" Margin="0,0,0,8">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="110"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="110"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="Proximity Distance (mm):"
+                           Style="{StaticResource FieldLabel}" VerticalAlignment="Center"/>
+                <TextBox Grid.Column="1" Margin="8,0,0,0"
+                         Style="{StaticResource BoxedTextInput}"
+                         Text="{Binding ProximityDistanceMm, UpdateSourceTrigger=PropertyChanged, StringFormat=F1}"/>
+
+                <TextBlock Grid.Column="3" Text="Validation Tolerance (mm):"
+                           Style="{StaticResource FieldLabel}" VerticalAlignment="Center"/>
+                <TextBox Grid.Column="4" Margin="8,0,0,0"
+                         Style="{StaticResource BoxedTextInput}"
+                         Text="{Binding ValidationToleranceMm, UpdateSourceTrigger=PropertyChanged, StringFormat=F2}"/>
+
+                <StackPanel Grid.Column="6" Orientation="Horizontal" Margin="12,0"
+                            Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}">
+                    <TextBlock Text="{Binding ProgressDetail}" FontSize="10"
+                               Foreground="{StaticResource BrushWarning}"
+                               VerticalAlignment="Center" Margin="0,0,6,0"/>
+                    <ProgressBar IsIndeterminate="True" Width="80" Height="6"
+                                 Foreground="{StaticResource BrushNavyPrimary}"
+                                 VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <Button Grid.Column="7" Content="▶  Generate Ridges"
+                        Command="{Binding RunCommand}"
+                        Style="{StaticResource PrimaryButton}"
+                        IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBool}}"/>
+            </Grid>
+        </Border>
+
+        <!-- ── LOG TABS ────────────────────────────────────────────────────── -->
+        <Border Grid.Row="4" Style="{StaticResource ContentCard}" Margin="0,0,0,8">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="12,8,12,6">
+                    <TextBlock FontSize="11" VerticalAlignment="Center"
+                               Foreground="{StaticResource BrushSuccess}">
+                        <Run Text="PASS: "/><Run Text="{Binding PassCount}"/>
+                    </TextBlock>
+                    <TextBlock FontSize="11" Margin="16,0,0,0" VerticalAlignment="Center"
+                               Foreground="{StaticResource BrushDanger}">
+                        <Run Text="FAIL: "/><Run Text="{Binding FailCount}"/>
+                    </TextBlock>
+                    <TextBlock FontSize="11" Margin="16,0,0,0" VerticalAlignment="Center"
+                               Foreground="{StaticResource BrushNavyPrimary}"
+                               Text="{Binding GroupCountDisplay, StringFormat='Groups: {0}'}"/>
+                    <Button Content="📋 Copy Full Log"
+                            Command="{Binding CopyLogCommand}"
+                            Style="{StaticResource SmallSecondaryButton}"
+                            Margin="16,0,0,0" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <Border Grid.Row="0" Style="{StaticResource SeparatorLine}"/>
+
+                <TabControl Grid.Row="1"
+                            Background="{StaticResource BrushSystemBackground}"
+                            BorderBrush="{StaticResource BrushSeparatorThin}">
+                    <TabControl.Resources>
+                        <Style TargetType="TabItem">
+                            <Setter Property="Background"  Value="{StaticResource BrushSystemSecondaryBackground}"/>
+                            <Setter Property="Foreground"  Value="{StaticResource BrushTextSecondary}"/>
+                            <Setter Property="FontSize"    Value="11"/>
+                            <Setter Property="FontWeight"  Value="SemiBold"/>
+                            <Setter Property="Padding"     Value="10,5"/>
+                            <Setter Property="BorderBrush" Value="{StaticResource BrushSeparatorThin}"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="{StaticResource BrushNavyPrimary}"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TabControl.Resources>
+
+                    <!-- Validation Log -->
+                    <TabItem Header="Validation Log">
+                        <DataGrid Style="{StaticResource StandardDataGrid}"
+                                  ItemsSource="{Binding ValidationLog}"
+                                  AutoGenerateColumns="False" IsReadOnly="True"
+                                  CanUserSortColumns="True" SelectionMode="Single"
+                                  VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Auto">
+                            <DataGrid.ColumnHeaderStyle>
+                                <Style TargetType="DataGridColumnHeader"
+                                       BasedOn="{StaticResource StandardDataGridColumnHeader}"/>
+                            </DataGrid.ColumnHeaderStyle>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Pt #"       Binding="{Binding PointIndex}"                   Width="40"/>
+                                <DataGridTextColumn Header="X (ft)"     Binding="{Binding X,            StringFormat=F4}" Width="72"/>
+                                <DataGridTextColumn Header="Y (ft)"     Binding="{Binding Y,            StringFormat=F4}" Width="72"/>
+                                <DataGridTextColumn Header="Max Δ (ft)" Binding="{Binding MaxDeviation, StringFormat=F6}" Width="85"/>
+                                <DataGridTextColumn Header="Tol (ft)"   Binding="{Binding Tolerance,    StringFormat=F6}" Width="75"/>
+                                <DataGridTextColumn Header="Result"     Binding="{Binding Passed}"                        Width="60"/>
+                                <DataGridTextColumn Header="Note"       Binding="{Binding Note}"                          Width="*"/>
+                            </DataGrid.Columns>
+                            <DataGrid.RowStyle>
+                                <Style TargetType="DataGridRow">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Passed}" Value="False">
+                                            <Setter Property="Background" Value="#FFF5F5"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Passed}" Value="True">
+                                            <Setter Property="Background" Value="#F5FFF8"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.RowStyle>
+                        </DataGrid>
+                    </TabItem>
+
+                    <!-- Pipeline Log -->
+                    <TabItem Header="Pipeline Log">
+                        <TextBox Text="{Binding PipelineLogText, Mode=OneWay}"
+                                 IsReadOnly="True" AcceptsReturn="True"
+                                 TextWrapping="NoWrap"
+                                 FontFamily="Consolas, Courier New" FontSize="11"
+                                 Foreground="{StaticResource BrushLogText}"
+                                 Background="{StaticResource BrushLogBg}"
+                                 BorderThickness="0" Padding="8"
+                                 VerticalScrollBarVisibility="Auto"
+                                 HorizontalScrollBarVisibility="Auto"
+                                 ToolTip="Select All: Ctrl+A   Copy: Ctrl+C"/>
+                    </TabItem>
+                </TabControl>
+            </Grid>
+        </Border>
+
+        <!-- ── STATUS BAR ──────────────────────────────────────────────────── -->
+        <Border Grid.Row="5" Style="{StaticResource AppIdentityCard}" Padding="8,4">
+            <TextBlock Text="{Binding StatusMessage}"
+                       Style="{StaticResource FieldLabel}"
+                       TextTrimming="CharacterEllipsis"/>
+        </Border>
+    </Grid>
+</mah:MetroWindow>
