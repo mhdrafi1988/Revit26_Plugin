@@ -19,7 +19,8 @@
     ═══════════════════════════════════════════════════════════ -->
 
     <!-- Backgrounds -->
-    <Color x:Key="SystemBackground">#FFFFFF</Color>
+
+    <Color x:Key="SystemBackground">LightBlue</Color>
     <Color x:Key="SystemSecondaryBackground">#EEF3F9</Color>
     <Color x:Key="SystemTertiaryBackground">#DCE6F2</Color>
     <Color x:Key="SeparatorColor">#D7E1ED</Color>

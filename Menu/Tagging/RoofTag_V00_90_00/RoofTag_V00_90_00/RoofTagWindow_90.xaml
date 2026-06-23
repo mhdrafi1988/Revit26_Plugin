@@ -1,0 +1,114 @@
+﻿<Window x:Class="Revit22_Plugin.RoofTag_V90.RoofTagWindowV3"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:Revit22_Plugin.RoofTag_V90"
+        Title="Roof Tag V3 Settings"
+        Height="520" Width="380"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize">
+
+    <!-- ========= RESOURCE FIX ========= -->
+    <Window.Resources>
+        <local:InverseBoolConverter x:Key="InverseBoolConverter"/>
+    </Window.Resources>
+
+    <!-- ========= SCROLL FIX (so OK button always visible) ========= -->
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,0,0,5">
+
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- ========== TAG MODE ========== -->
+            <GroupBox Header="Tag Mode" Grid.Row="0" Margin="0,0,0,10">
+                <StackPanel Orientation="Horizontal" Margin="5">
+                    <RadioButton Content="Auto" Margin="5"
+                                 IsChecked="{Binding UseManualMode, Converter={StaticResource InverseBoolConverter}}"/>
+                    <RadioButton Content="Manual" Margin="5"
+                                 IsChecked="{Binding UseManualMode}"/>
+                </StackPanel>
+            </GroupBox>
+
+            <!-- ========== ANGLE ========== -->
+            <GroupBox Header="Angle" Grid.Row="1" Margin="0,0,0,10">
+                <StackPanel Orientation="Horizontal" Margin="5">
+                    <RadioButton Content="45°" Margin="5"
+                                 IsChecked="{Binding IsAngle45}"/>
+                    <RadioButton Content="30°" Margin="5"
+                                 IsChecked="{Binding IsAngle30}"/>
+                </StackPanel>
+            </GroupBox>
+
+            <!-- ========== BEND DIRECTION ========== -->
+            <GroupBox Header="Bend Direction" Grid.Row="2" Margin="0,0,0,10">
+                <StackPanel Orientation="Horizontal" Margin="5">
+                    <RadioButton Content="Inward" Margin="5"
+                                 IsChecked="{Binding BendInward}"/>
+                    <RadioButton Content="Outward" Margin="5"
+                                 IsChecked="{Binding BendOutward}"/>
+                </StackPanel>
+            </GroupBox>
+
+            <!-- ========== OFFSETS ========== -->
+            <GroupBox Header="Offsets (mm)" Grid.Row="3" Margin="0,0,0,10">
+                <Grid Margin="5">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Bend Offset:" VerticalAlignment="Center"/>
+                    <TextBox Grid.Column="1" Margin="5,2"
+                             Text="{Binding BendOffset, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <TextBlock Text="End Offset:" Grid.Row="1" VerticalAlignment="Center"/>
+                    <TextBox Grid.Column="1" Grid.Row="1" Margin="5,2"
+                             Text="{Binding EndOffset, UpdateSourceTrigger=PropertyChanged}"/>
+                </Grid>
+            </GroupBox>
+
+            <!-- ========== LEADER OPTION ========== -->
+            <StackPanel Orientation="Horizontal" Grid.Row="4" Margin="0,0,0,10">
+                <CheckBox Content="Use Leader Line"
+                          IsChecked="{Binding UseLeader}"/>
+            </StackPanel>
+
+            <!-- ========== TAG TYPE ========== -->
+            <GroupBox Header="Spot Tag Type" Grid.Row="5" Margin="0,0,0,10">
+                <ComboBox ItemsSource="{Binding SpotTagTypes}"
+                          SelectedItem="{Binding SelectedSpotTagType}"
+                          DisplayMemberPath="Name"
+                          Margin="5"/>
+            </GroupBox>
+
+            <Border Grid.Row="6" Height="10"/>
+
+            <!-- ========== BUTTONS (ALWAYS VISIBLE) ========== -->
+            <StackPanel Orientation="Horizontal"
+                        Grid.Row="7"
+                        HorizontalAlignment="Right"
+                        Margin="5,20,5,10">
+
+                <Button Content="OK" Width="80" Margin="5" Click="OnOK"/>
+                <Button Content="Cancel" Width="80" Margin="5" Click="OnCancel"/>
+
+            </StackPanel>
+
+        </Grid>
+    </ScrollViewer>
+
+</Window>

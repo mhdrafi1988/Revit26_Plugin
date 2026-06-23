@@ -1,0 +1,210 @@
+<Window
+    x:Class="Revit26_Plugin.CreaserAdv_V004_00.Views.CreaserAdvWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:models="clr-namespace:Revit26_Plugin.Shared.Models"
+    Title="Revit26 – Creaser Advanced V004"
+    Width="540"
+    Height="600"
+    WindowStartupLocation="CenterOwner"
+    ResizeMode="CanResizeWithGrip"
+    Topmost="True">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary
+                    Source="pack://application:,,,/Revit26_Plugin;component/Shared/SharedStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!--
+                Declared here directly — avoids MC3074 designer resolution issues
+                with assembly= references. Uses the same shared class from
+                Revit26_Plugin.Shared.Models that all other tools use.
+            -->
+            <models:LogLevelToColorConverter x:Key="LogLevelToColor"/>
+
+            <DataTemplate x:Key="LogEntryTemplate">
+                <TextBlock
+                    Text="{Binding}"
+                    Foreground="{Binding Level, Converter={StaticResource LogLevelToColor}}"
+                    FontFamily="Consolas"
+                    FontSize="11"
+                    TextWrapping="NoWrap"/>
+            </DataTemplate>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- ═══ Row 0 · Detail item selector ═══════════════════════════════ -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,10">
+            <TextBlock
+                Text="Detail item"
+                Style="{StaticResource FieldLabel}"
+                Margin="0,0,0,4"/>
+            <ComboBox
+                Style="{StaticResource StandardComboBox}"
+                ItemsSource="{Binding DetailSymbols}"
+                SelectedItem="{Binding SelectedDetailSymbol}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock>
+                            <Run Text="{Binding FamilyName, Mode=OneWay}"/>
+                            <Run Text=" : "/>
+                            <Run Text="{Binding Name}"/>
+                        </TextBlock>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </StackPanel>
+
+        <!-- ═══ Row 1 · Boundary lines checkbox ════════════════════════════ -->
+        <CheckBox
+            Grid.Row="1"
+            Content="Include boundary lines"
+            IsChecked="{Binding IncludeBoundaryLines}"
+            Foreground="{StaticResource BrushTextPrimary}"
+            Margin="0,0,0,10"
+            VerticalContentAlignment="Center"/>
+
+        <!-- ═══ Row 2 · Action buttons ══════════════════════════════════════ -->
+        <StackPanel
+            Grid.Row="2"
+            Orientation="Horizontal"
+            Margin="0,0,0,10">
+            <Button
+                Content="Run"
+                Width="90"
+                Margin="0,0,10,0"
+                Style="{StaticResource PrimaryButton}"
+                Command="{Binding RunCommand}"/>
+            <Button
+                Content="Clear log"
+                Width="90"
+                Style="{StaticResource OutlineButton}"
+                Command="{Binding ClearLogCommand}"/>
+        </StackPanel>
+
+        <!-- ═══ Row 3 · Run summary bar (hidden until first Run) ════════════ -->
+        <Border
+            Grid.Row="3"
+            Visibility="{Binding HasSummary, Converter={StaticResource BoolToVisibility}}"
+            Background="{StaticResource BrushNavyPrimary}"
+            CornerRadius="6"
+            Padding="10,8"
+            Margin="0,0,0,10">
+            <UniformGrid Rows="1" Columns="4">
+
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock
+                        Text="{Binding Summary.CreasesFound}"
+                        Style="{StaticResource MetricNumber}"
+                        Foreground="{StaticResource BrushTextOnDark}"
+                        HorizontalAlignment="Center"/>
+                    <TextBlock
+                        Text="creases found"
+                        Style="{StaticResource MetricUnit}"
+                        Foreground="{StaticResource BrushLogTextDim}"
+                        HorizontalAlignment="Center"/>
+                </StackPanel>
+
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock
+                        Text="{Binding Summary.BoundaryFound}"
+                        Style="{StaticResource MetricNumber}"
+                        Foreground="{StaticResource BrushTextOnDark}"
+                        HorizontalAlignment="Center"/>
+                    <TextBlock
+                        Text="boundary found"
+                        Style="{StaticResource MetricUnit}"
+                        Foreground="{StaticResource BrushLogTextDim}"
+                        HorizontalAlignment="Center"/>
+                </StackPanel>
+
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock
+                        Text="{Binding Summary.Created}"
+                        Style="{StaticResource MetricNumberSuccess}"
+                        HorizontalAlignment="Center"/>
+                    <TextBlock
+                        Text="created"
+                        Style="{StaticResource MetricUnit}"
+                        Foreground="{StaticResource BrushLogTextDim}"
+                        HorizontalAlignment="Center"/>
+                </StackPanel>
+
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock
+                        Text="{Binding Summary.Failed}"
+                        Style="{StaticResource MetricNumberDanger}"
+                        HorizontalAlignment="Center"/>
+                    <TextBlock
+                        Text="failed"
+                        Style="{StaticResource MetricUnit}"
+                        Foreground="{StaticResource BrushLogTextDim}"
+                        HorizontalAlignment="Center"/>
+                </StackPanel>
+
+            </UniformGrid>
+        </Border>
+
+        <!-- ═══ Row 4 · Log panel ═══════════════════════════════════════════ -->
+        <Border
+            Grid.Row="4"
+            Background="{StaticResource BrushLogBg}"
+            CornerRadius="8">
+            <Grid Margin="8">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Log title bar -->
+                <Border
+                    Grid.Row="0"
+                    Background="{StaticResource BrushLogTitleBar}"
+                    CornerRadius="5"
+                    Padding="8,5"
+                    Margin="0,0,0,6">
+                    <TextBlock
+                        Text="Log"
+                        FontSize="11"
+                        FontWeight="SemiBold"
+                        Foreground="{StaticResource BrushLogText}"/>
+                </Border>
+
+                <!-- Colour-coded log list -->
+                <ListBox
+                    Grid.Row="1"
+                    ItemsSource="{Binding LogEntries}"
+                    ItemTemplate="{StaticResource LogEntryTemplate}"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                    ScrollViewer.VerticalScrollBarVisibility="Auto"
+                    VirtualizingPanel.IsVirtualizing="True"
+                    MinHeight="120"/>
+
+                <!-- Copy log button -->
+                <Button
+                    Grid.Row="2"
+                    Content="Copy log"
+                    HorizontalAlignment="Right"
+                    Width="80"
+                    Margin="0,6,0,0"
+                    Style="{StaticResource DarkGhostButton}"
+                    Command="{Binding CopyLogCommand}"/>
+            </Grid>
+        </Border>
+
+    </Grid>
+</Window>

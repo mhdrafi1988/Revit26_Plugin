@@ -1,0 +1,86 @@
+// ==================================
+// File: LoggingService.cs
+// Namespace: Revit26_Plugin.CreaserAdv_V003_01
+// ==================================
+
+using System;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Threading;
+
+namespace Revit26_Plugin.CreaserAdv_V003_01.Services
+{
+    /// <summary>
+    /// Thread-safe logging service.
+    /// Streams log entries to an <see cref="ObservableCollection{T}"/>
+    /// (bound to the UI ListBox) and simultaneously persists them to a
+    /// timestamped text file under <c>%USERPROFILE%\Documents\Revit26_Logs\</c>.
+    /// Must be created on the WPF UI thread.
+    /// </summary>
+    public sealed class LoggingService
+    {
+        private readonly string                _logFilePath;
+        private readonly SynchronizationContext _uiContext;
+
+        public ObservableCollection<LogEntry> Entries { get; }
+            = new ObservableCollection<LogEntry>();
+
+        public LoggingService(string toolName)
+        {
+            _uiContext = SynchronizationContext.Current
+                ?? throw new InvalidOperationException(
+                    "LoggingService must be created on the UI thread.");
+
+            string folder = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                "Revit26_Logs",
+                toolName);
+
+            Directory.CreateDirectory(folder);
+
+            _logFilePath = Path.Combine(
+                folder,
+                $"Log_{DateTime.Now:yyyyMMdd_HHmmss}.txt");
+
+            WriteFileLine("=== Log Started ===");
+        }
+
+        // --------------------------------------------------
+        // Public API
+        // --------------------------------------------------
+
+        public void Info(string message)    => Log(LoggingLevel.Info,    message);
+        public void Warning(string message) => Log(LoggingLevel.Warning, message);
+        public void Error(string message)   => Log(LoggingLevel.Error,   message);
+
+        public void Clear()
+        {
+            _uiContext.Post(_ => Entries.Clear(), null);
+            WriteFileLine("=== Log Cleared ===");
+        }
+
+        // --------------------------------------------------
+        // Core
+        // --------------------------------------------------
+
+        private void Log(LoggingLevel level, string message)
+        {
+            var entry = new LogEntry(level, message);
+
+            _uiContext.Post(_ => Entries.Add(entry), null);
+            WriteFileLine(entry.ToString());
+        }
+
+        private void WriteFileLine(string line)
+        {
+            try
+            {
+                File.AppendAllText(_logFilePath, line + Environment.NewLine);
+            }
+            catch
+            {
+                // Never propagate exceptions from the logger itself.
+            }
+        }
+    }
+}

@@ -13,7 +13,7 @@ namespace Revit26_Plugin.Menu.Ribbon
         {
             RibbonPanel panel = app.CreateRibbonPanel(tabName, "QuickAcces");
 
-            PushButton auto_slope_button = panel.AddItem(new PushButtonData("Btn_AutoSlopeByPoint_05", "Auto Slope Point_05_QA", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint_05.Commands.AutoSlopeCommand")) as PushButton;
+            PushButton auto_slope_button = panel.AddItem(new PushButtonData("Btn_AutoSlopeByPoint_05", "Auto Slope Point_V06A", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.V06.Commands.AutoSlopeCommand")) as PushButton;
             auto_slope_button.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.AutoslopeV2_32.png");
 
             PushButton auto_slope_V5_button = panel.AddItem(new PushButtonData("Btn_AutoSlopeByPoint_0q5", "Auto Slope Poqint Riqdge", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.WithRidge.Commands.AutoSlopeCommand")) as PushButton;

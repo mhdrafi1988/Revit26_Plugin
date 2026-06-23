@@ -1,0 +1,457 @@
+<mah:MetroWindow
+    x:Class="Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V60.Views.RoofRidgeView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:conv="clr-namespace:Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V60.Converters"
+    xmlns:shared="clr-namespace:Revit26_Plugin.Shared.Models"
+    mc:Ignorable="d"
+    Title="Roof Ridge Tool"
+    TitleCharacterCasing="Normal"
+    Width="1050" Height="750" MinWidth="950" MinHeight="650"
+    WindowStartupLocation="CenterScreen"
+    Topmost="True"
+    Background="{DynamicResource BrushSystemBackground}">
+
+    <mah:MetroWindow.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Revit26_Plugin;component/Shared/SharedStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <conv:InverseBoolConverter      x:Key="InverseBool"/>
+            <shared:BoolToVisibilityConverter x:Key="BoolToVis"/>
+
+            <!-- Shared header template for the three shape-group expanders.
+                 Tag carries "Selected/Total" strings injected per expander below. -->
+            <Style x:Key="SeedGroupExpander" TargetType="Expander">
+                <Setter Property="IsExpanded" Value="True"/>
+                <Setter Property="Margin" Value="0,0,0,8"/>
+                <Setter Property="Background" Value="{StaticResource BrushSystemSecondaryBackground}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource BrushSeparatorThin}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+            </Style>
+
+            <Style x:Key="SeedGroupGrid" TargetType="DataGrid" BasedOn="{StaticResource StandardDataGrid}">
+                <Setter Property="AutoGenerateColumns" Value="False"/>
+                <Setter Property="CanUserAddRows" Value="False"/>
+                <Setter Property="CanUserDeleteRows" Value="False"/>
+                <Setter Property="CanUserSortColumns" Value="True"/>
+                <Setter Property="HeadersVisibility" Value="Column"/>
+                <Setter Property="SelectionMode" Value="Extended"/>
+                <Setter Property="MaxHeight" Value="180"/>
+                <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+                <Setter Property="HorizontalScrollBarVisibility" Value="Disabled"/>
+            </Style>
+        </ResourceDictionary>
+    </mah:MetroWindow.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="24,20,24,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="440"/>
+                <ColumnDefinition Width="24"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Margin="0,0,0,20">
+                    <TextBlock Text="Voronoi Ridge Generation" FontSize="20" FontWeight="Bold" Foreground="{StaticResource BrushNavyPrimary}"/>
+                    <TextBlock Text="Select inner loops as drainage seeds to compute ridges." FontSize="12" Margin="0,4,0,0" Opacity="0.7" TextWrapping="Wrap"/>
+                </StackPanel>
+
+                <!-- ── 1. BASE ROOF SELECTION ─────────────────────────────────── -->
+                <Border Grid.Row="1" Style="{StaticResource AppIdentityCard}" Margin="0,0,0,16" Padding="12">
+                    <StackPanel>
+                        <TextBlock Text="1. BASE ROOF SELECTION" Style="{StaticResource SectionTitle}" Margin="0,0,0,8"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Copyable Element Id field -->
+                            <Border Grid.Column="0" Background="{StaticResource BrushSystemSecondaryBackground}" CornerRadius="4" Padding="8,6">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="Element Id" FontSize="11" Opacity="0.7" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                    <TextBox  Grid.Column="1" Text="{Binding SelectedRoofId, Mode=OneWay}"
+                                              IsReadOnly="True" BorderThickness="0" Background="Transparent"
+                                              FontFamily="Consolas, Monaco, Courier New" FontSize="13"
+                                              VerticalContentAlignment="Center"
+                                              Foreground="{StaticResource BrushNavyPrimary}"/>
+                                    <Button   Grid.Column="2" Content="Copy" Command="{Binding CopyRoofIdCommand}"
+                                              Style="{StaticResource SmallSecondaryButton}" Width="52" Margin="6,0,0,0"
+                                              ToolTip="Copy roof element id to clipboard"/>
+                                </Grid>
+                            </Border>
+
+                            <Button Grid.Column="1" Content="Pick Roof" Command="{Binding SelectRoofCommand}" Style="{StaticResource OutlineButton}" Margin="8,0,0,0" Width="90"/>
+                        </Grid>
+                        <TextBlock Text="{Binding RoofDescription}" Style="{StaticResource FieldValue}" FontSize="11" Opacity="0.7" TextTrimming="CharacterEllipsis" Margin="0,6,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- ── 2. DRAINAGE SEEDS (INNER LOOPS) — three shape groups ───── -->
+                <Grid Grid.Row="2" Margin="0,0,0,16">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="2. DRAINAGE SEEDS (INNER LOOPS)" Style="{StaticResource SectionTitle}" Margin="0,0,0,6"/>
+
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel>
+
+                            <!-- Group A: Circles / Curved -->
+                            <Expander Style="{StaticResource SeedGroupExpander}">
+                                <Expander.Header>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="Circles / Curved" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                        <Border Grid.Column="1" Background="#EAF1FB" CornerRadius="4" Padding="6,1" Margin="8,0,0,0">
+                                            <TextBlock FontSize="11" Foreground="{StaticResource BrushNavyPrimary}">
+                                                <Run Text="{Binding CircularSelectedCount}"/><Run Text=" selected"/>
+                                            </TextBlock>
+                                        </Border>
+                                        <TextBlock Grid.Column="2" HorizontalAlignment="Right" FontSize="11" Opacity="0.6" VerticalAlignment="Center">
+                                            <Run Text="{Binding CircularTotalCount}"/><Run Text=" loops"/>
+                                        </TextBlock>
+                                    </Grid>
+                                </Expander.Header>
+                                <StackPanel Margin="4,6,4,8">
+                                    <UniformGrid Columns="2" Margin="0,0,0,6">
+                                        <Button Content="Select All"  Command="{Binding SelectAllCircularCommand}"  Style="{StaticResource SmallSecondaryButton}" Margin="0,0,4,0"/>
+                                        <Button Content="Select None" Command="{Binding SelectNoneCircularCommand}" Style="{StaticResource SmallSecondaryButton}" Margin="4,0,0,0"/>
+                                    </UniformGrid>
+                                    <DataGrid Style="{StaticResource SeedGroupGrid}" ItemsSource="{Binding CircularOpenings}">
+                                        <DataGrid.RowStyle>
+                                            <Style TargetType="DataGridRow" BasedOn="{StaticResource DataGridRowStyle}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                        <Setter Property="Background" Value="#EAF1FB"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </DataGrid.RowStyle>
+                                        <DataGrid.Columns>
+                                            <DataGridTemplateColumn Header="Seed" Width="50">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                            <DataGridTextColumn Header="Shape"  Binding="{Binding ShapeType}"                  Width="70" IsReadOnly="True"/>
+                                            <DataGridTextColumn Header="Dim 1"  Binding="{Binding Dim1, StringFormat=F1}"      Width="65" IsReadOnly="True"/>
+                                            <DataGridTextColumn Header="Dim 2"  Binding="{Binding Dim2, StringFormat=F1}"      Width="65" IsReadOnly="True"/>
+                                            <DataGridTextColumn Header="BBox W" Binding="{Binding BBoxWidth, StringFormat=F1}" Width="70" IsReadOnly="True"/>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </StackPanel>
+                            </Expander>
+
+                            <!-- Group B: Rectangles -->
+                            <Expander Style="{StaticResource SeedGroupExpander}">
+                                <Expander.Header>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="Rectangles" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                        <Border Grid.Column="1" Background="#EAF1FB" CornerRadius="4" Padding="6,1" Margin="8,0,0,0">
+                                            <TextBlock FontSize="11" Foreground="{StaticResource BrushNavyPrimary}">
+                                                <Run Text="{Binding RectangleSelectedCount}"/><Run Text=" selected"/>
+                                            </TextBlock>
+                                        </Border>
+                                        <TextBlock Grid.Column="2" HorizontalAlignment="Right" FontSize="11" Opacity="0.6" VerticalAlignment="Center">
+                                            <Run Text="{Binding RectangleTotalCount}"/><Run Text=" loops"/>
+                                        </TextBlock>
+                                    </Grid>
+                                </Expander.Header>
+                                <StackPanel Margin="4,6,4,8">
+                                    <UniformGrid Columns="2" Margin="0,0,0,6">
+                                        <Button Content="Select All"  Command="{Binding SelectAllRectangleCommand}"  Style="{StaticResource SmallSecondaryButton}" Margin="0,0,4,0"/>
+                                        <Button Content="Select None" Command="{Binding SelectNoneRectangleCommand}" Style="{StaticResource SmallSecondaryButton}" Margin="4,0,0,0"/>
+                                    </UniformGrid>
+                                    <DataGrid Style="{StaticResource SeedGroupGrid}" ItemsSource="{Binding RectangleOpenings}">
+                                        <DataGrid.RowStyle>
+                                            <Style TargetType="DataGridRow" BasedOn="{StaticResource DataGridRowStyle}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                        <Setter Property="Background" Value="#EAF1FB"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </DataGrid.RowStyle>
+                                        <DataGrid.Columns>
+                                            <DataGridTemplateColumn Header="Seed" Width="50">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                            <DataGridTextColumn Header="Shape"  Binding="{Binding ShapeType}"                  Width="70" IsReadOnly="True"/>
+                                            <DataGridTextColumn Header="Dim 1"  Binding="{Binding Dim1, StringFormat=F1}"      Width="65" IsReadOnly="True"/>
+                                            <DataGridTextColumn Header="Dim 2"  Binding="{Binding Dim2, StringFormat=F1}"      Width="65" IsReadOnly="True"/>
+                                            <DataGridTextColumn Header="BBox W" Binding="{Binding BBoxWidth, StringFormat=F1}" Width="70" IsReadOnly="True"/>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </StackPanel>
+                            </Expander>
+
+                            <!-- Group C: Other -->
+                            <Expander Style="{StaticResource SeedGroupExpander}">
+                                <Expander.Header>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="Other" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                        <Border Grid.Column="1" Background="#EAF1FB" CornerRadius="4" Padding="6,1" Margin="8,0,0,0">
+                                            <TextBlock FontSize="11" Foreground="{StaticResource BrushNavyPrimary}">
+                                                <Run Text="{Binding OtherSelectedCount}"/><Run Text=" selected"/>
+                                            </TextBlock>
+                                        </Border>
+                                        <TextBlock Grid.Column="2" HorizontalAlignment="Right" FontSize="11" Opacity="0.6" VerticalAlignment="Center">
+                                            <Run Text="{Binding OtherTotalCount}"/><Run Text=" loops"/>
+                                        </TextBlock>
+                                    </Grid>
+                                </Expander.Header>
+                                <StackPanel Margin="4,6,4,8">
+                                    <UniformGrid Columns="2" Margin="0,0,0,6">
+                                        <Button Content="Select All"  Command="{Binding SelectAllOtherCommand}"  Style="{StaticResource SmallSecondaryButton}" Margin="0,0,4,0"/>
+                                        <Button Content="Select None" Command="{Binding SelectNoneOtherCommand}" Style="{StaticResource SmallSecondaryButton}" Margin="4,0,0,0"/>
+                                    </UniformGrid>
+                                    <DataGrid Style="{StaticResource SeedGroupGrid}" ItemsSource="{Binding OtherOpenings}">
+                                        <DataGrid.RowStyle>
+                                            <Style TargetType="DataGridRow" BasedOn="{StaticResource DataGridRowStyle}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                        <Setter Property="Background" Value="#EAF1FB"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </DataGrid.RowStyle>
+                                        <DataGrid.Columns>
+                                            <DataGridTemplateColumn Header="Seed" Width="50">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                            <DataGridTextColumn Header="Shape"  Binding="{Binding ShapeType}"                  Width="70" IsReadOnly="True"/>
+                                            <DataGridTextColumn Header="Dim 1"  Binding="{Binding Dim1, StringFormat=F1}"      Width="65" IsReadOnly="True"/>
+                                            <DataGridTextColumn Header="Dim 2"  Binding="{Binding Dim2, StringFormat=F1}"      Width="65" IsReadOnly="True"/>
+                                            <DataGridTextColumn Header="BBox W" Binding="{Binding BBoxWidth, StringFormat=F1}" Width="70" IsReadOnly="True"/>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </StackPanel>
+                            </Expander>
+
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <TextBlock Grid.Row="2" Margin="4,8,0,0" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource BrushNavyPrimary}">
+                        <Run Text="✓ Selected: "/><Run Text="{Binding SelectedOpeningsCount}"/><Run Text=" opening(s) as seeds"/>
+                    </TextBlock>
+                </Grid>
+
+                <!-- ── 3. ALGORITHM CONFIGURATION ─────────────────────────────── -->
+                <Border Grid.Row="3" Style="{StaticResource AppIdentityCard}" Margin="0,0,0,16" Padding="14">
+                    <StackPanel>
+                        <TextBlock Text="3. ALGORITHM CONFIGURATION" Style="{StaticResource SectionTitle}" Margin="0,0,0,10"/>
+
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Proximity Distance (mm)" Style="{StaticResource FieldLabel}" VerticalAlignment="Center"/>
+                            <TextBox Grid.Column="1" Style="{StaticResource BoxedTextInput}" Text="{Binding ProximityDistanceMm, UpdateSourceTrigger=PropertyChanged, StringFormat=F1}" HorizontalContentAlignment="Right"/>
+                        </Grid>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Validation Tolerance (mm)" Style="{StaticResource FieldLabel}" VerticalAlignment="Center"/>
+                            <TextBox Grid.Column="1" Style="{StaticResource BoxedTextInput}" Text="{Binding ValidationToleranceMm, UpdateSourceTrigger=PropertyChanged, StringFormat=F2}" HorizontalContentAlignment="Right"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- ── Generate row + disabled hint ───────────────────────────── -->
+                <Grid Grid.Row="4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,12,0">
+                        <!-- Busy progress -->
+                        <StackPanel Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}">
+                            <TextBlock Text="{Binding ProgressDetail}" FontSize="11" Foreground="{StaticResource BrushWarning}" TextTrimming="CharacterEllipsis"/>
+                            <ProgressBar IsIndeterminate="True" Height="4" Margin="0,4,0,0" Foreground="{StaticResource BrushNavyPrimary}"/>
+                        </StackPanel>
+
+                        <!-- Disabled hint: shown when Generate can't run (e.g. fewer than 2 seeds) and not busy -->
+                        <TextBlock FontSize="11" Foreground="{StaticResource BrushWarning}" TextWrapping="Wrap"
+                                   Text="⚠ Select at least 2 seeds to generate ridges.">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding IsBusy}" Value="False"/>
+                                                <Condition Binding="{Binding CanGenerate}" Value="False"/>
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </MultiDataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </StackPanel>
+
+                    <Button Grid.Column="1" Content="Generate Ridges" Command="{Binding RunCommand}" Style="{StaticResource PrimaryButton}" Width="160" Height="36" FontSize="13" IsEnabled="{Binding CanGenerate}"/>
+                </Grid>
+            </Grid>
+
+            <!-- ── RIGHT SIDE — metric cards + logs (unchanged) ───────────────── -->
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <UniformGrid Grid.Row="0" Columns="3" Margin="0,0,0,16">
+                    <Border Style="{StaticResource MetricCard}" Margin="0,0,4,0" Padding="12,8">
+                        <StackPanel>
+                            <TextBlock Text="SELECTED SEEDS" FontSize="10" FontWeight="Bold" Foreground="{StaticResource BrushNavyPrimary}"/>
+                            <TextBlock Text="{Binding TotalCalculatedPoints}" FontSize="22" FontWeight="SemiBold" Foreground="{StaticResource BrushNavyPrimary}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource MetricCard}" Margin="4,0,4,0" Padding="12,8">
+                        <StackPanel>
+                            <TextBlock Text="ADDED ✓" FontSize="10" FontWeight="Bold" Foreground="{StaticResource BrushSuccess}"/>
+                            <TextBlock Text="{Binding TotalAddedPoints}" FontSize="22" FontWeight="Light" Foreground="{StaticResource BrushSuccess}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource MetricCard}" Margin="4,0,0,0" Padding="12,8">
+                        <StackPanel>
+                            <TextBlock Text="FAILED ✗" FontSize="10" FontWeight="Bold" Foreground="{StaticResource BrushDanger}"/>
+                            <TextBlock Text="{Binding TotalFailedPoints}" FontSize="22" FontWeight="Light" Foreground="{StaticResource BrushDanger}"/>
+                        </StackPanel>
+                    </Border>
+                </UniformGrid>
+
+                <Border Grid.Row="1" Style="{StaticResource ContentCard}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="0" Margin="12,6">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock FontSize="11" Foreground="{StaticResource BrushSuccess}" FontWeight="SemiBold">
+                                    <Run Text="PASS: "/><Run Text="{Binding PassCount}"/>
+                                </TextBlock>
+                                <TextBlock FontSize="11" Margin="16,0,0,0" Foreground="{StaticResource BrushDanger}" FontWeight="SemiBold">
+                                    <Run Text="FAIL: "/><Run Text="{Binding FailCount}"/>
+                                </TextBlock>
+                                <TextBlock FontSize="11" Margin="16,0,0,0" Foreground="{StaticResource BrushNavyPrimary}" Opacity="0.8">
+                                    <Run Text="{Binding GroupCountDisplay, StringFormat='Groups: {0}'}"/>
+                                </TextBlock>
+                            </StackPanel>
+                            <Button Content="Copy Log" Command="{Binding CopyLogCommand}" Style="{StaticResource SmallSecondaryButton}" HorizontalAlignment="Right"/>
+                        </Grid>
+
+                        <TabControl Grid.Row="1" Background="Transparent" BorderThickness="0,1,0,0" BorderBrush="{StaticResource BrushSeparatorThin}">
+                            <TabControl.Resources>
+                                <Style TargetType="TabItem">
+                                    <Setter Property="FontSize" Value="12"/>
+                                    <Setter Property="Padding" Value="16,6"/>
+                                </Style>
+                            </TabControl.Resources>
+
+                            <TabItem Header="Validation Log">
+                                <DataGrid Style="{StaticResource StandardDataGrid}" ItemsSource="{Binding ValidationLog}" AutoGenerateColumns="False" IsReadOnly="True" CanUserSortColumns="True" SelectionMode="Single">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Pt #" Binding="{Binding PointIndex}" Width="50"/>
+                                        <DataGridTextColumn Header="X (ft)" Binding="{Binding X, StringFormat=F3}" Width="80"/>
+                                        <DataGridTextColumn Header="Y (ft)" Binding="{Binding Y, StringFormat=F3}" Width="80"/>
+                                        <DataGridTextColumn Header="Max Δ (ft)" Binding="{Binding MaxDeviation, StringFormat=F5}" Width="90"/>
+                                        <DataGridTextColumn Header="Tol (ft)" Binding="{Binding Tolerance, StringFormat=F5}" Width="80"/>
+                                        <DataGridTextColumn Header="Result" Binding="{Binding Passed}" Width="65"/>
+                                        <DataGridTextColumn Header="Note" Binding="{Binding Note}" Width="*"/>
+                                    </DataGrid.Columns>
+                                    <DataGrid.RowStyle>
+                                        <Style TargetType="DataGridRow" BasedOn="{StaticResource StandardDataGridRow}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Passed}" Value="False">
+                                                    <Setter Property="Background" Value="#FFF2F2"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Passed}" Value="True">
+                                                    <Setter Property="Background" Value="#F2FBF4"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </DataGrid.RowStyle>
+                                </DataGrid>
+                            </TabItem>
+
+                            <TabItem Header="Pipeline Log">
+                                <TextBox Text="{Binding PipelineLogText, Mode=OneWay}"
+                                         IsReadOnly="True" AcceptsReturn="True" TextWrapping="NoWrap"
+                                         FontFamily="Consolas, Monaco, Courier New" FontSize="11.5"
+                                         Foreground="{StaticResource BrushLogText}" Background="{StaticResource BrushLogBg}"
+                                         Padding="10" BorderThickness="0"
+                                         VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
+                            </TabItem>
+                        </TabControl>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+
+        <Border Grid.Row="1" Background="{StaticResource BrushSystemSecondaryBackground}" BorderThickness="0,1,0,0" BorderBrush="{StaticResource BrushSeparatorThin}" Padding="16,6">
+            <TextBlock Text="{Binding StatusMessage}" Style="{StaticResource FieldLabel}" FontSize="11" TextTrimming="CharacterEllipsis" Opacity="0.8"/>
+        </Border>
+    </Grid>
+</mah:MetroWindow>
