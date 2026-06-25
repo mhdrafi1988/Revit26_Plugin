@@ -1,0 +1,299 @@
+<mah:MetroWindow
+    x:Class="Revit26_Plugin.RoofDetailLineIntersect.V005.RoofDetailLineIntersectWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+    xmlns:shared="clr-namespace:Revit26_Plugin.Shared.Models"
+    Title="Roof Detail Line Intersect — V005"
+    Width="480"
+    SizeToContent="Height"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen"
+    Topmost="True">
+
+    <mah:MetroWindow.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Revit26_Plugin;component/Shared/SharedStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Shared converters — instantiated here in the consuming window (never in SharedStyles.xaml) -->
+            <shared:InverseBoolConverter       x:Key="InvBool"/>
+            <shared:LogLevelToColorConverter   x:Key="LogColor"/>
+        </ResourceDictionary>
+    </mah:MetroWindow.Resources>
+
+    <StackPanel>
+
+        <!-- ── Header bar ──────────────────────────────────────────── -->
+        <Border Style="{StaticResource HeaderBar}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Roof Detail Line Intersect"
+                               Style="{StaticResource HeaderTitle}"/>
+                    <TextBlock Text="V005 — Outer &amp; Inner Loop Intersections"
+                               Style="{StaticResource HeaderSubtitle}"/>
+                </StackPanel>
+
+                <Button Grid.Column="1"
+                        Width="24" Height="24"
+                        Click="CloseButton_Click"
+                        Background="#14283F"
+                        BorderThickness="0"
+                        Cursor="Hand"
+                        ToolTip="Close">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="Bg"
+                                    Background="{TemplateBinding Background}"
+                                    CornerRadius="5">
+                                <TextBlock Text="✕"
+                                           FontSize="11"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Foreground="{StaticResource BrushLogTextDim}"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Bg" Property="Background" Value="#D9534F"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- ── Selection info ──────────────────────────────────────── -->
+        <Border Style="{StaticResource ContentCard}" Margin="10,10,10,0">
+            <StackPanel>
+
+                <TextBlock Text="SELECTION"
+                           Style="{StaticResource SectionTitle}"
+                           Margin="12,8,12,4"/>
+
+                <Border Height="1" Background="{StaticResource BrushSeparatorThin}" Margin="12,0"/>
+
+                <!-- Roof row -->
+                <Grid Margin="12,6,12,4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0"
+                            Background="{StaticResource BrushAppleBlue}"
+                            CornerRadius="8" Padding="7,2" Margin="0,0,8,0"
+                            VerticalAlignment="Center">
+                        <TextBlock Text="ROOF" FontSize="10" FontWeight="Bold" Foreground="White"/>
+                    </Border>
+
+                    <TextBlock Grid.Column="1"
+                               Text="{Binding RoofName}"
+                               Style="{StaticResource FieldValue}"
+                               VerticalAlignment="Center"/>
+
+                    <TextBlock Grid.Column="2"
+                               Text="{Binding RoofIdText}"
+                               Style="{StaticResource FieldLabel}"
+                               VerticalAlignment="Center"/>
+                </Grid>
+
+                <Border Height="1" Background="{StaticResource BrushSeparatorThin}" Margin="12,0"/>
+
+                <!-- Detail Lines row -->
+                <Grid Margin="12,6,12,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0"
+                            Background="{StaticResource BrushSuccess}"
+                            CornerRadius="8" Padding="7,2" Margin="0,0,8,0"
+                            VerticalAlignment="Center">
+                        <TextBlock FontSize="10" FontWeight="Bold" Foreground="White">
+                            <Run Text="{Binding TotalLines, Mode=OneWay}"/>
+                            <Run Text=" LINES"/>
+                        </TextBlock>
+                    </Border>
+
+                    <TextBlock Grid.Column="1"
+                               Text="Detail Lines selected"
+                               Style="{StaticResource FieldValue}"
+                               VerticalAlignment="Center"/>
+
+                    <TextBlock Grid.Column="2"
+                               Text="{Binding ViewName}"
+                               Style="{StaticResource FieldLabel}"
+                               VerticalAlignment="Center"/>
+                </Grid>
+
+            </StackPanel>
+        </Border>
+
+        <!-- ── Summary cards ───────────────────────────────────────── -->
+        <Border Style="{StaticResource ContentCard}" Margin="10,6,10,0">
+            <StackPanel>
+
+                <TextBlock Text="SUMMARY"
+                           Style="{StaticResource SectionTitle}"
+                           Margin="12,8,12,4"/>
+
+                <Border Height="1" Background="{StaticResource BrushSeparatorThin}" Margin="12,0"/>
+
+                <UniformGrid Rows="1" Columns="4" Margin="10,8,10,10">
+
+                    <Border Style="{StaticResource MetricCard}" Margin="2">
+                        <StackPanel HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding TotalLines}"
+                                       Style="{StaticResource MetricNumber}"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Text="LINES"
+                                       Style="{StaticResource MetricLabel}"
+                                       HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource MetricCard}" Margin="2">
+                        <StackPanel HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding IntersectionsFound}"
+                                       Style="{StaticResource MetricNumberSuccess}"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Text="INTERSECTIONS"
+                                       Style="{StaticResource MetricLabel}"
+                                       HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource MetricCard}" Margin="2">
+                        <StackPanel HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding PointsPlaced}"
+                                       Style="{StaticResource MetricNumberSuccess}"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Text="PTS PLACED"
+                                       Style="{StaticResource MetricLabel}"
+                                       HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource MetricCard}" Margin="2">
+                        <StackPanel HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding SkippedCount}"
+                                       Style="{StaticResource MetricNumberWarning}"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Text="SKIPPED"
+                                       Style="{StaticResource MetricLabel}"
+                                       HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                </UniformGrid>
+            </StackPanel>
+        </Border>
+
+        <!-- ── Log panel ───────────────────────────────────────────── -->
+        <Border Margin="10,6,10,0" CornerRadius="10" ClipToBounds="True">
+            <StackPanel>
+
+                <Border Background="{StaticResource BrushNavyPrimary}" Padding="10,6">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0"
+                                   Text="RUN LOG"
+                                   FontSize="10" FontWeight="Bold"
+                                   Foreground="{StaticResource BrushTextOnDark}"
+                                   VerticalAlignment="Center"/>
+
+                        <Button Grid.Column="1"
+                                Content="Copy Log"
+                                Command="{Binding CopyLogCommand}"
+                                Style="{StaticResource DarkGhostButton}"
+                                Padding="10,0"/>
+                    </Grid>
+                </Border>
+
+                <Border Background="{StaticResource BrushLogBg}" Height="180">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled"
+                                  x:Name="LogScrollViewer">
+                        <ItemsControl ItemsSource="{Binding LogEntries}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="8,1">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="52"/>
+                                            <ColumnDefinition Width="54"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Timestamp -->
+                                        <TextBlock Grid.Column="0"
+                                                   Text="{Binding Time, StringFormat=HH:mm:ss}"
+                                                   FontSize="10"
+                                                   Foreground="#9BACC8"
+                                                   FontFamily="Consolas"/>
+
+                                        <!-- Level — colour driven by shared LogLevelToColorConverter -->
+                                        <TextBlock Grid.Column="1"
+                                                   Text="{Binding Level}"
+                                                   FontSize="9.5"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{Binding Level,
+                                                       Converter={StaticResource LogColor}}"
+                                                   FontFamily="Consolas"
+                                                   VerticalAlignment="Center"/>
+
+                                        <!-- Message -->
+                                        <TextBlock Grid.Column="2"
+                                                   Text="{Binding Message}"
+                                                   FontSize="10.5"
+                                                   Foreground="#E3E7EE"
+                                                   TextWrapping="Wrap"
+                                                   FontFamily="Consolas"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Border>
+
+            </StackPanel>
+        </Border>
+
+        <!-- ── Footer buttons ──────────────────────────────────────── -->
+        <Border Background="{StaticResource BrushSystemSecondaryBackground}"
+                BorderBrush="{StaticResource BrushSeparatorThin}"
+                BorderThickness="0,1,0,0"
+                Margin="0,8,0,0"
+                Padding="12,8">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+
+                <Button Content="Close"
+                        Style="{StaticResource OutlineButton}"
+                        Click="CloseButton_Click"
+                        Width="80"
+                        IsEnabled="{Binding IsBusy, Converter={StaticResource InvBool}}"
+                        Margin="0,0,8,0"/>
+
+                <Button Content="▶  Run"
+                        Style="{StaticResource PrimaryButton}"
+                        Command="{Binding RunCommand}"
+                        Width="90"/>
+
+            </StackPanel>
+        </Border>
+
+    </StackPanel>
+</mah:MetroWindow>

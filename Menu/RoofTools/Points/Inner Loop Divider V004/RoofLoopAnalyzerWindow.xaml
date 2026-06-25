@@ -1,0 +1,269 @@
+<mah:MetroWindow x:Class="Revit26_Plugin.DivideInnerLoops.V004.Views.RoofLoopAnalyzerWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                 xmlns:conv="clr-namespace:Revit26_Plugin.Shared.Models"
+                 xmlns:local="clr-namespace:Revit26_Plugin.DivideInnerLoops.V004.ViewModels"
+                 Title="Inner Loop Divider V001"
+                 Height="680" Width="1000"
+                 MinHeight="500" MinWidth="900"
+                 WindowStartupLocation="CenterScreen"
+                 TitleCharacterCasing="Normal"
+                 ShowMaxRestoreButton="False">
+
+    <mah:MetroWindow.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Blue.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Revit26_Plugin;component/Shared/SharedStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Converters -->
+            <conv:LogLevelToColorConverter           x:Key="LogLevelToColor"/>
+            <conv:InverseBoolToVisibilityConverter   x:Key="InverseBoolToVis"/>
+            <conv:BoolToVisibilityConverter          x:Key="BoolToVisibility"/>
+
+            <!-- Group style for collapsible sections -->
+            <Style x:Key="GroupHeaderStyle" TargetType="GroupItem">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="GroupItem">
+                            <Expander IsExpanded="True" Margin="0">
+                                <Expander.Header>
+                                    <Grid Background="#DCE6F2" Height="32">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0" Text="{Binding Name}" FontSize="12" FontWeight="SemiBold" 
+                                                   Foreground="#1E3A5F" VerticalAlignment="Center" Margin="10,0,10,0"/>
+                                        <Border Grid.Column="1" Background="#FFFFFF" CornerRadius="9" Padding="6,1" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding ItemCount}" FontSize="10.5" FontWeight="SemiBold" 
+                                                       Foreground="#1E3A5F"/>
+                                        </Border>
+
+                                        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,8,0">
+                                            <Button Content="Select all" Style="{StaticResource SmallSecondaryButton}" 
+                                                    Height="22" Padding="0" Margin="0,0,6,0" FontSize="10.5"
+                                                    Click="SelectGroupButton_Click" Tag="{Binding Name}"/>
+                                            <Button Content="Select none" Style="{StaticResource SmallSecondaryButton}" 
+                                                    Height="22" Padding="0" FontSize="10.5"
+                                                    Click="ClearGroupButton_Click" Tag="{Binding Name}"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Expander.Header>
+                                <ItemsPresenter/>
+                            </Expander>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </mah:MetroWindow.Resources>
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>   <!-- Header bar          -->
+            <RowDefinition Height="Auto"/>   <!-- Toolbar buttons     -->
+            <RowDefinition Height="Auto"/>   <!-- Summary cards       -->
+            <RowDefinition Height="*"/>      <!-- Data grid / empty    -->
+            <RowDefinition Height="Auto"/>   <!-- Activity log panel    -->
+            <RowDefinition Height="Auto"/>   <!-- Action buttons        -->
+        </Grid.RowDefinitions>
+
+        <!-- ─── HEADER BAR ─────────────────────────────────────────── -->
+        <Border Grid.Row="0" Style="{StaticResource HeaderBar}" CornerRadius="10" Margin="0,0,0,10">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <StackPanel>
+                    <TextBlock Text="Inner Loop Divider V001" Style="{StaticResource HeaderTitle}"/>
+                    <TextBlock Text="Hierarchical division point assignment" Style="{StaticResource HeaderSubtitle}"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- ─── TOOLBAR / COUNT BADGES ─────────────────────────────── -->
+        <Grid Grid.Row="1" Margin="0,0,0,8">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <!-- Badge section removed - now in summary cards below -->
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Select all"
+                        Style="{StaticResource SmallSecondaryButton}"
+                        Command="{Binding SelectAllCommand}"
+                        Margin="0,0,6,0"/>
+                <Button Content="Clear"
+                        Style="{StaticResource SmallSecondaryButton}"
+                        Command="{Binding ClearSelectionCommand}"
+                        Margin="0,0,6,0"/>
+                <Button Content="Re-analyze"
+                        Style="{StaticResource SmallSecondaryButton}"
+                        Command="{Binding AnalyzeCommand}"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- ─── SUMMARY CARDS ──────────────────────────────────────── -->
+        <Grid Grid.Row="2" Margin="0,0,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Style="{StaticResource MetricCard}" Margin="0,0,6,0">
+                <StackPanel>
+                    <TextBlock Text="Selected shapes" Style="{StaticResource MetricLabel}"/>
+                    <TextBlock Text="{Binding SelectedShapeCount}" Style="{StaticResource MetricNumber}"/>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="1" Style="{StaticResource MetricCard}" Margin="0,0,6,0">
+                <StackPanel>
+                    <TextBlock Text="Division points" Style="{StaticResource MetricLabel}"/>
+                    <TextBlock Text="{Binding QueuedPointCount}" Style="{StaticResource MetricNumberAccent}"/>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="2" Style="{StaticResource MetricCard}">
+                <StackPanel>
+                    <TextBlock Text="Total openings" Style="{StaticResource MetricLabel}"/>
+                    <TextBlock Text="{Binding TotalOpeningsCount}" Style="{StaticResource MetricNumberSuccess}"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- ─── DATA GRID ──────────────────────────────────────────── -->
+        <Border Grid.Row="3" Style="{StaticResource ContentCard}"
+                Visibility="{Binding HasLoops, Converter={StaticResource BoolToVisibility}}">
+            <DataGrid ItemsSource="{Binding LoopsView}"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      SelectionMode="Single"
+                      Style="{StaticResource StandardDataGrid}"
+                      ColumnHeaderStyle="{StaticResource StandardDataGridColumnHeader}"
+                      CellStyle="{StaticResource StandardDataGridCell}"
+                      RowStyle="{StaticResource StandardDataGridRow}">
+                <DataGrid.GroupStyle>
+                    <GroupStyle ContainerStyle="{StaticResource GroupHeaderStyle}">
+                        <GroupStyle.Panel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel IsItemsHost="True"/>
+                            </ItemsPanelTemplate>
+                        </GroupStyle.Panel>
+                    </GroupStyle>
+                </DataGrid.GroupStyle>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Index"
+                                        Binding="{Binding Index}"
+                                        IsReadOnly="True" Width="60"/>
+                    <DataGridTextColumn Header="Type"
+                                        Binding="{Binding LoopType}"
+                                        IsReadOnly="True" Width="80"/>
+                    <DataGridTextColumn Header="Perimeter"
+                                        Binding="{Binding PerimeterMm, StringFormat={}{0:N0}}"
+                                        IsReadOnly="True" Width="120"/>
+                    <DataGridCheckBoxColumn Header="Selected"
+                                            Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}"
+                                            Width="80"/>
+                    <DataGridTemplateColumn Header="Division pts" Width="120">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <mah:NumericUpDown Value="{Binding RecommendedPoints, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                   Minimum="0" Maximum="64" Interval="1"
+                                                   NumericInputMode="Numbers"
+                                                   HideUpDownButtons="False"
+                                                   Width="100" HorizontalAlignment="Left"
+                                                   Margin="2"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Divided length"
+                                        Binding="{Binding DividedLengthMeters, StringFormat='{}{0} m'}"
+                                        IsReadOnly="True" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <!-- ─── EMPTY STATE ────────────────────────────────────────── -->
+        <Border Grid.Row="3" Style="{StaticResource ContentCard}"
+                Visibility="{Binding HasLoops, Converter={StaticResource InverseBoolToVis}}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,30">
+                <TextBlock Text="No inner loops detected"
+                           Style="{StaticResource SectionTitle}"
+                           HorizontalAlignment="Center"/>
+                <TextBlock Text="The selected roof has no inner boundary loops to divide."
+                           Style="{StaticResource HintText}"
+                           HorizontalAlignment="Center"
+                           TextAlignment="Center"/>
+            </StackPanel>
+        </Border>
+
+        <!-- ─── ACTIVITY LOG PANEL (always dark) ───────────────────── -->
+        <Border Grid.Row="4" Background="{StaticResource BrushLogBg}"
+                CornerRadius="8" Margin="0,0,0,10" MaxHeight="150">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" Background="{StaticResource BrushLogTitleBar}"
+                        CornerRadius="8,8,0,0" Padding="12,7">
+                    <Grid>
+                        <TextBlock Text="Activity log"
+                                   Foreground="{StaticResource BrushLogText}"
+                                   FontSize="11.5" VerticalAlignment="Center"/>
+                        <Button Content="Clear"
+                                Style="{StaticResource DarkGhostButton}"
+                                Command="{Binding ClearLogCommand}"
+                                HorizontalAlignment="Right"/>
+                    </Grid>
+                </Border>
+
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="12,8">
+                    <ItemsControl ItemsSource="{Binding Log}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Margin="0,1">
+                                    <TextBlock Text="{Binding Time, StringFormat=HH:mm:ss}"
+                                               Foreground="{StaticResource BrushLogTextDim}"
+                                               FontFamily="Consolas" FontSize="11.5"
+                                               Margin="0,0,10,0"/>
+                                    <TextBlock Text="{Binding Level}"
+                                               Foreground="{Binding Level, Converter={StaticResource LogLevelToColor}}"
+                                               FontFamily="Consolas" FontSize="11.5" FontWeight="SemiBold"
+                                               Width="64"/>
+                                    <TextBlock Text="{Binding Message}"
+                                               Foreground="{StaticResource BrushLogText}"
+                                               FontFamily="Consolas" FontSize="11.5"
+                                               TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+
+        <!-- ─── ACTION BUTTONS ─────────────────────────────────────── -->
+        <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Close"
+                    Style="{StaticResource OutlineButton}"
+                    Width="90" Height="38"
+                    IsCancel="True"
+                    Margin="0,0,10,0"/>
+            <Button Content="Apply division points"
+                    Style="{StaticResource PrimaryButton}"
+                    Width="200"
+                    Command="{Binding ApplyDivisionCommand}"/>
+        </StackPanel>
+    </Grid>
+</mah:MetroWindow>

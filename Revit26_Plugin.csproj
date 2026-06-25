@@ -5,7 +5,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\Release\net8.0-windows\23-06-001</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\Release\net8.0-windows\23-06-004</BaseOutputPath>
 		<PackageId />
 		<AssemblyName>Revit26_Plugin</AssemblyName>
 	</PropertyGroup>
@@ -97,6 +97,7 @@
 	  <Compile Remove="Menu\RoofTools\RoofSlope\ByPoints_000\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\ByPoints_00\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPointTwoSlopes_01_00%28Excel%29TwoSlopes\**" />
+	  <Compile Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_009\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_00%28Excel%29%28Colorful%29wip\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_00%28Excel%29%28Colorful%29\**" />
 	  <Compile Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_00%28Excel%29\UI\Views\BAck up\**" />
@@ -259,6 +260,7 @@
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\ByPoints_000\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\ByPoints_00\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPointTwoSlopes_01_00%28Excel%29TwoSlopes\**" />
+	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_009\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_00%28Excel%29%28Colorful%29wip\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_00%28Excel%29%28Colorful%29\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_00%28Excel%29\UI\Views\BAck up\**" />
@@ -421,6 +423,7 @@
 	  <None Remove="Menu\RoofTools\RoofSlope\ByPoints_000\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\ByPoints_00\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPointTwoSlopes_01_00%28Excel%29TwoSlopes\**" />
+	  <None Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_009\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_00%28Excel%29%28Colorful%29wip\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_00%28Excel%29%28Colorful%29\**" />
 	  <None Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_00%28Excel%29\UI\Views\BAck up\**" />
@@ -583,6 +586,7 @@
 	  <Page Remove="Menu\RoofTools\RoofSlope\ByPoints_000\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\ByPoints_00\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPointTwoSlopes_01_00%28Excel%29TwoSlopes\**" />
+	  <Page Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_009\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_00%28Excel%29%28Colorful%29wip\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_00%28Excel%29%28Colorful%29\**" />
 	  <Page Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_00%28Excel%29\UI\Views\BAck up\**" />

@@ -50,9 +50,9 @@ namespace Revit26_Plugin.CreaserAdv_V004_00.Services
         // Public API
         // --------------------------------------------------
 
-        public void Info(string message)    => Log(LoggingLevel.Info,    message);
-        public void Warning(string message) => Log(LoggingLevel.Warning, message);
-        public void Error(string message)   => Log(LoggingLevel.Error,   message);
+        public void Info(string message)    => Log(LogLevel.Info,    message);
+        public void Warning(string message) => Log(LogLevel.Warning, message);
+        public void Error(string message)   => Log(LogLevel.Error,   message);
 
         public void Clear()
         {
@@ -64,7 +64,7 @@ namespace Revit26_Plugin.CreaserAdv_V004_00.Services
         // Core
         // --------------------------------------------------
 
-        private void Log(LoggingLevel level, string message)
+        private void Log(LogLevel level, string message)
         {
             var entry = new LogEntry((LogLevel)level, message);
             _uiContext.Post(_ => Entries.Add(entry), null);

@@ -103,9 +103,7 @@
     <SolidColorBrush x:Key="BrushCardBorder"                Color="{StaticResource CardBorder}"/>
     <SolidColorBrush x:Key="BrushIconTint"                  Color="{StaticResource IconTint}"/>
 
-    <!-- ─── CONVERTERS ────────────────────────────────────────── -->
-    <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
-
+    
     <!-- ═══════════════════════════════════════════════════════════
          TYPOGRAPHY — sizes nudged up for readability
     ═══════════════════════════════════════════════════════════ -->
