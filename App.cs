@@ -9,7 +9,7 @@ namespace Revit26_Plugin
     /// </summary>
     public partial class App : IExternalApplication
     {
-        private const string RibbonTabName = "Rafi_2026_01";
+        private const string RibbonTabName = "Rafi_2026_30_00";
 
         public Result OnStartup(UIControlledApplication application)
         {

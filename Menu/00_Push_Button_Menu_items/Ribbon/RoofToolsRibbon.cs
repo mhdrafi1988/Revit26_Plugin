@@ -19,7 +19,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             //Slope BY Point
 
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint_05", "AutoSlopeByPoint_05", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint_05.Commands.AutoSlopeCommand"));
-            SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint_06", "AutoSlopeByPoint_06_New Dijkstra", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.V06.Commands.AutoSlopeCommand"));
+            //SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint_06", "AutoSlopeByPoint_06_New Dijkstra", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.V06.Commands.AutoSlopeCommand"));
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint_009", "AutoSlopeByPoint_009_New Dijkstra", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.V009.Commands.AutoSlopeCommand"));
 
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint", "AutoSlopeByPoint_00_00(Classic)", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.Commands.AutoSlopeCommand"));
@@ -31,21 +31,27 @@ namespace Revit26_Plugin.Menu.Ribbon
             //Slope BY Drain 
             
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSloperDrain_Asd_19", "AutoSloperDrain_Asd_19_CSV(Drain)", assemblyPath, "Revit26_Plugin.Asd_19.Commands.AutoSloperDrain_04"));
-            
-            //Create Roof Point
-            
+
+            //Create Shape Point Shape Point Shape Point Shape Point
+
             PulldownButton ShapepointMenu = panel.AddItem(new PulldownButtonData("ShapepointMenu", "Shape Points")) as PulldownButton;
             ShapepointMenu.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Shapepoints32.png");
 
-            ShapepointMenu.AddPushButton(new PushButtonData("Btn_ADivideInnerLoops_V001", "Divide Inner Loops(Basic)", assemblyPath, "Revit22_Plugin.PDCV1.Commands.RoofLoopAnalyzerCommand_01"));//Working
+            //ShapepointMenu.AddPushButton(new PushButtonData("Btn_ADivideInnerLoops_V001", "Divide Inner Loops(Basic)", assemblyPath, "Revit22_Plugin.PDCV1.Commands.RoofLoopAnalyzerCommand_01"));//Working
             ShapepointMenu.AddPushButton(new PushButtonData("Btn_ADivideInnerLoops_V004", "Divide Inner Loops   V004", assemblyPath, "Revit26_Plugin.DivideInnerLoops.V004.RoofLoopAnalyzerCommand"));//Working
-            ShapepointMenu.AddPushButton(new PushButtonData("Btn_ADivideInnerLoops_V002", "Divide Inner Loops_PDCV2 ", assemblyPath, "Revit26_Plugin.PDCV2.Commands.RoofLoopAnalyzerCommand"));//Working 
+            ShapepointMenu.AddPushButton(new PushButtonData("Btn_ADivideInnerLoops_V006", "Divide Inner Loops   V006", assemblyPath, "Revit26_Plugin.DivideInnerLoops.V006.RoofLoopAnalyzerCommand"));//Working
+            //ShapepointMenu.AddPushButton(new PushButtonData("Btn_ADivideInnerLoops_V002", "Divide Inner Loops_PDCV2 ", assemblyPath, "Revit26_Plugin.PDCV2.Commands.RoofLoopAnalyzerCommand"));//Working 
             ShapepointMenu.AddPushButton(new PushButtonData("Btn_AddPointOnIntersectionsCommand 05", "Outer CurveDivider.V001", assemblyPath, "Revit26_Plugin.OuterCurveDivider.V001.Commands.CurveDividerCommand"));//Working
             ShapepointMenu.AddPushButton(new PushButtonData("Btn_RoofDetailLineIntersect 04", "Roof Detail Line Intersect V0004 #", assemblyPath, "Revit26_Plugin.RoofDetailLineIntersect.V004.RoofDetailLineIntersectCommand"));//Working
             ShapepointMenu.AddPushButton(new PushButtonData("Btn_RoofDetailLineIntersect 05", "Roof Detail Line Intersect V0005 #", assemblyPath, "Revit26_Plugin.RoofDetailLineIntersect.V005.RoofDetailLineIntersectCommand"));//Working
             ShapepointMenu.AddPushButton(new PushButtonData("Btn_PonitOnCurvesInnerandOuter 01", "Ponits On Curves Inner & Outer V02", assemblyPath, "Revit26_Plugin.PonitOnCurvesInnerandOuter.V01.Commands.RoofLoopAnalyzerCommand"));//Working
-                       
-           
+
+            ShapepointMenu.AddPushButton(new PushButtonData("Btn_DivideInnerLoopsAndPerpendicular_V001", "DivideInnerLoopsAndPerpendicular V001##", assemblyPath, "Revit26_Plugin.DivideInnerLoopsAndPerpendicular.V001.DrainToPerpendicularCommand"));//Working
+            ShapepointMenu.AddPushButton(new PushButtonData("Btn_DivideInnerLoopsAndPerpendicular_V002", "DivideInnerLoopsAndPerpendicular V002##", assemblyPath, "Revit26_Plugin.DivideInnerLoopsAndPerpendicular.V002.PerpendicularPointCommand"));//Working
+
+
+
+
             PulldownButton LineAndPoint = panel.AddItem(new PulldownButtonData("LineAndPointMenu", "Line & PointMenu")) as PulldownButton;
             LineAndPoint.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Linematch32.png");
                         
@@ -62,33 +68,30 @@ namespace Revit26_Plugin.Menu.Ribbon
             SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserAdvCommand_V003_01", "CreaserAdvCommand V003_01 # Working", assemblyPath, "Revit26_Plugin.CreaserAdv_V003_01.Commands.CreaserAdvCommand"));
             SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserAdvCommand_V004_00", "CreaserAdvCommand V004_00 # Working", assemblyPath, "Revit26_Plugin.CreaserAdv_V004_00.Commands.CreaserAdvCommand"));
             
-
             PulldownButton tagMenu = panel.AddItem(new PulldownButtonData("RoofTagMenu", "Tag")) as PulldownButton;
             tagMenu.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Addtag32.png");
             //tagMenu.LargeImage = IconManager.ToBitmapSource(Properties.Resources.addtag32);
-
-            tagMenu.AddPushButton(new PushButtonData("Btn_RoofTag_V03", "RoofTag_V03", assemblyPath, "Revit26_Plugin.RoofTag_V03.Commands.RoofTagCommandV3"));
+                        
             tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV3", "RoofTagCommandV3", assemblyPath, "Revit22_Plugin.RoofTag_V90.RoofTagCommandV3"));
-            tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommandV3.1", "RoofTagCommandV3", assemblyPath, "Revit26_Plugin.RoofTag_V03.Commands.RoofTagCommandV3"));
             tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommand_V5)", "RoofTagCommand V5", assemblyPath, "Revit26_Plugin.RoofTag_V73.Commands.RoofTagCommand"));
-            tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommand_V6)", "RoofTagCommand V6", assemblyPath, "Revit26_Plugin.RoofTag_V03.Commands.RoofTagCommandV3"));
+            tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommand_V006)", "RoofTagCommand V006", assemblyPath, "Revit26_Plugin.RoofTag_V006.RoofTagCommand"));
+            tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommand_V007A)", "RoofTagCommand V007 A Face Ref", assemblyPath, "Revit26_Plugin.RoofTag_V007_A.RoofTagCommand"));
+            tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommand_V008)", "RoofTagCommand V008", assemblyPath, "Revit26_Plugin.RoofTag_V008.RoofTagCommand"));
 
             PulldownButton Profiler = panel.AddItem(new PulldownButtonData("ProfilerTagMenu", "Profiler")) as PulldownButton;
             Profiler.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Addtag32.png");
+                        
+            Profiler.AddPushButton(new PushButtonData("Btn_RoofFromFloor_V02", "Roof From Floor V02", assemblyPath, "Revit26_Plugin.RoofFromFloor.V02.Commands.LaunchRoofFromFloorCommand"));
+            Profiler.AddPushButton(new PushButtonData("Btn_RoofFromFloor_Base", "Roof From Floor Base", assemblyPath, "Revit26_Plugin.RoofFromFloor.Commands.LaunchRoofFromFloorCommand"));
+            Profiler.AddPushButton(new PushButtonData("Btn_RoofFromFloor_V07", "Roof From Floor V07 (Converts Curve to lines)", assemblyPath, "Revit26_Plugin.RoofFromFloor.V007.Commands.LaunchRoofFromFloorCommand"));
+            Profiler.AddPushButton(new PushButtonData("Btn_RoofFromFloor_V08", "Roof From Floor V08 Fix ONe)", assemblyPath, "Revit26_Plugin.RoofFromFloor.V008.Commands.LaunchRoofFromFloorCommand"));
+            Profiler.AddPushButton(new PushButtonData("Btn_RoofFromFloor_V09", "Roof From Floor V09 Circle Solved)", assemblyPath, "Revit26_Plugin.RoofFromFloor.V009.Commands.LaunchRoofFromFloorCommand"));
+            Profiler.AddPushButton(new PushButtonData("Btn_RoofFromFloor_V10", "Roof From Floor 10 New WIP ***)", assemblyPath, "Revit26_Plugin.RoofFromFloor.V010.Commands.LaunchRoofFromFloorCommand"));
 
-            Profiler.AddPushButton(new PushButtonData("Btn_LaunchRoofFromFloorCommand", "LaunchRoofFromFloorCommand", assemblyPath, "Revit26_Plugin.RoofFromFloor.Commands.LaunchRoofFromFloorCommand"));
-            Profiler.AddPushButton(new PushButtonData("Btn_CreateLinkedMechanicalCircles1", "CreateLinkedMechanicalCircles1", assemblyPath, "Revit26_Plugin.LinesFromMechanical.V001_01.Commands.CreateLinkedMechanicalCirclesCommand"));
-            Profiler.AddPushButton(new PushButtonData("Btn_CreateLinkedMechanicalCircles2", "CreateLinkedMechanicalCircles2", assemblyPath, "Revit26_Plugin.LinesFromMechanical.V003.Commands.CreateLinkedMechanicalCirclesCommand"));
-            Profiler.AddPushButton(new PushButtonData("Btn_CreateLinkedMechanicalCircles3", "CreateLinkedMechanicalCircles3", assemblyPath, "Revit26_Plugin.CreaserAdv.V071_02.Commands.CreaserAdvCommand"));
+            Profiler.AddPushButton(new PushButtonData("Btn_MechanicalCircles_V007", "Mechanical Circles V00 7", assemblyPath, "Revit26_Plugin.LinesFromMechanical.V007.Commands.CreateLinkedMechanicalCirclesCommand"));
+            Profiler.AddPushButton(new PushButtonData("Btn_MechanicalCircles_V009", "Mechanical Circles V009", assemblyPath, "Revit26_Plugin.LinesFromMechanical.V009.Commands.CreateLinkedMechanicalCirclesCommand"));
+            Profiler.AddPushButton(new PushButtonData("Btn_MechanicalCircles_V010", "Mechanical Circles V010", assemblyPath, "Revit26_Plugin.LinesFromMechanical.V010.Commands.CreateLinkedMechanicalCirclesCommand"));
 
-            Profiler.AddPushButton(new PushButtonData("Btn_LaunchRoofFromFloorCommand1", "LaunchRoofFromFloorCommand1", assemblyPath, "Revit26_Plugin.RoofFromFloor.Commands.LaunchRoofFromFloorCommand"));
-            Profiler.AddPushButton(new PushButtonData("Btn_LaunchRoofFromFloorCommand V02", "LaunchRoofFromFloorCommand V02", assemblyPath, "Revit26_Plugin.RoofFromFloor.V02.LaunchRoofFromFloorCommand"));
-            Profiler.AddPushButton(new PushButtonData("Btn_LaunchRoofFromFloorCommand V00", "LaunchRoofFromFloorCommand V00", assemblyPath, "Revit26_Plugin.RoofFromFloor.V00.LaunchRoofFromFloorCommand"));
-            Profiler.AddPushButton(new PushButtonData("Btn_LaunchRoofFromFloorCommand V0005", "LaunchRoofFromFloorCommand V005", assemblyPath, "Revit26_Plugin.RoofFromFloor.V005.LaunchRoofFromFloorCommand"));
-            Profiler.AddPushButton(new PushButtonData("Btn_LaunchRoofFromFloorCommand V0007", "LaunchRoofFromFloorCommand V007", assemblyPath, "Revit26_Plugin.RoofFromFloor.V007.LaunchRoofFromFloorCommand"));
-            Profiler.AddPushButton(new PushButtonData("Btn_LaunchRoofFromFloorCommand V0008", "LaunchRoofFromFloorCommand V008", assemblyPath, "Revit26_Plugin.RoofFromFloor.V008.LaunchRoofFromFloorCommand"));
-
-            
             //RoofConverter.AddPushButton(new PushButtonData("Btn_RoomToFloor", "Room To Floor", assemblyPath, "Revit22_Plugin.RoomToFloorCommand"));
             //RoofConverter.AddPushButton(new PushButtonData("Btn_RoomToRoof", "Room To Roof", assemblyPath, "Revit22_Plugin.RoomToRoofCommand"));
 

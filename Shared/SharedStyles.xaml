@@ -1,7 +1,6 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!-- ═══════════════════════════════════════════════════════════
          REVIT PLUGIN SHARED STYLE GUIDE  —  Navy Corporate Theme
@@ -103,7 +102,7 @@
     <SolidColorBrush x:Key="BrushCardBorder"                Color="{StaticResource CardBorder}"/>
     <SolidColorBrush x:Key="BrushIconTint"                  Color="{StaticResource IconTint}"/>
 
-    
+
     <!-- ═══════════════════════════════════════════════════════════
          TYPOGRAPHY — sizes nudged up for readability
     ═══════════════════════════════════════════════════════════ -->
@@ -253,6 +252,34 @@
 
     <Style x:Key="MetricCard" TargetType="Border" BasedOn="{StaticResource BaseCard}">
         <Setter Property="Padding" Value="12,14"/>
+    </Style>
+
+    <!--  NEW: CardGroupBox style for GroupBox controls  -->
+    <Style x:Key="CardGroupBox" TargetType="GroupBox">
+        <Setter Property="Background" Value="{StaticResource BrushCardBackground}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BrushCardBorder}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Margin" Value="0,0,0,8"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="GroupBox">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="10"
+                            Padding="{TemplateBinding Padding}">
+                        <StackPanel>
+                            <ContentPresenter ContentSource="Header"
+                                              Margin="12,10,12,0"
+                                              TextBlock.FontWeight="SemiBold"
+                                              TextBlock.Foreground="{StaticResource BrushTextSecondary}"/>
+                            <ContentPresenter ContentSource="Content" Margin="0,0,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <!-- ═══════════════════════════════════════════════════════════

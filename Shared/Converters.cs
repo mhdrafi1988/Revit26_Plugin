@@ -1,8 +1,26 @@
+using Revit26_Plugin.Shared.Models;   // LogLevel — required for LogLevelToColorConverter
 using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
+
+// ── CONVENTION ────────────────────────────────────────────────────────────────
+// These converters live in Revit26_Plugin.Shared.Models (same assembly).
+// Reference them in XAML with the FULL assembly-qualified xmlns:
+//
+//   xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models;assembly=Revit26_Plugin"
+//
+// Then instantiate ONLY in the consuming Window's own Resources block:
+//
+//   <converters:BoolToVisibilityConverter        x:Key="BoolToVisibilityConverter"/>
+//   <converters:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter"/>
+//   <converters:LogLevelToColorConverter         x:Key="LogLevelToColorConverter"/>
+//   <converters:InverseBoolConverter             x:Key="InverseBoolConverter"/>
+//
+// NEVER declare converter instances inside SharedStyles.xaml — that causes
+// "incompatible type" / "does not exist in namespace" errors at design time.
+// ──────────────────────────────────────────────────────────────────────────────
 
 namespace Revit26_Plugin.Shared.Models
 {
@@ -94,7 +112,7 @@ namespace Revit26_Plugin.Shared.Models
     /// </summary>
     public class MixedWorksetToColorConverter : IValueConverter
     {
-        private static readonly SolidColorBrush Mixed = new(Color.FromRgb(0xFF, 0x6B, 0x00));
+        private static readonly SolidColorBrush Mixed  = new(Color.FromRgb(0xFF, 0x6B, 0x00));
         private static readonly SolidColorBrush Normal = new(Color.FromRgb(0x1C, 0x1C, 0x1E));
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
