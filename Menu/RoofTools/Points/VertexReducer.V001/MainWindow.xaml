@@ -1,0 +1,150 @@
+<Window x:Class="Revit26_Plugin.RoofEdgeVertexReducer.V001.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
+        Title="Roof edge vertex reducer" Height="620" Width="440"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanResizeWithGrip">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Revit26_Plugin;component/Shared/SharedStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <converters:LogLevelToColorConverter x:Key="LogLevelToColorConverter"/>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Background="{StaticResource BrushSystemBackground}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Style="{StaticResource HeaderBar}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Roof edge vertex reducer" Style="{StaticResource HeaderTitle}"/>
+                    <TextBlock Text="Straight-edge interior point simplification" Style="{StaticResource HeaderSubtitle}"/>
+                </StackPanel>
+                <Border Grid.Column="1" Background="{StaticResource BrushNavyLight}" CornerRadius="10" Padding="8,3" VerticalAlignment="Center">
+                    <TextBlock Text="V001" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource BrushTextOnDark}"/>
+                </Border>
+            </Grid>
+        </Border>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="10">
+
+                <!-- Selection -->
+                <Border Style="{StaticResource ContentCard}">
+                    <StackPanel Margin="12,10">
+                        <TextBlock Text="Selection" Style="{StaticResource SectionTitle}" Margin="0,0,0,6"/>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Button Content="Select roof" Style="{StaticResource SmallSecondaryButton}" Command="{Binding SelectRoofCommand}"/>
+                            <TextBlock Text="{Binding RoofLabel}" Style="{StaticResource FieldValue}" Margin="10,0,0,0" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Settings -->
+                <Border Style="{StaticResource ContentCard}">
+                    <StackPanel Margin="12,10">
+                        <TextBlock Text="Settings" Style="{StaticResource SectionTitle}" Margin="0,0,0,6"/>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="Tolerance" Style="{StaticResource FieldLabel}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                            <TextBox Style="{StaticResource BoxedTextInput}" Width="60" MaxLength="10"
+                                     Text="{Binding ToleranceMm, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Text="mm" Style="{StaticResource UnitLabel}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Actions -->
+                <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="8"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="0" Content="Preview" Style="{StaticResource PrimaryButton}"
+                            Command="{Binding PreviewCommand}" IsEnabled="{Binding CanPreview}"/>
+                    <Button Grid.Column="2" Content="Apply" Style="{StaticResource PrimaryButton}"
+                            Command="{Binding ApplyCommand}" IsEnabled="{Binding CanApply}"/>
+                </Grid>
+
+                <!-- Preview grid -->
+                <Border Style="{StaticResource ContentCard}">
+                    <StackPanel>
+                        <TextBlock Text="Preview results" Style="{StaticResource SectionTitle}"/>
+                        <DataGrid ItemsSource="{Binding PreviewRows}" AutoGenerateColumns="False"
+                                  Style="{StaticResource StandardDataGrid}"
+                                  ColumnHeaderStyle="{StaticResource StandardDataGridColumnHeader}"
+                                  CellStyle="{StaticResource StandardDataGridCell}"
+                                  RowStyle="{StaticResource StandardDataGridRow}"
+                                  IsReadOnly="True" MaxHeight="220"
+                                  VirtualizingStackPanel.IsVirtualizing="True">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Segment" Binding="{Binding Segment}" Width="*"/>
+                                <DataGridTextColumn Header="Point" Binding="{Binding PointId}" Width="50"/>
+                                <DataGridTextColumn Header="Z" Binding="{Binding Z}" Width="70"/>
+                                <DataGridTextColumn Header="Action" Binding="{Binding Action}" Width="90"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Log -->
+                <Border CornerRadius="10" Background="{StaticResource BrushLogBg}" Padding="10" Margin="0,0,0,8">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Log" Foreground="{StaticResource BrushLogText}" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <Button Content="Copy all" Style="{StaticResource DarkGhostButton}" Command="{Binding CopyAllLogsCommand}" Margin="0,0,6,0"/>
+                                <Button Content="Copy selected" Style="{StaticResource DarkGhostButton}" Click="CopySelectedLogs_Click" Margin="0,0,6,0"/>
+                                <Button Content="Clear" Style="{StaticResource DarkGhostButton}" Command="{Binding ClearLogsCommand}"/>
+                            </StackPanel>
+                        </Grid>
+                        <ListBox x:Name="LogList" ItemsSource="{Binding Logs}" MaxHeight="160"
+                                 Background="Transparent" BorderThickness="0"
+                                 SelectionMode="Extended"
+                                 ScrollViewer.VerticalScrollBarVisibility="Auto">
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="Padding" Value="0,1"/>
+                                    <Setter Property="Background" Value="Transparent"/>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock FontFamily="Consolas" FontSize="10.5"                                               
+                                               Text="{Binding}" TextWrapping="Wrap"/>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
+                </Border>
+
+                <!-- Summary -->
+                <Grid Margin="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="{Binding SummaryText}" Style="{StaticResource StatusText}" VerticalAlignment="Center"/>
+                    <Button Grid.Column="1" Content="Close" Style="{StaticResource OutlineButton}" Click="Close_Click"/>
+                </Grid>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

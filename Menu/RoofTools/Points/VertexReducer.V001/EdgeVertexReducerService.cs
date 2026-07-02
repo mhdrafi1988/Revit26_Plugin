@@ -1,0 +1,319 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Autodesk.Revit.DB;
+using Revit26_Plugin.RoofEdgeVertexReducer.V001.Models;
+
+namespace Revit26_Plugin.RoofEdgeVertexReducer.V001.Services
+{
+    /// <summary>
+    /// Pure geometry/logic layer. No UI, no ExternalEvent plumbing — only called from
+    /// inside a valid Revit API context (see RoofEdgeVertexReducerEventHandler).
+    ///
+    /// Assumptions confirmed with user:
+    ///  - Segments come from FootPrintRoof.GetProfile() (outer + inner sketch loops).
+    ///  - Only Line curves become segments; Arc/Spline edges are skipped and any
+    ///    vertex near them is left untouched.
+    ///  - "On segment" = 5mm-class perpendicular distance, measured in the XY plane
+    ///    only (Z is ignored for matching — shape-editor points move in Z, not XY).
+    ///  - Start/end vertex = first/last match along the segment in loop-traversal order.
+    ///  - Tie on max interior Z -> first in loop-traversal order wins.
+    /// </summary>
+    public static class EdgeVertexReducerService
+    {
+        public static List<RoofSegment> BuildSegments(Element roof, out List<string> skipped)
+        {
+            skipped = new List<string>();
+            var segments = new List<RoofSegment>();
+
+            if (!(roof is FootPrintRoof footprint))
+            {
+                skipped.Add("Element is not a FootPrintRoof — cannot read sketch profile.");
+                return segments;
+            }
+
+            ModelCurveArrArray profile;
+            try
+            {
+                profile = footprint.GetProfiles();
+            }
+            catch (Exception ex)
+            {
+                skipped.Add($"GetProfile() failed: {ex.Message}");
+                return segments;
+            }
+
+            var loops = new List<List<Curve>>();
+            foreach (ModelCurveArray arr in profile)
+            {
+                var curves = new List<Curve>();
+                foreach (ModelCurve mc in arr)
+                {
+                    if (mc?.GeometryCurve != null)
+                        curves.Add(mc.GeometryCurve);
+                }
+                if (curves.Count > 0)
+                    loops.Add(curves);
+            }
+
+            if (loops.Count == 0)
+            {
+                skipped.Add("No boundary loops found on roof sketch.");
+                return segments;
+            }
+
+            // Largest |area| loop = outer boundary; the rest are inner (openings).
+            var loopAreas = loops.Select(l => Math.Abs(SignedAreaXY(l))).ToList();
+            int outerIndex = loopAreas.IndexOf(loopAreas.Max());
+
+            int innerCount = 0;
+            for (int li = 0; li < loops.Count; li++)
+            {
+                string loopLabel = li == outerIndex ? "Outer" : $"Inner {++innerCount}";
+                var curves = loops[li];
+
+                for (int ci = 0; ci < curves.Count; ci++)
+                {
+                    if (curves[ci] is Line line)
+                    {
+                        var startXY = Flatten(line.GetEndPoint(0));
+                        var endXY = Flatten(line.GetEndPoint(1));
+
+                        segments.Add(new RoofSegment
+                        {
+                            LoopLabel = loopLabel,
+                            SegmentIndex = ci,
+                            Line = line,
+                            StartXY = startXY,
+                            EndXY = endXY,
+                            LengthXY = startXY.DistanceTo(endXY)
+                        });
+                    }
+                    else
+                    {
+                        skipped.Add($"{loopLabel} / seg {ci + 1}: non-straight curve ({curves[ci].GetType().Name}) — left untouched.");
+                    }
+                }
+            }
+
+            return segments;
+        }
+
+        /// <summary>
+        /// Classifies every current SlabShapeEditor vertex against the straight segments
+        /// and applies the keep/remove rule per segment. Read-only — never modifies the model.
+        /// </summary>
+        public static List<VertexDecision> ClassifyAndReduce(
+            SlabShapeEditor editor,
+            List<RoofSegment> segments,
+            double toleranceFeet)
+        {
+            var decisions = new List<VertexDecision>();
+            if (editor == null) return decisions;
+
+            var vertices = new List<SlabShapeVertex>();
+            foreach (SlabShapeVertex v in editor.SlabShapeVertices)
+                vertices.Add(v);
+
+            // Assign each vertex to its closest matching segment (within tolerance), by XY distance.
+            var bySegment = new Dictionary<RoofSegment, List<(SlabShapeVertex v, double t)>>();
+            var unmatched = new List<SlabShapeVertex>();
+
+            foreach (var v in vertices)
+            {
+                XYZ p = Flatten(v.Position);
+                RoofSegment best = null;
+                double bestDist = double.MaxValue;
+                double bestT = 0;
+
+                foreach (var seg in segments)
+                {
+                    double t = ProjectParameter(seg.StartXY, seg.EndXY, p);
+                    double tClamped = Math.Max(0, Math.Min(1, t));
+                    XYZ closest = seg.StartXY + (seg.EndXY - seg.StartXY) * tClamped;
+                    double dist = p.DistanceTo(closest);
+
+                    if (dist <= toleranceFeet && dist < bestDist)
+                    {
+                        best = seg;
+                        bestDist = dist;
+                        bestT = t;
+                    }
+                }
+
+                if (best != null)
+                {
+                    if (!bySegment.TryGetValue(best, out var list))
+                    {
+                        list = new List<(SlabShapeVertex, double)>();
+                        bySegment[best] = list;
+                    }
+                    list.Add((v, bestT));
+                }
+                else
+                {
+                    unmatched.Add(v);
+                }
+            }
+
+            foreach (var v in unmatched)
+            {
+                decisions.Add(new VertexDecision
+                {
+                    Vertex = v,
+                    Position = v.Position,
+                    ZFeet = v.Position.Z,
+                    SegmentLabel = "\u2014",
+                    Action = VertexAction.KeepUnmatched,
+                    Reason = "Not within tolerance of any straight segment"
+                });
+            }
+
+            foreach (var kv in bySegment)
+            {
+                var seg = kv.Key;
+                var ordered = kv.Value.OrderBy(x => x.t).ToList();
+                if (ordered.Count == 0) continue;
+
+                // First/last by loop-traversal (parameter) order — kept unconditionally.
+                var startEntry = ordered.First();
+                var endEntry = ordered.Last();
+
+                decisions.Add(new VertexDecision
+                {
+                    Vertex = startEntry.v,
+                    Position = startEntry.v.Position,
+                    ZFeet = startEntry.v.Position.Z,
+                    SegmentLabel = seg.Label,
+                    Action = VertexAction.KeepStart,
+                    Reason = "Segment start vertex"
+                });
+
+                if (ordered.Count == 1)
+                    continue; // single point on this segment — nothing interior
+
+                if (!ReferenceEquals(startEntry.v, endEntry.v))
+                {
+                    decisions.Add(new VertexDecision
+                    {
+                        Vertex = endEntry.v,
+                        Position = endEntry.v.Position,
+                        ZFeet = endEntry.v.Position.Z,
+                        SegmentLabel = seg.Label,
+                        Action = VertexAction.KeepEnd,
+                        Reason = "Segment end vertex"
+                    });
+                }
+
+                var interior = ordered.Skip(1).Take(ordered.Count - 2).ToList();
+                if (interior.Count == 0) continue;
+
+                double startZ = startEntry.v.Position.Z;
+                double endZ = endEntry.v.Position.Z;
+
+                double maxZ = interior.Max(x => x.v.Position.Z);
+                var maxEntry = interior.First(x => Math.Abs(x.v.Position.Z - maxZ) < 1e-9);
+                bool qualifies = maxZ > startZ + 1e-9 && maxZ > endZ + 1e-9;
+
+                foreach (var entry in interior)
+                {
+                    bool isMax = ReferenceEquals(entry.v, maxEntry.v);
+
+                    if (isMax && qualifies)
+                    {
+                        decisions.Add(new VertexDecision
+                        {
+                            Vertex = entry.v,
+                            Position = entry.v.Position,
+                            ZFeet = entry.v.Position.Z,
+                            SegmentLabel = seg.Label,
+                            Action = VertexAction.KeepMaxZ,
+                            Reason = $"Highest interior Z ({FeetToMm(maxZ):0.0}mm), above both ends"
+                        });
+                    }
+                    else if (isMax)
+                    {
+                        decisions.Add(new VertexDecision
+                        {
+                            Vertex = entry.v,
+                            Position = entry.v.Position,
+                            ZFeet = entry.v.Position.Z,
+                            SegmentLabel = seg.Label,
+                            Action = VertexAction.Remove,
+                            Reason = "Highest interior Z but not above both ends"
+                        });
+                    }
+                    else
+                    {
+                        decisions.Add(new VertexDecision
+                        {
+                            Vertex = entry.v,
+                            Position = entry.v.Position,
+                            ZFeet = entry.v.Position.Z,
+                            SegmentLabel = seg.Label,
+                            Action = VertexAction.Remove,
+                            Reason = "Interior vertex, not the retained max-Z point"
+                        });
+                    }
+                }
+            }
+
+            return decisions;
+        }
+
+        /// <summary>Removes every vertex marked Remove. Per-item try/catch — failures are logged, not thrown.</summary>
+        public static int ApplyRemovals(SlabShapeEditor editor, List<VertexDecision> decisions, Action<string> logSkip)
+        {
+            int removed = 0;
+            foreach (var d in decisions.Where(d => d.WillRemove))
+            {
+                try
+                {
+                    // Use DeletePoint instead of RemovePoint
+                    if (editor.DeletePoint(d.Vertex))
+                    {
+                        removed++;
+                    }
+                    else
+                    {
+                        logSkip?.Invoke($"{d.SegmentLabel}: could not remove point at Z={FeetToMm(d.ZFeet):0.0}mm — DeletePoint returned false");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    logSkip?.Invoke($"{d.SegmentLabel}: could not remove point at Z={FeetToMm(d.ZFeet):0.0}mm \u2014 {ex.Message}");
+                }
+            }
+            return removed;
+        }
+
+        private static XYZ Flatten(XYZ p) => new XYZ(p.X, p.Y, 0);
+
+        private static double ProjectParameter(XYZ start, XYZ end, XYZ p)
+        {
+            XYZ dir = end - start;
+            double len2 = dir.DotProduct(dir);
+            if (len2 < 1e-12) return 0;
+            return (p - start).DotProduct(dir) / len2;
+        }
+
+        private static double SignedAreaXY(List<Curve> curves)
+        {
+            var pts = new List<XYZ>();
+            foreach (var c in curves)
+                pts.AddRange(c.Tessellate());
+
+            double area = 0;
+            for (int i = 0; i < pts.Count; i++)
+            {
+                var a = pts[i];
+                var b = pts[(i + 1) % pts.Count];
+                area += (a.X * b.Y) - (b.X * a.Y);
+            }
+            return area / 2.0;
+        }
+
+        public static double FeetToMm(double feet) => UnitUtils.ConvertFromInternalUnits(feet, UnitTypeId.Millimeters);
+        public static double MmToFeet(double mm) => UnitUtils.ConvertToInternalUnits(mm, UnitTypeId.Millimeters);
+    }
+}

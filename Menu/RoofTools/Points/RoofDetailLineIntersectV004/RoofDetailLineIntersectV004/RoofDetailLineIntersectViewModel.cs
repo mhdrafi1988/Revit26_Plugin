@@ -16,23 +16,26 @@ namespace Revit26_Plugin.RoofDetailLineIntersect.V004
     public partial class RoofDetailLineIntersectViewModel : ObservableObject
     {
         // ── Revit context ────────────────────────────────────────────────────
-        private readonly Document         _doc;
-        private readonly FootPrintRoof    _roof;
+        private readonly Document        _doc;
+        private readonly FootPrintRoof   _roof;
         private readonly List<DetailLine> _detailLines;
-        private readonly UIDocument       _uiDoc;
+        private readonly UIDocument      _uiDoc;
 
-        // ── ExternalEvent — set by Command before window opens ───────────────
+        // ── ExternalEvent stored as field to prevent GC ──────────────────────
         private ExternalEvent _exEvent;
 
         // ── Constants ────────────────────────────────────────────────────────
-        private const double DedupToleranceFt    = 2.0 / 1000.0 / 0.3048;
+        /// <summary>2 mm dedup tolerance in Revit internal feet.</summary>
+        private const double DedupToleranceFt   = 2.0 / 1000.0 / 0.3048;
+        /// <summary>Zero-length tolerance for segment culling.</summary>
         private const double ZeroLengthTolerance = 1e-6;
+        /// <summary>Ray-casting distance (must be >> model extents).</summary>
         private const double RayCastDistance     = 100_000.0;
 
         // ── Observable properties ────────────────────────────────────────────
-        [ObservableProperty] private string roofName   = string.Empty;
-        [ObservableProperty] private string roofIdText = string.Empty;
-        [ObservableProperty] private string viewName   = string.Empty;
+        [ObservableProperty] private string roofName     = string.Empty;
+        [ObservableProperty] private string roofIdText   = string.Empty;
+        [ObservableProperty] private string viewName     = string.Empty;
         [ObservableProperty] private int    totalLines;
         [ObservableProperty] private int    intersectionsFound;
         [ObservableProperty] private int    pointsPlaced;
@@ -47,10 +50,10 @@ namespace Revit26_Plugin.RoofDetailLineIntersect.V004
 
         // ── Constructor ──────────────────────────────────────────────────────
         public RoofDetailLineIntersectViewModel(
-            UIDocument       uiDoc,
-            Document         doc,
-            FootPrintRoof    roof,
-            List<DetailLine> detailLines)
+            UIDocument        uiDoc,
+            Document          doc,
+            FootPrintRoof     roof,
+            List<DetailLine>  detailLines)
         {
             _uiDoc       = uiDoc;
             _doc         = doc;
@@ -66,13 +69,10 @@ namespace Revit26_Plugin.RoofDetailLineIntersect.V004
             CopyLogCommand = new RelayCommand(ExecuteCopyLog);
         }
 
-        /// <summary>Called by Command after ExternalEvent.Create() — must happen inside IExternalCommand.Execute().</summary>
-        public void SetExternalEvent(ExternalEvent exEvent) => _exEvent = exEvent;
-
         partial void OnIsBusyChanged(bool value)
             => (RunCommand as RelayCommand)?.NotifyCanExecuteChanged();
 
-        // ── Trigger ExternalEvent (WPF button click — no Revit API context) ──
+        // ── Trigger ExternalEvent ─────────────────────────────────────────────
         private void ExecuteRun()
         {
             IsBusy = true;
@@ -83,100 +83,136 @@ namespace Revit26_Plugin.RoofDetailLineIntersect.V004
 
             try
             {
-                _exEvent.Raise();   // Raise() is legal from any thread
+                // Store as field — prevents GC before Revit fires the event
+                var handler = new PlacePointsEventHandler(_doc, _roof, _detailLines, this);
+                _exEvent    = ExternalEvent.Create(handler);
+                _exEvent.Raise();
             }
             catch (Exception ex)
             {
-                AddLog(LogLevel.Error, $"Failed to raise event: {ex.Message}");
+                AddLog(LogLevel.Error, $"Fatal error queuing event: {ex.Message}");
                 IsBusy = false;
             }
         }
 
-        // ── Main processing — called by PlacePointsEventHandler.Execute() ────
-        // (runs on Revit API thread, inside valid API context)
-        internal void ExecutePlacePoints()
+        // ── IExternalEventHandler (inner class) ──────────────────────────────
+        private sealed class PlacePointsEventHandler : IExternalEventHandler
         {
-            try
+            private readonly Document         _doc;
+            private readonly FootPrintRoof    _roof;
+            private readonly List<DetailLine> _detailLines;
+            private readonly RoofDetailLineIntersectViewModel _vm;
+
+            public PlacePointsEventHandler(
+                Document        doc,
+                FootPrintRoof   roof,
+                List<DetailLine> detailLines,
+                RoofDetailLineIntersectViewModel vm)
             {
-                // 1. Extract boundary — separate outer and inner loop segments
-                var outerSegments = new List<Line>();
-                var innerSegments = new List<Line>();
-                ExtractBoundarySegments2D(outerSegments, innerSegments,
-                    out int outerCount, out int innerLoops, out int innerEdgeCount);
+                _doc         = doc;
+                _roof        = roof;
+                _detailLines = detailLines;
+                _vm          = vm;
+            }
 
-                AddLog(LogLevel.Info,
-                    $"Roof id {_roof.Id.Value}: {outerCount} outer edges, " +
-                    $"{innerLoops} inner loops ({innerEdgeCount} edges).");
+            public string GetName() => "RoofDetailLineIntersect V004 — Place Shape Points";
 
-                if (outerSegments.Count == 0)
-                {
-                    AddLog(LogLevel.Error, "No outer boundary segments found. Aborting.");
-                    return;
-                }
-
-                var allSegments = outerSegments.Concat(innerSegments).ToList();
-
-                // 2. Base Z — read-only, before transaction
-                double baseZ = GetBaseZ();
-                AddLog(LogLevel.Info, $"Base Z = {baseZ * 0.3048:F3} m");
-
-                // 3. Single transaction for all point placements
-                using var tx = new Transaction(_doc, "RoofDetailLineIntersect V004 — Place Shape Points");
-                try
-                {
-                    tx.Start();
-
-                    SlabShapeEditor sse = _roof.GetSlabShapeEditor();
-                    if (!sse.IsEnabled) sse.Enable();
-
-                    var placedXYs = new List<XYZ>();
-                    int lineIndex = 0;
-
-                    foreach (var dl in _detailLines)
-                    {
-                        lineIndex++;
-                        try
-                        {
-                            ProcessDetailLine(lineIndex, dl, outerSegments, innerSegments,
-                                              allSegments, baseZ, sse, placedXYs);
-                        }
-                        catch (Exception ex)
-                        {
-                            AddLog(LogLevel.Error,
-                                $"Line {lineIndex} (id {dl.Id.Value}) — exception: {ex.Message}");
-                        }
-                    }
-
-                    tx.Commit();
-
-                    int errorCount = LogEntries.Count(e => e.Level == LogLevel.Error);
-                    AddLog(LogLevel.Info,
-                        $"Done — {PointsPlaced} placed, {SkippedCount} skipped, {errorCount} errors.");
-                }
+            public void Execute(UIApplication app)
+            {
+                try   { _vm.ExecutePlacePoints(); }
                 catch (Exception ex)
                 {
-                    if (tx.GetStatus() == TransactionStatus.Started)
-                        tx.RollBack();
-                    AddLog(LogLevel.Error, $"Transaction aborted: {ex.Message}");
+                    _vm.AddLog(LogLevel.Error, $"Event handler error: {ex.Message}");
                 }
+                finally
+                {
+                    _vm.IsBusy = false;
+                }
+            }
+        }
+
+        // ── Main processing — runs inside ExternalEvent on Revit API thread ──
+        private void ExecutePlacePoints()
+        {
+            // 1. Extract boundary — separate outer and inner loop segments
+            var outerSegments = new List<Line>();
+            var innerSegments = new List<Line>();
+            ExtractBoundarySegments2D(outerSegments, innerSegments,
+                out int outerCount, out int innerLoops, out int innerEdgeCount);
+
+            AddLog(LogLevel.Info, $"Roof id {_roof.Id.Value}: {outerCount} outer edges, " +
+                                  $"{innerLoops} inner loops ({innerEdgeCount} edges).");
+
+            if (outerSegments.Count == 0)
+            {
+                AddLog(LogLevel.Error, "No outer boundary segments found. Aborting.");
+                return;
+            }
+
+            // All boundary segments combined (for intersection scanning)
+            var allSegments = outerSegments.Concat(innerSegments).ToList();
+
+            // 2. Base Z — computed before opening the transaction (read-only)
+            double baseZ = GetBaseZ();
+            AddLog(LogLevel.Info, $"Base Z = {baseZ * 0.3048:F3} m");
+
+            // 3. Open one transaction for all point placements
+            using var tx = new Transaction(_doc, "RoofDetailLineIntersect V004 — Place Shape Points");
+            try
+            {
+                tx.Start();
+
+                // Get SlabShapeEditor once, inside the transaction
+                SlabShapeEditor sse = _roof.GetSlabShapeEditor();
+                if (!sse.IsEnabled)
+                    sse.Enable();
+
+                var placedXYs = new List<XYZ>(); // global dedup list
+                int lineIndex = 0;
+
+                foreach (var dl in _detailLines)
+                {
+                    lineIndex++;
+                    try
+                    {
+                        ProcessDetailLine(lineIndex, dl, outerSegments, innerSegments,
+                                          allSegments, baseZ, sse, placedXYs);
+                    }
+                    catch (Exception ex)
+                    {
+                        AddLog(LogLevel.Error,
+                            $"Line {lineIndex} (id {dl.Id.Value}) — exception: {ex.Message}");
+                    }
+                }
+
+                tx.Commit();
+
+                int errorCount = LogEntries.Count(e => e.Level == LogLevel.Error);
+                AddLog(LogLevel.Info,
+                    $"Done — {PointsPlaced} placed, {SkippedCount} skipped, {errorCount} errors.");
             }
             catch (Exception ex)
             {
-                AddLog(LogLevel.Error, $"Fatal error: {ex.Message}");
+                // Rollback only if the transaction is still open
+                if (tx.GetStatus() == TransactionStatus.Started)
+                    tx.RollBack();
+
+                AddLog(LogLevel.Error, $"Transaction aborted: {ex.Message}");
             }
         }
 
         // ── Process single DetailLine ────────────────────────────────────────
         private void ProcessDetailLine(
-            int             lineIndex,
-            DetailLine      dl,
-            List<Line>      outerSegments,
-            List<Line>      innerSegments,
-            List<Line>      allSegments,
-            double          baseZ,
-            SlabShapeEditor sse,
-            List<XYZ>       placedXYs)
+            int              lineIndex,
+            DetailLine       dl,
+            List<Line>       outerSegments,
+            List<Line>       innerSegments,
+            List<Line>       allSegments,
+            double           baseZ,
+            SlabShapeEditor  sse,
+            List<XYZ>        placedXYs)
         {
+            // Tessellate the detail line into 2D line segments
             var dlSegments = TessellateDetailLine2D(dl);
             if (dlSegments.Count == 0)
             {
@@ -190,13 +226,18 @@ namespace Revit26_Plugin.RoofDetailLineIntersect.V004
 
             foreach (var dlSeg in dlSegments)
             {
-                candidateHits.AddRange(FindIntersectionsBounded(dlSeg, allSegments));
+                // A) Bounded intersection: where this segment crosses any boundary edge
+                var hits = FindIntersectionsBounded(dlSeg, allSegments);
+                candidateHits.AddRange(hits);
 
+                // B) Endpoints that lie strictly inside the roof (outer - inner holes)
                 var p0 = Flatten(dlSeg.GetEndPoint(0));
                 var p1 = Flatten(dlSeg.GetEndPoint(1));
 
-                if (IsPointInsideRoof(p0, outerSegments, innerSegments)) candidateHits.Add(p0);
-                if (IsPointInsideRoof(p1, outerSegments, innerSegments)) candidateHits.Add(p1);
+                if (IsPointInsideRoof(p0, outerSegments, innerSegments))
+                    candidateHits.Add(p0);
+                if (IsPointInsideRoof(p1, outerSegments, innerSegments))
+                    candidateHits.Add(p1);
             }
 
             var uniqueHits = DeduplicatePoints(candidateHits);
@@ -221,7 +262,8 @@ namespace Revit26_Plugin.RoofDetailLineIntersect.V004
                     continue;
                 }
 
-                sse.AddPoint(new XYZ(hit.X, hit.Y, baseZ));
+                var pt3D = new XYZ(hit.X, hit.Y, baseZ);
+                sse.AddPoint(pt3D);
                 placedXYs.Add(hit);
                 PointsPlaced++;
 
@@ -230,7 +272,7 @@ namespace Revit26_Plugin.RoofDetailLineIntersect.V004
             }
         }
 
-        // ── Tessellate DetailLine → 2D segments ──────────────────────────────
+        // ── Tessellate DetailLine → 2D line segments ─────────────────────────
         private List<Line> TessellateDetailLine2D(DetailLine dl)
         {
             var result = new List<Line>();
@@ -248,10 +290,12 @@ namespace Revit26_Plugin.RoofDetailLineIntersect.V004
                     return result;
                 }
 
+                // Arc, circle, spline, ellipse, etc.
                 var pts = c.Tessellate();
                 if (pts == null || pts.Count < 2)
                 {
-                    AddLog(LogLevel.Warning, $"DetailLine id {dl.Id.Value} — tessellation: insufficient points.");
+                    AddLog(LogLevel.Warning,
+                        $"DetailLine id {dl.Id.Value} — tessellation: insufficient points.");
                     return result;
                 }
 
@@ -264,34 +308,47 @@ namespace Revit26_Plugin.RoofDetailLineIntersect.V004
                 }
 
                 if (result.Count > 0)
-                    AddLog(LogLevel.Info, $"DetailLine id {dl.Id.Value} — arc/curve → {result.Count} segments.");
+                    AddLog(LogLevel.Info,
+                        $"DetailLine id {dl.Id.Value} — arc/curve → {result.Count} segments.");
             }
             catch (Exception ex)
             {
-                AddLog(LogLevel.Warning, $"DetailLine id {dl.Id.Value} — tessellation failed: {ex.Message}");
+                AddLog(LogLevel.Warning,
+                    $"DetailLine id {dl.Id.Value} — tessellation failed: {ex.Message}");
             }
 
             return result;
         }
 
-        // ── Bounded segment–segment intersection ─────────────────────────────
+        // ── Bounded intersection: query segment vs boundary segments ─────────
+        /// <summary>
+        /// Returns points where the query segment [p,p+r] crosses any boundary
+        /// segment. Both t (query) and u (boundary) are clamped to [0,1].
+        /// This prevents phantom hits from extended line math.
+        /// </summary>
         private static List<XYZ> FindIntersectionsBounded(Line querySegment, List<Line> boundarySegs)
         {
             var results = new List<XYZ>();
+
             XYZ p = querySegment.GetEndPoint(0);
             XYZ r = querySegment.GetEndPoint(1) - p;
 
             foreach (var seg in boundarySegs)
             {
-                XYZ    q    = seg.GetEndPoint(0);
-                XYZ    s    = seg.GetEndPoint(1) - q;
+                XYZ q = seg.GetEndPoint(0);
+                XYZ s = seg.GetEndPoint(1) - q;
+
                 double rxs  = Cross2D(r, s);
-                XYZ    qmp  = q - p;
-                double t    = Cross2D(qmp, s) / rxs;
-                double u    = Cross2D(qmp, r) / rxs;
+                XYZ   qmp   = q - p;
+                double qpxr = Cross2D(qmp, r);
+                double qpxs = Cross2D(qmp, s);
 
-                if (Math.Abs(rxs) < 1e-10) continue;
+                if (Math.Abs(rxs) < 1e-10) continue; // parallel / collinear
 
+                double t = qpxs / rxs; // parameter along query segment
+                double u = qpxr / rxs; // parameter along boundary segment
+
+                // Both must be within their segments (with small epsilon tolerance)
                 const double eps = 1e-6;
                 if (t >= -eps && t <= 1.0 + eps &&
                     u >= -eps && u <= 1.0 + eps)
@@ -304,42 +361,73 @@ namespace Revit26_Plugin.RoofDetailLineIntersect.V004
             return results;
         }
 
-        // ── Point-in-roof (outer polygon minus inner holes) ───────────────────
-        private static bool IsPointInsideRoof(XYZ point, List<Line> outerSegs, List<Line> innerSegs)
+        // ── Point-in-roof test (outer polygon minus inner holes) ─────────────
+        /// <summary>
+        /// A point is inside the roof if:
+        ///   - Ray crosses outer boundary an ODD number of times, AND
+        ///   - Ray crosses every inner loop an EVEN number of times
+        ///     (even = outside that hole → still on roof surface).
+        /// </summary>
+        private static bool IsPointInsideRoof(
+            XYZ        point,
+            List<Line> outerSegments,
+            List<Line> innerSegments)
         {
-            // Inner loops on FootPrintRoof are surface step/edge boundaries, not cut-through voids.
-            // A point inside an inner loop polygon is still on the roof surface — do not exclude it.
-            return IsPointInsidePolygon(point, outerSegs);
+            // Must be inside outer polygon
+            if (!IsPointInsidePolygon(point, outerSegments)) return false;
+
+            // Must NOT be inside any inner hole
+            // We treat all inner segments together: even crossings = outside all holes
+            // (works when inner loops don't overlap each other)
+            if (innerSegments.Count > 0 &&
+                IsPointInsidePolygon(point, innerSegments))
+                return false;
+
+            return true;
         }
 
         private static bool IsPointInsidePolygon(XYZ point, List<Line> segments)
         {
-            int crossings = 0;
-            XYZ rayEnd    = new XYZ(point.X + RayCastDistance, point.Y, 0);
+            int  crossings = 0;
+            XYZ  rayEnd    = new XYZ(point.X + RayCastDistance, point.Y, 0);
+
             foreach (var seg in segments)
-                if (DoSegmentsIntersect2D(point, rayEnd, seg.GetEndPoint(0), seg.GetEndPoint(1), out _))
+            {
+                if (DoSegmentsIntersect2D(point, rayEnd,
+                        seg.GetEndPoint(0), seg.GetEndPoint(1), out _))
                     crossings++;
+            }
+
             return (crossings % 2) == 1;
         }
 
-        private static bool DoSegmentsIntersect2D(XYZ p1, XYZ p2, XYZ p3, XYZ p4, out XYZ intersection)
+        private static bool DoSegmentsIntersect2D(
+            XYZ p1, XYZ p2, XYZ p3, XYZ p4, out XYZ intersection)
         {
             intersection = XYZ.Zero;
             double x1 = p1.X, y1 = p1.Y, x2 = p2.X, y2 = p2.Y;
             double x3 = p3.X, y3 = p3.Y, x4 = p4.X, y4 = p4.Y;
+
             double denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
             if (Math.Abs(denom) < 1e-10) return false;
+
             double t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / denom;
             double u = ((x1 - x3) * (y1 - y2) - (y1 - y3) * (x1 - x2)) / denom;
+
             if (t >= 0 && t <= 1 && u >= 0 && u <= 1)
             {
                 intersection = new XYZ(x1 + t * (x2 - x1), y1 + t * (y2 - y1), 0);
                 return true;
             }
+
             return false;
         }
 
         // ── Boundary extraction ───────────────────────────────────────────────
+        /// <summary>
+        /// Populates separate outer and inner segment lists from GetProfiles().
+        /// First loop in ModelCurveArrArray = outer; subsequent = inner holes.
+        /// </summary>
         private void ExtractBoundarySegments2D(
             List<Line> outerSegments,
             List<Line> innerSegments,
@@ -366,18 +454,25 @@ namespace Revit26_Plugin.RoofDetailLineIntersect.V004
 
                     if (c is Line)
                     {
-                        if (TryAddSegment(targetList, Flatten(c.GetEndPoint(0)), Flatten(c.GetEndPoint(1))))
-                            edgesAdded++;
+                        var s = Flatten(c.GetEndPoint(0));
+                        var e = Flatten(c.GetEndPoint(1));
+                        if (TryAddSegment(targetList, s, e)) edgesAdded++;
                     }
                     else
                     {
+                        // Bound or unbound non-linear (arc, ellipse, spline)
                         IList<XYZ> pts;
                         try   { pts = c.Tessellate(); }
                         catch { continue; }
+
                         if (pts == null || pts.Count < 2) continue;
+
                         for (int i = 0; i < pts.Count - 1; i++)
-                            if (TryAddSegment(targetList, Flatten(pts[i]), Flatten(pts[i + 1])))
+                        {
+                            if (TryAddSegment(targetList,
+                                    Flatten(pts[i]), Flatten(pts[i + 1])))
                                 edgesAdded++;
+                        }
                     }
                 }
 
@@ -394,25 +489,32 @@ namespace Revit26_Plugin.RoofDetailLineIntersect.V004
         }
 
         // ── Base Z ────────────────────────────────────────────────────────────
+        /// <summary>
+        /// Returns the lowest existing SlabShapeVertex Z, or the roof level
+        /// elevation if no vertices exist yet. Called before tx.Start() — read only.
+        /// </summary>
         private double GetBaseZ()
         {
             SlabShapeEditor sse      = _roof.GetSlabShapeEditor();
             var             vertices = sse.SlabShapeVertices;
+
             if (vertices == null || vertices.Size == 0)
             {
                 Level lvl = _doc.GetElement(_roof.LevelId) as Level;
                 return lvl?.Elevation ?? 0.0;
             }
+
             double minZ = double.MaxValue;
             foreach (SlabShapeVertex v in vertices)
                 if (v.Position.Z < minZ) minZ = v.Position.Z;
+
             return minZ;
         }
 
         // ── Helpers ───────────────────────────────────────────────────────────
-        private static XYZ    Flatten(XYZ p)        => new XYZ(p.X, p.Y, 0);
-        private static double Cross2D(XYZ a, XYZ b) => a.X * b.Y - a.Y * b.X;
-        private static double ToM(double feet)       => feet * 0.3048;
+        private static XYZ     Flatten(XYZ p)         => new XYZ(p.X, p.Y, 0);
+        private static double  Cross2D(XYZ a, XYZ b)  => a.X * b.Y - a.Y * b.X;
+        private static double  ToM(double feet)        => feet * 0.3048;
 
         private List<XYZ> DeduplicatePoints(List<XYZ> points)
         {

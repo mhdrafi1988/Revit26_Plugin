@@ -14,8 +14,8 @@ namespace Revit26_Plugin.RoofDetailLineIntersect.V004
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
-            UIDocument uiDoc      = commandData.Application.ActiveUIDocument;
-            Document   doc        = uiDoc.Document;
+            UIDocument uiDoc    = commandData.Application.ActiveUIDocument;
+            Document   doc      = uiDoc.Document;
             View       activeView = doc.ActiveView;
 
             // ── Guard: must be a plan view ──────────────────────────────────
@@ -74,13 +74,8 @@ namespace Revit26_Plugin.RoofDetailLineIntersect.V004
                 .OfType<DetailLine>()
                 .ToList();
 
-            // ── Build VM, create ExternalEvent here (valid Revit API context) ─
-            var vm      = new RoofDetailLineIntersectViewModel(uiDoc, doc, roof, detailLines);
-            var handler = new PlacePointsEventHandler(vm);
-            var exEvent = ExternalEvent.Create(handler);   // ← only legal here, not in WPF button click
-            vm.SetExternalEvent(exEvent);
-
             // ── Launch window ────────────────────────────────────────────────
+            var vm     = new RoofDetailLineIntersectViewModel(uiDoc, doc, roof, detailLines);
             var window = new RoofDetailLineIntersectWindow(vm);
             window.Show();
 
