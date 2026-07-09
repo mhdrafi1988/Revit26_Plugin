@@ -90,6 +90,9 @@
                             <TextBlock Text="Validation Tolerance (mm)" Style="{StaticResource FieldLabel}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" Style="{StaticResource BoxedTextInput}" Text="{Binding ValidationToleranceMm, UpdateSourceTrigger=PropertyChanged, StringFormat=F2}" HorizontalContentAlignment="Right"/>
                         </Grid>
+
+                        <CheckBox Content="Add detail lines" IsChecked="{Binding AddDetailLines}" FontSize="12" Margin="0,10,0,4"/>
+                        <CheckBox Content="Add shape points" IsChecked="{Binding AddShapePoints}" FontSize="12" Margin="0,0,0,0"/>
                     </StackPanel>
                 </Border>
 

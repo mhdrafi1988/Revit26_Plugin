@@ -5,9 +5,15 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\Release\net8.0-windows\02-07-004</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\Release\net8.0-windows\09-07-006</BaseOutputPath>
 		<PackageId />
 		<AssemblyName>Revit26_Plugin</AssemblyName>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	  <IsPublishable>False</IsPublishable>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	  <IsPublishable>False</IsPublishable>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />

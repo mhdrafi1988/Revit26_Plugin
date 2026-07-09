@@ -13,21 +13,15 @@ namespace Revit26_Plugin.Menu.Ribbon
             PulldownButton setup = panel.AddItem(new PulldownButtonData("SetupTools", "Setup Tools")) as PulldownButton;
             setup.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Setting32.png");
 
-            setup.AddPushButton(new PushButtonData("Btn_CreateWorksetsFromLinkedFilesv022", "Create Worksets FromLinked Files v02", assemblyPath, "Revit26_Plugin.WSAV02.CreateWorksetsFromLinkedFilesv02"));
-            setup.AddPushButton(new PushButtonData("Btn_CreateWorksetsFromLinkedFilesv023", "Create Worksets FromLinked Files v03", assemblyPath, "Revit26_Plugin.WSAV03.CreateWorksetsFromLinkedFilesv03"));
-            setup.AddPushButton(new PushButtonData("Btn_CreateWorksetsFromLinkedFiles_V05_01", "Create Worksets FromLinked Files v0501", assemblyPath, "Revit26_Plugin.WorksetManager_05_01.CreateWorksetsFromLinkedFilesCommand"));
-            setup.AddPushButton(new PushButtonData("Btn_CreateWorksetsFromLinkedFiles_V06", "Create Worksets FromLinked Files v06", assemblyPath, "Revit26_Plugin.WorksetManager.V06.CreateWorksetsFromLinkedFilesCommand"));
-
-            
-            setup.AddPushButton(new PushButtonData("Btn_CreateWorksetsFromLinkedFiles_V009", "Create Worksets FromLinked Files V 009", assemblyPath, "Revit26_Plugin.WSFL_009.Commands.CreateWorksetsFromLinkedFiles"));
             //Workset creation-mange-ment tools
-            setup.AddPushButton(new PushButtonData("Btn_CreateWorksetsFromLinkedFilesv10", "Create Worksets FromLinked Files v10", assemblyPath, "Revit26_Plugin.WSFL_010.Commands.CreateWorksetsFromLinkedFiles"));
-            setup.AddPushButton(new PushButtonData("Btn_WorkSetmanager", "WorkSetmanager", assemblyPath, "WorksetManager_01.Commands.WorksetManagerCommand"));
-            setup.AddPushButton(new PushButtonData("Btn_WorksetRenamer_01", "WorksetRenamer_01", assemblyPath, "Revit26_Plugin.WorksetRenamer_01.Command"));
-
+            setup.AddPushButton(new PushButtonData("Btn_CreateWorksetsFromLinkedFiles_V06", "Create Worksets FromLinked Files v06", assemblyPath, "Revit26_Plugin.WorksetManager.V06.CreateWorksetsFromLinkedFilesCommand"));
             setup.AddPushButton(new PushButtonData("Btn_WorksetManager_02", "WorksetManager_02", assemblyPath, " Revit26_Plugin.WorksetManager_02.Commands.WorksetManagerCommand"));
-            setup.AddPushButton(new PushButtonData("Btn_WorksetManager_03", "WorksetManager_03", assemblyPath, " Revit26_Plugin.WorksetManager_03.Commands.WorksetManagerCommand"));
-            setup.AddPushButton(new PushButtonData("Btn_WorksetManager_06", "WorksetManager_06", assemblyPath, " Revit26_Plugin.WorksetManager.V06.Commands.WorksetManagerCommand"));
+
+
+            setup.AddPushButton(new PushButtonData("Btn_WorksetManager_10", "WorksetManager_ v10", assemblyPath, "Revit26_Plugin.WSFL_010.Commands.CreateWorksetsFromLinkedFiles"));
+            setup.AddPushButton(new PushButtonData("Btn_WorksetManager_007", "WorksetManager_ 007", assemblyPath, "Revit26_Plugin.WorksetManager_007.CreateWorksetsFromLinkedFilesCommand"));
+            setup.AddPushButton(new PushButtonData("Btn_WorksetManager_009", "WorksetManager_ 009", assemblyPath, "Revit26_Plugin.WorksetManager.V009.CreateWorksetsFromLinkedFiles"));
+            setup.AddPushButton(new PushButtonData("Btn_WorksetManager_010", "WorksetManager_ 010", assemblyPath, "Revit26_Plugin.WorksetManager.V010.CreateWorksetsFromLinkedFiles"));
 
             PulldownButton Linker = panel.AddItem(new PulldownButtonData("Batch Link", "Batch Link")) as PulldownButton;
             Linker.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Linker_32.png");

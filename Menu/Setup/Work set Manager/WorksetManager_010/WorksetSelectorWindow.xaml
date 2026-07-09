@@ -1,0 +1,615 @@
+<Window
+    x:Class="Revit26_Plugin.WorksetManager.V010.Views.WorksetSelectorWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:Revit26_Plugin.WorksetManager.V010.Views"
+    xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Workset Manager V010"
+    Height="820"
+    Width="1060"
+    MinHeight="640"
+    MinWidth="860"
+    WindowStartupLocation="CenterOwner"
+    ResizeMode="CanResize">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Revit26_Plugin;component/Shared/SharedStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Converters — registered here only, per shared convention -->
+            <converters:BoolToVisibilityConverter   x:Key="BoolToVisibilityConverter"/>
+            <converters:LogLevelToColorConverter    x:Key="LogLevelToColorConverter"/>
+
+            <!-- Window-specific DataGrid cell styles (not general theme, so kept local) -->
+            <Style x:Key="CellText" TargetType="TextBlock">
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="Padding"           Value="8,0"/>
+                <Setter Property="Foreground"        Value="{StaticResource BrushTextPrimary}"/>
+                <Setter Property="FontSize"          Value="10"/>
+            </Style>
+
+            <Style x:Key="MonoCell" TargetType="TextBlock" BasedOn="{StaticResource CellText}">
+                <Setter Property="FontFamily" Value="Consolas, Courier New"/>
+                <Setter Property="FontSize"   Value="10"/>
+            </Style>
+
+            <Style x:Key="CurrentWorksetCell" TargetType="TextBlock" BasedOn="{StaticResource CellText}">
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Background="{StaticResource BrushSystemSecondaryBackground}">
+        <Grid.RowDefinitions>
+            <!-- Row 0: Navy header — title, version badge, subtitle -->
+            <RowDefinition Height="Auto"/>
+            <!-- Row 1: Pattern toolbar -->
+            <RowDefinition Height="Auto"/>
+            <!-- Row 2: Three section grids -->
+            <RowDefinition Height="*"/>
+            <!-- Row 3: Live log -->
+            <RowDefinition Height="110"/>
+            <!-- Row 4: Footer buttons -->
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ══ ROW 0 — Navy header ══════════════════════════════════════════ -->
+        <Border Grid.Row="0" Style="{StaticResource HeaderBar}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Workset manager" Style="{StaticResource HeaderTitle}"/>
+                        <Border Style="{StaticResource BadgePill}"
+                                Background="{StaticResource BrushNavyLight}"
+                                Margin="8,0,0,0">
+                            <TextBlock Text="V010" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource BrushTextOnDark}"/>
+                        </Border>
+                    </StackPanel>
+                    <TextBlock Text="WSFL-010 · Assigns each linked file to its own workset"
+                               Style="{StaticResource HeaderSubtitle}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ══ ROW 1 — Pattern toolbar ══════════════════════════════════════ -->
+        <Border Grid.Row="1" Style="{StaticResource SectionCard}" Margin="12,10,12,0">
+            <Grid Margin="12,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0"
+                           Text="Pattern"
+                           Style="{StaticResource FieldLabel}"
+                           FontSize="10"
+                           VerticalAlignment="Center"
+                           Margin="0,0,8,0"/>
+
+                <TextBox Grid.Column="1"
+                         Width="140"
+                         MaxLength="10"
+                         FontSize="10"
+                         Style="{StaticResource StyledTextInput}"
+                         Text="{Binding Pattern, UpdateSourceTrigger=PropertyChanged}"
+                         ToolTip="Use {name} as a placeholder for the linked file name"/>
+
+                <TextBlock Grid.Column="2"
+                           Text="Use {name} for the link file name"
+                           Style="{StaticResource HintText}"
+                           FontSize="10"
+                           VerticalAlignment="Center"
+                           Margin="8,0,0,0"/>
+
+                <TextBlock Grid.Column="3"
+                           Text="{Binding PatternErrorMessage}"
+                           Foreground="{StaticResource BrushDanger}"
+                           FontSize="10"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Right"
+                           Visibility="{Binding HasPatternError, Converter={StaticResource BoolToVisibilityConverter}}"/>
+            </Grid>
+        </Border>
+
+        <!-- ══ ROW 2 — Three section grids ══════════════════════════════════ -->
+        <Grid Grid.Row="2" Margin="12,8,12,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- ── GRID 1 — Already created & assigned ─────────────────── -->
+            <Border Grid.Row="0" Style="{StaticResource SectionCard}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0"
+                            Background="{StaticResource BrushSystemSecondaryBackground}"
+                            CornerRadius="10,10,0,0"
+                            Padding="12,6">
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse Style="{StaticResource StatusDot}" Fill="{StaticResource BrushSuccess}"/>
+                            <TextBlock Text="Already created &amp; assigned"
+                                       Style="{StaticResource SectionTitle}"
+                                       FontSize="10" Margin="0"
+                                       VerticalAlignment="Center"/>
+                            <Border Style="{StaticResource BadgePill}"
+                                    Background="{StaticResource BrushSuccess}"
+                                    Margin="8,0,0,0">
+                                <TextBlock Text="{Binding Grid1Count}"
+                                           FontSize="10" FontWeight="SemiBold" Foreground="White"/>
+                            </Border>
+                            <TextBlock Text="Exact match confirmed — read only"
+                                       Style="{StaticResource HintText}"
+                                       FontSize="10"
+                                       Margin="12,0,0,0"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Row="0" Height="0.5"
+                            Background="{StaticResource BrushSeparatorThin}"
+                            VerticalAlignment="Bottom"/>
+
+                    <DataGrid Grid.Row="1"
+                              ItemsSource="{Binding Grid1AssignedItems}"
+                              Style="{StaticResource StandardDataGrid}"
+                              ColumnHeaderStyle="{StaticResource StandardDataGridColumnHeader}"
+                              CellStyle="{StaticResource DataGridCellStyle}"
+                              RowStyle="{StaticResource DataGridRowStyle}"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              HeadersVisibility="Column"
+                              SelectionMode="Single"
+                              VirtualizingStackPanel.IsVirtualizing="True"
+                              VirtualizingStackPanel.VirtualizationMode="Recycling"
+                              IsReadOnly="True">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="#"
+                                                Binding="{Binding SerialNumber}"
+                                                Width="40"
+                                                ElementStyle="{StaticResource CellText}"/>
+                            <DataGridTemplateColumn Header="Linked file" Width="*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding LinkName}"
+                                                   Style="{StaticResource MonoCell}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Workset" Width="220">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding ProposedWorksetName}"
+                                                   Style="{StaticResource MonoCell}"
+                                                   Foreground="{StaticResource BrushSuccess}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Instances"
+                                                Binding="{Binding InstanceCount}"
+                                                IsReadOnly="True"
+                                                Width="80"
+                                                ElementStyle="{StaticResource CellText}"/>
+                            <DataGridTemplateColumn Header="Status" Width="110">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border CornerRadius="10"
+                                                Background="{StaticResource BrushSuccess}"
+                                                Padding="7,2"
+                                                HorizontalAlignment="Left"
+                                                Margin="8,0">
+                                            <TextBlock Text="Assigned"
+                                                       FontSize="10" FontWeight="SemiBold" Foreground="White"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+
+            <!-- ── GRID 2 — Needs workset ──────────────────────────────── -->
+            <Border Grid.Row="1" Style="{StaticResource SectionCard}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0"
+                            Background="{StaticResource BrushSystemSecondaryBackground}"
+                            CornerRadius="10,10,0,0"
+                            Padding="12,6">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                <Ellipse Style="{StaticResource StatusDot}" Fill="{StaticResource BrushAppleBlue}"/>
+                                <TextBlock Text="Linked files — workset not yet created"
+                                           Style="{StaticResource SectionTitle}"
+                                           FontSize="10" Margin="0"
+                                           VerticalAlignment="Center"/>
+                                <Border Style="{StaticResource BadgePill}"
+                                        Background="{StaticResource BrushAppleBlue}"
+                                        Margin="8,0,0,0">
+                                    <TextBlock Text="{Binding Grid2Count}"
+                                               FontSize="10" FontWeight="SemiBold" Foreground="White"/>
+                                </Border>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                <Button Content="Select all"
+                                        Style="{StaticResource SecondaryButton}"
+                                        Command="{Binding SelectAllCommand}"
+                                        Margin="0,0,6,0"/>
+                                <Button Content="Select none"
+                                        Style="{StaticResource SecondaryButton}"
+                                        Command="{Binding SelectNoneCommand}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Row="0" Height="0.5"
+                            Background="{StaticResource BrushSeparatorThin}"
+                            VerticalAlignment="Bottom"/>
+
+                    <DataGrid Grid.Row="1"
+                              ItemsSource="{Binding Grid2ActionableItems}"
+                              Style="{StaticResource StandardDataGrid}"
+                              ColumnHeaderStyle="{StaticResource StandardDataGridColumnHeader}"
+                              CellStyle="{StaticResource DataGridCellStyle}"
+                              RowStyle="{StaticResource DataGridRowStyle}"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              HeadersVisibility="Column"
+                              SelectionMode="Single"
+                              VirtualizingStackPanel.IsVirtualizing="True"
+                              VirtualizingStackPanel.VirtualizationMode="Recycling">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="#"
+                                                Binding="{Binding SerialNumber}"
+                                                IsReadOnly="True"
+                                                Width="40"
+                                                ElementStyle="{StaticResource CellText}"/>
+                            <DataGridTemplateColumn Header="Create" Width="56">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                  HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Linked file" Width="*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding LinkName}"
+                                                   Style="{StaticResource MonoCell}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Current workset" Width="180">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding CurrentWorksetName}"
+                                                   Style="{StaticResource CurrentWorksetCell}"
+                                                   ToolTip="MIXED = instances assigned to more than one workset"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Proposed workset" Width="220">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding ProposedWorksetName}"
+                                                   Style="{StaticResource MonoCell}"
+                                                   ToolTip="{Binding ProposedWorksetTooltip}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Instances"
+                                                Binding="{Binding InstanceCount}"
+                                                IsReadOnly="True"
+                                                Width="80"
+                                                ElementStyle="{StaticResource CellText}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+
+            <!-- ── GRID 3 — No instances ───────────────────────────────── -->
+            <Border Grid.Row="2" Style="{StaticResource SectionCard}" Margin="0,0,0,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0"
+                            Background="{StaticResource BrushSystemSecondaryBackground}"
+                            CornerRadius="10,10,0,0"
+                            Padding="12,6">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                <Ellipse Style="{StaticResource StatusDot}" Fill="{StaticResource BrushWarning}"/>
+                                <TextBlock Text="No instances in model"
+                                           Style="{StaticResource SectionTitle}"
+                                           FontSize="10" Margin="0"
+                                           VerticalAlignment="Center"/>
+                                <Border Style="{StaticResource BadgePill}"
+                                        Background="{StaticResource BrushWarning}"
+                                        Margin="8,0,0,0">
+                                    <TextBlock Text="{Binding Grid3Count}"
+                                               FontSize="10" FontWeight="SemiBold" Foreground="White"/>
+                                </Border>
+                                <TextBlock Text="Workset will be created; assignment happens when link is loaded"
+                                           Style="{StaticResource HintText}"
+                                           FontSize="10"
+                                           Margin="12,0,0,0"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                <Button Content="Select all"
+                                        Style="{StaticResource SecondaryButton}"
+                                        Command="{Binding SelectAllG3Command}"
+                                        Margin="0,0,6,0"/>
+                                <Button Content="Select none"
+                                        Style="{StaticResource SecondaryButton}"
+                                        Command="{Binding SelectNoneG3Command}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Row="0" Height="0.5"
+                            Background="{StaticResource BrushSeparatorThin}"
+                            VerticalAlignment="Bottom"/>
+
+                    <DataGrid Grid.Row="1"
+                              ItemsSource="{Binding Grid3NoInstanceItems}"
+                              Style="{StaticResource StandardDataGrid}"
+                              ColumnHeaderStyle="{StaticResource StandardDataGridColumnHeader}"
+                              CellStyle="{StaticResource DataGridCellStyle}"
+                              RowStyle="{StaticResource DataGridRowStyle}"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              HeadersVisibility="Column"
+                              SelectionMode="Single"
+                              VirtualizingStackPanel.IsVirtualizing="True"
+                              VirtualizingStackPanel.VirtualizationMode="Recycling">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="#"
+                                                Binding="{Binding SerialNumber}"
+                                                IsReadOnly="True"
+                                                Width="40"
+                                                ElementStyle="{StaticResource CellText}"/>
+                            <DataGridTemplateColumn Header="Create" Width="56">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                  HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Linked file" Width="*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding LinkName}"
+                                                   Style="{StaticResource MonoCell}"
+                                                   Opacity="0.6"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Proposed workset" Width="220">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding ProposedWorksetName}"
+                                                   Style="{StaticResource MonoCell}"
+                                                   Opacity="0.6"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Status" Width="120">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border CornerRadius="10"
+                                                Background="{StaticResource BrushSystemTertiaryBackground}"
+                                                Padding="7,2"
+                                                HorizontalAlignment="Left"
+                                                Margin="8,0">
+                                            <TextBlock Text="Unloaded / not placed"
+                                                       FontSize="10"
+                                                       Foreground="{StaticResource BrushTextSecondary}"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- ══ ROW 3 — Live log ══════════════════════════════════════════════ -->
+        <Border Grid.Row="3"
+                Background="{StaticResource BrushLogBg}"
+                CornerRadius="10"
+                Margin="12,8,12,0"
+                ClipToBounds="True">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Title bar with Copy All / Copy Selected / Clear -->
+                <Border Grid.Row="0"
+                        Background="{StaticResource BrushLogTitleBar}"
+                        CornerRadius="10,10,0,0"
+                        Padding="10,4">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0"
+                                   Text="LIVE LOG"
+                                   FontFamily="Consolas"
+                                   FontSize="9"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource BrushLogTextDim}"
+                                   VerticalAlignment="Center"/>
+
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <Button Content="Copy all"
+                                    Style="{StaticResource DarkGhostButton}"
+                                    Command="{Binding CopyLogCommand}"
+                                    Margin="0,0,6,0"
+                                    ToolTip="Copy all log entries to clipboard"/>
+                            <Button Content="Copy selected"
+                                    Style="{StaticResource DarkGhostButton}"
+                                    Click="CopySelectedLog_Click"
+                                    Margin="0,0,6,0"
+                                    ToolTip="Copy only the selected log rows"/>
+                            <Button Content="Clear"
+                                    Style="{StaticResource DarkGhostButton}"
+                                    Command="{Binding ClearLogCommand}"
+                                    ToolTip="Clear the log"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Log entries — level color wired via LogLevelToColorConverter -->
+                <ListBox Grid.Row="1"
+                         x:Name="LogListBox"
+                         ItemsSource="{Binding Log}"
+                         Background="Transparent"
+                         BorderThickness="0"
+                         SelectionMode="Extended"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                         Padding="0">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Padding"    Value="0"/>
+                            <Setter Property="Margin"     Value="0"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListBoxItem">
+                                        <Border x:Name="Bg" Background="{TemplateBinding Background}">
+                                            <ContentPresenter/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Bg" Property="Background" Value="{StaticResource BrushLogTitleBar}"/>
+                                            </Trigger>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="Bg" Property="Background" Value="{StaticResource BrushNavyLight}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Margin="10,1">
+                                <TextBlock Text="{Binding Time, StringFormat=HH:mm:ss}"
+                                           FontFamily="Consolas"
+                                           FontSize="10"
+                                           Foreground="{StaticResource BrushLogTextDim}"
+                                           Width="58"
+                                           VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding Level}"
+                                           FontFamily="Consolas"
+                                           FontSize="10"
+                                           FontWeight="SemiBold"
+                                           Foreground="{Binding Level, Converter={StaticResource LogLevelToColorConverter}}"
+                                           Width="60"
+                                           VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding Message}"
+                                           FontFamily="Consolas"
+                                           FontSize="10"
+                                           Foreground="{StaticResource BrushLogText}"
+                                           TextWrapping="NoWrap"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+        </Border>
+
+        <!-- ══ ROW 4 — Footer ═══════════════════════════════════════════════ -->
+        <Border Grid.Row="4"
+                Background="{StaticResource BrushSystemBackground}"
+                BorderBrush="{StaticResource BrushSeparatorThin}"
+                BorderThickness="0,1,0,0"
+                Padding="12,10"
+                Margin="12,8,12,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0"
+                           VerticalAlignment="Center"
+                           FontSize="11"
+                           Foreground="{StaticResource BrushTextSecondary}">
+                    <Run Text="{Binding TotalSelectedCount, Mode=OneWay}"/>
+                    <Run Text=" link(s) selected for creation"/>
+                </TextBlock>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="Resync all"
+                            Style="{StaticResource OutlineButton}"
+                            Command="{Binding ResyncCommand}"
+                            IsEnabled="{Binding IsResyncEnabled}"
+                            Margin="0,0,8,0"
+                            ToolTip="Re-assign selected links to their matching worksets"/>
+                    <Button Content="Create worksets"
+                            Style="{StaticResource PrimaryButton}"
+                            Command="{Binding CreateCommand}"
+                            IsEnabled="{Binding IsCreateEnabled}"
+                            Margin="0,0,8,0"
+                            ToolTip="Create worksets for selected Grid 2 &amp; Grid 3 links and assign instances"/>
+                    <Button Content="Close"
+                            Style="{StaticResource OutlineButton}"
+                            Command="{Binding CloseCommand}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

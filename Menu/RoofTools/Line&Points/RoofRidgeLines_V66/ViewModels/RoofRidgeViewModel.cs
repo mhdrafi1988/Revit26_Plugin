@@ -98,6 +98,14 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V66.ViewModels
         private double _validationToleranceMm = 50.0;
 
         [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(RunCommand))]
+        private bool _addDetailLines = true;
+
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(RunCommand))]
+        private bool _addShapePoints = false;
+
+        [ObservableProperty]
         private bool _isBusy;
 
         [ObservableProperty]
@@ -516,7 +524,7 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V66.ViewModels
             }
         }
 
-        private bool CanRun() => _selectedRoof != null && SelectedOpeningsCount >= 2 && ProximityDistanceMm > 0;
+        private bool CanRun() => _selectedRoof != null && SelectedOpeningsCount >= 2 && ProximityDistanceMm > 0 && (AddDetailLines || AddShapePoints);
 
         // ── Helpers ───────────────────────────────────────────────────────────────
 
