@@ -19,15 +19,14 @@ namespace Revit26_Plugin.Menu.Ribbon
             PulldownButton ViewPlace = panel.AddItem(new PulldownButtonData("Place", "Place")) as PulldownButton;
             ViewPlace.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Place_32.png");
 
-            //ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_311", "AutoPlaceSectionsCommand_311 #", assemblyPath, "Revit26_Plugin.APUS_V311.Commands.AutoPlaceSectionsCommand"));
-            //ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_312", "AutoPlaceSectionsCommand_312 #", assemblyPath, "Revit26_Plugin.APUS_V312.Commands.AutoPlaceSectionsCommand"));
-            //ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_313", "AutoPlaceSectionsCommand_313 #", assemblyPath, "Revit26_Plugin.APUS_V313.Commands.AutoPlaceSectionsCommand"));
-            ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_314", "AutoPlaceSectionsCommand_314 ", assemblyPath, "Revit26_Plugin.APUS_V314.Commands.AutoPlaceSectionsCommand"));
-            //ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_317", "AutoPlaceSectionsCommand_317 ", assemblyPath, "Revit26_Plugin.APUS_V317.Commands.AutoPlaceSectionsCommand"));
-            ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_320", "AutoPlaceSectionsCommand_320_Grid Only #", assemblyPath, "Revit26_Plugin.APUS_V320.Commands.AutoPlaceSectionsCommand"));
-            ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_330", "AutoPlaceSectionsCommand_330 ONE  #", assemblyPath, "Revit26_Plugin.APUS_V330.Commands.AutoPlaceSectionsCommand"));
-            ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_V320_01", "AutoPlaceSectionsCommand_V320_01  #", assemblyPath, "Revit26_Plugin.APUS_V320_01.Commands.AutoPlaceSectionsCommand"));
+            //ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_314", "AutoPlaceSectionsCommand_314 ", assemblyPath, "Revit26_Plugin.APUS_V314.Commands.AutoPlaceSectionsCommand"));
+            //ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_320", "AutoPlaceSectionsCommand_320_Grid Only #", assemblyPath, "Revit26_Plugin.APUS_V320.Commands.AutoPlaceSectionsCommand"));
+            //ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_330", "AutoPlaceSectionsCommand_330 ONE  #", assemblyPath, "Revit26_Plugin.APUS_V330.Commands.AutoPlaceSectionsCommand"));
+           // ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_V320_01", "AutoPlaceSectionsCommand_V320_01  #", assemblyPath, "Revit26_Plugin.APUS_V320_01.Commands.AutoPlaceSectionsCommand"));
+            ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_V321_01", "AutoPlaceSectionsCommand_V321_01 ##", assemblyPath, "Revit26_Plugin.APUS_V321_01.Commands.AutoPlaceSectionsCommand"));
             ViewPlace.AddPushButton(new PushButtonData("Btn_CalloutCOP", "Call Out PLacing Auto V06 #", assemblyPath, "Revit26_Plugin.CalloutCOP_V06.Commands.CalloutCOPCommand"));
+
+
             ViewPlace.AddPushButton(new PushButtonData("Btn_CalloutCOP_V007", "Call Out PLacing Auto V007 ###", assemblyPath, "Revit26_Plugin.CalloutCOP_V007.Commands.CalloutAutoPlacer"));
             //ViewPlace.AddPushButton(new PushButtonData("Btn_CalloutCOP_V008", "Call Out PLacing Auto V008 #", assemblyPath, "Revit26_Plugin.CalloutPlacing_V008.Commands.CalloutAutoPlacer"));
             ViewPlace.AddPushButton(new PushButtonData("Btn_CalloutCOP_V011", "Call Out PLacing Auto V011 #", assemblyPath, "Revit26_Plugin.CalloutCOP.V011.Commands.CalloutCOPCommand"));

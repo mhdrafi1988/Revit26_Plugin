@@ -1,0 +1,209 @@
+<Window x:Class="Revit26_Plugin.FloorsFromLinkedRoomsViaPlanView.V001.FloorsFromLinkedRoomsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
+        Title="Floors From Linked Rooms"
+        Width="420" SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResize">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Revit26_Plugin;component/Shared/SharedStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+            <converters:IntToVisibilityConverter  x:Key="IntToVisibilityConverter"/>
+            <converters:LogLevelToColorConverter  x:Key="LogLevelToColorConverter"/>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Background="{StaticResource BrushSystemBackground}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Style="{StaticResource HeaderBar}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Floors From Linked Rooms" Style="{StaticResource HeaderTitle}"/>
+                    <TextBlock Text="Create floors from linked room boundaries" Style="{StaticResource HeaderSubtitle}"/>
+                </StackPanel>
+                <Border Grid.Column="1" Style="{StaticResource BadgePill}" VerticalAlignment="Center" Margin="0,0,8,0">
+                    <TextBlock Text="V001" Style="{StaticResource BadgeText}"/>
+                </Border>
+                <Button Grid.Column="2" Content="Close" Click="Close_Click"
+                        Style="{StaticResource DarkGhostButton}" VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="10">
+            <StackPanel>
+
+                <TextBlock Text="Loading linked files and floor types…" Style="{StaticResource HintText}"
+                           Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"
+                           Margin="0,0,0,8"/>
+
+                <!-- Linked file -->
+                <Border Style="{StaticResource SectionCard}" Padding="8,10">
+                    <StackPanel Margin="4,0">
+                        <TextBlock Text="Linked file" Style="{StaticResource FieldLabel}"/>
+                        <ComboBox ItemsSource="{Binding LinkedDocuments}"
+                                  SelectedItem="{Binding SelectedLinkedDocument}"
+                                  DisplayMemberPath="DisplayName"
+                                  Style="{StaticResource StandardComboBox}"/>
+
+                        <TextBlock Text="Link instance" Style="{StaticResource FieldLabel}" Margin="0,6,0,2"
+                                   Visibility="{Binding AvailableInstances.Count, Converter={StaticResource IntToVisibilityConverter}}"/>
+                        <ComboBox ItemsSource="{Binding AvailableInstances}"
+                                  SelectedItem="{Binding SelectedInstance}"
+                                  DisplayMemberPath="DisplayName"
+                                  Style="{StaticResource StandardComboBox}"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Rooms -->
+                <Border Style="{StaticResource SectionCard}" Padding="8,10">
+                    <StackPanel Margin="4,0">
+                        <TextBlock Style="{StaticResource FieldLabel}">
+                            <Run Text="Rooms at this level ("/>
+                            <Run Text="{Binding Rooms.Count, Mode=OneWay}"/>
+                            <Run Text=" found)"/>
+                        </TextBlock>
+
+                        <ListBox ItemsSource="{Binding Rooms}" MaxHeight="180"
+                                 Background="Transparent" BorderThickness="0"
+                                 ScrollViewer.CanContentScroll="True"
+                                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                 VirtualizingPanel.IsVirtualizing="True"
+                                 VirtualizingPanel.VirtualizationMode="Recycling">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,2">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected}" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding DisplayName}" Style="{StaticResource FieldValue}"
+                                                   FontSize="11.5" Margin="6,0" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="2" Style="{StaticResource HintText}" Margin="0" VerticalAlignment="Center">
+                                            <Run Text="{Binding AreaDisplay, StringFormat={}{0:0.0}}"/>
+                                            <Run Text=" "/>
+                                            <Run Text="{Binding AreaUnitSymbol}"/>
+                                        </TextBlock>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                            <Button Content="Select all" Command="{Binding SelectAllCommand}"
+                                    Style="{StaticResource SmallSecondaryButton}" Margin="0,0,6,0"/>
+                            <Button Content="Deselect all" Command="{Binding DeselectAllCommand}"
+                                    Style="{StaticResource SmallSecondaryButton}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Floor type -->
+                <Border Style="{StaticResource SectionCard}" Padding="8,10">
+                    <StackPanel Margin="4,0">
+                        <TextBlock Text="Floor type" Style="{StaticResource FieldLabel}"/>
+                        <ComboBox ItemsSource="{Binding FloorTypes}"
+                                  SelectedItem="{Binding SelectedFloorType}"
+                                  DisplayMemberPath="Name"
+                                  Style="{StaticResource StandardComboBox}"/>
+                    </StackPanel>
+                </Border>
+
+                <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="0" Content="Create floors" Command="{Binding RunCommand}"
+                            Style="{StaticResource PrimaryButton}" Margin="0,0,6,0"/>
+                    <Button Grid.Column="1" Content="Cancel" Command="{Binding CancelCommand}"
+                            Style="{StaticResource OutlineButton}"
+                            Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                </Grid>
+
+                <ProgressBar Height="6" Margin="0,0,0,4" IsIndeterminate="False"
+                             Minimum="0" Maximum="{Binding TotalCount}" Value="{Binding ProcessedCount, Mode=OneWay}"
+                             Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                <TextBlock Text="{Binding ProgressText}" Style="{StaticResource HintText}" Margin="0,0,0,8"
+                           Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="{Binding SummaryText}" Style="{StaticResource HintText}"
+                               Visibility="{Binding HasSummary, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                    <Button Grid.Column="1" Content="Copy summary" Command="{Binding CopySummaryCommand}"
+                            Style="{StaticResource SmallSecondaryButton}"
+                            Visibility="{Binding HasSummary, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                </Grid>
+
+                <TextBlock Text="{Binding ToastMessage}" Style="{StaticResource HintText}" Margin="0,0,0,8"
+                           Foreground="{StaticResource BrushSuccess}"
+                           Visibility="{Binding HasToast, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                <!-- Log panel -->
+                <Border Background="{StaticResource BrushLogBg}" CornerRadius="10" Padding="10,8">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Log" Foreground="{StaticResource BrushLogText}"
+                                       FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <Button Content="Copy all" Command="{Binding CopyAllLogsCommand}"
+                                        Style="{StaticResource DarkGhostButton}" Margin="0,0,4,0"/>
+                                <Button x:Name="CopySelectedButton" Content="Copy selected" Click="CopySelected_Click"
+                                        Style="{StaticResource DarkGhostButton}" Margin="0,0,4,0"/>
+                                <Button Content="Export" Command="{Binding ExportLogsCommand}"
+                                        Style="{StaticResource DarkGhostButton}" Margin="0,0,4,0"/>
+                                <Button Content="Clear" Command="{Binding ClearLogsCommand}"
+                                        Style="{StaticResource DarkGhostButton}"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <ListBox x:Name="LogListBox" ItemsSource="{Binding Logs}" MaxHeight="160" Margin="0,6,0,0"
+                                 Background="Transparent" BorderThickness="0"
+                                 SelectionMode="Extended"
+                                 ScrollViewer.CanContentScroll="True"
+                                 VirtualizingPanel.IsVirtualizing="True"
+                                 VirtualizingPanel.VirtualizationMode="Recycling">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock FontFamily="Consolas" FontSize="10" IsHitTestVisible="True">
+                                        <Run Text="{Binding Time, StringFormat=HH:mm:ss}" Foreground="{StaticResource BrushLogTextDim}"/>
+                                        <Run Text=" "/>
+                                        <Run Text="{Binding Level}" Foreground="{Binding Level, Converter={StaticResource LogLevelToColorConverter}}"/>
+                                        <Run Text=" "/>
+                                        <Run Text="{Binding Message}" Foreground="{StaticResource BrushLogText}"/>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

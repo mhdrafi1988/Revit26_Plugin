@@ -20,12 +20,11 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             //SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint_05", "AutoSlopeByPoint_05", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint_05.Commands.AutoSlopeCommand"));
             //SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint_06", "AutoSlopeByPoint_06_New Dijkstra", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.V06.Commands.AutoSlopeCommand"));
-            SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint_009", "AutoSlopeByPoint_009_old Dijkstra", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.V009.Commands.AutoSlopeCommand"));
-            SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint_010", "AutoSlopeByPoint_010_New Dijkstra", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.V010.Commands.AutoSlopeCommand"));
-            SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint_011", "AutoSlopeByPoint_011_New Dijkstra ###", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.V011.Commands.AutoSlopeCommand"));
-            SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint_012", "AutoSlopeByPoint_012_New Dijkstra ###", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.V012.Commands.AutoSlopeCommand"));
-            SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint_016", "AutoSlopeByPoint_016_New Dijkstra ###", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.V016.Commands.AutoSlopeCommand"));
-            SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint_017", "AutoSlopeByPoint_017_New Dijkstra ###", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.V017.Commands.AutoSlopeCommand"));
+            SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint_009", "AutoSlopeByPoint_009_old Dijkstra", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.V009.Commands.AutoSlopeCommand"));           
+            SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint_011", "AutoSlopeByPoint_011_New Dijkstra ###", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.V011.Commands.AutoSlopeCommand"));            
+            SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint_018", "AutoSlopeByPoint_018_New Dijkstra ###", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.V018.Commands.AutoSlopeCommand"));
+            SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint.WithRidge V001", "AutoSlopeByPoint With Ridge V001", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.WithRidge.Commands.AutoSlopeCommand"));
+
 
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint", "AutoSlopeByPoint_00_00(Classic)", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.Commands.AutoSlopeCommand"));
             //SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint_04", "AutoSlope(ByPoint)00_04_Excel(Classic)", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint_04.Commands.AutoSlopeCommand"));
