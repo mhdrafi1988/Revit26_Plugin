@@ -77,6 +77,19 @@ namespace Revit26_Plugin.Shared.Models
     }
 
     /// <summary>
+    /// Converts a value to bool by comparing its string representation to ConverterParameter.
+    /// Used for radio-button groups bound to a single string property (e.g. Grouping mode).
+    /// </summary>
+    public class StringEqualsConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            => value?.ToString() == parameter?.ToString();
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => (value is bool b && b) ? parameter : Binding.DoNothing;
+    }
+
+    /// <summary>
     /// Maps LogLevel to a colored brush for log display.
     /// INFO → cyan, WARNING → orange, ERROR → red, SUCCESS → green.
     /// </summary>

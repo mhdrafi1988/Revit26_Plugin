@@ -25,6 +25,7 @@ namespace Revit26_Plugin.Menu.Ribbon
            // ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_V320_01", "AutoPlaceSectionsCommand_V320_01  #", assemblyPath, "Revit26_Plugin.APUS_V320_01.Commands.AutoPlaceSectionsCommand"));
             ViewPlace.AddPushButton(new PushButtonData("Btn_AutoPlaceSectionsCommand_V321_01", "AutoPlaceSectionsCommand_V321_01 ##", assemblyPath, "Revit26_Plugin.APUS_V321_01.Commands.AutoPlaceSectionsCommand"));
             ViewPlace.AddPushButton(new PushButtonData("Btn_CalloutCOP", "Call Out PLacing Auto V06 #", assemblyPath, "Revit26_Plugin.CalloutCOP_V06.Commands.CalloutCOPCommand"));
+            
 
 
             ViewPlace.AddPushButton(new PushButtonData("Btn_CalloutCOP_V007", "Call Out PLacing Auto V007 ###", assemblyPath, "Revit26_Plugin.CalloutCOP_V007.Commands.CalloutAutoPlacer"));
@@ -36,7 +37,12 @@ namespace Revit26_Plugin.Menu.Ribbon
 
 
             ViewPlace.AddPushButton(new PushButtonData("Btn_RoofDrainCalloutPlacing.V001", "RoofDrainCalloutPlacing V001 #", assemblyPath, "Revit26_Plugin.RoofDrainCalloutPlacing.V001.Commands.RoofDrainCalloutPlacingCommand"));
-            
+
+            ViewPlace.AddPushButton(new PushButtonData("Btn_ViewSheetPlacer", "ViewSheetPlacer*** #", assemblyPath, "Revit26_Plugin.Tools.ViewSheetPlacer.ViewSheetPlacerCommand"));
+            ViewPlace.AddPushButton(new PushButtonData("Btn_PlanFromScopeBox", "PlanFromScopeBox *** #", assemblyPath, "Revit26_Plugin.PlanFromScopeBox.V001.Commands.PlanFromScopeBoxCommand"));
+            ViewPlace.AddPushButton(new PushButtonData("Btn_RefSectionHeadPlacerCommand V001", "RefSectionHeadPlacerCommand V001 *** #", assemblyPath, "Revit26_Plugin.RefSectionHeadPlacer.V001.Commands.RefSectionHeadPlacerCommand"));
+            ViewPlace.AddPushButton(new PushButtonData("Btn_RefSectionHeadPlacerCommand V002", "RefSectionHeadPlacerCommand V002 *** #", assemblyPath, "Revit26_Plugin.RefSectionHeadPlacer.V002.Commands.RefSectionHeadPlacerCommand"));
+
 
             //Rename Sections Menu
             PulldownButton ViewRename = panel.AddItem(new PulldownButtonData("Rename", "Rename")) as PulldownButton;

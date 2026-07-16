@@ -44,7 +44,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             PulldownButton ShapepointMenu = panel.AddItem(new PulldownButtonData("ShapepointMenu", "Shape Points")) as PulldownButton;
             ShapepointMenu.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Shapepoints32.png");
 
-            //ShapepointMenu.AddPushButton(new PushButtonData("Btn_ADivideInnerLoops_V001", "Divide Inner Loops(Basic)", assemblyPath, "Revit22_Plugin.PDCV1.Commands.RoofLoopAnalyzerCommand_01"));//Working
+            //ShapepointMenu.AddPushButton(new PushButtonData("Btn_ADivideInn erLoops_V001", "Divide Inner Loops(Basic)", assemblyPath, "Revit22_Plugin.PDCV1.Commands.RoofLoopAnalyzerCommand_01"));//Working 
             //ShapepointMenu.AddPushButton(new PushButtonData("Btn_ADivideInnerLoops_V004", "Divide Inner Loops   V004", assemblyPath, "Revit26_Plugin.DivideInnerLoops.V004.RoofLoopAnalyzerCommand"));//Working
             ShapepointMenu.AddPushButton(new PushButtonData("Btn_ADivideInnerLoops_V006", "Divide Inner Loops   V006", assemblyPath, "Revit26_Plugin.DivideInnerLoops.V006.RoofLoopAnalyzerCommand"));//Working
 
@@ -70,8 +70,10 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             PulldownButton LineAndPoint = panel.AddItem(new PulldownButtonData("LineAndPointMenu", "Line & PointMenu")) as PulldownButton;
             LineAndPoint.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Linematch32.png");
-                        
+
             LineAndPoint.AddPushButton(new PushButtonData("Btn_RoofRidgeLines_V56", "Auto Ridger(Multiple Shapes)56(By Point)", assemblyPath, "Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V56.Commands.RoofRidgeCommand"));//Working
+            LineAndPoint.AddPushButton(new PushButtonData("Btn_RoofRidgeLines_V57", "Auto Ridger(Multiple Shapes)57(By Point)", assemblyPath, "Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.Commands.RoofRidgeCommand"));//Working
+
             LineAndPoint.AddPushButton(new PushButtonData("Btn_RoofRidgeLines_V60", "Auto Ridger(Multiple Shapes)60(By Shape)", assemblyPath, "Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V60.Commands.RoofRidgeCommand"));//Working
             LineAndPoint.AddPushButton(new PushButtonData("Btn_RoofRidgeLines_V62", "Auto Ridger(Multiple Shapes)62(By Shape)", assemblyPath, "Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V62.Commands.RoofRidgeCommand"));//Working
             LineAndPoint.AddPushButton(new PushButtonData("Btn_RoofRidgeLines_V64", "Auto Ridger(Multiple Shapes)64(By Shape)", assemblyPath, "Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V64.Commands.RoofRidgeCommand"));//Working
