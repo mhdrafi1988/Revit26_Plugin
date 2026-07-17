@@ -18,12 +18,12 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             //Floor From Room
 
-            Create.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint_05", "RoomToRoofOrFloor.V001", assemblyPath, "Revit26_Plugin.RoomToRoofOrFloor.V001.Commands.RoomToRoofOrFloor"));
-            Create.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint_07", "FloorsFromLinkedRoomsViaPlanView.V001", assemblyPath, "Revit26_Plugin.FloorsFromLinkedRoomsViaPlanView.V001.Command"));
-            Create.AddPushButton(new PushButtonData("Btn_FloorsAndRoofFromLinkedRoomsViaPlanViewV003", "FloorsAndRoofFromLinkedRoomsViaPlanView.V003", assemblyPath, "Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V003.Command"));
-            Create.AddPushButton(new PushButtonData("Btn_RoomToRoofff ", "RoomToRoof", assemblyPath, "Revit26_Plugin.RoomToRoof.RoomToRoofCommand"));
 
-           
+            Create.AddPushButton(new PushButtonData("Btn_FloorsAndRoofFromLinkedRoomsViaPlanViewV003", "FloorsAndRoofFromLinkedRoomsViaPlanView.V003", assemblyPath, "Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V003.Command"));
+            Create.AddPushButton(new PushButtonData("Btn_FloorsAndRoofFromLinkedRooms.V004", "FloorsAndRoofFromLinkedRooms.V004", assemblyPath, "Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V004.Command"));
+
+
+
 
 
 
