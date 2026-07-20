@@ -54,8 +54,13 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V004
                 // skip rather than NRE on candidate.SelectedHostLevel.LevelElement.
                 if (candidate.SelectedHostLevel?.LevelElement == null)
                 {
-                    summary.UnmappedSkippedCount++;
-                    ViewModel.AddLog(LogLevel.Warning, $"{candidate.DisplayName} — skipped: no New Level mapped.");
+                    // Not counted into summary.UnmappedSkippedCount here — that field is
+                    // already seeded once from the ViewModel's pre-filter count (see
+                    // UnmappedSkippedCount property above). This branch is a defensive
+                    // fallback that should never fire in normal operation, so it's counted
+                    // as a failure instead to avoid double-counting the same room.
+                    summary.FailedCount++;
+                    ViewModel.AddLog(LogLevel.Warning, $"{candidate.DisplayName} — skipped unexpectedly: no New Level mapped (should have been filtered before run).");
                     processed++;
                     ViewModel.ReportProgress(processed);
                     continue;

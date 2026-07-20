@@ -3,7 +3,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Architecture;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.FloorsFromLinkedRoomsViaPlanView.V001
+namespace Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V003
 {
     /// <summary>A linked RVT document that contains at least one Room element.</summary>
     public class LinkedDocumentOption
@@ -53,12 +53,16 @@ namespace Revit26_Plugin.FloorsFromLinkedRoomsViaPlanView.V001
         public bool IsCancelled { get; set; }
     }
 
-    /// <summary>Everything the ExternalEvent handler needs to run one pass.</summary>
-    public class FloorRunRequest
+    public enum CreationMode { Floor, Roof }
+
+    /// <summary>Everything the ExternalEvent handler needs to run one pass — either
+    /// creating floors or creating roofs from the same selected room boundaries.</summary>
+    public class CreateRunRequest
     {
+        public CreationMode Mode { get; set; }
         public List<RoomCandidate> Rooms { get; set; }
         public Transform LinkTransform { get; set; }
-        public ElementId FloorTypeId { get; set; }
+        public ElementId TypeId { get; set; } // FloorType.Id or RoofType.Id depending on Mode
         public Level TargetLevel { get; set; }
         public CancelFlag Cancel { get; set; }
     }

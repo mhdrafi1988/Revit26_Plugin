@@ -4,7 +4,7 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 
-namespace Revit26_Plugin.FloorsFromLinkedRoomsViaPlanView.V001
+namespace Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V003
 {
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]
@@ -19,7 +19,7 @@ namespace Revit26_Plugin.FloorsFromLinkedRoomsViaPlanView.V001
             if (doc.ActiveView is not ViewPlan planView)
             {
                 TaskDialog.Show(
-                    "Floors From Linked Rooms",
+                    "Floors and Roofs From Linked Rooms",
                     "This tool only runs from a plan view. Open a floor plan and try again.");
                 return Result.Cancelled;
             }
@@ -27,12 +27,12 @@ namespace Revit26_Plugin.FloorsFromLinkedRoomsViaPlanView.V001
             if (planView.GenLevel == null)
             {
                 TaskDialog.Show(
-                    "Floors From Linked Rooms",
+                    "Floors and Roofs From Linked Rooms",
                     "This plan view has no associated level (e.g. an area plan or certain site/structural plans aren't supported). Open a standard floor plan and try again.");
                 return Result.Cancelled;
             }
 
-            var handler = new RunFloorsExternalEventHandler();
+            var handler = new RunCreateElementsExternalEventHandler();
             var externalEvent = ExternalEvent.Create(handler);
 
             var viewModel = new MainViewModel(doc, planView, handler, externalEvent);

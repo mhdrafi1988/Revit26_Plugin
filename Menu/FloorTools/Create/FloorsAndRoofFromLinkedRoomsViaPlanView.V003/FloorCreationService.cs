@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.FloorsFromLinkedRoomsViaPlanView.V001
+namespace Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V003
 {
     /// <summary>
     /// ASSUMPTION (flagged): uses the Revit 2022+ Floor.Create(document, profile, floorTypeId,

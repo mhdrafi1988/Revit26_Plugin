@@ -1,0 +1,374 @@
+<Window x:Class="Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V005.FloorsFromLinkedRoomsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
+        Title="Floors and Roofs From Linked Rooms"
+        Width="1180" Height="760" MinWidth="1180" MinHeight="760"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResize">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Revit26_Plugin;component/Shared/SharedStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+            <converters:IntToVisibilityConverter  x:Key="IntToVisibilityConverter"/>
+            <converters:LogLevelToColorConverter  x:Key="LogLevelToColorConverter"/>
+
+            <!-- V005: IsTextSearchEnabled is OFF — the jump-to-match behavior would fight
+                 the live substring filter implemented in code-behind
+                 (NewLevelCombo_TextChanged). Styling derives from SharedStyles only
+                 (DATAGRID SPEC item 7). -->
+            <Style x:Key="NewLevelComboStyle" TargetType="ComboBox" BasedOn="{StaticResource StandardComboBox}">
+                <Setter Property="IsEditable" Value="True"/>
+                <Setter Property="StaysOpenOnEdit" Value="True"/>
+                <Setter Property="IsTextSearchEnabled" Value="False"/>
+                <Setter Property="Height" Value="26"/>
+                <Setter Property="FontSize" Value="11.5"/>
+                <Setter Property="Padding" Value="6,2"/>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Background="{StaticResource BrushSystemBackground}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Style="{StaticResource HeaderBar}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Floors and Roofs From Linked Rooms" Style="{StaticResource HeaderTitle}"/>
+                    <TextBlock Text="Create floors and roofs from linked room boundaries — advanced level mapping" Style="{StaticResource HeaderSubtitle}"/>
+                </StackPanel>
+                <Border Grid.Column="1" Style="{StaticResource BadgePill}" VerticalAlignment="Center" Margin="0,0,8,0">
+                    <TextBlock Text="V005" Style="{StaticResource BadgeText}"/>
+                </Border>
+                <Button Grid.Column="2" Content="Close" Click="Close_Click"
+                        Style="{StaticResource DarkGhostButton}" VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+
+        <!-- Body: grid (left) + primary controls (right pane) -->
+        <Grid Grid.Row="1" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="300"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- LEFT: DataGrid area -->
+            <Grid Grid.Column="0" Margin="0,0,10,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Toolbar: filter + Select All/Clear/Refresh (DATAGRID SPEC item 1) -->
+                <Border Grid.Row="0" Style="{StaticResource BaseCard}" CornerRadius="10,10,0,0"
+                        BorderThickness="1,1,1,0" Padding="8,6">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Column="0" Style="{StaticResource StyledTextInput}"
+                                 Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,0,8,0"/>
+                        <Button Grid.Column="1" Content="Select All" Command="{Binding SelectAllCommand}"
+                                Style="{StaticResource SmallSecondaryButton}" Margin="0,0,4,0"/>
+                        <Button Grid.Column="2" Content="Clear" Command="{Binding DeselectAllCommand}"
+                                Style="{StaticResource SmallSecondaryButton}" Margin="0,0,4,0"/>
+                        <Button Grid.Column="3" Content="Refresh" Command="{Binding RefreshCommand}"
+                                Style="{StaticResource SmallSecondaryButton}" Margin="0,0,10,0"/>
+                        <TextBlock Grid.Column="4" Style="{StaticResource HintText}" Margin="0" VerticalAlignment="Center">
+                            <Run Text="{Binding FilteredRooms.Count, Mode=OneWay}"/>
+                            <Run Text=" rooms"/>
+                        </TextBlock>
+                    </Grid>
+                </Border>
+
+                <!-- DataGrid (DATAGRID SPEC items 2-6). Rounded bottom corners come from
+                     the wrapping Border (DataGrid has no CornerRadius). -->
+                <Border Grid.Row="1" CornerRadius="0,0,10,10" BorderThickness="1"
+                        BorderBrush="{StaticResource BrushCardBorder}" ClipToBounds="True">
+                    <DataGrid Style="{StaticResource StandardDataGrid}"
+                              ColumnHeaderStyle="{StaticResource StandardDataGridColumnHeader}"
+                              CellStyle="{StaticResource StandardDataGridCell}"
+                              RowStyle="{StaticResource StandardDataGridRow}"
+                              ItemsSource="{Binding FilteredRooms}"
+                              SelectedItem="{Binding SelectedRoom}"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              HeadersVisibility="Column"
+                              VirtualizingPanel.IsVirtualizing="True"
+                              VirtualizingPanel.VirtualizationMode="Recycling"
+                              BorderThickness="0">
+                    <DataGrid.Columns>
+
+                        <!-- Serial number -->
+                        <DataGridTextColumn Header="#" Binding="{Binding SerialNumber}"
+                                            Width="40" IsReadOnly="True">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                                    <Setter Property="Margin" Value="0,0,4,0"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
+                        <!-- Checkbox: centered, TwoWay, PreviewMouseLeftButtonDown blocks row-select
+                             cascade (DATAGRID SPEC item 2) -->
+                        <DataGridTemplateColumn Header="" Width="40" CanUserSort="False">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}"
+                                              HorizontalAlignment="Center" VerticalAlignment="Center"
+                                              PreviewMouseLeftButtonDown="RowCheckBox_PreviewMouseLeftButtonDown"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <!-- Room Name: left-align text, sortable -->
+                        <DataGridTextColumn Header="Room Name" Binding="{Binding RoomName}"
+                                            Width="*" MinWidth="140" IsReadOnly="True"/>
+
+                        <!-- Room Number: right-align numeric-style, sortable -->
+                        <DataGridTextColumn Header="Room Number" Binding="{Binding RoomNumber}"
+                                            Width="110" IsReadOnly="True">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                                    <Setter Property="Margin" Value="0,0,4,0"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                            <DataGridTextColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource StandardDataGridColumnHeader}">
+                                    <Setter Property="HorizontalContentAlignment" Value="Right"/>
+                                </Style>
+                            </DataGridTextColumn.HeaderStyle>
+                        </DataGridTextColumn>
+
+                        <!-- Linked File Level: read-only, shows match state via color -->
+                        <DataGridTemplateColumn Header="Linked File Level" Width="150" SortMemberPath="LinkedLevelName">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border CornerRadius="8" Padding="7,2" HorizontalAlignment="Left">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Background" Value="{StaticResource BrushSystemSecondaryBackground}"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsMapped}" Value="False">
+                                                        <Setter Property="Background" Value="#FBEAEA"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <TextBlock Text="{Binding LinkedLevelName}" FontSize="11" FontWeight="SemiBold">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Foreground" Value="{StaticResource BrushNavyPrimary}"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsMapped}" Value="False">
+                                                            <Setter Property="Foreground" Value="{StaticResource BrushDanger}"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Border>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <!-- New Level: V005 live substring-filter dropdown. ItemsSource is
+                             assigned in code-behind (NewLevelCombo_Loaded) as a per-combo
+                             ListCollectionView over HostLevels, so each row filters
+                             independently. SelectedItem stays TwoWay to the row VM. -->
+                        <DataGridTemplateColumn Header="New Level" Width="170" CanUserSort="False">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox SelectedItem="{Binding SelectedHostLevel, UpdateSourceTrigger=PropertyChanged}"
+                                              DisplayMemberPath="Name"
+                                              Loaded="NewLevelCombo_Loaded">
+                                        <ComboBox.Style>
+                                            <Style TargetType="ComboBox" BasedOn="{StaticResource NewLevelComboStyle}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsMapped}" Value="False">
+                                                        <Setter Property="BorderBrush" Value="{StaticResource BrushDanger}"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ComboBox.Style>
+                                    </ComboBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                    </DataGrid.Columns>
+                    </DataGrid>
+                </Border>
+
+                <!-- Log panel — under the DataGrid, ~3 log lines tall incl. header bar. -->
+                <Border Grid.Row="2" Background="{StaticResource BrushLogBg}" CornerRadius="10" Padding="10,8" Margin="0,8,0,0">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Log" Foreground="{StaticResource BrushLogText}"
+                                       FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <Button Content="Copy all" Command="{Binding CopyAllLogsCommand}"
+                                        Style="{StaticResource DarkGhostButton}" Margin="0,0,4,0"/>
+                                <Button x:Name="CopySelectedButton" Content="Copy sel." Click="CopySelected_Click"
+                                        Style="{StaticResource DarkGhostButton}" Margin="0,0,4,0"/>
+                                <Button Content="Export" Command="{Binding ExportLogsCommand}"
+                                        Style="{StaticResource DarkGhostButton}" Margin="0,0,4,0"/>
+                                <Button Content="Clear" Command="{Binding ClearLogsCommand}"
+                                        Style="{StaticResource DarkGhostButton}"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <ListBox x:Name="LogListBox" ItemsSource="{Binding Logs}" MaxHeight="60" Margin="0,6,0,0"
+                                 Background="Transparent" BorderThickness="0"
+                                 SelectionMode="Extended"
+                                 ScrollViewer.CanContentScroll="True"
+                                 VirtualizingPanel.IsVirtualizing="True"
+                                 VirtualizingPanel.VirtualizationMode="Recycling">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock FontFamily="Consolas" FontSize="9.5" IsHitTestVisible="True" TextWrapping="Wrap">
+                                        <Run Text="{Binding Time, StringFormat=HH:mm:ss, Mode=OneWay}" Foreground="{StaticResource BrushLogTextDim}"/>
+                                        <Run Text=" "/>
+                                        <Run Text="{Binding Level, Mode=OneWay}" Foreground="{Binding Level, Converter={StaticResource LogLevelToColorConverter}}"/>
+                                        <Run Text=" "/>
+                                        <Run Text="{Binding Message, Mode=OneWay}" Foreground="{StaticResource BrushLogText}"/>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- RIGHT: primary controls pane -->
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="Loading linked files and levels…" Style="{StaticResource HintText}"
+                           Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"
+                           Margin="0,0,0,8"/>
+
+                <!-- Linked file -->
+                <Border Grid.Row="1" Style="{StaticResource SectionCard}" Padding="8,10">
+                    <StackPanel Margin="4,0">
+                        <TextBlock Text="Linked file" Style="{StaticResource SectionTitle}" Margin="0,0,0,4"/>
+                        <TextBlock Text="Linked file" Style="{StaticResource FieldLabel}"/>
+                        <ComboBox ItemsSource="{Binding LinkedDocuments}"
+                                  SelectedItem="{Binding SelectedLinkedDocument}"
+                                  DisplayMemberPath="DisplayName"
+                                  Style="{StaticResource StandardComboBox}" Margin="0,0,0,6"/>
+
+                        <TextBlock Text="Link instance" Style="{StaticResource FieldLabel}" Margin="0,0,0,2"
+                                   Visibility="{Binding AvailableInstances.Count, Converter={StaticResource IntToVisibilityConverter}}"/>
+                        <ComboBox ItemsSource="{Binding AvailableInstances}"
+                                  SelectedItem="{Binding SelectedInstance}"
+                                  DisplayMemberPath="DisplayName"
+                                  Style="{StaticResource StandardComboBox}"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Floor type + Create floors / Roof type + Create roof.
+                     V005: explicit IsEnabled bindings removed — CanExecute on the
+                     commands already disables the buttons while IsBusy (the two were
+                     redundant and could fight each other). -->
+                <Border Grid.Row="2" Style="{StaticResource SectionCard}" Padding="8,10">
+                    <StackPanel Margin="4,0">
+                        <TextBlock Text="Creation" Style="{StaticResource SectionTitle}" Margin="0,0,0,4"/>
+                        <TextBlock Text="Floor type" Style="{StaticResource FieldLabel}"/>
+                        <ComboBox ItemsSource="{Binding FloorTypes}"
+                                  SelectedItem="{Binding SelectedFloorType}"
+                                  DisplayMemberPath="Name"
+                                  Style="{StaticResource StandardComboBox}" Margin="0,0,0,6"/>
+                        <Button Content="Create Floors" Command="{Binding RunFloorCommand}"
+                                Style="{StaticResource PrimaryButton}"/>
+
+                        <TextBlock Text="Roof type" Style="{StaticResource FieldLabel}" Margin="0,10,0,0"/>
+                        <ComboBox ItemsSource="{Binding RoofTypes}"
+                                  SelectedItem="{Binding SelectedRoofType}"
+                                  DisplayMemberPath="Name"
+                                  Style="{StaticResource StandardComboBox}" Margin="0,0,0,6"/>
+                        <Button Content="Create Roof" Command="{Binding RunRoofCommand}"
+                                Style="{StaticResource AccentButton}"/>
+
+                        <TextBlock Style="{StaticResource HintText}" Margin="0,8,0,0"
+                                   Text="Each selected room uses its own New Level mapping from the grid as the target level for creation. Unmapped rooms are skipped."/>
+                    </StackPanel>
+                </Border>
+
+                <Button Grid.Row="3" Content="Cancel Run" Command="{Binding CancelCommand}"
+                        Style="{StaticResource OutlineButton}" Margin="0,0,0,4"
+                        Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                <StackPanel Grid.Row="4" Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <ProgressBar Height="6" Margin="0,0,0,4" IsIndeterminate="False"
+                                 Minimum="0" Maximum="{Binding TotalCount}" Value="{Binding ProcessedCount, Mode=OneWay}"/>
+                    <TextBlock Text="{Binding ProgressText}" Style="{StaticResource HintText}" Margin="0,0,0,8"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="5">
+                    <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{Binding FloorSummaryText}" Style="{StaticResource HintText}"
+                                   Visibility="{Binding HasFloorSummary, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                        <Button Grid.Column="1" Content="Copy" Command="{Binding CopyFloorSummaryCommand}"
+                                Style="{StaticResource SmallSecondaryButton}"
+                                Visibility="{Binding HasFloorSummary, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                    </Grid>
+
+                    <Grid Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{Binding RoofSummaryText}" Style="{StaticResource HintText}"
+                                   Visibility="{Binding HasRoofSummary, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                        <Button Grid.Column="1" Content="Copy" Command="{Binding CopyRoofSummaryCommand}"
+                                Style="{StaticResource SmallSecondaryButton}"
+                                Visibility="{Binding HasRoofSummary, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                    </Grid>
+
+                    <TextBlock Text="{Binding ToastMessage}" Style="{StaticResource HintText}" Margin="0,0,0,8"
+                               Foreground="{StaticResource BrushSuccess}"
+                               Visibility="{Binding HasToast, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                </StackPanel>
+
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

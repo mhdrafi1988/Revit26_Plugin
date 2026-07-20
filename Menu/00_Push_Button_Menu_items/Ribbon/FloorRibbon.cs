@@ -21,6 +21,8 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             Create.AddPushButton(new PushButtonData("Btn_FloorsAndRoofFromLinkedRoomsViaPlanViewV003", "FloorsAndRoofFromLinkedRoomsViaPlanView.V003", assemblyPath, "Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V003.Command"));
             Create.AddPushButton(new PushButtonData("Btn_FloorsAndRoofFromLinkedRooms.V004", "FloorsAndRoofFromLinkedRooms.V004", assemblyPath, "Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V004.Command"));
+            Create.AddPushButton(new PushButtonData("Btn_FloorsAndRoofFromLinkedRooms.V005", "FloorsAndRoofFromLinkedRooms.V005", assemblyPath, "Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V005.Command"));
+            Create.AddPushButton(new PushButtonData("Btn_RoofCreateTest.V001", "RoofCreateTest.V001", assemblyPath, "Revit26_Plugin.RoofCreateTest.V001.RoofCreateTestCommand"));
 
 
 

@@ -3,7 +3,7 @@ using System.Linq;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Architecture;
 
-namespace Revit26_Plugin.FloorsFromLinkedRoomsViaPlanView.V001
+namespace Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V003
 {
     /// <summary>
     /// ASSUMPTION (flagged, not silently applied): elevation overlap is checked using only

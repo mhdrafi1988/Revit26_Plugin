@@ -4,12 +4,15 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.Shared.Models;
 
-namespace Revit26_Plugin.FloorsFromLinkedRoomsViaPlanView.V001
+namespace Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V003
 {
-    public class RunFloorsExternalEventHandler : IExternalEventHandler
+    /// <summary>Runs either a floor-creation pass or a roof-creation pass, depending on
+    /// which button the ViewModel set on CreateRunRequest.Mode. Same per-room
+    /// dedupe/trim/validate boundary logic feeds both.</summary>
+    public class RunCreateElementsExternalEventHandler : IExternalEventHandler
     {
         public MainViewModel ViewModel { get; set; }
-        public FloorRunRequest PendingRequest { get; set; }
+        public CreateRunRequest PendingRequest { get; set; }
 
         public void Execute(UIApplication app)
         {
@@ -17,10 +20,13 @@ namespace Revit26_Plugin.FloorsFromLinkedRoomsViaPlanView.V001
             var request = PendingRequest;
             if (request == null) return;
 
+            bool isRoof = request.Mode == CreationMode.Roof;
+            string verb = isRoof ? "roof" : "floor";
+
             var summary = new RunSummary();
             bool wasCancelled = false;
 
-            using var tx = new Transaction(doc, "Create floors from linked rooms");
+            using var tx = new Transaction(doc, isRoof ? "Create roofs from linked rooms" : "Create floors from linked rooms");
             var failureOptions = tx.GetFailureHandlingOptions();
             failureOptions.SetFailuresPreprocessor(new FloorFailuresPreprocessor());
             tx.SetFailureHandlingOptions(failureOptions);
@@ -52,7 +58,12 @@ namespace Revit26_Plugin.FloorsFromLinkedRoomsViaPlanView.V001
                     }
 
                     doc.Regenerate();
-                    FloorCreationService.Create(doc, boundary.Loops, request.FloorTypeId, request.TargetLevel);
+
+                    if (isRoof)
+                        RoofCreationService.Create(doc, boundary.Loops[0], request.TypeId, request.TargetLevel);
+                    else
+                        FloorCreationService.Create(doc, boundary.Loops, request.TypeId, request.TargetLevel);
+
                     doc.Regenerate();
 
                     subTx.Commit();
@@ -61,14 +72,23 @@ namespace Revit26_Plugin.FloorsFromLinkedRoomsViaPlanView.V001
                     if (boundary.WasTrimmedOrFixed)
                     {
                         summary.TrimmedFixedCount++;
-                        ViewModel.AddLog(LogLevel.Warning, $"{candidate.DisplayName} — floor created (boundary trimmed/fixed)");
+                        ViewModel.AddLog(LogLevel.Warning, $"{candidate.DisplayName} — {verb} created (boundary trimmed/fixed)");
                     }
                     else
                     {
-                        ViewModel.AddLog(LogLevel.Success, $"{candidate.DisplayName} — floor created");
+                        ViewModel.AddLog(LogLevel.Success, $"{candidate.DisplayName} — {verb} created");
                     }
 
-                    if (boundary.InnerLoopsSkipped > 0)
+                    if (isRoof && boundary.Loops.Count > 1)
+                    {
+                        // Roofs only ever get the outer loop (see RoofCreationService) — every
+                        // inner loop present counts as skipped here, unlike floors.
+                        int skipped = boundary.Loops.Count - 1;
+                        summary.InnerLoopsSkippedCount += skipped;
+                        ViewModel.AddLog(LogLevel.Warning,
+                            $"{candidate.DisplayName} — {skipped} inner loop(s) not supported for roofs, outer boundary used");
+                    }
+                    else if (boundary.InnerLoopsSkipped > 0)
                     {
                         summary.InnerLoopsSkippedCount += boundary.InnerLoopsSkipped;
                         ViewModel.AddLog(LogLevel.Warning,
@@ -87,9 +107,6 @@ namespace Revit26_Plugin.FloorsFromLinkedRoomsViaPlanView.V001
                 processed++;
                 ViewModel.ReportProgress(processed);
 
-                // Pumps the dispatcher so the progress bar / status text actually repaint
-                // between rooms — Execute() runs synchronously on the UI thread otherwise,
-                // and WPF won't render until it returns. Standard, if slightly hacky, fix.
                 System.Windows.Application.Current?.Dispatcher.Invoke(
                     DispatcherPriority.Background, new Action(() => { }));
             }
@@ -103,9 +120,9 @@ namespace Revit26_Plugin.FloorsFromLinkedRoomsViaPlanView.V001
                     "Check the model for overlapping or invalid geometry and try again.");
             }
 
-            ViewModel.OnRunComplete(summary, wasCancelled);
+            ViewModel.OnRunComplete(request.Mode, summary, wasCancelled);
         }
 
-        public string GetName() => "Floors From Linked Rooms — run handler";
+        public string GetName() => "Floors and Roofs From Linked Rooms — run handler";
     }
 }

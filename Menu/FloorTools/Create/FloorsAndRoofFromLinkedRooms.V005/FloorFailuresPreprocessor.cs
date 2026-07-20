@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.FloorsFromLinkedRoomsViaPlanView.V001
+namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V005
 {
     /// <summary>
-    /// ASSUMPTION (flagged): the GUID list below is a starting point copied from similar
-    /// slab/floor-creation tools in the suite. Confirm the actual warning GUIDs you see
-    /// during testing on a real model before relying on this — wrong GUIDs mean warnings
-    /// you actually want to see could get silently deleted.
+    /// ASSUMPTION (flagged, carried from V004, kept as-is per confirmed spec): the GUID
+    /// list below is a starting point copied from similar slab/floor-creation tools in
+    /// the suite. Confirm the actual warning GUIDs you see during testing on a real model
+    /// before relying on this — wrong GUIDs mean warnings you actually want to see could
+    /// get silently deleted.
     /// </summary>
     public class FloorFailuresPreprocessor : IFailuresPreprocessor
     {

@@ -11,13 +11,13 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Revit26_Plugin.Shared.Models;
 
-namespace Revit26_Plugin.FloorsFromLinkedRoomsViaPlanView.V001
+namespace Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V003
 {
     public partial class MainViewModel : ObservableObject
     {
         private readonly Document _hostDoc;
         private readonly ViewPlan _planView;
-        private readonly RunFloorsExternalEventHandler _handler;
+        private readonly RunCreateElementsExternalEventHandler _handler;
         private readonly ExternalEvent _externalEvent;
         private readonly Level _activeLevel;
         private readonly CancelFlag _cancelFlag = new();
@@ -26,29 +26,42 @@ namespace Revit26_Plugin.FloorsFromLinkedRoomsViaPlanView.V001
         public ObservableCollection<LinkInstanceOption> AvailableInstances { get; } = new();
         public ObservableCollection<RoomCandidate> Rooms { get; } = new();
         public ObservableCollection<FloorType> FloorTypes { get; } = new();
+        public ObservableCollection<RoofType> RoofTypes { get; } = new();
         public ObservableCollection<LogEntry> Logs { get; } = new();
 
         [ObservableProperty] private LinkedDocumentOption selectedLinkedDocument;
+
         [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(RunCommand))]
+        [NotifyCanExecuteChangedFor(nameof(RunFloorCommand))]
+        [NotifyCanExecuteChangedFor(nameof(RunRoofCommand))]
         private LinkInstanceOption selectedInstance;
+
         [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(RunCommand))]
+        [NotifyCanExecuteChangedFor(nameof(RunFloorCommand))]
         private FloorType selectedFloorType;
+
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(RunRoofCommand))]
+        private RoofType selectedRoofType;
+
         [ObservableProperty] private bool isBusy;
         [ObservableProperty] private bool isLoading;
-        [ObservableProperty] private string summaryText = "";
+        [ObservableProperty] private string floorSummaryText = "";
+        [ObservableProperty] private string roofSummaryText = "";
         [ObservableProperty] private string toastMessage = "";
-        public bool HasSummary => !string.IsNullOrEmpty(SummaryText);
+        public bool HasFloorSummary => !string.IsNullOrEmpty(FloorSummaryText);
+        public bool HasRoofSummary => !string.IsNullOrEmpty(RoofSummaryText);
         public bool HasToast => !string.IsNullOrEmpty(ToastMessage);
 
-        partial void OnSummaryTextChanged(string value) => OnPropertyChanged(nameof(HasSummary));
+        partial void OnFloorSummaryTextChanged(string value) => OnPropertyChanged(nameof(HasFloorSummary));
+        partial void OnRoofSummaryTextChanged(string value) => OnPropertyChanged(nameof(HasRoofSummary));
         partial void OnToastMessageChanged(string value) => OnPropertyChanged(nameof(HasToast));
+
         [ObservableProperty] private int totalCount;
         [ObservableProperty] private int processedCount;
         [ObservableProperty] private string progressText = "";
 
-        public MainViewModel(Document hostDoc, ViewPlan planView, RunFloorsExternalEventHandler handler, ExternalEvent externalEvent)
+        public MainViewModel(Document hostDoc, ViewPlan planView, RunCreateElementsExternalEventHandler handler, ExternalEvent externalEvent)
         {
             _hostDoc = hostDoc;
             _planView = planView;
@@ -63,6 +76,7 @@ namespace Revit26_Plugin.FloorsFromLinkedRoomsViaPlanView.V001
             IsLoading = true;
             LoadLinkedDocuments();
             LoadFloorTypes();
+            LoadRoofTypes();
             IsLoading = false;
         }
 
@@ -85,6 +99,17 @@ namespace Revit26_Plugin.FloorsFromLinkedRoomsViaPlanView.V001
 
             foreach (var t in types) FloorTypes.Add(t);
             SelectedFloorType = FloorTypes.FirstOrDefault();
+        }
+
+        private void LoadRoofTypes()
+        {
+            var types = new FilteredElementCollector(_hostDoc)
+                .OfClass(typeof(RoofType))
+                .Cast<RoofType>()
+                .OrderBy(t => t.Name);
+
+            foreach (var t in types) RoofTypes.Add(t);
+            SelectedRoofType = RoofTypes.FirstOrDefault();
         }
 
         partial void OnSelectedLinkedDocumentChanged(LinkedDocumentOption value)
@@ -119,8 +144,9 @@ namespace Revit26_Plugin.FloorsFromLinkedRoomsViaPlanView.V001
 
         private void RoomCandidate_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(RoomCandidate.IsSelected))
-                RunCommand.NotifyCanExecuteChanged();
+            if (e.PropertyName != nameof(RoomCandidate.IsSelected)) return;
+            RunFloorCommand.NotifyCanExecuteChanged();
+            RunRoofCommand.NotifyCanExecuteChanged();
         }
 
         [RelayCommand]
@@ -129,11 +155,19 @@ namespace Revit26_Plugin.FloorsFromLinkedRoomsViaPlanView.V001
         [RelayCommand]
         private void DeselectAll() { foreach (var r in Rooms) r.IsSelected = false; }
 
-        private bool CanRun() => !IsBusy && SelectedInstance != null && SelectedFloorType != null
+        private bool CanRunFloor() => !IsBusy && SelectedInstance != null && SelectedFloorType != null
             && Rooms.Any(r => r.IsSelected);
 
-        [RelayCommand(CanExecute = nameof(CanRun))]
-        private void Run()
+        private bool CanRunRoof() => !IsBusy && SelectedInstance != null && SelectedRoofType != null
+            && Rooms.Any(r => r.IsSelected);
+
+        [RelayCommand(CanExecute = nameof(CanRunFloor))]
+        private void RunFloor() => StartRun(CreationMode.Floor, SelectedFloorType.Id);
+
+        [RelayCommand(CanExecute = nameof(CanRunRoof))]
+        private void RunRoof() => StartRun(CreationMode.Roof, SelectedRoofType.Id);
+
+        private void StartRun(CreationMode mode, ElementId typeId)
         {
             IsBusy = true;
             _cancelFlag.IsCancelled = false;
@@ -143,11 +177,12 @@ namespace Revit26_Plugin.FloorsFromLinkedRoomsViaPlanView.V001
             ProcessedCount = 0;
             ProgressText = $"Processing 0 of {TotalCount}";
 
-            _handler.PendingRequest = new FloorRunRequest
+            _handler.PendingRequest = new CreateRunRequest
             {
+                Mode = mode,
                 Rooms = selected,
                 LinkTransform = SelectedInstance.Transform,
-                FloorTypeId = SelectedFloorType.Id,
+                TypeId = typeId,
                 TargetLevel = _activeLevel,
                 Cancel = _cancelFlag
             };
@@ -170,13 +205,19 @@ namespace Revit26_Plugin.FloorsFromLinkedRoomsViaPlanView.V001
             ProgressText = $"Processing {processed} of {TotalCount}";
         }
 
-        public void OnRunComplete(RunSummary summary, bool wasCancelled)
+        public void OnRunComplete(CreationMode mode, RunSummary summary, bool wasCancelled)
         {
             IsBusy = false;
             ProgressText = wasCancelled ? "Cancelled" : "Completed";
-            SummaryText = $"success {summary.SuccessCount} | trimmed/fixed {summary.TrimmedFixedCount} | "
+
+            string text = $"success {summary.SuccessCount} | trimmed/fixed {summary.TrimmedFixedCount} | "
                 + $"failed {summary.FailedCount} | inner loops skipped {summary.InnerLoopsSkippedCount}";
-            RunCommand.NotifyCanExecuteChanged();
+
+            if (mode == CreationMode.Floor) FloorSummaryText = text;
+            else RoofSummaryText = text;
+
+            RunFloorCommand.NotifyCanExecuteChanged();
+            RunRoofCommand.NotifyCanExecuteChanged();
             CancelCommand.NotifyCanExecuteChanged();
         }
 
@@ -185,16 +226,24 @@ namespace Revit26_Plugin.FloorsFromLinkedRoomsViaPlanView.V001
         /// handler since it runs on the same thread as the Revit UI.</summary>
         public void ShowCriticalError(string reason)
         {
-            TaskDialog.Show("Floors From Linked Rooms",
+            TaskDialog.Show("Floors and Roofs From Linked Rooms",
                 $"The operation could not complete cleanly.\n\n{reason}");
         }
 
         [RelayCommand]
-        private void CopySummary()
+        private void CopyFloorSummary()
         {
-            if (!HasSummary) return;
-            Clipboard.SetText(SummaryText);
-            ShowToast("Summary copied to clipboard");
+            if (!HasFloorSummary) return;
+            Clipboard.SetText(FloorSummaryText);
+            ShowToast("Floor summary copied to clipboard");
+        }
+
+        [RelayCommand]
+        private void CopyRoofSummary()
+        {
+            if (!HasRoofSummary) return;
+            Clipboard.SetText(RoofSummaryText);
+            ShowToast("Roof summary copied to clipboard");
         }
 
         [RelayCommand]
@@ -207,7 +256,7 @@ namespace Revit26_Plugin.FloorsFromLinkedRoomsViaPlanView.V001
         }
 
         /// <summary>Called from code-behind after Copy Selected too, so both copy paths
-        /// give the same feedback (fix #19).</summary>
+        /// give the same feedback.</summary>
         public void ShowToast(string message)
         {
             ToastMessage = message;
@@ -220,7 +269,7 @@ namespace Revit26_Plugin.FloorsFromLinkedRoomsViaPlanView.V001
         private void ClearLogs()
         {
             if (Logs.Count == 0) return;
-            var result = MessageBox.Show("Clear all logs?", "Floors From Linked Rooms",
+            var result = MessageBox.Show("Clear all logs?", "Floors and Roofs From Linked Rooms",
                 MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result == MessageBoxResult.Yes) Logs.Clear();
         }
@@ -231,14 +280,15 @@ namespace Revit26_Plugin.FloorsFromLinkedRoomsViaPlanView.V001
             var dialog = new SaveFileDialog
             {
                 Filter = "Text file (*.txt)|*.txt",
-                FileName = $"FloorsFromLinkedRoomsViaPlanView_Logs_{DateTime.Now:yyyy-MM-dd_HH-mm}.txt"
+                FileName = $"FloorsAndRoofFromLinkedRoomsViaPlanView_Logs_{DateTime.Now:yyyy-MM-dd_HH-mm}.txt"
             };
             if (dialog.ShowDialog() != true) return;
 
             var sb = new StringBuilder();
             foreach (var l in Logs) sb.AppendLine(l.ToString());
             sb.AppendLine();
-            sb.AppendLine(SummaryText);
+            if (HasFloorSummary) sb.AppendLine("Floor run: " + FloorSummaryText);
+            if (HasRoofSummary) sb.AppendLine("Roof run: " + RoofSummaryText);
 
             File.WriteAllText(dialog.FileName, sb.ToString());
         }

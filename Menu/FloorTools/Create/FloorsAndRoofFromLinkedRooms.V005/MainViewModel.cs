@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -12,7 +13,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Revit26_Plugin.Shared.Models;
 
-namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V004
+namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V005
 {
     public partial class MainViewModel : ObservableObject
     {
@@ -20,6 +21,7 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V004
         private readonly RunCreateElementsExternalEventHandler _handler;
         private readonly ExternalEvent _externalEvent;
         private readonly CancelFlag _cancelFlag = new();
+        private readonly ToolSettings _settings;
 
         public ObservableCollection<LinkedDocumentOption> LinkedDocuments { get; } = new();
         public ObservableCollection<LinkInstanceOption> AvailableInstances { get; } = new();
@@ -74,15 +76,23 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V004
             _handler = handler;
             _externalEvent = externalEvent;
 
-            // NOTE (fix #10, carried from V003): Revit's API is not thread-safe outside the
-            // API execution context, so this can't be pushed onto a background Task — genuine
-            // async loading isn't available here. IsLoading at least gives the user a visible
-            // "working" state instead of the window silently freezing during the scan.
+            // NOTE (carried from V004): Revit's API is not thread-safe outside the API
+            // execution context, so this can't be pushed onto a background Task. IsLoading
+            // gives the user a visible "working" state during the scan.
             IsLoading = true;
+
+            _settings = SettingsService.Load(out string settingsMsg);
+            AddLog(LogLevel.Info, settingsMsg);
+
             LoadHostLevels();
             LoadLinkedDocuments();
             LoadFloorTypes();
             LoadRoofTypes();
+
+            // V005: first link (or the one restored from settings) is selected by
+            // default, which cascades to first instance -> rooms auto-load.
+            ApplyDefaultLinkSelection();
+
             IsLoading = false;
         }
 
@@ -92,6 +102,7 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V004
             foreach (var l in LevelMatchingService.GetHostLevels(_hostDoc))
                 HostLevels.Add(l);
 
+            AddLog(LogLevel.Info, $"Loaded {HostLevels.Count} host level(s).");
             if (HostLevels.Count == 0)
                 AddLog(LogLevel.Warning, "No levels found in the host model — New Level mapping will be unavailable.");
         }
@@ -102,6 +113,7 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V004
             foreach (var d in LinkedRoomService.GetLinkedDocumentsWithRooms(_hostDoc))
                 LinkedDocuments.Add(d);
 
+            AddLog(LogLevel.Info, $"Found {LinkedDocuments.Count} linked file(s) containing rooms.");
             if (LinkedDocuments.Count == 0)
                 AddLog(LogLevel.Warning, "No linked files with rooms were found in this model.");
         }
@@ -114,7 +126,12 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V004
                 .OrderBy(t => t.Name);
 
             foreach (var t in types) FloorTypes.Add(t);
-            SelectedFloorType = FloorTypes.FirstOrDefault();
+
+            var restored = FloorTypes.FirstOrDefault(t => t.Name == _settings.LastFloorTypeName);
+            SelectedFloorType = restored ?? FloorTypes.FirstOrDefault();
+
+            if (restored != null)
+                AddLog(LogLevel.Info, $"Floor type restored from settings: '{restored.Name}'.");
         }
 
         private void LoadRoofTypes()
@@ -125,7 +142,27 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V004
                 .OrderBy(t => t.Name);
 
             foreach (var t in types) RoofTypes.Add(t);
-            SelectedRoofType = RoofTypes.FirstOrDefault();
+
+            var restored = RoofTypes.FirstOrDefault(t => t.Name == _settings.LastRoofTypeName);
+            SelectedRoofType = restored ?? RoofTypes.FirstOrDefault();
+
+            if (restored != null)
+                AddLog(LogLevel.Info, $"Roof type restored from settings: '{restored.Name}'.");
+        }
+
+        /// <summary>V005: select the link saved in settings if it still exists, otherwise
+        /// the first link in the list. Selecting the link cascades (via
+        /// OnSelectedLinkedDocumentChanged) to the first instance and auto-loads rooms.</summary>
+        private void ApplyDefaultLinkSelection()
+        {
+            if (LinkedDocuments.Count == 0) return;
+
+            var fromSettings = LinkedDocuments.FirstOrDefault(d => d.DisplayName == _settings.LastLinkName);
+            SelectedLinkedDocument = fromSettings ?? LinkedDocuments[0];
+
+            AddLog(LogLevel.Info, fromSettings != null
+                ? $"Link restored from settings: '{SelectedLinkedDocument.DisplayName}'."
+                : $"Default link selected: '{SelectedLinkedDocument.DisplayName}'.");
         }
 
         partial void OnSelectedLinkedDocumentChanged(LinkedDocumentOption value)
@@ -137,7 +174,11 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V004
             foreach (var inst in value.Instances)
                 AvailableInstances.Add(inst);
 
-            SelectedInstance = AvailableInstances.Count == 1 ? AvailableInstances[0] : null;
+            // V005: first instance always selected by default (V004 only auto-selected
+            // when exactly one existed). Triggers OnSelectedInstanceChanged -> room load.
+            SelectedInstance = AvailableInstances.FirstOrDefault();
+            if (AvailableInstances.Count > 1)
+                AddLog(LogLevel.Info, $"{AvailableInstances.Count} instances of this link — first selected by default.");
         }
 
         partial void OnSelectedInstanceChanged(LinkInstanceOption value)
@@ -145,11 +186,11 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V004
             ClearRooms();
             if (value == null || SelectedLinkedDocument == null) return;
 
-            var found = LinkedRoomService.GetAllRooms(SelectedLinkedDocument.LinkDocument, value);
+            var found = LinkedRoomService.GetAllRooms(SelectedLinkedDocument.LinkDocument);
             foreach (var r in found)
             {
                 // Auto-match Linked File Level -> New Level by name (case-insensitive,
-                // trimmed). Left null ("— unmapped —" in the grid) when no match exists —
+                // trimmed). Left null ("unmapped" in the grid) when no match exists —
                 // never defaulted to any level, per confirmed spec.
                 r.SelectedHostLevel = LevelMatchingService.FindMatch(r.LinkedLevelName, HostLevels);
 
@@ -159,18 +200,19 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V004
 
             ApplyFilter();
 
-            // State persistence: auto-select the first item so the user has immediate
-            // context on load, per confirmed spec.
+            // Auto-select the first row so the user has immediate context on load.
             SelectedRoom = FilteredRooms.FirstOrDefault();
 
             int unmatched = found.Count(r => r.SelectedHostLevel == null);
             if (found.Count == 0)
                 AddLog(LogLevel.Warning, "No rooms were found in this link.");
             else
-                AddLog(LogLevel.Info, $"Loaded {found.Count} room(s) across {found.Select(r => r.LinkedLevelName).Distinct().Count()} linked level(s).");
+                AddLog(LogLevel.Info,
+                    $"Loaded {found.Count} room(s) across {found.Select(r => r.LinkedLevelName).Distinct().Count()} linked level(s) " +
+                    $"from '{value.DisplayName}'.");
 
             if (unmatched > 0)
-                AddLog(LogLevel.Warning, $"{unmatched} room(s) had no matching host level — mapped manually via New Level.");
+                AddLog(LogLevel.Warning, $"{unmatched} room(s) had no matching host level — map manually via New Level.");
         }
 
         private void ClearRooms()
@@ -267,9 +309,8 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V004
                 Cancel = _cancelFlag
             };
 
-            // Unmapped count is known before the handler even runs (computed above from
-            // the checked-but-unmapped rows), so it's passed through rather than recomputed
-            // on the Revit API thread.
+            // Unmapped count is known before the handler runs, so it's passed through
+            // rather than recomputed on the Revit API thread.
             _handler.UnmappedSkippedCount = unmapped.Count;
 
             _externalEvent.Raise();
@@ -281,8 +322,8 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V004
         private void Cancel() => _cancelFlag.IsCancelled = true;
 
         /// <summary>Called by the handler on the Revit API thread; ObservableCollection
-        /// updates are safe here since the handler runs on Revit's idling/API context,
-        /// same thread that owns the modeless window's dispatcher in this pattern.</summary>
+        /// updates are safe here since the handler runs on the same thread that owns the
+        /// modeless window's dispatcher in this pattern.</summary>
         public void AddLog(LogLevel level, string message) => Logs.Add(new LogEntry(level, message));
 
         public void ReportProgress(int processed)
@@ -298,19 +339,38 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V004
 
             string text = $"success {summary.SuccessCount} | trimmed/fixed {summary.TrimmedFixedCount} | "
                 + $"failed {summary.FailedCount} | inner loops skipped {summary.InnerLoopsSkippedCount} | "
-                + $"unmapped skipped {summary.UnmappedSkippedCount}";
+                + $"unmapped skipped {summary.UnmappedSkippedCount} | not processed {summary.NotProcessedCount}";
 
             if (mode == CreationMode.Floor) FloorSummaryText = text;
             else RoofSummaryText = text;
+
+            // Completion summary also goes to the log panel so it's part of Copy All /
+            // Export output, per confirmed spec ("everything to UI log and copyable").
+            AddLog(wasCancelled ? LogLevel.Warning : LogLevel.Info,
+                $"{(mode == CreationMode.Floor ? "Floor" : "Roof")} run {(wasCancelled ? "cancelled" : "completed")} — {text}");
+
+            SaveSettings("after run");
 
             RunFloorCommand.NotifyCanExecuteChanged();
             RunRoofCommand.NotifyCanExecuteChanged();
             CancelCommand.NotifyCanExecuteChanged();
         }
 
+        /// <summary>Persists current selections. Called after each run and from the
+        /// window's Closing event (see code-behind). The reason string is only used
+        /// for the log line.</summary>
+        public void SaveSettings(string reason)
+        {
+            _settings.LastLinkName = SelectedLinkedDocument?.DisplayName;
+            _settings.LastFloorTypeName = SelectedFloorType?.Name;
+            _settings.LastRoofTypeName = SelectedRoofType?.Name;
+
+            bool ok = SettingsService.Save(_settings, out string msg);
+            AddLog(ok ? LogLevel.Info : LogLevel.Warning, $"{msg} ({reason}).");
+        }
+
         /// <summary>Shows a Task Dialog for a transaction-level failure (spec: critical
-        /// errors must surface a dialog, not just a log line). Safe to call from the
-        /// handler since it runs on the same thread as the Revit UI.</summary>
+        /// errors must surface a dialog, not just a log line).</summary>
         public void ShowCriticalError(string reason)
         {
             TaskDialog.Show("Floors and Roofs From Linked Rooms",

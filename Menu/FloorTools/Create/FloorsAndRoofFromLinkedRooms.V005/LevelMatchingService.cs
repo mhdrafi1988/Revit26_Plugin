@@ -3,24 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V004
+namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V005
 {
     /// <summary>
     /// Loads host-model levels for the "New Level" dropdown and auto-matches each linked
     /// room's level name against them. Matching is case-insensitive and trims leading/
-    /// trailing whitespace before comparing (confirmed spec) — e.g. "Level 1" matches
-    /// " level 1 " but NOT "Level 1 Mezzanine" (no partial/fuzzy matching).
+    /// trailing whitespace before comparing — e.g. "Level 1" matches " level 1 " but NOT
+    /// "Level 1 Mezzanine" (no partial/fuzzy matching).
     /// </summary>
     public static class LevelMatchingService
     {
-        /// <summary>Host Levels available as mapping targets, excluding template/legend-only
-        /// levels (Level.IsTemplate) per confirmed spec. Structural-only levels are included.</summary>
+        /// <summary>All host Levels available as mapping targets, ordered by elevation.</summary>
         public static List<HostLevelOption> GetHostLevels(Document hostDoc)
         {
             return new FilteredElementCollector(hostDoc)
                 .OfClass(typeof(Level))
                 .Cast<Level>()
-                .Where(l => !l.IsTemplate)
                 .OrderBy(l => l.Elevation)
                 .Select(l => new HostLevelOption { Name = l.Name, LevelElement = l })
                 .ToList();

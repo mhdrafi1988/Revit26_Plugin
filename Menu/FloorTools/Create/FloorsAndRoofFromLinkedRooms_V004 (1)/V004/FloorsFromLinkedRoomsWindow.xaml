@@ -1,7 +1,7 @@
 <Window x:Class="Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V004.FloorsFromLinkedRoomsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models;assembly=Revit26_Plugin"
+        xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
         Title="Floors and Roofs From Linked Rooms"
         Width="1180" Height="760" MinWidth="1180" MinHeight="760"
         WindowStartupLocation="CenterOwner"
@@ -70,6 +70,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <!-- Toolbar: filter + Select All/Clear/Refresh (DATAGRID SPEC item 1) -->
@@ -106,22 +107,25 @@
                     </Grid>
                 </Border>
 
-                <!-- Advanced DataGrid (DATAGRID SPEC items 2-6) -->
-                <DataGrid Grid.Row="1"
-                          Style="{StaticResource StandardDataGrid}"
-                          ColumnHeaderStyle="{StaticResource StandardDataGridColumnHeader}"
-                          CellStyle="{StaticResource StandardDataGridCell}"
-                          RowStyle="{StaticResource StandardDataGridRow}"
-                          ItemsSource="{Binding FilteredRooms}"
-                          SelectedItem="{Binding SelectedRoom}"
-                          AutoGenerateColumns="False"
-                          CanUserAddRows="False"
-                          CanUserDeleteRows="False"
-                          HeadersVisibility="Column"
-                          VirtualizingPanel.IsVirtualizing="True"
-                          VirtualizingPanel.VirtualizationMode="Recycling"
-                          BorderThickness="1" BorderBrush="{StaticResource BrushCardBorder}"
-                          CornerRadius="0,0,10,10">
+                <!-- Advanced DataGrid (DATAGRID SPEC items 2-6). DataGrid has no
+                     CornerRadius property (that was my bug — CornerRadius only exists on
+                     Border/GroupBox in SharedStyles), so rounded bottom corners come from
+                     wrapping the grid in a Border instead. -->
+                <Border Grid.Row="1" CornerRadius="0,0,10,10" BorderThickness="1"
+                        BorderBrush="{StaticResource BrushCardBorder}" ClipToBounds="True">
+                    <DataGrid Style="{StaticResource StandardDataGrid}"
+                              ColumnHeaderStyle="{StaticResource StandardDataGridColumnHeader}"
+                              CellStyle="{StaticResource StandardDataGridCell}"
+                              RowStyle="{StaticResource StandardDataGridRow}"
+                              ItemsSource="{Binding FilteredRooms}"
+                              SelectedItem="{Binding SelectedRoom}"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              HeadersVisibility="Column"
+                              VirtualizingPanel.IsVirtualizing="True"
+                              VirtualizingPanel.VirtualizationMode="Recycling"
+                              BorderThickness="0">
                     <DataGrid.Columns>
 
                         <!-- Serial number -->
@@ -209,8 +213,7 @@
                         <DataGridTemplateColumn Header="New Level" Width="170" CanUserSort="False">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <ComboBox Style="{StaticResource NewLevelComboStyle}"
-                                              ItemsSource="{Binding DataContext.HostLevels, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                    <ComboBox ItemsSource="{Binding DataContext.HostLevels, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                               SelectedItem="{Binding SelectedHostLevel, UpdateSourceTrigger=PropertyChanged}"
                                               DisplayMemberPath="Name"
                                               TextSearch.TextPath="Name">
@@ -229,7 +232,52 @@
                         </DataGridTemplateColumn>
 
                     </DataGrid.Columns>
-                </DataGrid>
+                    </DataGrid>
+                </Border>
+
+                <!-- Log panel (moved here from right pane per spec — sits under the
+                     DataGrid, ~3 log lines tall including the header bar). -->
+                <Border Grid.Row="2" Background="{StaticResource BrushLogBg}" CornerRadius="10" Padding="10,8" Margin="0,8,0,0">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Log" Foreground="{StaticResource BrushLogText}"
+                                       FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <Button Content="Copy all" Command="{Binding CopyAllLogsCommand}"
+                                        Style="{StaticResource DarkGhostButton}" Margin="0,0,4,0"/>
+                                <Button x:Name="CopySelectedButton" Content="Copy sel." Click="CopySelected_Click"
+                                        Style="{StaticResource DarkGhostButton}" Margin="0,0,4,0"/>
+                                <Button Content="Export" Command="{Binding ExportLogsCommand}"
+                                        Style="{StaticResource DarkGhostButton}" Margin="0,0,4,0"/>
+                                <Button Content="Clear" Command="{Binding ClearLogsCommand}"
+                                        Style="{StaticResource DarkGhostButton}"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <ListBox x:Name="LogListBox" ItemsSource="{Binding Logs}" MaxHeight="60" Margin="0,6,0,0"
+                                 Background="Transparent" BorderThickness="0"
+                                 SelectionMode="Extended"
+                                 ScrollViewer.CanContentScroll="True"
+                                 VirtualizingPanel.IsVirtualizing="True"
+                                 VirtualizingPanel.VirtualizationMode="Recycling">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock FontFamily="Consolas" FontSize="9.5" IsHitTestVisible="True" TextWrapping="Wrap">
+                                        <Run Text="{Binding Time, StringFormat=HH:mm:ss}" Foreground="{StaticResource BrushLogTextDim}"/>
+                                        <Run Text=" "/>
+                                        <Run Text="{Binding Level}" Foreground="{Binding Level, Converter={StaticResource LogLevelToColorConverter}}"/>
+                                        <Run Text=" "/>
+                                        <Run Text="{Binding Message}" Foreground="{StaticResource BrushLogText}"/>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
+                </Border>
             </Grid>
 
             <!-- RIGHT: primary controls pane (moved here per spec) -->
@@ -241,7 +289,6 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0" Text="Loading linked files and levels…" Style="{StaticResource HintText}"
@@ -331,49 +378,6 @@
                                Foreground="{StaticResource BrushSuccess}"
                                Visibility="{Binding HasToast, Converter={StaticResource BoolToVisibilityConverter}}"/>
                 </StackPanel>
-
-                <!-- Log panel -->
-                <Border Grid.Row="6" Background="{StaticResource BrushLogBg}" CornerRadius="10" Padding="10,8">
-                    <StackPanel>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="Log" Foreground="{StaticResource BrushLogText}"
-                                       FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                            <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                <Button Content="Copy all" Command="{Binding CopyAllLogsCommand}"
-                                        Style="{StaticResource DarkGhostButton}" Margin="0,0,4,0"/>
-                                <Button x:Name="CopySelectedButton" Content="Copy sel." Click="CopySelected_Click"
-                                        Style="{StaticResource DarkGhostButton}" Margin="0,0,4,0"/>
-                                <Button Content="Export" Command="{Binding ExportLogsCommand}"
-                                        Style="{StaticResource DarkGhostButton}" Margin="0,0,4,0"/>
-                                <Button Content="Clear" Command="{Binding ClearLogsCommand}"
-                                        Style="{StaticResource DarkGhostButton}"/>
-                            </StackPanel>
-                        </Grid>
-
-                        <ListBox x:Name="LogListBox" ItemsSource="{Binding Logs}" MaxHeight="220" Margin="0,6,0,0"
-                                 Background="Transparent" BorderThickness="0"
-                                 SelectionMode="Extended"
-                                 ScrollViewer.CanContentScroll="True"
-                                 VirtualizingPanel.IsVirtualizing="True"
-                                 VirtualizingPanel.VirtualizationMode="Recycling">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock FontFamily="Consolas" FontSize="9.5" IsHitTestVisible="True" TextWrapping="Wrap">
-                                        <Run Text="{Binding Time, StringFormat=HH:mm:ss}" Foreground="{StaticResource BrushLogTextDim}"/>
-                                        <Run Text=" "/>
-                                        <Run Text="{Binding Level}" Foreground="{Binding Level, Converter={StaticResource LogLevelToColorConverter}}"/>
-                                        <Run Text=" "/>
-                                        <Run Text="{Binding Message}" Foreground="{StaticResource BrushLogText}"/>
-                                    </TextBlock>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </StackPanel>
-                </Border>
 
             </Grid>
         </Grid>
