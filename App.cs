@@ -44,7 +44,8 @@ namespace Revit26_Plugin
             FloorToolsRibbon.Build(application, RibbonTabName, assemblyPath);
             ViewToolsRibbon.Build(application, RibbonTabName, assemblyPath);
             DimensionsRibbon.Build(application, RibbonTabName, assemblyPath);
-            SetupRibbon.Build(application, RibbonTabName, assemblyPath);
+            SetupRibbon.Build(application, RibbonTabName, assemblyPath);            
+            SheetToolsRibbon.Build(application, RibbonTabName, assemblyPath);
             QuickAccessRibbon.Build(application, RibbonTabName, assemblyPath);
         }
     }

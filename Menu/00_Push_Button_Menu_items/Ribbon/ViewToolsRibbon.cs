@@ -14,6 +14,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             ViewCreate.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Create_32.png");
 
             ViewCreate.AddPushButton(new PushButtonData("Btn_CSFL_V07", "Create Sections From Detail Lines V07*", assemblyPath, "Revit26_Plugin.CreateSectionsFromDetailLines.V07.Commands.CreateSectionsFromDetailLines"));
+            ViewCreate.AddPushButton(new PushButtonData("Btn_RoofEdgeAroundSections_V001 ###", "RoofEdgeAroundSections_V001 #", assemblyPath, "Revit26_Plugin.RoofEdgeSections.V001.RoofEdgeAroundSectionsCommand"));
 
             //Place Sections Menu
             PulldownButton ViewPlace = panel.AddItem(new PulldownButtonData("Place", "Place")) as PulldownButton;
@@ -33,15 +34,18 @@ namespace Revit26_Plugin.Menu.Ribbon
             ViewPlace.AddPushButton(new PushButtonData("Btn_CalloutCOP_V011", "Call Out PLacing Auto V011 #", assemblyPath, "Revit26_Plugin.CalloutCOP.V011.Commands.CalloutCOPCommand"));
             //ViewPlace.AddPushButton(new PushButtonData("Btn_CalloutToSectionViewPlacement_V013 ###", "CalloutToSectionViewPlacement V013 #", assemblyPath, "Revit26_Plugin.CalloutToSectionViewPlacement.V013.Commands.CalloutCOPCommand"));
             //ViewPlace.AddPushButton(new PushButtonData("Btn_CalloutToSectionViewPlacement_V014 ###", "CalloutToSectionViewPlacement V014 #", assemblyPath, "Revit26_Plugin.CalloutCOP.V014.Commands.CalloutCOPCommand"));
-            ViewPlace.AddPushButton(new PushButtonData("Btn_CalloutToSectionViewPlacement_V015 ###", "CalloutToSectionViewPlacement V015 #", assemblyPath, "Revit26_Plugin.CalloutCOP.V015.Commands.CalloutCOPCommand"));
-
+            ViewPlace.AddPushButton(new PushButtonData("Btn_CalloutToSectionViewPlacement_V015", "CalloutToSectionViewPlacement V015 #", assemblyPath, "Revit26_Plugin.CalloutCOP.V015.Commands.CalloutCOPCommand"));
+            ViewPlace.AddPushButton(new PushButtonData("Btn_CalloutToSectionViewPlacement_V017 ###", "CalloutToSectionViewPlacement V017 #", assemblyPath, "Revit26_Plugin.CalloutCOP.V017.Commands.CalloutCOPCommand"));    
 
             ViewPlace.AddPushButton(new PushButtonData("Btn_RoofDrainCalloutPlacing.V001", "RoofDrainCalloutPlacing V001 #", assemblyPath, "Revit26_Plugin.RoofDrainCalloutPlacing.V001.Commands.RoofDrainCalloutPlacingCommand"));
 
             ViewPlace.AddPushButton(new PushButtonData("Btn_ViewSheetPlacer", "ViewSheetPlacer*** #", assemblyPath, "Revit26_Plugin.Tools.ViewSheetPlacer.ViewSheetPlacerCommand"));
             ViewPlace.AddPushButton(new PushButtonData("Btn_PlanFromScopeBox", "PlanFromScopeBox *** #", assemblyPath, "Revit26_Plugin.PlanFromScopeBox.V001.Commands.PlanFromScopeBoxCommand"));
-            ViewPlace.AddPushButton(new PushButtonData("Btn_RefSectionHeadPlacerCommand V001", "RefSectionHeadPlacerCommand V001 *** #", assemblyPath, "Revit26_Plugin.RefSectionHeadPlacer.V001.Commands.RefSectionHeadPlacerCommand"));
-            ViewPlace.AddPushButton(new PushButtonData("Btn_RefSectionHeadPlacerCommand V002", "RefSectionHeadPlacerCommand V002 *** #", assemblyPath, "Revit26_Plugin.RefSectionHeadPlacer.V002.Commands.RefSectionHeadPlacerCommand"));
+            
+            ViewPlace.AddPushButton(new PushButtonData("Btn_RefSectionHeadPlacerCommand V011", "RefSectionHeadPlacerCommand V011 *** #", assemblyPath, "Revit26_Plugin.RefSectionHeadPlacer.V011.Commands.RefSectionHeadPlacerCommand"));
+            ViewPlace.AddPushButton(new PushButtonData("Btn_RefSectionHeadPlacerCommand V012", "RefSectionHeadPlacerCommand V012 *** #", assemblyPath, "Revit26_Plugin.RefSectionHeadPlacer.V012.Commands.RefSectionHeadPlacerCommand"));
+
+
 
 
             //Rename Sections Menu

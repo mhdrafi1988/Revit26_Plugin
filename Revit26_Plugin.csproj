@@ -5,7 +5,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\Release\net8.0-windows\17-07-002</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\Release\net8.0-windows\30-07-007</BaseOutputPath>
 		<PackageId />
 		<AssemblyName>Revit26_Plugin</AssemblyName>
 	</PropertyGroup>
@@ -703,8 +703,10 @@
 	  <None Remove="Resources\Icons\converter32.png" />
 	  <None Remove="Resources\Icons\DimMenu_32.png" />
 	  <None Remove="Resources\Icons\linematch32.png" />
+	  <None Remove="Resources\Icons\SBtoSheet.png" />
 	  <None Remove="Resources\Icons\setting32.png" />
 	  <None Remove="Resources\Icons\shapepoints32.png" />
+	  <None Remove="Resources\Icons\ViewToSheet.png" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Page Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_WIP2\UI\Views\UI_Autoslope - Copy.xaml" />
@@ -728,9 +730,12 @@
 	  <EmbeddedResource Include="Resources\Icons\Linematch32.png" />
 	  <EmbeddedResource Include="Resources\Icons\Place_32.png" />
 	  <EmbeddedResource Include="Resources\Icons\Rename_32.png" />
+	  <EmbeddedResource Include="Resources\Icons\SBtoSheet.png" />
 	  <EmbeddedResource Include="Resources\Icons\Setting32.png" />
 	  <EmbeddedResource Include="Resources\Icons\Linker_32.png" />
+	  <EmbeddedResource Include="Resources\Icons\SheetSettings.png" />
 	  <EmbeddedResource Include="Resources\Icons\Shapepoints32.png" />
+	  <EmbeddedResource Include="Resources\Icons\ViewToSheet.png" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Reference Include="RevitAPI">

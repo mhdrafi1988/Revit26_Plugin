@@ -12,11 +12,14 @@ namespace Revit26_Plugin.Menu.Ribbon
             PulldownButton DimMenu = panel.AddItem(new PulldownButtonData("Dimensions", "Dimensions")) as PulldownButton;
             DimMenu.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DimMenu_32.png");
 
-            DimMenu.AddPushButton(new PushButtonData("Btn_DtlLineDimCommand_03", "Auto Dim Detail Item Line Based_03 (Working)", assemblyPath, "Revit26_Plugin.DtlLineDim_V03.Commands.DtlLineDimCommand"));
-            DimMenu.AddPushButton(new PushButtonData("Btn_DtlLineDimCommand_04", "Auto Dim Detail Item Line Based_04 (Working)", assemblyPath, "Revit26_Plugin.DtlLineDim_V04.Commands.DtlLineDimCommand"));
-            DimMenu.AddPushButton(new PushButtonData("Btn_DtlLineDimCommand_05 ###", "Auto Dim Detail Item Line Based_05 (Working)", assemblyPath, "Revit26_Plugin.DetailLIneDimensions.V005.Commands.DetailLineDimensionsCommand"));
+            DimMenu.AddPushButton(new PushButtonData("Btn_DtlLine_03", "Auto Dim Detail Item Line Based_03", assemblyPath, "Revit26_Plugin.DtlLineDim_V03.Commands.DtlLineDimCommand"));
+            DimMenu.AddPushButton(new PushButtonData("Btn_DtlLine_05", "Auto Dim Detail Item Line Based_05", assemblyPath, "Revit26_Plugin.DetailLIneDimensions.V005.Commands.DetailLineDimensionsCommand"));
+            DimMenu.AddPushButton(new PushButtonData("Btn_DtlLine_07", "Auto Dim Detail Item Line Based_07", assemblyPath, "Revit26_Plugin.DtlLineDim.V007.Commands.DtlLineDimCommand"));
+            DimMenu.AddPushButton(new PushButtonData("Btn_DtlLine_08", "Auto Dim Detail Item Line Based_08", assemblyPath, "Revit26_Plugin.DtlLineDim.V008.Commands.DtlLineDimCommand"));
 
             
+
+
 
         }
     }

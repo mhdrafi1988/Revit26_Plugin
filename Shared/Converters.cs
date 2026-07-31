@@ -77,19 +77,6 @@ namespace Revit26_Plugin.Shared.Models
     }
 
     /// <summary>
-    /// Converts a value to bool by comparing its string representation to ConverterParameter.
-    /// Used for radio-button groups bound to a single string property (e.g. Grouping mode).
-    /// </summary>
-    public class StringEqualsConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-            => value?.ToString() == parameter?.ToString();
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            => (value is bool b && b) ? parameter : Binding.DoNothing;
-    }
-
-    /// <summary>
     /// Maps LogLevel to a colored brush for log display.
     /// INFO → cyan, WARNING → orange, ERROR → red, SUCCESS → green.
     /// </summary>
@@ -114,6 +101,22 @@ namespace Revit26_Plugin.Shared.Models
                 };
             return _brushInfo;
         }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => DependencyProperty.UnsetValue;
+    }
+
+    /// <summary>
+    /// Maps a bool active-state flag to an icon brush (accent blue when true, muted tertiary when false).
+    /// Used for toolbar/header icons that indicate an active filter, toggle, or highlighted state.
+    /// </summary>
+    public class BoolToHeaderIconBrushConverter : IValueConverter
+    {
+        private readonly SolidColorBrush _active   = new(Color.FromRgb(0x2D, 0x6C, 0xDF)); // BrushAppleBlue
+        private readonly SolidColorBrush _inactive = new(Color.FromRgb(0x8F, 0xA3, 0xB8)); // BrushTextTertiary
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            => (value is bool b && b) ? _active : _inactive;
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             => DependencyProperty.UnsetValue;
