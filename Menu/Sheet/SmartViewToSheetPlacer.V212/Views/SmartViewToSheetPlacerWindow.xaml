@@ -1,0 +1,1531 @@
+<Window x:Class="Revit26_Plugin.SmartViewToSheetPlacer.V212.Views.SmartViewToSheetPlacerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
+        mc:Ignorable="d"
+        Title="Smart View To Sheet Placer — v212"
+        Height="1080" Width="1200"
+        MinHeight="720" MinWidth="900"
+        WindowStartupLocation="CenterScreen"
+        Closing="Window_Closing">
+
+    <!-- V212 fix: StaticResource lookups throughout this Window (HeaderBar,
+         SectionCard, etc.) are resolved by the XAML compiler at BUILD TIME —
+         the code-behind LoadSharedStyles() call only helps at RUNTIME and
+         cannot satisfy the compiler. A prior edit removed this merge
+         entirely in favor of the code-behind trick alone, which broke the
+         build. Using the assembly-relative pack syntax below (not the
+         absolute pack://application:,,, form) resolves against the current
+         assembly directly, without needing a live Application object — safe
+         at both compile time and Revit runtime. LoadSharedStyles() in the
+         code-behind is kept as a defensive no-op-if-already-merged fallback,
+         but this static merge is what actually makes the Window buildable. -->
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Revit26_Plugin;component/Shared/SharedStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+            <converters:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter"/>
+            <converters:InverseBoolConverter x:Key="InverseBoolConverter"/>
+            <converters:LogLevelToColorConverter x:Key="LogLevelToColorConverter"/>
+            <converters:BoolToHeaderIconBrushConverter x:Key="BoolToHeaderIconBrushConverter"/>
+
+            <!-- V212 stopgap: these 7 keys are referenced throughout this Window's
+                 accordion stage headers but were not present in the copy of
+                 SharedStyles.xaml available at edit time (confirmed pre-existing in
+                 V212 too, not introduced by this refactor). Defined locally here so
+                 V212 builds standalone; if/when the real project's SharedStyles.xaml
+                 (which may already define these) is confirmed to have matching keys,
+                 these local overrides can be removed in favor of the shared ones —
+                 flagging this as a stopgap, not a permanent home for these styles,
+                 per the "converters/styles belong in Shared, not tool-local" convention. -->
+
+            <!-- Flat, borderless clickable container for each accordion stage header. -->
+            <Style x:Key="StageHeaderToggle" TargetType="ToggleButton">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Padding" Value="14,12"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ToggleButton">
+                            <Border x:Name="Bg" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                                <ContentPresenter/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Bg" Property="Background" Value="{StaticResource BrushSystemSecondaryBackground}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Numbered circle badge base (24x24, set by the ToggleButton's parent Border
+                 Width/Height/CornerRadius inline) — Background is overridden per-stage via
+                 DataTrigger (Disabled/Navy-in-progress/Success-complete), default here is
+                 the "not yet reached" disabled state. -->
+            <Style x:Key="StageNumberCircleBase" TargetType="Border">
+                <Setter Property="Background" Value="{StaticResource BrushTextDisabled}"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+            </Style>
+
+            <Style x:Key="StageNumberText" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+            </Style>
+
+            <Style x:Key="StageTitleText" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+                <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}"/>
+                <Setter Property="Margin" Value="0,0,10,0"/>
+            </Style>
+
+            <Style x:Key="StageSubtitleText" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="11.5"/>
+                <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}"/>
+            </Style>
+
+            <!-- Status pill (Pending/In Progress/Complete) base — Background overridden
+                 per-stage via DataTrigger, default here is the "not yet reached" state. -->
+            <Style x:Key="StatusBadgeBase" TargetType="Border">
+                <Setter Property="Background" Value="{StaticResource BrushSystemTertiaryBackground}"/>
+                <Setter Property="CornerRadius" Value="10"/>
+                <Setter Property="Padding" Value="9,3"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+            </Style>
+
+            <Style x:Key="StatusBadgeTextPending" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="11"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+                <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}"/>
+            </Style>
+
+            <!-- V212: local override of Shared MetricCard with tighter padding —
+                 confirmed with Rafi ("reduce the size of metrics card, with
+                 adjusted padding") for the pinned Placement Metrics row only.
+                 Per convention, SharedStyles.xaml is never edited directly for
+                 tool-specific tweaks — this stays local to this Window. -->
+            <Style x:Key="CompactMetricCard" TargetType="Border" BasedOn="{StaticResource MetricCard}">
+                <Setter Property="Padding" Value="8,8"/>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Window.InputBindings>
+        <KeyBinding Key="Esc" Command="{Binding CloseCommand}"/>
+    </Window.InputBindings>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header bar -->
+        <Border Grid.Row="0" Style="{StaticResource HeaderBar}" CornerRadius="0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Smart View To Sheet Placer" Style="{StaticResource HeaderTitle}"/>
+                <TextBlock Grid.Column="1" Text="v212" Style="{StaticResource HeaderSubtitle}" VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+
+        <!-- V212 UPDATE: pinned metrics — ALL cards (per-ViewType-group input
+             counts + Placed/Skipped/Failed/Sheets Used) merged into a SINGLE
+             horizontal row per Rafi's request (previously: two separate rows,
+             one below the other). Uses StackPanel Orientation="Horizontal"
+             rather than UniformGrid, since UniformGrid forces equal-width
+             fixed columns and can't mix a variable-length ItemsControl
+             (InputCountsByType — count varies by how many ViewType groups
+             are present) with a fixed set of cards in the same row; a
+             horizontal StackPanel lets each card size to its own content and
+             lines them all up left-to-right regardless of count. If the
+             total width of all cards exceeds the window width, this row
+             will NOT wrap — it will require horizontal scrolling or clip,
+             since StackPanel does not wrap (flagging this as a tradeoff of
+             the "single row" requirement; a WrapPanel would wrap instead of
+             overflowing, but that contradicts "keep all in same row"). -->
+        <Border Grid.Row="1" Padding="16,8,16,0">
+            <StackPanel>
+                <TextBlock Text="Placement Metrics" Style="{StaticResource SectionTitle}" Margin="2,0,2,3"/>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                    <!-- V212: placeholder card shown ONLY when no ViewType group
+                         exists yet (no views ever selected/packed this session) —
+                         confirmed with Rafi: generic "No views selected yet" text,
+                         replaced by real per-group cards the moment the first
+                         group appears. HasInputCounts is a small computed bool on
+                         the ViewModel (InputCountsByType.Count > 0). -->
+                    <Border Style="{StaticResource CompactMetricCard}" Margin="0,0,6,0" MinWidth="150"
+                            Visibility="{Binding HasInputCounts, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                        <StackPanel>
+                            <TextBlock Text="Selected Views" Style="{StaticResource MetricLabel}"/>
+                            <TextBlock Text="No views selected yet" Style="{StaticResource HintText}" Margin="0" FontStyle="Italic"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Dynamic: one card per ViewType group present -->
+                    <ItemsControl ItemsSource="{Binding InputCountsByType}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource CompactMetricCard}" Margin="0,0,6,0" MinWidth="110">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding ViewTypeLabel}" Style="{StaticResource MetricLabel}"/>
+                                        <TextBlock Text="{Binding Count}" Style="{StaticResource MetricNumber}"/>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!-- Fixed: always these 4 -->
+                    <Border Style="{StaticResource CompactMetricCard}" Margin="0,0,6,0" MinWidth="110">
+                        <StackPanel>
+                            <TextBlock Text="Placed" Style="{StaticResource MetricLabel}"/>
+                            <TextBlock Text="{Binding TotalPlacedCount}" Style="{StaticResource MetricNumberSuccess}"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource CompactMetricCard}" Margin="0,0,6,0" MinWidth="110">
+                        <StackPanel>
+                            <TextBlock Text="Skipped — Oversized" Style="{StaticResource MetricLabel}"/>
+                            <TextBlock Text="{Binding TotalSkippedOversizedCount}" Style="{StaticResource MetricNumberWarning}"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource CompactMetricCard}" Margin="0,0,6,0" MinWidth="110">
+                        <StackPanel>
+                            <TextBlock Text="Failed — Bad Data" Style="{StaticResource MetricLabel}"/>
+                            <TextBlock Text="{Binding TotalFailedBadDataCount}" Style="{StaticResource MetricNumberDanger}"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource CompactMetricCard}" MinWidth="110">
+                        <StackPanel>
+                            <TextBlock Text="Sheets Used" Style="{StaticResource MetricLabel}"/>
+                            <TextBlock Text="{Binding TotalSheetsUsedCount}" Style="{StaticResource MetricNumber}"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- Scrollable accordion body -->
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Padding="16">
+            <StackPanel>
+
+                <!-- ═══════════ STAGE 1: SELECT VIEWS ═══════════ -->
+                <!-- V212: StageCardControl UserControl eliminated — inlined directly
+                     here per confirmed decision. Header block below is repeated once
+                     per stage (5x total), each bound to that stage's own
+                     StageXExpanded/StageXComplete/StageXStatusLabel properties
+                     directly on the Window's DataContext (no more AncestorType=UserControl
+                     RelativeSource indirection needed). -->
+                <Border Style="{StaticResource ContentCard}">
+                    <StackPanel>
+                        <ToggleButton Style="{StaticResource StageHeaderToggle}"
+                                      IsChecked="{Binding Stage1Expanded, Mode=TwoWay}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Border Width="24" Height="24" CornerRadius="12" Margin="0,0,10,0">
+                                        <Border.Style>
+                                            <Style TargetType="Border" BasedOn="{StaticResource StageNumberCircleBase}">
+                                                <Style.Triggers>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding Stage1Expanded}" Value="True"/>
+                                                            <Condition Binding="{Binding Stage1Complete}" Value="False"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Background" Value="{StaticResource BrushNavyPrimary}"/>
+                                                    </MultiDataTrigger>
+                                                    <DataTrigger Binding="{Binding Stage1Complete}" Value="True">
+                                                        <Setter Property="Background" Value="{StaticResource BrushSuccess}"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                                <Setter Property="Background" Value="{StaticResource BrushTextDisabled}"/>
+                                            </Style>
+                                        </Border.Style>
+                                        <TextBlock Text="1" Style="{StaticResource StageNumberText}"/>
+                                    </Border>
+                                    <TextBlock Text="Select Views" Style="{StaticResource StageTitleText}" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Choose views and titleblock" Style="{StaticResource StageSubtitleText}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Border Margin="0,0,10,0">
+                                        <Border.Style>
+                                            <Style TargetType="Border" BasedOn="{StaticResource StatusBadgeBase}">
+                                                <Style.Triggers>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding Stage1Expanded}" Value="True"/>
+                                                            <Condition Binding="{Binding Stage1Complete}" Value="False"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Background" Value="{StaticResource BrushSystemSecondaryBackground}"/>
+                                                    </MultiDataTrigger>
+                                                    <DataTrigger Binding="{Binding Stage1Complete}" Value="True">
+                                                        <Setter Property="Background" Value="#E4F3EA"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                                <Setter Property="Background" Value="{StaticResource BrushSystemTertiaryBackground}"/>
+                                            </Style>
+                                        </Border.Style>
+                                        <TextBlock Text="{Binding Stage1StatusLabel}">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock" BasedOn="{StaticResource StatusBadgeTextPending}">
+                                                    <Style.Triggers>
+                                                        <MultiDataTrigger>
+                                                            <MultiDataTrigger.Conditions>
+                                                                <Condition Binding="{Binding Stage1Expanded}" Value="True"/>
+                                                                <Condition Binding="{Binding Stage1Complete}" Value="False"/>
+                                                            </MultiDataTrigger.Conditions>
+                                                            <Setter Property="Foreground" Value="{StaticResource BrushNavyPrimary}"/>
+                                                        </MultiDataTrigger>
+                                                        <DataTrigger Binding="{Binding Stage1Complete}" Value="True">
+                                                            <Setter Property="Foreground" Value="{StaticResource BrushSuccess}"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Border>
+                                    <TextBlock Text="&#9662;" FontSize="11" Foreground="{StaticResource BrushTextSecondary}" VerticalAlignment="Center">
+                                        <TextBlock.LayoutTransform>
+                                            <RotateTransform Angle="0"/>
+                                        </TextBlock.LayoutTransform>
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Stage1Expanded}" Value="False">
+                                                        <Setter Property="LayoutTransform">
+                                                            <Setter.Value>
+                                                                <RotateTransform Angle="-90"/>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </StackPanel>
+                            </Grid>
+                        </ToggleButton>
+                        <Border BorderThickness="0,1,0,0" BorderBrush="{StaticResource BrushCardBorder}"
+                                Visibility="{Binding Stage1Expanded, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <StackPanel Margin="14">
+
+                            <!-- Titleblock + Margin -->
+                            <Border Style="{StaticResource SectionCard}">
+                                <StackPanel Margin="12">
+                                    <TextBlock Text="Titleblock" Style="{StaticResource SectionTitle}" Margin="0,0,0,8"/>
+                                    <!-- Titleblock dropdown + all 4 Margin fields (grouped under a
+                                         "Margin" heading) in ONE horizontal row. -->
+                                    <StackPanel Orientation="Horizontal">
+                                        <StackPanel Margin="0,0,16,0">
+                                            <TextBlock Text="Titleblock (applies to all new sheets)" Style="{StaticResource FieldLabel}"/>
+                                            <ComboBox Width="280" Style="{StaticResource StandardComboBox}"
+                                                      ItemsSource="{Binding Titleblocks}"
+                                                      SelectedItem="{Binding SelectedTitleblock}"
+                                                      DisplayMemberPath="Name"/>
+                                        </StackPanel>
+                                        <StackPanel>
+                                            <TextBlock Text="Margin" Style="{StaticResource FieldLabel}" FontWeight="SemiBold" Margin="0,0,0,2"/>
+                                            <StackPanel Orientation="Horizontal">
+                                                <StackPanel Margin="0,0,16,0">
+                                                    <TextBlock Text="Top (mm)" Style="{StaticResource FieldLabel}"/>
+                                                    <TextBox Width="80" Style="{StaticResource BoxedTextInput}" MaxLength="10"
+                                                             Text="{Binding MarginTopMm, UpdateSourceTrigger=PropertyChanged}"/>
+                                                </StackPanel>
+                                                <StackPanel Margin="0,0,16,0">
+                                                    <TextBlock Text="Bottom (mm)" Style="{StaticResource FieldLabel}"/>
+                                                    <TextBox Width="80" Style="{StaticResource BoxedTextInput}" MaxLength="10"
+                                                             Text="{Binding MarginBottomMm, UpdateSourceTrigger=PropertyChanged}"/>
+                                                </StackPanel>
+                                                <StackPanel Margin="0,0,16,0">
+                                                    <TextBlock Text="Left (mm)" Style="{StaticResource FieldLabel}"/>
+                                                    <TextBox Width="80" Style="{StaticResource BoxedTextInput}" MaxLength="10"
+                                                             Text="{Binding MarginLeftMm, UpdateSourceTrigger=PropertyChanged}"/>
+                                                </StackPanel>
+                                                <StackPanel>
+                                                    <TextBlock Text="Right (mm)" Style="{StaticResource FieldLabel}"/>
+                                                    <TextBox Width="80" Style="{StaticResource BoxedTextInput}" MaxLength="10"
+                                                             Text="{Binding MarginRightMm, UpdateSourceTrigger=PropertyChanged}"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <TextBlock Style="{StaticResource HintText}" Margin="0,6,0,0"
+                                               Text="Usable sheet area = titleblock's actual paper size minus each independent margin (Top / Bottom / Left / Right). Used directly by the packing calculation."/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Project Views grid -->
+                            <Border Style="{StaticResource SectionCard}">
+                                <StackPanel Margin="12">
+                                    <TextBlock Text="Project Views" Style="{StaticResource SectionTitle}" Margin="0,0,0,8"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                        <Button Content="Select All" Style="{StaticResource SmallSecondaryButton}" Margin="0,0,6,0"
+                                                Command="{Binding SelectAllViewsCommand}"/>
+                                        <Button Content="Clear Selection" Style="{StaticResource SmallSecondaryButton}" Margin="0,0,6,0"
+                                                Command="{Binding ClearSelectionCommand}"/>
+                                        <Button Content="Refresh" Style="{StaticResource SmallSecondaryButton}"
+                                                Command="{Binding RefreshViewsCommand}"/>
+                                    </StackPanel>
+
+                                    <!-- Always-visible filter row (V212) — sits directly above the DataGrid
+                                         header, columns aligned to the DataGrid.Columns widths below
+                                         (36 / * / 140 / 90 / 160), so each filter lines up under its column. -->
+                                    <Grid Margin="0,0,0,4">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="36"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="140"/>
+                                            <ColumnDefinition Width="90"/>
+                                            <ColumnDefinition Width="160"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Checkbox column — no filter -->
+
+                                        <!-- View Name filter: live text box -->
+                                        <TextBox Grid.Column="1" Style="{StaticResource StyledTextInput}"
+                                                 Margin="2,0,4,0" MaxLength="25"
+                                                 Text="{Binding ViewNameFilter, UpdateSourceTrigger=PropertyChanged}"/>
+
+                                        <!-- View Type filter: button in filter row opens popover with checkbox list -->
+                                        <ToggleButton x:Name="ViewTypeFilterToggle"
+                                                      Grid.Column="2" Margin="0,0,4,0" HorizontalAlignment="Stretch"
+                                                      Height="28"
+                                                      IsChecked="{Binding IsViewTypeFilterOpen, Mode=TwoWay}"
+                                                      Background="{StaticResource BrushCardBackground}"
+                                                      BorderBrush="{StaticResource BrushCardBorder}"
+                                                      BorderThickness="1"
+                                                      Cursor="Hand">
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                <TextBlock Text="View Type" FontSize="11" VerticalAlignment="Center"/>
+                                                <TextBlock Text="&#9660;" FontSize="8" Margin="4,0,0,0" VerticalAlignment="Center"
+                                                           Foreground="{Binding IsViewTypeFilterActive,
+                                                                        Converter={StaticResource BoolToHeaderIconBrushConverter}}"/>
+                                            </StackPanel>
+                                        </ToggleButton>
+                                        <Popup Grid.Column="2" PlacementTarget="{Binding ElementName=ViewTypeFilterToggle}"
+                                               IsOpen="{Binding IsViewTypeFilterOpen, Mode=TwoWay}"
+                                               StaysOpen="False"
+                                               AllowsTransparency="True"
+                                               Placement="Bottom"
+                                               HorizontalOffset="0"
+                                               VerticalOffset="2">
+                                            <Border Background="{StaticResource BrushCardBackground}"
+                                                    BorderBrush="{StaticResource BrushCardBorder}"
+                                                    BorderThickness="1" CornerRadius="8" Padding="0,6"
+                                                    Width="190">
+                                                <Border.Effect>
+                                                    <DropShadowEffect ShadowDepth="2" BlurRadius="10" Opacity="0.25"/>
+                                                </Border.Effect>
+                                                <StackPanel>
+                                                    <StackPanel Orientation="Horizontal"
+                                                                HorizontalAlignment="Right"
+                                                                Margin="10,0,10,6">
+                                                        <Button Content="All" Style="{StaticResource SecondaryButton}"
+                                                                Height="20" FontSize="10.5" Padding="4,0" Margin="0,0,4,0"
+                                                                Command="{Binding CheckAllViewTypesCommand}"/>
+                                                        <Button Content="None" Style="{StaticResource SecondaryButton}"
+                                                                Height="20" FontSize="10.5" Padding="4,0"
+                                                                Command="{Binding UncheckAllViewTypesCommand}"/>
+                                                    </StackPanel>
+                                                    <ItemsControl ItemsSource="{Binding ViewTypeFilters}">
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <CheckBox Content="{Binding Label}"
+                                                                          IsChecked="{Binding IsChecked, Mode=TwoWay}"
+                                                                          FontSize="12"
+                                                                          Padding="6,0,0,0"
+                                                                          Margin="12,4"/>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                </StackPanel>
+                                            </Border>
+                                        </Popup>
+
+                                        <!-- Scale / Size on Sheet columns — no filter -->
+                                    </Grid>
+
+                                    <DataGrid ItemsSource="{Binding ViewsView}"
+                                              Style="{StaticResource StandardDataGrid}"
+                                              ColumnHeaderStyle="{StaticResource StandardDataGridColumnHeader}"
+                                              CellStyle="{StaticResource StandardDataGridCell}"
+                                              RowStyle="{StaticResource StandardDataGridRow}"
+                                              AutoGenerateColumns="False"
+                                              CanUserAddRows="False"
+                                              IsReadOnly="False"
+                                              MaxHeight="320"
+                                              VirtualizingPanel.IsVirtualizing="True"
+                                              VirtualizingPanel.VirtualizationMode="Recycling">
+                                        <DataGrid.Columns>
+                                            <!-- V212 FIX: DataGridCheckBoxColumn only refreshes its displayed
+                                                 checkmark when a cell is clicked/edited by the user — it does
+                                                 NOT visually update when IsSelected changes programmatically
+                                                 (e.g. our popover-driven bulk select in
+                                                 ApplyViewTypeSelectionFromPopover). Swapped for a
+                                                 DataGridTemplateColumn + real CheckBox, which binds and
+                                                 refreshes like any normal Binding — fixes rows appearing
+                                                 unchecked in the grid even though IsSelected is actually true. -->
+                                            <DataGridTemplateColumn Header="" Width="36">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <CheckBox IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}"
+                                                                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+
+                                            <!-- View Name column — plain header; live filter row sits directly
+                                                 above the DataGrid, in the same column position (V212). -->
+                                            <DataGridTextColumn Header="View Name" Width="*" Binding="{Binding Name}" IsReadOnly="True"/>
+
+                                            <!-- View Type column — plain header; popover-button filter sits
+                                                 directly above the DataGrid, in the same column position (V212). -->
+                                            <DataGridTextColumn Header="View Type" Width="140" Binding="{Binding ViewTypeLabel}" IsReadOnly="True"/>
+
+                                            <DataGridTextColumn Header="Scale" Width="90" Binding="{Binding ScaleLabel}" IsReadOnly="True">
+                                                <DataGridTextColumn.ElementStyle>
+                                                    <Style TargetType="TextBlock"><Setter Property="HorizontalAlignment" Value="Right"/></Style>
+                                                </DataGridTextColumn.ElementStyle>
+                                            </DataGridTextColumn>
+                                            <DataGridTextColumn Header="Size on Sheet (mm)" Width="160" IsReadOnly="True">
+                                                <DataGridTextColumn.Binding>
+                                                    <MultiBinding StringFormat="{}{0:0} x {1:0}">
+                                                        <Binding Path="WidthMm"/>
+                                                        <Binding Path="HeightMm"/>
+                                                    </MultiBinding>
+                                                </DataGridTextColumn.Binding>
+                                                <DataGridTextColumn.ElementStyle>
+                                                    <Style TargetType="TextBlock"><Setter Property="HorizontalAlignment" Value="Right"/></Style>
+                                                </DataGridTextColumn.ElementStyle>
+                                            </DataGridTextColumn>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+
+                                    <TextBlock Style="{StaticResource HintText}" Margin="0,6,0,0">
+                                        <Run Text="{Binding SelectedViewCount, Mode=OneWay}"/>
+                                        <Run Text=" view(s) selected of "/>
+                                        <Run Text="{Binding TotalViewCount, Mode=OneWay}"/>
+                                        <Run Text=" total"/>
+                                    </TextBlock>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Footer -->
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
+                                <Button Content="Cancel" Style="{StaticResource OutlineButton}" Margin="0,0,8,0"
+                                        Command="{Binding CloseCommand}"/>
+                                <Button Style="{StaticResource PrimaryButton}"
+                                        Command="{Binding NextToStage2Command}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Loading..." Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                        <TextBlock Text="Next: Preview Placement &gt;" Visibility="{Binding IsBusy, Converter={StaticResource InverseBoolToVisibilityConverter}}"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+
+                        </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <!-- ═══════════ STAGE 2: PREVIEW PLACEMENT (NEW) ═══════════ -->
+                <Border Style="{StaticResource ContentCard}">
+                    <StackPanel>
+                        <ToggleButton Style="{StaticResource StageHeaderToggle}"
+                                      IsChecked="{Binding Stage2Expanded, Mode=TwoWay}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Border Width="24" Height="24" CornerRadius="12" Margin="0,0,10,0">
+                                        <Border.Style>
+                                            <Style TargetType="Border" BasedOn="{StaticResource StageNumberCircleBase}">
+                                                <Style.Triggers>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding Stage2Expanded}" Value="True"/>
+                                                            <Condition Binding="{Binding Stage2Complete}" Value="False"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Background" Value="{StaticResource BrushNavyPrimary}"/>
+                                                    </MultiDataTrigger>
+                                                    <DataTrigger Binding="{Binding Stage2Complete}" Value="True">
+                                                        <Setter Property="Background" Value="{StaticResource BrushSuccess}"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                                <Setter Property="Background" Value="{StaticResource BrushTextDisabled}"/>
+                                            </Style>
+                                        </Border.Style>
+                                        <TextBlock Text="2" Style="{StaticResource StageNumberText}"/>
+                                    </Border>
+                                    <TextBlock Text="Preview Placement" Style="{StaticResource StageTitleText}" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Set gaps and preview sheet layout" Style="{StaticResource StageSubtitleText}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Border Margin="0,0,10,0">
+                                        <Border.Style>
+                                            <Style TargetType="Border" BasedOn="{StaticResource StatusBadgeBase}">
+                                                <Style.Triggers>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding Stage2Expanded}" Value="True"/>
+                                                            <Condition Binding="{Binding Stage2Complete}" Value="False"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Background" Value="{StaticResource BrushSystemSecondaryBackground}"/>
+                                                    </MultiDataTrigger>
+                                                    <DataTrigger Binding="{Binding Stage2Complete}" Value="True">
+                                                        <Setter Property="Background" Value="#E4F3EA"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                                <Setter Property="Background" Value="{StaticResource BrushSystemTertiaryBackground}"/>
+                                            </Style>
+                                        </Border.Style>
+                                        <TextBlock Text="{Binding Stage2StatusLabel}">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock" BasedOn="{StaticResource StatusBadgeTextPending}">
+                                                    <Style.Triggers>
+                                                        <MultiDataTrigger>
+                                                            <MultiDataTrigger.Conditions>
+                                                                <Condition Binding="{Binding Stage2Expanded}" Value="True"/>
+                                                                <Condition Binding="{Binding Stage2Complete}" Value="False"/>
+                                                            </MultiDataTrigger.Conditions>
+                                                            <Setter Property="Foreground" Value="{StaticResource BrushNavyPrimary}"/>
+                                                        </MultiDataTrigger>
+                                                        <DataTrigger Binding="{Binding Stage2Complete}" Value="True">
+                                                            <Setter Property="Foreground" Value="{StaticResource BrushSuccess}"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Border>
+                                    <TextBlock Text="&#9662;" FontSize="11" Foreground="{StaticResource BrushTextSecondary}" VerticalAlignment="Center">
+                                        <TextBlock.LayoutTransform>
+                                            <RotateTransform Angle="0"/>
+                                        </TextBlock.LayoutTransform>
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Stage2Expanded}" Value="False">
+                                                        <Setter Property="LayoutTransform">
+                                                            <Setter.Value>
+                                                                <RotateTransform Angle="-90"/>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </StackPanel>
+                            </Grid>
+                        </ToggleButton>
+                        <Border BorderThickness="0,1,0,0" BorderBrush="{StaticResource BrushCardBorder}"
+                                Visibility="{Binding Stage2Expanded, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <StackPanel Margin="14">
+
+                            <!-- V212: Reading Order + per-ViewType-group gap cards merged into
+                                 ONE horizontal row per Rafi's request (previously: Reading Order
+                                 was its own card above, each gap card stacked below it). Hint
+                                 texts dropped from this compact row per Rafi's confirmation —
+                                 only essential controls kept (dropdowns, toggle buttons, gap
+                                 fields). Uses StackPanel Orientation="Horizontal" for the same
+                                 reason as the pinned metrics row above: GapSettingsGroups has a
+                                 variable count (one per ViewType group), which UniformGrid can't
+                                 mix with a fixed-width neighbor card. Same overflow tradeoff
+                                 applies — accepted by Rafi: no wrap, clips/scrolls if too many
+                                 groups to fit. -->
+                            <TextBlock Text="Reading Order &amp; Packing" Style="{StaticResource SectionTitle}" Margin="2,4,2,4"/>
+                            <!-- V212 UPDATE: switched from StackPanel to a Grid with star-sized
+                                 columns so Reading Order + each gap card share the row's full
+                                 width evenly (distributed), rather than left-packing with unused
+                                 space on the right. Reading Order gets a fixed first column;
+                                 GapSettingsGroups (variable count) are wrapped in an ItemsControl
+                                 whose ItemsPanel is itself a Grid with one star-column generated
+                                 per item, via Grid.IsSharedSizeScope-free even split (simplest
+                                 correct approach: ItemsControl.ItemsPanel = UniformGrid, which DOES
+                                 support "distribute N items evenly" as long as the count is
+                                 determined by the ItemsControl itself at runtime — Rows=1 makes it
+                                 auto-columns to fit exactly the bound item count). -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="2*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Reading Order — global, applies uniformly to all groups -->
+                                <Border Grid.Column="0" Style="{StaticResource SectionCard}" Margin="0,0,8,0">
+                                    <StackPanel Margin="10">
+                                        <TextBlock Text="Reading Order" Style="{StaticResource FieldValue}" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                                        <TextBlock Text="Direction" Style="{StaticResource FieldLabel}"/>
+                                        <ComboBox Style="{StaticResource StandardComboBox}" HorizontalAlignment="Stretch"
+                                                  ItemsSource="{Binding ReadingDirectionOptions}"
+                                                  SelectedItem="{Binding SelectedReadingDirectionOption}"
+                                                  DisplayMemberPath="Label" Margin="0,0,0,6"/>
+                                        <!-- V212 UPDATE: Tiebreak + Y-Tolerance paired into one row -->
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                                                <TextBlock Text="Tiebreak" Style="{StaticResource FieldLabel}"/>
+                                                <ComboBox Style="{StaticResource StandardComboBox}" HorizontalAlignment="Stretch"
+                                                          ItemsSource="{Binding RowTiebreakOptions}"
+                                                          SelectedItem="{Binding SelectedRowTiebreakOption}"
+                                                          DisplayMemberPath="Label"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1">
+                                                <TextBlock Text="Y-Tolerance (mm)" Style="{StaticResource FieldLabel}"/>
+                                                <TextBox Style="{StaticResource BoxedTextInput}" MaxLength="10" HorizontalAlignment="Stretch"
+                                                         Text="{Binding YToleranceMm, UpdateSourceTrigger=PropertyChanged}"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Per-ViewType-group gap style + values, compact, distributed
+                                     evenly across the remaining row width via UniformGrid (columns
+                                     auto-match the bound item count, so N groups always split the
+                                     available width into N equal shares). -->
+                                <ItemsControl Grid.Column="1" ItemsSource="{Binding GapSettingsGroups}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <UniformGrid Rows="1"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Style="{StaticResource SectionCard}" Margin="0,0,8,0">
+                                                <StackPanel Margin="10">
+                                                    <TextBlock Text="{Binding ViewTypeLabel}" Style="{StaticResource FieldValue}" FontWeight="SemiBold" Margin="0,0,0,6"/>
+
+                                                    <!-- Fixed/EvenGap segmented toggle via two Buttons — RadioButton was
+                                                         considered but SharedStyles' SmallSecondaryButton is TargetType=Button,
+                                                         not applicable to RadioButton, and a new style wasn't warranted for
+                                                         this one case. Highlight state driven by IsFixedStyle/IsEvenGapStyle
+                                                         via a local (non-shared) Style.Trigger, values set via Click. -->
+                                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                                        <Button Content="Fixed" Padding="8,4" Margin="0,0,4,0"
+                                                                Command="{Binding DataContext.SetGapStyleFixedCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                CommandParameter="{Binding}">
+                                                            <Button.Style>
+                                                                <Style TargetType="Button" BasedOn="{StaticResource SmallSecondaryButton}">
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsFixedStyle}" Value="True">
+                                                                            <Setter Property="Background" Value="{StaticResource BrushNavyPrimary}"/>
+                                                                            <Setter Property="Foreground" Value="White"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Button.Style>
+                                                        </Button>
+                                                        <Button Content="Even-Gap" Padding="8,4"
+                                                                Command="{Binding DataContext.SetGapStyleEvenGapCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                CommandParameter="{Binding}">
+                                                            <Button.Style>
+                                                                <Style TargetType="Button" BasedOn="{StaticResource SmallSecondaryButton}">
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsEvenGapStyle}" Value="True">
+                                                                            <Setter Property="Background" Value="{StaticResource BrushNavyPrimary}"/>
+                                                                            <Setter Property="Foreground" Value="White"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Button.Style>
+                                                        </Button>
+                                                    </StackPanel>
+
+                                                    <!-- V212 UPDATE: H-Gap + V-Gap paired into one row -->
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                                                            <TextBlock Text="H-Gap (mm)" Style="{StaticResource FieldLabel}"/>
+                                                            <TextBox Style="{StaticResource BoxedTextInput}" MaxLength="10" HorizontalAlignment="Stretch"
+                                                                     Text="{Binding HorizontalGapMm, UpdateSourceTrigger=PropertyChanged}"/>
+                                                        </StackPanel>
+                                                        <StackPanel Grid.Column="1">
+                                                            <TextBlock Text="V-Gap (mm)" Style="{StaticResource FieldLabel}"/>
+                                                            <TextBox Style="{StaticResource BoxedTextInput}" MaxLength="10" HorizontalAlignment="Stretch"
+                                                                     Text="{Binding VerticalGapMm, UpdateSourceTrigger=PropertyChanged}"/>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Grid>
+                            <TextBlock Text="Each view group (by Revit ViewType) is always placed on its own set of sheets; same-group views can still pack together if they fit, but different groups never share a sheet."
+                                       Style="{StaticResource HintText}" Margin="2,4,2,8"/>
+
+                            <!-- Card 2: Sheet Preview — to-scale WPF canvas of the selected suggested sheet -->
+                            <Border Style="{StaticResource SectionCard}">
+                                <StackPanel Margin="12">
+                                    <TextBlock Text="Sheet Preview" Style="{StaticResource SectionTitle}" Margin="0,0,0,8"/>
+
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                        <StackPanel Margin="0,0,16,0">
+                                            <TextBlock Text="Sheet" Style="{StaticResource FieldLabel}"/>
+                                            <ComboBox Width="240" Style="{StaticResource StandardComboBox}"
+                                                      ItemsSource="{Binding SuggestedSheets}"
+                                                      SelectedItem="{Binding SelectedPreviewSheet}"
+                                                      DisplayMemberPath="GeneratedName"/>
+                                        </StackPanel>
+                                        <Border Style="{StaticResource BadgePill}" VerticalAlignment="Bottom" Margin="0,0,8,2">
+                                            <TextBlock Style="{StaticResource BadgeText}">
+                                                <Run Text="Views on sheet: "/>
+                                                <Run Text="{Binding SelectedPreviewSheet.TotalViewCount, Mode=OneWay}"/>
+                                            </TextBlock>
+                                        </Border>
+                                    </StackPanel>
+
+                                    <!-- To-scale sheet canvas: outer border = full sheet, dashed rect =
+                                         usable area (post-margin), inner rects = each placed view. All
+                                         pixel geometry (Preview*Px on the ViewModel, Preview*Px on each
+                                         ViewPlacement) is pre-computed in the VM's RecomputePreviewGeometry —
+                                         plain OneWay bindings here, no converters needed. -->
+                                    <Border Background="{StaticResource BrushSystemBackground}"
+                                            BorderBrush="{StaticResource BrushSeparator}" BorderThickness="1"
+                                            CornerRadius="8" Padding="20" HorizontalAlignment="Center">
+                                        <Border Width="{Binding PreviewSheetWidthPx}" Height="{Binding PreviewSheetHeightPx}"
+                                                Background="White" BorderBrush="{StaticResource BrushTextTertiary}" BorderThickness="1.5">
+                                            <Canvas>
+                                                <!-- Usable-area outline (post-margin) -->
+                                                <Border Canvas.Left="{Binding PreviewUsableLeftPx}" Canvas.Top="{Binding PreviewUsableTopPx}"
+                                                        Width="{Binding PreviewUsableWidthPx}" Height="{Binding PreviewUsableHeightPx}"
+                                                        BorderBrush="{StaticResource BrushAppleBlue}" BorderThickness="1" Opacity="0.6"/>
+
+                                                <!-- One box per placed view on the selected sheet -->
+                                                <ItemsControl ItemsSource="{Binding SelectedPreviewSheet.Placements}">
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate><Canvas/></ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                    <ItemsControl.ItemContainerStyle>
+                                                        <Style TargetType="ContentPresenter">
+                                                            <Setter Property="Canvas.Left" Value="{Binding PreviewLeftPx}"/>
+                                                            <Setter Property="Canvas.Top" Value="{Binding PreviewTopPx}"/>
+                                                        </Style>
+                                                    </ItemsControl.ItemContainerStyle>
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Border Width="{Binding PreviewWidthPx}" Height="{Binding PreviewHeightPx}"
+                                                                    BorderThickness="1.2" Background="{StaticResource BrushSystemTertiaryBackground}">
+                                                                <Border.Style>
+                                                                    <Style TargetType="Border">
+                                                                        <Setter Property="BorderBrush" Value="{StaticResource BrushNavyLight}"/>
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding Fits}" Value="False">
+                                                                                <Setter Property="BorderBrush" Value="{StaticResource BrushDanger}"/>
+                                                                                <Setter Property="Background" Value="#FDEBEA"/>
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </Border.Style>
+                                                                <StackPanel VerticalAlignment="Center" Margin="4">
+                                                                    <TextBlock Text="{Binding View.Name}" FontSize="10.5" FontWeight="SemiBold"
+                                                                               Foreground="{StaticResource BrushTextPrimary}"
+                                                                               TextAlignment="Center" TextWrapping="Wrap" TextTrimming="CharacterEllipsis"/>
+                                                                    <TextBlock FontSize="9.5" Foreground="{StaticResource BrushTextSecondary}" TextAlignment="Center" Margin="0,2,0,0">
+                                                                        <Run Text="{Binding View.WidthMm, Mode=OneWay, StringFormat={}{0:0}}"/>
+                                                                        <Run Text=" × "/>
+                                                                        <Run Text="{Binding View.HeightMm, Mode=OneWay, StringFormat={}{0:0}}"/>
+                                                                        <Run Text=" mm"/>
+                                                                    </TextBlock>
+                                                                </StackPanel>
+                                                            </Border>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </Canvas>
+                                        </Border>
+                                    </Border>
+
+                                    <TextBlock Style="{StaticResource HintText}" Margin="0,8,0,0"
+                                               Text="Drawn to scale from the same margin/gap/offset values used by the packing calculation — this is a preview, not the final Revit sheet. Views outlined in red failed fit validation. Switching sheets or editing Gap fields above updates this canvas; it also updates live if a view is manually reassigned on the Suggested Placement stage."/>
+                                </StackPanel>
+                            </Border>
+
+                            <Grid Margin="0,8,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Column="0" HorizontalAlignment="Left" Content="&lt; Back to Select Views" Style="{StaticResource OutlineButton}"
+                                        Command="{Binding BackToStage1Command}"/>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <Button Content="Cancel" Style="{StaticResource OutlineButton}" Margin="0,0,8,0"
+                                            Command="{Binding CloseCommand}"/>
+                                    <Button Content="Next: Suggested Placement &gt;" Style="{StaticResource PrimaryButton}"
+                                            Command="{Binding NextToStage3Command}"/>
+                                </StackPanel>
+                            </Grid>
+
+                        </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <!-- ═══════════ STAGE 3: SUGGESTED PLACEMENT ═══════════ -->
+                <Border Style="{StaticResource ContentCard}">
+                    <StackPanel>
+                        <ToggleButton Style="{StaticResource StageHeaderToggle}"
+                                      IsChecked="{Binding Stage3Expanded, Mode=TwoWay}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Border Width="24" Height="24" CornerRadius="12" Margin="0,0,10,0">
+                                        <Border.Style>
+                                            <Style TargetType="Border" BasedOn="{StaticResource StageNumberCircleBase}">
+                                                <Style.Triggers>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding Stage3Expanded}" Value="True"/>
+                                                            <Condition Binding="{Binding Stage3Complete}" Value="False"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Background" Value="{StaticResource BrushNavyPrimary}"/>
+                                                    </MultiDataTrigger>
+                                                    <DataTrigger Binding="{Binding Stage3Complete}" Value="True">
+                                                        <Setter Property="Background" Value="{StaticResource BrushSuccess}"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                                <Setter Property="Background" Value="{StaticResource BrushTextDisabled}"/>
+                                            </Style>
+                                        </Border.Style>
+                                        <TextBlock Text="3" Style="{StaticResource StageNumberText}"/>
+                                    </Border>
+                                    <TextBlock Text="Suggested Placement" Style="{StaticResource StageTitleText}" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Review auto-packed sheet layout" Style="{StaticResource StageSubtitleText}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Border Margin="0,0,10,0">
+                                        <Border.Style>
+                                            <Style TargetType="Border" BasedOn="{StaticResource StatusBadgeBase}">
+                                                <Style.Triggers>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding Stage3Expanded}" Value="True"/>
+                                                            <Condition Binding="{Binding Stage3Complete}" Value="False"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Background" Value="{StaticResource BrushSystemSecondaryBackground}"/>
+                                                    </MultiDataTrigger>
+                                                    <DataTrigger Binding="{Binding Stage3Complete}" Value="True">
+                                                        <Setter Property="Background" Value="#E4F3EA"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                                <Setter Property="Background" Value="{StaticResource BrushSystemTertiaryBackground}"/>
+                                            </Style>
+                                        </Border.Style>
+                                        <TextBlock Text="{Binding Stage3StatusLabel}">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock" BasedOn="{StaticResource StatusBadgeTextPending}">
+                                                    <Style.Triggers>
+                                                        <MultiDataTrigger>
+                                                            <MultiDataTrigger.Conditions>
+                                                                <Condition Binding="{Binding Stage3Expanded}" Value="True"/>
+                                                                <Condition Binding="{Binding Stage3Complete}" Value="False"/>
+                                                            </MultiDataTrigger.Conditions>
+                                                            <Setter Property="Foreground" Value="{StaticResource BrushNavyPrimary}"/>
+                                                        </MultiDataTrigger>
+                                                        <DataTrigger Binding="{Binding Stage3Complete}" Value="True">
+                                                            <Setter Property="Foreground" Value="{StaticResource BrushSuccess}"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Border>
+                                    <TextBlock Text="&#9662;" FontSize="11" Foreground="{StaticResource BrushTextSecondary}" VerticalAlignment="Center">
+                                        <TextBlock.LayoutTransform>
+                                            <RotateTransform Angle="0"/>
+                                        </TextBlock.LayoutTransform>
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Stage3Expanded}" Value="False">
+                                                        <Setter Property="LayoutTransform">
+                                                            <Setter.Value>
+                                                                <RotateTransform Angle="-90"/>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </StackPanel>
+                            </Grid>
+                        </ToggleButton>
+                        <Border BorderThickness="0,1,0,0" BorderBrush="{StaticResource BrushCardBorder}"
+                                Visibility="{Binding Stage3Expanded, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <StackPanel Margin="14">
+
+                            <Border Style="{StaticResource SectionCard}">
+                                <StackPanel Margin="12">
+                                    <TextBlock Text="Suggested Sheet Placement" Style="{StaticResource SectionTitle}" Margin="0,0,0,8"/>
+
+                                    <ItemsControl ItemsSource="{Binding SuggestedSheets}" Margin="0,0,0,8">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate><WrapPanel Orientation="Horizontal"/></ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Style="{StaticResource BadgePill}" Margin="0,0,8,6">
+                                                    <TextBlock Style="{StaticResource BadgeText}">
+                                                        <Run Text="Sheet "/>
+                                                        <Run Text="{Binding SheetIndex, Mode=OneWay}"/>
+                                                        <Run Text=": "/>
+                                                        <Run Text="{Binding GeneratedName, Mode=OneWay}"/>
+                                                    </TextBlock>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <!-- Single flat grid: all views across all sheets, per confirmed design -->
+                                    <DataGrid ItemsSource="{Binding AllPlacements}"
+                                              Style="{StaticResource StandardDataGrid}"
+                                              ColumnHeaderStyle="{StaticResource StandardDataGridColumnHeader}"
+                                              CellStyle="{StaticResource StandardDataGridCell}"
+                                              RowStyle="{StaticResource StandardDataGridRow}"
+                                              AutoGenerateColumns="False"
+                                              CanUserAddRows="False"
+                                              MaxHeight="360">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="View Name" Width="*" Binding="{Binding View.Name}" IsReadOnly="True"/>
+                                            <DataGridTemplateColumn Header="Suggested Sheet #" Width="240">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <ComboBox ItemsSource="{Binding AvailableSheets}"
+                                                                  SelectedItem="{Binding AssignedSheet, UpdateSourceTrigger=PropertyChanged}"
+                                                                  DisplayMemberPath="GeneratedName"
+                                                                  Style="{StaticResource StandardComboBox}"/>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                            <DataGridTextColumn Header="Position on Sheet" Width="140" Binding="{Binding Position}" IsReadOnly="True"/>
+                                            <DataGridTextColumn Header="Scale" Width="80" Binding="{Binding View.ScaleLabel}" IsReadOnly="True"/>
+                                            <DataGridTemplateColumn Header="Fit Status" Width="120">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                            <TextBlock.Style>
+                                                                <Style TargetType="TextBlock">
+                                                                    <Setter Property="Text" Value="OK"/>
+                                                                    <Setter Property="Foreground" Value="{StaticResource BrushSuccess}"/>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding Fits}" Value="False">
+                                                                            <Setter Property="Text" Value="⚠ Overflow"/>
+                                                                            <Setter Property="Foreground" Value="{StaticResource BrushDanger}"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </TextBlock.Style>
+                                                        </TextBlock>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+
+                                    <TextBlock Style="{StaticResource HintText}" Margin="0,4,0,0"
+                                               Text="Editing &quot;Suggested Sheet #&quot; manually re-validates fit and recomputes that sheet's name. The dropdown only offers sheets in that view's own ViewType group. Rows that no longer fit are flagged in red with an Overflow warning — placement can still proceed, but flagged views should be reviewed."/>
+                                </StackPanel>
+                            </Border>
+
+                            <Grid Margin="0,8,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Column="0" HorizontalAlignment="Left" Content="&lt; Back to Preview Placement" Style="{StaticResource OutlineButton}"
+                                        Command="{Binding BackToStage2Command}"/>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <Button Content="Cancel" Style="{StaticResource OutlineButton}" Margin="0,0,8,0"
+                                            Command="{Binding CloseCommand}"/>
+                                    <Button Content="Next: Confirm &amp; Place &gt;" Style="{StaticResource PrimaryButton}"
+                                            Command="{Binding NextToStage4Command}"/>
+                                </StackPanel>
+                            </Grid>
+
+                        </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <!-- ═══════════ STAGE 4: CONFIRM & PLACE ═══════════ -->
+                <Border Style="{StaticResource ContentCard}">
+                    <StackPanel>
+                        <ToggleButton Style="{StaticResource StageHeaderToggle}"
+                                      IsChecked="{Binding Stage4Expanded, Mode=TwoWay}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Border Width="24" Height="24" CornerRadius="12" Margin="0,0,10,0">
+                                        <Border.Style>
+                                            <Style TargetType="Border" BasedOn="{StaticResource StageNumberCircleBase}">
+                                                <Style.Triggers>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding Stage4Expanded}" Value="True"/>
+                                                            <Condition Binding="{Binding Stage4Complete}" Value="False"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Background" Value="{StaticResource BrushNavyPrimary}"/>
+                                                    </MultiDataTrigger>
+                                                    <DataTrigger Binding="{Binding Stage4Complete}" Value="True">
+                                                        <Setter Property="Background" Value="{StaticResource BrushSuccess}"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                                <Setter Property="Background" Value="{StaticResource BrushTextDisabled}"/>
+                                            </Style>
+                                        </Border.Style>
+                                        <TextBlock Text="4" Style="{StaticResource StageNumberText}"/>
+                                    </Border>
+                                    <TextBlock Text="Confirm &amp; Place" Style="{StaticResource StageTitleText}" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Review final plan and create sheets" Style="{StaticResource StageSubtitleText}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Border Margin="0,0,10,0">
+                                        <Border.Style>
+                                            <Style TargetType="Border" BasedOn="{StaticResource StatusBadgeBase}">
+                                                <Style.Triggers>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding Stage4Expanded}" Value="True"/>
+                                                            <Condition Binding="{Binding Stage4Complete}" Value="False"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Background" Value="{StaticResource BrushSystemSecondaryBackground}"/>
+                                                    </MultiDataTrigger>
+                                                    <DataTrigger Binding="{Binding Stage4Complete}" Value="True">
+                                                        <Setter Property="Background" Value="#E4F3EA"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                                <Setter Property="Background" Value="{StaticResource BrushSystemTertiaryBackground}"/>
+                                            </Style>
+                                        </Border.Style>
+                                        <TextBlock Text="{Binding Stage4StatusLabel}">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock" BasedOn="{StaticResource StatusBadgeTextPending}">
+                                                    <Style.Triggers>
+                                                        <MultiDataTrigger>
+                                                            <MultiDataTrigger.Conditions>
+                                                                <Condition Binding="{Binding Stage4Expanded}" Value="True"/>
+                                                                <Condition Binding="{Binding Stage4Complete}" Value="False"/>
+                                                            </MultiDataTrigger.Conditions>
+                                                            <Setter Property="Foreground" Value="{StaticResource BrushNavyPrimary}"/>
+                                                        </MultiDataTrigger>
+                                                        <DataTrigger Binding="{Binding Stage4Complete}" Value="True">
+                                                            <Setter Property="Foreground" Value="{StaticResource BrushSuccess}"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Border>
+                                    <TextBlock Text="&#9662;" FontSize="11" Foreground="{StaticResource BrushTextSecondary}" VerticalAlignment="Center">
+                                        <TextBlock.LayoutTransform>
+                                            <RotateTransform Angle="0"/>
+                                        </TextBlock.LayoutTransform>
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Stage4Expanded}" Value="False">
+                                                        <Setter Property="LayoutTransform">
+                                                            <Setter.Value>
+                                                                <RotateTransform Angle="-90"/>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </StackPanel>
+                            </Grid>
+                        </ToggleButton>
+                        <Border BorderThickness="0,1,0,0" BorderBrush="{StaticResource BrushCardBorder}"
+                                Visibility="{Binding Stage4Expanded, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <StackPanel Margin="14">
+
+                            <Border Style="{StaticResource SectionCard}">
+                                <StackPanel Margin="12">
+                                    <TextBlock Text="Final Placement Plan (Read-Only)" Style="{StaticResource SectionTitle}" Margin="0,0,0,8"/>
+
+                                    <DataGrid ItemsSource="{Binding AllPlacements}"
+                                              Style="{StaticResource StandardDataGrid}"
+                                              ColumnHeaderStyle="{StaticResource StandardDataGridColumnHeader}"
+                                              CellStyle="{StaticResource StandardDataGridCell}"
+                                              RowStyle="{StaticResource StandardDataGridRow}"
+                                              AutoGenerateColumns="False"
+                                              CanUserAddRows="False"
+                                              IsReadOnly="True"
+                                              MaxHeight="360">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Sheet #" Width="70" Binding="{Binding AssignedSheet.SheetIndex}"/>
+                                            <DataGridTextColumn Header="Sheet Name" Width="180" Binding="{Binding AssignedSheet.GeneratedName}"/>
+                                            <DataGridTextColumn Header="View" Width="*" Binding="{Binding View.Name}"/>
+                                            <DataGridTextColumn Header="Location" Width="140" Binding="{Binding Position}"/>
+                                            <DataGridTextColumn Header="Scale" Width="80" Binding="{Binding View.ScaleLabel}"/>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource SectionCard}">
+                                <StackPanel Margin="12">
+                                    <TextBlock Text="Activity Log" Style="{StaticResource SectionTitle}" Margin="0,0,0,8"/>
+                                    <Border Background="{StaticResource BrushLogBg}" CornerRadius="6" Padding="10" MaxHeight="140">
+                                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                            <ItemsControl ItemsSource="{Binding Logs}">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock FontFamily="Consolas" FontSize="11"
+                                                                   Foreground="{Binding Level, Converter={StaticResource LogLevelToColorConverter}}"
+                                                                   Text="{Binding}" TextWrapping="Wrap"/>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </ScrollViewer>
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+
+                            <Grid Margin="0,8,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="&lt; Back to Suggested Placement" Style="{StaticResource OutlineButton}" Margin="0,0,8,0"
+                                            Command="{Binding BackToStage3Command}"/>
+                                    <Button Content="Export Logs (.txt)" Style="{StaticResource OutlineButton}"
+                                            Command="{Binding ExportLogsCommand}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <Button Content="Cancel" Style="{StaticResource OutlineButton}" Margin="0,0,8,0"
+                                            Command="{Binding CloseCommand}"/>
+                                    <Button Style="{StaticResource PrimaryButton}" Command="{Binding PlaceViewsCommand}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Placing..." Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                            <TextBlock Text="Place Views" Visibility="{Binding IsBusy, Converter={StaticResource InverseBoolToVisibilityConverter}}"/>
+                                        </StackPanel>
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+
+                        </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <!-- ═══════════ STAGE 5: PLACEMENT COMPLETE ═══════════ -->
+                <Border Style="{StaticResource ContentCard}">
+                    <StackPanel>
+                        <ToggleButton Style="{StaticResource StageHeaderToggle}"
+                                      IsChecked="{Binding Stage5Expanded, Mode=TwoWay}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Border Width="24" Height="24" CornerRadius="12" Margin="0,0,10,0">
+                                        <Border.Style>
+                                            <Style TargetType="Border" BasedOn="{StaticResource StageNumberCircleBase}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Stage5Expanded}" Value="True">
+                                                        <Setter Property="Background" Value="{StaticResource BrushNavyPrimary}"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                                <Setter Property="Background" Value="{StaticResource BrushTextDisabled}"/>
+                                            </Style>
+                                        </Border.Style>
+                                        <TextBlock Text="5" Style="{StaticResource StageNumberText}"/>
+                                    </Border>
+                                    <TextBlock Text="Placement Complete" Style="{StaticResource StageTitleText}" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Open created sheets in Revit" Style="{StaticResource StageSubtitleText}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Border Margin="0,0,10,0">
+                                        <Border.Style>
+                                            <Style TargetType="Border" BasedOn="{StaticResource StatusBadgeBase}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Stage5Expanded}" Value="True">
+                                                        <Setter Property="Background" Value="{StaticResource BrushSystemSecondaryBackground}"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                                <Setter Property="Background" Value="{StaticResource BrushSystemTertiaryBackground}"/>
+                                            </Style>
+                                        </Border.Style>
+                                        <TextBlock Text="{Binding Stage5StatusLabel}">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock" BasedOn="{StaticResource StatusBadgeTextPending}">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Stage5Expanded}" Value="True">
+                                                            <Setter Property="Foreground" Value="{StaticResource BrushNavyPrimary}"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Border>
+                                    <TextBlock Text="&#9662;" FontSize="11" Foreground="{StaticResource BrushTextSecondary}" VerticalAlignment="Center">
+                                        <TextBlock.LayoutTransform>
+                                            <RotateTransform Angle="0"/>
+                                        </TextBlock.LayoutTransform>
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Stage5Expanded}" Value="False">
+                                                        <Setter Property="LayoutTransform">
+                                                            <Setter.Value>
+                                                                <RotateTransform Angle="-90"/>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </StackPanel>
+                            </Grid>
+                        </ToggleButton>
+                        <Border BorderThickness="0,1,0,0" BorderBrush="{StaticResource BrushCardBorder}"
+                                Visibility="{Binding Stage5Expanded, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <StackPanel Margin="14">
+
+                            <Border Style="{StaticResource SectionCard}">
+                                <StackPanel Margin="12">
+                                    <TextBlock Text="Newly Created Sheets" Style="{StaticResource SectionTitle}" Margin="0,0,0,8"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                        <Button Content="Select All" Style="{StaticResource SmallSecondaryButton}" Margin="0,0,6,0"
+                                                Command="{Binding SelectAllSheetsToOpenCommand}"/>
+                                        <Button Content="Clear Selection" Style="{StaticResource SmallSecondaryButton}"
+                                                Command="{Binding ClearSheetsToOpenCommand}"/>
+                                    </StackPanel>
+                                    <TextBlock Style="{StaticResource HintText}" Margin="0,0,0,8"
+                                               Text="Select All / Clear Selection above only affect sheets in currently expanded groups below. Use each group's own checkbox to select/clear just that group."/>
+
+                                    <!-- V212: sheets grouped by ViewType, collapsible per group —
+                                         confirmed with Rafi: replaces the single flat DataGrid.
+                                         Each group starts collapsed; header shows a sheet-count
+                                         badge and its own "select all in this group" checkbox,
+                                         independent of the global Select All/Clear Selection
+                                         buttons above (which only touch expanded groups). Same
+                                         ItemsControl-of-cards pattern as Stage 2's Reading
+                                         Order/Gap cards. -->
+                                    <ItemsControl ItemsSource="{Binding SheetTypeGroups}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Style="{StaticResource SectionCard}" Margin="0,0,0,6">
+                                                    <StackPanel Margin="10">
+                                                        <ToggleButton IsChecked="{Binding IsExpanded, Mode=TwoWay}"
+                                                                      Background="Transparent" BorderThickness="0" Cursor="Hand"
+                                                                      HorizontalContentAlignment="Stretch" Padding="0">
+                                                            <Grid>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                </Grid.ColumnDefinitions>
+                                                                <TextBlock Grid.Column="0" Text="{Binding HeaderText}" Style="{StaticResource FieldValue}" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                                                <TextBlock Grid.Column="1" Text="&#9662;" FontSize="11" Foreground="{StaticResource BrushTextSecondary}" VerticalAlignment="Center">
+                                                                    <TextBlock.LayoutTransform>
+                                                                        <RotateTransform Angle="0"/>
+                                                                    </TextBlock.LayoutTransform>
+                                                                    <TextBlock.Style>
+                                                                        <Style TargetType="TextBlock">
+                                                                            <Style.Triggers>
+                                                                                <DataTrigger Binding="{Binding IsExpanded}" Value="False">
+                                                                                    <Setter Property="LayoutTransform">
+                                                                                        <Setter.Value>
+                                                                                            <RotateTransform Angle="-90"/>
+                                                                                        </Setter.Value>
+                                                                                    </Setter>
+                                                                                </DataTrigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </TextBlock.Style>
+                                                                </TextBlock>
+                                                            </Grid>
+                                                        </ToggleButton>
+
+                                                        <Border BorderThickness="0,1,0,0" BorderBrush="{StaticResource BrushCardBorder}"
+                                                                Margin="0,8,0,0" Padding="0,8,0,0"
+                                                                Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                            <StackPanel>
+                                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                                                    <CheckBox IsChecked="{Binding IsGroupSelectAllChecked, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                                    <TextBlock Text="Select all in this group" Style="{StaticResource HintText}" Margin="0" VerticalAlignment="Center"/>
+                                                                </StackPanel>
+
+                                                                <DataGrid ItemsSource="{Binding Sheets}"
+                                                                          Style="{StaticResource StandardDataGrid}"
+                                                                          ColumnHeaderStyle="{StaticResource StandardDataGridColumnHeader}"
+                                                                          CellStyle="{StaticResource StandardDataGridCell}"
+                                                                          RowStyle="{StaticResource StandardDataGridRow}"
+                                                                          AutoGenerateColumns="False"
+                                                                          CanUserAddRows="False">
+                                                                    <DataGrid.Columns>
+                                                                        <!-- Template column (not DataGridCheckBoxColumn) — same fix as
+                                                                             Stage 1's IsSelected column: the per-group "select all"
+                                                                             checkbox sets OpenAfterPlacement programmatically, and
+                                                                             DataGridCheckBoxColumn does not visually refresh on
+                                                                             programmatic changes, only on direct user cell-clicks. -->
+                                                                        <DataGridTemplateColumn Header="Open?" Width="70">
+                                                                            <DataGridTemplateColumn.CellTemplate>
+                                                                                <DataTemplate>
+                                                                                    <CheckBox IsChecked="{Binding OpenAfterPlacement, UpdateSourceTrigger=PropertyChanged}"
+                                                                                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                                </DataTemplate>
+                                                                            </DataGridTemplateColumn.CellTemplate>
+                                                                        </DataGridTemplateColumn>
+                                                                        <DataGridTextColumn Header="Sheet Number" Width="140" Binding="{Binding AssignedSheetNumber}" IsReadOnly="True"/>
+                                                                        <DataGridTextColumn Header="Sheet Name" Width="*" Binding="{Binding GeneratedName}" IsReadOnly="True"/>
+                                                                        <DataGridTextColumn Header="Views Placed" Width="110" Binding="{Binding TotalViewCount}" IsReadOnly="True"/>
+                                                                        <DataGridTextColumn Header="Status" Width="100" Binding="{Binding StatusText}" IsReadOnly="True"/>
+                                                                    </DataGrid.Columns>
+                                                                </DataGrid>
+                                                            </StackPanel>
+                                                        </Border>
+                                                    </StackPanel>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <TextBlock Style="{StaticResource HintText}" Margin="0,6,0,0"
+                                               Text="Check the sheets you want opened in Revit after closing this dialog. Unchecked sheets remain created but closed."/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource SectionCard}">
+                                <StackPanel Margin="12">
+                                    <!-- V212: Activity Log made collapsible — confirmed with Rafi:
+                                         collapsed/expanded state persists across sessions (settings.json),
+                                         same click-to-toggle-chevron pattern as the 5 stage accordion
+                                         headers, but lightweight (no numbered circle / status badge —
+                                         just a title + chevron, since this isn't a workflow stage).
+                                         The "Prompt for folder" checkbox is kept OUTSIDE the
+                                         ToggleButton (own Grid column) so clicking it does not also
+                                         toggle the log's expand/collapse — putting it inside the
+                                         ToggleButton's content would make the whole row one click
+                                         target, which was tried first and rejected as it required an
+                                         extra Click handler just to swallow the bubbled event. -->
+                                    <Grid Margin="0,0,0,8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <ToggleButton Grid.Column="0" IsChecked="{Binding IsActivityLogExpanded, Mode=TwoWay}"
+                                                      Background="Transparent" BorderThickness="0" Cursor="Hand"
+                                                      HorizontalContentAlignment="Stretch" Padding="0" HorizontalAlignment="Stretch">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="Activity Log" Style="{StaticResource SectionTitle}" Margin="0"/>
+                                                <TextBlock Grid.Column="1" Text="&#9662;" FontSize="11" Foreground="{StaticResource BrushTextSecondary}" VerticalAlignment="Center">
+                                                    <TextBlock.LayoutTransform>
+                                                        <RotateTransform Angle="0"/>
+                                                    </TextBlock.LayoutTransform>
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsActivityLogExpanded}" Value="False">
+                                                                    <Setter Property="LayoutTransform">
+                                                                        <Setter.Value>
+                                                                            <RotateTransform Angle="-90"/>
+                                                                        </Setter.Value>
+                                                                    </Setter>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </Grid>
+                                        </ToggleButton>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,0,0">
+                                            <CheckBox IsChecked="{Binding PromptForFolderOnAutoSave}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                            <TextBlock Text="Prompt for folder on auto-save" Style="{StaticResource HintText}" Margin="0" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Grid>
+                                    <Border Background="{StaticResource BrushLogBg}" CornerRadius="6" Padding="10" MaxHeight="140"
+                                            Visibility="{Binding IsActivityLogExpanded, Converter={StaticResource BoolToVisibilityConverter}}">
+                                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                            <ItemsControl ItemsSource="{Binding Logs}">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock FontFamily="Consolas" FontSize="11"
+                                                                   Foreground="{Binding Level, Converter={StaticResource LogLevelToColorConverter}}"
+                                                                   Text="{Binding}" TextWrapping="Wrap"/>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </ScrollViewer>
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+
+                            <Grid Margin="0,8,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Column="0" HorizontalAlignment="Left" Content="Export Logs (.txt)" Style="{StaticResource OutlineButton}"
+                                        Command="{Binding ExportLogsCommand}"/>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <Button Style="{StaticResource PrimaryButton}" Margin="0,0,8,0" Command="{Binding OpenSelectedCommand}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Opening..." Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                            <TextBlock Text="Open Selected" Visibility="{Binding IsBusy, Converter={StaticResource InverseBoolToVisibilityConverter}}"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button Content="Close" Style="{StaticResource OutlineButton}"
+                                            Command="{Binding CloseCommand}"/>
+                                </StackPanel>
+                            </Grid>
+
+                        </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

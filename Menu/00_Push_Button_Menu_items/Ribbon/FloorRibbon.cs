@@ -23,6 +23,10 @@ namespace Revit26_Plugin.Menu.Ribbon
             Create.AddPushButton(new PushButtonData("Btn_FloorsAndRoofFromLinkedRooms.V004", "FloorsAndRoofFromLinkedRooms.V004", assemblyPath, "Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V004.Command"));
             Create.AddPushButton(new PushButtonData("Btn_FloorsAndRoofFromLinkedRooms.V005", "FloorsAndRoofFromLinkedRooms.V005", assemblyPath, "Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V005.Command"));
             Create.AddPushButton(new PushButtonData("Btn_FloorsAndRoofFromLinkedRooms.V006", "FloorsAndRoofFromLinkedRooms.V006", assemblyPath, "Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V006.Command"));
+            Create.AddPushButton(new PushButtonData("Btn_FloorsAndRoofFromLinkedRooms.V007", "FloorsAndRoofFromLinkedRooms.V007", assemblyPath, "Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V007.Command"));
+            Create.AddPushButton(new PushButtonData("Btn_FloorsAndRoofFromLinkedRooms.V008", "FloorsAndRoofFromLinkedRooms.V008 #", assemblyPath, "Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V008.Command"));
+
+
             Create.AddPushButton(new PushButtonData("Btn_RoofCreateTest.V001", "RoofCreateTest.V001", assemblyPath, "Revit26_Plugin.RoofCreateTest.V001.RoofCreateTestCommand"));
             Create.AddPushButton(new PushButtonData("Btn_V001", "RoofCreationIsolationTest.V001", assemblyPath, "Revit26_Plugin.RoofCreationIsolationTest.V001.Commands.RunTestCommand"));
 

@@ -5,7 +5,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\Release\net8.0-windows\30-07-007</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\Release\net8.0-windows\07-08-001</BaseOutputPath>
 		<PackageId />
 		<AssemblyName>Revit26_Plugin</AssemblyName>
 	</PropertyGroup>
@@ -701,6 +701,7 @@
 	  <None Remove="Resources\Icons\AutoslopeV6_32.png" />
 	  <None Remove="Resources\Icons\AutoslopeV6_64.png" />
 	  <None Remove="Resources\Icons\converter32.png" />
+	  <None Remove="Resources\Icons\CreateRoofromLInes.png" />
 	  <None Remove="Resources\Icons\DimMenu_32.png" />
 	  <None Remove="Resources\Icons\linematch32.png" />
 	  <None Remove="Resources\Icons\SBtoSheet.png" />
@@ -713,6 +714,7 @@
 	  <Page Remove="Resources\App.xaml" />
 	  <Page Remove="Shared\SharedStyles - Copy.xaml" />
 	  <Page Remove="Shared\SharedStyles-backup.xaml" />
+	  <Page Remove="Shared\SharedStyles.xaml" />
 	</ItemGroup>
 	<ItemGroup>
 	  <EmbeddedResource Include="Resources\Icons\Addlines_32.png" />
@@ -725,6 +727,7 @@
 	  <EmbeddedResource Include="Resources\Icons\AutoslopeV6_32.png" />
 	  <EmbeddedResource Include="Resources\Icons\AutoslopeV6_64.png" />
 	  <EmbeddedResource Include="Resources\Icons\Converter32.png" />
+	  <EmbeddedResource Include="Resources\Icons\CreateRoofromLInes.png" />
 	  <EmbeddedResource Include="Resources\Icons\Create_32.png" />
 	  <EmbeddedResource Include="Resources\Icons\DimMenu_32.png" />
 	  <EmbeddedResource Include="Resources\Icons\Linematch32.png" />
@@ -761,6 +764,9 @@
 	  <Folder Include="Menu\RoofTools\Lines\Creaser\" />
 	  <Folder Include="Menu\RoofTools\Lines\SlopeToDetailItem\" />
 	  <Folder Include="Menu\Setup\CaddLInkToFamiliy\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Resource Include="Shared\SharedStyles.xaml" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Update="Menu\RoofTools\CreasetoLines\Creaser_V08\CreaserSummaryWindow.xaml.cs">
