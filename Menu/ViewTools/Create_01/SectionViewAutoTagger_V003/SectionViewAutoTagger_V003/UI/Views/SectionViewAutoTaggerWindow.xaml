@@ -1,0 +1,467 @@
+<Window x:Class="Revit26_Plugin.SectionViewAutoTagger.V003.SectionViewAutoTaggerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
+        xmlns:local="clr-namespace:Revit26_Plugin.SectionViewAutoTagger.V003"
+        Title="Section View Auto Tagger — V003"
+        Height="760" Width="1000"
+        MinHeight="760" MinWidth="1000"
+        Background="{DynamicResource BrushSystemBackground}"
+        FontFamily="{DynamicResource SystemFont}"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Revit26_Plugin;component/Shared/SharedStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Local converter instances only — never in SharedStyles.xaml -->
+            <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+            <converters:InverseBoolConverter x:Key="InverseBoolConverter"/>
+            <converters:LogLevelToColorConverter x:Key="LogLevelToColorConverter"/>
+
+            <!-- ═══ Section Views multi-select popover template ═══
+                 Named parts (SearchBox / ResultsListBox / CountText) are
+                 located via FindName by SectionViewMultiSelectBehavior on
+                 the Popup's Opened event — see behavior class comments for
+                 why Loaded is unreliable for Popup content. -->
+            <Style x:Key="SectionViewPopoverTrigger" TargetType="Border">
+                <Setter Property="BorderBrush" Value="{StaticResource BrushSeparator}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="CornerRadius" Value="8"/>
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="Padding" Value="8,6"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="MinHeight" Value="34"/>
+            </Style>
+
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Window.InputBindings>
+        <KeyBinding Key="Esc" Command="ApplicationCommands.Close"/>
+    </Window.InputBindings>
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.Close" Executed="CloseButton_Click"/>
+    </Window.CommandBindings>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- ═══ HEADER ═══ -->
+        <Border Grid.Row="0" Style="{StaticResource HeaderBar}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Section View Auto Tagger — V003" Style="{StaticResource HeaderTitle}"/>
+                <Button Grid.Column="1" Content="✕ Close" Style="{StaticResource DarkGhostButton}" Click="CloseButton_Click"/>
+            </Grid>
+        </Border>
+
+        <!-- ═══ BODY: two columns ═══ -->
+        <Grid Grid.Row="1" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.1*" MinWidth="460"/>
+                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="0.9*" MinWidth="340"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- ── LEFT COLUMN ── -->
+            <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+
+                    <!-- Sheet & Views card -->
+                    <Border Style="{StaticResource ContentCard}">
+                        <StackPanel>
+                            <TextBlock Text="Select Sheet &amp; Views" Style="{StaticResource SectionTitle}"/>
+                            <StackPanel Style="{StaticResource FieldRow}">
+                                <TextBlock Text="Sheet" Style="{StaticResource FieldLabel}"/>
+                                <ComboBox Style="{StaticResource StandardComboBox}"
+                                          ItemsSource="{Binding Sheets}"
+                                          SelectedItem="{Binding SelectedSheet}"
+                                          DisplayMemberPath="DisplayName"/>
+                            </StackPanel>
+                            <TextBlock Text="Selection persists after Add to Worklist / Run." Style="{StaticResource HintText}" Margin="12,0,12,6"/>
+
+                            <TextBlock Text="Section Views on Sheet" Style="{StaticResource FieldLabel}" Margin="12,6,12,2"/>
+
+                            <!-- ═══ Advanced multi-select popover ═══ -->
+                            <Grid Margin="12,0,12,4">
+                                <ToggleButton x:Name="SectionViewPopoverToggle"
+                                              Background="Transparent" BorderThickness="0"
+                                              HorizontalContentAlignment="Stretch">
+                                    <ToggleButton.Template>
+                                        <ControlTemplate TargetType="ToggleButton">
+                                            <Border Style="{StaticResource SectionViewPopoverTrigger}">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Grid.Column="0"
+                                                               Text="{Binding SelectedViewsSummary}"
+                                                               Style="{StaticResource BodyText}"
+                                                               TextTrimming="CharacterEllipsis"
+                                                               VerticalAlignment="Center"/>
+                                                    <TextBlock Grid.Column="1" Text="▾" Foreground="{StaticResource BrushTextTertiary}"
+                                                               VerticalAlignment="Center" Margin="6,0,0,0"/>
+                                                </Grid>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </ToggleButton.Template>
+                                </ToggleButton>
+
+                                <Popup x:Name="SectionViewPopup"
+                                       PlacementTarget="{Binding ElementName=SectionViewPopoverToggle}"
+                                       Placement="Bottom"
+                                       StaysOpen="False"
+                                       Width="{Binding ActualWidth, ElementName=SectionViewPopoverToggle}"
+                                       IsOpen="{Binding IsChecked, ElementName=SectionViewPopoverToggle, Mode=TwoWay}"
+                                       local:SectionViewMultiSelectBehavior.IsEnabled="True">
+                                    <Border Background="White" BorderBrush="{StaticResource BrushCardBorder}"
+                                            BorderThickness="1" CornerRadius="10" Padding="8">
+                                        <Border.Effect>
+                                            <DropShadowEffect ShadowDepth="2" BlurRadius="10" Opacity="0.2"/>
+                                        </Border.Effect>
+                                        <StackPanel>
+                                            <Grid Margin="0,0,0,6">
+                                                <TextBox x:Name="SearchBox" Style="{StaticResource StyledTextInput}"/>
+                                                <TextBlock Text="Search section views..." IsHitTestVisible="False"
+                                                           Foreground="{StaticResource BrushTextTertiary}"
+                                                           FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding Text, ElementName=SearchBox}" Value="">
+                                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </Grid>
+                                            <Grid Margin="0,0,0,6">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock x:Name="CountText" Grid.Column="0" Style="{StaticResource HintText}"
+                                                           Margin="0" VerticalAlignment="Center"/>
+                                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                                    <Button Content="Select All" Style="{StaticResource SmallSecondaryButton}"
+                                                            Command="{Binding SelectAllSectionViewsCommand}" Margin="0,0,4,0"/>
+                                                    <Button Content="Clear" Style="{StaticResource SmallSecondaryButton}"
+                                                            Command="{Binding ClearSectionViewsCommand}"/>
+                                                </StackPanel>
+                                            </Grid>
+                                            <Border BorderBrush="{StaticResource BrushSeparatorThin}" BorderThickness="0,1,0,0">
+                                                <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
+                                                    <ItemsControl x:Name="ResultsListBox" ItemsSource="{Binding SectionViewsOnSheet}">
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <StackPanel Orientation="Horizontal" Margin="4,6">
+                                                                    <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" VerticalAlignment="Center"/>
+                                                                    <TextBlock Text="{Binding ViewName}" Style="{StaticResource BodyText}" Margin="8,0,0,0"/>
+                                                                </StackPanel>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                </ScrollViewer>
+                                            </Border>
+                                            <Button Content="Done" Style="{StaticResource SmallSecondaryButton}"
+                                                    HorizontalAlignment="Right" Margin="0,6,0,0"
+                                                    Click="DonePopoverButton_Click"/>
+                                        </StackPanel>
+                                    </Border>
+                                </Popup>
+                            </Grid>
+                            <TextBlock Text="Searchable multi-select — filter, then check the views to include." Style="{StaticResource HintText}" Margin="12,0,12,10"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Categories card -->
+                    <Border Style="{StaticResource ContentCard}">
+                        <StackPanel>
+                            <TextBlock Text="Categories in Selected View(s)" Style="{StaticResource SectionTitle}"/>
+                            <Border BorderBrush="{StaticResource BrushSeparatorThin}" BorderThickness="1" CornerRadius="8" Margin="12,0,12,6" MaxHeight="200">
+                                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                    <ItemsControl ItemsSource="{Binding Categories}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid Margin="10,6">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="150"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <CheckBox Grid.Column="0"
+                                                              IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                                              IsEnabled="{Binding IsTaggable}"
+                                                              VerticalAlignment="Center"/>
+
+                                                    <TextBlock Grid.Column="1" Text="{Binding CategoryName}" Style="{StaticResource BodyText}" Margin="8,0,0,0" VerticalAlignment="Center"/>
+
+                                                    <!-- V003: Tag Type — dropdown when 2+ options, plain text when only 1 -->
+                                                    <Grid Grid.Column="2" Margin="6,0">
+                                                        <ComboBox Height="26" FontSize="11"
+                                                                  ItemsSource="{Binding AvailableTagTypes}"
+                                                                  SelectedItem="{Binding SelectedTagType, Mode=TwoWay}"
+                                                                  DisplayMemberPath="DisplayName">
+                                                            <ComboBox.Style>
+                                                                <Style TargetType="ComboBox" BasedOn="{StaticResource StandardComboBox}">
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding HasMultipleTagTypes}" Value="True">
+                                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </ComboBox.Style>
+                                                        </ComboBox>
+                                                        <TextBlock Text="{Binding SelectedTagType.DisplayName}"
+                                                                   FontSize="11.5" Foreground="{StaticResource BrushTextPrimary}"
+                                                                   VerticalAlignment="Center" TextTrimming="CharacterEllipsis">
+                                                            <TextBlock.Style>
+                                                                <Style TargetType="TextBlock">
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding HasMultipleTagTypes}" Value="False">
+                                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </TextBlock.Style>
+                                                        </TextBlock>
+                                                    </Grid>
+
+                                                    <Border Grid.Column="3" CornerRadius="8" Padding="7,2">
+                                                        <Border.Style>
+                                                            <Style TargetType="Border">
+                                                                <Setter Property="Background" Value="#E7F5EE"/>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsTaggable}" Value="False">
+                                                                        <Setter Property="Background" Value="#FBEAE9"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Border.Style>
+                                                        <TextBlock FontSize="10.5" FontWeight="SemiBold">
+                                                            <TextBlock.Style>
+                                                                <Style TargetType="TextBlock">
+                                                                    <Setter Property="Text" Value="Taggable"/>
+                                                                    <Setter Property="Foreground" Value="#2E9E64"/>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsTaggable}" Value="False">
+                                                                            <Setter Property="Text" Value="{Binding Reason}"/>
+                                                                            <Setter Property="Foreground" Value="#D9534F"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </TextBlock.Style>
+                                                        </TextBlock>
+                                                    </Border>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </ScrollViewer>
+                            </Border>
+                            <TextBlock Text="Detail line tagging feasibility not yet confirmed — excluded from this list for now."
+                                       Style="{StaticResource HintText}" Margin="12,0,12,6"/>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="12,0,12,10">
+                                <Button Content="Select All" Style="{StaticResource SmallSecondaryButton}" Command="{Binding SelectAllCategoriesCommand}" Margin="0,0,6,0"/>
+                                <Button Content="Clear" Style="{StaticResource SmallSecondaryButton}" Command="{Binding ClearCategoriesCommand}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <Button Content="+ Add to Worklist" Style="{StaticResource AccentButton}"
+                            HorizontalAlignment="Right" Margin="0,0,0,8"
+                            Command="{Binding AddToWorklistCommand}"/>
+
+                    <!-- Worklist card -->
+                    <Border Style="{StaticResource ContentCard}">
+                        <StackPanel>
+                            <TextBlock Text="Worklist (Queued for Run)" Style="{StaticResource SectionTitle}"/>
+                            <ItemsControl ItemsSource="{Binding Worklist}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush="{StaticResource BrushSeparatorThin}" BorderThickness="0,0,0,1" Padding="12,8">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel Grid.Column="0">
+                                                    <TextBlock Text="{Binding SheetDisplay}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource BrushNavyPrimary}"/>
+                                                    <TextBlock Text="{Binding CategoriesDisplay}" FontSize="11" Foreground="{StaticResource BrushTextSecondary}"/>
+                                                </StackPanel>
+                                                <TextBlock Grid.Column="1" Text="✕" FontWeight="Bold" Foreground="{StaticResource BrushDanger}"
+                                                           Cursor="Hand" VerticalAlignment="Center" Padding="4,0">
+                                                    <TextBlock.InputBindings>
+                                                        <MouseBinding MouseAction="LeftClick"
+                                                                      Command="{Binding DataContext.RemoveWorklistEntryCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                      CommandParameter="{Binding}"/>
+                                                    </TextBlock.InputBindings>
+                                                </TextBlock>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <TextBlock Text="No views queued yet. Add a sheet/view above."
+                                       HorizontalAlignment="Center" Margin="0,14,0,14" FontStyle="Italic">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource HintText}">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding HasWorklistItems}" Value="False">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+
+                            <Grid Margin="12,8,12,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Column="0" Content="Clear All" Style="{StaticResource SmallSecondaryButton}" Command="{Binding ClearWorklistCommand}"/>
+                                <TextBlock Grid.Column="1" Text="{Binding Worklist.Count, StringFormat='{}{0} view(s) queued'}"
+                                           Style="{StaticResource HintText}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- ── RIGHT COLUMN ── -->
+            <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+
+                    <!-- Settings card -->
+                    <Border Style="{StaticResource ContentCard}">
+                        <StackPanel Margin="0,0,0,10">
+                            <TextBlock Text="Tag Placement Settings (Global)" Style="{StaticResource SectionTitle}"/>
+
+                            <TextBlock Text="Alignment Side" Style="{StaticResource FieldLabel}" Margin="12,4,12,4"/>
+                            <StackPanel Orientation="Horizontal" Margin="12,0,12,10">
+                                <RadioButton Content="Left" GroupName="AlignSide" Margin="0,0,14,0"
+                                             IsChecked="{Binding IsLeftSelected, Mode=TwoWay}"/>
+                                <RadioButton Content="Right" GroupName="AlignSide"
+                                             IsChecked="{Binding IsRightSelected, Mode=TwoWay}"/>
+                            </StackPanel>
+
+                            <TextBlock Text="Leader End" Style="{StaticResource FieldLabel}" Margin="12,4,12,4"/>
+                            <StackPanel Orientation="Horizontal" Margin="12,0,12,10">
+                                <RadioButton Content="Free End" GroupName="LeaderEnd" Margin="0,0,14,0"
+                                             IsChecked="{Binding IsFreeEndSelected, Mode=TwoWay}"/>
+                                <RadioButton Content="Attached End" GroupName="LeaderEnd"
+                                             IsChecked="{Binding IsAttachedEndSelected, Mode=TwoWay}"/>
+                            </StackPanel>
+
+                            <StackPanel Style="{StaticResource FieldRow}">
+                                <TextBlock Text="Offset from Crop Boundary (mm)" Style="{StaticResource FieldLabel}"/>
+                                <TextBox Style="{StaticResource BoxedTextInput}" MaxLength="10" FontSize="11"
+                                         Text="{Binding OffsetMm, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+
+                            <StackPanel Style="{StaticResource FieldRow}">
+                                <TextBlock Text="Tag Stack Spacing (mm)" Style="{StaticResource FieldLabel}"/>
+                                <TextBox Style="{StaticResource BoxedTextInput}" MaxLength="10" FontSize="11"
+                                         Text="{Binding SpacingMm, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+
+                            <TextBlock Text="Applies to every view in the worklist. Tag Type is set per-category (left). Leader End is global."
+                                       Style="{StaticResource HintText}" Margin="12,4,12,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Run card -->
+                    <Border Style="{StaticResource ContentCard}">
+                        <StackPanel Margin="12">
+                            <TextBlock Text="Run" Style="{StaticResource SectionTitle}" Margin="0,0,0,5"/>
+                            <Button Content="▶ Run Batch Tag Placement" Style="{StaticResource PrimaryButton}"
+                                    Command="{Binding RunCommand}"/>
+                            <TextBlock Text="Disabled while running; re-enables on completion." Style="{StaticResource HintText}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Log card -->
+                    <Border Style="{StaticResource ContentCard}">
+                        <StackPanel Margin="12">
+                            <TextBlock Text="Log" Style="{StaticResource SectionTitle}" Margin="0,0,0,5"/>
+                            <Border Background="{StaticResource BrushLogBg}" CornerRadius="8" Padding="8" Height="180">
+                                <ListBox x:Name="LogListBox" ItemsSource="{Binding LogEntries}"
+                                         Background="Transparent" BorderThickness="0"
+                                         SelectionMode="Extended"
+                                         SelectionChanged="LogListBox_SelectionChanged"
+                                         ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock FontFamily="Consolas" FontSize="11">
+                                                <Run Text="{Binding Time, StringFormat='HH:mm:ss', Mode=OneWay}" Foreground="{StaticResource BrushLogTextDim}"/>
+                                                <Run Text="  "/>
+                                                <Run Text="{Binding Level, Mode=OneWay}" Foreground="{Binding Level, Converter={StaticResource LogLevelToColorConverter}, Mode=OneWay}"/>
+                                                <Run Text="  "/>
+                                                <Run Text="{Binding Message, Mode=OneWay}" Foreground="{StaticResource BrushLogText}"/>
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </Border>
+                            <TextBlock Text="{Binding SummaryLine}" FontSize="12" FontWeight="SemiBold"
+                                       Foreground="{StaticResource BrushNavyPrimary}" Margin="2,6,0,6"/>
+
+                            <TextBlock Text="Saved Log Location" Style="{StaticResource FieldLabel}" Margin="2,0,0,2">
+                                <TextBlock.Visibility>
+                                    <Binding Path="HasSavedLogPath" Converter="{StaticResource BoolToVisibilityConverter}"/>
+                                </TextBlock.Visibility>
+                            </TextBlock>
+                            <TextBox Text="{Binding SavedLogPath, Mode=OneWay}"
+                                     IsReadOnly="True" FontSize="10.5"
+                                     Background="{StaticResource BrushSystemSecondaryBackground}"
+                                     BorderBrush="{StaticResource BrushSeparator}" BorderThickness="1"
+                                     Padding="6,4" Margin="0,0,0,8"
+                                     Cursor="IBeam">
+                                <TextBox.Visibility>
+                                    <Binding Path="HasSavedLogPath" Converter="{StaticResource BoolToVisibilityConverter}"/>
+                                </TextBox.Visibility>
+                            </TextBox>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Column="0" Content="Copy All" Style="{StaticResource SmallSecondaryButton}" Margin="0,0,6,0"
+                                        Command="{Binding CopyAllCommand}"/>
+                                <Button Grid.Column="1" Content="Copy Selected" Style="{StaticResource SmallSecondaryButton}" HorizontalAlignment="Left"
+                                        Command="{Binding CopySelectedCommand}"/>
+                                <Button Grid.Column="2" Content="Export .txt" Style="{StaticResource SmallSecondaryButton}"
+                                        Command="{Binding ExportLogCommand}"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </ScrollViewer>
+
+        </Grid>
+    </Grid>
+</Window>

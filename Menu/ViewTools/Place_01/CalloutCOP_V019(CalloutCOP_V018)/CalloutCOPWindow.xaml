@@ -1,0 +1,679 @@
+﻿<Window x:Class="Revit26_Plugin.CalloutCOP.V019.Views.CalloutCOPWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
+        xmlns:local="clr-namespace:Revit26_Plugin.CalloutCOP.V019.Views"
+        mc:Ignorable="d"
+        Title="Callout COP V018"
+        Height="860"
+        Width="1080"
+        WindowStartupLocation="CenterOwner">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Revit26_Plugin;component/Shared/SharedStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+            <converters:LogLevelToColorConverter x:Key="LogLevelToColorConverter"/>
+
+            <!-- ═══════════════════════════════════════════════════════
+                 Rich dropdown row template - used ONLY inside the popup's
+                 ItemsPresenter (see DraftingViewComboBox style below).
+                 Name | Detail # | Sheet, three aligned columns.
+            ═══════════════════════════════════════════════════════ -->
+            <DataTemplate x:Key="DraftingViewDropdownRowTemplate">
+                <Grid Margin="6,3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="45"/>
+                        <ColumnDefinition Width="120"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="{Binding Name}"
+                               FontSize="10.5" Foreground="{StaticResource BrushTextPrimary}"
+                               TextTrimming="CharacterEllipsis" Margin="0,0,8,0"/>
+                    <TextBlock Grid.Column="1" Text="{Binding DetailNumbers}"
+                               FontSize="10.5" Foreground="{StaticResource BrushTextSecondary}"
+                               HorizontalAlignment="Center" Margin="4,0"/>
+                    <TextBlock Grid.Column="2" Text="{Binding SheetNumbers}"
+                               FontSize="10.5" Foreground="{StaticResource BrushTextSecondary}"
+                               TextTrimming="CharacterEllipsis" Margin="8,0,0,0"/>
+                </Grid>
+            </DataTemplate>
+
+            <!-- ═══════════════════════════════════════════════════════
+                 DraftingViewComboBox - shared ComboBox style for ALL 6
+                 drafting-view combos (bulk-fill x3 + per-row grid x3).
+
+                 Standard WPF pattern for "plain closed box, rich open
+                 dropdown": ComboBox.ItemTemplate would apply to BOTH the
+                 closed selection box and the open popup (they are not
+                 independently templatable via DisplayMemberPath/
+                 ItemTemplate alone). This ControlTemplate instead splits
+                 them explicitly:
+                   - The closed box is a ContentPresenter bound to
+                     SelectedItem.Name only (plain text, no rich columns).
+                   - The Popup's ItemsPresenter uses the ComboBox's
+                     ItemTemplate (set to DraftingViewDropdownRowTemplate
+                     below), which only ever renders for items inside the
+                     open dropdown list.
+                 Local to this window per shared-styles convention -
+                 SharedStyles.xaml is left untouched.
+            ═══════════════════════════════════════════════════════ -->
+            <Style x:Key="DraftingViewComboBox" TargetType="ComboBox">
+                <Setter Property="ItemTemplate" Value="{StaticResource DraftingViewDropdownRowTemplate}"/>
+                <Setter Property="FontSize" Value="10"/>
+                <Setter Property="Height" Value="24"/>
+                <Setter Property="Background" Value="{StaticResource BrushSystemBackground}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource BrushSeparator}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <!-- V018: enables DraftingViewSearchBehavior, which wires the
+                     PART_SearchBox / PART_ResultCount named elements below
+                     into a per-instance filtered CollectionView (search box +
+                     live "Showing X/Y" counter over the existing rich
+                     Name | Detail # | Sheet row template). -->
+                <Setter Property="local:DraftingViewSearchBehavior.IsEnabled" Value="True"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ComboBox">
+                            <Grid>
+                                <ToggleButton x:Name="Toggle"
+                                              Background="{TemplateBinding Background}"
+                                              BorderBrush="{TemplateBinding BorderBrush}"
+                                              BorderThickness="{TemplateBinding BorderThickness}"
+                                              IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                              ClickMode="Press">
+                                    <ToggleButton.Template>
+                                        <ControlTemplate TargetType="ToggleButton">
+                                            <Border Background="{TemplateBinding Background}"
+                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                    CornerRadius="5">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="16"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <!-- Closed box: PLAIN NAME ONLY, per spec -->
+                                                    <!-- FIX: this TextBlock lives inside ToggleButton.Template
+                                                         (nested), so TemplatedParent here resolved to the
+                                                         ToggleButton - which has no SelectedItem property.
+                                                         The binding silently failed and always showed blank,
+                                                         even after a real selection was made. AncestorType=
+                                                         ComboBox walks up to the actual ComboBox instead. -->
+                                                    <TextBlock Grid.Column="0"
+                                                               Text="{Binding SelectedItem.Name, RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                                                               FontSize="10" Foreground="{StaticResource BrushTextPrimary}"
+                                                               TextTrimming="CharacterEllipsis"
+                                                               VerticalAlignment="Center" Margin="6,0,4,0"/>
+                                                    <Path Grid.Column="1" Data="M0,0 L4,4 L8,0" Stroke="{StaticResource BrushTextTertiary}"
+                                                          StrokeThickness="1.3" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                </Grid>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </ToggleButton.Template>
+                                </ToggleButton>
+
+                                <!-- V018: MinWidth 260 so the search box / rich row columns never
+                                     get squeezed by narrow hosts (the 3 per-row grid columns are
+                                     ~130px). Popup still opens left-aligned under the closed box;
+                                     WPF's own on-screen placement adjuster (Popup default behavior)
+                                     shifts it left automatically if it would overflow the window's
+                                     right edge, so no manual Placement logic is needed here. -->
+                                <Popup x:Name="PART_Popup"
+                                       IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                                       Placement="Bottom" AllowsTransparency="True" Focusable="False"
+                                       PopupAnimation="None" StaysOpen="False">
+                                    <Border Background="{StaticResource BrushCardBackground}"
+                                            BorderBrush="{StaticResource BrushCardBorder}"
+                                            BorderThickness="1" CornerRadius="6"
+                                            MinWidth="260"
+                                            MaxHeight="300">
+                                        <StackPanel>
+                                            <Border Padding="8,6" BorderThickness="0,0,0,1"
+                                                    BorderBrush="{StaticResource BrushSeparatorThin}">
+                                                <StackPanel>
+                                                    <TextBox x:Name="PART_SearchBox"
+                                                             Style="{StaticResource StyledTextInput}"
+                                                             Height="24"/>
+                                                    <!-- V018: teaches the "detail/sheet" structured search
+                                                         (e.g. "12/A-201") alongside plain free-text search. -->
+                                                    <TextBlock Text="Search by name, or type detail/sheet e.g. 12/A-201"
+                                                               Style="{StaticResource HintText}"
+                                                               Margin="0,3,0,0"/>
+                                                </StackPanel>
+                                            </Border>
+                                            <Border BorderThickness="0,0,0,1" BorderBrush="{StaticResource BrushSeparatorThin}">
+                                                <TextBlock x:Name="PART_ResultCount"
+                                                           FontSize="9" Foreground="{StaticResource BrushTextTertiary}"
+                                                           Padding="8,3"/>
+                                            </Border>
+                                            <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="220" Margin="2">
+                                                <ItemsPresenter/>
+                                            </ScrollViewer>
+                                        </StackPanel>
+                                    </Border>
+                                </Popup>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Background="{StaticResource BrushSystemSecondaryBackground}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- ========================= -->
+        <!-- HEADER -->
+        <!-- ========================= -->
+        <Border Grid.Row="0" Style="{StaticResource HeaderBar}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Callout COP" Style="{StaticResource HeaderTitle}"/>
+                    <TextBlock Text="Reference callout placement - per-view mapping" Style="{StaticResource HeaderSubtitle}"/>
+                </StackPanel>
+
+                <Border Grid.Column="1" Style="{StaticResource BadgePill}"
+                        Background="{StaticResource BrushNavyLight}"
+                        VerticalAlignment="Center">
+                    <TextBlock Text="V018" Foreground="{StaticResource BrushTextOnDark}"
+                               FontSize="11" FontWeight="SemiBold"/>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- ========================= -->
+        <!-- BODY -->
+        <!-- ========================= -->
+        <Grid Grid.Row="1" Margin="12">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="200"/>
+            </Grid.RowDefinitions>
+
+            <!-- CONFIG CARD -->
+            <Border Grid.Row="0" Style="{StaticResource ContentCard}" Padding="12">
+                <StackPanel>
+
+                    <!-- Bulk-fill toolbar -->
+                    <TextBlock Text="Bulk-fill (applies to all checked rows)"
+                               FontSize="10" FontWeight="SemiBold"
+                               Foreground="{StaticResource BrushTextSecondary}"
+                               Margin="0,0,0,6"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,9">
+                        <ComboBox ItemsSource="{Binding DraftingViews}"
+                                  SelectedItem="{Binding BulkFillLeftView}"
+                                  Style="{StaticResource DraftingViewComboBox}"
+                                  Width="150" Margin="0,0,6,0"/>
+                        <ComboBox ItemsSource="{Binding DraftingViews}"
+                                  SelectedItem="{Binding BulkFillCenterView}"
+                                  Style="{StaticResource DraftingViewComboBox}"
+                                  Width="150" Margin="0,0,6,0"/>
+                        <ComboBox ItemsSource="{Binding DraftingViews}"
+                                  SelectedItem="{Binding BulkFillRightView}"
+                                  Style="{StaticResource DraftingViewComboBox}"
+                                  Width="150" Margin="0,0,10,0"/>
+                        <Button Content="Apply to checked"
+                                Command="{Binding ApplyBulkFillCommand}"
+                                Style="{StaticResource AccentButton}"
+                                Height="24" Width="130" FontSize="10"/>
+                    </StackPanel>
+
+                    <Border Style="{StaticResource SeparatorLine}" Margin="0,0,0,9"/>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,7">
+                        <TextBlock Text="Sheet filter" FontSize="10"
+                                   Foreground="{StaticResource BrushTextSecondary}"
+                                   Width="150" VerticalAlignment="Center"/>
+
+                        <!-- Sheet filter button + popup (multi-select, OR-match) -->
+                        <Grid Width="220" HorizontalAlignment="Left">
+                            <Button x:Name="SheetFilterButton"
+                                    Content="{Binding SheetFilterSummaryText}"
+                                    Command="{Binding OpenSheetFilterPopupCommand}"
+                                    Style="{StaticResource OutlineButton}"
+                                    Height="26" HorizontalContentAlignment="Left"
+                                    Padding="8,0"/>
+
+                            <Popup IsOpen="{Binding IsSheetFilterPopupOpen, Mode=TwoWay}"
+                                   PlacementTarget="{Binding ElementName=SheetFilterButton}"
+                                   Placement="Bottom" StaysOpen="False" AllowsTransparency="True"
+                                   PopupAnimation="None">
+                                <Border Background="{StaticResource BrushCardBackground}"
+                                        BorderBrush="{StaticResource BrushCardBorder}"
+                                        BorderThickness="1" CornerRadius="8" Width="260">
+                                    <Border.Effect>
+                                        <DropShadowEffect ShadowDepth="3" BlurRadius="12" Opacity="0.2"/>
+                                    </Border.Effect>
+                                    <StackPanel>
+
+                                        <!-- Search -->
+                                        <!-- NOTE: StyledTextInput has no built-in watermark/placeholder
+                                             support, so a small label is used above the box instead
+                                             of attempting a Tag-based placeholder trick. -->
+                                        <Border BorderBrush="{StaticResource BrushSeparatorThin}" BorderThickness="0,0,0,1" Padding="8">
+                                            <StackPanel>
+                                                <TextBlock Text="Search sheet number" FontSize="9.5"
+                                                           Foreground="{StaticResource BrushTextTertiary}"
+                                                           Margin="2,0,0,3"/>
+                                                <TextBox Text="{Binding SheetFilterSearchText, UpdateSourceTrigger=PropertyChanged}"
+                                                         Style="{StaticResource StyledTextInput}"
+                                                         MaxLength="25" Height="24"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- Checklist -->
+                                        <ItemsControl ItemsSource="{Binding SheetFilterItemsView}" MaxHeight="220">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <VirtualizingStackPanel/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel>
+                                                        <CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay}"
+                                                                  Padding="6,5" Margin="4,0">
+                                                            <TextBlock Text="{Binding DisplayText}" FontSize="10.5"/>
+                                                            <CheckBox.Style>
+                                                                <Style TargetType="CheckBox">
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsAllRow}" Value="True">
+                                                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </CheckBox.Style>
+                                                        </CheckBox>
+                                                        <Border BorderThickness="0,0,0,1"
+                                                                BorderBrush="{StaticResource BrushSeparatorThin}"
+                                                                Margin="4,2"
+                                                                Visibility="{Binding IsAllRow, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+
+                                        <!-- Footer -->
+                                        <Border BorderBrush="{StaticResource BrushSeparatorThin}" BorderThickness="0,1,0,0"
+                                                Background="{StaticResource BrushSystemSecondaryBackground}">
+                                            <Grid Margin="6,5">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                                    <Button Content="Select all"
+                                                            Command="{Binding SheetFilterSelectAllCommand}"
+                                                            Style="{StaticResource SmallSecondaryButton}"
+                                                            Margin="0,0,6,0"/>
+                                                    <Button Content="Clear"
+                                                            Command="{Binding SheetFilterClearCommand}"
+                                                            Style="{StaticResource SmallSecondaryButton}"/>
+                                                </StackPanel>
+                                                <Button Grid.Column="1" Content="Close"
+                                                        Command="{Binding CloseSheetFilterPopupCommand}"
+                                                        Style="{StaticResource SecondaryButton}"
+                                                        Height="26" Padding="10,0"/>
+                                            </Grid>
+                                        </Border>
+                                    </StackPanel>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,9">
+                        <TextBlock Text="Callout size (mm)" FontSize="10"
+                                   Foreground="{StaticResource BrushTextSecondary}"
+                                   Width="150" VerticalAlignment="Center"/>
+                        <TextBox Text="{Binding CalloutSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 MaxLength="10" FontSize="10" Width="80" Height="26"
+                                 VerticalContentAlignment="Center" Padding="6,0"/>
+                        <TextBlock Text="suggested from view scale" FontSize="10"
+                                   Foreground="{StaticResource BrushTextTertiary}"
+                                   Margin="10,0,0,0" VerticalAlignment="Center"
+                                   Visibility="{Binding IsSizeAutoSuggested, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                        <Button Content="Reset to suggested"
+                                Command="{Binding ResetSizeToSuggestedCommand}"
+                                Style="{StaticResource SmallSecondaryButton}"
+                                Margin="12,0,0,0" Padding="9,0" FontSize="10"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                        <CheckBox Content="Show placed" IsChecked="{Binding ShowPlaced}"
+                                  FontSize="10" Margin="0,0,16,0"/>
+                        <CheckBox Content="Show unplaced" IsChecked="{Binding ShowUnplaced}"
+                                  FontSize="10" Margin="0,0,16,0"/>
+                        <CheckBox Content="Show sections" IsChecked="{Binding ShowSections}"
+                                  FontSize="10" Margin="0,0,16,0"/>
+                        <CheckBox Content="Show elevations" IsChecked="{Binding ShowElevations}"
+                                  FontSize="10"/>
+                    </StackPanel>
+
+                </StackPanel>
+            </Border>
+
+            <!-- VIEW GRID CARD -->
+            <Border Grid.Row="1" Style="{StaticResource ContentCard}">
+                <DockPanel LastChildFill="True">
+                    <Grid DockPanel.Dock="Top" Margin="10,8,10,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="Select all"
+                                    Command="{Binding SelectAllCommand}"
+                                    Style="{StaticResource SmallSecondaryButton}"
+                                    Margin="0,0,6,0" Padding="9,0" FontSize="9.5"/>
+                            <Button Content="Select none"
+                                    Command="{Binding SelectNoneCommand}"
+                                    Style="{StaticResource SmallSecondaryButton}"
+                                    Margin="0,0,6,0" Padding="9,0" FontSize="9.5"/>
+                            <Button Content="Inverse selection"
+                                    Command="{Binding InverseSelectionCommand}"
+                                    Style="{StaticResource SmallSecondaryButton}"
+                                    Padding="9,0" FontSize="9.5"/>
+                        </StackPanel>
+                        <TextBlock Grid.Column="1" Text="Scoped to visible/filtered rows"
+                                   FontSize="9.5" Foreground="{StaticResource BrushTextTertiary}"
+                                   HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    </Grid>
+
+                <DataGrid ItemsSource="{Binding ViewsCollection}"
+                          Style="{StaticResource StandardDataGrid}"
+                          ColumnHeaderStyle="{StaticResource StandardDataGridColumnHeader}"
+                          CellStyle="{StaticResource StandardDataGridCell}"
+                          RowStyle="{StaticResource StandardDataGridRow}"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          HeadersVisibility="Column"
+                          VirtualizingStackPanel.IsVirtualizing="True"
+                          VirtualizingStackPanel.VirtualizationMode="Recycling">
+
+                    <DataGrid.Columns>
+
+                        <DataGridCheckBoxColumn Header="&#10003;"
+                                                 Binding="{Binding IsSelected, Mode=TwoWay}"
+                                                 Width="34"/>
+
+                        <DataGridTextColumn Header="View name"
+                                             Binding="{Binding Name}"
+                                             Width="*"/>
+
+                        <DataGridTextColumn Header="Type"
+                                             Binding="{Binding ViewType}"
+                                             Width="90"/>
+
+                        <DataGridTextColumn Header="Sheets"
+                                             Binding="{Binding SheetNumbers}"
+                                             Width="110"/>
+
+                        <!-- LEFT -->
+                        <DataGridTemplateColumn Width="130">
+                            <DataGridTemplateColumn.Header>
+                                <StackPanel>
+                                    <TextBlock Text="Left" FontSize="10" FontWeight="SemiBold"
+                                               Foreground="{StaticResource BrushTextOnDark}"/>
+                                    <TextBlock Text="-50mm" FontSize="9"
+                                               Foreground="{StaticResource BrushAppleBlueLight}"/>
+                                </StackPanel>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox ItemsSource="{Binding DataContext.DraftingViews,
+                                                            RelativeSource={RelativeSource AncestorType=Window}}"
+                                              SelectedItem="{Binding LeftView, Mode=TwoWay}"
+                                              Style="{StaticResource DraftingViewComboBox}"
+                                              Margin="2"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <!-- CENTER -->
+                        <DataGridTemplateColumn Width="130">
+                            <DataGridTemplateColumn.Header>
+                                <StackPanel>
+                                    <TextBlock Text="Center" FontSize="10" FontWeight="SemiBold"
+                                               Foreground="{StaticResource BrushTextOnDark}"/>
+                                    <TextBlock Text="0mm" FontSize="9"
+                                               Foreground="{StaticResource BrushAppleBlueLight}"/>
+                                </StackPanel>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox ItemsSource="{Binding DataContext.DraftingViews,
+                                                            RelativeSource={RelativeSource AncestorType=Window}}"
+                                              SelectedItem="{Binding CenterView, Mode=TwoWay}"
+                                              Style="{StaticResource DraftingViewComboBox}"
+                                              Margin="2"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <!-- RIGHT -->
+                        <DataGridTemplateColumn Width="130">
+                            <DataGridTemplateColumn.Header>
+                                <StackPanel>
+                                    <TextBlock Text="Right" FontSize="10" FontWeight="SemiBold"
+                                               Foreground="{StaticResource BrushTextOnDark}"/>
+                                    <TextBlock Text="+50mm" FontSize="9"
+                                               Foreground="{StaticResource BrushAppleBlueLight}"/>
+                                </StackPanel>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox ItemsSource="{Binding DataContext.DraftingViews,
+                                                            RelativeSource={RelativeSource AncestorType=Window}}"
+                                              SelectedItem="{Binding RightView, Mode=TwoWay}"
+                                              Style="{StaticResource DraftingViewComboBox}"
+                                              Margin="2"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="Placed" Width="80" IsReadOnly="True">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border CornerRadius="8" Padding="7,2" HorizontalAlignment="Left">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Background" Value="{StaticResource BrushSystemSecondaryBackground}"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsPlaced}" Value="True">
+                                                        <Setter Property="Background" Value="#EAF6F0"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <TextBlock FontSize="9.5">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Text" Value="Unplaced"/>
+                                                    <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsPlaced}" Value="True">
+                                                            <Setter Property="Text" Value="Placed"/>
+                                                            <Setter Property="Foreground" Value="#1F6B45"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Border>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                    </DataGrid.Columns>
+                </DataGrid>
+                </DockPanel>
+            </Border>
+
+            <!-- SUMMARY CARDS -->
+            <Grid Grid.Row="2" Margin="0,8,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="8"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="8"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="8"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="8"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="8"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Style="{StaticResource MetricCard}">
+                    <StackPanel>
+                        <TextBlock Text="Selected" Style="{StaticResource MetricLabel}"/>
+                        <TextBlock Text="{Binding SelectedCount}" Style="{StaticResource MetricNumber}"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- V018: new card - sum of filled Left/Center/Right slots across
+                     selected rows, i.e. what a run would attempt right now. -->
+                <Border Grid.Column="2" Style="{StaticResource MetricCard}">
+                    <StackPanel>
+                        <TextBlock Text="Expected placements" Style="{StaticResource MetricLabel}"/>
+                        <TextBlock Text="{Binding ExpectedPlacementCount}" Style="{StaticResource MetricNumberAccent}"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="4" Style="{StaticResource MetricCard}">
+                    <StackPanel>
+                        <TextBlock Text="Already placed" Style="{StaticResource MetricLabel}"/>
+                        <TextBlock Text="{Binding PlacedCount}" Style="{StaticResource MetricNumberAccent}"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="6" Style="{StaticResource MetricCard}">
+                    <StackPanel>
+                        <TextBlock Text="Placed this run" Style="{StaticResource MetricLabel}"/>
+                        <TextBlock Text="{Binding RunSuccessCount}" Style="{StaticResource MetricNumberSuccess}"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="8" Style="{StaticResource MetricCard}">
+                    <StackPanel>
+                        <TextBlock Text="Failed this run" Style="{StaticResource MetricLabel}"/>
+                        <TextBlock Text="{Binding RunFailedCount}" Style="{StaticResource MetricNumberDanger}"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="10" Style="{StaticResource MetricCard}">
+                    <StackPanel>
+                        <TextBlock Text="Skipped (no views)" Style="{StaticResource MetricLabel}"/>
+                        <TextBlock Text="{Binding RunSkippedCount}" Style="{StaticResource MetricNumberWarning}"/>
+                    </StackPanel>
+                </Border>
+
+            </Grid>
+
+            <!-- ACTION BAR -->
+            <DockPanel Grid.Row="3" Margin="0,10,0,8">
+                <TextBlock Text="{Binding ProgressText}"
+                           FontSize="10.5" FontWeight="SemiBold"
+                           Foreground="{StaticResource BrushNavyPrimary}"
+                           VerticalAlignment="Center"
+                           Visibility="{Binding IsRunning, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                <!-- V018: reason shown once Run disables permanently after a
+                     successful run this session. -->
+                <TextBlock Text="{Binding RunDisabledReason}"
+                           FontSize="9.5" Foreground="{StaticResource BrushTextTertiary}"
+                           VerticalAlignment="Center" Margin="0,0,10,0"
+                           DockPanel.Dock="Right"
+                           Visibility="{Binding HasPlacedThisSession, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                <Button Content="Place reference callouts"
+                        Command="{Binding PlaceCalloutsCommand}"
+                        Style="{StaticResource PrimaryButton}"
+                        Width="220" DockPanel.Dock="Right"/>
+            </DockPanel>
+
+            <!-- LOG PANEL -->
+            <Border Grid.Row="4" Background="{StaticResource BrushLogBg}" CornerRadius="10">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0" Background="{StaticResource BrushLogTitleBar}"
+                            CornerRadius="10,10,0,0" Padding="10,6">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Text="Log" FontSize="10.5" FontWeight="SemiBold"
+                                       Foreground="{StaticResource BrushLogText}" VerticalAlignment="Center"/>
+
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <Button Content="Copy all"
+                                        Command="{Binding CopyAllLogsCommand}"
+                                        Style="{StaticResource DarkGhostButton}" Margin="0,0,6,0"/>
+                                <Button Content="Copy selected"
+                                        Click="CopySelectedLogs_Click"
+                                        Style="{StaticResource DarkGhostButton}" Margin="0,0,6,0"/>
+                                <Button Content="Clear"
+                                        Command="{Binding ClearLogsCommand}"
+                                        Style="{StaticResource DarkGhostButton}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <ListBox x:Name="LogListBox" Grid.Row="1"
+                             ItemsSource="{Binding Logs}"
+                             SelectionMode="Extended"
+                             Background="Transparent" BorderThickness="0"
+                             Padding="10,4">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Padding" Value="0,1"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock FontFamily="Consolas" FontSize="10.5"
+                                           Foreground="{Binding Level, Converter={StaticResource LogLevelToColorConverter}}">
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="{}{0:HH:mm:ss}  {1,-7}  {2}">
+                                            <Binding Path="Time"/>
+                                            <Binding Path="Level"/>
+                                            <Binding Path="Message"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                </Grid>
+            </Border>
+
+        </Grid>
+    </Grid>
+</Window>

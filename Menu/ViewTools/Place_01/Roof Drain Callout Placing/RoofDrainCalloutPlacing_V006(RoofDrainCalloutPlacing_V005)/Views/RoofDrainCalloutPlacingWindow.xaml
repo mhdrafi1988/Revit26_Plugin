@@ -1,0 +1,233 @@
+<Window x:Class="Revit26_Plugin.RoofDrainCalloutPlacing.V006.Views.RoofDrainCalloutPlacingWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:helpers="clr-namespace:Revit26_Plugin.RoofDrainCalloutPlacing.V006.Helpers"
+        Title="RoofDrainCalloutPlacing — V005"
+        Height="750" Width="520" MinHeight="750" MinWidth="520"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource BrushSystemBackground}">
+    <!--
+        NOTE: no StaticResource on the root Window tag — Window.Resources parses
+        after root attributes, so Background above uses DynamicResource. Shared
+        style dictionary is loaded via assembly-relative pack URI in XAML
+        directly (works without an Application object); never pack://application:,,,.
+
+        V005 changes from V004: roof pick and drain-point pick moved entirely
+        into RoofDrainCalloutPlacingCommand.Execute(), running synchronously
+        BEFORE this window is ever constructed — confirmed with Rafi. This
+        window is now display + parameters + Run only: no Pick Roof / Pick
+        Drain Points buttons, no Undo/Clear, no IsBusyPicking (nothing sets it
+        anymore — picking already happened by the time this window exists).
+        The Roof and Drain Points cards became read-only summary cards instead
+        of interactive step cards.
+
+        V005 in-place tweak (no version bump — behavioral, not new feature):
+        window height 600 -> 750; Summary Metrics card moved to directly under
+        the header (was above the Log panel); Run button now stays disabled
+        permanently after first click (HasRun flag in VM), it does not
+        re-enable when the op completes.
+    -->
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Revit26_Plugin;component/Shared/SharedStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Converters instantiated locally, never inside SharedStyles.xaml -->
+            <helpers:ZeroCountToVisibilityConverter x:Key="ZeroCountToVisibilityConverter"/>
+
+            <Style x:Key="CompactCard" TargetType="Border" BasedOn="{StaticResource ContentCard}">
+                <Setter Property="Margin" Value="0,0,0,8"/>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Style="{StaticResource HeaderBar}" Padding="14,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="RoofDrainCalloutPlacing" Style="{StaticResource HeaderTitle}" FontSize="14"/>
+                    <TextBlock Text="Review picked drain points, then place callouts" Style="{StaticResource HeaderSubtitle}" FontSize="10.5"/>
+                </StackPanel>
+                <Border Grid.Column="1" Style="{StaticResource BadgePill}" Background="#22FFFFFF" VerticalAlignment="Top">
+                    <TextBlock Text="V005" Foreground="{StaticResource BrushTextOnDark}" FontSize="10" FontWeight="SemiBold"/>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- Body -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="10">
+            <StackPanel>
+
+                <!-- Summary metrics — kept at top per Rafi -->
+                <Border Style="{StaticResource MetricCard}" Margin="0,0,0,8" Padding="10,10">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding MetricRoofs, Mode=OneWay}" Style="{StaticResource MetricNumber}" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Roof" Style="{StaticResource MetricLabel}" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding MetricSourcePoints, Mode=OneWay}" Style="{StaticResource MetricNumberAccent}" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Pts picked" Style="{StaticResource MetricLabel}" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2" HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding MetricGroups, Mode=OneWay}" Style="{StaticResource MetricNumberWarning}" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Groups" Style="{StaticResource MetricLabel}" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="3" HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding MetricCallouts, Mode=OneWay}" Style="{StaticResource MetricNumberSuccess}" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Callouts" Style="{StaticResource MetricLabel}" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Roof summary (read-only — picked before this window opened) -->
+                <Border Style="{StaticResource CompactCard}">
+                    <StackPanel Margin="0,0,0,8">
+                        <TextBlock Text="Roof" Style="{StaticResource SectionTitle}" Margin="10,8,10,4"/>
+                        <TextBlock Margin="10,0,10,8" Style="{StaticResource HintText}">
+                            <Run Text="Roof "/>
+                            <Run Text="{Binding SelectedRoof.Id, Mode=OneWay}" Foreground="{StaticResource BrushTextPrimary}" FontWeight="SemiBold"/>
+                            <Run Text=" — shape editing enabled."/>
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+
+                <!-- Drain points summary (read-only — picked before this window opened) -->
+                <Border Style="{StaticResource CompactCard}">
+                    <StackPanel Margin="0,0,0,8">
+                        <Grid Margin="10,8,10,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Drain points" Style="{StaticResource SectionTitle}" Margin="0"/>
+                            <TextBlock Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource HintText}" Margin="0">
+                                <Run Text="{Binding PickedPoints.Count, Mode=OneWay}"/>
+                                <Run Text=" picked"/>
+                            </TextBlock>
+                        </Grid>
+
+                        <!-- V005 tweak: drain points table removed per Rafi — count + zero-state hint only -->
+
+                        <TextBlock Margin="10,0,10,8" Style="{StaticResource HintText}"
+                                   Visibility="{Binding PickedPoints.Count, Converter={StaticResource ZeroCountToVisibilityConverter}}"
+                                   Text="No drain points were picked — Run is disabled until points exist. Re-run the command to pick again."/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Grouping & callout size parameters -->
+                <Border Style="{StaticResource CompactCard}">
+                    <StackPanel Margin="0,0,0,8">
+                        <TextBlock Text="Grouping &amp; callout size" Style="{StaticResource SectionTitle}" Margin="10,8,10,4"/>
+                        <Grid Margin="10,0,10,7">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="8"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="8"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Grouping tol. (mm)" Style="{StaticResource FieldLabel}"/>
+                                <TextBox Style="{StaticResource BoxedTextInput}" MaxLength="10" Height="26"
+                                         Text="{Binding GroupingToleranceMmText, UpdateSourceTrigger=PropertyChanged}"
+                                         ToolTip="Drain points within this distance of each other are grouped into one callout. Points farther apart than this become separate callouts."/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Duplicate tol. (mm)" Style="{StaticResource FieldLabel}"/>
+                                <TextBox Style="{StaticResource BoxedTextInput}" MaxLength="10" Height="26"
+                                         Text="{Binding DuplicateToleranceMmText, UpdateSourceTrigger=PropertyChanged}"
+                                         ToolTip="If a callout's centroid would land within this distance of a callout already placed this run, it is skipped instead of placed again."/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="4">
+                                <TextBlock Text="Margin (mm)" Style="{StaticResource FieldLabel}"/>
+                                <TextBox Style="{StaticResource BoxedTextInput}" MaxLength="10" Height="26"
+                                         Text="{Binding CalloutMarginMmText, UpdateSourceTrigger=PropertyChanged}"
+                                         ToolTip="Extra space added on every side of a group's point spread when sizing its callout box, so the box doesn't hug the points exactly."/>
+                            </StackPanel>
+                        </Grid>
+                        <Grid Margin="10,0,10,7">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Callout floor (mm)" Style="{StaticResource FieldLabel}"/>
+                                <TextBox Style="{StaticResource BoxedTextInput}" MaxLength="10" Height="26"
+                                         Text="{Binding CalloutFloorMmText, UpdateSourceTrigger=PropertyChanged}"
+                                         ToolTip="Minimum callout box size. A group of points close together (or a single point) still gets a box at least this wide and tall."/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Drafting view" Style="{StaticResource FieldLabel}"/>
+                                <ComboBox Style="{StaticResource StandardComboBox}"
+                                          ItemsSource="{Binding DraftingViews}"
+                                          SelectedItem="{Binding SelectedDraftingView}"
+                                          DisplayMemberPath="Name"
+                                          ToolTip="The drafting view each placed callout will reference when clicked in the model."/>
+                            </StackPanel>
+                        </Grid>
+                        <TextBlock Margin="10,0,10,7" Style="{StaticResource HintText}"
+                                   Text="Callout box = cluster bounding box + margin, never smaller than the floor. Callouts closer than the duplicate tolerance to one already placed this run are skipped."/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Run button -->
+                <Button Content="Group points and place callouts" Style="{StaticResource PrimaryButton}"
+                        Command="{Binding RunCommand}"
+                        Margin="0,0,0,4"/>
+                <TextBlock Margin="0,0,0,8" Style="{StaticResource HintText}" HorizontalAlignment="Center"
+                           Text="Disabled until a drafting view is selected and at least one drain point exists."/>
+
+                <!-- Log panel -->
+                <Border Background="{StaticResource BrushLogBg}" CornerRadius="10" Margin="0,0,0,4">
+                    <StackPanel>
+                        <Border Background="{StaticResource BrushLogTitleBar}" CornerRadius="10,10,0,0" Padding="9,5">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Log" Foreground="{StaticResource BrushLogText}" FontSize="10" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <Button Content="Copy all" Style="{StaticResource DarkGhostButton}" Margin="4,0,0,0" Command="{Binding CopyAllLogsCommand}"/>
+                                    <Button x:Name="CopySelectedButton" Content="Copy selected" Style="{StaticResource DarkGhostButton}" Margin="4,0,0,0" Click="CopySelectedButton_Click"/>
+                                    <Button Content="Clear" Style="{StaticResource DarkGhostButton}" Margin="4,0,0,0" Command="{Binding ClearLogsCommand}"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                        <ListBox x:Name="LogListBox" ItemsSource="{Binding Logs}"
+                                 Background="Transparent" BorderThickness="0"
+                                 MaxHeight="160" SelectionMode="Extended"
+                                 ScrollViewer.VerticalScrollBarVisibility="Auto">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock FontFamily="Consolas" FontSize="9.5" Foreground="{StaticResource BrushLogText}"
+                                               Text="{Binding Mode=OneWay}" TextWrapping="Wrap" Margin="4,1"/>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

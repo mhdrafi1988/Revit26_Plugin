@@ -15,6 +15,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             DimMenu.AddPushButton(new PushButtonData("Btn_DtlLine_03", "Auto Dim Detail Item Line Based_03", assemblyPath, "Revit26_Plugin.DtlLineDim_V03.Commands.DtlLineDimCommand"));
             DimMenu.AddPushButton(new PushButtonData("Btn_DtlLine_05", "Auto Dim Detail Item Line Based_05", assemblyPath, "Revit26_Plugin.DetailLIneDimensions.V005.Commands.DetailLineDimensionsCommand"));
             DimMenu.AddPushButton(new PushButtonData("Btn_DtlLine_07", "Auto Dim Detail Item Line Based_07", assemblyPath, "Revit26_Plugin.DtlLineDim.V007.Commands.DtlLineDimCommand"));
+            DimMenu.AddPushButton(new PushButtonData("Btn_DetailLineDimensions_V008", "Auto Dim Detail Item Line Based_08 (new)", assemblyPath, "Revit26_Plugin.DetailLineDimensions.V008.Commands.DtlLineDimCommand"));
             DimMenu.AddPushButton(new PushButtonData("Btn_DtlLine_08", "Auto Dim Detail Item Line Based_08", assemblyPath, "Revit26_Plugin.DtlLineDim.V008.Commands.DtlLineDimCommand"));
 
             

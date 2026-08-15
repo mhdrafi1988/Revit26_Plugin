@@ -1,0 +1,153 @@
+<Window x:Class="Revit26_Plugin.AnnotationOverlapDetection.V002.Views.AnnotationOverlapPanel"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
+        Title="Annotation Overlap Detection"
+        Width="720" Height="640"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <converters:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" />
+        <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+    </Window.Resources>
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" /> <!-- Title bar -->
+            <RowDefinition Height="Auto" /> <!-- Type selector -->
+            <RowDefinition Height="Auto" /> <!-- Check overlaps button -->
+            <RowDefinition Height="Auto" /> <!-- Error banner -->
+            <RowDefinition Height="Auto" /> <!-- Summary card -->
+            <RowDefinition Height="*" />    <!-- Results grid -->
+        </Grid.RowDefinitions>
+
+        <!-- Title bar -->
+        <Grid Grid.Row="0" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Annotation Overlap Detection"
+                       FontSize="16" FontWeight="Medium" VerticalAlignment="Bottom" />
+            <TextBlock Grid.Column="1" Text="v1.0.0"
+                       FontSize="11" Foreground="Gray" VerticalAlignment="Bottom" />
+        </Grid>
+        <Border Grid.Row="0" BorderThickness="0,0,0,1" BorderBrush="LightGray"
+                VerticalAlignment="Bottom" Margin="0,0,0,4" />
+
+        <!-- Section 1: Type selector -->
+        <Border Grid.Row="1" BorderBrush="LightGray" BorderThickness="1"
+                CornerRadius="6" Padding="12" Margin="0,0,0,12">
+            <StackPanel>
+                <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="Select annotation types to check:"
+                               Foreground="Gray" VerticalAlignment="Center" />
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Button Content="Select All" Command="{Binding SelectAllCommand}" Margin="0,0,6,0" Padding="8,2" />
+                        <Button Content="Clear All" Command="{Binding ClearAllCommand}" Padding="8,2" />
+                    </StackPanel>
+                </Grid>
+
+                <ListBox ItemsSource="{Binding AnnotationFamilies}" MaxHeight="150"
+                         BorderThickness="0" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Margin="0,2">
+                                <CheckBox IsChecked="{Binding IsSelected}" VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding TypeName}" Margin="6,0,4,0" VerticalAlignment="Center" />
+                                <TextBlock Foreground="Gray" VerticalAlignment="Center">
+                                    <Run Text="(" /><Run Text="{Binding Count, Mode=OneWay}" /><Run Text=" items)" />
+                                </TextBlock>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
+        </Border>
+
+        <!-- Section 2: Action button -->
+        <Button Grid.Row="2" Content="Check Overlaps"
+                Command="{Binding CheckOverlapsCommand}"
+                IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"
+                Height="36" FontWeight="Medium" Margin="0,0,0,12" />
+
+        <!-- Loading spinner -->
+        <ProgressBar Grid.Row="2" IsIndeterminate="True" Height="4"
+                     VerticalAlignment="Bottom"
+                     Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+        <!-- Error banner -->
+        <Border Grid.Row="3" Background="#FCEBEB" BorderBrush="#E24B4A" BorderThickness="1"
+                CornerRadius="4" Padding="8" Margin="0,0,0,12"
+                Visibility="{Binding HasError, Converter={StaticResource BoolToVisibilityConverter}}">
+            <TextBlock Text="{Binding ErrorMessage}" Foreground="#791F1F" TextWrapping="Wrap" />
+        </Border>
+
+        <!-- Section 3: Summary card -->
+        <Border Grid.Row="4" Background="#F1EFE8" CornerRadius="6" Padding="12" Margin="0,0,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Scanned" Foreground="Gray" FontSize="12" />
+                    <TextBlock Text="{Binding TotalScanned}" FontSize="20" FontWeight="Medium" />
+                </StackPanel>
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="Overlaps found" Foreground="Gray" FontSize="12" />
+                    <TextBlock Text="{Binding TotalOverlaps}" FontSize="20" FontWeight="Medium" />
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="Breakdown" Foreground="Gray" FontSize="12" />
+                    <TextBlock Text="{Binding BreakdownByTypeText}" FontSize="12" TextWrapping="Wrap" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Section 4: Results grid -->
+        <DataGrid Grid.Row="5" ItemsSource="{Binding OverlapResults}"
+                  AutoGenerateColumns="False" IsReadOnly="True"
+                  CanUserSortColumns="True" SelectionMode="Single"
+                  GridLinesVisibility="Horizontal" HeadersVisibility="Column">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="ID 1" SortMemberPath="ElementId1">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="{Binding ElementId1}"
+                                    Command="{Binding DataContext.ZoomToElementCommand,
+                                              RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                    CommandParameter="{Binding ElementId1}"
+                                    Foreground="Blue" BorderThickness="0" Background="Transparent"
+                                    Cursor="Hand" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Type" Binding="{Binding AnnotationType}" />
+                <DataGridTextColumn Header="X (mm)" Binding="{Binding X, StringFormat={}{0:F4}}" />
+                <DataGridTextColumn Header="Y (mm)" Binding="{Binding Y, StringFormat={}{0:F4}}" />
+                <DataGridTextColumn Header="Aligned" Binding="{Binding GridAligned}" />
+                <DataGridTextColumn Header="V-Dist (mm)" Binding="{Binding VerticalDistance, StringFormat={}{0:F2}}" />
+                <DataGridTextColumn Header="H-Dist (mm)" Binding="{Binding HorizontalDistance, StringFormat={}{0:F2}}" />
+                <DataGridTemplateColumn Header="ID 2" SortMemberPath="ElementId2">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="{Binding ElementId2}"
+                                    Command="{Binding DataContext.ZoomToElementCommand,
+                                              RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                    CommandParameter="{Binding ElementId2}"
+                                    Foreground="Blue" BorderThickness="0" Background="Transparent"
+                                    Cursor="Hand" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>

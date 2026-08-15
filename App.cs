@@ -9,7 +9,7 @@ namespace Revit26_Plugin
     /// </summary>
     public partial class App : IExternalApplication
     {
-        private const string RibbonTabName = "Rafi_20_07-26_001";
+        private const string RibbonTabName = "Rafi_20_07-26_002";
 
         public Result OnStartup(UIControlledApplication application)
         {
@@ -44,9 +44,10 @@ namespace Revit26_Plugin
             FloorToolsRibbon.Build(application, RibbonTabName, assemblyPath);
             ViewToolsRibbon.Build(application, RibbonTabName, assemblyPath);
             DimensionsRibbon.Build(application, RibbonTabName, assemblyPath);
-            SetupRibbon.Build(application, RibbonTabName, assemblyPath);            
+            SetupRibbon.Build(application, RibbonTabName, assemblyPath);
             SheetToolsRibbon.Build(application, RibbonTabName, assemblyPath);
             QuickAccessRibbon.Build(application, RibbonTabName, assemblyPath);
+            ManageRibbon.Build(application, RibbonTabName, assemblyPath);
         }
     }
 }

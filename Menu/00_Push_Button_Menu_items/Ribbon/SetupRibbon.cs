@@ -19,9 +19,12 @@ namespace Revit26_Plugin.Menu.Ribbon
 
 
             setup.AddPushButton(new PushButtonData("Btn_WorksetManager_10", "WorksetManager_ v10", assemblyPath, "Revit26_Plugin.WSFL_010.Commands.CreateWorksetsFromLinkedFiles"));
+            setup.AddPushButton(new PushButtonData("Btn_WorksetManager_11", "WorksetManager_ v11", assemblyPath, "Revit26_Plugin.WSFL.V011.Commands.CreateWorksetsFromLinkedFiles"));
             setup.AddPushButton(new PushButtonData("Btn_WorksetManager_007", "WorksetManager_ 007", assemblyPath, "Revit26_Plugin.WorksetManager_007.CreateWorksetsFromLinkedFilesCommand"));
             setup.AddPushButton(new PushButtonData("Btn_WorksetManager_009", "WorksetManager_ 009", assemblyPath, "Revit26_Plugin.WorksetManager.V009.CreateWorksetsFromLinkedFiles"));
             setup.AddPushButton(new PushButtonData("Btn_WorksetManager_010", "WorksetManager_ 010", assemblyPath, "Revit26_Plugin.WorksetManager.V010.CreateWorksetsFromLinkedFiles"));
+            setup.AddPushButton(new PushButtonData("Btn_WorksetManager_011", "WorksetManager_ 011", assemblyPath, "Revit26_Plugin.WorksetManager.V011.CreateWorksetsFromLinkedFiles"));
+            setup.AddPushButton(new PushButtonData("Btn_WorksetRenamer_V003", "Workset Renamer V003", assemblyPath, "Revit26_Plugin.WorksetRenamer.V003.Command"));
 
             PulldownButton Linker = panel.AddItem(new PulldownButtonData("Batch Link", "Batch Link")) as PulldownButton;
             Linker.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Linker_32.png");
@@ -30,6 +33,13 @@ namespace Revit26_Plugin.Menu.Ribbon
             Linker.AddPushButton(new PushButtonData("DwgSymbolicConverter_V01", "DwgSymbolicConverter_V01", assemblyPath, "Revit26_Plugin.DwgSymbolicConverter_V01.Commands.LaunchCommand"));
             Linker.AddPushButton(new PushButtonData("DwgSymbolicConverter_V02", "DwgSymbolicConverter_V02", assemblyPath, "Revit26_Plugin.DwgSymbolicConverter_V02.Commands.LaunchCommand"));
             Linker.AddPushButton(new PushButtonData("DwgSymbolicConverter_V03", "DwgSymbolicConverter_V03", assemblyPath, "Revit26_Plugin.DwgSymbolicConverter_V03.Commands.LaunchCommand"));
+            Linker.AddPushButton(new PushButtonData("DwgSymbolicConverter_V04", "DwgSymbolicConverter_V04", assemblyPath, "Revit26_Plugin.DwgToLines.V004.Commands.LaunchCommand"));
+
+            Linker.AddPushButton(new PushButtonData("DwgToDetailLines_Project_V006", "Dwg To Detail Lines Project V006", assemblyPath, "Revit26_Plugin.DwgToDetailLines.Project.V006.Commands.LaunchCommand"));
+            Linker.AddPushButton(new PushButtonData("DwgToDetailLines_Project_V007", "Dwg To Detail Lines Project V007", assemblyPath, "Revit26_Plugin.DwgToDetailLines.Project.V007.Commands.LaunchCommand"));
+            Linker.AddPushButton(new PushButtonData("DwgToDetailLines_Project_V009", "Dwg To Detail Lines Project V009", assemblyPath, "Revit26_Plugin.DwgToDetailLines.Project.V009.Commands.LaunchCommand"));
+            Linker.AddPushButton(new PushButtonData("DwgToDetailLines_Project_V010", "Dwg To Detail Lines Project V010", assemblyPath, "Revit26_Plugin.DwgToDetailLines.V010.Commands.LaunchCommand"));
+            Linker.AddPushButton(new PushButtonData("Btn_DwgToDetailLines_V002", "Dwg To Detail Lines V002", assemblyPath, "Revit26_Plugin.DwgToDetailLines.V002.Commands.LaunchCommand"));
         }
     }
 }
