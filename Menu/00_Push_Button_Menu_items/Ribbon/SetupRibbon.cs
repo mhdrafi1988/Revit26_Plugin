@@ -28,6 +28,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             setup.AddPushButton(new PushButtonData("Btn_WorksetManager_02", "WorksetManager_02", assemblyPath, " Revit26_Plugin.WorksetManager_02.Commands.WorksetManagerCommand"));
             setup.AddPushButton(new PushButtonData("Btn_WorksetManager_03", "WorksetManager_03", assemblyPath, " Revit26_Plugin.WorksetManager_03.Commands.WorksetManagerCommand"));
             setup.AddPushButton(new PushButtonData("Btn_WorksetManager_06", "WorksetManager_06", assemblyPath, " Revit26_Plugin.WorksetManager.V06.Commands.WorksetManagerCommand"));
+            setup.AddPushButton(new PushButtonData("Btn_WorksetManager_009", "WorksetManager_009", assemblyPath, "Revit26_Plugin.WorksetManager.V009.CreateWorksetsFromLinkedFilesCommand"));
 
             PulldownButton Linker = panel.AddItem(new PulldownButtonData("Batch Link", "Batch Link")) as PulldownButton;
             Linker.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Linker_32.png");
