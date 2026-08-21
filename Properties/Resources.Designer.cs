@@ -59,15 +59,5 @@ namespace Revit26_Plugin.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] Autobutton32 {
-            get {
-                object obj = ResourceManager.GetObject("Autobutton32", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
     }
 }

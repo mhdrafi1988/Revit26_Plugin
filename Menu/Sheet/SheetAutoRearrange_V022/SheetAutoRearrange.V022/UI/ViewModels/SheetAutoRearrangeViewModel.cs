@@ -291,7 +291,7 @@ namespace Revit26_Plugin.SheetAutoRearrange.V022.UI.ViewModels
 
             _handler.Action = SheetAutoRearrangeAction.RunRearrange;
             _handler.TargetSheet = _activeSheet;
-            _handler.ItemsToProcess = FilteredViews.ToList();
+            _handler.ItemsToProcess = Views.ToList();
             _handler.OverflowHandlingMode = OverflowHandlingMode;
             _handler.GapSettings = GapSettings;
             _handler.RowToleranceMm = RowToleranceMm;

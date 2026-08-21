@@ -88,6 +88,7 @@ namespace Revit26_Plugin.Shared.Models
         private readonly SolidColorBrush _brushWarning = new(Color.FromRgb(0xFF, 0x9F, 0x0A));
         private readonly SolidColorBrush _brushError   = new(Color.FromRgb(0xFF, 0x45, 0x3A));
         private readonly SolidColorBrush _brushSuccess = new(Color.FromRgb(0x4C, 0xC1, 0x8A));
+        private readonly SolidColorBrush _brushDebug   = new(Color.FromRgb(0x8E, 0x8E, 0x93));
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -97,6 +98,7 @@ namespace Revit26_Plugin.Shared.Models
                     LogLevel.Warning => _brushWarning,
                     LogLevel.Error   => _brushError,
                     LogLevel.Success => _brushSuccess,
+                    LogLevel.Debug   => _brushDebug,
                     _                => _brushInfo
                 };
             return _brushInfo;

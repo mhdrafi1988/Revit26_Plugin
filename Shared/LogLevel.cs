@@ -10,6 +10,11 @@ namespace Revit26_Plugin.Shared.Models
         Info,
         Warning,
         Error,
-        Success
+        Success,
+
+        /// <summary>Verbose, developer-facing detail (which face/curve was picked,
+        /// intermediate clip/merge results, etc.) — additive value, existing switch
+        /// expressions across tools fall through to their Info/default branch.</summary>
+        Debug
     }
 }

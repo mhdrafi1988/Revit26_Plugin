@@ -1,0 +1,507 @@
+<Window x:Class="Revit26_Plugin.AutoSlopeByDrain.V007.UI.Views.AutoSlopeByDrainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:shared="clr-namespace:Revit26_Plugin.Shared.Models"
+        mc:Ignorable="d"
+        Title="AutoSlope By Drain — Revit 2026 · V005"
+        Width="850"
+        Height="860"
+        MinWidth="850"
+        MinHeight="860"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanResize"
+        Background="White">
+
+    <!-- COMPACT REDESIGN (2026-07-22), per Rafi's confirmed decisions:
+         - Right panel width reduced to a FIXED 546px — 60% of its original
+           ~910px flexible width. It no longer grows with the window; only
+           the left panel + splitter stay as before. Overall window width
+           dropped from 1180 to 816 to match (270 left + 10 splitter + 546
+           right + 14*2 outer margin - minor rounding).
+         - All always-visible HintText paragraphs converted to a small
+           "i" info-dot with a ToolTip carrying the exact same wording —
+           nothing was shortened or dropped, just moved off the always-
+           rendered layout and onto hover.
+         - Curve Handling + Verification cards merged into one "Options"
+           card (still both toggles, unchanged bindings).
+         - The two 4-column metric UniformGrids merged into one 4x2 Grid
+           (still all 8 metrics, same bindings, half the vertical gap).
+         Every binding, command, and code-behind hook from the prior
+         version is preserved — this is a layout-only pass. -->
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Revit26_Plugin;component/Shared/SharedStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Converters instantiated here only — never inside SharedStyles.xaml -->
+            <shared:LogLevelToColorConverter x:Key="LogLevelToColor"/>
+            <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
+
+            <!-- Small "i" info-dot style, used to carry the explanatory hint text
+                 as a ToolTip instead of an always-visible HintText paragraph. -->
+            <Style x:Key="InfoDot" TargetType="Border">
+                <Setter Property="Width" Value="13"/>
+                <Setter Property="Height" Value="13"/>
+                <Setter Property="CornerRadius" Value="7"/>
+                <Setter Property="Background" Value="{StaticResource BrushSystemTertiaryBackground}"/>
+                <Setter Property="Cursor" Value="Help"/>
+                <Setter Property="Margin" Value="4,0,0,0"/>
+            </Style>
+            <Style x:Key="InfoDotText" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="9"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Margin="12">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="546"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- ════════════════════════════════════════
+             LEFT PANEL — CONTROLS (unchanged width, tightened spacing)
+        ════════════════════════════════════════ -->
+        <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+
+                <!-- App Identity Card -->
+                <Border Style="{StaticResource AppIdentityCard}" Padding="10">
+                    <StackPanel>
+                        <TextBlock Text="AutoSlope by Drain" Style="{StaticResource AppName}" FontSize="14"/>
+                        <TextBlock Text="{Binding RoofSubtitle}" Style="{StaticResource AppSubtitle}" FontSize="10.5"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Slope Section — all 3 fields kept, hints moved to info-dot tooltips -->
+                <Border Style="{StaticResource ContentCard}">
+                    <StackPanel>
+                        <TextBlock Text="Slope" Style="{StaticResource SectionTitle}" Margin="10,7,10,3"/>
+
+                        <StackPanel Margin="10,3">
+                            <TextBlock Text="Percentage" Style="{StaticResource FieldLabel}" FontSize="10.5"/>
+                            <ComboBox ItemsSource="{Binding SlopeOptions}"
+                                      Text="{Binding SlopeInput}"
+                                      IsEditable="True"
+                                      Style="{StaticResource StandardComboBox}"/>
+                        </StackPanel>
+
+                        <Border Style="{StaticResource SeparatorLine}"/>
+
+                        <StackPanel Margin="10,3">
+                            <DockPanel LastChildFill="False" Margin="0,0,0,1">
+                                <TextBlock Text="Max Edge Distance" Style="{StaticResource FieldLabel}" FontSize="10.5"/>
+                                <Border Style="{StaticResource InfoDot}"
+                                        ToolTip="Two vertices farther apart than this are never linked as graph neighbors. Keeps the pathfinding graph sparse and fast.">
+                                    <TextBlock Text="i" Style="{StaticResource InfoDotText}"/>
+                                </Border>
+                            </DockPanel>
+                            <DockPanel LastChildFill="True">
+                                <TextBlock Text="m" Style="{StaticResource UnitLabel}" DockPanel.Dock="Right"/>
+                                <TextBox Style="{StaticResource BorderlessTextInput}"
+                                         MaxLength="10"
+                                         Text="{Binding ConnectionThresholdInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            </DockPanel>
+                        </StackPanel>
+
+                        <Border Style="{StaticResource SeparatorLine}"/>
+
+                        <StackPanel Margin="10,3">
+                            <DockPanel LastChildFill="False" Margin="0,0,0,1">
+                                <TextBlock Text="Max Path Distance" Style="{StaticResource FieldLabel}" FontSize="10.5"/>
+                                <Border Style="{StaticResource InfoDot}"
+                                        ToolTip="A vertex whose total path to its nearest selected drain exceeds this is skipped (no elevation change applied), even if every edge on the path was individually valid.">
+                                    <TextBlock Text="i" Style="{StaticResource InfoDotText}"/>
+                                </Border>
+                            </DockPanel>
+                            <DockPanel LastChildFill="True">
+                                <TextBlock Text="m" Style="{StaticResource UnitLabel}" DockPanel.Dock="Right"/>
+                                <TextBox Style="{StaticResource BorderlessTextInput}"
+                                         MaxLength="10"
+                                         Text="{Binding ThresholdInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            </DockPanel>
+                        </StackPanel>
+
+                        <Border Style="{StaticResource SeparatorLine}"/>
+
+                        <StackPanel Margin="10,3,10,7">
+                            <DockPanel LastChildFill="False" Margin="0,0,0,1">
+                                <TextBlock Text="Path Samples" Style="{StaticResource FieldLabel}" FontSize="10.5"/>
+                                <Border Style="{StaticResource InfoDot}"
+                                        ToolTip="Points sampled along each candidate edge to confirm it lies on the roof face. Min 2, recommended 5-20.">
+                                    <TextBlock Text="i" Style="{StaticResource InfoDotText}"/>
+                                </Border>
+                            </DockPanel>
+                            <DockPanel LastChildFill="True">
+                                <TextBlock Text="/edge" Style="{StaticResource UnitLabel}" DockPanel.Dock="Right"/>
+                                <TextBox Style="{StaticResource BorderlessTextInput}"
+                                         MaxLength="10"
+                                         Text="{Binding PathSampleCountInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            </DockPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Options Section — Curve Handling + Verification MERGED into one card -->
+                <Border Style="{StaticResource ContentCard}">
+                    <StackPanel>
+                        <TextBlock Text="Options" Style="{StaticResource SectionTitle}" Margin="10,7,10,3"/>
+
+                        <DockPanel Margin="10,5" LastChildFill="False">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="Insert curve intersections" Style="{StaticResource FieldValue}" FontSize="11" VerticalAlignment="Center"/>
+                                <Border Style="{StaticResource InfoDot}"
+                                        ToolTip="Adds real vertices where a roof edge crosses a boundary/opening arc, for accurate distance on curved edges.">
+                                    <TextBlock Text="i" Style="{StaticResource InfoDotText}"/>
+                                </Border>
+                            </StackPanel>
+                            <ToggleButton Style="{StaticResource AppleToggleButton}"
+                                          IsChecked="{Binding InsertCurveIntersectionPoints}"
+                                          DockPanel.Dock="Right"/>
+                        </DockPanel>
+
+                        <Border Style="{StaticResource SeparatorLine}"/>
+
+                        <DockPanel Margin="10,5,10,9" LastChildFill="False">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="Verify after commit" Style="{StaticResource FieldValue}" FontSize="11" VerticalAlignment="Center"/>
+                                <Border Style="{StaticResource InfoDot}"
+                                        ToolTip="Re-reads vertices from the model after commit to detect any silent adjustment Revit made vs. the calculated value. Off by default; adds a re-read pass.">
+                                    <TextBlock Text="i" Style="{StaticResource InfoDotText}"/>
+                                </Border>
+                            </StackPanel>
+                            <ToggleButton Style="{StaticResource AppleToggleButton}"
+                                          IsChecked="{Binding VerifyElevationsAfterCommit}"
+                                          DockPanel.Dock="Right"/>
+                        </DockPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Export Section -->
+                <Border Style="{StaticResource ContentCard}">
+                    <StackPanel>
+                        <DockPanel Margin="10,7,10,3" LastChildFill="False">
+                            <TextBlock Text="Export" Style="{StaticResource SectionTitle}" Margin="0"/>
+                            <Border Style="{StaticResource InfoDot}"
+                                    ToolTip="Exports an Excel workbook (Vertex Data + Run Summary sheets) after every run.">
+                                <TextBlock Text="i" Style="{StaticResource InfoDotText}"/>
+                            </Border>
+                        </DockPanel>
+
+                        <Border Style="{StaticResource SeparatorLine}"/>
+
+                        <StackPanel Margin="10,3,10,9">
+                            <TextBlock Text="Folder" Style="{StaticResource FieldLabel}" FontSize="10.5"/>
+                            <DockPanel LastChildFill="True">
+                                <Button Content="Browse"
+                                        DockPanel.Dock="Right"
+                                        Style="{StaticResource SecondaryButton}"
+                                        Margin="6,0,0,0"
+                                        Command="{Binding BrowseFolderCommand}"/>
+                                <TextBox Style="{StaticResource BorderlessTextInput}"
+                                         Text="{Binding ExportFolderPath, Mode=TwoWay}"
+                                         IsReadOnly="True"
+                                         FontSize="11"
+                                         Foreground="{StaticResource BrushAppleBlue}"/>
+                            </DockPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Run Button -->
+                <Button Command="{Binding RunAutoSlopeCommand}"
+                        ToolTip="Calculate and apply slope to the selected drains"
+                        Margin="0,0,0,3">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+                            <Setter Property="Content" Value="Run AutoSlope"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding StatusMessage}" Value="Processing...">
+                                    <Setter Property="Content" Value="⏳ Processing..."/>
+                                    <Setter Property="IsEnabled" Value="False"/>
+                                    <Setter Property="Background" Value="{StaticResource BrushWarning}"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding StatusMessage}" Value="Completed">
+                                    <Setter Property="Content" Value="✓ Complete"/>
+                                    <Setter Property="Background" Value="{StaticResource BrushSuccess}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+                <!-- Inline hint shown only when Run is disabled specifically because
+                     0 drains are selected — not a silent disable. -->
+                <TextBlock Text="Select at least one drain to run."
+                           Foreground="{StaticResource BrushWarning}"
+                           FontSize="10.5"
+                           Margin="4,0,4,7"
+                           TextWrapping="Wrap"
+                           Visibility="{Binding ShowNoDrainsSelectedHint, Converter={StaticResource BoolToVisibility}}"/>
+
+                <!-- Open Export Folder Button -->
+                <Button Content="Open Export Folder"
+                        Style="{StaticResource SecondaryButton}"
+                        Command="{Binding OpenExportFolderCommand}"
+                        Margin="0,0,0,7"/>
+
+                <!-- Status Card -->
+                <Border Style="{StaticResource ContentCard}">
+                    <StackPanel Style="{StaticResource StatusRow}" Margin="10,7">
+                        <Ellipse Style="{StaticResource StatusDot}"/>
+                        <TextBlock Text="{Binding StatusMessage}" Style="{StaticResource StatusText}" FontSize="11"/>
+                    </StackPanel>
+                </Border>
+
+                <DockPanel Margin="10,4,10,7" LastChildFill="False">
+                    <TextBlock Text="Vertices are reset to zero at drains; slope is applied outward from there."
+                               Style="{StaticResource HintText}"
+                               FontSize="9.5"
+                               Margin="0"
+                               TextWrapping="Wrap"/>
+                </DockPanel>
+            </StackPanel>
+        </ScrollViewer>
+
+        <GridSplitter Grid.Column="1"
+                      Width="1"
+                      HorizontalAlignment="Stretch"
+                      Background="{StaticResource BrushSeparator}"/>
+
+        <!-- ════════════════════════════════════════
+             RIGHT PANEL — METRICS, DRAIN GRID, LOG
+             Fixed at 546px (60% of the original ~910px flexible width).
+        ════════════════════════════════════════ -->
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="6"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="6"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="6"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Row 0: all 8 metrics in ONE 4x2 grid (was two separate 4-col rows) -->
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="5"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource MetricCard}" Margin="0,0,2.5,0" Padding="9,7">
+                    <StackPanel>
+                        <TextBlock Text="Longest Path" Style="{StaticResource MetricLabel}" FontSize="9.5"/>
+                        <TextBlock Text="{Binding LongestPathDisplay}" Style="{StaticResource MetricNumberAccent}" FontSize="19"/>
+                        <TextBlock Text="Meters" Style="{StaticResource MetricUnit}" FontSize="9"/>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource MetricCard}" Margin="2.5,0,2.5,0" Padding="9,7">
+                    <StackPanel>
+                        <TextBlock Text="Max Offset" Style="{StaticResource MetricLabel}" FontSize="9.5"/>
+                        <TextBlock Text="{Binding HighestElevationDisplay}" Style="{StaticResource MetricNumber}" FontSize="19"/>
+                        <TextBlock Text="Millimeters" Style="{StaticResource MetricUnit}" FontSize="9"/>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Row="0" Grid.Column="2" Style="{StaticResource MetricCard}" Margin="2.5,0,2.5,0" Padding="9,7">
+                    <StackPanel>
+                        <TextBlock Text="Drains Selected" Style="{StaticResource MetricLabel}" FontSize="9.5"/>
+                        <TextBlock Text="{Binding SelectedDrainsCount}" Style="{StaticResource MetricNumberSuccess}" FontSize="19"/>
+                        <TextBlock Text="of Detected" Style="{StaticResource MetricUnit}" FontSize="9"/>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Row="0" Grid.Column="3" Style="{StaticResource MetricCard}" Margin="2.5,0,0,0" Padding="9,7">
+                    <StackPanel>
+                        <TextBlock Text="Slope" Style="{StaticResource MetricLabel}" FontSize="9.5"/>
+                        <TextBlock Text="{Binding SlopeInput}" Style="{StaticResource MetricNumber}" FontSize="19"/>
+                        <TextBlock Text="Percent" Style="{StaticResource MetricUnit}" FontSize="9"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Row="2" Grid.Column="0" Style="{StaticResource MetricCard}" Margin="0,0,2.5,0" Padding="9,7">
+                    <StackPanel>
+                        <TextBlock Text="Run Duration" Style="{StaticResource MetricLabel}" FontSize="9.5"/>
+                        <TextBlock Text="{Binding RunDuration_sec, FallbackValue=0}" Style="{StaticResource MetricNumberSuccess}" FontSize="19"/>
+                        <TextBlock Text="Seconds" Style="{StaticResource MetricUnit}" FontSize="9"/>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Row="2" Grid.Column="1" Style="{StaticResource MetricCard}" Margin="2.5,0,2.5,0" Padding="9,7">
+                    <StackPanel>
+                        <TextBlock Text="Total Detected" Style="{StaticResource MetricLabel}" FontSize="9.5"/>
+                        <TextBlock Text="{Binding TotalDetectedCount, FallbackValue=0}" Style="{StaticResource MetricNumberAccent}" FontSize="19"/>
+                        <TextBlock Text="Drains" Style="{StaticResource MetricUnit}" FontSize="9"/>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Row="2" Grid.Column="2" Style="{StaticResource MetricCard}" Margin="2.5,0,2.5,0" Padding="9,7">
+                    <StackPanel>
+                        <TextBlock Text="Selected Count" Style="{StaticResource MetricLabel}" FontSize="9.5"/>
+                        <TextBlock Text="{Binding SelectedCount, FallbackValue=0}" Style="{StaticResource MetricNumber}" FontSize="19"/>
+                        <TextBlock Text="Drains" Style="{StaticResource MetricUnit}" FontSize="9"/>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Row="2" Grid.Column="3" Style="{StaticResource MetricCard}" Margin="2.5,0,0,0" Padding="9,7">
+                    <StackPanel>
+                        <TextBlock Text="Arcs Calculated" Style="{StaticResource MetricLabel}" FontSize="9.5"/>
+                        <TextBlock Text="{Binding ArcsCalculated, FallbackValue=0}" Style="{StaticResource MetricNumberWarning}" FontSize="19"/>
+                        <TextBlock Text="Boundary Arcs" Style="{StaticResource MetricUnit}" FontSize="9"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- Row 2: Detected Drains grid header (filter + select all/none/invert) -->
+            <Border Grid.Row="2" Style="{StaticResource ContentCard}" Margin="0">
+                <Grid Margin="10,6,10,6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="Detected Drains" Style="{StaticResource SectionTitle}" Margin="0" VerticalAlignment="Center" FontSize="11"/>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <ComboBox ItemsSource="{Binding SizeFilters}"
+                                  SelectedItem="{Binding SelectedSizeFilter}"
+                                  Width="118"
+                                  Style="{StaticResource StandardComboBox}"
+                                  Margin="0,0,6,0"/>
+                        <Button Content="Select All" Command="{Binding SelectAllCommand}" Style="{StaticResource SmallSecondaryButton}" Margin="0,0,3,0"/>
+                        <Button Content="Select None" Command="{Binding SelectNoneCommand}" Style="{StaticResource SmallSecondaryButton}" Margin="0,0,3,0"/>
+                        <Button Content="Invert" Command="{Binding InvertSelectionCommand}" Style="{StaticResource SmallSecondaryButton}"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Row 4: Detected Drains DataGrid — sortable, filterable via FilteredDrainsView -->
+            <DataGrid Grid.Row="4"
+                      ItemsSource="{Binding FilteredDrainsView}"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      CanUserSortColumns="True"
+                      EnableRowVirtualization="True"
+                      VirtualizingPanel.VirtualizationMode="Recycling"
+                      Style="{StaticResource StandardDataGrid}"
+                      ColumnHeaderStyle="{StaticResource StandardDataGridColumnHeader}"
+                      CellStyle="{StaticResource StandardDataGridCell}"
+                      RowStyle="{StaticResource StandardDataGridRow}"
+                      FontSize="11">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="✓" Width="28" CanUserSort="False">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          PreviewMouseLeftButtonDown="DrainCheckBox_PreviewMouseLeftButtonDown"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Shape"  Binding="{Binding ShapeType}"    SortMemberPath="ShapeType"    Width="68"/>
+                    <DataGridTextColumn Header="Size"   Binding="{Binding SizeCategory}" SortMemberPath="SizeCategory" Width="88"/>
+                    <DataGridTextColumn Header="W"      Binding="{Binding Width,  StringFormat={}{0:F0}}" SortMemberPath="Width"  Width="45">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock"><Setter Property="TextAlignment" Value="Right"/></Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="H"      Binding="{Binding Height, StringFormat={}{0:F0}}" SortMemberPath="Height" Width="45">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock"><Setter Property="TextAlignment" Value="Right"/></Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="X" Binding="{Binding CenterPoint.X, StringFormat={}{0:F0}}" Width="55">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock"><Setter Property="TextAlignment" Value="Right"/></Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="Y" Binding="{Binding CenterPoint.Y, StringFormat={}{0:F0}}" Width="55">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock"><Setter Property="TextAlignment" Value="Right"/></Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <!-- Row 6: Log header -->
+            <Border Grid.Row="6" Background="{StaticResource BrushLogBg}" CornerRadius="6,6,0,0" Padding="9,6">
+                <DockPanel>
+                    <TextBlock Text="Processing log"
+                               Style="{StaticResource FieldLabel}"
+                               Foreground="{StaticResource BrushLogTextDim}"
+                               FontSize="10.5"
+                               VerticalAlignment="Center"/>
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                        <Button Content="Copy selected"
+                                Style="{StaticResource DarkGhostButton}"
+                                Click="CopySelectedLogs_Click"
+                                Width="88" Margin="0,0,5,0"/>
+                        <Button Content="Copy all"
+                                Command="{Binding CopyAllLogsCommand}"
+                                Style="{StaticResource DarkGhostButton}"
+                                Width="60" Margin="0,0,5,0"/>
+                        <Button Content="Clear"
+                                Command="{Binding ClearLogCommand}"
+                                Style="{StaticResource DarkGhostButton}"
+                                Width="60"/>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
+            <!-- Row 7: Log body — ListBox (multi-select) bound to LogEntries -->
+            <Border Grid.Row="7" Background="{StaticResource BrushLogBg}">
+                <ListBox x:Name="LogListBox"
+                         ItemsSource="{Binding LogEntries}"
+                         SelectionMode="Extended"
+                         Background="Transparent"
+                         BorderThickness="0"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                         FontFamily="Consolas"
+                         FontSize="9.5">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Padding" Value="3,1"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListBoxItem">
+                                        <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                                            <ContentPresenter/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter Property="Background" Value="{StaticResource BrushLogTitleBar}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Foreground="{Binding Level, Converter={StaticResource LogLevelToColor}}"
+                                       TextWrapping="Wrap">
+                                <Run Text="{Binding Time, Mode=OneWay, StringFormat=[HH:mm:ss]}"/>
+                                <Run Text=" "/>
+                                <Run Text="{Binding Message, Mode=OneWay}"/>
+                            </TextBlock>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

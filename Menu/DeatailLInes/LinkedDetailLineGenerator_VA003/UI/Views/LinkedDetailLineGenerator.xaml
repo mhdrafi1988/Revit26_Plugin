@@ -1,0 +1,786 @@
+<Window x:Class="Revit26_Plugin.LinkedDetailLineGenerator.VA003.UI.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
+        xmlns:models="clr-namespace:Revit26_Plugin.LinkedDetailLineGenerator.VA003.Core.Models"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        mc:Ignorable="d"
+        Title="Linked Detail Line Generator — VA003"
+        Height="900" Width="1280"
+        MinHeight="750" MinWidth="1100"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource BrushSystemSecondaryBackground}">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- 
+                    Ensure SharedStyles.xaml exists in the "Shared" folder at the project root,
+                    and its Build Action is set to "Resource". 
+                    If the folder or file name differs, adjust the Source path accordingly.
+                -->
+                <ResourceDictionary Source="/Revit26_Plugin;component/Shared/SharedStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Converters instantiated locally per suite convention — never in SharedStyles.xaml -->
+            <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+            <converters:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter"/>
+            <converters:InverseBoolConverter x:Key="InverseBoolConverter"/>
+            <converters:LogLevelToColorConverter x:Key="LogLevelToColorConverter"/>
+
+            <ObjectDataProvider x:Key="ExtractionMethodValues" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
+                <ObjectDataProvider.MethodParameters>
+                    <x:Type TypeName="models:ProfileExtractionMethod"/>
+                </ObjectDataProvider.MethodParameters>
+            </ObjectDataProvider>
+
+            <!-- Point-group rows may only be Circle or Rectangle — RepresentationMode
+                 also has Boundary/Centerline (Profile/Linear), which don't apply here,
+                 so this is an explicit subset rather than the full enum. -->
+            <x:Array x:Key="PointRepresentationValues" Type="{x:Type models:RepresentationMode}">
+                <models:RepresentationMode>Circle</models:RepresentationMode>
+                <models:RepresentationMode>Rectangle</models:RepresentationMode>
+            </x:Array>
+
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Header -->
+            <RowDefinition Height="*"/>
+            <!-- Scrollable body -->
+            <RowDefinition Height="Auto"/>
+            <!-- Footer -->
+        </Grid.RowDefinitions>
+
+        <!-- ═══════════════════════ HEADER ═══════════════════════ -->
+        <Border Grid.Row="0" Style="{StaticResource HeaderBar}" CornerRadius="0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Linked Detail Line Generator — VA003" Style="{StaticResource HeaderTitle}"/>
+                    <TextBlock Text="Convert linked-model elements into 2D Detail Lines" Style="{StaticResource HeaderSubtitle}"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,4,0">
+                    <Ellipse Width="6" Height="6" Fill="{StaticResource BrushSuccess}" VerticalAlignment="Center" Margin="0,0,5,0"
+                             Visibility="{Binding SettingsLoaded, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                    <TextBlock Text="Settings loaded" FontSize="10.5" Foreground="{StaticResource BrushTextOnDark}" Opacity="0.8" VerticalAlignment="Center"
+                               Visibility="{Binding SettingsLoaded, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ═══════════════════════ SCROLLABLE BODY ═══════════════════════ -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="14">
+            <!-- Entire body IsEnabled toggles off (gray/inactive) once RunState == Complete -->
+            <StackPanel IsEnabled="{Binding IsFormLocked, Converter={StaticResource InverseBoolConverter}}">
+
+                <!-- ── METRICS ROW ── -->
+                <Grid Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0" Style="{StaticResource MetricCard}">
+                        <StackPanel>
+                            <TextBlock Text="ELEMENTS FOUND" Style="{StaticResource MetricLabel}"/>
+                            <TextBlock Text="{Binding ElementsFound}" Style="{StaticResource MetricNumber}"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Column="2" Style="{StaticResource MetricCard}">
+                        <StackPanel>
+                            <TextBlock Text="PROCESSED" Style="{StaticResource MetricLabel}"/>
+                            <TextBlock Text="{Binding ElementsProcessed}" Style="{StaticResource MetricNumberAccent}"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Column="4" Style="{StaticResource MetricCard}">
+                        <StackPanel>
+                            <TextBlock Text="LINES CREATED" Style="{StaticResource MetricLabel}"/>
+                            <TextBlock Text="{Binding DetailLinesCreated}" Style="{StaticResource MetricNumberSuccess}"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Column="6" Style="{StaticResource MetricCard}">
+                        <StackPanel>
+                            <TextBlock Text="SKIPPED" Style="{StaticResource MetricLabel}"/>
+                            <TextBlock Text="{Binding ElementsSkipped}" Style="{StaticResource MetricNumberWarning}"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Column="8" Style="{StaticResource MetricCard}">
+                        <StackPanel>
+                            <TextBlock Text="ERRORS" Style="{StaticResource MetricLabel}"/>
+                            <TextBlock Text="{Binding CriticalErrors}" Style="{StaticResource MetricNumberDanger}"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- ── 1. LINKED MODELS & INSTANCES (Expander, default expanded) ── -->
+                <Expander Header="1. Linked Models &amp; Instances"
+                          IsExpanded="{Binding IsLinkedModelsExpanded}"
+                          Margin="0,0,0,8"
+                          Background="{StaticResource BrushCardBackground}"
+                          BorderBrush="{StaticResource BrushCardBorder}" BorderThickness="1">
+                    <StackPanel Margin="0,4,0,4">
+                        <Border Margin="12,4,12,10" BorderBrush="{StaticResource BrushSeparator}" BorderThickness="1" CornerRadius="8" Padding="8,6">
+                            <TextBlock Text="🔍 Search linked models..." Foreground="{StaticResource BrushTextTertiary}" FontSize="13"/>
+                        </Border>
+
+                        <ItemsControl ItemsSource="{Binding LinkedModels}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type models:LinkedModelItem}">
+                                    <Border BorderBrush="{StaticResource BrushSeparatorThin}" BorderThickness="0,1,0,0" Padding="14,9">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected}" IsEnabled="{Binding IsLoaded}"
+                                                      VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                            <StackPanel Grid.Column="1">
+                                                <TextBlock Text="{Binding DocumentTitle}" FontSize="12.5" FontWeight="SemiBold" Foreground="{StaticResource BrushTextPrimary}"/>
+                                                <TextBlock FontSize="11" Foreground="{StaticResource BrushTextSecondary}" Margin="0,1,0,0">
+                                                    <Run Text="Instance: "/><Run Text="{Binding InstanceName, Mode=OneWay}"/>
+                                                    <Run Text="  •  ID "/><Run Text="{Binding LinkInstanceId, Mode=OneWay}"/>
+                                                </TextBlock>
+                                            </StackPanel>
+                                            <Border Grid.Column="2" Style="{StaticResource BadgePill}">
+                                                <TextBlock>
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock" BasedOn="{StaticResource BadgeText}">
+                                                            <!-- Default (unloaded) state -->
+                                                            <Setter Property="Text" Value="Unloaded"/>
+                                                            <Setter Property="Foreground" Value="{StaticResource BrushWarning}"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsLoaded}" Value="True">
+                                                                    <Setter Property="Text" Value="Loaded"/>
+                                                                    <Setter Property="Foreground" Value="{StaticResource BrushSuccess}"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Expander>
+
+                <!-- ── 2. ELEMENT SELECTION (Phase 5: one expander per RepresentationGroup,
+                     replacing the old single-tree-plus-tab-switcher — the old tabs never
+                     actually filtered the tree, so each group now gets its own always-
+                     available expander instead) ── -->
+                <Border BorderBrush="{StaticResource BrushSeparator}" BorderThickness="1" CornerRadius="6" Padding="9,6" Margin="0,0,0,8">
+                    <TextBlock Text="🔍 Search category / family / type" Foreground="{StaticResource BrushTextTertiary}" FontSize="12"/>
+                </Border>
+
+                <Expander Header="2a. Element Selection — Profile (Floor/Roof)"
+                          IsExpanded="{Binding IsProfileSelectionExpanded}"
+                          Margin="0,0,0,8"
+                          Background="{StaticResource BrushCardBackground}"
+                          BorderBrush="{StaticResource BrushCardBorder}" BorderThickness="1">
+                    <ScrollViewer MaxHeight="260" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding ElementTree}" Margin="14,8,14,8">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type models:LinkTreeNode}">
+                                    <StackPanel Margin="0,6,0,0" Visibility="{Binding HasProfileCategories, Converter={StaticResource BoolToVisibilityConverter}}">
+                                        <TextBlock Text="{Binding LinkDisplayName}" FontSize="11" FontWeight="Bold" Foreground="{StaticResource BrushNavyPrimary}"/>
+                                        <ItemsControl ItemsSource="{Binding ProfileCategories}" Margin="14,4,0,0">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type models:CategoryTreeItem}">
+                                                    <StackPanel Margin="0,4,0,0">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{Binding CategoryName}" FontSize="12.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                                            <Button Content="Select All" Style="{StaticResource SmallSecondaryButton}" Margin="8,0,0,0"
+                                                                    Command="{Binding DataContext.SelectAllInCategoryCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                    CommandParameter="{Binding}"/>
+                                                            <Button Content="Select None" Style="{StaticResource SmallSecondaryButton}" Margin="4,0,0,0"
+                                                                    Command="{Binding DataContext.SelectNoneInCategoryCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                    CommandParameter="{Binding}"/>
+                                                        </StackPanel>
+                                                        <ItemsControl ItemsSource="{Binding Families}" Margin="20,2,0,0">
+                                                            <ItemsControl.ItemTemplate>
+                                                                <DataTemplate DataType="{x:Type models:FamilyTreeItem}">
+                                                                    <StackPanel Margin="0,1,0,0">
+                                                                        <CheckBox IsChecked="{Binding IsChecked}" Content="{Binding FamilyName}" FontSize="12.5"/>
+                                                                        <ItemsControl ItemsSource="{Binding Types}" Margin="20,1,0,0">
+                                                                            <ItemsControl.ItemTemplate>
+                                                                                <DataTemplate DataType="{x:Type models:TypeTreeItem}">
+                                                                                    <CheckBox IsChecked="{Binding IsChecked}" Content="{Binding TypeName}"
+                                                                                              FontSize="12" Foreground="{StaticResource BrushTextSecondary}" Margin="0,1,0,0"/>
+                                                                                </DataTemplate>
+                                                                            </ItemsControl.ItemTemplate>
+                                                                        </ItemsControl>
+                                                                    </StackPanel>
+                                                                </DataTemplate>
+                                                            </ItemsControl.ItemTemplate>
+                                                        </ItemsControl>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Expander>
+
+                <Expander Header="2b. Element Selection — Linear (Wall/Beam)"
+                          IsExpanded="{Binding IsLinearSelectionExpanded}"
+                          Margin="0,0,0,8"
+                          Background="{StaticResource BrushCardBackground}"
+                          BorderBrush="{StaticResource BrushCardBorder}" BorderThickness="1">
+                    <ScrollViewer MaxHeight="260" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding ElementTree}" Margin="14,8,14,8">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type models:LinkTreeNode}">
+                                    <StackPanel Margin="0,6,0,0" Visibility="{Binding HasLinearCategories, Converter={StaticResource BoolToVisibilityConverter}}">
+                                        <TextBlock Text="{Binding LinkDisplayName}" FontSize="11" FontWeight="Bold" Foreground="{StaticResource BrushNavyPrimary}"/>
+                                        <ItemsControl ItemsSource="{Binding LinearCategories}" Margin="14,4,0,0">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type models:CategoryTreeItem}">
+                                                    <StackPanel Margin="0,4,0,0">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{Binding CategoryName}" FontSize="12.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                                            <Button Content="Select All" Style="{StaticResource SmallSecondaryButton}" Margin="8,0,0,0"
+                                                                    Command="{Binding DataContext.SelectAllInCategoryCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                    CommandParameter="{Binding}"/>
+                                                            <Button Content="Select None" Style="{StaticResource SmallSecondaryButton}" Margin="4,0,0,0"
+                                                                    Command="{Binding DataContext.SelectNoneInCategoryCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                    CommandParameter="{Binding}"/>
+                                                        </StackPanel>
+                                                        <ItemsControl ItemsSource="{Binding Families}" Margin="20,2,0,0">
+                                                            <ItemsControl.ItemTemplate>
+                                                                <DataTemplate DataType="{x:Type models:FamilyTreeItem}">
+                                                                    <StackPanel Margin="0,1,0,0">
+                                                                        <CheckBox IsChecked="{Binding IsChecked}" Content="{Binding FamilyName}" FontSize="12.5"/>
+                                                                        <ItemsControl ItemsSource="{Binding Types}" Margin="20,1,0,0">
+                                                                            <ItemsControl.ItemTemplate>
+                                                                                <DataTemplate DataType="{x:Type models:TypeTreeItem}">
+                                                                                    <CheckBox IsChecked="{Binding IsChecked}" Content="{Binding TypeName}"
+                                                                                              FontSize="12" Foreground="{StaticResource BrushTextSecondary}" Margin="0,1,0,0"/>
+                                                                                </DataTemplate>
+                                                                            </ItemsControl.ItemTemplate>
+                                                                        </ItemsControl>
+                                                                    </StackPanel>
+                                                                </DataTemplate>
+                                                            </ItemsControl.ItemTemplate>
+                                                        </ItemsControl>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Expander>
+
+                <Expander Header="2c. Element Selection — Point (Columns/Mech. Equipment)"
+                          IsExpanded="{Binding IsPointSelectionExpanded}"
+                          Margin="0,0,0,8"
+                          Background="{StaticResource BrushCardBackground}"
+                          BorderBrush="{StaticResource BrushCardBorder}" BorderThickness="1">
+                    <ScrollViewer MaxHeight="260" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding ElementTree}" Margin="14,8,14,8">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type models:LinkTreeNode}">
+                                    <StackPanel Margin="0,6,0,0" Visibility="{Binding HasPointCategories, Converter={StaticResource BoolToVisibilityConverter}}">
+                                        <TextBlock Text="{Binding LinkDisplayName}" FontSize="11" FontWeight="Bold" Foreground="{StaticResource BrushNavyPrimary}"/>
+                                        <ItemsControl ItemsSource="{Binding PointCategories}" Margin="14,4,0,0">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type models:CategoryTreeItem}">
+                                                    <StackPanel Margin="0,4,0,0">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{Binding CategoryName}" FontSize="12.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                                            <Button Content="Select All" Style="{StaticResource SmallSecondaryButton}" Margin="8,0,0,0"
+                                                                    Command="{Binding DataContext.SelectAllInCategoryCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                    CommandParameter="{Binding}"/>
+                                                            <Button Content="Select None" Style="{StaticResource SmallSecondaryButton}" Margin="4,0,0,0"
+                                                                    Command="{Binding DataContext.SelectNoneInCategoryCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                    CommandParameter="{Binding}"/>
+                                                        </StackPanel>
+                                                        <ItemsControl ItemsSource="{Binding Families}" Margin="20,2,0,0">
+                                                            <ItemsControl.ItemTemplate>
+                                                                <DataTemplate DataType="{x:Type models:FamilyTreeItem}">
+                                                                    <StackPanel Margin="0,1,0,0">
+                                                                        <CheckBox IsChecked="{Binding IsChecked}" Content="{Binding FamilyName}" FontSize="12.5"/>
+                                                                        <ItemsControl ItemsSource="{Binding Types}" Margin="20,1,0,0">
+                                                                            <ItemsControl.ItemTemplate>
+                                                                                <DataTemplate DataType="{x:Type models:TypeTreeItem}">
+                                                                                    <CheckBox IsChecked="{Binding IsChecked}" Content="{Binding TypeName}"
+                                                                                              FontSize="12" Foreground="{StaticResource BrushTextSecondary}" Margin="0,1,0,0"/>
+                                                                                </DataTemplate>
+                                                                            </ItemsControl.ItemTemplate>
+                                                                        </ItemsControl>
+                                                                    </StackPanel>
+                                                                </DataTemplate>
+                                                            </ItemsControl.ItemTemplate>
+                                                        </ItemsControl>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Expander>
+
+                <!-- ── 3. MAPPING GRID (grouped w/ expanders) ── -->
+                <Border Style="{StaticResource ContentCard}">
+                    <StackPanel>
+                        <TextBlock Text="3. MAPPING" Style="{StaticResource SectionTitle}"/>
+
+                        <Grid Margin="12,0,12,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0" Style="{StaticResource StyledTextInput}" Width="220" HorizontalAlignment="Left"
+                                     Text="{Binding MappingFilterText, UpdateSourceTrigger=PropertyChanged}" MaxLength="25"
+                                     Tag="🔍 Filter mappings..."/>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <Button Content="Select All" Style="{StaticResource SmallSecondaryButton}" Margin="4,0,0,0"
+                                        Command="{Binding SelectAllMappingsCommand}"/>
+                                <Button Content="Clear" Style="{StaticResource SmallSecondaryButton}" Margin="4,0,0,0"
+                                        Command="{Binding ClearAllMappingsCommand}"/>
+                                <Button Content="Remove Selected" Style="{StaticResource SmallSecondaryButton}" Margin="4,0,0,0"
+                                        Command="{Binding RemoveSelectedMappingsCommand}"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Global Override: master toggle that forces one Line Style/Color
+                             across every enabled mapping's Detail Lines, in place of each
+                             row's own selection. Per-row combos below are disabled (not
+                             overwritten) while this is on. -->
+                        <Border Background="{StaticResource BrushSystemSecondaryBackground}" BorderBrush="{StaticResource BrushSeparatorThin}"
+                                BorderThickness="0,1,0,1" Margin="0,4,0,4" Padding="14,8">
+                            <StackPanel Orientation="Horizontal">
+                                <ToggleButton Style="{StaticResource AppleToggleButton}" IsChecked="{Binding GlobalOverride.IsEnabled}"/>
+                                <TextBlock Text="Global Override" FontWeight="SemiBold" FontSize="12" Margin="8,0,16,0" VerticalAlignment="Center"
+                                           ToolTip="When enabled, forces the Line Style and Color below across ALL enabled mappings, overriding each row's individual selection"/>
+                                <TextBlock Text="Line Style" Style="{StaticResource FieldLabel}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                <ComboBox Style="{StaticResource StandardComboBox}" Width="140" FontSize="12"
+                                          IsEnabled="{Binding GlobalOverride.IsEnabled}"
+                                          ItemsSource="{Binding AvailableLineStyleNames}"
+                                          SelectedItem="{Binding GlobalOverride.LineStyleName}"/>
+                                <TextBlock Text="Color" Style="{StaticResource FieldLabel}" VerticalAlignment="Center" Margin="14,0,6,0"/>
+                                <ComboBox Style="{StaticResource StandardComboBox}" Width="120" FontSize="12"
+                                          IsEnabled="{Binding GlobalOverride.IsEnabled}"
+                                          ItemsSource="{Binding AvailableColorNames}"
+                                          SelectedItem="{Binding GlobalOverride.ColorName}"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Column headers, aligned to the row Grid below -->
+                        <Grid Margin="14,0,14,2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="30"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Link" Style="{StaticResource FieldLabel}"/>
+                            <TextBlock Grid.Column="1" Text="Category" Style="{StaticResource FieldLabel}"/>
+                            <TextBlock Grid.Column="2" Text="Family" Style="{StaticResource FieldLabel}"/>
+                            <TextBlock Grid.Column="3" Text="Type" Style="{StaticResource FieldLabel}"/>
+                            <TextBlock Grid.Column="4" Text="Representation" Style="{StaticResource FieldLabel}"/>
+                            <TextBlock Grid.Column="5" Text="Method" Style="{StaticResource FieldLabel}" ToolTip="Profile-group only: Floor/Roof boundary extraction method"/>
+                            <TextBlock Grid.Column="6" Text="Line Style" Style="{StaticResource FieldLabel}"/>
+                            <TextBlock Grid.Column="7" Text="Color" Style="{StaticResource FieldLabel}"/>
+                            <TextBlock Grid.Column="8" Text="On" Style="{StaticResource FieldLabel}" HorizontalAlignment="Center"/>
+                        </Grid>
+
+                        <!-- Grouped-by-RepresentationGroup mapping table with expanders -->
+                        <ItemsControl ItemsSource="{Binding MappingsGrouped}">
+                            <ItemsControl.GroupStyle>
+                                <GroupStyle>
+                                    <GroupStyle.ContainerStyle>
+                                        <Style TargetType="GroupItem">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="GroupItem">
+                                                        <Expander IsExpanded="True" Background="{StaticResource BrushSystemSecondaryBackground}">
+                                                            <Expander.Header>
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="12" Foreground="{StaticResource BrushNavyPrimary}"/>
+                                                                    <TextBlock Text="{Binding ItemCount, StringFormat=' — {0} mapping(s)'}" FontSize="10.5" Foreground="{StaticResource BrushTextTertiary}" Margin="6,0,0,0"/>
+                                                                </StackPanel>
+                                                            </Expander.Header>
+                                                            <ItemsPresenter/>
+                                                        </Expander>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </GroupStyle.ContainerStyle>
+                                </GroupStyle>
+                            </ItemsControl.GroupStyle>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type models:ElementMapping}">
+                                    <Grid Margin="14,4,14,4">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="110"/>
+                                            <ColumnDefinition Width="110"/>
+                                            <ColumnDefinition Width="120"/>
+                                            <ColumnDefinition Width="120"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="110"/>
+                                            <ColumnDefinition Width="120"/>
+                                            <ColumnDefinition Width="80"/>
+                                            <ColumnDefinition Width="30"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding LinkDisplayName}" FontSize="12" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding CategoryName}" FontSize="12" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding FamilyName}" FontSize="12" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="3" Text="{Binding TypeName}" FontSize="12" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="4" Text="{Binding Representation}" FontSize="12" VerticalAlignment="Center"
+                                                   Visibility="{Binding IsPointGroup, Converter={StaticResource InverseBoolToVisibilityConverter}}"/>
+                                        <ComboBox Grid.Column="4" Style="{StaticResource StandardComboBox}" FontSize="12" VerticalAlignment="Center"
+                                                  Visibility="{Binding IsPointGroup, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                  ItemsSource="{Binding Source={StaticResource PointRepresentationValues}}"
+                                                  SelectedItem="{Binding Representation}"
+                                                  ToolTip="Point marker shape: Circle or Rectangle"/>
+                                        <ComboBox Grid.Column="5" Style="{StaticResource StandardComboBox}" FontSize="12" VerticalAlignment="Center"
+                                                  Visibility="{Binding IsProfileGroup, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                  ItemsSource="{Binding Source={StaticResource ExtractionMethodValues}}"
+                                                  SelectedItem="{Binding ExtractionMethod}"
+                                                  ToolTip="Floor/Roof boundary extraction: Solid Geometry (top face) or Profile-Based (sketch curves)"/>
+                                        <ComboBox Grid.Column="6" Style="{StaticResource StandardComboBox}" FontSize="12" VerticalAlignment="Center"
+                                                  IsEnabled="{Binding DataContext.GlobalOverride.IsEnabled, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource InverseBoolConverter}}"
+                                                  ItemsSource="{Binding DataContext.AvailableLineStyleNames, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                  SelectedItem="{Binding DetailLineStyleName}"
+                                                  ToolTip="Detail Line Style applied to this Type's generated lines (disabled while Global Override is on)"/>
+                                        <ComboBox Grid.Column="7" Style="{StaticResource StandardComboBox}" FontSize="12" VerticalAlignment="Center"
+                                                  IsEnabled="{Binding DataContext.GlobalOverride.IsEnabled, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource InverseBoolConverter}}"
+                                                  ItemsSource="{Binding DataContext.AvailableColorNames, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                  SelectedItem="{Binding ColorName}"
+                                                  ToolTip="Color override applied to this Type's generated lines (disabled while Global Override is on)"/>
+                                        <CheckBox Grid.Column="8" IsChecked="{Binding IsEnabled}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <!-- Grand total row -->
+                        <Border Background="{StaticResource BrushSystemSecondaryBackground}" BorderBrush="{StaticResource BrushSeparatorThin}" BorderThickness="0,1,0,0" Padding="14,8">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <TextBlock Text="Total Mappings: " FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource BrushNavyPrimary}" VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding TotalMappingCount}" FontSize="15" FontWeight="Bold" Foreground="{StaticResource BrushAppleBlue}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <!-- ── 4A/4B/6 grouped column + 5. Processing Scope column ── -->
+                <Grid Margin="0,8,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Left column: 4A Circle Marker + 4B Rectangle Marker + 6 Complex Curve Handling, grouped together -->
+                    <StackPanel Grid.Column="0">
+                        <Border Style="{StaticResource ContentCard}" Margin="0,0,0,8">
+                            <StackPanel>
+                                <TextBlock Text="4A. POINT MARKER — CIRCLE" Style="{StaticResource SectionTitle}"/>
+                                <StackPanel Orientation="Horizontal" Margin="12,4,12,10">
+                                    <Ellipse Width="20" Height="20" Stroke="{StaticResource BrushAppleBlue}" StrokeThickness="2" Margin="0,0,10,0"/>
+                                    <TextBlock Text="Diameter" Style="{StaticResource FieldLabel}" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                    <TextBox Style="{StaticResource BoxedTextInput}" Width="60" MaxLength="10"
+                                             Text="{Binding CircleMarker.DiameterMm}"/>
+                                    <TextBlock Text="mm" Style="{StaticResource UnitLabel}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource ContentCard}" Margin="0,0,0,8">
+                            <StackPanel>
+                                <TextBlock Text="4B. POINT MARKER — RECTANGLE" Style="{StaticResource SectionTitle}"/>
+                                <StackPanel Orientation="Horizontal" Margin="12,4,12,4">
+                                    <Rectangle Width="20" Height="20" Stroke="{StaticResource BrushAppleBlue}" StrokeThickness="2" Margin="0,0,10,0"/>
+                                    <TextBlock Text="W" Style="{StaticResource FieldLabel}" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                    <TextBox Style="{StaticResource BoxedTextInput}" Width="50" MaxLength="10"
+                                             Text="{Binding RectangleMarker.WidthMm}" Margin="0,0,8,0"/>
+                                    <TextBlock Text="H" Style="{StaticResource FieldLabel}" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                    <TextBox Style="{StaticResource BoxedTextInput}" Width="50" MaxLength="10"
+                                             Text="{Binding RectangleMarker.HeightMm}"/>
+                                    <TextBlock Text="mm" Style="{StaticResource UnitLabel}"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="12,4,12,10">
+                                    <TextBlock Text="Alignment" Style="{StaticResource FieldLabel}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                    <ComboBox Style="{StaticResource StandardComboBox}" Width="190"
+                                              SelectedValue="{Binding RectangleMarker.AlignmentMode}"
+                                              SelectedValuePath="Tag"
+                                              ToolTip="How the rectangle marker is rotated around its center point">
+                                        <ComboBoxItem Content="Linked Instance Rotation" Tag="{x:Static models:RectangleAlignmentMode.InstanceRotation}"/>
+                                        <ComboBoxItem Content="Project Axes (X/Y)" Tag="{x:Static models:RectangleAlignmentMode.ProjectAxes}"/>
+                                        <ComboBoxItem Content="True North" Tag="{x:Static models:RectangleAlignmentMode.TrueNorth}"/>
+                                        <ComboBoxItem Content="Active View Axes" Tag="{x:Static models:RectangleAlignmentMode.ViewAxes}"/>
+                                        <ComboBoxItem Content="Manual Angle" Tag="{x:Static models:RectangleAlignmentMode.Manual}"/>
+                                        <ComboBoxItem Content="Outer Profile Detection" Tag="{x:Static models:RectangleAlignmentMode.OuterProfileAxis}"/>
+                                    </ComboBox>
+                                    <Button Content="Pick Line" Style="{StaticResource SmallSecondaryButton}" Margin="8,0,0,0" VerticalAlignment="Center"
+                                            Command="{Binding PickAxisLineCommand}"
+                                            ToolTip="Pick an existing Detail Line in the view — its direction becomes the alignment axis (sets Manual angle)"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="12,0,12,10"
+                                            Visibility="{Binding RectangleMarker.IsManualAlignment, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <TextBlock Text="Angle" Style="{StaticResource FieldLabel}" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                    <TextBox Style="{StaticResource BoxedTextInput}" Width="60" MaxLength="10"
+                                             Text="{Binding RectangleMarker.ManualAngleDegrees}"/>
+                                    <TextBlock Text="°" Style="{StaticResource UnitLabel}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource ContentCard}">
+                            <StackPanel>
+                                <TextBlock Text="6. COMPLEX CURVE HANDLING" Style="{StaticResource SectionTitle}"/>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource AppleToggleRow}">
+                                    <ToggleButton Style="{StaticResource AppleToggleButton}" IsChecked="{Binding ComplexCurve.ReplaceWithFallback}"/>
+                                    <TextBlock Text="Replace complex curves with simplified shape" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="12,2,12,6">
+                                    <TextBlock Text="Fallback shape" Style="{StaticResource FieldLabel}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                    <ComboBox Style="{StaticResource StandardComboBox}" Width="150"
+                                              IsEnabled="{Binding ComplexCurve.ReplaceWithFallback}"
+                                              SelectedValue="{Binding ComplexCurve.FallbackShape}"
+                                              SelectedValuePath="Tag">
+                                        <ComboBoxItem Content="Straight Chord" Tag="{x:Static models:SplineFallbackShape.StraightChord}"/>
+                                        <ComboBoxItem Content="Best-fit Arc" Tag="{x:Static models:SplineFallbackShape.BestFitArc}"/>
+                                    </ComboBox>
+                                </StackPanel>
+                                <TextBlock Text="When unchecked (default), spline/NURBS edges are tessellated and rebuilt as a smooth HermiteSpline. When checked, they are replaced by the selected simplified shape instead."
+                                           Style="{StaticResource HintText}" Margin="12,2,12,10"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Right column: 5. Processing Scope -->
+                    <Border Grid.Column="2" Style="{StaticResource ContentCard}">
+                        <StackPanel>
+                            <TextBlock Text="5. PROCESSING SCOPE" Style="{StaticResource SectionTitle}"/>
+                            <StackPanel Orientation="Horizontal" Style="{StaticResource AppleToggleRow}">
+                                <ToggleButton Style="{StaticResource AppleToggleButton}" IsChecked="{Binding ProcessingScope.LimitToActiveView}"/>
+                                <TextBlock Text="Limit to active view visible area" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Style="{StaticResource AppleToggleRow}">
+                                <ToggleButton Style="{StaticResource AppleToggleButton}" IsChecked="{Binding ProcessingScope.TrimToBoundary}"/>
+                                <TextBlock Text="Trim lines to boundary" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+
+                            <!-- Overlapping & Collinear (same-element only — no cross-element comparison) -->
+                            <TextBlock Text="OVERLAPPING &amp; COLLINEAR" FontSize="11" FontWeight="SemiBold"
+                                       Foreground="{StaticResource BrushTextTertiary}" Margin="12,12,12,2"/>
+                            <StackPanel Orientation="Horizontal" Style="{StaticResource AppleToggleRow}">
+                                <ToggleButton Style="{StaticResource AppleToggleButton}" IsChecked="{Binding ProcessingScope.RemoveEngulfedOnly}"/>
+                                <TextBlock Text="Remove Engulfed Only" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                            </StackPanel>
+                            <TextBlock Text="Deletes a shorter segment when it is fully engulfed by a longer overlapping segment on the same axis."
+                                       Style="{StaticResource HintText}" Margin="12,0,12,6"/>
+                            <StackPanel Orientation="Horizontal" Style="{StaticResource AppleToggleRow}">
+                                <ToggleButton Style="{StaticResource AppleToggleButton}" IsChecked="{Binding ProcessingScope.MergePartialOverlaps}"/>
+                                <TextBlock Text="Merge Partial Overlaps" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                            </StackPanel>
+                            <TextBlock Text="Combines two partially-overlapping segments (neither fully contains the other) into one line covering their full combined extent."
+                                       Style="{StaticResource HintText}" Margin="12,0,12,6"/>
+                            <StackPanel Orientation="Horizontal" Style="{StaticResource AppleToggleRow}">
+                                <ToggleButton Style="{StaticResource AppleToggleButton}" IsChecked="{Binding ProcessingScope.JoinCollinearLines}"/>
+                                <TextBlock Text="Join Collinear Lines" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                            </StackPanel>
+                            <TextBlock Text="Joins adjacent, non-overlapping segments that share an endpoint or fall within tolerance. Also extends/trims non-collinear segments to meet exactly at their true intersection when they fall short by no more than the tolerance."
+                                       Style="{StaticResource HintText}" Margin="12,0,12,6"/>
+                            <StackPanel Orientation="Horizontal" Margin="12,4,12,4">
+                                <TextBlock Text="Alignment tolerance" Style="{StaticResource FieldLabel}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <TextBox Style="{StaticResource BoxedTextInput}" Width="60" MaxLength="10"
+                                         Text="{Binding ProcessingScope.LineJoinToleranceMm}"/>
+                                <TextBlock Text="mm" Style="{StaticResource UnitLabel}"/>
+                            </StackPanel>
+                            <TextBlock Text="Shared by all three options above. Same-source-element only — lines from different elements are never compared."
+                                       Style="{StaticResource HintText}" Margin="12,2,12,10"/>
+
+                            <!-- Loop Closing (Outer vs Inner, real TabControl) -->
+                            <TextBlock Text="LOOP CLOSING" FontSize="11" FontWeight="SemiBold"
+                                       Foreground="{StaticResource BrushTextTertiary}" Margin="12,4,12,4"/>
+                            <TabControl Background="Transparent" BorderThickness="1" BorderBrush="{StaticResource BrushSeparator}" Margin="12,0,12,10">
+                                <TabItem Header="Outer Loops">
+                                    <StackPanel Margin="8">
+                                        <StackPanel Orientation="Horizontal" Style="{StaticResource AppleToggleRow}">
+                                            <ToggleButton Style="{StaticResource AppleToggleButton}" IsChecked="{Binding ProcessingScope.OuterLoopClosing.CloseOpenLoops}"/>
+                                            <TextBlock Text="Extend &amp; close open loops where possible" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Style="{StaticResource AppleToggleRow}">
+                                            <ToggleButton Style="{StaticResource AppleToggleButton}" IsChecked="{Binding ProcessingScope.OuterLoopClosing.CapOpenEnds}"/>
+                                            <TextBlock Text="Cap open ends with straight line" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                        <TextBlock Text="Applies to OUTER Profile boundary loops only. Mutually exclusive — enabling one disables the other."
+                                                   Style="{StaticResource HintText}" Margin="4,2,4,4"/>
+                                    </StackPanel>
+                                </TabItem>
+                                <TabItem Header="Inner Loops">
+                                    <StackPanel Margin="8">
+                                        <StackPanel Orientation="Horizontal" Style="{StaticResource AppleToggleRow}">
+                                            <ToggleButton Style="{StaticResource AppleToggleButton}" IsChecked="{Binding ProcessingScope.InnerLoopClosing.CloseOpenLoops}"/>
+                                            <TextBlock Text="Extend &amp; close open loops where possible" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Style="{StaticResource AppleToggleRow}">
+                                            <ToggleButton Style="{StaticResource AppleToggleButton}" IsChecked="{Binding ProcessingScope.InnerLoopClosing.CapOpenEnds}"/>
+                                            <TextBlock Text="Cap open ends with straight line" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                        <TextBlock Text="Applies to INNER Profile boundary loops (openings) only. Mutually exclusive — enabling one disables the other."
+                                                   Style="{StaticResource HintText}" Margin="4,2,4,4"/>
+                                    </StackPanel>
+                                </TabItem>
+                            </TabControl>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- ── Scope meta info line ── -->
+                <Border Style="{StaticResource ContentCard}" Padding="14,10">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock FontSize="11.5" Foreground="{StaticResource BrushTextTertiary}">
+                            <Run Text="Current View: " FontWeight="SemiBold" Foreground="{StaticResource BrushTextSecondary}"/>
+                            <Run Text="{Binding CurrentViewName, Mode=OneWay}"/>
+                            <Run Text="   |   Processing: " FontWeight="SemiBold" Foreground="{StaticResource BrushTextSecondary}"/>
+                            <Run Text="Active Crop / Visible Region"/>
+                            <Run Text="   |   Output: " FontWeight="SemiBold" Foreground="{StaticResource BrushTextSecondary}"/>
+                            <Run Text="Host Model Only"/>
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+
+                <!-- ── LOG PANEL ── -->
+                <Border Background="{StaticResource BrushLogBg}" CornerRadius="10" Margin="0,4,0,0">
+                    <StackPanel>
+                        <Border Background="{StaticResource BrushLogTitleBar}" Padding="14,8" CornerRadius="10,10,0,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Processing Log" FontSize="11.5" FontWeight="SemiBold" Foreground="{StaticResource BrushLogText}" VerticalAlignment="Center"/>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <Button Content="Copy All" Style="{StaticResource DarkGhostButton}" Margin="4,0,0,0"/>
+                                    <Button Content="Copy Selected" Style="{StaticResource DarkGhostButton}" Margin="4,0,0,0"/>
+                                    <Button Content="Clear" Style="{StaticResource DarkGhostButton}" Margin="4,0,0,0" Command="{Binding ClearLogCommand}"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                        <ItemsControl ItemsSource="{Binding LogEntries}" Margin="14,8,14,8" MaxHeight="120">
+                            <ItemsControl.Template>
+                                <ControlTemplate TargetType="ItemsControl">
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                        <ItemsPresenter/>
+                                    </ScrollViewer>
+                                </ControlTemplate>
+                            </ItemsControl.Template>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Margin="0,1,0,1">
+                                        <TextBlock Text="{Binding Time, StringFormat='HH:mm:ss', Mode=OneWay}" FontFamily="Consolas" FontSize="11"
+                                                   Foreground="{StaticResource BrushLogTextDim}" Margin="0,0,8,0"/>
+                                        <TextBlock Text="{Binding Level, Mode=OneWay}" FontFamily="Consolas" FontSize="11" FontWeight="Bold" Width="60"
+                                                   Foreground="{Binding Level, Converter={StaticResource LogLevelToColorConverter}, Mode=OneWay}"/>
+                                        <TextBlock Text="{Binding Message, Mode=OneWay}" FontFamily="Consolas" FontSize="11"
+                                                   Foreground="{StaticResource BrushLogText}" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- ═══════════════════════ FOOTER ═══════════════════════ -->
+        <Border Grid.Row="2" Background="{StaticResource BrushSystemSecondaryBackground}"
+                BorderBrush="{StaticResource BrushSeparator}" BorderThickness="0,1,0,0" Padding="18,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Ellipse Width="7" Height="7" VerticalAlignment="Center" Margin="0,0,6,0">
+                        <Ellipse.Style>
+                            <Style TargetType="Ellipse">
+                                <Setter Property="Fill" Value="{StaticResource BrushSuccess}"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsFormLocked}" Value="True">
+                                        <Setter Property="Fill" Value="{StaticResource BrushTextDisabled}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Ellipse.Style>
+                    </Ellipse>
+                    <TextBlock FontSize="12" Foreground="{StaticResource BrushTextSecondary}">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Text" Value="Ready"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsFormLocked}" Value="True">
+                                        <Setter Property="Text" Value="Complete — form locked"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsRunning}" Value="True">
+                                        <Setter Property="Text" Value="Processing..."/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="Clear" Style="{StaticResource OutlineButton}" Margin="0,0,8,0"
+                            Command="{Binding ClearCommand}"/>
+                    <Button Content="Close" Style="{StaticResource OutlineButton}" Margin="0,0,8,0"
+                            Click="CloseButton_Click"
+                            Visibility="{Binding IsFormLocked, Converter={StaticResource InverseBoolToVisibilityConverter}}"/>
+                    <Button Content="Close" Style="{StaticResource OutlineButton}" Margin="0,0,8,0"
+                            Click="CloseButton_Click"
+                            Visibility="{Binding IsFormLocked, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                    <Button Content="Create Detail Lines" Style="{StaticResource PrimaryButton}"
+                            Command="{Binding CreateDetailLinesCommand}"
+                            Visibility="{Binding IsFormLocked, Converter={StaticResource InverseBoolToVisibilityConverter}}"/>
+                    <Button Content="Reset / New Session" Style="{StaticResource PrimaryButton}"
+                            Command="{Binding ResetSessionCommand}"
+                            Visibility="{Binding IsFormLocked, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+    </Grid>
+</Window>

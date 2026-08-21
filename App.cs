@@ -9,7 +9,7 @@ namespace Revit26_Plugin
     /// </summary>
     public partial class App : IExternalApplication
     {
-        private const string RibbonTabName = "Rafi_20_07-26_002";
+        private const string RibbonTabName = "Water Poofer 21.0";
 
         public Result OnStartup(UIControlledApplication application)
         {
@@ -46,8 +46,9 @@ namespace Revit26_Plugin
             DimensionsRibbon.Build(application, RibbonTabName, assemblyPath);
             SetupRibbon.Build(application, RibbonTabName, assemblyPath);
             SheetToolsRibbon.Build(application, RibbonTabName, assemblyPath);
-            QuickAccessRibbon.Build(application, RibbonTabName, assemblyPath);
+            DetailLInesRibbon.Build(application, RibbonTabName, assemblyPath);
             ManageRibbon.Build(application, RibbonTabName, assemblyPath);
+            QuickAccessRibbon.Build(application, RibbonTabName, assemblyPath);
         }
     }
 }

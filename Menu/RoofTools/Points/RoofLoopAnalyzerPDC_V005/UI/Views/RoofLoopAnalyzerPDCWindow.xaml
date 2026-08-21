@@ -1,0 +1,208 @@
+<!--
+=======================================================
+File: RoofLoopAnalyzerPDCWindow.xaml
+Location: UI/Views/
+Changes vs V004 (per approved mockup):
+  - The fully custom "Catppuccin" dark theme (hand-rolled button/grid/log
+    styles defined inline, none of which actually used the merged
+    SharedStyles.xaml) is replaced with the real navy SharedStyles theme,
+    matching every other tool in the suite. All functionality preserved:
+    Analyze, point-count dropdown, loops grid, Export/Copy Selected/Copy
+    All on the log, Close.
+  - FIX: the log's timestamp column bound to {Binding Timestamp}, but the
+    shared LogEntry class's actual property is Time — the timestamp was
+    silently rendering blank. Now binds to Time.
+  - MinWidth/MinHeight added, locked to the default Width/Height (window
+    could previously be resized below its own default size).
+  - KeyDown="Window_KeyDown" added for Esc-to-close (modeless dialog
+    convention) — Close_Click is unchanged.
+=======================================================
+-->
+<Window x:Class="Revit26_Plugin.RoofLoopAnalyzerPDC.V005.UI.Views.RoofLoopAnalyzerPDCWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shared="clr-namespace:Revit26_Plugin.Shared.Models"
+        Title="Roof Loop Analyzer (PDC) — V005"
+        Width="820" Height="620"
+        MinWidth="820" MinHeight="620"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanResizeWithGrip"
+        KeyDown="Window_KeyDown">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Revit26_Plugin;component/Shared/SharedStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Converters live in Shared/Converters.cs; instantiated locally per window. -->
+            <shared:LogLevelToColorConverter x:Key="LogLevelToColor"/>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Margin="14">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>   <!-- Header bar -->
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="Auto"/>   <!-- Controls row -->
+            <RowDefinition Height="8"/>
+            <RowDefinition Height="*" MinHeight="150"/>   <!-- DataGrid -->
+            <RowDefinition Height="8"/>
+            <RowDefinition Height="150"/>    <!-- Log area -->
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="Auto"/>   <!-- Bottom buttons -->
+        </Grid.RowDefinitions>
+
+        <!-- ── Header bar ── -->
+        <Border Grid.Row="0" Style="{StaticResource HeaderBar}">
+            <StackPanel>
+                <TextBlock Text="Roof Loop Analyzer (PDC)" Style="{StaticResource HeaderTitle}"/>
+                <TextBlock Text="Circular/rectangular inner loop division points" Style="{StaticResource HeaderSubtitle}"/>
+            </StackPanel>
+        </Border>
+
+        <!-- ── Controls row: Analyze | Points dropdown | Apply ── -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    Content="Analyze Roof"
+                    Style="{StaticResource PrimaryButton}"
+                    Command="{Binding AnalyzeCommand}"/>
+
+            <!-- Division point count label + dropdown -->
+            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="Division Points:" VerticalAlignment="Center" Margin="0,0,8,0"
+                           Style="{StaticResource FieldLabel}"/>
+                <ComboBox Style="{StaticResource StandardComboBox}" Width="70" Height="30"
+                          ItemsSource="{Binding PointCountOptions}"
+                          SelectedItem="{Binding SelectedPointCount, Mode=TwoWay}"/>
+            </StackPanel>
+
+            <Button Grid.Column="4"
+                    Content="Apply Divisions"
+                    Style="{StaticResource PrimaryButton}"
+                    Background="{StaticResource BrushSuccess}"
+                    Command="{Binding ApplyDivisionCommand}"/>
+        </Grid>
+
+        <!-- ── DataGrid ── -->
+        <Border Grid.Row="4" Style="{StaticResource ContentCard}">
+            <DataGrid ItemsSource="{Binding Loops}"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      SelectionMode="Single"
+                      Style="{StaticResource StandardDataGrid}"
+                      ColumnHeaderStyle="{StaticResource StandardDataGridColumnHeader}"
+                      CellStyle="{StaticResource StandardDataGridCell}"
+                      RowStyle="{StaticResource StandardDataGridRow}">
+
+                <DataGrid.Columns>
+
+                    <!-- Select checkbox -->
+                    <DataGridTemplateColumn Header="Select" Width="55">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTextColumn Header="#"          Binding="{Binding Index}"         Width="35"  IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Type"       Binding="{Binding LoopType}"       Width="55"  IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Shape"      Binding="{Binding LoopShapeType}"  Width="85"  IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Perimeter (mm)"
+                                        Binding="{Binding PerimeterMm, StringFormat=N0}"
+                                        Width="120" IsReadOnly="True"/>
+
+                    <!-- Points — read-only display; global dropdown controls the value -->
+                    <DataGridTextColumn Header="Points"
+                                        Binding="{Binding RecommendedPoints}"
+                                        Width="60"  IsReadOnly="True"/>
+
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <!-- ── Activity log ── -->
+        <Border Grid.Row="6" Background="{StaticResource BrushLogBg}" CornerRadius="8">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" Background="{StaticResource BrushLogTitleBar}"
+                        CornerRadius="8,8,0,0" Padding="12,7">
+                    <Grid>
+                        <TextBlock Text="Activity log"
+                                   Foreground="{StaticResource BrushLogText}"
+                                   FontSize="11.5" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Content="Export" Style="{StaticResource DarkGhostButton}"
+                                    Command="{Binding ExportLogCommand}" Margin="0,0,6,0"
+                                    ToolTip="Save the log to a .txt file"/>
+                            <Button Content="Copy Selected" Style="{StaticResource DarkGhostButton}"
+                                    Command="{Binding CopySelectedLogsCommand}" Margin="0,0,6,0"
+                                    ToolTip="Copy the selected log lines"/>
+                            <Button Content="Copy All" Style="{StaticResource DarkGhostButton}"
+                                    Command="{Binding CopyAllLogsCommand}"
+                                    ToolTip="Copy the whole log to the clipboard"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <ListBox Grid.Row="1"
+                         x:Name="LogList"
+                         ItemsSource="{Binding LogEntries}"
+                         SelectionMode="Extended"
+                         SelectionChanged="LogList_SelectionChanged"
+                         Background="Transparent"
+                         BorderThickness="0"
+                         VirtualizingPanel.IsVirtualizing="True"
+                         VirtualizingPanel.VirtualizationMode="Recycling"
+                         ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                         Padding="12,8">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Padding" Value="0,1"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Margin="0,1">
+                                <TextBlock Text="{Binding Time, StringFormat=HH:mm:ss}"
+                                           Foreground="{StaticResource BrushLogTextDim}"
+                                           FontFamily="Consolas" FontSize="11.5" Margin="0,0,10,0"/>
+                                <TextBlock Text="{Binding Message}"
+                                           Foreground="{Binding Level, Converter={StaticResource LogLevelToColor}}"
+                                           FontFamily="Consolas" FontSize="11.5" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+        </Border>
+
+        <!-- ── Bottom buttons ── -->
+        <StackPanel Grid.Row="8" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Close"
+                    Style="{StaticResource OutlineButton}"
+                    Width="90"
+                    Click="Close_Click"/>
+        </StackPanel>
+
+    </Grid>
+</Window>

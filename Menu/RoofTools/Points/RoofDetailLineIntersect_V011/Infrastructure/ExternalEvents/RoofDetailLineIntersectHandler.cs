@@ -1,0 +1,73 @@
+// =======================================================
+// File: RoofDetailLineIntersectHandler.cs
+// Location: Infrastructure/ExternalEvents/
+// Changes vs V008: previously a private inner class on the ViewModel,
+// holding Document/FootPrintRoof/List&lt;DetailLine&gt; directly. Now a
+// standalone Handler matching every other tool's Infrastructure/
+// ExternalEvents convention — the roof and detail lines are re-resolved
+// from ElementIds each run (RoofDetailLineIntersectEngine.Execute already
+// opens its own single Transaction with correct rollback on failure, so
+// no outer TransactionGroup is needed here).
+// =======================================================
+
+using Autodesk.Revit.DB;
+using Autodesk.Revit.UI;
+using Revit26_Plugin.RoofDetailLineIntersect.V011.Core.Engine;
+using Revit26_Plugin.RoofDetailLineIntersect.V011.Core.Models;
+using Revit26_Plugin.Shared.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Revit26_Plugin.RoofDetailLineIntersect.V011.Infrastructure.ExternalEvents
+{
+    public class RoofDetailLineIntersectHandler : IExternalEventHandler
+    {
+        /// <summary>
+        /// Set by the ViewModel immediately before raising the ExternalEvent.
+        /// Static because IExternalEventHandler instances are created once by
+        /// Revit and cannot receive constructor arguments per-invocation.
+        /// </summary>
+        public static RoofDetailLineIntersectPayload Payload;
+
+        public void Execute(UIApplication app)
+        {
+            if (Payload == null) return;
+
+            RoofDetailLineIntersectPayload current = Payload;
+            Document doc = app.ActiveUIDocument.Document;
+
+            try
+            {
+                var roof = doc.GetElement(current.RoofId) as FootPrintRoof;
+                if (roof == null)
+                {
+                    const string msg = "Roof element not found (it may have been deleted).";
+                    current.Log?.Invoke(new LogEntry(LogLevel.Error, msg));
+                    current.OnCompleted?.Invoke(new RoofDetailLineIntersectResult { Success = false, ErrorMessage = msg });
+                    return;
+                }
+
+                List<DetailLine> detailLines = current.DetailLineIds
+                    .Select(id => doc.GetElement(id) as DetailLine)
+                    .Where(dl => dl != null)
+                    .ToList();
+
+                var result = RoofDetailLineIntersectEngine.Execute(doc, roof, detailLines, current.Log);
+                current.OnCompleted?.Invoke(result);
+            }
+            catch (Exception ex)
+            {
+                current.Log?.Invoke(new LogEntry(LogLevel.Error,
+                    $"[RoofDetailLineIntersectHandler] Unhandled exception: {ex.Message}"));
+                current.OnCompleted?.Invoke(new RoofDetailLineIntersectResult
+                {
+                    Success = false,
+                    ErrorMessage = ex.Message
+                });
+            }
+        }
+
+        public string GetName() => "Roof Detail Line Intersect Handler";
+    }
+}

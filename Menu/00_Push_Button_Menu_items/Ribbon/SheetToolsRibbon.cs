@@ -10,28 +10,17 @@ namespace Revit26_Plugin.Menu.Ribbon
             RibbonPanel panel = app.CreateRibbonPanel(tabName, "Sheet Tools");
             //Sheet placer
             PulldownButton SheetCreate = panel.AddItem(new PulldownButtonData("Create", "Create")) as PulldownButton;
-            SheetCreate.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SBtoSheet.png");
+            SheetCreate.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SBtoSheet.png");
 
             //Sheet Reaarngeger
-            SheetCreate.AddPushButton(new PushButtonData("Btn_PlanFromScopeBox.V002", "Plan From ScopeBox.V002 #", assemblyPath, "Revit26_Plugin.PlanFromScopeBox.V002.Commands.PlanFromScopeBoxCommand"));
             SheetCreate.AddPushButton(new PushButtonData("Btn_PlanFromScopeBox.V003", "Plan From ScopeBox.V003 #", assemblyPath, "Revit26_Plugin.PlanFromScopeBox.V003.Commands.PlanFromScopeBoxCommand"));
-           
-            SheetCreate.AddPushButton(new PushButtonData("Btn_SmartViewToSheetPlacer.V220", "Smart View To Sheet Placer V220 #", assemblyPath, "Revit26_Plugin.SmartViewToSheetPlacer.V220.SmartViewToSheetPlacerCommand"));
             SheetCreate.AddPushButton(new PushButtonData("Btn_SmartViewToSheetPlacer.V221", "Smart View To Sheet Placer V221 #", assemblyPath, "Revit26_Plugin.SmartViewToSheetPlacer.V221.SmartViewToSheetPlacerCommand"));
-
             //Place Sections Menu
             PulldownButton SheetPlace = panel.AddItem(new PulldownButtonData("Place", "Place")) as PulldownButton;
-            SheetPlace.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewToSheet.png");
-
+            SheetPlace.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.ViewToSheet.png");
             
-            SheetPlace.AddPushButton(new PushButtonData("Btn_SheetAutoRearrange.V016", "Sheet Auto Rearrange_V016", assemblyPath, "Revit26_Plugin.SheetAutoRearrange.V016.Commands.SheetAutoRearrangeCommand"));            SheetPlace.AddPushButton(new PushButtonData("Btn_SheetAutoRearrange.V021", "Sheet Auto Rearrange_V021", assemblyPath, "Revit26_Plugin.SheetAutoRearrange.V021.Commands.SheetAutoRearrangeCommand"));
             SheetPlace.AddPushButton(new PushButtonData("Btn_SheetAutoRearrange.V022", "Sheet Auto Rearrange_V022", assemblyPath, "Revit26_Plugin.SheetAutoRearrange.V022.Commands.SheetAutoRearrangeCommand"));
             SheetPlace.AddPushButton(new PushButtonData("Btn_SheetAutoRearrange.V023", "Sheet Auto Rearrange_V023", assemblyPath, "Revit26_Plugin.SheetAutoRearrange.V023.Commands.SheetAutoRearrangeCommand"));
-
-
-
-
-
 
         }
     }

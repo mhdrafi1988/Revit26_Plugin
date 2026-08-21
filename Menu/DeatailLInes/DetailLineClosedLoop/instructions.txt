@@ -1,0 +1,51 @@
+PROJECT: Revit26_Plugin — code/refactor as a senior dev.
+
+STACK: C# • Revit 2026 API • WPF/MVVM (CommunityToolkit.Mvvm) • vertical-slice per tool (/Views /ViewModels /Models /Services). Shared infra only in Revit26_Plugin.Shared (SharedStyles.xaml #1E3A5F navy theme, Converters.cs, LogEntry/LogLevel).
+Namespace: Revit26_Plugin.{FeatureName}.{Version} — I suggest, Rafi confirms.
+
+WORKFLOW: UI mockup (HTML, screenshot-style) first, always. No code/XAML/zip until explicit "GO AHEAD". No .md files without confirmation. Flag assumptions inline, never bake in silently.
+
+UI CONVENTIONS
+- Navy theme, compact cards, header = "ToolName — Vxxx"
+- Fields: MaxLength=10 (25 for name/pattern fields)
+- Modeless dialogs: Close-only (no OK/Cancel), Esc=Close
+- Buttons right-aligned: Primary → Cancel/Close → Apply; Dialog buttons (Reset) far-left
+- Resizable, never below default size; grid columns grow proportionally
+- Grid/table titles Title Case, bolded; subtle alternating row shading
+- Card titles: noun phrase, no punctuation
+- Run button: disable during op, re-enable after (confirm per-tool if N/A)
+
+DATAGRID SPEC (when used)
+1. Toolbar: filter box + Select All/Clear/Refresh
+2. Checkbox col: centered, TwoWay to per-row VM prop, PreviewMouseLeftButtonDown to block row-select cascade
+3. Text left-align, numeric right-align (+ header)
+4. Sortable cols show direction arrow
+5. Select All/Clear scoped to visible/filtered rows
+6. Virtualizing (Recycling) for 100+ rows
+7. SharedStyles.xaml only — no new brushes/styles
+
+ARCHITECTURE
+- Converters: all in Shared/Converters.cs; each Window instantiates only what it needs, locally (never in shared ResourceDictionary)
+- IExternalEventHandler + ExternalEvent.Create() (inside Execute()) per tool — one handler/event pair by default; shared orchestrator only if one window has multiple distinct Revit-side actions
+- Mode=OneWay for read-only Run.Text bindings
+
+TRANSACTIONS (Autodesk-standard)
+- One Transaction per logical op
+- TransactionGroup for multi-step Undo merge (.Assimilate()) or all-or-nothing rollback
+- SubTransaction only for isolated retryable sub-steps, explicit Commit()/RollBack()
+- Never open/commit inside a loop — wrap loop in one Transaction
+
+CODE ROBUSTNESS: All Revit API/transaction calls in try/catch with rollback.
+
+WINDOW & LOGGING
+- Window never auto-closes
+- Real-time log via ObservableCollection<LogEntry>, Copy All/Selected buttons
+- Silent skips → Warning only; critical/transaction errors → dialog + rollback
+- Completion summary line ("X placed | Y skipped | Z failed")
+- Auto-save log on completion + manual Export (.txt); filename {ToolName}_Logs_{yyyy-MM-dd}_{HH-mm}.txt; ask save folder once/session, reuse
+
+LOGGING DEPTH: capture params, item counts/IDs at each collection stage, entry/exit of major steps — for traceability. Applies to new + existing tools (flag when touched).
+
+SETTINGS: per-tool JSON at %AppData%\Revit26_Plugin\{ToolName}\settings.json (System.Text.Json POCO); load on open, save on close/after Run. ExtensibleStorage only if project-specific.
+
+Delet leftover codes while creating zip

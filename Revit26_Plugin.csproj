@@ -5,7 +5,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\Release\net8.0-windows\15-08-000</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\Release\net8.0-windows\21-08-001</BaseOutputPath>
 		<PackageId />
 		<AssemblyName>Revit26_Plugin</AssemblyName>
 	</PropertyGroup>
@@ -691,23 +691,27 @@
 	  <None Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_002_02.rar" />
 	  <None Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_002_03.rar" />
 	  <None Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_002_dup.rar" />
-	  <None Remove="Resources\Icons\addpoints32.png" />
-	  <None Remove="Resources\Icons\addtag32.png" />
-	  <None Remove="Resources\Icons\automatci.png" />
-	  <None Remove="Resources\Icons\Autoslope32.png" />
-	  <None Remove="Resources\Icons\AutoslopeV2_32.png" />
-	  <None Remove="Resources\Icons\AutoslopeV2_64.png" />
-	  <None Remove="Resources\Icons\AutoslopeV5_32.png" />
-	  <None Remove="Resources\Icons\AutoslopeV6_32.png" />
-	  <None Remove="Resources\Icons\AutoslopeV6_64.png" />
-	  <None Remove="Resources\Icons\converter32.png" />
-	  <None Remove="Resources\Icons\CreateRoofromLInes.png" />
-	  <None Remove="Resources\Icons\DimMenu_32.png" />
-	  <None Remove="Resources\Icons\linematch32.png" />
-	  <None Remove="Resources\Icons\SBtoSheet.png" />
-	  <None Remove="Resources\Icons\setting32.png" />
-	  <None Remove="Resources\Icons\shapepoints32.png" />
-	  <None Remove="Resources\Icons\ViewToSheet.png" />
+	  <None Remove="Resources\Icons\DetailLiner\Addlines_32.png" />
+	  <None Remove="Resources\Icons\DetailLiner\ClosedLoop_32.png" />
+	  <None Remove="Resources\Icons\DetailLiner\CreateDetailLines.png" />
+	  <None Remove="Resources\Icons\DetailLiner\Linematch32.png" />
+	  <None Remove="Resources\Icons\DetailLiner\Looper_32.png" />
+	  <None Remove="Resources\Icons\Dimensions\DimMenu_32.png" />
+	  <None Remove="Resources\Icons\FloorTools\FloorCreate_32.png" />
+	  <None Remove="Resources\Icons\Manage\Manage32.png" />
+	  <None Remove="Resources\Icons\RoofTools\Addtag32.png" />
+	  <None Remove="Resources\Icons\RoofTools\Autoslope32.png" />
+	  <None Remove="Resources\Icons\RoofTools\CreateRoofromLInes.png" />
+	  <None Remove="Resources\Icons\RoofTools\LinePoint.png" />
+	  <None Remove="Resources\Icons\RoofTools\Shapepoints32.png" />
+	  <None Remove="Resources\Icons\RoofTools\SlopeLiner.png" />
+	  <None Remove="Resources\Icons\SetupTools\Linker_32.png" />
+	  <None Remove="Resources\Icons\SetupTools\Setting32.png" />
+	  <None Remove="Resources\Icons\SheetTools\SBtoSheet.png" />
+	  <None Remove="Resources\Icons\SheetTools\ViewToSheet.png" />
+	  <None Remove="Resources\Icons\ViewTools\Create_32.png" />
+	  <None Remove="Resources\Icons\ViewTools\Place_32.png" />
+	  <None Remove="Resources\Icons\ViewTools\Rename_32.png" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Page Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_WIP2\UI\Views\UI_Autoslope - Copy.xaml" />
@@ -715,30 +719,6 @@
 	  <Page Remove="Shared\SharedStyles - Copy.xaml" />
 	  <Page Remove="Shared\SharedStyles-backup.xaml" />
 	  <Page Remove="Shared\SharedStyles.xaml" />
-	</ItemGroup>
-	<ItemGroup>
-	  <EmbeddedResource Include="Resources\Icons\Addlines_32.png" />
-	  <EmbeddedResource Include="Resources\Icons\Addpoints32.png" />
-	  <EmbeddedResource Include="Resources\Icons\Addtag32.png" />
-	  <EmbeddedResource Include="Resources\Icons\Automatci.png" />
-	  <EmbeddedResource Include="Resources\Icons\Autoslope32.png" />
-	  <EmbeddedResource Include="Resources\Icons\AutoslopeV2_32.png" />
-	  <EmbeddedResource Include="Resources\Icons\AutoslopeV5_32.png" />
-	  <EmbeddedResource Include="Resources\Icons\AutoslopeV6_32.png" />
-	  <EmbeddedResource Include="Resources\Icons\AutoslopeV6_64.png" />
-	  <EmbeddedResource Include="Resources\Icons\Converter32.png" />
-	  <EmbeddedResource Include="Resources\Icons\CreateRoofromLInes.png" />
-	  <EmbeddedResource Include="Resources\Icons\Create_32.png" />
-	  <EmbeddedResource Include="Resources\Icons\DimMenu_32.png" />
-	  <EmbeddedResource Include="Resources\Icons\Linematch32.png" />
-	  <EmbeddedResource Include="Resources\Icons\Place_32.png" />
-	  <EmbeddedResource Include="Resources\Icons\Rename_32.png" />
-	  <EmbeddedResource Include="Resources\Icons\SBtoSheet.png" />
-	  <EmbeddedResource Include="Resources\Icons\Setting32.png" />
-	  <EmbeddedResource Include="Resources\Icons\Linker_32.png" />
-	  <EmbeddedResource Include="Resources\Icons\SheetSettings.png" />
-	  <EmbeddedResource Include="Resources\Icons\Shapepoints32.png" />
-	  <EmbeddedResource Include="Resources\Icons\ViewToSheet.png" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Reference Include="RevitAPI">
@@ -764,6 +744,30 @@
 	  <Folder Include="Menu\RoofTools\Lines\Creaser\" />
 	  <Folder Include="Menu\RoofTools\Lines\SlopeToDetailItem\" />
 	  <Folder Include="Menu\Setup\CaddLInkToFamiliy\" />
+	  <Folder Include="Resources\Icons\FloorTools\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <EmbeddedResource Include="Resources\Icons\DetailLiner\Addlines_32.png" />
+	  <EmbeddedResource Include="Resources\Icons\DetailLiner\ClosedLoop_32.png" />
+	  <EmbeddedResource Include="Resources\Icons\DetailLiner\CreateDetailLines.png" />
+	  <EmbeddedResource Include="Resources\Icons\DetailLiner\Linematch32.png" />
+	  <EmbeddedResource Include="Resources\Icons\DetailLiner\Looper_32.png" />
+	  <EmbeddedResource Include="Resources\Icons\Dimensions\DimMenu_32.png" />
+	  <EmbeddedResource Include="Resources\Icons\FloorTools\FloorCreate_32.png" />
+	  <EmbeddedResource Include="Resources\Icons\Manage\Manage32.png" />
+	  <EmbeddedResource Include="Resources\Icons\RoofTools\Addtag32.png" />
+	  <EmbeddedResource Include="Resources\Icons\RoofTools\Autoslope32.png" />
+	  <EmbeddedResource Include="Resources\Icons\RoofTools\CreateRoofromLInes.png" />
+	  <EmbeddedResource Include="Resources\Icons\RoofTools\LinePoint.png" />
+	  <EmbeddedResource Include="Resources\Icons\RoofTools\Shapepoints32.png" />
+	  <EmbeddedResource Include="Resources\Icons\RoofTools\SlopeLiner.png" />
+	  <EmbeddedResource Include="Resources\Icons\SetupTools\Linker_32.png" />
+	  <EmbeddedResource Include="Resources\Icons\SetupTools\Setting32.png" />
+	  <EmbeddedResource Include="Resources\Icons\SheetTools\SBtoSheet.png" />
+	  <EmbeddedResource Include="Resources\Icons\SheetTools\ViewToSheet.png" />
+	  <EmbeddedResource Include="Resources\Icons\ViewTools\Create_32.png" />
+	  <EmbeddedResource Include="Resources\Icons\ViewTools\Place_32.png" />
+	  <EmbeddedResource Include="Resources\Icons\ViewTools\Rename_32.png" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Resource Include="Shared\SharedStyles.xaml" />
