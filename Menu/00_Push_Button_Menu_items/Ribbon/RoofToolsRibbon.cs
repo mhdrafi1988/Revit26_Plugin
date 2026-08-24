@@ -16,7 +16,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             PulldownButton SlopeMenu = panel.AddItem(new PulldownButtonData("RoofSlopeMenu", "Auto SLope")) as PulldownButton;
             SlopeMenu.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.Autoslope32.png");
 
-            //Slope BY Point  
+            //Slope BY Point Final
              
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint_028", "Auto Slope ByPoint_028 (WIP ##)", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.V028.Commands.AutoSlopeCommand"));
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPointRPF_V003", "Auto Slope By Point RPF V003 ####", assemblyPath, "Revit26_Plugin.AutoSlopeByPointRPF.V003.Commands.AutoSlopeCommand"));
