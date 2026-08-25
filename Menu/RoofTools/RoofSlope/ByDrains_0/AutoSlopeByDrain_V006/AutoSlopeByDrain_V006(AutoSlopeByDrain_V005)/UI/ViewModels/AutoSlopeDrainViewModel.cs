@@ -64,10 +64,10 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V006.UI.ViewModels
         [NotifyCanExecuteChangedFor(nameof(RunAutoSlopeCommand))]
         private RunState state = RunState.Ready;
 
-        private bool IsRunning => state == RunState.Running;
-        private bool IsComplete => state == RunState.Done;
+        private bool IsRunning => State == RunState.Running;
+        private bool IsComplete => State == RunState.Done;
 
-        public string StatusMessage => state switch
+        public string StatusMessage => State switch
         {
             RunState.Running => "Processing...",
             RunState.Done => "Completed",

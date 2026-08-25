@@ -17,7 +17,7 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA003.Core.Services
     {
         private static readonly Guid SchemaGuid = new Guid("A7E4F1B2-3C4D-4E5F-8A9B-1C2D3E4F5A6B");
         private const string SchemaName = "LinkedDetailLineGenerator_SourceMetadata";
-        private const string VendorId = "RAFI_REVIT26_PLUGIN";
+        private const string VendorId = "RAFI_Revit26_Plugin";
 
         private const string FieldSourceLinkInstanceId = "SourceLinkInstanceId";
         private const string FieldSourceLinkDocTitle = "SourceLinkDocTitle";

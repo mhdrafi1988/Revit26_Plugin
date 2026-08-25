@@ -259,6 +259,21 @@ namespace Revit26_Plugin.SheetAutoRearrange.V023.UI.ViewModels
                 (string.IsNullOrWhiteSpace(FilterText) || v.ViewName.Contains(FilterText, System.StringComparison.OrdinalIgnoreCase))
                 && TypeIsVisible(v.ViewType));
 
+        // FilteredViews is a computed property with no backing field, so the
+        // DataGrid's binding to it only ever refreshes if something explicitly
+        // raises PropertyChanged(nameof(FilteredViews)). Every property it reads
+        // from needs one of these hooks, or the grid silently goes stale/empty
+        // whenever Views is reloaded or a filter changes.
+        partial void OnViewsChanged(ObservableCollection<ViewOnSheetItem> value) => OnPropertyChanged(nameof(FilteredViews));
+        partial void OnFilterTextChanged(string value) => OnPropertyChanged(nameof(FilteredViews));
+        partial void OnShowFloorPlanChanged(bool value) => OnPropertyChanged(nameof(FilteredViews));
+        partial void OnShowSectionChanged(bool value) => OnPropertyChanged(nameof(FilteredViews));
+        partial void OnShowElevationChanged(bool value) => OnPropertyChanged(nameof(FilteredViews));
+        partial void OnShow3DChanged(bool value) => OnPropertyChanged(nameof(FilteredViews));
+        partial void OnShowLegendChanged(bool value) => OnPropertyChanged(nameof(FilteredViews));
+        partial void OnShowScheduleChanged(bool value) => OnPropertyChanged(nameof(FilteredViews));
+        partial void OnShowDraftingChanged(bool value) => OnPropertyChanged(nameof(FilteredViews));
+
         private bool TypeIsVisible(Autodesk.Revit.DB.ViewType viewType)
         {
             return viewType switch

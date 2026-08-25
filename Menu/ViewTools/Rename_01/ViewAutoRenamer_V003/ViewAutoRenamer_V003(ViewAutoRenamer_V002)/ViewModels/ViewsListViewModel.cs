@@ -417,16 +417,19 @@ public partial class ViewsListViewModel : ObservableObject
         SchedulePreview();
     }
 
-    partial void OnPrefixChanged(string _)              => SchedulePreview();
-    partial void OnPostfixChanged(string _)             => SchedulePreview();
-    partial void OnFindTextChanged(string _)            => SchedulePreview();
-    partial void OnReplaceTextChanged(string _)         => SchedulePreview();
-    partial void OnAddSerialChanged(bool _)             => SchedulePreview();
-    partial void OnSerialFormatChanged(string _)        => SchedulePreview();
-    partial void OnIncludeDetailNumberChanged(bool _)   => SchedulePreview();
-    partial void OnStandardizeEnabledChanged(bool _)            => SchedulePreview();
-    partial void OnStandardizeCaseChanged(StandardizeCaseOption _) => SchedulePreview();
-    partial void OnCleanWhitespacePunctuationChanged(bool _)    => SchedulePreview();
+    // Parameter names must match the generator's "value" exactly — a differing
+    // name (e.g. "_") makes this a distinct overload from the generated
+    // partial declaration, so it silently never gets called (CS8826).
+    partial void OnPrefixChanged(string value)              => SchedulePreview();
+    partial void OnPostfixChanged(string value)             => SchedulePreview();
+    partial void OnFindTextChanged(string value)            => SchedulePreview();
+    partial void OnReplaceTextChanged(string value)         => SchedulePreview();
+    partial void OnAddSerialChanged(bool value)             => SchedulePreview();
+    partial void OnSerialFormatChanged(string value)        => SchedulePreview();
+    partial void OnIncludeDetailNumberChanged(bool value)   => SchedulePreview();
+    partial void OnStandardizeEnabledChanged(bool value)            => SchedulePreview();
+    partial void OnStandardizeCaseChanged(StandardizeCaseOption value) => SchedulePreview();
+    partial void OnCleanWhitespacePunctuationChanged(bool value)    => SchedulePreview();
 
     private void SchedulePreview()
     {
