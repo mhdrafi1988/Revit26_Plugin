@@ -8,6 +8,7 @@ using Revit26_Plugin.SheetAutoRearrange.V023.Infrastructure.ExternalEvents;
 using Revit26_Plugin.SheetAutoRearrange.V023.Infrastructure.Helpers;
 using Revit26_Plugin.Shared.Models;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Threading;
 
@@ -104,12 +105,14 @@ namespace Revit26_Plugin.SheetAutoRearrange.V023.UI.ViewModels
 
         [ObservableProperty] private bool isMultipleTitleBlocksWarning;
 
-        // ── Expander state (NOT persisted — always collapsed on open, per
-        // original confirmed design; only the underlying VALUES persist). ──
+        // ── Expander state (NOT persisted — resets to these defaults on every
+        // open; only the underlying VALUES persist). Row Fill Strategy and
+        // Live Sheet Preview default to open per explicit request; the rest
+        // stay collapsed as originally confirmed. ──
         [ObservableProperty] private bool isLayoutSettingsExpanded;
         [ObservableProperty] private bool isSheetPositioningExpanded;
-        [ObservableProperty] private bool isRowFillStrategyExpanded;
-        [ObservableProperty] private bool isLiveSheetPreviewExpanded;
+        [ObservableProperty] private bool isRowFillStrategyExpanded = true;
+        [ObservableProperty] private bool isLiveSheetPreviewExpanded = true;
         [ObservableProperty] private bool isOverflowHandlingExpanded;
         [ObservableProperty] private bool isGapMarginExpanded;
 
@@ -264,7 +267,30 @@ namespace Revit26_Plugin.SheetAutoRearrange.V023.UI.ViewModels
         // raises PropertyChanged(nameof(FilteredViews)). Every property it reads
         // from needs one of these hooks, or the grid silently goes stale/empty
         // whenever Views is reloaded or a filter changes.
-        partial void OnViewsChanged(ObservableCollection<ViewOnSheetItem> value) => OnPropertyChanged(nameof(FilteredViews));
+        //
+        // Also re-wires the per-row IsChecked subscription whenever the Views
+        // collection itself is replaced (load/refresh/run), so the SELECTED
+        // metric stays live no matter which row's checkbox changes it — not
+        // just the ones that go through SelectAll/ClearAll.
+        partial void OnViewsChanged(ObservableCollection<ViewOnSheetItem> oldValue, ObservableCollection<ViewOnSheetItem> newValue)
+        {
+            if (oldValue != null)
+                foreach (var item in oldValue)
+                    item.PropertyChanged -= OnViewItemPropertyChanged;
+
+            if (newValue != null)
+                foreach (var item in newValue)
+                    item.PropertyChanged += OnViewItemPropertyChanged;
+
+            OnPropertyChanged(nameof(FilteredViews));
+        }
+
+        private void OnViewItemPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ViewOnSheetItem.IsChecked))
+                UpdateMetrics();
+        }
+
         partial void OnFilterTextChanged(string value) => OnPropertyChanged(nameof(FilteredViews));
         partial void OnShowFloorPlanChanged(bool value) => OnPropertyChanged(nameof(FilteredViews));
         partial void OnShowSectionChanged(bool value) => OnPropertyChanged(nameof(FilteredViews));

@@ -12,8 +12,6 @@ namespace Revit26_Plugin.Menu.Ribbon
             //Create Sections Menu
             PulldownButton DeatailLInesCreate = panel.AddItem(new PulldownButtonData("Create", "Create")) as PulldownButton;
             DeatailLInesCreate.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.Addlines_32.png");
-            DeatailLInesCreate.AddPushButton(new PushButtonData("Btn_ DeatailLInes VA001", "Create  Deatail LInes From Linked Files VA001 #", assemblyPath, "Revit26_Plugin.LinkedDetailLineGenerator.VA001.Commands.OpenLinkedDetailLineGeneratorCommand"));
-            DeatailLInesCreate.AddPushButton(new PushButtonData("Btn_ DeatailLInes VA002", "Create  Deatail LInes From Linked Files VA002 #", assemblyPath, "Revit26_Plugin.LinkedDetailLineGenerator.VA002.Commands.OpenLinkedDetailLineGeneratorCommand"));
             DeatailLInesCreate.AddPushButton(new PushButtonData("Btn_ DeatailLInes VA003", "Create  Deatail LInes From Linked Files VA003 #", assemblyPath, "Revit26_Plugin.LinkedDetailLineGenerator.VA003.Commands.OpenLinkedDetailLineGeneratorCommand"));
 
             //Process Menu

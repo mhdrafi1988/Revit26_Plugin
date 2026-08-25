@@ -19,7 +19,6 @@ namespace Revit26_Plugin.Menu.Ribbon
             PulldownButton SheetPlace = panel.AddItem(new PulldownButtonData("Place", "Place")) as PulldownButton;
             SheetPlace.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.ViewToSheet.png");
             
-            SheetPlace.AddPushButton(new PushButtonData("Btn_SheetAutoRearrange.V022", "Sheet Auto Rearrange_V022", assemblyPath, "Revit26_Plugin.SheetAutoRearrange.V022.Commands.SheetAutoRearrangeCommand"));
             SheetPlace.AddPushButton(new PushButtonData("Btn_SheetAutoRearrange.V023", "Sheet Auto Rearrange_V023", assemblyPath, "Revit26_Plugin.SheetAutoRearrange.V023.Commands.SheetAutoRearrangeCommand"));
 
         }
