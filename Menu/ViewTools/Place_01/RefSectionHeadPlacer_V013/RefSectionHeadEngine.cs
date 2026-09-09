@@ -109,6 +109,21 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V013.Core.Engine
                         continue;
                     }
 
+                    // GUARD: the mapped drafting view can be deleted from the model
+                    // in another window while this modeless tool sits open — its
+                    // ElementId then points at nothing. Without this check,
+                    // touching .RevitView.Id below throws and the outer try/catch
+                    // in PlaceSectionsEventHandler aborts the WHOLE run (including
+                    // the open host Transaction), unlike every other failure mode
+                    // here which skips just this one item.
+                    var mappedView = mapping.MappedDraftingView.RevitView;
+                    if (mappedView == null || !mappedView.IsValidObject)
+                    {
+                        summary.SkippedCount++;
+                        Log(LogLevel.Warning, $"Skip · {row.SourceLabel} · {row.Category} · {row.TypeName} · mapped drafting view '{mapping.MappedDraftingView.Name}' no longer exists in the document.");
+                        continue;
+                    }
+
                     var origin = _originService.GetOrigin(element, row.Bic, row.LinkTransform, tailLengthFeet);
                     if (!origin.IsValid)
                     {
@@ -153,7 +168,7 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V013.Core.Engine
                         sub.Start();
                         var result = _placementService.PlaceReferenceSection(
                             activeViewId, finalOrigin, origin.ViewDirection,
-                            mapping.MappedDraftingView.RevitView.Id, sectionTypeId, tailLengthFeet);
+                            mappedView.Id, sectionTypeId, tailLengthFeet);
 
                         if (result.Success && sub.Commit() == TransactionStatus.Committed)
                         {

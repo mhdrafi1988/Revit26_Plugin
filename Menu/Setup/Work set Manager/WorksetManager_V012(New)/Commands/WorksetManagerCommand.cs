@@ -13,6 +13,24 @@ namespace Revit26_Plugin.WorksetManager.V012.Commands
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
+            try
+            {
+                return ExecuteInternal(commandData, ref message, elements);
+            }
+            catch (Autodesk.Revit.Exceptions.OperationCanceledException)
+            {
+                return Result.Cancelled;
+            }
+            catch (System.Exception ex)
+            {
+                message = ex.Message;
+                TaskDialog.Show("Workset Manager", $"An unexpected error occurred: {ex.Message}");
+                return Result.Failed;
+            }
+        }
+
+        private Result ExecuteInternal(ExternalCommandData commandData, ref string message, ElementSet elements)
+        {
             var doc = commandData.Application.ActiveUIDocument?.Document;
 
             if (doc == null || !doc.IsWorkshared)

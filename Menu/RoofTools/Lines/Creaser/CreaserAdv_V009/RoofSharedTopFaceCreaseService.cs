@@ -154,7 +154,10 @@ namespace Revit26_Plugin.CreaserAdv.V009.Services
                         if (predicate(face.ComputeNormal(new UV(u, v)))) pass++;
                         total++;
                     }
-                    catch { }
+                    catch (System.Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[RoofSharedTopFaceCreaseService] MajorityCheck: ComputeNormal failed at U={u:F3} V={v:F3} — {ex.Message}");
+                    }
                 }
             }
 

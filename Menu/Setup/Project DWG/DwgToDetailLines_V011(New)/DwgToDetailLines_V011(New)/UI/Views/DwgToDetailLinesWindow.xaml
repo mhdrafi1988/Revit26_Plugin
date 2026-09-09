@@ -1,0 +1,342 @@
+<!--
+=======================================================
+File: DwgToDetailLinesWindow.xaml
+Location: UI/Views/
+Changes vs V010 (per approved mockup):
+  - Same structure (context banner, metrics card, defaults, layer grid,
+    spline handling, transform-method diagnostic, log) but every hardcoded
+    hex color (#D7DCE2, #EAF1F8, #152A45, ...) replaced with SharedStyles
+    brushes, matching the rest of the suite.
+  - ADDED Close button + Esc-to-close (this window had no Close button at
+    all before — modeless, closed only via window chrome).
+  - ADDED Export / Copy Selected buttons to the log title bar (was Copy
+    All only).
+  - Transform Method (Diagnostic) group left exactly as-is, per Rafi.
+=======================================================
+-->
+<Window x:Class="Revit26_Plugin.DwgToDetailLines.V011.UI.Views.DwgToDetailLinesWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shared="clr-namespace:Revit26_Plugin.Shared.Models"
+        xmlns:local="clr-namespace:Revit26_Plugin.DwgToDetailLines.V011.Infrastructure.Helpers"
+        Title="DWG to Detail Lines — V011"
+        Width="600" Height="760"
+        MinWidth="600" MinHeight="760"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResizeWithGrip"
+        KeyDown="Window_KeyDown">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Revit26_Plugin;component/Shared/SharedStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <local:BooleanToEnumConverter x:Key="BoolToEnum"/>
+            <local:NullableIntToDashConverter x:Key="NullableIntToDash"/>
+            <local:MetricCountToBrushConverter x:Key="MetricCountToBrush"/>
+            <shared:InverseBoolConverter x:Key="InverseBoolConverter"/>
+            <shared:LogLevelToColorConverter x:Key="LogLevelToColor"/>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Margin="14" Background="{StaticResource BrushSystemBackground}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/> <!-- Header -->
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="Auto"/> <!-- Context banner -->
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="Auto"/> <!-- CAD import -->
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="Auto"/> <!-- Metrics card -->
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="Auto"/> <!-- Defaults card -->
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="Auto"/> <!-- Layers & Hatches grid card -->
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="Auto"/> <!-- Spline handling -->
+            <RowDefinition Height="8"/>
+            <RowDefinition Height="Auto"/> <!-- Transform Method (diagnostic) -->
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="Auto"/> <!-- Convert / Close buttons -->
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="*" MinHeight="140"/> <!-- Log -->
+        </Grid.RowDefinitions>
+
+        <!-- ── Header bar ── -->
+        <Border Grid.Row="0" Style="{StaticResource HeaderBar}">
+            <StackPanel>
+                <TextBlock Text="DWG to Detail Lines" Style="{StaticResource HeaderTitle}"/>
+                <TextBlock Text="Convert CAD import to Detail Curves / Filled Regions" Style="{StaticResource HeaderSubtitle}"/>
+            </StackPanel>
+        </Border>
+
+        <!-- ── Context banner ── -->
+        <Border Grid.Row="2" Background="{StaticResource BrushSystemTertiaryBackground}"
+                BorderBrush="{StaticResource BrushNavyPrimary}" BorderThickness="1" CornerRadius="6" Padding="10,8">
+            <TextBlock Text="{Binding ContextBannerText}" FontSize="11" TextWrapping="Wrap"
+                       Foreground="{StaticResource BrushNavyPrimary}"/>
+        </Border>
+
+        <!-- ── CAD import ── -->
+        <StackPanel Grid.Row="4">
+            <TextBlock Text="CAD Import" Style="{StaticResource FieldLabel}" Margin="0,0,0,6"/>
+            <ComboBox Style="{StaticResource StandardComboBox}" Height="32"
+                      ItemsSource="{Binding AvailableCads}"
+                      SelectedItem="{Binding SelectedCad, Mode=TwoWay}"/>
+        </StackPanel>
+
+        <!-- ── Metrics card ── -->
+        <Border Grid.Row="6" Style="{StaticResource ContentCard}">
+            <StackPanel Margin="10">
+                <TextBlock Text="CAD Import Info" Style="{StaticResource SectionTitle}" Margin="0,0,0,8"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+                        <TextBlock Text="{Binding Metrics.LayersFound}" FontSize="18" FontWeight="Bold"
+                                   Foreground="{StaticResource BrushNavyPrimary}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Layers Found" FontSize="10" Foreground="{StaticResource BrushTextTertiary}" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                        <TextBlock Text="{Binding Metrics.Entities}" FontSize="18" FontWeight="Bold"
+                                   Foreground="{StaticResource BrushNavyPrimary}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Entities" FontSize="10" Foreground="{StaticResource BrushTextTertiary}" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2" HorizontalAlignment="Center">
+                        <TextBlock Text="{Binding Metrics.Placed, Converter={StaticResource NullableIntToDash}}" FontSize="18" FontWeight="Bold"
+                                   Foreground="{StaticResource BrushNavyPrimary}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Placed" FontSize="10" Foreground="{StaticResource BrushTextTertiary}" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="3" HorizontalAlignment="Center">
+                        <TextBlock Text="{Binding Metrics.Skipped, Converter={StaticResource NullableIntToDash}}" FontSize="18" FontWeight="Bold"
+                                   Foreground="{Binding Metrics.Skipped, Converter={StaticResource MetricCountToBrush}, ConverterParameter=Warning}"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Text="Skipped" FontSize="10" Foreground="{StaticResource BrushTextTertiary}" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="4" HorizontalAlignment="Center">
+                        <TextBlock Text="{Binding Metrics.Failed, Converter={StaticResource NullableIntToDash}}" FontSize="18" FontWeight="Bold"
+                                   Foreground="{Binding Metrics.Failed, Converter={StaticResource MetricCountToBrush}, ConverterParameter=Danger}"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Text="Failed" FontSize="10" Foreground="{StaticResource BrushTextTertiary}" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <!-- ── Defaults ── -->
+        <Border Grid.Row="8" Style="{StaticResource ContentCard}">
+            <StackPanel Margin="10">
+                <TextBlock Text="Defaults" Style="{StaticResource SectionTitle}" Margin="0,0,0,8"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Default Line Style" Style="{StaticResource FieldLabel}" Margin="0,0,0,4"/>
+                        <ComboBox Style="{StaticResource StandardComboBox}" Height="30"
+                                  ItemsSource="{Binding AvailableLineStyles}"
+                                  SelectedItem="{Binding DefaultLineStyle}"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Default Fill Pattern" Style="{StaticResource FieldLabel}" Margin="0,0,0,4"/>
+                        <ComboBox Style="{StaticResource StandardComboBox}" Height="30"
+                                  ItemsSource="{Binding AvailableFillPatterns}"
+                                  SelectedItem="{Binding DefaultFillPattern}"/>
+                    </StackPanel>
+                </Grid>
+                <TextBlock Text="Populated from this project's actual line styles / fill region types. Used when a layer has no existing match — per-row prompt still applies."
+                           Style="{StaticResource HintText}" Margin="0,8,0,0"/>
+            </StackPanel>
+        </Border>
+
+        <!-- ── Layers & Hatches grid ── -->
+        <Border Grid.Row="10" Style="{StaticResource ContentCard}">
+            <StackPanel Margin="10">
+                <TextBlock Text="Layers &amp; Hatches To Convert" Style="{StaticResource SectionTitle}" Margin="0,0,0,8"/>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                    <TextBox Text="{Binding LayerFilterText, UpdateSourceTrigger=PropertyChanged}"
+                             Style="{StaticResource StyledTextInput}" Width="160" Margin="0,0,6,0"/>
+                    <Button Content="Select All" Command="{Binding SelectAllCommand}" Style="{StaticResource SmallSecondaryButton}" Margin="0,0,4,0"/>
+                    <Button Content="Clear" Command="{Binding ClearCommand}" Style="{StaticResource SmallSecondaryButton}" Margin="0,0,4,0"/>
+                    <Button Content="Refresh" Command="{Binding RefreshCommand}" Style="{StaticResource SmallSecondaryButton}"/>
+                </StackPanel>
+
+                <DataGrid ItemsSource="{Binding LayerRowsView}"
+                          SelectedItem="{Binding SelectedLayerRow}"
+                          Style="{StaticResource StandardDataGrid}"
+                          ColumnHeaderStyle="{StaticResource StandardDataGridColumnHeader}"
+                          CellStyle="{StaticResource StandardDataGridCell}"
+                          RowStyle="{StaticResource StandardDataGridRow}"
+                          MaxHeight="200"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          EnableRowVirtualization="True"
+                          VirtualizingPanel.IsVirtualizing="True"
+                          VirtualizingPanel.VirtualizationMode="Recycling">
+                    <DataGrid.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name}"
+                                               FontWeight="SemiBold" FontSize="10.5"
+                                               Foreground="{StaticResource BrushNavyPrimary}"
+                                               Background="{StaticResource BrushSystemTertiaryBackground}"
+                                               Padding="6,3"/>
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                        </GroupStyle>
+                    </DataGrid.GroupStyle>
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="" Width="36">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}"
+                                              HorizontalAlignment="Center" VerticalAlignment="Center"
+                                              PreviewMouseLeftButtonDown="LayerCheckBox_PreviewMouseLeftButtonDown"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Layer Name" Binding="{Binding LayerName}" Width="*"/>
+                        <DataGridTextColumn Header="Count" Binding="{Binding Count}" Width="60">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Right"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                            <DataGridTextColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource StandardDataGridColumnHeader}">
+                                    <Setter Property="HorizontalContentAlignment" Value="Right"/>
+                                </Style>
+                            </DataGridTextColumn.HeaderStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Style / Pattern" Binding="{Binding ResolvedStyleName, Mode=OneWay}" Width="140"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <TextBlock Margin="0,6,0,0" FontSize="10.5" Foreground="{StaticResource BrushTextTertiary}">
+                    <Run Text="{Binding LayerRows.Count, Mode=OneWay}"/>
+                    <Run Text=" layers found"/>
+                </TextBlock>
+            </StackPanel>
+        </Border>
+
+        <!-- ── Spline handling ── -->
+        <Border Grid.Row="12" Style="{StaticResource ContentCard}">
+            <StackPanel Margin="10">
+                <TextBlock Text="Spline Handling" Style="{StaticResource SectionTitle}" Margin="0,0,0,8"/>
+                <StackPanel Orientation="Horizontal">
+                    <RadioButton Content="Preserve Splines" Margin="0,0,18,0"
+                                 IsChecked="{Binding SplineHandlingMode, Converter={StaticResource BoolToEnum}, ConverterParameter=Preserve}"/>
+                    <RadioButton Content="Tessellate"
+                                 IsChecked="{Binding SplineHandlingMode, Converter={StaticResource BoolToEnum}, ConverterParameter=Tessellate}"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- ── Transform Method (TEMPORARY DIAGNOSTIC) — left as-is, per Rafi ── -->
+        <Border Grid.Row="14" Style="{StaticResource ContentCard}" BorderThickness="1" BorderBrush="{StaticResource BrushTextTertiary}">
+            <StackPanel Margin="10">
+                <TextBlock Text="Transform Method (Diagnostic)" Style="{StaticResource SectionTitle}" Margin="0,0,0,8"/>
+                <StackPanel>
+                    <RadioButton Content="None (gi.Transform only)"
+                                 IsChecked="{Binding TransformMethod, Converter={StaticResource BoolToEnum}, ConverterParameter=None}"/>
+                    <RadioButton Content="GetTransform" Margin="0,4,0,0"
+                                 IsChecked="{Binding TransformMethod, Converter={StaticResource BoolToEnum}, ConverterParameter=GetTransform}"/>
+                    <RadioButton Content="GetTotalTransform (incl. true north)" Margin="0,4,0,0"
+                                 IsChecked="{Binding TransformMethod, Converter={StaticResource BoolToEnum}, ConverterParameter=GetTotalTransform}"/>
+                    <TextBlock Text="Try each option, Convert, and compare against the DWG's actual position. Report back which one lands exactly."
+                               Style="{StaticResource HintText}" Margin="0,6,0,0"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- ── Convert / Close buttons ── -->
+        <StackPanel Grid.Row="16" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Close" Style="{StaticResource OutlineButton}" Width="90" Margin="0,0,8,0"
+                    Command="{Binding CloseCommand}"/>
+            <Button Content="Convert DWG" Style="{StaticResource PrimaryButton}" Width="140"
+                    Command="{Binding ConvertCommand}"
+                    IsEnabled="{Binding IsRunning, Converter={StaticResource InverseBoolConverter}}"/>
+        </StackPanel>
+
+        <!-- ── Activity log ── -->
+        <Border Grid.Row="18" Background="{StaticResource BrushLogBg}" CornerRadius="8">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" Background="{StaticResource BrushLogTitleBar}"
+                        CornerRadius="8,8,0,0" Padding="12,7">
+                    <Grid>
+                        <TextBlock Text="Activity log"
+                                   Foreground="{StaticResource BrushLogText}"
+                                   FontSize="11.5" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Content="Export" Style="{StaticResource DarkGhostButton}"
+                                    Command="{Binding ExportLogCommand}" Margin="0,0,6,0"
+                                    ToolTip="Save the log to a .txt file"/>
+                            <Button Content="Copy Selected" Style="{StaticResource DarkGhostButton}"
+                                    Command="{Binding CopySelectedLogCommand}" Margin="0,0,6,0"
+                                    ToolTip="Copy the selected log lines"/>
+                            <Button Content="Copy All" Style="{StaticResource DarkGhostButton}"
+                                    Command="{Binding CopyAllLogCommand}"
+                                    ToolTip="Copy the whole log to the clipboard"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <ListBox Grid.Row="1"
+                         x:Name="LogList"
+                         ItemsSource="{Binding LogEntries}"
+                         SelectionMode="Extended"
+                         SelectionChanged="LogList_SelectionChanged"
+                         Background="Transparent"
+                         BorderThickness="0"
+                         VirtualizingPanel.IsVirtualizing="True"
+                         VirtualizingPanel.VirtualizationMode="Recycling"
+                         ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                         Padding="12,8">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Padding" Value="0,1"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Margin="0,1">
+                                <TextBlock Text="{Binding Time, StringFormat=HH:mm:ss}"
+                                           Foreground="{StaticResource BrushLogTextDim}"
+                                           FontFamily="Consolas" FontSize="11.5" Margin="0,0,10,0"/>
+                                <TextBlock Text="{Binding Message}"
+                                           Foreground="{Binding Level, Converter={StaticResource LogLevelToColor}}"
+                                           FontFamily="Consolas" FontSize="11.5" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+        </Border>
+
+    </Grid>
+</Window>

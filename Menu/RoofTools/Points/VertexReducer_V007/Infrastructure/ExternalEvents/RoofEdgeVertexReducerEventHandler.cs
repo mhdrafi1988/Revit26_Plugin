@@ -144,35 +144,38 @@ namespace Revit26_Plugin.RoofEdgeVertexReducer.V007.Infrastructure.ExternalEvent
                 return;
             }
 
-            var tg = new TransactionGroup(doc, "Roof edge vertex reducer");
+            using var tg = new TransactionGroup(doc, "Roof edge vertex reducer");
             tg.Start();
 
-            var t = new Transaction(doc, "Remove interior shape points");
-            var startStatus = t.Start();
-            if (startStatus != TransactionStatus.Started)
+            using (var t = new Transaction(doc, "Remove interior shape points"))
             {
-                _vm.AddLog(LogLevel.Error, "Could not start transaction.");
-                tg.RollBack();
+                var startStatus = t.Start();
+                if (startStatus != TransactionStatus.Started)
+                {
+                    _vm.AddLog(LogLevel.Error, "Could not start transaction.");
+                    tg.RollBack();
+                    return;
+                }
+
+                int removed = EdgeVertexReducerService.ApplyRemovals(
+                    editor, _lastDecisions, msg => _vm.AddLog(LogLevel.Warning, msg));
+
+                var commitStatus = t.Commit();
+                if (commitStatus != TransactionStatus.Committed)
+                {
+                    _vm.AddLog(LogLevel.Error, $"Transaction failed to commit: {commitStatus}");
+                    tg.RollBack();
+                    return;
+                }
+
+                tg.Assimilate();
+
+                _vm.AddLog(LogLevel.Success, $"Changes applied — {removed} point(s) removed");
+                int kept = _lastDecisions.Count(d => !d.WillRemove);
+                _vm.SetSummary($"{kept} kept · {removed} removed");
+                _lastDecisions = null;
                 return;
             }
-
-            int removed = EdgeVertexReducerService.ApplyRemovals(
-                editor, _lastDecisions, msg => _vm.AddLog(LogLevel.Warning, msg));
-
-            var commitStatus = t.Commit();
-            if (commitStatus != TransactionStatus.Committed)
-            {
-                _vm.AddLog(LogLevel.Error, $"Transaction failed to commit: {commitStatus}");
-                tg.RollBack();
-                return;
-            }
-
-            tg.Assimilate();
-
-            _vm.AddLog(LogLevel.Success, $"Changes applied — {removed} point(s) removed");
-            int kept = _lastDecisions.Count(d => !d.WillRemove);
-            _vm.SetSummary($"{kept} kept · {removed} removed");
-            _lastDecisions = null;
         }
 
         public string GetName() => "Roof Edge Vertex Reducer Event Handler";

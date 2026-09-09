@@ -13,45 +13,45 @@ namespace Revit26_Plugin.Menu.Ribbon
         {
             RibbonPanel panel = app.CreateRibbonPanel(tabName, "Roof Tools");
 
-            PulldownButton SlopeMenu = panel.AddItem(new PulldownButtonData("RoofSlopeMenu", "Auto SLope")) as PulldownButton;
+            PulldownButton SlopeMenu = panel.AddItem(new PulldownButtonData("RoofSlopeMenu", "Auto Slope")) as PulldownButton;
             SlopeMenu.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.Autoslope32.png");
 
-            //Slope BY Point Final
-             
-            SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint_028", "Auto Slope ByPoint_028 (WIP ##)", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.V028.Commands.AutoSlopeCommand"));
-            //Slope BY Drain
+            //Slope By Point
+            SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint_028", "Auto Slope By Point — V028", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.V028.Commands.AutoSlopeCommand"));
+            SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint_028_KdTree", "Auto Slope By Point — V028 (KD-Tree test)", assemblyPath, "Revit26_Plugin.AutoSlopeByPointKdTree.VKD01.Commands.AutoSlopeCommand"));
 
-            SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByDrain_V007", "Auto Slope By Drain V007 (Drain)##", assemblyPath, "Revit26_Plugin.AutoSlopeByDrain.V007.Commands.AutoSlopeByDrain"));
+            //Slope By Drain
+            SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByDrain_V007", "Auto Slope By Drain — V007", assemblyPath, "Revit26_Plugin.AutoSlopeByDrain.V007.Commands.AutoSlopeByDrain"));
+            SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByDrain_V008", "Auto Slope By Drain — V008 (Multi-Roof)", assemblyPath, "Revit26_Plugin.MultiRoofSlopeByDrain.Commands.AutoSlopeByDrain"));
 
-            //Create Shape Point Shape Point Shape Point Shape Point
+            //Create Shape Point tools
             PulldownButton ShapepointMenu = panel.AddItem(new PulldownButtonData("ShapepointMenu", "Shape Points")) as PulldownButton;
             ShapepointMenu.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.Shapepoints32.png");
-            ShapepointMenu.AddPushButton(new PushButtonData("Btn_InnerLoopDivider_V009", "Divide Inner Loops   V009", assemblyPath, "Revit26_Plugin.InnerLoopDivider.V009.Commands.InnerLoopDividerCommand"));//Refactored
-            ShapepointMenu.AddPushButton(new PushButtonData("Btn_RoofLoopAnalyzerPDC_V005", "Roof Loop Analyzer PDC V005", assemblyPath, "Revit26_Plugin.RoofLoopAnalyzerPDC.V005.Commands.RoofLoopAnalyzerPDCCommand"));//Refactored
-            ShapepointMenu.AddPushButton(new PushButtonData("Btn_OuterCurveDivider_V004", "Outer CurveDivider.V004", assemblyPath, "Revit26_Plugin.OuterCurveDivider.V004.Commands.CurveDividerCommand"));//Refactored
-            ShapepointMenu.AddPushButton(new PushButtonData("Btn_RoofDetailLineIntersect_V011", "Roof Detail Line Intersect V011 #", assemblyPath, "Revit26_Plugin.RoofDetailLineIntersect.V011.Commands.RoofDetailLineIntersectCommand"));//Refactored
-            ShapepointMenu.AddPushButton(new PushButtonData("Btn_InnerLoopsAndPerpendicular_V005", "Inner Loops And Perpendicular V005##", assemblyPath, "Revit26_Plugin.InnerLoopsAndPerpendicular.V005.Commands.InnerLoopsAndPerpendicularCommand"));//Refactored
-            ShapepointMenu.AddPushButton(new PushButtonData("Btn_VertexReducer_V007", "RoofEdgeVertexReducer V007", assemblyPath, "Revit26_Plugin.RoofEdgeVertexReducer.V007.Commands.RoofEdgeVertexReducerCommand"));//Refactored
+            ShapepointMenu.AddPushButton(new PushButtonData("Btn_InnerLoopDivider_V009", "Divide Inner Loops — V009", assemblyPath, "Revit26_Plugin.InnerLoopDivider.V009.Commands.InnerLoopDividerCommand"));
+            //ShapepointMenu.AddPushButton(new PushButtonData("Btn_RoofLoopAnalyzerPDC_V005", "Roof Loop Analyzer PDC — V005", assemblyPath, "Revit26_Plugin.RoofLoopAnalyzerPDC.V005.Commands.RoofLoopAnalyzerPDCCommand"));
+            ShapepointMenu.AddPushButton(new PushButtonData("Btn_OuterCurveDivider_V004", "Outer Curve Divider — V004", assemblyPath, "Revit26_Plugin.OuterCurveDivider.V004.Commands.CurveDividerCommand"));
+            ShapepointMenu.AddPushButton(new PushButtonData("Btn_RoofDetailLineIntersect_V012", "Roof Detail Line Intersect — V012", assemblyPath, "Revit26_Plugin.RoofDetailLineIntersect.V012.Commands.RoofDetailLineIntersectCommand"));
+            ShapepointMenu.AddPushButton(new PushButtonData("Btn_InnerLoopsAndPerpendicular_V005", "Inner Loops And Perpendicular — V005", assemblyPath, "Revit26_Plugin.InnerLoopsAndPerpendicular.V005.Commands.InnerLoopsAndPerpendicularCommand"));
+            ShapepointMenu.AddPushButton(new PushButtonData("Btn_VertexReducer_V007", "Roof Edge Vertex Reducer — V007", assemblyPath, "Revit26_Plugin.RoofEdgeVertexReducer.V007.Commands.RoofEdgeVertexReducerCommand"));
 
             PulldownButton LineAndPoint = panel.AddItem(new PulldownButtonData("LineAndPointMenu", "Line-Point")) as PulldownButton;
             LineAndPoint.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.LinePoint.png");
 
-            LineAndPoint.AddPushButton(new PushButtonData("Btn_RoofRidgeLines_V68", "Auto Ridger(Multiple Shapes)68(By Shape)", assemblyPath, "Revit26_Plugin.RoofRidgeLines.V068.Commands.RoofRidgeCommand"));
+            LineAndPoint.AddPushButton(new PushButtonData("Btn_RoofRidgeLines_V57", "Roof Ridge Lines (By Points) — V057", assemblyPath, "Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.Commands.RoofRidgeCommand"));
+            LineAndPoint.AddPushButton(new PushButtonData("Btn_RoofRidgeLines_V68", "Roof Ridge Lines (Multiple Shapes) — V068", assemblyPath, "Revit26_Plugin.RoofRidgeLines.V068.Commands.RoofRidgeCommand"));
 
-                        //Slope Liner Menu
-            PulldownButton SlopeLinerMenu = panel.AddItem(new PulldownButtonData("SlopeLiner", "SlopeLiner")) as PulldownButton;
-            SlopeLinerMenu.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.SlopeLiner.png");
-            SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserAdvCommand_V009_00", "CreaserAdvCommand V009_00 # Working", assemblyPath, "Revit26_Plugin.CreaserAdv.V009.Commands.CreaserAdvCommand"));
+            //Slope Liner Menu
+            PulldownButton SlopeLinerMenu = panel.AddItem(new PulldownButtonData("SlopeLiner", "Slope Liner")) as PulldownButton;
+            SlopeLinerMenu.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.Divider.png");
+            SlopeLinerMenu.AddPushButton(new PushButtonData("Btn_CreaserAdvCommand_V009_00", "Creaser Adv — V009", assemblyPath, "Revit26_Plugin.CreaserAdv.V009.Commands.CreaserAdvCommand"));
 
             PulldownButton tagMenu = panel.AddItem(new PulldownButtonData("RoofTagMenu", "Tag")) as PulldownButton;
             tagMenu.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.Addtag32.png");
-            tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommand_V016)", "RoofTagCommand V016", assemblyPath, "Revit26_Plugin.RoofTag.V016.RoofTagCommand"));
+            tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommand_V016", "Roof Tag — V016", assemblyPath, "Revit26_Plugin.RoofTag.V016.RoofTagCommand"));
+
             PulldownButton CreateMenu = panel.AddItem(new PulldownButtonData("RoofCreateMenu", "Create")) as PulldownButton;
             CreateMenu.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.SlopeLiner.png");
-            //CreateMenu.LargeImage = IconManager.ToBitmapSource(Properties.Resources.addtag32);
-                        
-            CreateMenu.AddPushButton(new PushButtonData("Btn_RoofFromDetailLines.V007", "Roof From Detail Lines_V007", assemblyPath, "Revit26_Plugin.RoofFromDetailLines.V007.Command"));
-
+            CreateMenu.AddPushButton(new PushButtonData("Btn_RoofFromDetailLines.V007", "Roof From Detail Lines — V007", assemblyPath, "Revit26_Plugin.RoofFromDetailLines.V007.Command"));
         }
     }
 }

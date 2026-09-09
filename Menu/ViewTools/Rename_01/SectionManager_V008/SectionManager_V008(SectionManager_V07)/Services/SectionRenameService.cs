@@ -21,8 +21,15 @@ namespace Revit26_Plugin.SectionManager.V008.Services
 
                     if (view.Name != s.NewName)
                     {
-                        view.Name = s.NewName;
-                        renamed++;
+                        try
+                        {
+                            view.Name = s.NewName;
+                            renamed++;
+                        }
+                        catch (Autodesk.Revit.Exceptions.ArgumentException)
+                        {
+                            // Name collision or invalid characters — skip this section, keep the batch going.
+                        }
                     }
                 }
 

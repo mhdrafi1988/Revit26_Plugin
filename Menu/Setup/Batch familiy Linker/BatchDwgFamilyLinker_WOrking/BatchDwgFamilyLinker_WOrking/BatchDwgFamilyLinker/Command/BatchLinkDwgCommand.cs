@@ -15,6 +15,27 @@ namespace BatchDwgFamilyLinker.Command
             ref string message,
             ElementSet elements)
         {
+            try
+            {
+                return ExecuteInternal(commandData, ref message, elements);
+            }
+            catch (Autodesk.Revit.Exceptions.OperationCanceledException)
+            {
+                return Result.Cancelled;
+            }
+            catch (System.Exception ex)
+            {
+                message = ex.Message;
+                TaskDialog.Show("Batch DWG Family Linker", $"An unexpected error occurred: {ex.Message}");
+                return Result.Failed;
+            }
+        }
+
+        private Result ExecuteInternal(
+            ExternalCommandData commandData,
+            ref string message,
+            ElementSet elements)
+        {
             UIApplication uiApp = commandData.Application;
             UIDocument uiDoc = uiApp.ActiveUIDocument;
 

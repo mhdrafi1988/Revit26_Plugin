@@ -83,6 +83,8 @@
     <SolidColorBrush x:Key="BrushAppleBlue"                 Color="{StaticResource AppleBlue}"/>
     <SolidColorBrush x:Key="BrushAppleBlueLight"            Color="{StaticResource AppleBlueLight}"/>
     <SolidColorBrush x:Key="BrushAppleBlueDark"             Color="{StaticResource AppleBlueDark}"/>
+    <!-- General-purpose accent brush (filter badges, "active" links, chip highlights) -->
+    <SolidColorBrush x:Key="BrushSystemAccent"              Color="{StaticResource AppleBlue}"/>
 
     <SolidColorBrush x:Key="BrushTextPrimary"               Color="{StaticResource TextPrimary}"/>
     <SolidColorBrush x:Key="BrushTextSecondary"             Color="{StaticResource TextSecondary}"/>
@@ -793,6 +795,43 @@
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="Bg" Property="Background" Value="{StaticResource BrushSystemSecondaryBackground}"/>
                             <Setter Property="Foreground" Value="{StaticResource BrushTextDisabled}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Filter "chip" — a RadioButton rendered as a pill, highlighted (accent
+         background/white text) when checked. Used for one-click quick-filter
+         rows (e.g. ViewAutoRenamer's Quick Filter chip strip). -->
+    <Style x:Key="ChipToggle" TargetType="RadioButton">
+        <Setter Property="Height"     Value="24"/>
+        <Setter Property="FontSize"   Value="11"/>
+        <Setter Property="Padding"    Value="10,0"/>
+        <Setter Property="Margin"     Value="0,0,6,0"/>
+        <Setter Property="Cursor"     Value="Hand"/>
+        <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <Border x:Name="Bg"
+                            Background="{StaticResource BrushSystemBackground}"
+                            BorderBrush="{StaticResource BrushCardBorder}"
+                            BorderThickness="1"
+                            CornerRadius="12"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          TextElement.Foreground="{TemplateBinding Foreground}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bg" Property="BorderBrush" Value="{StaticResource BrushAppleBlueLight}"/>
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Bg" Property="Background"  Value="{StaticResource BrushSystemAccent}"/>
+                            <Setter TargetName="Bg" Property="BorderBrush" Value="{StaticResource BrushSystemAccent}"/>
+                            <Setter Property="Foreground" Value="{StaticResource BrushTextOnDark}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
