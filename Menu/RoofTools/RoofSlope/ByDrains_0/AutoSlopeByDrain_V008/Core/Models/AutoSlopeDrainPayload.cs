@@ -93,6 +93,12 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.Core.Models
         /// <summary>Style/config for circles placed on vertices tied at max elevation. Ported from AutoSlopeByPoint's Circle Markers.</summary>
         public CircleMarkerGroup HighestPointMarkerGroup { get; set; }
 
+        /// <summary>Style/config for circles placed on processed vertices meeting the Allowed Offset threshold. Ported from AutoSlopeByPoint's Circle Markers.</summary>
+        public CircleMarkerGroup AllowedOffsetMarkerGroup { get; set; }
+
+        /// <summary>Minimum ElevationOffsetMm a vertex must reach to get an Allowed Offset circle. Excludes vertices already circled as Highest Point.</summary>
+        public double AllowedOffsetThresholdMm { get; set; }
+
         public ExportConfig ExportConfig { get; set; }
 
         /// <summary>Revit document title — passed in so Core/Infrastructure never touch UIDocument directly.</summary>

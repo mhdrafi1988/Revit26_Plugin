@@ -313,6 +313,89 @@ namespace Revit26_Plugin.AutoSlopeByPoint.V028.Core.Engine
             }
         }
 
+        private const string RedHighestPointTextTypeName = "AutoSlope Highest Point (Red)";
+        private const double HighestPointLabelOffsetMm = 250;
+
+        /// <summary>
+        /// Places a red TextNote reading "Offset: {value} mm" with a straight
+        /// leader pointing back at the Highest Point vertex — showing the
+        /// calculated offset (pathLength × slope), the same figure logged as the
+        /// group's max elevation. The text sits a fixed 250 mm away from the
+        /// point regardless of the circle's radius. Best-effort: a failure here
+        /// is logged as a warning but does not remove the already-placed circle.
+        /// </summary>
+        private static void PlaceHighestPointLabel(
+            Document doc,
+            View activeView,
+            XYZ centerPt,
+            double viewElevFt,
+            double offsetMm,
+            Action<LogEntry> log)
+        {
+            try
+            {
+                ElementId textTypeId = GetOrCreateRedTextNoteType(doc, log);
+                if (textTypeId == null || textTypeId == ElementId.InvalidElementId)
+                {
+                    log?.Invoke(new LogEntry(LogLevel.Warning,
+                        "Circle Markers: no text note type available — skipped highest-point label."));
+                    return;
+                }
+
+                double gapFt = UnitUtils.ConvertToInternalUnits(HighestPointLabelOffsetMm, UnitTypeId.Millimeters);
+                XYZ point = new XYZ(centerPt.X, centerPt.Y, viewElevFt);
+                XYZ textPos = new XYZ(point.X + gapFt, point.Y, point.Z);
+
+                TextNote note = TextNote.Create(doc, activeView.Id, textPos, $"Offset: {offsetMm:0} mm", textTypeId);
+
+                // Point is to the left of the text box, so the leader attaches
+                // on the text's left side and its arrow end goes back to the point.
+                Leader leader = note.AddLeader(TextNoteLeaderTypes.TNLT_STRAIGHT_L);
+                leader.End = point;
+            }
+            catch (Exception ex)
+            {
+                log?.Invoke(new LogEntry(LogLevel.Warning,
+                    $"Circle Markers: failed to place highest-point label — {ex.Message}"));
+            }
+        }
+
+        /// <summary>
+        /// Returns the Id of a red-text TextNoteType, creating it once (by
+        /// duplicating the project's default text note type and setting its
+        /// Color parameter) and reusing it on every subsequent run so repeated
+        /// AutoSlope runs don't pile up duplicate types.
+        /// </summary>
+        private static ElementId GetOrCreateRedTextNoteType(Document doc, Action<LogEntry> log)
+        {
+            var existing = new FilteredElementCollector(doc)
+                .OfClass(typeof(TextNoteType))
+                .Cast<TextNoteType>()
+                .FirstOrDefault(t => t.Name == RedHighestPointTextTypeName);
+            if (existing != null) return existing.Id;
+
+            ElementId baseTypeId = doc.GetDefaultElementTypeId(ElementTypeGroup.TextNoteType);
+            if (baseTypeId == null || baseTypeId == ElementId.InvalidElementId) return null;
+            if (!(doc.GetElement(baseTypeId) is TextNoteType baseType)) return null;
+
+            if (!(baseType.Duplicate(RedHighestPointTextTypeName) is TextNoteType redType)) return null;
+
+            Parameter colorParam = redType.LookupParameter("Color");
+            if (colorParam != null && !colorParam.IsReadOnly)
+            {
+                // Revit stores color parameters as a packed 0x00BBGGRR integer.
+                const int red = 255, green = 0, blue = 0;
+                colorParam.Set(red | (green << 8) | (blue << 16));
+            }
+            else
+            {
+                log?.Invoke(new LogEntry(LogLevel.Warning,
+                    "Circle Markers: could not find a settable Color parameter on the text note type — label will use the default type color."));
+            }
+
+            return redType.Id;
+        }
+
         /// <summary>
         /// Assigns the chosen Line Style (existing OST_Lines subcategory) as the
         /// element's line-style, and applies the chosen named color as a per-view

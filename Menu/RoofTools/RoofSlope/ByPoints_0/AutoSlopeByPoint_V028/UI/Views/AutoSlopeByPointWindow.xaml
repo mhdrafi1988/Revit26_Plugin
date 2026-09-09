@@ -208,6 +208,13 @@
                                      MaxLength="10" Padding="2"/>
                         </StackPanel>
                     </Grid>
+                    <StackPanel Orientation="Horizontal" Margin="4,0,4,4" VerticalAlignment="Center"
+                                IsEnabled="{Binding HighestPointMarkerGroup.IsEnabled}">
+                        <CheckBox IsChecked="{Binding HighestPointMarkerGroup.ShowOffsetText}" VerticalAlignment="Center"/>
+                        <TextBlock Text="Show offset text label" Style="{StaticResource FieldValue}"
+                                   Margin="6,0,0,0" VerticalAlignment="Center"
+                                   ToolTip="Places a red &quot;Offset: X mm&quot; text note with a leader next to the Highest Point circle."/>
+                    </StackPanel>
 
                     <Border Style="{StaticResource SeparatorLine}" Margin="12,8,12,8"/>
 

@@ -145,7 +145,9 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.Core.Engine
                     payload.ThresholdMeters,
                     activeView,
                     payload.DrainMarkerGroup,
-                    payload.HighestPointMarkerGroup);
+                    payload.HighestPointMarkerGroup,
+                    payload.AllowedOffsetMarkerGroup,
+                    payload.AllowedOffsetThresholdMm);
 
                 int durationSec = (int)(DateTime.Now - startTime).TotalSeconds;
                 var vertexData = slopeService.GetLastExportData() ?? new List<DrainVertexData>();
@@ -197,7 +199,7 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.Core.Engine
                 log(new LogEntry(LogLevel.Success,
                     $"SUCCESS: {results.modifiedCount} vertices modified | Max offset {results.maxOffset:F1} mm | Longest path {results.longestPath:F2} m"));
                 log(new LogEntry(LogLevel.Info,
-                    $"Circles Placed            : {slopeService.LastDrainCirclesPlaced} drain, {slopeService.LastHighestCirclesPlaced} highest"));
+                    $"Circles Placed            : {slopeService.LastDrainCirclesPlaced} drain, {slopeService.LastHighestCirclesPlaced} highest, {slopeService.LastOffsetCirclesPlaced} allowed-offset"));
 
                 return new AutoSlopeDrainResult
                 {
@@ -219,7 +221,8 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.Core.Engine
                     OverThresholdVertexCount = slopeService.LastOverThresholdCount,
                     ExportedFilePath = exportedPath,
                     DrainCirclesPlaced = slopeService.LastDrainCirclesPlaced,
-                    HighestCirclesPlaced = slopeService.LastHighestCirclesPlaced
+                    HighestCirclesPlaced = slopeService.LastHighestCirclesPlaced,
+                    OffsetCirclesPlaced = slopeService.LastOffsetCirclesPlaced
                 };
             }
             catch (Exception ex)

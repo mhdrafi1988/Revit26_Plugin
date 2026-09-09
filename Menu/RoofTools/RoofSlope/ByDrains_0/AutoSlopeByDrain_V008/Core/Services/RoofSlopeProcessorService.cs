@@ -38,6 +38,7 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.Core.Services
         private int _lastOverThresholdCount;
         private int _lastDrainCirclesPlaced;
         private int _lastHighestCirclesPlaced;
+        private int _lastOffsetCirclesPlaced;
 
         public int LastRunDuration => _lastRunDuration;
 
@@ -55,6 +56,9 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.Core.Services
 
         /// <summary>Circles placed on vertices tied at max elevation this run. 0 if the marker group was disabled/absent or the view wasn't a plan view.</summary>
         public int LastHighestCirclesPlaced => _lastHighestCirclesPlaced;
+
+        /// <summary>Circles placed on processed vertices meeting the Allowed Offset threshold this run. 0 if the marker group was disabled/absent or the view wasn't a plan view.</summary>
+        public int LastOffsetCirclesPlaced => _lastOffsetCirclesPlaced;
 
         /// <summary>
         /// Process slopes for the roof.
@@ -83,7 +87,9 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.Core.Services
             double thresholdMeters = 0,
             View activeView = null,
             CircleMarkerGroup drainMarkerGroup = null,
-            CircleMarkerGroup highestPointMarkerGroup = null)
+            CircleMarkerGroup highestPointMarkerGroup = null,
+            CircleMarkerGroup allowedOffsetMarkerGroup = null,
+            double allowedOffsetThresholdMm = 0)
         {
             var doc = roofData.Roof.Document;
             int modifiedCount = 0;
@@ -262,7 +268,8 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.Core.Services
                     // Runs inside this same transaction (one commit, one undo step
                     // for the whole Run), same reasoning as ByPoint's CircleMarkerService.
                     if ((drainMarkerGroup != null && drainMarkerGroup.IsEnabled) ||
-                        (highestPointMarkerGroup != null && highestPointMarkerGroup.IsEnabled))
+                        (highestPointMarkerGroup != null && highestPointMarkerGroup.IsEnabled) ||
+                        (allowedOffsetMarkerGroup != null && allowedOffsetMarkerGroup.IsEnabled))
                     {
                         var drainCenterPoints = selectedDrains.Select(d => d.CenterPoint).Where(p => p != null).ToList();
                         var markerCounts = CircleMarkerService.PlaceMarkers(
@@ -272,11 +279,14 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.Core.Services
                             _lastExportData,
                             drainMarkerGroup,
                             highestPointMarkerGroup,
+                            allowedOffsetMarkerGroup,
+                            allowedOffsetThresholdMm,
                             clusterToleranceMm: 0,
                             log: logAction);
 
                         _lastDrainCirclesPlaced = markerCounts.DrainCirclesPlaced;
                         _lastHighestCirclesPlaced = markerCounts.HighestCirclesPlaced;
+                        _lastOffsetCirclesPlaced = markerCounts.OffsetCirclesPlaced;
                     }
 
                     transaction.Commit();

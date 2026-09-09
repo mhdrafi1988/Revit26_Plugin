@@ -41,5 +41,13 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.Core.Models
         /// <summary>Circle radius in millimeters, as entered by the user.</summary>
         [ObservableProperty]
         private double radiusMm = 250;
+
+        /// <summary>
+        /// Only meaningful for the Highest Point group: whether to also place
+        /// the red "Offset: X mm" text label (with leader) next to the circle.
+        /// Ignored by the Drain group.
+        /// </summary>
+        [ObservableProperty]
+        private bool showOffsetText = true;
     }
 }

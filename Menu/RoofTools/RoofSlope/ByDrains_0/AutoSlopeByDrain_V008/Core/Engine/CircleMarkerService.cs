@@ -42,13 +42,14 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.Core.Engine
         {
             public int DrainCirclesPlaced { get; set; }
             public int HighestCirclesPlaced { get; set; }
+            public int OffsetCirclesPlaced { get; set; }
         }
 
         /// <summary>
-        /// Places circles for the Drain and Highest Point marker groups. Must be
-        /// called inside an already-open Transaction. Returns per-group placed
-        /// counts (zero for any group that was disabled, had no qualifying
-        /// points, or was skipped due to an invalid active view).
+        /// Places circles for the Drain, Highest Point, and Allowed Offset marker
+        /// groups. Must be called inside an already-open Transaction. Returns
+        /// per-group placed counts (zero for any group that was disabled, had no
+        /// qualifying points, or was skipped due to an invalid active view).
         /// </summary>
         public static PlacementCounts PlaceMarkers(
             Document doc,
@@ -57,6 +58,8 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.Core.Engine
             List<DrainVertexData> vertexDataList,
             CircleMarkerGroup drainGroup,
             CircleMarkerGroup highestGroup,
+            CircleMarkerGroup offsetGroup,
+            double allowedOffsetThresholdMm,
             double clusterToleranceMm,
             Action<string> log)
         {
@@ -109,6 +112,7 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.Core.Engine
             // Uses the calculated offset (pathLength × slope), not a post-commit
             // model re-read value, since circle placement runs inside the same
             // transaction as the slope vertex writes.
+            var highestVertices = new List<DrainVertexData>();
             if (highestGroup != null && highestGroup.IsEnabled)
             {
                 var processed = vertexDataList?.Where(v => v.WasProcessed).ToList() ?? new List<DrainVertexData>();
@@ -122,7 +126,7 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.Core.Engine
                     // Small epsilon guards against floating point rounding when
                     // comparing values that were rounded to whole mm in DrainVertexData.
                     const double eps = 0.001;
-                    var highestVertices = processed
+                    highestVertices = processed
                         .Where(v => Math.Abs(v.ElevationOffsetMm - maxElev) <= eps)
                         .ToList();
 
@@ -133,9 +137,44 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.Core.Engine
                     {
                         if (PlaceOneCircle(doc, activeView, pt, viewElevFt, highestGroup, log))
                             placed++;
+
+                        if (highestGroup.ShowOffsetText)
+                            PlaceHighestPointLabel(doc, activeView, pt, viewElevFt, maxElev, log);
                     }
                     counts.HighestCirclesPlaced = placed;
                     log?.Invoke($"Circle Markers: placed {placed} highest-point circle(s) for {highestVertices.Count} vertex/vertices at {maxElev:0} mm.");
+                }
+            }
+
+            // ── Group 3: Allowed Offset ──────────────────────────────────────
+            // Excludes vertices already circled as Highest Point — compared by
+            // VertexIndex (stable identity from the engine's vertex collection).
+            if (offsetGroup != null && offsetGroup.IsEnabled)
+            {
+                var highestIndices = new HashSet<int>(highestVertices.Select(v => v.VertexIndex));
+
+                var qualifying = (vertexDataList ?? new List<DrainVertexData>())
+                    .Where(v => v.WasProcessed
+                             && v.ElevationOffsetMm >= allowedOffsetThresholdMm
+                             && !highestIndices.Contains(v.VertexIndex))
+                    .ToList();
+
+                if (qualifying.Count == 0)
+                {
+                    log?.Invoke($"Circle Markers: Allowed Offset group enabled but no vertices met the {allowedOffsetThresholdMm:0} mm threshold.");
+                }
+                else
+                {
+                    var clusteredOffsetPoints = ClusterPoints(
+                        qualifying.Select(v => v.Position).ToList(), clusterToleranceFt);
+                    int placed = 0;
+                    foreach (var pt in clusteredOffsetPoints)
+                    {
+                        if (PlaceOneCircle(doc, activeView, pt, viewElevFt, offsetGroup, log))
+                            placed++;
+                    }
+                    counts.OffsetCirclesPlaced = placed;
+                    log?.Invoke($"Circle Markers: placed {placed} allowed-offset circle(s) for {qualifying.Count} vertex/vertices (>= {allowedOffsetThresholdMm:0} mm).");
                 }
             }
 
@@ -242,6 +281,86 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.Core.Engine
                 log?.Invoke($"Circle Markers: failed to place a {style.GroupLabel} circle — {ex.Message}");
                 return false;
             }
+        }
+
+        private const string RedHighestPointTextTypeName = "AutoSlope Highest Point (Red)";
+        private const double HighestPointLabelOffsetMm = 250;
+
+        /// <summary>
+        /// Places a red TextNote reading "Offset: {value} mm" with a straight
+        /// leader pointing back at the Highest Point vertex — showing the
+        /// calculated offset (pathLength × slope), the same figure logged as the
+        /// group's max elevation. The text sits a fixed 250 mm away from the
+        /// point regardless of the circle's radius. Best-effort: a failure here
+        /// is logged as a warning but does not remove the already-placed circle.
+        /// </summary>
+        private static void PlaceHighestPointLabel(
+            Document doc,
+            View activeView,
+            XYZ centerPt,
+            double viewElevFt,
+            double offsetMm,
+            Action<string> log)
+        {
+            try
+            {
+                ElementId textTypeId = GetOrCreateRedTextNoteType(doc, log);
+                if (textTypeId == null || textTypeId == ElementId.InvalidElementId)
+                {
+                    log?.Invoke("Circle Markers: no text note type available — skipped highest-point label.");
+                    return;
+                }
+
+                double gapFt = UnitUtils.ConvertToInternalUnits(HighestPointLabelOffsetMm, UnitTypeId.Millimeters);
+                XYZ point = new XYZ(centerPt.X, centerPt.Y, viewElevFt);
+                XYZ textPos = new XYZ(point.X + gapFt, point.Y, point.Z);
+
+                TextNote note = TextNote.Create(doc, activeView.Id, textPos, $"Offset: {offsetMm:0} mm", textTypeId);
+
+                // Point is to the left of the text box, so the leader attaches
+                // on the text's left side and its arrow end goes back to the point.
+                Leader leader = note.AddLeader(TextNoteLeaderTypes.TNLT_STRAIGHT_L);
+                leader.End = point;
+            }
+            catch (Exception ex)
+            {
+                log?.Invoke($"Circle Markers: failed to place highest-point label — {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Returns the Id of a red-text TextNoteType, creating it once (by
+        /// duplicating the project's default text note type and setting its
+        /// Color parameter) and reusing it on every subsequent run so repeated
+        /// AutoSlope runs don't pile up duplicate types.
+        /// </summary>
+        private static ElementId GetOrCreateRedTextNoteType(Document doc, Action<string> log)
+        {
+            var existing = new FilteredElementCollector(doc)
+                .OfClass(typeof(TextNoteType))
+                .Cast<TextNoteType>()
+                .FirstOrDefault(t => t.Name == RedHighestPointTextTypeName);
+            if (existing != null) return existing.Id;
+
+            ElementId baseTypeId = doc.GetDefaultElementTypeId(ElementTypeGroup.TextNoteType);
+            if (baseTypeId == null || baseTypeId == ElementId.InvalidElementId) return null;
+            if (!(doc.GetElement(baseTypeId) is TextNoteType baseType)) return null;
+
+            if (!(baseType.Duplicate(RedHighestPointTextTypeName) is TextNoteType redType)) return null;
+
+            Parameter colorParam = redType.LookupParameter("Color");
+            if (colorParam != null && !colorParam.IsReadOnly)
+            {
+                // Revit stores color parameters as a packed 0x00BBGGRR integer.
+                const int red = 255, green = 0, blue = 0;
+                colorParam.Set(red | (green << 8) | (blue << 16));
+            }
+            else
+            {
+                log?.Invoke("Circle Markers: could not find a settable Color parameter on the text note type — label will use the default type color.");
+            }
+
+            return redType.Id;
         }
 
         /// <summary>

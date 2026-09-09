@@ -306,6 +306,65 @@
                                          MaxLength="10"/>
                             </StackPanel>
                         </Grid>
+                        <StackPanel Orientation="Horizontal" Margin="10,0,10,4" VerticalAlignment="Center"
+                                    IsEnabled="{Binding HighestPointMarkerGroup.IsEnabled}">
+                            <CheckBox IsChecked="{Binding HighestPointMarkerGroup.ShowOffsetText}" VerticalAlignment="Center"/>
+                            <TextBlock Text="Show offset text label" Style="{StaticResource FieldValue}"
+                                       Margin="6,0,0,0" VerticalAlignment="Center" FontSize="11"
+                                       ToolTip="Places a red &quot;Offset: X mm&quot; text note with a leader next to the Highest Point circle."/>
+                        </StackPanel>
+
+                        <Border Style="{StaticResource SeparatorLine}"/>
+
+                        <!-- Group 3: Allowed Offset -->
+                        <StackPanel Orientation="Horizontal" Margin="10,4,10,0" VerticalAlignment="Center">
+                            <CheckBox IsChecked="{Binding AllowedOffsetMarkerGroup.IsEnabled}" VerticalAlignment="Center"/>
+                            <TextBlock Text="Allowed Offset (Visual Clamping Offset)" Style="{StaticResource FieldValue}"
+                                       Margin="6,0,0,0" VerticalAlignment="Center" FontSize="11"
+                                       ToolTip="Circles processed vertices with offset &#8805; threshold. Excludes vertices already marked Highest Point."/>
+                        </StackPanel>
+                        <Grid Margin="10,4,10,4" IsEnabled="{Binding AllowedOffsetMarkerGroup.IsEnabled}"
+                              Visibility="{Binding AllowedOffsetMarkerGroup.IsEnabled, Converter={StaticResource BoolToVisibility}}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Threshold (mm)" Style="{StaticResource FieldLabel}" FontSize="9.5"/>
+                                <TextBox Style="{StaticResource BorderlessTextInput}"
+                                         Text="{Binding AllowedOffsetThresholdMm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         MaxLength="10"/>
+                            </StackPanel>
+                        </Grid>
+                        <Grid Margin="10,4,10,9" IsEnabled="{Binding AllowedOffsetMarkerGroup.IsEnabled}"
+                              Visibility="{Binding AllowedOffsetMarkerGroup.IsEnabled, Converter={StaticResource BoolToVisibility}}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1.1*"/>
+                                <ColumnDefinition Width="6"/>
+                                <ColumnDefinition Width="0.9*"/>
+                                <ColumnDefinition Width="6"/>
+                                <ColumnDefinition Width="0.7*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Line Style" Style="{StaticResource FieldLabel}" FontSize="9.5"/>
+                                <ComboBox ItemsSource="{Binding LineStyleOptions}"
+                                          SelectedValue="{Binding AllowedOffsetMarkerGroup.LineStyleId, Mode=TwoWay}"
+                                          SelectedValuePath="Id"
+                                          DisplayMemberPath="Name"
+                                          Style="{StaticResource StandardComboBox}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Color" Style="{StaticResource FieldLabel}" FontSize="9.5"/>
+                                <ComboBox ItemsSource="{Binding ColorPalette}"
+                                          SelectedItem="{Binding AllowedOffsetMarkerGroup.ColorName, Mode=TwoWay}"
+                                          Style="{StaticResource StandardComboBox}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="4">
+                                <TextBlock Text="Radius (mm)" Style="{StaticResource FieldLabel}" FontSize="9.5"/>
+                                <TextBox Style="{StaticResource BorderlessTextInput}"
+                                         Text="{Binding AllowedOffsetMarkerGroup.RadiusMm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         MaxLength="10"/>
+                            </StackPanel>
+                        </Grid>
                     </StackPanel>
                 </Border>
 
@@ -355,27 +414,30 @@
                     </StackPanel>
                 </Border>
 
-                <!-- Run Button -->
-                <Button Command="{Binding RunAutoSlopeCommand}"
-                        ToolTip="Calculate and apply slope to the selected drains"
-                        Margin="0,0,0,3">
-                    <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
-                            <Setter Property="Content" Value="Run AutoSlope"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding StatusMessage}" Value="Processing...">
-                                    <Setter Property="Content" Value="⏳ Processing..."/>
-                                    <Setter Property="IsEnabled" Value="False"/>
-                                    <Setter Property="Background" Value="{StaticResource BrushWarning}"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding StatusMessage}" Value="Completed">
-                                    <Setter Property="Content" Value="✓ Complete"/>
-                                    <Setter Property="Background" Value="{StaticResource BrushSuccess}"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                </Button>
+                <!-- Run Button — right-aligned at the bottom, matching AutoSlopeByPoint VKD01's layout -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,3">
+                    <Button Command="{Binding RunAutoSlopeCommand}"
+                            ToolTip="Calculate and apply slope to the selected drains"
+                            Height="32"
+                            Width="150">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+                                <Setter Property="Content" Value="Run AutoSlope"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding StatusMessage}" Value="Processing...">
+                                        <Setter Property="Content" Value="⏳ Processing..."/>
+                                        <Setter Property="IsEnabled" Value="False"/>
+                                        <Setter Property="Background" Value="{StaticResource BrushWarning}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding StatusMessage}" Value="Completed">
+                                        <Setter Property="Content" Value="✓ Complete"/>
+                                        <Setter Property="Background" Value="{StaticResource BrushSuccess}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </StackPanel>
 
                 <!-- Inline hint shown only when Run is disabled specifically because
                      0 drains are selected — not a silent disable. -->

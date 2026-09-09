@@ -68,5 +68,8 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.Core.Models
 
         /// <summary>Circles placed on vertices tied at max elevation. 0 if the marker group was disabled or the active view wasn't a plan view.</summary>
         public int HighestCirclesPlaced { get; set; }
+
+        /// <summary>Circles placed on processed vertices meeting the Allowed Offset threshold. 0 if the marker group was disabled or the active view wasn't a plan view.</summary>
+        public int OffsetCirclesPlaced { get; set; }
     }
 }

@@ -160,6 +160,16 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.UI.ViewModels
             RadiusMm = 250
         };
 
+        public CircleMarkerGroup AllowedOffsetMarkerGroup { get; } = new CircleMarkerGroup
+        {
+            GroupLabel = "Allowed Offset",
+            ColorName = "Orange",
+            RadiusMm = 250
+        };
+
+        [ObservableProperty]
+        private double allowedOffsetThresholdMm = 500;
+
         public IReadOnlyList<string> ColorPalette { get; } = NamedColorHelper.PaletteNames;
 
         public ObservableCollection<LineStyleOption> LineStyleOptions { get; } = new ObservableCollection<LineStyleOption>();
@@ -210,6 +220,9 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.UI.ViewModels
         [ObservableProperty]
         private int highestCirclesPlaced;
 
+        [ObservableProperty]
+        private int offsetCirclesPlaced;
+
         /// <summary>NEW (V008): roofs actually processed (had >=1 selected drain) in the last run.</summary>
         [ObservableProperty]
         private int roofsProcessed;
@@ -257,6 +270,8 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.UI.ViewModels
 
             ApplyMarkerSettings(DrainMarkerGroup, settings.DrainMarkerGroup);
             ApplyMarkerSettings(HighestPointMarkerGroup, settings.HighestPointMarkerGroup);
+            ApplyMarkerSettings(AllowedOffsetMarkerGroup, settings.AllowedOffsetMarkerGroup);
+            AllowedOffsetThresholdMm = settings.AllowedOffsetThresholdMm;
 
             ExportFolderPath = !string.IsNullOrWhiteSpace(settings.ExportFolderPath) && Directory.Exists(settings.ExportFolderPath)
                 ? settings.ExportFolderPath
@@ -307,7 +322,7 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.UI.ViewModels
 
             if (defaultOption != null)
             {
-                foreach (var group in new[] { DrainMarkerGroup, HighestPointMarkerGroup })
+                foreach (var group in new[] { DrainMarkerGroup, HighestPointMarkerGroup, AllowedOffsetMarkerGroup })
                 {
                     if (group.LineStyleId == null)
                     {
@@ -330,6 +345,7 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.UI.ViewModels
             group.IsEnabled = saved.IsEnabled;
             group.ColorName = string.IsNullOrWhiteSpace(saved.ColorName) ? group.ColorName : saved.ColorName;
             group.RadiusMm = saved.RadiusMm > 0 ? saved.RadiusMm : group.RadiusMm;
+            group.ShowOffsetText = saved.ShowOffsetText;
 
             if (!string.IsNullOrWhiteSpace(saved.LineStyleName))
             {
@@ -347,7 +363,8 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.UI.ViewModels
             IsEnabled = group.IsEnabled,
             LineStyleName = group.LineStyleName,
             ColorName = group.ColorName,
-            RadiusMm = group.RadiusMm
+            RadiusMm = group.RadiusMm,
+            ShowOffsetText = group.ShowOffsetText
         };
 
         // ── Run ───────────────────────────────────────────────────────────────
@@ -427,6 +444,8 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.UI.ViewModels
                     VerifyElevationsAfterCommit = VerifyElevationsAfterCommit,
                     DrainMarkerGroup = DrainMarkerGroup,
                     HighestPointMarkerGroup = HighestPointMarkerGroup,
+                    AllowedOffsetMarkerGroup = AllowedOffsetMarkerGroup,
+                    AllowedOffsetThresholdMm = AllowedOffsetThresholdMm,
                     ProjectTitle = projectTitle,
                     Log = entry => AddLog(new LogEntry(entry.Level, $"[{capturedTab.RoofName}] {entry.Message}")),
                     ExportConfig = new ExportConfig
@@ -474,6 +493,7 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.UI.ViewModels
                         ArcsCalculated = succeeded.Sum(r => r.Result.ArcsCalculated);
                         DrainCirclesPlaced = succeeded.Sum(r => r.Result.DrainCirclesPlaced);
                         HighestCirclesPlaced = succeeded.Sum(r => r.Result.HighestCirclesPlaced);
+                        OffsetCirclesPlaced = succeeded.Sum(r => r.Result.OffsetCirclesPlaced);
 
                         if (roofResults.Count > succeeded.Count)
                             AddLog(new LogEntry(LogLevel.Warning,
@@ -492,7 +512,9 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.UI.ViewModels
                             ExportFolderPath = ExportFolderPath,
                             SelectedSizeFilter = SelectedRoofTab?.SelectedSizeFilter ?? "All",
                             DrainMarkerGroup = ToMarkerSettings(DrainMarkerGroup),
-                            HighestPointMarkerGroup = ToMarkerSettings(HighestPointMarkerGroup)
+                            HighestPointMarkerGroup = ToMarkerSettings(HighestPointMarkerGroup),
+                            AllowedOffsetMarkerGroup = ToMarkerSettings(AllowedOffsetMarkerGroup),
+                            AllowedOffsetThresholdMm = AllowedOffsetThresholdMm
                         }, msg => AddLog(new LogEntry(LogLevel.Warning, msg)));
 
                         bool anyExported = succeeded.Any(r => !string.IsNullOrEmpty(r.Result.ExportedFilePath));
@@ -571,7 +593,9 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.UI.ViewModels
                 ExportFolderPath = ExportFolderPath,
                 SelectedSizeFilter = SelectedRoofTab?.SelectedSizeFilter ?? "All",
                 DrainMarkerGroup = ToMarkerSettings(DrainMarkerGroup),
-                HighestPointMarkerGroup = ToMarkerSettings(HighestPointMarkerGroup)
+                HighestPointMarkerGroup = ToMarkerSettings(HighestPointMarkerGroup),
+                AllowedOffsetMarkerGroup = ToMarkerSettings(AllowedOffsetMarkerGroup),
+                AllowedOffsetThresholdMm = AllowedOffsetThresholdMm
             });
         }
 

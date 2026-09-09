@@ -19,6 +19,7 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.Infrastructure.Helpers
         public string LineStyleName { get; set; }
         public string ColorName { get; set; } = "Black";
         public double RadiusMm { get; set; } = 250;
+        public bool ShowOffsetText { get; set; } = true;
     }
 
     public class AutoSlopeDrainSettings
@@ -35,6 +36,8 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.Infrastructure.Helpers
         // ── Circle Markers (ported from AutoSlopeByPoint) ────────────────
         public CircleMarkerGroupSettings DrainMarkerGroup { get; set; } = new CircleMarkerGroupSettings { ColorName = "Blue" };
         public CircleMarkerGroupSettings HighestPointMarkerGroup { get; set; } = new CircleMarkerGroupSettings { ColorName = "Red" };
+        public CircleMarkerGroupSettings AllowedOffsetMarkerGroup { get; set; } = new CircleMarkerGroupSettings { ColorName = "Orange" };
+        public double AllowedOffsetThresholdMm { get; set; } = 500;
     }
 
     public static class SettingsService
