@@ -1,5 +1,6 @@
 using Revit26_Plugin.Shared.Models;   // LogLevel — required for LogLevelToColorConverter
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
@@ -135,6 +136,61 @@ namespace Revit26_Plugin.Shared.Models
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
             => (value is bool b && b) ? Mixed : Normal;
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => DependencyProperty.UnsetValue;
+    }
+
+    /// <summary>
+    /// One-way: true when the bound enum's value name matches the string
+    /// ConverterParameter (e.g. an ActiveQuickFilter enum bound with
+    /// ConverterParameter="Unplaced"). Compares by ToString() rather than a
+    /// concrete enum type so one converter instance works for any enum —
+    /// intentionally has no ConvertBack; pair it with Mode=OneWay and drive
+    /// the actual state change via a Command, not two-way binding.
+    /// </summary>
+    public class EnumToBoolConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            => value != null && parameter != null
+               && string.Equals(value.ToString(), parameter.ToString(), StringComparison.OrdinalIgnoreCase);
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => Binding.DoNothing;
+    }
+
+    /// <summary>
+    /// Maps a "ViewTypeGroup"-shaped enum (matched by enum member name, not a
+    /// concrete type, so it works across any tool's own versioned copy of that
+    /// enum) to a background/foreground brush pair for a category pill.
+    /// ConverterParameter selects "Background" or "Foreground" (default: Background).
+    /// Unrecognized names fall back to a neutral grey pill.
+    /// </summary>
+    public class ViewTypeGroupToBrushConverter : IValueConverter
+    {
+        private static readonly Dictionary<string, (SolidColorBrush Bg, SolidColorBrush Fg)> Palette = new()
+        {
+            ["SectionOrCallout"] = (new SolidColorBrush(Color.FromRgb(0xE6, 0xF1, 0xFB)), new SolidColorBrush(Color.FromRgb(0x0C, 0x44, 0x7C))),
+            ["FloorPlan"]        = (new SolidColorBrush(Color.FromRgb(0xEA, 0xF3, 0xDE)), new SolidColorBrush(Color.FromRgb(0x27, 0x50, 0x0A))),
+            ["CeilingPlan"]      = (new SolidColorBrush(Color.FromRgb(0xF5, 0xEC, 0xFA)), new SolidColorBrush(Color.FromRgb(0x5B, 0x2C, 0x82))),
+            ["StructuralPlan"]   = (new SolidColorBrush(Color.FromRgb(0xFC, 0xEF, 0xE3)), new SolidColorBrush(Color.FromRgb(0x8A, 0x4B, 0x08))),
+            ["AreaPlan"]         = (new SolidColorBrush(Color.FromRgb(0xE3, 0xFC, 0xF4)), new SolidColorBrush(Color.FromRgb(0x0A, 0x6B, 0x4C))),
+            ["Elevation"]        = (new SolidColorBrush(Color.FromRgb(0xFA, 0xEE, 0xDA)), new SolidColorBrush(Color.FromRgb(0x63, 0x38, 0x06))),
+            ["Drafting"]         = (new SolidColorBrush(Color.FromRgb(0xEC, 0xEC, 0xEC)), new SolidColorBrush(Color.FromRgb(0x3A, 0x3A, 0x3A))),
+            ["Legend"]           = (new SolidColorBrush(Color.FromRgb(0xFA, 0xEC, 0xE7)), new SolidColorBrush(Color.FromRgb(0x71, 0x2B, 0x13))),
+            ["Schedule"]         = (new SolidColorBrush(Color.FromRgb(0xE0, 0xF0, 0xFF)), new SolidColorBrush(Color.FromRgb(0x0D, 0x3A, 0x66))),
+        };
+
+        private static readonly (SolidColorBrush Bg, SolidColorBrush Fg) Fallback =
+            (new SolidColorBrush(Color.FromRgb(0xEE, 0xF3, 0xF9)), new SolidColorBrush(Color.FromRgb(0x5B, 0x71, 0x85)));
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var pair = value != null && Palette.TryGetValue(value.ToString(), out var found) ? found : Fallback;
+            return string.Equals(parameter as string, "Foreground", StringComparison.OrdinalIgnoreCase)
+                ? pair.Fg
+                : pair.Bg;
+        }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             => DependencyProperty.UnsetValue;

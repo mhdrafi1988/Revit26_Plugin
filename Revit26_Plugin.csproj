@@ -5,7 +5,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\Release\net8.0-windows\25-08-002</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\Release\net8.0-windows\08-09-2026-10</BaseOutputPath>
 		<PackageId />
 		<AssemblyName>Revit26_Plugin</AssemblyName>
 	</PropertyGroup>
@@ -702,6 +702,7 @@
 	  <None Remove="Resources\Icons\RoofTools\Addtag32.png" />
 	  <None Remove="Resources\Icons\RoofTools\Autoslope32.png" />
 	  <None Remove="Resources\Icons\RoofTools\CreateRoofromLInes.png" />
+	  <None Remove="Resources\Icons\RoofTools\Divider.png" />
 	  <None Remove="Resources\Icons\RoofTools\LinePoint.png" />
 	  <None Remove="Resources\Icons\RoofTools\Shapepoints32.png" />
 	  <None Remove="Resources\Icons\RoofTools\SlopeLiner.png" />
@@ -758,6 +759,7 @@
 	  <EmbeddedResource Include="Resources\Icons\RoofTools\Addtag32.png" />
 	  <EmbeddedResource Include="Resources\Icons\RoofTools\Autoslope32.png" />
 	  <EmbeddedResource Include="Resources\Icons\RoofTools\CreateRoofromLInes.png" />
+	  <EmbeddedResource Include="Resources\Icons\RoofTools\Divider.png" />
 	  <EmbeddedResource Include="Resources\Icons\RoofTools\LinePoint.png" />
 	  <EmbeddedResource Include="Resources\Icons\RoofTools\Shapepoints32.png" />
 	  <EmbeddedResource Include="Resources\Icons\RoofTools\SlopeLiner.png" />

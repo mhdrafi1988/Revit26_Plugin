@@ -14,6 +14,27 @@ namespace Revit26_Plugin.WSFL.V011.Commands
             ref string message,
             ElementSet elements)
         {
+            try
+            {
+                return ExecuteInternal(commandData, ref message, elements);
+            }
+            catch (Autodesk.Revit.Exceptions.OperationCanceledException)
+            {
+                return Result.Cancelled;
+            }
+            catch (System.Exception ex)
+            {
+                message = ex.Message;
+                TaskDialog.Show("WSFL 009", $"An unexpected error occurred: {ex.Message}");
+                return Result.Failed;
+            }
+        }
+
+        private Result ExecuteInternal(
+            ExternalCommandData commandData,
+            ref string message,
+            ElementSet elements)
+        {
             UIDocument uidoc = commandData.Application.ActiveUIDocument;
             Document doc = uidoc?.Document;
 

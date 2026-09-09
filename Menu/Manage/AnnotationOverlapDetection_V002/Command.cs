@@ -11,6 +11,24 @@ namespace Revit26_Plugin.AnnotationOverlapDetection.V002
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
+            try
+            {
+                return ExecuteInternal(commandData, ref message, elements);
+            }
+            catch (Autodesk.Revit.Exceptions.OperationCanceledException)
+            {
+                return Result.Cancelled;
+            }
+            catch (System.Exception ex)
+            {
+                message = ex.Message;
+                TaskDialog.Show("Annotation Overlap Detection", $"An unexpected error occurred: {ex.Message}");
+                return Result.Failed;
+            }
+        }
+
+        private Result ExecuteInternal(ExternalCommandData commandData, ref string message, ElementSet elements)
+        {
             UIDocument uiDoc = commandData.Application.ActiveUIDocument;
             Document doc = uiDoc.Document;
             View activeView = uiDoc.ActiveView;

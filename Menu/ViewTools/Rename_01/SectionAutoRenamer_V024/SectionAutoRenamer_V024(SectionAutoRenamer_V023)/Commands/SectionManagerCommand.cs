@@ -13,6 +13,24 @@ public class OpenSectionManagerCommand : IExternalCommand
 {
     public Result Execute(ExternalCommandData c, ref string m, ElementSet e)
     {
+        try
+        {
+            return ExecuteInternal(c, ref m, e);
+        }
+        catch (Autodesk.Revit.Exceptions.OperationCanceledException)
+        {
+            return Result.Cancelled;
+        }
+        catch (System.Exception ex)
+        {
+            m = ex.Message;
+            TaskDialog.Show("Section Manager", $"An unexpected error occurred: {ex.Message}");
+            return Result.Failed;
+        }
+    }
+
+    private Result ExecuteInternal(ExternalCommandData c, ref string m, ElementSet e)
+    {
         RevitEventManager.Initialize();
 
         var uidoc = c.Application.ActiveUIDocument;
