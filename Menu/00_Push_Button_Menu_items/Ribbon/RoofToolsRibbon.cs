@@ -49,6 +49,10 @@ namespace Revit26_Plugin.Menu.Ribbon
             tagMenu.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.Addtag32.png");
             tagMenu.AddPushButton(new PushButtonData("Btn_RoofTagCommand_V016", "Roof Tag — V016", assemblyPath, "Revit26_Plugin.RoofTag.V016.RoofTagCommand"));
 
+            PulldownButton CompareMenu = panel.AddItem(new PulldownButtonData("RoofCompareMenu", "Compare")) as PulldownButton;
+            CompareMenu.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.Shapepoints32.png");
+            CompareMenu.AddPushButton(new PushButtonData("Btn_RoofComparison_V001", "Compare Roofs — V001", assemblyPath, "Revit26_Plugin.RoofPointComparison.V001.Commands.RoofComparisonCommand"));
+
             PulldownButton CreateMenu = panel.AddItem(new PulldownButtonData("RoofCreateMenu", "Create")) as PulldownButton;
             CreateMenu.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.SlopeLiner.png");
             CreateMenu.AddPushButton(new PushButtonData("Btn_RoofFromDetailLines.V007", "Roof From Detail Lines — V007", assemblyPath, "Revit26_Plugin.RoofFromDetailLines.V007.Command"));
