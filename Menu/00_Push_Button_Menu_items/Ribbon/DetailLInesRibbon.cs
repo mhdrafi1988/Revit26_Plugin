@@ -1,4 +1,4 @@
-﻿using Autodesk.Revit.UI;
+using Autodesk.Revit.UI;
 using Revit26_Plugin.Resources.Icons;
 
 namespace Revit26_Plugin.Menu.Ribbon
@@ -13,6 +13,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             PulldownButton DeatailLInesCreate = panel.AddItem(new PulldownButtonData("Create", "Create")) as PulldownButton;
             DeatailLInesCreate.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.Addlines_32.png");
             DeatailLInesCreate.AddPushButton(new PushButtonData("Btn_ DeatailLInes VA003", "Create Detail Lines From Linked Files — VA003", assemblyPath, "Revit26_Plugin.LinkedDetailLineGenerator.VA003.Commands.OpenLinkedDetailLineGeneratorCommand"));
+            DeatailLInesCreate.AddPushButton(new PushButtonData("Btn_ DeatailLInes VA006", "Create Detail Lines From Linked Files — VA006", assemblyPath, "Revit26_Plugin.LinkedDetailLineGenerator.VA006.Commands.OpenLinkedDetailLineGeneratorCommand"));
 
             //Process Menu
             PulldownButton DeatailLInesProcess = panel.AddItem(new PulldownButtonData("Process", "Process")) as PulldownButton;

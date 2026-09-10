@@ -10,22 +10,22 @@ namespace Revit26_Plugin.Menu.Ribbon
         {
             RibbonPanel panel = app.CreateRibbonPanel(tabName, "Setup Tools");
 
-            PulldownButton setup = panel.AddItem(new PulldownButtonData("SetupTools", "Setup Tools")) as PulldownButton;
-            setup.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.Setting32.png");
+            // Split button: pick the Family-editor tool or the Project tool — choose wisely,
+            // running a Family tool in a Project (or vice versa) will fail the context check.
+            SplitButton setupSplit = panel.AddItem(new SplitButtonData("SetupToolsSplit", "Setup Tools")) as SplitButton;
+            setupSplit.IsSynchronizedWithCurrentItem = true;
 
-            //Workset creation/management tools
-            setup.AddPushButton(new PushButtonData("Btn_WorksetManager_11", "Create Worksets From Linked Files — V011", assemblyPath, "Revit26_Plugin.WSFL.V011.Commands.CreateWorksetsFromLinkedFiles"));
-            setup.AddPushButton(new PushButtonData("Btn_WorksetRenamer_V003", "Workset Renamer — V003", assemblyPath, "Revit26_Plugin.WorksetRenamer.V003.Command"));
-            setup.AddPushButton(new PushButtonData("Btn_WorksetManager_V012_New", "Workset Manager — V012", assemblyPath, "Revit26_Plugin.WorksetManager.V012.Commands.WorksetManagerCommand"));
+            //Family Editor tools
+            setupSplit.AddPushButton(new PushButtonData("BatchLinkDwgCommand", "[Family] Batch Link DWG Family", assemblyPath, "BatchDwgFamilyLinker.Command.BatchLinkDwgCommand"));
+            setupSplit.AddPushButton(new PushButtonData("DwgSymbolicConverter_V01", "[Family] DWG Symbolic Converter — V01", assemblyPath, "Revit26_Plugin.DwgSymbolicConverter_V01.Commands.LaunchCommand"));
+            setupSplit.AddPushButton(new PushButtonData("DwgSymbolicConverter_V03", "[Family] DWG Symbolic Converter — V03", assemblyPath, "Revit26_Plugin.DwgSymbolicConverter_V03.Commands.LaunchCommand"));
+            setupSplit.AddPushButton(new PushButtonData("Btn_DwgToLines_V005", "[Family] DWG To Lines — V005", assemblyPath, "Revit26_Plugin.DwgToLines.V005.Commands.DwgToLinesCommand"));
 
-            PulldownButton Linker = panel.AddItem(new PulldownButtonData("Batch Link", "Batch Link")) as PulldownButton;
-            Linker.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.Linker_32.png");
-
-            Linker.AddPushButton(new PushButtonData("BatchLinkDwgCommand", "Batch Link DWG Family", assemblyPath, "BatchDwgFamilyLinker.Command.BatchLinkDwgCommand"));
-            Linker.AddPushButton(new PushButtonData("DwgSymbolicConverter_V01", "DWG Symbolic Converter — V01", assemblyPath, "Revit26_Plugin.DwgSymbolicConverter_V01.Commands.LaunchCommand"));
-            Linker.AddPushButton(new PushButtonData("DwgSymbolicConverter_V03", "DWG Symbolic Converter — V03", assemblyPath, "Revit26_Plugin.DwgSymbolicConverter_V03.Commands.LaunchCommand"));
-            Linker.AddPushButton(new PushButtonData("Btn_DwgToLines_V005", "DWG To Lines — V005", assemblyPath, "Revit26_Plugin.DwgToLines.V005.Commands.DwgToLinesCommand"));
-            Linker.AddPushButton(new PushButtonData("Btn_DwgToDetailLines_V011", "DWG To Detail Lines — V011", assemblyPath, "Revit26_Plugin.DwgToDetailLines.V011.Commands.DwgToDetailLinesCommand"));
+            //Project tools (worksets + linked-file DWG import)
+            setupSplit.AddPushButton(new PushButtonData("Btn_WorksetManager_11", "[Project] Create Worksets From Linked Files — V011", assemblyPath, "Revit26_Plugin.WSFL.V011.Commands.CreateWorksetsFromLinkedFiles"));
+            setupSplit.AddPushButton(new PushButtonData("Btn_WorksetRenamer_V003", "[Project] Workset Renamer — V003", assemblyPath, "Revit26_Plugin.WorksetRenamer.V003.Command"));
+            setupSplit.AddPushButton(new PushButtonData("Btn_WorksetManager_V012_New", "[Project] Workset Manager — V012", assemblyPath, "Revit26_Plugin.WorksetManager.V012.Commands.WorksetManagerCommand"));
+            setupSplit.AddPushButton(new PushButtonData("Btn_DwgToDetailLines_V011", "[Project] DWG To Detail Lines — V011", assemblyPath, "Revit26_Plugin.DwgToDetailLines.V011.Commands.DwgToDetailLinesCommand"));
         }
     }
 }
