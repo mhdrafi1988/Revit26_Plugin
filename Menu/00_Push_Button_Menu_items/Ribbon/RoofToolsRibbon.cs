@@ -42,6 +42,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             ShapepointMenu.AddPushButton(new PushButtonData("Btn_RoofDetailLineIntersect_V012", "Roof Detail Line Intersect — V012", assemblyPath, "Revit26_Plugin.RoofDetailLineIntersect.V012.Commands.RoofDetailLineIntersectCommand"));
             ShapepointMenu.AddPushButton(new PushButtonData("Btn_InnerLoopsAndPerpendicular_V005", "Inner Loops And Perpendicular — V005", assemblyPath, "Revit26_Plugin.InnerLoopsAndPerpendicular.V005.Commands.InnerLoopsAndPerpendicularCommand"));
             ShapepointMenu.AddPushButton(new PushButtonData("Btn_VertexReducer_V007", "Roof Edge Vertex Reducer — V007", assemblyPath, "Revit26_Plugin.RoofEdgeVertexReducer.V007.Commands.RoofEdgeVertexReducerCommand"));
+            ShapepointMenu.AddPushButton(new PushButtonData("Btn_MultiplePoints_V001", "Multiple Points — V001", assemblyPath, "Revit26_Plugin.MultiplePoints.V001.Commands.MultiplePointsCommand"));
 
             PulldownButton LineAndPoint = panel.AddItem(new PulldownButtonData("LineAndPointMenu", "Line-Point")) as PulldownButton;
             LineAndPoint.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.LinePoint.png");
