@@ -7,12 +7,12 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Revit26_Plugin.CreaserAdv.V009.Core.Models;
+using Revit26_Plugin.CreaserAdv.V009.Infrastructure.ExternalEvents;
 using Revit26_Plugin.CreaserAdv.V009.Services;
 using Revit26_Plugin.Shared.Models;          // LogEntry, LogLevel, converters
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Text;
 using System.Windows;
 
@@ -45,9 +45,8 @@ namespace Revit26_Plugin.CreaserAdv.V009.ViewModels
         // Fields
         // --------------------------------------------------
 
-        private readonly UIDocument     _uiDoc;
         private readonly Document       _doc;
-        private readonly Element        _roof;
+        private readonly ElementId      _roofId;
         private readonly LoggingService _log;
 
         // --------------------------------------------------
@@ -147,14 +146,15 @@ namespace Revit26_Plugin.CreaserAdv.V009.ViewModels
             Element        roof,
             LoggingService log)
         {
-            _uiDoc = uiApp?.ActiveUIDocument
-                ?? throw new ArgumentNullException(nameof(uiApp));
+            if (uiApp == null) throw new ArgumentNullException(nameof(uiApp));
 
-            _doc  = _uiDoc.Document;
-            _roof = roof ?? throw new ArgumentNullException(nameof(roof));
-            _log  = log  ?? throw new ArgumentNullException(nameof(log));
+            _doc    = uiApp.ActiveUIDocument.Document;
+            _roofId = (roof ?? throw new ArgumentNullException(nameof(roof))).Id;
+            _log    = log  ?? throw new ArgumentNullException(nameof(log));
 
             LoadDetailSymbols();
+
+            CreaserAdvEventManager.Init();
         }
 
         // --------------------------------------------------
@@ -173,154 +173,53 @@ namespace Revit26_Plugin.CreaserAdv.V009.ViewModels
         }
 
         // --------------------------------------------------
-        // Run command
+        // Run command (via ExternalEvent)
         // --------------------------------------------------
+        // A modeless window cannot call the Revit API directly from a button
+        // click — the pipeline that used to run here directly now lives in
+        // CreaserAdvEngine, invoked through CreaserAdvHandler/EventManager,
+        // matching the convention already used by InnerLoopDivider/
+        // InnerLoopsAndPerpendicular/OuterCurveDivider/AutoSlopeByDrain.
 
         [RelayCommand]
         private void Run()
         {
             if (SelectedDetailSymbol == null)
             {
-                TaskDialog.Show("Creaser Advanced", "Please select a detail item.");
+                _log.Warning("Please select a detail item.");
                 return;
             }
 
-            if (_doc.ActiveView is not ViewPlan planView || planView.GenLevel == null)
+            CreaserAdvHandler.Payload = new CreaserAdvPayload
             {
-                TaskDialog.Show("Creaser Advanced", "Run this command from a Plan View.");
-                return;
-            }
-
-            _log.Info("─── Run started ───");
-
-            using var tx = new Transaction(_doc, "Creaser Advanced V008 – Place Detail Items");
-            tx.Start();
-
-            // ── 1. Extract crease curves ──────────────────────────────────────
-            var creaseService   = new RoofSharedTopFaceCreaseService(_log);
-            IList<Curve> creaseCurves = creaseService.ExtractSharedTopFaceCreases(_roof);
-
-            if (creaseCurves.Count == 0)
-            {
-                _log.Warning("No crease edges found — transaction rolled back.");
-                tx.RollBack();
-                UpdateSummary(0, 0, 0, 0);
-                return;
-            }
-
-            // ── 1b. Filter out horizontal creases (same Z on both endpoints) ──
-            var horizontalFilterSvc = new HorizontalCreaseFilterService(_log);
-            creaseCurves = horizontalFilterSvc.FilterOutHorizontalCreases(creaseCurves);
-
-            if (creaseCurves.Count == 0)
-            {
-                _log.Warning("No non-horizontal crease edges found — transaction rolled back.");
-                tx.RollBack();
-                UpdateSummary(0, 0, 0, 0);
-                return;
-            }
-
-            // ── 2. Extract boundary curves (optional) ─────────────────────────
-            IList<Curve> boundaryCurves = new List<Curve>();
-            if (IncludeBoundaryLines)
-            {
-                boundaryCurves = creaseService.ExtractBoundaryLines(_roof);
-                _log.Info($"Boundary lines extracted: {boundaryCurves.Count}");
-            }
-
-            // ── 2b. Filter by Dijkstra path validity (optional, ticked by default) ──
-            // Runs on creases + boundary curves together, right after the horizontal
-            // filter — this defines the working set before min-length/drain-grouping.
-            // Minimum-slope enforcement (EnableMinimumSlope) is only meaningful here
-            // and only applies when this toggle is also on.
-            int ridgePointCount = 0;
-            int disconnectedPointCount = 0;
-
-            if (EnableDijkstraPathFilter)
-            {
-                var dijkstraSvc = new DijkstraPathValidityService(_log);
-                var dijkstraResult = dijkstraSvc.FilterByPathValidity(creaseCurves, boundaryCurves, MinimumSlopePercent, EnableMinimumSlope);
-                creaseCurves           = dijkstraResult.Creases;
-                boundaryCurves         = dijkstraResult.Boundary;
-                ridgePointCount        = dijkstraResult.RidgePoints;
-                disconnectedPointCount = dijkstraResult.DisconnectedPoints;
-
-                if (creaseCurves.Count == 0 && boundaryCurves.Count == 0)
+                RoofId = _roofId,
+                SelectedDetailSymbolId = SelectedDetailSymbol.Id,
+                IncludeBoundaryLines = IncludeBoundaryLines,
+                EnableDrainGrouping = EnableDrainGrouping,
+                EnableDijkstraPathFilter = EnableDijkstraPathFilter,
+                EnableMinimumSlope = EnableMinimumSlope,
+                MinimumSlopePercent = MinimumSlopePercent,
+                DrainGroupingRadiusMm = DrainGroupingRadiusMm,
+                EnableMinimumLength = EnableMinimumLength,
+                MinimumLengthMm = MinimumLengthMm,
+                Log = _log,
+                OnCompleted = result =>
                 {
-                    _log.Warning("All curves failed the Dijkstra path validity check — transaction rolled back.");
-                    tx.RollBack();
-                    UpdateSummary(0, 0, 0, 0, ridgePointCount, disconnectedPointCount);
-                    return;
+                    System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        if (!result.Success)
+                        {
+                            _log.Error($"Run failed: {result.ErrorMessage}");
+                            return;
+                        }
+
+                        UpdateSummary(result.CreasesFound, result.BoundaryFound, result.Created, result.Failed,
+                            result.RidgePoints, result.DisconnectedPoints);
+                    }));
                 }
-            }
+            };
 
-            // ── 3. Project all curves to plan view ────────────────────────────
-            // Projection returns curves+lines paired — a zero-length projection drops
-            // the matching 3D curve too, so creaseCurves/creaseLines2d stay aligned.
-            (creaseCurves, IList<Line> creaseLines2d) = ProjectToPlanView(creaseCurves, planView, "crease");
-
-            IList<Line> boundaryLines2d;
-            if (IncludeBoundaryLines)
-                (boundaryCurves, boundaryLines2d) = ProjectToPlanView(boundaryCurves, planView, "boundary");
-            else
-                boundaryLines2d = new List<Line>();
-
-            if (creaseLines2d.Count == 0 && boundaryLines2d.Count == 0)
-            {
-                _log.Warning("All lines collapsed during projection — transaction rolled back.");
-                tx.RollBack();
-                UpdateSummary(creaseCurves.Count, boundaryCurves.Count, 0, 0);
-                return;
-            }
-
-            // ── 4. Filter creases by minimum length (optional, crease only) ────
-            // Filters curves3d + lines2d together so DrainPointGroupingService (step 5)
-            // still gets matching counts.
-            if (EnableMinimumLength)
-            {
-                var minLengthSvc = new MinimumLengthFilterService(_log);
-                (creaseCurves, creaseLines2d) =
-                    minLengthSvc.FilterByMinimumLength(creaseCurves, creaseLines2d, MinimumLengthMm);
-
-                if (creaseLines2d.Count == 0 && boundaryLines2d.Count == 0)
-                {
-                    _log.Warning("All crease lines filtered out by minimum length — transaction rolled back.");
-                    tx.RollBack();
-                    UpdateSummary(creaseCurves.Count, boundaryCurves.Count, 0, 0);
-                    return;
-                }
-            }
-
-            // ── 5. Group creases by drain proximity (optional) ──────────────────
-            if (EnableDrainGrouping && creaseLines2d.Count > 0)
-            {
-                // Important: maintain 1:1 mapping between original curves and projected lines
-                var drainSvc = new DrainPointGroupingService(_log);
-
-                // Convert mm to Revit internal units for proximity radius
-                double radiusFt = DrainGroupingRadiusMm / 304.8;
-
-                creaseLines2d = drainSvc.FilterByDrainProximity(creaseCurves, creaseLines2d, radiusFt);
-
-                if (creaseLines2d.Count == 0 && boundaryLines2d.Count == 0)
-                {
-                    _log.Warning("All crease lines filtered out by drain grouping — transaction rolled back.");
-                    tx.RollBack();
-                    UpdateSummary(creaseCurves.Count, boundaryCurves.Count, 0, 0);
-                    return;
-                }
-            }
-
-            // ── 6. Place detail items ─────────────────────────────────────────
-            var allLines = creaseLines2d.Concat(boundaryLines2d).ToList();
-            var (placed, failed) = new DetailItemPlacementService(_doc, planView)
-                .PlaceAlongLines(allLines, SelectedDetailSymbol, _log);
-
-            tx.Commit();
-
-            // ── 7. Summary ────────────────────────────────────────────────────
-            UpdateSummary(creaseCurves.Count, boundaryCurves.Count, placed, failed, ridgePointCount, disconnectedPointCount);
-            _log.Info($"─── Run complete — created: {placed}  failed: {failed} ───");
+            CreaserAdvEventManager.Event.Raise();
         }
 
         // --------------------------------------------------
@@ -350,44 +249,6 @@ namespace Revit26_Plugin.CreaserAdv.V009.ViewModels
         // --------------------------------------------------
         // Private helpers
         // --------------------------------------------------
-
-        /// <summary>
-        /// Projects 3D curves to the plan view's Z elevation. Returns curves and
-        /// lines index-aligned — a curve that projects to zero length is dropped
-        /// from BOTH lists, so downstream steps (min-length filter, drain grouping)
-        /// that need the original 3D curve stay in sync with the 2D line count.
-        /// </summary>
-        private (IList<Curve> Curves3d, IList<Line> Lines2d) ProjectToPlanView(
-            IList<Curve> curves,
-            ViewPlan     view,
-            string       label)
-        {
-            double viewZ  = view.GenLevel.Elevation;
-            double tol    = _doc.Application.ShortCurveTolerance;
-            var    keptCurves = new List<Curve>();
-            var    keptLines  = new List<Line>();
-            int    skipped = 0;
-
-            foreach (Curve curve in curves)
-            {
-                XYZ a = curve.GetEndPoint(0);
-                XYZ b = curve.GetEndPoint(1);
-
-                XYZ p1 = new XYZ(a.X, a.Y, viewZ);
-                XYZ p2 = new XYZ(b.X, b.Y, viewZ);
-
-                if (p1.DistanceTo(p2) < tol) { skipped++; continue; }
-
-                keptCurves.Add(curve);
-                keptLines.Add(Line.CreateBound(p1, p2));
-            }
-
-            if (skipped > 0)
-                _log.Warning($"{skipped} {label} curve(s) projected to zero length — skipped.");
-
-            _log.Info($"{char.ToUpper(label[0])}{label.Substring(1)} lines projected: {keptLines.Count}");
-            return (keptCurves, keptLines);
-        }
 
         private void UpdateSummary(int creasesFound, int boundaryFound, int created, int failed, int ridgePoints = 0, int disconnectedPoints = 0)
         {
