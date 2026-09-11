@@ -10,10 +10,9 @@ namespace Revit26_Plugin.Menu.Ribbon
         {
             RibbonPanel panel = app.CreateRibbonPanel(tabName, "Setup Tools");
 
-            // Split button: pick the Family-editor tool or the Project tool — choose wisely,
+            // Pulldown: pick the Family-editor tool or the Project tool — choose wisely,
             // running a Family tool in a Project (or vice versa) will fail the context check.
-            SplitButton setupSplit = panel.AddItem(new SplitButtonData("SetupToolsSplit", "Setup Tools")) as SplitButton;
-            setupSplit.IsSynchronizedWithCurrentItem = true;
+            PulldownButton setupSplit = panel.AddItem(new PulldownButtonData("SetupToolsSplit", "Setup Tools")) as PulldownButton;
             setupSplit.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.Setting32.png");
 
             //Family Editor tools
