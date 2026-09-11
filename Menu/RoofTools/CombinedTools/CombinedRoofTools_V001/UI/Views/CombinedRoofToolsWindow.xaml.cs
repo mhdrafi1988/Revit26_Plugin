@@ -16,7 +16,17 @@ namespace Revit26_Plugin.CombinedRoofTools.V001.UI.Views
         protected override void OnClosing(CancelEventArgs e)
         {
             if (DataContext is CombinedRoofToolsViewModel vm)
+            {
+                if (vm.IsRunningAll)
+                {
+                    MessageBox.Show(this, "Run All is still in progress. Please wait for it to finish before closing.",
+                        "Combined Roof Tools", MessageBoxButton.OK, MessageBoxImage.Information);
+                    e.Cancel = true;
+                    return;
+                }
+
                 vm.SaveOnClose();
+            }
             base.OnClosing(e);
         }
     }

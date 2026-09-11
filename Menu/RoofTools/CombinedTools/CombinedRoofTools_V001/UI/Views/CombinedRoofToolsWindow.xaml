@@ -85,25 +85,48 @@ bindings as each tool's existing standalone window.
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" VerticalAlignment="Center">
                     <TextBlock Text="Combined Roof Tools" Style="{StaticResource HeaderTitle}"/>
                     <TextBlock Style="{StaticResource HeaderSubtitle}" TextWrapping="Wrap"
-                               Text="{Binding RoofLabel, StringFormat='Working roof: {0}'}"/>
+                               Text="{Binding RoofLabel, StringFormat='Working roof: {0}'}"
+                               Visibility="{Binding IsRunningAll, Converter={StaticResource InverseBoolToVis}}"/>
+                    <TextBlock Style="{StaticResource HeaderSubtitle}" TextWrapping="Wrap"
+                               Text="{Binding RunAllStatusMessage}"
+                               Visibility="{Binding IsRunningAll, Converter={StaticResource BoolToVisibility}}"/>
                 </StackPanel>
 
-                <Button Grid.Column="1" Content="Change Roof…"
+                <!-- Single Run All button — runs all 5 tools in pipeline order against
+                     the current roof, switching tabs live so progress is visible. -->
+                <Button Grid.Column="1"
+                        Width="140" Height="34" Margin="0,0,10,0"
+                        Command="{Binding RunAllCommand}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+                            <Setter Property="Content" Value="Run All ▶"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsRunningAll}" Value="True">
+                                    <Setter Property="Content" Value="⏳ Running…"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+                <Button Grid.Column="2" Content="Change Roof…"
                         Style="{StaticResource SecondaryButton}"
                         Width="140" Height="34"
                         Command="{Binding ChangeRoofCommand}"
-                        IsEnabled="{Binding IsChangingRoof, Converter={StaticResource InverseBool}}"/>
+                        IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBool}}"/>
             </Grid>
         </Border>
 
         <!-- ─── TABS ────────────────────────────────────────────────────── -->
         <Border Grid.Row="2" Style="{StaticResource ContentCard}" Padding="0">
-            <TabControl Background="Transparent" BorderThickness="0" Padding="12">
+            <TabControl Background="Transparent" BorderThickness="0" Padding="12"
+                        SelectedIndex="{Binding ActiveTabIndex, Mode=TwoWay}">
 
                 <TabItem Header="Inner Loop Divider" Style="{StaticResource CombinedTabItem}">
                     <Grid>

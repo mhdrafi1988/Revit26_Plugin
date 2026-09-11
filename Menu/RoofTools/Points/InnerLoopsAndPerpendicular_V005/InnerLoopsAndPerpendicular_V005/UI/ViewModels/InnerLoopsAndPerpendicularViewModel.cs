@@ -169,6 +169,12 @@ namespace Revit26_Plugin.InnerLoopsAndPerpendicular.V005.UI.ViewModels
             InnerLoopsAndPerpendicularEventManager.Event.Raise();
         }
 
+        /// <summary>Raised after Generate's/Apply's ExternalEvent round-trip completes
+        /// (true = success), so callers outside this ViewModel (e.g. the Combined
+        /// Roof Tools "Run All" orchestrator) can await completion without polling.</summary>
+        public event Action<bool> GeneratePerpendicularPointsCompleted;
+        public event Action<bool> ApplyPerpendicularCompleted;
+
         // ── Generate (via ExternalEvent) ──────────────────────────────────────
         /// <summary>
         /// Generates perpendicular border-point candidates for every selected shape.
@@ -185,6 +191,7 @@ namespace Revit26_Plugin.InnerLoopsAndPerpendicular.V005.UI.ViewModels
             {
                 AddLog(LogLevel.Error, "Cannot generate perpendicular points — no outer boundary loop available.");
                 RecomputePerpendicularCount();
+                GeneratePerpendicularPointsCompleted?.Invoke(false);
                 return;
             }
 
@@ -193,6 +200,7 @@ namespace Revit26_Plugin.InnerLoopsAndPerpendicular.V005.UI.ViewModels
             {
                 AddLog(LogLevel.Warning, "No shapes selected — nothing to project.");
                 RecomputePerpendicularCount();
+                GeneratePerpendicularPointsCompleted?.Invoke(false);
                 return;
             }
 
@@ -213,6 +221,7 @@ namespace Revit26_Plugin.InnerLoopsAndPerpendicular.V005.UI.ViewModels
                         {
                             AddLog(LogLevel.Error, $"Generate failed: {result.ErrorMessage}");
                             RecomputePerpendicularCount();
+                            GeneratePerpendicularPointsCompleted?.Invoke(false);
                             return;
                         }
 
@@ -224,6 +233,7 @@ namespace Revit26_Plugin.InnerLoopsAndPerpendicular.V005.UI.ViewModels
 
                         RecomputePerpendicularCount();
                         ApplyPerpendicularCommand.NotifyCanExecuteChanged();
+                        GeneratePerpendicularPointsCompleted?.Invoke(true);
                     }));
                 }
             };
@@ -252,6 +262,8 @@ namespace Revit26_Plugin.InnerLoopsAndPerpendicular.V005.UI.ViewModels
                     {
                         if (!result.Success)
                             AddLog(LogLevel.Error, $"Apply failed: {result.ErrorMessage}");
+
+                        ApplyPerpendicularCompleted?.Invoke(result.Success);
                     }));
                 }
             };

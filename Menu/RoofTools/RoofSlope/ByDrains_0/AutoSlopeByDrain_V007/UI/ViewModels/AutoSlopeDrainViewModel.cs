@@ -425,29 +425,38 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels
         // ── Run ───────────────────────────────────────────────────────────────
         private bool CanRunAutoSlope() => !IsRunning && !IsComplete && AllDrains.Any(d => d.IsSelected);
 
+        /// <summary>Raised after RunAutoSlope completes or bails out early (true =
+        /// success), so callers outside this ViewModel (e.g. the Combined Roof
+        /// Tools "Run All" orchestrator) can await completion without polling.</summary>
+        public event Action<bool> RunCompleted;
+
         [RelayCommand(CanExecute = nameof(CanRunAutoSlope))]
         private void RunAutoSlope()
         {
-            if (IsRunning || IsComplete) return;
+            if (IsRunning || IsComplete) { RunCompleted?.Invoke(false); return; }
 
             if (!double.TryParse(SlopeInput, out double slopePercent) || slopePercent <= 0)
             {
                 AddLog(new LogEntry(LogLevel.Error, "Please enter a valid positive slope percentage."));
+                RunCompleted?.Invoke(false);
                 return;
             }
             if (!double.TryParse(ConnectionThresholdInput, out double connectionThresholdM) || connectionThresholdM <= 0)
             {
                 AddLog(new LogEntry(LogLevel.Error, "Please enter a valid positive Max Edge Distance (m)."));
+                RunCompleted?.Invoke(false);
                 return;
             }
             if (!double.TryParse(ThresholdInput, out double thresholdM) || thresholdM <= 0)
             {
                 AddLog(new LogEntry(LogLevel.Error, "Please enter a valid positive Max Path Distance (m)."));
+                RunCompleted?.Invoke(false);
                 return;
             }
             if (!int.TryParse(PathSampleCountInput, out int pathSamples) || pathSamples < 2)
             {
                 AddLog(new LogEntry(LogLevel.Error, "Path Samples must be a whole number of 2 or more."));
+                RunCompleted?.Invoke(false);
                 return;
             }
 
@@ -462,6 +471,7 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels
                 // Defensive backstop — CanRunAutoSlope already prevents this in
                 // normal use via the disabled Run button + inline hint.
                 AddLog(new LogEntry(LogLevel.Warning, "No drains selected for slope application."));
+                RunCompleted?.Invoke(false);
                 return;
             }
 
@@ -506,6 +516,7 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels
                         {
                             AddLog(new LogEntry(LogLevel.Error, $"Run failed: {result.ErrorMessage}"));
                             State = RunState.Ready;
+                            RunCompleted?.Invoke(false);
                             return;
                         }
 
@@ -548,6 +559,8 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels
                             if (answer == MessageBoxResult.Yes)
                                 System.Diagnostics.Process.Start("explorer.exe", ExportFolderPath);
                         }
+
+                        RunCompleted?.Invoke(true);
                     }));
                 }
             };

@@ -106,11 +106,21 @@ namespace Revit26_Plugin.OuterCurveDivider.V004.UI.ViewModels
             foreach (var edge in Edges) edge.IsSelected = selected;
         }
 
+        /// <summary>Raised after Apply's ExternalEvent round-trip completes (true =
+        /// success), so callers outside this ViewModel (e.g. the Combined Roof
+        /// Tools "Run All" orchestrator) can await completion without polling.</summary>
+        public event Action<bool> ApplyCompleted;
+
         [RelayCommand]
         private void Apply()
         {
             var selected = Edges.Where(e => e.IsSelected).ToList();
-            if (!selected.Any()) { Log(LogLevel.Warning, "Apply skipped — no edges selected."); return; }
+            if (!selected.Any())
+            {
+                Log(LogLevel.Warning, "Apply skipped — no edges selected.");
+                ApplyCompleted?.Invoke(false);
+                return;
+            }
 
             int manual    = selected.Count(e => e.IsCountDriven && e.IsManual);
             int overrides = selected.Count(e => e.HasOverride);
@@ -129,12 +139,15 @@ namespace Revit26_Plugin.OuterCurveDivider.V004.UI.ViewModels
                         if (!result.Success)
                         {
                             Log(LogLevel.Error, $"Apply failed: {result.ErrorMessage}");
+                            ApplyCompleted?.Invoke(false);
                             return;
                         }
 
                         if (result.LogEntries != null)
                             foreach (var entry in result.LogEntries)
                                 AddLogEntry(entry);
+
+                        ApplyCompleted?.Invoke(true);
                     }));
                 }
             };

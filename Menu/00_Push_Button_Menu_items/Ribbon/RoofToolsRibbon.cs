@@ -20,7 +20,8 @@ namespace Revit26_Plugin.Menu.Ribbon
                 "Revit26_Plugin.CombinedRoofTools.V001.Commands.CombinedRoofToolsCommand")) as PushButton;
             combinedBtn.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.CombinedTools_32.png");
             combinedBtn.ToolTip = "Inner Loop Divider, Inner Loops And Perpendicular, Outer Curve Divider, " +
-                "Auto Slope By Drain, and Creaser Adv — combined in one window with one shared roof pick.";
+                "Auto Slope By Drain, and Creaser Adv — combined in one window with one shared roof pick. " +
+                "Opens on Auto Slope By Drain; use Run All to run every tool in order with one click.";
 
             PulldownButton SlopeMenu = panel.AddItem(new PulldownButtonData("RoofSlopeMenu", "Auto Slope")) as PulldownButton;
             SlopeMenu.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.Autoslope32.png");
@@ -69,7 +70,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.VertexReducer_32.png")
             });
-            ShapepointMenu.AddPushButton(new PushButtonData("Btn_MultiplePoints_V001", "Multiple Points — V001", assemblyPath, "Revit26_Plugin.MultiplePoints.V001.Commands.MultiplePointsCommand")
+            ShapepointMenu.AddPushButton(new PushButtonData("Btn_MultiplePoints_V001", "Multiple Points(1/2-1/4) — V001", assemblyPath, "Revit26_Plugin.MultiplePoints.V001.Commands.MultiplePointsCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.MultiplePoints_32.png")
             });

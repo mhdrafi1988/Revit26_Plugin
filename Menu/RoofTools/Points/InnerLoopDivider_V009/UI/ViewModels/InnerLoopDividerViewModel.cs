@@ -161,6 +161,11 @@ namespace Revit26_Plugin.InnerLoopDivider.V009.UI.ViewModels
             InnerLoopDividerEventManager.Event.Raise();
         }
 
+        /// <summary>Raised after ApplyDivision's ExternalEvent round-trip completes
+        /// (true = success), so callers outside this ViewModel (e.g. the Combined
+        /// Roof Tools "Run All" orchestrator) can await completion without polling.</summary>
+        public event Action<bool> ApplyDivisionCompleted;
+
         // ── Apply (via ExternalEvent) ─────────────────────────────────────────
         [RelayCommand(CanExecute = nameof(CanApply))]
         private void ApplyDivision()
@@ -184,6 +189,8 @@ namespace Revit26_Plugin.InnerLoopDivider.V009.UI.ViewModels
                     {
                         if (!result.Success)
                             AddLog(LogLevel.Error, $"Apply failed: {result.ErrorMessage}");
+
+                        ApplyDivisionCompleted?.Invoke(result.Success);
                     }));
                 }
             };

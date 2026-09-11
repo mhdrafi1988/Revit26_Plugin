@@ -181,12 +181,18 @@ namespace Revit26_Plugin.CreaserAdv.V009.ViewModels
         // matching the convention already used by InnerLoopDivider/
         // InnerLoopsAndPerpendicular/OuterCurveDivider/AutoSlopeByDrain.
 
+        /// <summary>Raised after Run completes or bails out early (true = success),
+        /// so callers outside this ViewModel (e.g. the Combined Roof Tools
+        /// "Run All" orchestrator) can await completion without polling.</summary>
+        public event Action<bool> RunCompleted;
+
         [RelayCommand]
         private void Run()
         {
             if (SelectedDetailSymbol == null)
             {
                 _log.Warning("Please select a detail item.");
+                RunCompleted?.Invoke(false);
                 return;
             }
 
@@ -210,11 +216,13 @@ namespace Revit26_Plugin.CreaserAdv.V009.ViewModels
                         if (!result.Success)
                         {
                             _log.Error($"Run failed: {result.ErrorMessage}");
+                            RunCompleted?.Invoke(false);
                             return;
                         }
 
                         UpdateSummary(result.CreasesFound, result.BoundaryFound, result.Created, result.Failed,
                             result.RidgePoints, result.DisconnectedPoints);
+                        RunCompleted?.Invoke(true);
                     }));
                 }
             };
