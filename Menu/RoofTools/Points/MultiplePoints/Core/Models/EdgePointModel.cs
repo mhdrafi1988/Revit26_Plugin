@@ -19,6 +19,9 @@ namespace Revit26_Plugin.MultiplePoints.V001.Core.Models
         public double LengthM       { get; set; }
         public Curve  Geometry      { get; set; }
 
+        /// <summary>Slope (rise/run × 100) of the single top facet this edge borders — used by the optional max-slope filter.</summary>
+        public double FacetSlopePercent { get; set; }
+
         [ObservableProperty]
         private bool isSelected = true;
 

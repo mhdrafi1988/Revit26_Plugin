@@ -5,6 +5,11 @@
 // checkboxes (per the user's explicit request: midpoint, quarter points,
 // and extra points on long edges each toggle separately) plus the
 // length threshold that gates the third checkbox.
+// LimitMaxSlope/MaxSlopePercent is a display filter, not a re-extraction
+// trigger — EdgePointService always extracts every perimeter edge
+// regardless of its facet's slope; the ViewModel just hides edges whose
+// FacetSlopePercent exceeds this cap when the checkbox is on, so toggling
+// it never needs to touch the Revit API again.
 // =======================================================
 
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -31,5 +36,12 @@ namespace Revit26_Plugin.MultiplePoints.V001.Core.Models
 
         [ObservableProperty]
         private double thresholdMeters = 1.00;
+
+        /// <summary>When on, edges whose top facet is steeper than <see cref="MaxSlopePercent"/> are hidden from the grid and excluded from Apply.</summary>
+        [ObservableProperty]
+        private bool limitMaxSlope;
+
+        [ObservableProperty]
+        private double maxSlopePercent = 10.00;
     }
 }

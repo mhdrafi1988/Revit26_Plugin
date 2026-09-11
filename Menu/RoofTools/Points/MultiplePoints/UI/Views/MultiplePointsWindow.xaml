@@ -41,7 +41,7 @@
             <StackPanel>
                 <TextBlock Text="Multiple Points" Style="{StaticResource HeaderTitle}"/>
                 <TextBlock Style="{StaticResource HeaderSubtitle}" TextWrapping="Wrap"
-                           Text="Select a roof, then add shape-edit points at each edge's midpoint and/or quarter points. Optionally add extra points on edges longer than a threshold, so no gap exceeds it. Applies to every edge type — lines, arcs, splines."/>
+                           Text="Select a roof, then add shape-edit points at each edge's midpoint and/or quarter points. Optionally add extra points on edges longer than a threshold, so no gap exceeds it. Works at any slope; optionally cap it to exclude steeper facets. Applies to every edge type — lines, arcs, splines."/>
             </StackPanel>
         </Border>
 
@@ -55,7 +55,7 @@
                     <CheckBox Content="Quarter points (1/4, 3/4)" Margin="24,0,0,0" VerticalAlignment="Center"
                               IsChecked="{Binding Settings.AddQuarterPoints, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
                     <CheckBox Content="Add extra points on edges longer than:" VerticalAlignment="Center"
                               IsChecked="{Binding Settings.AddExtraOnLongEdges, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                     <TextBox Style="{StaticResource BoxedTextInput}" Height="26" Padding="6,2" Width="62" Margin="8,0,0,0"
@@ -63,6 +63,16 @@
                               Text="{Binding Settings.ThresholdMeters, StringFormat=F2, UpdateSourceTrigger=LostFocus}"/>
                     <TextBlock Text="m" Style="{StaticResource UnitLabel}"/>
                     <TextBlock Text="(max spacing on that edge is capped at the threshold)"
+                               Style="{StaticResource HintText}" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox Content="Limit to roof slope under:" VerticalAlignment="Center"
+                              IsChecked="{Binding Settings.LimitMaxSlope, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBox Style="{StaticResource BoxedTextInput}" Height="26" Padding="6,2" Width="62" Margin="8,0,0,0"
+                              IsEnabled="{Binding Settings.LimitMaxSlope}"
+                              Text="{Binding Settings.MaxSlopePercent, StringFormat=F2, UpdateSourceTrigger=LostFocus}"/>
+                    <TextBlock Text="%" Style="{StaticResource UnitLabel}"/>
+                    <TextBlock Text="(edges on steeper facets are hidden and excluded from Apply)"
                                Style="{StaticResource HintText}" Margin="10,0,0,0" VerticalAlignment="Center"/>
                 </StackPanel>
             </StackPanel>
@@ -105,10 +115,11 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTextColumn Header="#"        Binding="{Binding Index}"                     Width="40"  IsReadOnly="True"/>
-                <DataGridTextColumn Header="Type"     Binding="{Binding CurveTypeName}"             Width="120" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Len (m)"  Binding="{Binding LengthM, StringFormat=F3}"  Width="90"  IsReadOnly="True"/>
-                <DataGridTextColumn Header="Points"   Binding="{Binding PreviewPointCount}"         Width="*"   IsReadOnly="True"/>
+                <DataGridTextColumn Header="#"        Binding="{Binding Index}"                          Width="40"  IsReadOnly="True"/>
+                <DataGridTextColumn Header="Type"     Binding="{Binding CurveTypeName}"                  Width="110" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Len (m)"  Binding="{Binding LengthM, StringFormat=F3}"       Width="85"  IsReadOnly="True"/>
+                <DataGridTextColumn Header="Slope %"  Binding="{Binding FacetSlopePercent, StringFormat=F1}" Width="75" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Points"   Binding="{Binding PreviewPointCount}"              Width="*"   IsReadOnly="True"/>
             </DataGrid.Columns>
         </DataGrid>
 

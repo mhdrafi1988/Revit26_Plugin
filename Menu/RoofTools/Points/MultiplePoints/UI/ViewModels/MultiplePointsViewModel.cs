@@ -30,6 +30,9 @@ namespace Revit26_Plugin.MultiplePoints.V001.UI.ViewModels
         private readonly ElementId _roofId;
         private readonly EdgePointService _service = new EdgePointService();
 
+        /// <summary>Every perimeter edge EdgePointService found, unfiltered — Edges is this filtered by the max-slope cap.</summary>
+        private System.Collections.Generic.List<EdgePointModel> _allEdges = new System.Collections.Generic.List<EdgePointModel>();
+
         public MultiplePointsSettings Settings { get; } = new MultiplePointsSettings();
 
         public ObservableCollection<EdgePointModel> Edges { get; } = new ObservableCollection<EdgePointModel>();
@@ -54,14 +57,42 @@ namespace Revit26_Plugin.MultiplePoints.V001.UI.ViewModels
 
         private void PopulateEdges(System.Collections.Generic.List<EdgePointModel> found)
         {
-            Edges.Clear();
-            foreach (var edge in found) Edges.Add(edge);
+            _allEdges = found ?? new System.Collections.Generic.List<EdgePointModel>();
 
-            Log(LogLevel.Info, $"Roof loaded — {Edges.Count} edge(s) found on the top face.");
-            if (Edges.Count == 0) Log(LogLevel.Warning, "No edges found on this roof's top face.");
+            Log(LogLevel.Info, $"Roof loaded — {_allEdges.Count} edge(s) found on the top face.");
+            if (_allEdges.Count == 0) Log(LogLevel.Warning, "No edges found on this roof's top face.");
+
+            ApplySlopeFilter();
         }
 
-        private void OnSettingsChanged(object sender, PropertyChangedEventArgs e) => RefreshPreview();
+        private void OnSettingsChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(MultiplePointsSettings.LimitMaxSlope) ||
+                e.PropertyName == nameof(MultiplePointsSettings.MaxSlopePercent))
+            {
+                ApplySlopeFilter();
+            }
+            RefreshPreview();
+        }
+
+        /// <summary>Rebuilds the displayed Edges from _allEdges per the current max-slope cap — a display filter only, no re-extraction from Revit.</summary>
+        private void ApplySlopeFilter()
+        {
+            Edges.Clear();
+
+            var visible = Settings.LimitMaxSlope
+                ? _allEdges.Where(e => e.FacetSlopePercent <= Settings.MaxSlopePercent)
+                : _allEdges;
+
+            foreach (var edge in visible) Edges.Add(edge);
+
+            if (Settings.LimitMaxSlope)
+            {
+                int hidden = _allEdges.Count - Edges.Count;
+                string suffix = hidden > 0 ? $" ({hidden} excluded — facet too steep)." : ".";
+                Log(LogLevel.Info, $"Slope filter ≤ {Settings.MaxSlopePercent:F1}%: {Edges.Count} of {_allEdges.Count} edge(s) shown{suffix}");
+            }
+        }
 
         private void RefreshPreview()
         {

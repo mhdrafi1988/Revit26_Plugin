@@ -52,9 +52,10 @@ namespace Revit26_Plugin.MultiplePoints.V001.Core.Services
             if (geo == null) return edges;
 
             // Every upward-facing planar facet — one face for a flat roof, several
-            // tilted ones once slope/shape points exist.
+            // tilted ones once slope/shape points exist. SlopePercent is the owning
+            // facet's slope, carried onto the edge for the UI's optional max-slope filter.
             var keyOrder = new List<string>();
-            var counts   = new Dictionary<string, (int Count, Curve Curve)>();
+            var counts   = new Dictionary<string, (int Count, Curve Curve, double SlopePercent)>();
 
             foreach (GeometryObject obj in geo)
             {
@@ -64,16 +65,18 @@ namespace Revit26_Plugin.MultiplePoints.V001.Core.Services
                     if (!(face is PlanarFace pf)) continue;
                     if (pf.FaceNormal.Z <= 1e-6) continue; // side/fascia or bottom face — not a roof-top facet
 
+                    double slopePercent = SlopePercentFromNormal(pf.FaceNormal);
+
                     foreach (CurveLoop loop in pf.GetEdgesAsCurveLoops())
                     {
                         foreach (Curve c in loop)
                         {
                             string key = EdgeKey(c);
                             if (counts.TryGetValue(key, out var existing))
-                                counts[key] = (existing.Count + 1, existing.Curve);
+                                counts[key] = (existing.Count + 1, existing.Curve, existing.SlopePercent);
                             else
                             {
-                                counts[key] = (1, c);
+                                counts[key] = (1, c, slopePercent);
                                 keyOrder.Add(key);
                             }
                         }
@@ -92,14 +95,24 @@ namespace Revit26_Plugin.MultiplePoints.V001.Core.Services
 
                 edges.Add(new EdgePointModel
                 {
-                    Index         = idx,
-                    CurveTypeName = TypeName(entry.Curve),
-                    LengthM       = lengthM,
-                    Geometry      = entry.Curve,
-                    IsSelected    = true
+                    Index             = idx,
+                    CurveTypeName     = TypeName(entry.Curve),
+                    LengthM           = lengthM,
+                    Geometry          = entry.Curve,
+                    FacetSlopePercent = entry.SlopePercent,
+                    IsSelected        = true
                 });
             }
             return edges;
+        }
+
+        /// <summary>Slope (rise/run × 100) of a facet from its normal's Z-component — e.g. Z ≈ 0.995 (≈5.71° from horizontal) is a 10% slope.</summary>
+        private static double SlopePercentFromNormal(XYZ normal)
+        {
+            double z = normal.Z;
+            if (z <= 1e-9) return double.PositiveInfinity;
+            double horizontal = Math.Sqrt(Math.Max(0.0, 1.0 - z * z));
+            return 100.0 * horizontal / z;
         }
 
         /// <summary>Canonical, direction-independent identity for an edge, from its rounded endpoints — used to detect the same physical edge shared by two adjacent top facets.</summary>
