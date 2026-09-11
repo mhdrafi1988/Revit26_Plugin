@@ -1,7 +1,7 @@
 // =======================================================
 // File: EdgePointService.cs
 // Location: Core/Services/
-// Extracts every top-face edge of a roof (lines, arcs, ellipses,
+// Extracts every perimeter edge of a roof (lines, arcs, ellipses,
 // splines — all types) and places shape-edit points on each per the
 // global MultiplePointsSettings rule:
 //   - Midpoint            → t = 1/2 (by arc length)
@@ -14,6 +14,17 @@
 // OuterCurveDivider's CurveDivisionService: exact for Line/Arc (whose
 // normalized parameter is already proportional to length), sampled for
 // everything else (Ellipse, NurbSpline, ...).
+//
+// Edge extraction: a flat roof's top is one horizontal PlanarFace, but
+// once slopes/shape points exist it's several tilted facets meeting at
+// hip/ridge/valley lines. Rather than requiring an exact horizontal
+// normal (which only matches a still-flat roof), every upward-facing
+// facet (FaceNormal.Z > 0 — true at any slope) is scanned, and an edge
+// is kept only if it borders exactly one such facet: a hip/ridge/valley
+// line borders two top facets (counted twice) and is excluded, while a
+// true perimeter/opening edge borders one facet and one side face
+// (counted once). This reduces to the old single-face behavior when the
+// roof is still flat, and generalizes correctly to any slope percentage.
 // =======================================================
 
 using Autodesk.Revit.DB;
@@ -27,8 +38,9 @@ namespace Revit26_Plugin.MultiplePoints.V001.Core.Services
 {
     public class EdgePointService
     {
-        private const int    ArcLengthSamples  = 512;
-        private const double FractionTolerance = 1e-4;
+        private const int    ArcLengthSamples   = 512;
+        private const double FractionTolerance  = 1e-4;
+        private const double PointKeyTolerance  = 1e-6;
 
         public List<EdgePointModel> ExtractEdges(RoofBase roof)
         {
@@ -39,35 +51,69 @@ namespace Revit26_Plugin.MultiplePoints.V001.Core.Services
             GeometryElement geo = roof.get_Geometry(opt);
             if (geo == null) return edges;
 
-            int idx = 0;
+            // Every upward-facing planar facet — one face for a flat roof, several
+            // tilted ones once slope/shape points exist.
+            var keyOrder = new List<string>();
+            var counts   = new Dictionary<string, (int Count, Curve Curve)>();
+
             foreach (GeometryObject obj in geo)
             {
                 if (!(obj is Solid solid)) continue;
                 foreach (Face face in solid.Faces)
                 {
                     if (!(face is PlanarFace pf)) continue;
-                    if (!pf.FaceNormal.IsAlmostEqualTo(XYZ.BasisZ)) continue;
+                    if (pf.FaceNormal.Z <= 1e-6) continue; // side/fascia or bottom face — not a roof-top facet
 
                     foreach (CurveLoop loop in pf.GetEdgesAsCurveLoops())
                     {
                         foreach (Curve c in loop)
                         {
-                            idx++;
-                            double lengthM = UnitUtils.ConvertFromInternalUnits(c.Length, UnitTypeId.Meters);
-
-                            edges.Add(new EdgePointModel
+                            string key = EdgeKey(c);
+                            if (counts.TryGetValue(key, out var existing))
+                                counts[key] = (existing.Count + 1, existing.Curve);
+                            else
                             {
-                                Index         = idx,
-                                CurveTypeName = TypeName(c),
-                                LengthM       = lengthM,
-                                Geometry      = c,
-                                IsSelected    = true
-                            });
+                                counts[key] = (1, c);
+                                keyOrder.Add(key);
+                            }
                         }
                     }
                 }
             }
+
+            int idx = 0;
+            foreach (string key in keyOrder)
+            {
+                var entry = counts[key];
+                if (entry.Count != 1) continue; // shared between two top facets — a hip/ridge/valley line, not a perimeter edge
+
+                idx++;
+                double lengthM = UnitUtils.ConvertFromInternalUnits(entry.Curve.Length, UnitTypeId.Meters);
+
+                edges.Add(new EdgePointModel
+                {
+                    Index         = idx,
+                    CurveTypeName = TypeName(entry.Curve),
+                    LengthM       = lengthM,
+                    Geometry      = entry.Curve,
+                    IsSelected    = true
+                });
+            }
             return edges;
+        }
+
+        /// <summary>Canonical, direction-independent identity for an edge, from its rounded endpoints — used to detect the same physical edge shared by two adjacent top facets.</summary>
+        private static string EdgeKey(Curve c)
+        {
+            string a = RoundPoint(c.GetEndPoint(0));
+            string b = RoundPoint(c.GetEndPoint(1));
+            return string.CompareOrdinal(a, b) <= 0 ? a + "→" + b : b + "→" + a;
+        }
+
+        private static string RoundPoint(XYZ p)
+        {
+            double Rnd(double v) => Math.Round(v / PointKeyTolerance) * PointKeyTolerance;
+            return $"{Rnd(p.X):F6},{Rnd(p.Y):F6},{Rnd(p.Z):F6}";
         }
 
         /// <summary>Fractions (0..1, by arc length) at which points get placed, given the current settings — used both for Apply and for the grid's live preview count.</summary>
