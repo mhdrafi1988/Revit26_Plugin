@@ -16,8 +16,14 @@ namespace Revit26_Plugin.Menu.Ribbon
             Create.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.FloorTools.FloorCreate_32.png");
 
             //Floor From Room
-            Create.AddPushButton(new PushButtonData("Btn_FloorsAndRoofFromLinkedRoomsViaPlanViewV004", "Floors And Roof From Linked Rooms (Via Plan View) — V004", assemblyPath, "Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V004.Command"));
-            Create.AddPushButton(new PushButtonData("Btn_FloorsAndRoofFromLinkedRooms_V011", "Floors And Roof From Linked Rooms — V011", assemblyPath, "Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011.Command"));
+            Create.AddPushButton(new PushButtonData("Btn_FloorsAndRoofFromLinkedRoomsViaPlanViewV004", "Floors And Roof From Linked Rooms (Via Plan View) — V004", assemblyPath, "Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V004.Command")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.FloorTools.FloorRoofFromRoomsPlanView_32.png")
+            });
+            Create.AddPushButton(new PushButtonData("Btn_FloorsAndRoofFromLinkedRooms_V011", "Floors And Roof From Linked Rooms — V011", assemblyPath, "Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011.Command")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.FloorTools.FloorRoofFromRooms_32.png")
+            });
         }
     }
 }

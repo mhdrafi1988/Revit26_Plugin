@@ -12,7 +12,10 @@ namespace Revit26_Plugin.Menu.Ribbon
             PulldownButton DimMenu = panel.AddItem(new PulldownButtonData("Dimensions", "Dimensions")) as PulldownButton;
             DimMenu.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Dimensions.DimMenu_32.png");
 
-            DimMenu.AddPushButton(new PushButtonData("Btn_DtlLine_08", "Auto Dim Detail Line — V008", assemblyPath, "Revit26_Plugin.DtlLineDim.V008.Commands.DtlLineDimCommand"));
+            DimMenu.AddPushButton(new PushButtonData("Btn_DtlLine_08", "Auto Dim Detail Line — V008", assemblyPath, "Revit26_Plugin.DtlLineDim.V008.Commands.DtlLineDimCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Dimensions.AutoDimDetailLine_32.png")
+            });
         }
     }
 }
