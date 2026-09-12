@@ -35,6 +35,11 @@ namespace Revit26_Plugin.Menu.Ribbon
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.AutoSlopeByPoint_KdTree_32.png")
             });
+            SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint_MultiCopies28", "Auto Slope By Point — MultiCopies28 (Multi-Slope Variants)", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.MultiCopies28.Commands.AutoSlopeCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.by_point.png"),
+                ToolTip = "Generates up to 4 roof copies (drain point XY preserved) at different slope percentages, each assigned to its own workset."
+            });
 
             //Slope By Drain
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByDrain_V007", "Auto Slope By Drain — V007", assemblyPath, "Revit26_Plugin.AutoSlopeByDrain.V007.Commands.AutoSlopeByDrain")
