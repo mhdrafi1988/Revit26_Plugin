@@ -37,6 +37,11 @@ namespace Revit26_Plugin.Menu.Ribbon
                 ToolTip = "V028 plus ridge handling: drains are grouped, ridge points are found on the basin boundaries " +
                           "between drain groups, and each ridge point is raised so water leaves it to every surrounding drain at the given slope."
             });
+            SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPoint_MultiCopies28", "Auto Slope By Point — MultiCopies28 (Multi-Slope Variants)", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.MultiCopies28.Commands.AutoSlopeCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.by_point.png"),
+                ToolTip = "Generates up to 4 roof copies (drain point XY preserved) at different slope percentages, each assigned to its own workset."
+            });
 
             //Slope By Drain
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByDrain_V007", "Auto Slope By Drain — V007", assemblyPath, "Revit26_Plugin.AutoSlopeByDrain.V007.Commands.AutoSlopeByDrain")
