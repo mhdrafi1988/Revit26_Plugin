@@ -35,6 +35,12 @@ namespace Revit26_Plugin.Menu.Ribbon
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.AutoSlopeByPoint_KdTree_32.png")
             });
+            SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByPointRidge_001", "Auto Slope By Point — Ridge V001", assemblyPath, "Revit26_Plugin.AutoSlopeByPointRidge.V001.Commands.AutoSlopeCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.AutoSlopeByPoint_Ridge_32.png"),
+                ToolTip = "V028 plus ridge handling: drains are grouped, ridge points are found on the basin boundaries " +
+                          "between drain groups, and each ridge point is raised so water leaves it to every surrounding drain at the given slope."
+            });
 
             //Slope By Drain
             SlopeMenu.AddPushButton(new PushButtonData("Btn_AutoSlopeByDrain_V007", "Auto Slope By Drain — V007", assemblyPath, "Revit26_Plugin.AutoSlopeByDrain.V007.Commands.AutoSlopeByDrain")
