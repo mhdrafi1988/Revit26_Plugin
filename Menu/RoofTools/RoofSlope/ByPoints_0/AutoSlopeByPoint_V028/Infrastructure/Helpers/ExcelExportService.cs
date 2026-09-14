@@ -45,13 +45,18 @@ namespace Revit26_Plugin.AutoSlopeByPoint.V028.Infrastructure.Helpers
             RoofBase roof,
             double slopePercent,
             string version = "P.10.00",
-            int status = 1)
+            int status = 1,
+            int runDurationSec = 0,
+            string runDate = null,
+            string runStartTime = null,
+            string runEndTime = null)
         {
             if (!IsAvailable(payload?.Log)) return null;
             try
             {
                 return ExcelExportHelper.ExportCompactVertexData(
-                    payload, vertexData, roof, slopePercent, version, status);
+                    payload, vertexData, roof, slopePercent, version, status,
+                    runDurationSec, runDate, runStartTime, runEndTime);
             }
             catch (Exception ex)
             {

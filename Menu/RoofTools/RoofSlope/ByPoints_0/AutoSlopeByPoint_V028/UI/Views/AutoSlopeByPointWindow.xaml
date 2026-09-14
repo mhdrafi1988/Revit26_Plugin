@@ -464,8 +464,20 @@
                                    VerticalAlignment="Center"/>
                     </StackPanel>
 
-                    <!-- Row 2: Run AutoSlope (Primary) then Close, right-aligned -->
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <!-- Row 2: Run timing (start/end/total, bottom-left) + Run AutoSlope/Close (right) -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0"
+                                   Text="{Binding RunTimingDisplay}"
+                                   Style="{StaticResource HintText}"
+                                   VerticalAlignment="Bottom"
+                                   HorizontalAlignment="Left"/>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
                         <Button Command="{Binding RunCommand}"
                                 ToolTip="Calculate and apply slope to roof"
                                 Height="32"
@@ -495,6 +507,7 @@
                                 Height="32"
                                 Width="90"/>
                     </StackPanel>
+                    </Grid>
 
                 </StackPanel>
             </Border>
