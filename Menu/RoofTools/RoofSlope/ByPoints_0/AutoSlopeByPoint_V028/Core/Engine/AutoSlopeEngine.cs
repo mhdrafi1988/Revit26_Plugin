@@ -360,7 +360,9 @@ namespace Revit26_Plugin.AutoSlopeByPoint.V028.Core.Engine
             {
                 compactPath = ExcelExportService.ExportCompactVertexData(
                     data, vertexDataList, roof, data.SlopePercent,
-                    toolVersion, statusCode);
+                    toolVersion, statusCode,
+                    durationSec, runDate,
+                    runStartTime.ToString("HH:mm:ss"), runEndTime.ToString("HH:mm:ss"));
 
                 if (!string.IsNullOrEmpty(compactPath))
                 {

@@ -127,7 +127,11 @@ namespace Revit26_Plugin.AutoSlopeByPoint.V028.Infrastructure.Helpers
             RoofBase roof,
             double slopePercent,
             string version = "P.10.00",
-            int status = 1)
+            int status = 1,
+            int runDurationSec = 0,
+            string runDate = null,
+            string runStartTime = null,
+            string runEndTime = null)
         {
             if (payload?.ExportConfig == null || !payload.ExportConfig.ExportToExcel || vertexData == null)
                 return null;
@@ -280,7 +284,10 @@ namespace Revit26_Plugin.AutoSlopeByPoint.V028.Infrastructure.Helpers
                         Success = true,
                         VerticesProcessed = processed,
                         VerticesSkipped = skipped,
-                        RunDate = DateTime.Now.ToString("dd-MM-yy HH:mm"),
+                        RunDate = runDate ?? DateTime.Now.ToString("dd-MM-yy HH:mm"),
+                        RunStartTime = runStartTime,
+                        RunEndTime = runEndTime,
+                        RunDuration_sec = runDurationSec,
                         Version = version,
                         Status = status
                     };
@@ -342,6 +349,8 @@ namespace Revit26_Plugin.AutoSlopeByPoint.V028.Infrastructure.Helpers
             row++;
 
             AddInfoRow(sheet, ref row, "Run Date", result.RunDate ?? DateTime.Now.ToString("dd-MM-yy HH:mm"));
+            AddInfoRow(sheet, ref row, "Run Start Time", result.RunStartTime ?? "N/A");
+            AddInfoRow(sheet, ref row, "Run End Time", result.RunEndTime ?? "N/A");
             AddInfoRow(sheet, ref row, "Version", result.Version ?? "N/A");
             AddInfoRow(sheet, ref row, "Status", StatusToText(result.Status));
             AddInfoRow(sheet, ref row, "Slope Percentage", $"{slopePercent}%");
