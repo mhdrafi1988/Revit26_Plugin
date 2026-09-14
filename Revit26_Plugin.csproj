@@ -718,6 +718,7 @@
 	  <None Remove="Resources\Icons\Manage\AnnotationOverlapDetection_32.png" />
 	  <None Remove="Resources\Icons\RoofTools\AutoSlopeByDrain_MultiRoof_32.png" />
 	  <None Remove="Resources\Icons\RoofTools\AutoSlopeByPoint_KdTree_32.png" />
+	  <None Remove="Resources\Icons\RoofTools\AutoSlopeByPoint_Ridge_32.png" />
 	  <None Remove="Resources\Icons\RoofTools\by_drain.png" />
 	  <None Remove="Resources\Icons\RoofTools\by_point.png" />
 	  <None Remove="Resources\Icons\RoofTools\CombinedTools_32.png" />
@@ -821,6 +822,7 @@
 	  <EmbeddedResource Include="Resources\Icons\Manage\AnnotationOverlapDetection_32.png" />
 	  <EmbeddedResource Include="Resources\Icons\RoofTools\AutoSlopeByDrain_MultiRoof_32.png" />
 	  <EmbeddedResource Include="Resources\Icons\RoofTools\AutoSlopeByPoint_KdTree_32.png" />
+	  <EmbeddedResource Include="Resources\Icons\RoofTools\AutoSlopeByPoint_Ridge_32.png" />
 	  <EmbeddedResource Include="Resources\Icons\RoofTools\by_drain.png" />
 	  <EmbeddedResource Include="Resources\Icons\RoofTools\by_point.png" />
 	  <EmbeddedResource Include="Resources\Icons\RoofTools\CombinedTools_32.png" />
