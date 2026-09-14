@@ -1,0 +1,529 @@
+<title>AutoSlope V028</title>
+<style>
+  :root{
+    --navy-primary:#1E3A5F; --navy-dark:#14283F; --navy-light:#2C4A6E;
+    --blue:#2D6CDF; --blue-light:#5B8DEF; --blue-dark:#1E4FB8;
+    --text-primary:#1A2B3C; --text-secondary:#5B7185; --text-tertiary:#8FA3B8; --text-disabled:#C3CFDB; --text-on-dark:#EAF1F8;
+    --success:#2E9E64; --warning:#E0922E; --danger:#D9534F;
+    --card-bg:#FFFFFF; --card-border:#D7E1ED; --sep:#D7E1ED; --sep-thin:#E8EEF6;
+    --sys-bg:#ADD8E6; --sys-bg2:#EEF3F9; --sys-bg3:#DCE6F2;
+    --input-bg:#FDF0E3;
+    --log-bg:#14283F; --log-titlebar:#1E3A5F; --log-text:#EAF1F8; --log-dim:#7E94AA;
+    --log-success:#4CC18A; --log-warning:#F0AE5C; --log-error:#F0837D; --log-highlight:#7FB0FF;
+    --page-bg:#DCE6F2;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--page-bg);
+    font-family:"Segoe UI","Segoe UI Variable",-apple-system,BlinkMacSystemFont,Roboto,"Helvetica Neue",Arial,sans-serif;
+    color:var(--text-primary);
+    padding:28px 16px 40px;
+    display:flex; flex-direction:column; align-items:center; gap:14px;
+  }
+  .eyebrow{
+    font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--text-secondary);
+    display:flex; align-items:center; gap:8px; max-width:1160px; width:100%;
+  }
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--success);flex:none;}
+
+  /* ============ WINDOW CHROME ============ */
+  .app-window{
+    width:100%; max-width:1160px; background:#fff; border-radius:8px;
+    box-shadow:0 24px 60px -20px rgba(20,40,63,.45), 0 2px 8px rgba(20,40,63,.15);
+    overflow:hidden; border:1px solid #c7d3e0;
+  }
+  .titlebar{
+    height:38px; background:#fff; border-bottom:1px solid var(--sep-thin);
+    display:flex; align-items:center; justify-content:space-between; padding:0 4px 0 14px;
+  }
+  .titlebar .name{display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:600; color:var(--text-secondary);}
+  .titlebar .name svg{flex:none;}
+  .titlebar .wincontrols{display:flex; height:100%;}
+  .titlebar .wincontrols button{
+    width:44px; height:100%; border:none; background:transparent; color:var(--text-secondary);
+    font-size:12px; cursor:default; display:flex; align-items:center; justify-content:center;
+  }
+  .titlebar .wincontrols button:hover{background:var(--sys-bg2);}
+  .titlebar .wincontrols button.close:hover{background:#E5484D; color:#fff;}
+
+  .window-body{ padding:14px; }
+  .layout{ display:grid; grid-template-columns:332px 10px 1fr; align-items:start; }
+  .vsplit{ background:var(--sep); width:1px; height:100%; margin:0 auto; }
+
+  /* ============ CARDS ============ */
+  .card{ background:var(--card-bg); border:1px solid var(--card-border); border-radius:10px; }
+  .stack > * + *{ margin-top:8px; }
+
+  .identity-card{ padding:14px; }
+  .app-name{ font-size:16px; font-weight:600; color:var(--text-primary); }
+  .app-sub{ font-size:11.5px; color:var(--text-secondary); margin-top:2px; }
+
+  .section-title{
+    font-size:11.5px; font-weight:600; color:var(--navy-primary);
+    margin:10px 12px 5px; cursor:help;
+  }
+  .field-row{ display:grid; grid-template-columns:1fr 8px 1fr; margin:0 12px 10px; }
+  .field-label{ font-size:11.5px; color:var(--text-secondary); margin-bottom:2px; display:block; }
+
+  select, input[type=text], input[type=number]{
+    width:100%; font-size:13px; color:var(--text-primary); background:var(--input-bg);
+    border:none; border-radius:4px; padding:6px 7px; font-family:inherit;
+  }
+  select:disabled, input:disabled{ color:var(--text-disabled); background:var(--sys-bg2); }
+  select{ appearance:none; -webkit-appearance:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M0 0l5 6 5-6z' fill='%235B7185'/></svg>");
+    background-repeat:no-repeat; background-position:right 8px center; padding-right:22px;
+  }
+  select:disabled{ background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M0 0l5 6 5-6z' fill='%23C3CFDB'/></svg>"); }
+
+  /* editable combo box — typable AND choosable, like a WPF IsEditable ComboBox */
+  .combo{ position:relative; }
+  .combo-input{ padding-right:24px !important; }
+  .combo-arrow{
+    position:absolute; right:0; top:0; width:22px; height:100%; border:none; background:transparent;
+    cursor:pointer; display:flex; align-items:center; justify-content:center;
+  }
+  .combo-arrow svg{ pointer-events:none; }
+  .combo-list{
+    position:absolute; top:calc(100% + 3px); left:0; right:0; z-index:30;
+    background:#fff; border:1px solid var(--card-border); border-radius:6px;
+    box-shadow:0 10px 24px -6px rgba(20,40,63,.28); max-height:170px; overflow-y:auto;
+    display:none; padding:4px;
+  }
+  .combo-list.open{ display:block; }
+  .combo-opt{ padding:6px 8px; font-size:13px; border-radius:4px; cursor:pointer; color:var(--text-primary); }
+  .combo-opt:hover{ background:var(--sys-bg2); }
+  .combo-opt.selected{ background:var(--sys-bg3); font-weight:600; }
+
+  /* toggle switch */
+  .toggle{ width:34px; height:19px; border-radius:9.5px; background:var(--sys-bg3); position:relative; cursor:pointer; flex:none; border:none; padding:0; }
+  .toggle .knob{ position:absolute; top:2px; left:2px; width:15px; height:15px; border-radius:50%; background:#fff; box-shadow:0 0 3px rgba(0,0,0,.25); transition:left .15s ease; }
+  .toggle.on{ background:var(--blue); }
+  .toggle.on .knob{ left:17px; }
+  .toggle:disabled{ opacity:.55; cursor:default; }
+
+  .row-inline{ display:flex; align-items:center; gap:6px; }
+  .field-value{ font-size:13.5px; color:var(--text-primary); }
+  .field-value.strong{ font-weight:600; }
+  .hint{ font-size:10.5px; color:var(--text-tertiary); line-height:1.4; margin:3px 12px 8px; }
+  .sep-line{ height:1px; background:var(--sep-thin); margin:8px 12px; }
+
+  input[type=checkbox]{
+    width:15px; height:15px; accent-color:var(--blue); flex:none; margin:0; cursor:pointer;
+  }
+
+  .marker-group-head{ display:flex; align-items:center; gap:6px; margin:4px 4px 0; }
+  .marker-fields{ display:grid; grid-template-columns:1.1fr 6px .9fr 6px .8fr; margin:4px; }
+  .marker-fields.hidden{ display:none; }
+  .marker-sub{ margin:0 4px 4px; }
+
+  /* ============ RIGHT PANEL ============ */
+  .right-col > * + *{ margin-top:8px; }
+  .metric-row{ display:grid; grid-template-columns:repeat(5,1fr); gap:6px; }
+  .metric-card{ padding:12px 12px 10px; }
+  .metric-label{ font-size:10.5px; font-weight:600; color:var(--text-secondary); margin-bottom:5px; }
+  .metric-number{ font-size:22px; font-weight:700; font-variant-numeric:tabular-nums; line-height:1.1; }
+  .metric-unit{ font-size:10.5px; color:var(--text-tertiary); margin-top:3px; }
+
+  .action-card{ padding:12px; }
+
+  .btn{ border:none; border-radius:9px; font-size:12.5px; cursor:pointer; font-family:inherit; }
+  .btn-outline{ background:var(--sys-bg); border:1px solid var(--sep); color:var(--text-primary); height:32px; padding:0 12px; }
+  .btn-outline:hover{ background:#cfe6ee; }
+  .btn-secondary{ background:transparent; color:var(--blue); height:30px; padding:0 10px; font-weight:500; }
+  .btn-secondary:hover{ background:var(--sys-bg2); }
+  .btn-primary{ background:var(--navy-primary); color:#fff; height:32px; width:150px; font-weight:600; font-size:13.5px; transition:background .15s; }
+  .btn-primary:hover{ background:var(--navy-light); }
+  .btn-primary.processing{ background:var(--warning); cursor:default; }
+  .btn-primary.complete{ background:var(--success); }
+
+  .export-grid{ display:grid; grid-template-columns:auto 12px auto 8px 1fr 12px auto; align-items:center; margin-bottom:10px; }
+  .export-path{ font-size:13px; color:var(--blue); background:var(--input-bg); border-radius:4px; padding:6px 7px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+  .log-header{ background:var(--log-bg); border-radius:6px 6px 0 0; padding:8px 10px; display:flex; align-items:center; justify-content:space-between; }
+  .log-header .title{ font-size:11.5px; color:var(--log-dim); font-weight:400; }
+  .log-actions{ display:flex; gap:6px; }
+  .btn-ghost{ background:transparent; color:var(--log-text); border:1px solid var(--log-dim); border-radius:6px; height:26px; padding:0 10px; font-size:11.5px; cursor:pointer; }
+  .btn-ghost:hover{ background:var(--log-titlebar); border-color:var(--log-text); }
+  .btn-clear{ background:var(--sys-bg2); color:var(--text-primary); border:1px solid var(--sep); border-radius:6px; height:26px; width:56px; font-size:11.5px; cursor:pointer; }
+
+  .log-panel{ background:var(--log-bg); border-radius:0 0 10px 10px; min-height:230px; max-height:280px; overflow-y:auto; font-family:"Cascadia Mono","Consolas",Menlo,Monaco,"Courier New",monospace; font-size:10.5px; }
+  .log-row{ padding:4px 10px; cursor:default; white-space:pre-wrap; line-height:1.5; }
+  .log-row.selected{ background:var(--log-titlebar); }
+  .log-row .t{ color:var(--log-dim); }
+  .log-row.info .m{ color:var(--log-text); }
+  .log-row.success .m{ color:var(--log-success); }
+  .log-row.warning .m{ color:var(--log-warning); }
+  .log-row.error .m{ color:var(--log-error); }
+  .log-row.highlight .m{ color:var(--log-highlight); }
+
+  @media (max-width:900px){
+    .layout{ grid-template-columns:1fr; }
+    .vsplit{ display:none; }
+    .layout > .left-col{ margin-bottom:8px; }
+  }
+  @media (max-width:700px){
+    .metric-row{ grid-template-columns:repeat(2,1fr); }
+    .export-grid{ grid-template-columns:1fr; gap:8px; }
+    .export-grid > *{ width:100% !important; }
+  }
+</style>
+
+<div class="eyebrow"><span class="dot"></span>HTML preview &middot; rebuilt from AutoSlopeByPointWindow.xaml + SharedStyles.xaml (Navy Corporate theme)</div>
+
+<div class="app-window">
+  <div class="titlebar">
+    <div class="name">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M3 20L12 4l9 16H3z" stroke="#1E3A5F" stroke-width="2" stroke-linejoin="round"/><path d="M8 20l4-7 4 7" stroke="#2D6CDF" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      AutoSlope — V028
+    </div>
+    <div class="wincontrols">
+      <button title="Minimize">&#x2013;</button>
+      <button title="Maximize">&#x25A1;</button>
+      <button class="close" title="Close">&times;</button>
+    </div>
+  </div>
+
+  <div class="window-body">
+    <div class="layout">
+
+      <!-- ============ LEFT COLUMN ============ -->
+      <div class="left-col stack">
+
+        <div class="card identity-card">
+          <div class="app-name">AutoSlope — V028</div>
+          <div class="app-sub">Revit 2026</div>
+        </div>
+
+        <div class="card">
+          <div class="section-title">Slope</div>
+          <div class="field-row">
+            <div>
+              <span class="field-label">Percentage</span>
+              <div class="combo" id="slopeCombo">
+                <input type="text" id="slopePercent" class="combo-input" value="1%"
+                       onfocus="openCombo('slopeCombo')"
+                       oninput="markComboCustom('slopeCombo')"
+                       onkeydown="if(event.key==='Enter') this.blur();">
+                <button type="button" class="combo-arrow" tabindex="-1" onmousedown="event.preventDefault(); toggleCombo('slopeCombo');">
+                  <svg width="9" height="6" viewBox="0 0 10 6"><path d="M0 0l5 6 5-6z" fill="#5B7185"/></svg>
+                </button>
+                <div class="combo-list" id="slopeComboList">
+                  <div class="combo-opt" data-value="0.5%" onmousedown="event.preventDefault(); selectCombo('slopeCombo','0.5%')">0.5%</div>
+                  <div class="combo-opt selected" data-value="1%" onmousedown="event.preventDefault(); selectCombo('slopeCombo','1%')">1%</div>
+                  <div class="combo-opt" data-value="1.5%" onmousedown="event.preventDefault(); selectCombo('slopeCombo','1.5%')">1.5%</div>
+                  <div class="combo-opt" data-value="2%" onmousedown="event.preventDefault(); selectCombo('slopeCombo','2%')">2%</div>
+                  <div class="combo-opt" data-value="2.5%" onmousedown="event.preventDefault(); selectCombo('slopeCombo','2.5%')">2.5%</div>
+                </div>
+              </div>
+            </div>
+            <div></div>
+            <div>
+              <span class="field-label">Threshold (m)</span>
+              <input type="text" id="threshold" value="1" maxlength="10">
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section-title" title="Note: Ensure roof shape editing is enabled in Revit before running.">Drain Detection</div>
+          <div class="field-row">
+            <div style="align-self:end;">
+              <span class="field-label">Tolerance</span>
+              <button class="toggle" id="drainToleranceToggle" title="Finds plumbing fixtures and roof drains within the radius of selected points." onclick="toggleSwitch(this); syncDrainTolerance();"><span class="knob"></span></button>
+            </div>
+            <div></div>
+            <div>
+              <span class="field-label">Radius (mm)</span>
+              <input type="text" id="drainRadius" value="50" maxlength="10" disabled>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="padding-bottom:6px;">
+          <div class="section-title" title="Placed in the active plan view when Run completes. Skipped with a warning if the active view is not a plan view.">Circle Markers</div>
+
+          <!-- Group 1: Drain -->
+          <div class="marker-group-head">
+            <input type="checkbox" id="grp1Enable" checked onchange="toggleGroup('grp1', this.checked)">
+            <span class="field-value strong">Place Circles on Drains</span>
+          </div>
+          <div class="marker-fields" id="grp1Fields">
+            <div>
+              <span class="field-label">Line Style</span>
+              <select><option>Thin Lines</option><option>Medium Lines</option><option>Wide Lines</option><option>Dash</option></select>
+            </div><div></div>
+            <div>
+              <span class="field-label">Color</span>
+              <select><option>Black</option><option selected>Blue</option><option>Green</option><option>Red</option><option>Orange</option><option>Cyan</option><option>Magenta</option></select>
+            </div><div></div>
+            <div>
+              <span class="field-label">Radius (mm)</span>
+              <input type="text" value="250" maxlength="10">
+            </div>
+          </div>
+
+          <div class="sep-line"></div>
+
+          <!-- Group 2: Highest Point -->
+          <div class="marker-group-head">
+            <input type="checkbox" id="grp2Enable" checked onchange="toggleGroup('grp2', this.checked)">
+            <span class="field-value strong">Highest Point</span>
+          </div>
+          <div class="marker-fields" id="grp2Fields">
+            <div>
+              <span class="field-label">Line Style</span>
+              <select><option>Thin Lines</option><option selected>Medium Lines</option><option>Wide Lines</option><option>Dash</option></select>
+            </div><div></div>
+            <div>
+              <span class="field-label">Color</span>
+              <select><option>Black</option><option>Blue</option><option>Green</option><option selected>Red</option><option>Orange</option><option>Cyan</option><option>Magenta</option></select>
+            </div><div></div>
+            <div>
+              <span class="field-label">Radius (mm)</span>
+              <input type="text" value="250" maxlength="10">
+            </div>
+          </div>
+          <div class="row-inline marker-sub" id="grp2Sub">
+            <input type="checkbox">
+            <span class="field-value" title="Places a red &quot;Offset: X mm&quot; text note with a leader next to the Highest Point circle.">Show offset text label</span>
+          </div>
+
+          <div class="sep-line"></div>
+
+          <!-- Group 3: Allowed Offset -->
+          <div class="marker-group-head">
+            <input type="checkbox" id="grp3Enable" checked onchange="toggleGroup3(this.checked)">
+            <span class="field-value strong" title="Circles processed vertices with offset ≥ threshold. Excludes vertices already marked Highest Point.">Allowed Offset (Visual Clamping Offset)</span>
+          </div>
+          <div id="grp3ThresholdRow" style="margin:4px;">
+            <span class="field-label">Threshold (mm)</span>
+            <input type="text" value="500" maxlength="10">
+          </div>
+          <div class="marker-fields" id="grp3Fields" style="margin:4px 4px 10px;">
+            <div>
+              <span class="field-label">Line Style</span>
+              <select><option>Thin Lines</option><option>Medium Lines</option><option selected>Wide Lines</option><option>Dash</option></select>
+            </div><div></div>
+            <div>
+              <span class="field-label">Color</span>
+              <select><option>Black</option><option>Blue</option><option>Green</option><option>Red</option><option selected>Orange</option><option>Cyan</option><option>Magenta</option></select>
+            </div><div></div>
+            <div>
+              <span class="field-label">Radius (mm)</span>
+              <input type="text" value="250" maxlength="10">
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="vsplit"></div>
+
+      <!-- ============ RIGHT COLUMN ============ -->
+      <div class="right-col">
+
+        <div class="metric-row">
+          <div class="card metric-card"><div class="metric-label">Longest Path</div><div class="metric-number" style="color:orange" id="mLongestPath">24.85</div><div class="metric-unit">Meters</div></div>
+          <div class="card metric-card"><div class="metric-label">Highest elevation</div><div class="metric-number" style="color:red" id="mHighestElev">187</div><div class="metric-unit">Millimeters</div></div>
+          <div class="card metric-card"><div class="metric-label">Percentage applied</div><div class="metric-number" style="color:darkorange">1.0</div><div class="metric-unit">Percent</div></div>
+          <div class="card metric-card"><div class="metric-label">Run duration</div><div class="metric-number" style="color:var(--success)" id="mDuration">842</div><div class="metric-unit">Milliseconds</div></div>
+          <div class="card metric-card"><div class="metric-label">Tolerance Applied</div><div class="metric-number" style="color:orange">50</div><div class="metric-unit">Millimeters</div></div>
+        </div>
+
+        <div class="metric-row">
+          <div class="card metric-card"><div class="metric-label">Vertices processed</div><div class="metric-number" style="color:var(--blue)" id="mVerticesProcessed">46</div><div class="metric-unit">Vertices</div></div>
+          <div class="card metric-card"><div class="metric-label">Vertices skipped</div><div class="metric-number" style="color:blueviolet">8</div><div class="metric-unit">Boundary</div></div>
+          <div class="card metric-card"><div class="metric-label">Picked Drain</div><div class="metric-number" style="color:#00b3b3">4</div><div class="metric-unit">Detected</div></div>
+          <div class="card metric-card"><div class="metric-label">Final Drain Count</div><div class="metric-number" style="color:yellowgreen">3</div><div class="metric-unit">Detected</div></div>
+          <div class="card metric-card"><div class="metric-label">Curves Calculated</div><div class="metric-number" style="color:var(--blue)" id="mCurves">12</div><div class="metric-unit">Arcs found</div></div>
+        </div>
+
+        <div class="card action-card">
+          <div class="row-inline" style="margin:0 0 4px; justify-content:space-between;">
+            <span class="field-value" style="max-width:80%;">Curve handling — insert intersection points</span>
+            <button class="toggle on" id="curveToggle" onclick="toggleSwitch(this); syncCurveHint();"><span class="knob"></span></button>
+          </div>
+          <div class="hint" id="curveHint" style="margin-left:0; margin-right:0;">When a path edge overlaps an arc (boundary or opening), inserts real roof shape points at the entry/exit locations so distances and elevations follow the true arc length instead of a straight chord.</div>
+
+          <div class="sep-line" style="margin-left:0; margin-right:0;"></div>
+
+          <div class="section-title" style="margin-left:0;">Export</div>
+          <div class="export-grid">
+            <div class="row-inline">
+              <span class="field-value">Export to Excel</span>
+              <button class="toggle on" id="exportToggle" onclick="toggleSwitch(this); syncExportState();"><span class="knob"></span></button>
+            </div>
+            <div></div>
+            <button class="btn btn-outline" style="width:60px;">Browse</button>
+            <div></div>
+            <div class="export-path" id="exportPath">C:\Users\rafi\Documents\AutoSlope_Reports</div>
+            <div></div>
+            <button class="btn btn-secondary" style="width:120px; height:30px; background:var(--sys-bg2); border:1px solid var(--sep);">Export Results</button>
+          </div>
+
+          <div class="row-inline" style="margin-bottom:10px;">
+            <input type="checkbox" id="askOpenAfter" checked>
+            <span class="field-value">Ask to open file after export</span>
+          </div>
+
+          <div style="display:flex; justify-content:flex-end; gap:8px;">
+            <button class="btn btn-primary" id="runBtn" onclick="runAutoSlope()" title="Calculate and apply slope to roof">Run AutoSlope</button>
+            <button class="btn btn-outline" style="width:90px; height:32px;" title="Close window">Close</button>
+          </div>
+        </div>
+
+        <div class="log-header">
+          <span class="title">Processing log</span>
+          <div class="log-actions">
+            <button class="btn-ghost" style="width:100px;" onclick="copyLogs(true)">Copy selected</button>
+            <button class="btn-ghost" style="width:70px;" onclick="copyLogs(false)">Copy all</button>
+            <button class="btn-clear" onclick="clearLogs()">Clear</button>
+          </div>
+        </div>
+        <div class="log-panel" id="logPanel"></div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const seedLog = [
+    ['12:41:07','info','Loaded 46 roof shape vertices from active Roof (Id 482113).'],
+    ['12:41:07','info','Slope target: 1.0%  |  Threshold: 1 m'],
+    ['12:41:08','highlight','Drain tolerance ENABLED — radius 50 mm'],
+    ['12:41:08','info','Scanning plumbing fixtures and roof drains in tolerance radius…'],
+    ['12:41:08','success','Found 4 candidates; 3 matched to picked drain points.'],
+    ['12:41:09','info','Building boundary + interior graph for Dijkstra shortest-path search…'],
+    ['12:41:09','highlight','Curve handling ON — 5 arc segments inspected, 2 intersection points inserted.'],
+    ['12:41:10','success','Highest point resolved at vertex V-014 — 187 mm above lowest drain.'],
+    ['12:41:10','info','Writing slope arrows and shape-edit points to 46 vertices…'],
+    ['12:41:11','warning','Skipped 8 boundary vertices (locked to roof edge, cannot be offset).'],
+    ['12:41:11','info','Placed circle markers — 3 Drain, 1 Highest Point, 6 Allowed Offset.'],
+    ['12:41:11','info','Exporting results → AutoSlope_Reports\\\\AutoSlope_2026-09-14_124111.xlsx'],
+    ['12:41:11','success','Run completed in 842 ms.'],
+  ];
+
+  const logPanel = document.getElementById('logPanel');
+  function renderLog(entries){
+    logPanel.innerHTML = '';
+    entries.forEach(([t,level,msg])=>{
+      const row = document.createElement('div');
+      row.className = 'log-row ' + level;
+      row.innerHTML = '<span class="t">['+t+']</span> <span class="m">'+msg+'</span>';
+      row.onclick = ()=> row.classList.toggle('selected');
+      logPanel.appendChild(row);
+    });
+    logPanel.scrollTop = logPanel.scrollHeight;
+  }
+  renderLog(seedLog);
+
+  function clearLogs(){ renderLog([]); }
+  function copyLogs(selectedOnly){
+    const rows = [...logPanel.querySelectorAll('.log-row' + (selectedOnly ? '.selected' : ''))];
+    const text = rows.map(r => r.textContent).join('\n');
+    if (navigator.clipboard && text) navigator.clipboard.writeText(text).catch(()=>{});
+  }
+
+  function toggleSwitch(btn){
+    if (btn.disabled) return;
+    btn.classList.toggle('on');
+  }
+
+  /* ---- editable combo box (typable + choosable) ---- */
+  function closeAllCombos(except){
+    document.querySelectorAll('.combo-list.open').forEach(l => { if (l.id !== except) l.classList.remove('open'); });
+  }
+  function openCombo(id){
+    closeAllCombos(id + 'List');
+    document.getElementById(id + 'List').classList.add('open');
+  }
+  function toggleCombo(id){
+    const list = document.getElementById(id + 'List');
+    const isOpen = list.classList.contains('open');
+    closeAllCombos();
+    if (!isOpen){ list.classList.add('open'); document.getElementById(id).querySelector('input').focus(); }
+  }
+  function selectCombo(id, value){
+    const wrap = document.getElementById(id);
+    wrap.querySelector('input').value = value;
+    wrap.querySelectorAll('.combo-opt').forEach(o => o.classList.toggle('selected', o.dataset.value === value));
+    closeAllCombos();
+  }
+  function markComboCustom(id){
+    // typed value no longer matches a preset option — clear the highlighted item
+    const wrap = document.getElementById(id);
+    const val = wrap.querySelector('input').value.trim();
+    wrap.querySelectorAll('.combo-opt').forEach(o => o.classList.toggle('selected', o.dataset.value === val));
+  }
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.combo')) closeAllCombos();
+  });
+
+  function syncDrainTolerance(){
+    const on = document.getElementById('drainToleranceToggle').classList.contains('on');
+    document.getElementById('drainRadius').disabled = !on;
+  }
+
+  function syncCurveHint(){
+    const on = document.getElementById('curveToggle').classList.contains('on');
+    document.getElementById('curveHint').style.display = on ? 'block' : 'none';
+  }
+
+  function syncExportState(){
+    const on = document.getElementById('exportToggle').classList.contains('on');
+    document.getElementById('askOpenAfter').disabled = !on;
+  }
+
+  function toggleGroup(prefix, enabled){
+    const fields = document.getElementById(prefix + 'Fields');
+    fields.querySelectorAll('select,input[type=text]').forEach(el => el.disabled = !enabled);
+    const sub = document.getElementById(prefix + 'Sub');
+    if (sub) sub.querySelectorAll('input').forEach(el => el.disabled = !enabled);
+  }
+
+  function toggleGroup3(enabled){
+    document.getElementById('grp3ThresholdRow').style.display = enabled ? 'block' : 'none';
+    document.getElementById('grp3Fields').style.display = enabled ? 'grid' : 'none';
+  }
+
+  let running = false;
+  function runAutoSlope(){
+    if (running) return;
+    running = true;
+    const btn = document.getElementById('runBtn');
+    btn.textContent = 'Processing...';
+    btn.classList.add('processing');
+    btn.disabled = true;
+
+    const start = performance.now();
+    setTimeout(()=>{
+      const dur = Math.round(performance.now() - start) + 760;
+      btn.textContent = '✓ Complete';
+      btn.classList.remove('processing');
+      btn.classList.add('complete');
+
+      document.getElementById('mDuration').textContent = dur;
+      document.getElementById('mVerticesProcessed').textContent = 46;
+      document.getElementById('mCurves').textContent = 12;
+
+      const entries = [...logPanel.children].map(r => [
+        r.querySelector('.t').textContent.replace(/[\[\]]/g,''),
+        [...r.classList].find(c=>c!=='log-row'),
+        r.querySelector('.m').textContent
+      ]);
+      const now = new Date();
+      const t = now.toTimeString().slice(0,8);
+      entries.push([t,'success','Run completed in ' + dur + ' ms. Slope applied to 46 vertices.']);
+      renderLog(entries);
+
+      setTimeout(()=>{
+        btn.textContent = 'Run AutoSlope';
+        btn.classList.remove('complete');
+        btn.disabled = false;
+        running = false;
+      }, 1800);
+    }, 1100);
+  }
+</script>
