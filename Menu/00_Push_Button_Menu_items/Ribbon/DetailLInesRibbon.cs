@@ -1,5 +1,6 @@
 using Autodesk.Revit.UI;
 using Revit26_Plugin.Resources.Icons;
+using System.Collections.Generic;
 
 namespace Revit26_Plugin.Menu.Ribbon
 {
@@ -9,27 +10,23 @@ namespace Revit26_Plugin.Menu.Ribbon
         {
             RibbonPanel panel = app.CreateRibbonPanel(tabName, "Detail Lines");
 
-            //Create Sections Menu
-            PulldownButton DeatailLInesCreate = panel.AddItem(new PulldownButtonData("Create", "Create")) as PulldownButton;
-            DeatailLInesCreate.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.Addlines_32.png");
-            DeatailLInesCreate.AddPushButton(new PushButtonData("Btn_ DeatailLInes VA003", "Create Detail Lines From Linked Files — VA003", assemblyPath, "Revit26_Plugin.LinkedDetailLineGenerator.VA003.Commands.OpenLinkedDetailLineGeneratorCommand")
+            var buttons = new List<PushButtonData>
             {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.CreateDetailLines.png")
-            });
-            DeatailLInesCreate.AddPushButton(new PushButtonData("Btn_ DeatailLInes VA006", "Create Detail Lines From Linked Files — VA006", assemblyPath, "Revit26_Plugin.LinkedDetailLineGenerator.VA006.Commands.OpenLinkedDetailLineGeneratorCommand")
-            {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.Linematch32.png")
-            });
-
-            //Process Menu
-            PulldownButton DeatailLInesProcess = panel.AddItem(new PulldownButtonData("Process", "Process")) as PulldownButton;
-            DeatailLInesProcess.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.Looper_32.png");
-            PushButtonData closedLoopButtonData = new PushButtonData("Btn_DetailLineClosedLoop_V001", "Detail Line Closed Loop — V001", assemblyPath, "Revit26_Plugin.DetailLineClosedLoop.V001.Commands.DetailLineClosedLoopCommand")
-            {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.ClosedLoop_32.png")
+                new PushButtonData("Btn_ DeatailLInes VA003", "Create Detail Lines From Linked Files — VA003", assemblyPath, "Revit26_Plugin.LinkedDetailLineGenerator.VA003.Commands.OpenLinkedDetailLineGeneratorCommand")
+                {
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.CreateDetailLines.png")
+                },
+                new PushButtonData("Btn_ DeatailLInes VA006", "Create Detail Lines From Linked Files — VA006", assemblyPath, "Revit26_Plugin.LinkedDetailLineGenerator.VA006.Commands.OpenLinkedDetailLineGeneratorCommand")
+                {
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.Linematch32.png")
+                },
+                new PushButtonData("Btn_DetailLineClosedLoop_V001", "Detail Line Closed Loop — V001", assemblyPath, "Revit26_Plugin.DetailLineClosedLoop.V001.Commands.DetailLineClosedLoopCommand")
+                {
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.ClosedLoop_32.png")
+                },
             };
-            DeatailLInesProcess.AddPushButton(closedLoopButtonData);
 
+            RibbonLayoutHelper.AddStackedButtons(panel, buttons);
         }
     }
 }
