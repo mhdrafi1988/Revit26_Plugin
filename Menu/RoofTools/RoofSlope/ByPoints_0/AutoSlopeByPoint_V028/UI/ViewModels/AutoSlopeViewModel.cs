@@ -180,6 +180,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint.V028.UI.ViewModels
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(RunDurationDisplay))]
         [NotifyPropertyChangedFor(nameof(RunDuration_ms))]
+        [NotifyPropertyChangedFor(nameof(RunTimingDisplay))]
         private int runDuration_sec;
 
         // Displayed in milliseconds: whole-seconds value from the engine × 1000
@@ -193,6 +194,22 @@ namespace Revit26_Plugin.AutoSlopeByPoint.V028.UI.ViewModels
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(SummaryText))]
         private string runDate;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(SummaryText))]
+        [NotifyPropertyChangedFor(nameof(RunTimingDisplay))]
+        private string runStartTime;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(SummaryText))]
+        [NotifyPropertyChangedFor(nameof(RunTimingDisplay))]
+        private string runEndTime;
+
+        // Single combined line for the Export section: start time, end time, total seconds.
+        public string RunTimingDisplay =>
+            string.IsNullOrEmpty(RunStartTime)
+                ? "Start: —   End: —   Total: — sec"
+                : $"Start: {RunStartTime}   End: {RunEndTime}   Total: {RunDuration_sec} sec";
 
         // ── Circle Marker result counts (V026) ───────────────────────────────
         [ObservableProperty]
@@ -219,6 +236,7 @@ Highest Elevation        : {HighestElevationDisplay}
 Longest Path             : {LongestPathDisplay}
 Run Duration             : {RunDurationDisplay}
 Run Date                 : {RunDate}
+Run Start / End          : {RunStartTime} / {RunEndTime}
 Export Folder            : {ExportFolderPath}
 Circles Placed           : {DrainCirclesPlaced} drain / {HighestCirclesPlaced} highest / {OffsetCirclesPlaced} offset";
 
@@ -468,6 +486,8 @@ Circles Placed           : {DrainCirclesPlaced} drain / {HighestCirclesPlaced} h
                         LongestPath_m       = result.LongestPath_m;
                         RunDuration_sec     = result.RunDuration_sec;
                         RunDate             = result.RunDate;
+                        RunStartTime        = result.RunStartTime;
+                        RunEndTime          = result.RunEndTime;
                         CurvesCalculated    = result.CurvesCalculated;
 
                         DrainCirclesPlaced   = result.DrainCirclesPlaced;
