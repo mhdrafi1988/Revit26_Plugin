@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:shared="clr-namespace:Revit26_Plugin.Shared.Models"       
+        xmlns:local="clr-namespace:Revit26_Plugin.AutoSlopeByPoint.V028.UI.Views"
         mc:Ignorable="d"
         Title="AutoSlope — V028"
         Width="1160"
@@ -30,6 +31,7 @@
             <shared:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibility"/>
             <shared:LogLevelToColorConverter        x:Key="LogLevelToColor"/>
             <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
+            <local:SlopePercentTextConverter    x:Key="SlopePercentText"/>
         </ResourceDictionary>
     </Window.Resources>
 
@@ -77,7 +79,11 @@
                         <StackPanel Grid.Column="0">
                             <TextBlock Text="Percentage" Style="{StaticResource FieldLabel}"/>
                             <ComboBox ItemsSource="{Binding SlopeOptions}"
-                                      SelectedItem="{Binding SlopePercent, Mode=TwoWay}">
+                                      SelectedItem="{Binding SlopePercent, Mode=TwoWay}"
+                                      IsEditable="True"
+                                      IsTextSearchEnabled="False"
+                                      Text="{Binding SlopePercent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource SlopePercentText}}"
+                                      ToolTip="Pick a preset slope, or type a custom percentage.">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding StringFormat={}{0}%}"/>
