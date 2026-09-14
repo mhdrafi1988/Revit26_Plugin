@@ -10,15 +10,13 @@ namespace Revit26_Plugin.Menu.Ribbon
         {
             RibbonPanel panel = app.CreateRibbonPanel(tabName, "Dimensions");
 
-            var buttons = new List<PushButtonData>
+            RibbonLayoutHelper.AddStackedButtons(panel, new List<PushButtonData>
             {
-                new PushButtonData("Btn_DtlLine_08", "Auto Dim Detail Line — V008", assemblyPath, "Revit26_Plugin.DtlLineDim.V008.Commands.DtlLineDimCommand")
+                new PushButtonData("Btn_DtlLine_08", "Auto Dim Detail Line", assemblyPath, "Revit26_Plugin.DtlLineDim.V008.Commands.DtlLineDimCommand")
                 {
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Dimensions.AutoDimDetailLine_32.png")
                 },
-            };
-
-            RibbonLayoutHelper.AddStackedButtons(panel, buttons);
+            });
         }
     }
 }

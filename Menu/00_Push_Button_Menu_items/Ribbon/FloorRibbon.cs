@@ -6,24 +6,21 @@ namespace Revit26_Plugin.Menu.Ribbon
 {
     public static class FloorToolsRibbon
     {
-
         public static void Build(UIControlledApplication app, string tabName, string assemblyPath)
         {
             RibbonPanel panel = app.CreateRibbonPanel(tabName, "Floor Tools");
 
-            var buttons = new List<PushButtonData>
+            RibbonLayoutHelper.AddStackedButtons(panel, new List<PushButtonData>
             {
-                new PushButtonData("Btn_FloorsAndRoofFromLinkedRoomsViaPlanViewV004", "Floors And Roof From Linked Rooms (Via Plan View) — V004", assemblyPath, "Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V004.Command")
+                new PushButtonData("Btn_FloorsAndRoofFromLinkedRoomsViaPlanViewV004", "Floors And Roof From Linked Rooms (Via Plan View)", assemblyPath, "Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V004.Command")
                 {
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.FloorTools.FloorRoofFromRoomsPlanView_32.png")
                 },
-                new PushButtonData("Btn_FloorsAndRoofFromLinkedRooms_V011", "Floors And Roof From Linked Rooms — V011", assemblyPath, "Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011.Command")
+                new PushButtonData("Btn_FloorsAndRoofFromLinkedRooms_V011", "Floors And Roof From Linked Rooms", assemblyPath, "Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011.Command")
                 {
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.FloorTools.FloorRoofFromRooms_32.png")
                 },
-            };
-
-            RibbonLayoutHelper.AddStackedButtons(panel, buttons);
+            });
         }
     }
 }
