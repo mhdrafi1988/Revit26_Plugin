@@ -13,11 +13,7 @@ namespace Revit26_Plugin.Menu.Ribbon
         {
             RibbonPanel panel = app.CreateRibbonPanel(tabName, "Roof Tools");
 
-            PushButton combinedBtn = panel.AddItem(new PushButtonData(
-                "Btn_CombinedRoofTools_V001",
-                "Combined\nRoof Tools",
-                assemblyPath,
-                "Revit26_Plugin.CombinedRoofTools.V001.Commands.CombinedRoofToolsCommand")) as PushButton;
+            PushButton combinedBtn = panel.AddItem(new PushButtonData("Btn_CombinedRoofTools_V001","Combined\nRoof Tools", assemblyPath,"Revit26_Plugin.CombinedRoofTools.V001.Commands.CombinedRoofToolsCommand")) as PushButton;
             combinedBtn.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.CombinedTools_32.png");
             combinedBtn.ToolTip = "Inner Loop Divider, Inner Loops And Perpendicular, Outer Curve Divider, " +
                 "Auto Slope By Drain, and Creaser Adv — combined in one window with one shared roof pick. " +
