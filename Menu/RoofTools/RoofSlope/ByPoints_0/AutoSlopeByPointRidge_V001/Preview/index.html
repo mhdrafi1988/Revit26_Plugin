@@ -1,0 +1,763 @@
+<title>Ridge Slope Preview</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#F3F5F2; --surface:#FFFFFF; --surface-2:#FAFBF9;
+    --ink:#1A2420; --muted:#5C6B63; --muted-2:#7C8A82; --border:#D8DED9; --border-strong:#C4CDC5;
+    --accent:#1E6E8C; --accent-soft:#DDEBF0; --accent-ink:#0F4054;
+    --ridge:#9A3B72; --ridge-soft:#F3E1EC; --ridge-ink:#5E2145;
+    --success:#2E7D5B; --success-soft:#DCEEE4;
+    --warning:#B5762B; --warning-soft:#F5E6D2;
+    --drain:#1E6E8C; --highest:#B5442E; --offset:#B5762B;
+    --basin-d:#5B6FA8; --basin-e:#A85B3E; --basin-f:#3F8C74;
+    --shadow: 0 1px 2px rgba(20,30,25,0.06), 0 8px 24px -12px rgba(20,30,25,0.18);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#11170F; --surface:#171F1B; --surface-2:#1C2521;
+      --ink:#E7EDE7; --muted:#9CACA1; --muted-2:#7E9086; --border:#2B3630; --border-strong:#3A473F;
+      --basin-d:#93A4DE; --basin-e:#E0977C; --basin-f:#7FC9AE;
+      --accent:#6BBBD9; --accent-soft:#1C3540; --accent-ink:#BFE6F2;
+      --ridge:#E48FC0; --ridge-soft:#3B2333; --ridge-ink:#F3C3DE;
+      --success:#74CBA0; --success-soft:#1D3327;
+      --warning:#E5AC68; --warning-soft:#3A2C16;
+      --drain:#6BBBD9; --highest:#E58A73; --offset:#E5AC68;
+      --shadow: 0 1px 2px rgba(0,0,0,0.35), 0 12px 28px -14px rgba(0,0,0,0.6);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#11170F; --surface:#171F1B; --surface-2:#1C2521;
+    --ink:#E7EDE7; --muted:#9CACA1; --muted-2:#7E9086; --border:#2B3630; --border-strong:#3A473F;
+    --basin-d:#93A4DE; --basin-e:#E0977C; --basin-f:#7FC9AE;
+    --accent:#6BBBD9; --accent-soft:#1C3540; --accent-ink:#BFE6F2;
+    --ridge:#E48FC0; --ridge-soft:#3B2333; --ridge-ink:#F3C3DE;
+    --success:#74CBA0; --success-soft:#1D3327;
+    --warning:#E5AC68; --warning-soft:#3A2C16;
+    --drain:#6BBBD9; --highest:#E58A73; --offset:#E5AC68;
+    --shadow: 0 1px 2px rgba(0,0,0,0.35), 0 12px 28px -14px rgba(0,0,0,0.6);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    padding-inline:20px; padding-block:28px 64px;
+  }
+  .num{ font-family:"IBM Plex Mono", ui-monospace, monospace; font-variant-numeric:tabular-nums; }
+
+  .sheet{ max-width:1040px; margin:0 auto; }
+
+  /* ── Title block ───────────────────────────────────────── */
+  .titleblock{
+    display:flex; justify-content:space-between; align-items:flex-end; gap:16px;
+    border-bottom:2px solid var(--ink); padding-bottom:16px; margin-bottom:8px; flex-wrap:wrap;
+  }
+  .titleblock h1{
+    font-size:clamp(1.5rem, 1.1rem + 1.6vw, 2.1rem); margin:0 0 4px; font-weight:700;
+    text-wrap:balance; letter-spacing:-0.01em;
+  }
+  .titleblock .sub{ color:var(--muted); font-size:0.95rem; }
+  .meta{ text-align:right; font-size:0.78rem; color:var(--muted); line-height:1.6; }
+  .meta .num{ color:var(--ink); }
+  .badge{
+    display:inline-flex; align-items:center; gap:6px; font-size:0.72rem; font-weight:600;
+    text-transform:uppercase; letter-spacing:0.06em; color:var(--accent-ink);
+    background:var(--accent-soft); border:1px solid var(--accent); border-radius:999px;
+    padding:3px 10px; margin-top:16px;
+  }
+  .badge svg{ width:11px; height:11px; }
+
+  .lede{
+    font-size:1rem; color:var(--muted); max-width:64ch; margin:18px 0 30px; line-height:1.6;
+  }
+  .lede strong{ color:var(--ink); font-weight:600; }
+
+  section{ margin-block:36px; }
+  .section-label{
+    font-size:0.72rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em;
+    color:var(--muted-2); margin-bottom:10px; display:flex; align-items:center; gap:10px;
+  }
+  .section-label::after{ content:""; flex:1; height:1px; background:var(--border); }
+
+  /* ── Schematic card ────────────────────────────────────── */
+  .schematic{
+    background:var(--surface); border:1px solid var(--border); border-radius:10px;
+    padding:20px; box-shadow:var(--shadow);
+  }
+  .schematic-head{ display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:10px;}
+  .schematic-head h2{ font-size:1.05rem; margin:0 0 4px; font-weight:600; }
+  .schematic-head p{ margin:0; color:var(--muted); font-size:0.86rem; max-width:52ch; }
+  .legend{ display:flex; gap:14px; flex-wrap:wrap; font-size:0.78rem; color:var(--muted); align-items:center; }
+  .legend span{ display:inline-flex; align-items:center; gap:6px; }
+  .swatch{ width:10px; height:10px; border-radius:50%; display:inline-block; flex:none; }
+
+  .diagram-wrap{ overflow-x:auto; }
+  svg.plan{ display:block; width:100%; height:auto; min-width:520px; }
+  .plan text{ font-family:"IBM Plex Mono", monospace; fill:var(--muted); }
+  .plan .label-strong{ fill:var(--ink); font-weight:600; }
+  svg.plan-multi{ min-width:460px; }
+
+  .group-chips{ display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+  .chip{
+    display:inline-flex; align-items:center; gap:7px; font-size:0.78rem; color:var(--ink);
+    background:var(--surface-2); border:1px solid var(--border); border-radius:999px; padding:4px 11px 4px 8px;
+  }
+  .chip .swatch{ width:9px; height:9px; }
+  .chip .num{ color:var(--muted); }
+  .callout-note{
+    display:flex; gap:10px; align-items:flex-start; margin-top:14px; padding:11px 13px;
+    background:var(--warning-soft); border:1px solid var(--warning); border-radius:8px;
+    font-size:0.82rem; color:var(--ink); line-height:1.55;
+  }
+  .callout-note svg{ width:16px; height:16px; flex:none; margin-top:2px; color:var(--warning); }
+
+  .steps{
+    margin-top:16px; padding-top:16px; border-top:1px dashed var(--border);
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:14px;
+  }
+  .step{ font-size:0.82rem; color:var(--muted); line-height:1.5; }
+  .step b{
+    color:var(--accent-ink); font-family:"IBM Plex Mono",monospace; font-weight:600;
+    display:inline-block; margin-right:4px;
+  }
+  .step .t{ color:var(--ink); font-weight:600; display:block; margin-bottom:2px; }
+
+  /* ── Window recreation ────────────────────────────────── */
+  .window{
+    background:var(--surface-2); border:1px solid var(--border-strong); border-radius:12px;
+    box-shadow:var(--shadow); overflow:hidden;
+  }
+  .window-bar{
+    display:flex; align-items:center; gap:8px; padding:9px 14px;
+    background:var(--surface); border-bottom:1px solid var(--border); font-size:0.78rem; color:var(--muted);
+  }
+  .dot{ width:9px; height:9px; border-radius:50%; background:var(--border-strong); }
+  .window-bar .title{ margin-left:6px; font-weight:600; color:var(--ink); }
+  .window-body{
+    display:grid; grid-template-columns:290px 1fr; gap:16px; padding:18px;
+  }
+  @media (max-width:760px){ .window-body{ grid-template-columns:1fr; } }
+
+  .card{
+    background:var(--surface); border:1px solid var(--border); border-radius:8px;
+    padding:14px; margin-bottom:14px;
+  }
+  .card:last-child{ margin-bottom:0; }
+  .card h3{
+    font-size:0.72rem; font-weight:600; text-transform:uppercase; letter-spacing:0.07em;
+    color:var(--muted-2); margin:0 0 10px;
+  }
+  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .field label{ display:block; font-size:0.72rem; color:var(--muted); margin-bottom:4px; }
+  .field .value{
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+    border:1px solid var(--border); border-radius:6px; padding:6px 9px; background:var(--surface-2);
+    font-size:0.86rem;
+  }
+  .field .value .num{ font-weight:500; }
+
+  .toggle-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:2px; }
+  .toggle-row label{ font-size:0.86rem; }
+  .toggle{
+    width:34px; height:19px; border-radius:999px; background:var(--success); position:relative; flex:none;
+  }
+  .toggle::after{
+    content:""; position:absolute; width:15px; height:15px; border-radius:50%; background:#fff;
+    top:2px; right:2px; box-shadow:0 1px 2px rgba(0,0,0,0.25);
+  }
+  .toggle.off{ background:var(--border-strong); }
+  .toggle.off::after{ right:auto; left:2px; }
+  .hint{ font-size:0.76rem; color:var(--muted); line-height:1.5; margin-top:8px; }
+
+  .marker-row{
+    display:flex; align-items:center; gap:10px; padding:7px 0; border-top:1px solid var(--border);
+    font-size:0.82rem;
+  }
+  .marker-row:first-of-type{ border-top:none; }
+  .ring{ width:14px; height:14px; border-radius:50%; border:2.5px solid; flex:none; }
+  .marker-row .name{ flex:1; }
+  .marker-row .spec{ color:var(--muted); font-size:0.76rem; }
+
+  /* metrics grid */
+  .metrics{ display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-bottom:8px; }
+  .metrics.six{ grid-template-columns:repeat(6,1fr); }
+  @media (max-width:760px){ .metrics, .metrics.six{ grid-template-columns:repeat(3,1fr); } }
+  @media (max-width:460px){ .metrics, .metrics.six{ grid-template-columns:repeat(2,1fr); } }
+  .metric{
+    background:var(--surface); border:1px solid var(--border); border-radius:8px;
+    padding:10px 8px; text-align:center;
+  }
+  .metric .k{ font-size:0.66rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.04em; }
+  .metric .v{ font-size:1.05rem; font-weight:600; margin:3px 0 1px; }
+  .metric .u{ font-size:0.66rem; color:var(--muted-2); }
+  .metric.ridge .v{ color:var(--ridge); }
+  .metric.drain .v{ color:var(--drain); }
+
+  .run-actions{ display:flex; gap:10px; align-items:center; margin:14px 0; flex-wrap:wrap; }
+  .btn{
+    font-family:inherit; font-size:0.82rem; font-weight:600; border-radius:7px; padding:8px 16px;
+    border:1px solid var(--border-strong); background:var(--surface); color:var(--ink); cursor:default;
+  }
+  .btn.primary{ background:var(--success); border-color:var(--success); color:#fff; }
+  .btn.ghost{ background:transparent; }
+  .run-actions .status{ font-size:0.8rem; color:var(--success); font-weight:600; }
+
+  .log{
+    background:#12181A; border-radius:8px; padding:10px 12px; font-size:0.76rem; line-height:1.65;
+    font-family:"IBM Plex Mono",monospace; max-height:230px; overflow-y:auto;
+  }
+  :root[data-theme="light"] .log, :root:not([data-theme="dark"]) .log{ background:#151C1E; }
+  .log div{ color:#B7C4C0; white-space:pre-wrap; }
+  .log .t{ color:#6A7A75; }
+  .log .lvl-info{ color:#7FC7D9; }
+  .log .lvl-success{ color:#7FD9A6; }
+  .log .lvl-warn{ color:#E3B36B; }
+
+  /* table */
+  .table-wrap{ overflow-x:auto; background:var(--surface); border:1px solid var(--border); border-radius:10px; box-shadow:var(--shadow); }
+  table{ border-collapse:collapse; width:100%; min-width:660px; font-size:0.82rem; }
+  thead th{
+    text-align:right; font-weight:600; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.04em;
+    color:var(--muted); padding:10px 12px; border-bottom:1px solid var(--border-strong); background:var(--surface-2);
+    white-space:nowrap;
+  }
+  thead th:first-child, thead th:nth-child(2){ text-align:left; }
+  tbody td{ padding:8px 12px; text-align:right; border-bottom:1px solid var(--border); white-space:nowrap; }
+  tbody td:first-child, tbody td:nth-child(2){ text-align:left; }
+  tbody tr:last-child td{ border-bottom:none; }
+  tr.ridge-row td{ background:var(--ridge-soft); }
+  tr.ridge-row td:first-child{ box-shadow:inset 3px 0 0 var(--ridge); }
+  .pill{
+    display:inline-block; font-size:0.68rem; font-weight:600; padding:1px 8px; border-radius:999px;
+  }
+  .pill.yes{ background:var(--ridge-soft); color:var(--ridge-ink); }
+  .pill.no{ background:var(--surface-2); color:var(--muted); border:1px solid var(--border); }
+
+  footer{
+    margin-top:44px; padding-top:16px; border-top:1px solid var(--border);
+    font-size:0.78rem; color:var(--muted-2); display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;
+  }
+</style>
+
+<div class="sheet">
+
+  <div class="titleblock">
+    <div>
+      <h1>Auto Slope By Point — Ridge V001</h1>
+      <div class="sub">Roof Tools · Auto Slope · Revit 2026</div>
+    </div>
+    <div class="meta">
+      Drawing type <span class="num">UI PREVIEW</span><br>
+      Base tool <span class="num">V028</span><br>
+      Branch <span class="num">ridge-point-detection</span>
+    </div>
+  </div>
+
+  <p class="lede">
+    A static preview of the tool's window and the ridge logic behind it — built to review the design
+    <strong>before opening Revit</strong>. The real tool is a WPF window inside the plugin, not a web page;
+    nothing here is wired up or interactive.
+  </p>
+  <span class="badge">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 8v5M12 16.5v.01"/><circle cx="12" cy="12" r="9.5"/></svg>
+    Preview only — not the running application
+  </span>
+
+  <!-- ══════════════════════════════ SCHEMATIC ══════════════════════════════ -->
+  <section>
+    <div class="section-label">How a ridge point gets its elevation</div>
+    <div class="schematic">
+      <div class="schematic-head">
+        <div>
+          <h2>Plan view — two drain groups, one roof</h2>
+          <p>Drains at <span class="num">(2.0, 2.0)</span> m and <span class="num">(8.0, 0.0)</span> m — deliberately
+            off-centre. The ridge lands wherever the roof-path distances to each drain tie, not at the geometric middle.</p>
+        </div>
+        <div class="legend">
+          <span><i class="swatch" style="background:var(--drain)"></i>Drain</span>
+          <span><i class="swatch" style="background:var(--ridge)"></i>Ridge point</span>
+          <span><i class="swatch" style="background:var(--muted-2);opacity:.5"></i>Basin edge</span>
+        </div>
+      </div>
+
+      <div class="diagram-wrap">
+        <svg class="plan" viewBox="0 0 620 300" role="img" aria-label="Roof plan showing two drain basins split by a ridge line, with arrows from ridge points down to each drain">
+          <!-- roof outline -->
+          <rect x="40" y="30" width="540" height="220" fill="none" stroke="var(--border-strong)" stroke-width="1.5"/>
+          <!-- basin fill: split roughly by the true Voronoi boundary from the simulation -->
+          <path d="M40,30 L40,250 L246,250 L330,180 L400,120 L470,30 Z" fill="var(--accent)" opacity="0.06"/>
+          <path d="M580,30 L580,250 L246,250 L330,180 L400,120 L470,30 Z" fill="var(--ridge)" opacity="0.055"/>
+
+          <!-- basin boundary (the ridge line) -->
+          <polyline points="246,250 292,215 330,180 365,150 400,120 435,75 470,30"
+                    fill="none" stroke="var(--ridge)" stroke-width="2" stroke-dasharray="1 7" stroke-linecap="round"/>
+
+          <!-- ridge points along the boundary -->
+          <g>
+            <circle cx="292" cy="215" r="5" fill="var(--surface)" stroke="var(--ridge)" stroke-width="2.5"/>
+            <circle cx="330" cy="180" r="5" fill="var(--surface)" stroke="var(--ridge)" stroke-width="2.5"/>
+            <circle cx="365" cy="150" r="5" fill="var(--surface)" stroke="var(--ridge)" stroke-width="2.5"/>
+            <circle cx="400" cy="120" r="6" fill="var(--surface)" stroke="var(--ridge)" stroke-width="3"/>
+            <circle cx="435" cy="75" r="5" fill="var(--surface)" stroke="var(--ridge)" stroke-width="2.5"/>
+          </g>
+
+          <!-- drains -->
+          <circle cx="160" cy="190" r="9" fill="var(--drain)"/>
+          <text x="160" y="212" text-anchor="middle" font-size="11" class="label-strong">Drain A</text>
+          <text x="160" y="225" text-anchor="middle" font-size="9.5">0 mm · group 0</text>
+
+          <circle cx="480" cy="60" r="9" fill="var(--drain)"/>
+          <text x="480" y="82" text-anchor="middle" font-size="11" class="label-strong">Drain B</text>
+          <text x="480" y="95" text-anchor="middle" font-size="9.5">0 mm · group 1</text>
+
+          <!-- flow arrows from the governing ridge point to both drains -->
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/>
+            </marker>
+          </defs>
+          <line x1="400" y1="120" x2="172" y2="185" stroke="var(--muted)" stroke-width="1.3" marker-end="url(#arrow)" opacity="0.75"/>
+          <line x1="400" y1="120" x2="468" y2="68" stroke="var(--muted)" stroke-width="1.3" marker-end="url(#arrow)" opacity="0.75"/>
+
+          <!-- governing ridge callout -->
+          <text x="408" y="112" font-size="10.5" class="label-strong" fill="var(--ridge-ink)">88 mm</text>
+          <text x="408" y="124" font-size="9">= 1.5% × 5.87 m to Drain B (the farther one)</text>
+
+          <text x="292" y="234" font-size="9">57 mm</text>
+          <text x="470" y="50" font-size="9">40 mm</text>
+        </svg>
+      </div>
+
+      <div class="steps">
+        <div class="step"><span class="t"><b>1</b>Group drains</span>Drains within the group radius (1000 mm) become one drain; each remaining group is a separate outlet.</div>
+        <div class="step"><span class="t"><b>2</b>Path-distance basins</span>Every roof point joins the basin of whichever group is closer along the roof surface — around openings, along arcs.</div>
+        <div class="step"><span class="t"><b>3</b>Find the ridge</span>Points sitting on a basin boundary are ridge points — this is the Voronoi seam, so it's rarely centred.</div>
+        <div class="step"><span class="t"><b>4</b>Lift to the far drain</span>Ridge height = slope × path to the <em>farthest</em> surrounding basin, so every side gets at least the given slope.</div>
+        <div class="step"><span class="t"><b>5</b>Move the watershed</span>Points behind a ridge re-flow to the far drain at exactly the given slope — nothing ponds.</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════ MULTI-DRAIN CASE ══════════════════════════════ -->
+  <section>
+    <div class="section-label">In practice — six randomly placed drains</div>
+    <div class="schematic">
+      <div class="schematic-head">
+        <div>
+          <h2>Same 18 × 11 m roof, drains dropped without a pattern</h2>
+          <p>Two drains land close together and merge into one outlet (dashed circle = the 1.0 m group radius);
+            the other four stay separate. Five outlets in total, each pulling its own basin — every seam between
+            two basins is a run of ridge points, raised just enough to still hit 1.5% towards the farther side.</p>
+        </div>
+        <div class="legend">
+          <span><i class="swatch" style="background:var(--ridge);border:none;box-shadow:0 0 0 2px var(--ridge) inset;"></i>Ridge point</span>
+          <span><i class="swatch" style="background:transparent;border:1.5px dashed var(--muted-2);"></i>Group radius</span>
+        </div>
+      </div>
+
+      <div class="diagram-wrap">
+        <svg class="plan plan-multi" viewBox="0 0 608 394" role="img" aria-label="Roof plan with six randomly placed drains grouped into five outlets, showing the resulting drain basins and ridge points">
+<rect x="34" y="30" width="540" height="330" fill="none" stroke="var(--border-strong)" stroke-width="1.5"/>
+<rect x="34.0" y="330.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="64.0" y="330.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="94.0" y="330.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="124.0" y="330.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="154.0" y="330.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="184.0" y="330.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="214.0" y="330.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="244.0" y="330.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="274.0" y="330.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="304.0" y="330.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="334.0" y="330.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="364.0" y="330.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="394.0" y="330.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="424.0" y="330.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="454.0" y="330.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="484.0" y="330.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="514.0" y="330.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="544.0" y="330.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="34.0" y="300.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="64.0" y="300.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="94.0" y="300.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="124.0" y="300.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="154.0" y="300.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="184.0" y="300.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="214.0" y="300.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="244.0" y="300.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="274.0" y="300.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="304.0" y="300.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="334.0" y="300.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="364.0" y="300.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="394.0" y="300.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="424.0" y="300.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="454.0" y="300.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="484.0" y="300.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="514.0" y="300.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="544.0" y="300.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="34.0" y="270.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="64.0" y="270.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="94.0" y="270.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="124.0" y="270.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="154.0" y="270.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="184.0" y="270.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="214.0" y="270.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="244.0" y="270.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="274.0" y="270.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="304.0" y="270.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="334.0" y="270.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="364.0" y="270.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="394.0" y="270.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="424.0" y="270.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="454.0" y="270.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="484.0" y="270.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="514.0" y="270.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="544.0" y="270.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="34.0" y="240.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="64.0" y="240.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="94.0" y="240.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="124.0" y="240.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="154.0" y="240.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="184.0" y="240.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="214.0" y="240.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="244.0" y="240.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="274.0" y="240.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="304.0" y="240.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="334.0" y="240.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="364.0" y="240.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="394.0" y="240.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="424.0" y="240.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="454.0" y="240.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="484.0" y="240.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="514.0" y="240.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="544.0" y="240.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="34.0" y="210.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="64.0" y="210.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="94.0" y="210.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="124.0" y="210.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="154.0" y="210.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="184.0" y="210.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="214.0" y="210.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="244.0" y="210.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="274.0" y="210.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="304.0" y="210.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="334.0" y="210.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="364.0" y="210.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="394.0" y="210.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="424.0" y="210.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="454.0" y="210.0" width="30.0" height="30.0" fill="var(--basin-d)" opacity="0.16"/>
+<rect x="484.0" y="210.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="514.0" y="210.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="544.0" y="210.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="34.0" y="180.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="64.0" y="180.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="94.0" y="180.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="124.0" y="180.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="154.0" y="180.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="184.0" y="180.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="214.0" y="180.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="244.0" y="180.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="274.0" y="180.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="304.0" y="180.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="334.0" y="180.0" width="30.0" height="30.0" fill="var(--warning)" opacity="0.16"/>
+<rect x="364.0" y="180.0" width="30.0" height="30.0" fill="var(--warning)" opacity="0.16"/>
+<rect x="394.0" y="180.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="424.0" y="180.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="454.0" y="180.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="484.0" y="180.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="514.0" y="180.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="544.0" y="180.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="34.0" y="150.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="64.0" y="150.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="94.0" y="150.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="124.0" y="150.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="154.0" y="150.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="184.0" y="150.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="214.0" y="150.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="244.0" y="150.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="274.0" y="150.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="304.0" y="150.0" width="30.0" height="30.0" fill="var(--warning)" opacity="0.16"/>
+<rect x="334.0" y="150.0" width="30.0" height="30.0" fill="var(--warning)" opacity="0.16"/>
+<rect x="364.0" y="150.0" width="30.0" height="30.0" fill="var(--warning)" opacity="0.16"/>
+<rect x="394.0" y="150.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="424.0" y="150.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="454.0" y="150.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="484.0" y="150.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="514.0" y="150.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="544.0" y="150.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="34.0" y="120.0" width="30.0" height="30.0" fill="var(--accent)" opacity="0.16"/>
+<rect x="64.0" y="120.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="94.0" y="120.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="124.0" y="120.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="154.0" y="120.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="184.0" y="120.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="214.0" y="120.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="244.0" y="120.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="274.0" y="120.0" width="30.0" height="30.0" fill="var(--warning)" opacity="0.16"/>
+<rect x="304.0" y="120.0" width="30.0" height="30.0" fill="var(--warning)" opacity="0.16"/>
+<rect x="334.0" y="120.0" width="30.0" height="30.0" fill="var(--warning)" opacity="0.16"/>
+<rect x="364.0" y="120.0" width="30.0" height="30.0" fill="var(--warning)" opacity="0.16"/>
+<rect x="394.0" y="120.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="424.0" y="120.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="454.0" y="120.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="484.0" y="120.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="514.0" y="120.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="544.0" y="120.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="34.0" y="90.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="64.0" y="90.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="94.0" y="90.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="124.0" y="90.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="154.0" y="90.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="184.0" y="90.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="214.0" y="90.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="244.0" y="90.0" width="30.0" height="30.0" fill="var(--warning)" opacity="0.16"/>
+<rect x="274.0" y="90.0" width="30.0" height="30.0" fill="var(--warning)" opacity="0.16"/>
+<rect x="304.0" y="90.0" width="30.0" height="30.0" fill="var(--warning)" opacity="0.16"/>
+<rect x="334.0" y="90.0" width="30.0" height="30.0" fill="var(--warning)" opacity="0.16"/>
+<rect x="364.0" y="90.0" width="30.0" height="30.0" fill="var(--warning)" opacity="0.16"/>
+<rect x="394.0" y="90.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="424.0" y="90.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="454.0" y="90.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="484.0" y="90.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="514.0" y="90.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="544.0" y="90.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="34.0" y="60.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="64.0" y="60.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="94.0" y="60.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="124.0" y="60.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="154.0" y="60.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="184.0" y="60.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="214.0" y="60.0" width="30.0" height="30.0" fill="var(--warning)" opacity="0.16"/>
+<rect x="244.0" y="60.0" width="30.0" height="30.0" fill="var(--warning)" opacity="0.16"/>
+<rect x="274.0" y="60.0" width="30.0" height="30.0" fill="var(--warning)" opacity="0.16"/>
+<rect x="304.0" y="60.0" width="30.0" height="30.0" fill="var(--warning)" opacity="0.16"/>
+<rect x="334.0" y="60.0" width="30.0" height="30.0" fill="var(--warning)" opacity="0.16"/>
+<rect x="364.0" y="60.0" width="30.0" height="30.0" fill="var(--warning)" opacity="0.16"/>
+<rect x="394.0" y="60.0" width="30.0" height="30.0" fill="var(--warning)" opacity="0.16"/>
+<rect x="424.0" y="60.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="454.0" y="60.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="484.0" y="60.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="514.0" y="60.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="544.0" y="60.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="34.0" y="30.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="64.0" y="30.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="94.0" y="30.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="124.0" y="30.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="154.0" y="30.0" width="30.0" height="30.0" fill="var(--basin-e)" opacity="0.16"/>
+<rect x="184.0" y="30.0" width="30.0" height="30.0" fill="var(--warning)" opacity="0.16"/>
+<rect x="214.0" y="30.0" width="30.0" height="30.0" fill="var(--warning)" opacity="0.16"/>
+<rect x="244.0" y="30.0" width="30.0" height="30.0" fill="var(--warning)" opacity="0.16"/>
+<rect x="274.0" y="30.0" width="30.0" height="30.0" fill="var(--warning)" opacity="0.16"/>
+<rect x="304.0" y="30.0" width="30.0" height="30.0" fill="var(--warning)" opacity="0.16"/>
+<rect x="334.0" y="30.0" width="30.0" height="30.0" fill="var(--warning)" opacity="0.16"/>
+<rect x="364.0" y="30.0" width="30.0" height="30.0" fill="var(--warning)" opacity="0.16"/>
+<rect x="394.0" y="30.0" width="30.0" height="30.0" fill="var(--warning)" opacity="0.16"/>
+<rect x="424.0" y="30.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="454.0" y="30.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="484.0" y="30.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="514.0" y="30.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="544.0" y="30.0" width="30.0" height="30.0" fill="var(--success)" opacity="0.16"/>
+<rect x="34" y="30" width="540" height="330" fill="none" stroke="var(--border-strong)" stroke-width="1.5"/>
+<circle cx="289.0" cy="345.0" r="3.4" fill="var(--surface)" stroke="var(--ridge)" stroke-width="1.8"/>
+<circle cx="289.0" cy="315.0" r="3.4" fill="var(--surface)" stroke="var(--ridge)" stroke-width="1.8"/>
+<circle cx="259.0" cy="285.0" r="3.4" fill="var(--surface)" stroke="var(--ridge)" stroke-width="1.8"/>
+<circle cx="289.0" cy="285.0" r="3.4" fill="var(--surface)" stroke="var(--ridge)" stroke-width="1.8"/>
+<circle cx="229.0" cy="255.0" r="3.4" fill="var(--surface)" stroke="var(--ridge)" stroke-width="1.8"/>
+<circle cx="319.0" cy="255.0" r="3.4" fill="var(--surface)" stroke="var(--ridge)" stroke-width="1.8"/>
+<circle cx="169.0" cy="225.0" r="3.4" fill="var(--surface)" stroke="var(--ridge)" stroke-width="1.8"/>
+<circle cx="199.0" cy="225.0" r="3.4" fill="var(--surface)" stroke="var(--ridge)" stroke-width="1.8"/>
+<circle cx="349.0" cy="225.0" r="3.4" fill="var(--surface)" stroke="var(--ridge)" stroke-width="1.8"/>
+<circle cx="469.0" cy="225.0" r="3.4" fill="var(--surface)" stroke="var(--ridge)" stroke-width="1.8"/>
+<circle cx="499.0" cy="225.0" r="3.4" fill="var(--surface)" stroke="var(--ridge)" stroke-width="1.8"/>
+<circle cx="529.0" cy="225.0" r="3.4" fill="var(--surface)" stroke="var(--ridge)" stroke-width="1.8"/>
+<circle cx="559.0" cy="225.0" r="3.4" fill="var(--surface)" stroke="var(--ridge)" stroke-width="1.8"/>
+<circle cx="139.0" cy="195.0" r="3.4" fill="var(--surface)" stroke="var(--ridge)" stroke-width="1.8"/>
+<circle cx="349.0" cy="195.0" r="3.4" fill="var(--surface)" stroke="var(--ridge)" stroke-width="1.8"/>
+<circle cx="379.0" cy="195.0" r="3.4" fill="var(--surface)" stroke="var(--ridge)" stroke-width="1.8"/>
+<circle cx="109.0" cy="165.0" r="3.4" fill="var(--surface)" stroke="var(--ridge)" stroke-width="1.8"/>
+<circle cx="319.0" cy="165.0" r="3.4" fill="var(--surface)" stroke="var(--ridge)" stroke-width="1.8"/>
+<circle cx="49.0" cy="135.0" r="3.4" fill="var(--surface)" stroke="var(--ridge)" stroke-width="1.8"/>
+<circle cx="289.0" cy="135.0" r="3.4" fill="var(--surface)" stroke="var(--ridge)" stroke-width="1.8"/>
+<circle cx="259.0" cy="105.0" r="3.4" fill="var(--surface)" stroke="var(--ridge)" stroke-width="1.8"/>
+<circle cx="409.0" cy="105.0" r="3.4" fill="var(--surface)" stroke="var(--ridge)" stroke-width="1.8"/>
+<circle cx="229.0" cy="75.0" r="3.4" fill="var(--surface)" stroke="var(--ridge)" stroke-width="1.8"/>
+<circle cx="409.0" cy="75.0" r="3.4" fill="var(--surface)" stroke="var(--ridge)" stroke-width="1.8"/>
+<circle cx="199.0" cy="45.0" r="3.4" fill="var(--surface)" stroke="var(--ridge)" stroke-width="1.8"/>
+<circle cx="409.0" cy="45.0" r="3.4" fill="var(--surface)" stroke="var(--ridge)" stroke-width="1.8"/>
+<circle cx="118.0" cy="289.5" r="30.0" fill="none" stroke="var(--muted-2)" stroke-width="1" stroke-dasharray="3 4" opacity="0.8"/>
+<circle cx="109.0" cy="300.0" r="6.5" fill="var(--accent)" stroke="var(--surface)" stroke-width="1.6"/>
+<circle cx="127.0" cy="279.0" r="6.5" fill="var(--accent)" stroke="var(--surface)" stroke-width="1.6"/>
+<text x="118.0" y="277.5" text-anchor="middle" font-size="10.5" class="label-strong" fill="var(--accent)">G0</text>
+<circle cx="310.0" cy="81.0" r="6.5" fill="var(--warning)" stroke="var(--surface)" stroke-width="1.6"/>
+<text x="310.0" y="69.0" text-anchor="middle" font-size="10.5" class="label-strong" fill="var(--warning)">G1</text>
+<circle cx="499.0" cy="114.0" r="6.5" fill="var(--success)" stroke="var(--surface)" stroke-width="1.6"/>
+<text x="499.0" y="102.0" text-anchor="middle" font-size="10.5" class="label-strong" fill="var(--success)">G2</text>
+<circle cx="460.0" cy="312.0" r="6.5" fill="var(--basin-d)" stroke="var(--surface)" stroke-width="1.6"/>
+<text x="460.0" y="328.0" text-anchor="middle" font-size="10.5" class="label-strong" fill="var(--basin-d)">G3</text>
+<circle cx="223.0" cy="156.0" r="6.5" fill="var(--basin-e)" stroke="var(--surface)" stroke-width="1.6"/>
+<text x="223.0" y="144.0" text-anchor="middle" font-size="10.5" class="label-strong" fill="var(--basin-e)">G4</text>
+<text x="134.0" y="273.5" font-size="9" fill="var(--muted)">2 drains, 0.9 m apart</text>
+<text x="134.0" y="284.5" font-size="9" fill="var(--muted)">&#8594; merge into one outlet</text>
+<line x1="34.0" y1="105.0" x2="-12.0" y2="79.0" stroke="var(--ridge)" stroke-width="1" opacity="0.6"/>
+<text x="-12.0" y="65.0" font-size="10" class="label-strong" fill="var(--ridge-ink)" text-anchor="end">109 mm lift</text>
+<text x="-12.0" y="76.0" font-size="8.7" fill="var(--muted)" text-anchor="end">groups G0+G4 · 7.24 m to G0</text>
+</svg>
+      </div>
+
+      <div class="group-chips">
+        <span class="chip"><i class="swatch" style="background:var(--accent)"></i>G0 <span class="num">(2 drains merged)</span></span>
+            <span class="chip"><i class="swatch" style="background:var(--warning)"></i>G1</span>
+            <span class="chip"><i class="swatch" style="background:var(--success)"></i>G2</span>
+            <span class="chip"><i class="swatch" style="background:var(--basin-d)"></i>G3</span>
+            <span class="chip"><i class="swatch" style="background:var(--basin-e)"></i>G4</span>
+      </div>
+
+      <div class="callout-note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 16.5h.01"/><path d="M10.3 3.9 2 18a2 2 0 0 0 1.7 3h16.6a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+        <span>Rendered on a 1 m mosaic for legibility — the tool itself works at every roof-shape vertex, so this
+        run actually finds <span class="num">114</span> ridge points, not the <span class="num">26</span> markers shown.
+        Every basin seam has one; a busier drain layout means more of them, not a different rule.</span>
+      </div>
+
+      <div class="metrics" style="grid-template-columns:repeat(4,1fr); margin-top:16px;">
+        <div class="metric drain"><div class="k">Drains placed</div><div class="v num">6</div><div class="u">random points</div></div>
+        <div class="metric"><div class="k">Drain groups</div><div class="v num">5</div><div class="u">after merging</div></div>
+        <div class="metric ridge"><div class="k">Ridge points</div><div class="v num">114</div><div class="u">at 0.5 m resolution</div></div>
+        <div class="metric ridge"><div class="k">Highest ridge lift</div><div class="v num">109</div><div class="u">millimeters</div></div>
+      </div>
+    </div>
+
+    <div class="table-wrap" style="margin-top:16px;">
+      <table>
+        <thead>
+          <tr><th>Basins meeting</th><th>Near path (m)</th><th>Governs at</th><th>Ridge lift (mm)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="num">G0 + G4</td><td class="num">7.12</td><td class="num">G0 · 7.24</td><td class="num" style="font-weight:600;color:var(--ridge-ink)">109</td></tr>
+            <tr><td class="num">G0 + G3</td><td class="num">6.12</td><td class="num">G0 · 6.54</td><td class="num" style="font-weight:600;color:var(--ridge-ink)">98</td></tr>
+            <tr><td class="num">G0 + G3 + G4</td><td class="num">5.33</td><td class="num">G3 · 5.91</td><td class="num" style="font-weight:600;color:var(--ridge-ink)">89</td></tr>
+            <tr><td class="num">G3 + G4</td><td class="num">5.04</td><td class="num">G3 · 5.62</td><td class="num" style="font-weight:600;color:var(--ridge-ink)">84</td></tr>
+            <tr><td class="num">G1 + G3</td><td class="num">4.74</td><td class="num">G1 · 5.33</td><td class="num" style="font-weight:600;color:var(--ridge-ink)">80</td></tr>
+            <tr><td class="num">G1 + G3 + G4</td><td class="num">4.83</td><td class="num">G3 · 5.24</td><td class="num" style="font-weight:600;color:var(--ridge-ink)">79</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════ WINDOW ══════════════════════════════ -->
+  <section>
+    <div class="section-label">The tool window (WPF, opens inside Revit)</div>
+
+    <div class="window">
+      <div class="window-bar">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <span class="title">AutoSlope — Ridge V001</span>
+        <span style="margin-left:auto;">Roof: <span class="num">Warehouse_Roof_02</span></span>
+      </div>
+
+      <div class="window-body">
+        <!-- LEFT: controls -->
+        <div class="left">
+          <div class="card">
+            <h3>Slope</h3>
+            <div class="row2">
+              <div class="field"><label>Percentage</label><div class="value"><span class="num">1.5</span><span>%</span></div></div>
+              <div class="field"><label>Threshold (m)</label><div class="value"><span class="num">100</span></div></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Drain Detection</h3>
+            <div class="row2" style="align-items:end;">
+              <div class="field"><label>Tolerance</label><div class="toggle" style="margin-top:2px;"></div></div>
+              <div class="field"><label>Radius (mm)</label><div class="value"><span class="num">500</span></div></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Ridge Detection</h3>
+            <div class="row2" style="align-items:end;">
+              <div class="field"><label>Enable ridge rule</label><div class="toggle" style="margin-top:2px;"></div></div>
+              <div class="field"><label>Drain group radius (mm)</label><div class="value"><span class="num">1000</span></div></div>
+            </div>
+            <p class="hint">Points behind a lifted ridge re-route to the farther drain — every point keeps a way down at ≥ 1.5%.</p>
+          </div>
+
+          <div class="card">
+            <h3>Circle Markers</h3>
+            <div class="marker-row"><span class="ring" style="border-color:var(--drain)"></span><span class="name">Drain</span><span class="spec">Blue · ⌀250 mm</span></div>
+            <div class="marker-row"><span class="ring" style="border-color:var(--highest)"></span><span class="name">Highest Point</span><span class="spec">Red · ⌀250 mm</span></div>
+            <div class="marker-row"><span class="ring" style="border-color:var(--offset)"></span><span class="name">Allowed Offset</span><span class="spec">Orange · ≥500 mm</span></div>
+            <div class="marker-row"><span class="ring" style="border-color:var(--ridge)"></span><span class="name">Ridge Points</span><span class="spec">Magenta · ⌀250 mm</span></div>
+          </div>
+        </div>
+
+        <!-- RIGHT: metrics + log -->
+        <div class="right">
+          <div class="metrics">
+            <div class="metric"><div class="k">Longest path</div><div class="v num">14.62</div><div class="u">meters</div></div>
+            <div class="metric"><div class="k">Highest elev.</div><div class="v num">219</div><div class="u">millimeters</div></div>
+            <div class="metric"><div class="k">Slope applied</div><div class="v num">1.5</div><div class="u">percent</div></div>
+            <div class="metric"><div class="k">Run duration</div><div class="v num">340</div><div class="u">milliseconds</div></div>
+            <div class="metric"><div class="k">Tolerance</div><div class="v num">500</div><div class="u">millimeters</div></div>
+          </div>
+          <div class="metrics six">
+            <div class="metric drain"><div class="k">Processed</div><div class="v num">312</div><div class="u">vertices</div></div>
+            <div class="metric"><div class="k">Skipped</div><div class="v num">4</div><div class="u">boundary</div></div>
+            <div class="metric"><div class="k">Picked drain</div><div class="v num">2</div><div class="u">detected</div></div>
+            <div class="metric"><div class="k">Final drains</div><div class="v num">2</div><div class="u">detected</div></div>
+            <div class="metric"><div class="k">Curves</div><div class="v num">6</div><div class="u">arcs found</div></div>
+            <div class="metric ridge"><div class="k">Ridge points</div><div class="v num">9</div><div class="u">2 drain groups</div></div>
+          </div>
+
+          <div class="run-actions">
+            <button class="btn primary">✓ Complete</button>
+            <button class="btn ghost">Export Results</button>
+            <span class="status">Run finished — 340 ms</span>
+          </div>
+
+          <div class="log">
+<div><span class="t">[14:02:11]</span> <span class="lvl-info">Starting AutoSlope (Ridge)...</span></div>
+<div><span class="t">[14:02:11]</span> <span class="lvl-info">Drain groups: 2 (from 2 drain vertices, group radius 1000 mm)</span></div>
+<div><span class="t">[14:02:11]</span> <span class="lvl-info">  • Group 0: 1 drain vertex at (2.00, 2.00)</span></div>
+<div><span class="t">[14:02:11]</span> <span class="lvl-info">  • Group 1: 1 drain vertex at (8.00, 0.00)</span></div>
+<div><span class="t">[14:02:11]</span> <span class="lvl-success">Ridge detection: 9 ridge point(s) found on the basin boundaries.</span></div>
+<div><span class="t">[14:02:11]</span> <span class="lvl-info">  • RIDGE vertex 41: groups [0,1] nearest 3.81 m → governs group 1 at 5.87 m → lift 88 mm</span></div>
+<div><span class="t">[14:02:11]</span> <span class="lvl-success">Slope check: every processed vertex descends to a neighbour at ≥ 1.5%.</span></div>
+<div><span class="t">[14:02:11]</span> <span class="lvl-info">Watershed Moved          : 14 vertex/vertices re-routed to a farther drain</span></div>
+<div><span class="t">[14:02:11]</span> <span class="lvl-success">===== AutoSlope Finished Successfully =====</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════ TABLE ══════════════════════════════ -->
+  <section>
+    <div class="section-label">Sample vertex data — Excel export, "Vertex Data" sheet</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Vertex</th><th>Ridge</th><th>Basin</th><th>Flows&nbsp;to</th>
+            <th>Path (m)</th><th>Elev. calc (mm)</th><th>Ridge lift (mm)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="num">17</td><td><span class="pill no">no</span></td><td class="num">0</td><td class="num">0</td><td class="num">2.10</td><td class="num">32</td><td class="num">0</td></tr>
+          <tr><td class="num">28</td><td><span class="pill no">no</span></td><td class="num">0</td><td class="num">0</td><td class="num">3.44</td><td class="num">52</td><td class="num">0</td></tr>
+          <tr class="ridge-row"><td class="num">41</td><td><span class="pill yes">yes</span></td><td class="num">0</td><td class="num">1</td><td class="num">5.87</td><td class="num">88</td><td class="num">36</td></tr>
+          <tr><td class="num">52</td><td><span class="pill no">no</span></td><td class="num">1</td><td class="num">1</td><td class="num">4.02</td><td class="num">60</td><td class="num">0</td></tr>
+          <tr class="ridge-row"><td class="num">63</td><td><span class="pill yes">yes</span></td><td class="num">1</td><td class="num">1</td><td class="num">2.94</td><td class="num">44</td><td class="num">6</td></tr>
+          <tr><td class="num">74</td><td><span class="pill no">no</span></td><td class="num">0</td><td class="num">1</td><td class="num">6.35</td><td class="num">95</td><td class="num">0</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <span>Auto Slope By Point — Ridge V001 · branch <span class="num">claude/ridge-point-detection-j35eql</span></span>
+    <span>Numbers on this page are illustrative — actual results depend on the picked roof and drains.</span>
+  </footer>
+</div>
