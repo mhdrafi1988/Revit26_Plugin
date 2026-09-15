@@ -12,9 +12,10 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             RibbonLayoutHelper.AddStackedButtons(panel, new List<PushButtonData>
             {
-                new PushButtonData("Btn_AnnotationOverlapDetection_V002", "Annotation Overlap Detection", assemblyPath, "Revit26_Plugin.AnnotationOverlapDetection.V002.Command")
+                new PushButtonData("Btn_AnnotationOverlapDetection_V002", "Overlap Detection", assemblyPath, "Revit26_Plugin.AnnotationOverlapDetection.V002.Command")
                 {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Manage.AnnotationOverlapDetection_16.png")
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Manage.AnnotationOverlapDetection_16.png"),
+                    ToolTip = "Annotation Overlap Detection"
                 },
             });
         }

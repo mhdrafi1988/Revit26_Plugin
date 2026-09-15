@@ -28,18 +28,20 @@ namespace Revit26_Plugin.Menu.Ribbon
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofEdgeAroundSections_V004_16.png"),
                     ToolTip = "Roof Edge Around Sections (V004)"
                 },
-                new PushButtonData("Btn_RoofEdgeElementSections_V001", "Roof Edge Element Sections", assemblyPath, "Revit26_Plugin.RoofEdgeElementSections.V001.RoofEdgeElementSectionsCommand")
+                new PushButtonData("Btn_RoofEdgeElementSections_V001", "Roof Edge Sections", assemblyPath, "Revit26_Plugin.RoofEdgeElementSections.V001.RoofEdgeElementSectionsCommand")
                 {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofEdgeElementSections_16.png")
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofEdgeElementSections_16.png"),
+                    ToolTip = "Roof Edge Element Sections"
                 },
             });
 
             RibbonPanel placePanel = app.CreateRibbonPanel(tabName, "View Place");
             RibbonLayoutHelper.AddStackedButtons(placePanel, new List<PushButtonData>
             {
-                new PushButtonData("Btn_AutoPlaceSectionsCommand_V322_01", "Auto Place Sections", assemblyPath, "Revit26_Plugin.APUS.V322.Commands.AutoPlaceSectionsCommand")
+                new PushButtonData("Btn_AutoPlaceSectionsCommand_V322_01", "Place Sections", assemblyPath, "Revit26_Plugin.APUS.V322.Commands.AutoPlaceSectionsCommand")
                 {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.AutoPlaceSections_16.png")
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.AutoPlaceSections_16.png"),
+                    ToolTip = "Auto Place Sections"
                 },
                 new PushButtonData("Btn_CalloutToSectionViewPlacement_V019", "Callout To Section", assemblyPath, "Revit26_Plugin.CalloutCOP.V019.Commands.CalloutCOPCommand")
                 {
@@ -51,33 +53,37 @@ namespace Revit26_Plugin.Menu.Ribbon
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RefSectionHeadPlacer_16.png"),
                     ToolTip = "Reference Section Head Placer"
                 },
-                new PushButtonData("Btn_SectionViewAutoTagger.V004", "Section View Auto Tagger", assemblyPath, "Revit26_Plugin.SectionViewAutoTagger.V004.SectionViewAutoTaggerCommand")
+                new PushButtonData("Btn_SectionViewAutoTagger.V004", "Section View Tagger", assemblyPath, "Revit26_Plugin.SectionViewAutoTagger.V004.SectionViewAutoTaggerCommand")
                 {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.SectionAutoTagger_16.png")
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.SectionAutoTagger_16.png"),
+                    ToolTip = "Section View Auto Tagger"
                 },
             });
 
             RibbonPanel renamePanel = app.CreateRibbonPanel(tabName, "View Rename");
             RibbonLayoutHelper.AddStackedButtons(renamePanel, new List<PushButtonData>
             {
-                new PushButtonData("Btn_BubbleAutoRenumber_V006", "Bubble Auto Renumber", assemblyPath, "Revit26_Plugin.BubbleAutoRenumber.V006.Commands.SectionAutoRenumberCommand")
+                new PushButtonData("Btn_BubbleAutoRenumber_V006", "Bubble Renumber", assemblyPath, "Revit26_Plugin.BubbleAutoRenumber.V006.Commands.SectionAutoRenumberCommand")
                 {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.BubbleAutoRenumber_16.png")
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.BubbleAutoRenumber_16.png"),
+                    ToolTip = "Bubble Auto Renumber"
                 },
-                new PushButtonData("Btn_SectionAutoRenamer_V024", "Section Auto Renamer", assemblyPath, "Revit26_Plugin.SectionAutoRenamer.V024.Commands.OpenSectionManagerCommand")
+                new PushButtonData("Btn_SectionAutoRenamer_V024", "Section Renamer", assemblyPath, "Revit26_Plugin.SectionAutoRenamer.V024.Commands.OpenSectionManagerCommand")
                 {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.SectionAutoRenamer_16.png")
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.SectionAutoRenamer_16.png"),
+                    ToolTip = "Section Auto Renamer"
                 },
                 // Two coexisting implementations of the same tool — version
                 // kept only here so the pair stays distinguishable.
-                new PushButtonData("Btn_ViewAutoRenamer_V003", "Auto Renamer (V003)", assemblyPath, "Revit26_Plugin.ViewAutoRenamer.V003.Commands.OpenViewAutoRenamerCommand")
+                new PushButtonData("Btn_ViewAutoRenamer_V003", "Renamer (V003)", assemblyPath, "Revit26_Plugin.ViewAutoRenamer.V003.Commands.OpenViewAutoRenamerCommand")
                 {
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.ViewAutoRenamer_16.png"),
                     ToolTip = "View Auto Renamer (V003)"
                 },
-                new PushButtonData("Btn_ViewAutoRenamer_V004", "View Auto Renamer (V004)", assemblyPath, "Revit26_Plugin.ViewAutoRenamer.V004.Commands.OpenViewAutoRenamerCommand")
+                new PushButtonData("Btn_ViewAutoRenamer_V004", "View Renamer (V004)", assemblyPath, "Revit26_Plugin.ViewAutoRenamer.V004.Commands.OpenViewAutoRenamerCommand")
                 {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.ViewAutoRenamer_V004_16.png")
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.ViewAutoRenamer_V004_16.png"),
+                    ToolTip = "View Auto Renamer (V004)"
                 },
             });
         }

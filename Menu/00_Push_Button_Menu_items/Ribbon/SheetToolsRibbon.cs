@@ -28,9 +28,10 @@ namespace Revit26_Plugin.Menu.Ribbon
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SmartViewToSheetPlacer_16.png"),
                     ToolTip = "Smart View To Sheet Placer (V221)"
                 },
-                new PushButtonData("Btn_SmartViewToSheetPlacer.V222", "Smart View To Sheet Placer (V222)", assemblyPath, "Revit26_Plugin.SmartViewToSheetPlacer.V222.SmartViewToSheetPlacerCommand")
+                new PushButtonData("Btn_SmartViewToSheetPlacer.V222", "View To Sheet (V222)", assemblyPath, "Revit26_Plugin.SmartViewToSheetPlacer.V222.SmartViewToSheetPlacerCommand")
                 {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SmartViewToSheetPlacer_V222_16.png")
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SmartViewToSheetPlacer_V222_16.png"),
+                    ToolTip = "Smart View To Sheet Placer (V222)"
                 },
             });
 
