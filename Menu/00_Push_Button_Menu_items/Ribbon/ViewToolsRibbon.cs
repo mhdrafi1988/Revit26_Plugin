@@ -11,19 +11,22 @@ namespace Revit26_Plugin.Menu.Ribbon
             RibbonPanel createPanel = app.CreateRibbonPanel(tabName, "View Create");
             RibbonLayoutHelper.AddStackedButtons(createPanel, new List<PushButtonData>
             {
-                new PushButtonData("Btn_ Sections From Detail Lines V11", "Create Sections From Detail Lines", assemblyPath, "Revit26_Plugin.CreateSections.V011.Commands.CreateSectionsFromDetailLines")
+                new PushButtonData("Btn_ Sections From Detail Lines V11", "Sections From Lines", assemblyPath, "Revit26_Plugin.CreateSections.V011.Commands.CreateSectionsFromDetailLines")
                 {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.SectionsFromDetailLines_32.png")
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.SectionsFromDetailLines_32.png"),
+                    ToolTip = "Create Sections From Detail Lines"
                 },
                 // Two coexisting implementations of the same tool — version
                 // kept only here so the pair stays distinguishable.
-                new PushButtonData("Btn_RoofEdgeAroundSections_V003", "Roof Edge Around Sections (V003)", assemblyPath, "Revit26_Plugin.RoofEdgeAroundSections.V003.RoofEdgeAroundSectionsCommand")
+                new PushButtonData("Btn_RoofEdgeAroundSections_V003", "Edge Around (V003)", assemblyPath, "Revit26_Plugin.RoofEdgeAroundSections.V003.RoofEdgeAroundSectionsCommand")
                 {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofEdgeAroundSections_32.png")
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofEdgeAroundSections_32.png"),
+                    ToolTip = "Roof Edge Around Sections (V003)"
                 },
-                new PushButtonData("Btn_RoofEdgeAroundSections_V004", "Roof Edge Around Sections (V004)", assemblyPath, "Revit26_Plugin.RoofEdgeAroundSections.V004.RoofEdgeAroundSectionsCommand")
+                new PushButtonData("Btn_RoofEdgeAroundSections_V004", "Edge Around (V004)", assemblyPath, "Revit26_Plugin.RoofEdgeAroundSections.V004.RoofEdgeAroundSectionsCommand")
                 {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofEdgeAroundSections_V004_32.png")
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofEdgeAroundSections_V004_32.png"),
+                    ToolTip = "Roof Edge Around Sections (V004)"
                 },
                 new PushButtonData("Btn_RoofEdgeElementSections_V001", "Roof Edge Element Sections", assemblyPath, "Revit26_Plugin.RoofEdgeElementSections.V001.RoofEdgeElementSectionsCommand")
                 {
@@ -38,13 +41,15 @@ namespace Revit26_Plugin.Menu.Ribbon
                 {
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.AutoPlaceSections_32.png")
                 },
-                new PushButtonData("Btn_CalloutToSectionViewPlacement_V019", "Callout To Section View Placement", assemblyPath, "Revit26_Plugin.CalloutCOP.V019.Commands.CalloutCOPCommand")
+                new PushButtonData("Btn_CalloutToSectionViewPlacement_V019", "Callout To Section", assemblyPath, "Revit26_Plugin.CalloutCOP.V019.Commands.CalloutCOPCommand")
                 {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.CalloutToSection_32.png")
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.CalloutToSection_32.png"),
+                    ToolTip = "Callout To Section View Placement"
                 },
-                new PushButtonData("Btn_RefSectionHeadPlacerCommand V013", "Reference Section Head Placer", assemblyPath, "Revit26_Plugin.RefSectionHeadPlacer.V013.Commands.RefSectionHeadPlacerCommand")
+                new PushButtonData("Btn_RefSectionHeadPlacerCommand V013", "Section Head Placer", assemblyPath, "Revit26_Plugin.RefSectionHeadPlacer.V013.Commands.RefSectionHeadPlacerCommand")
                 {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RefSectionHeadPlacer_32.png")
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RefSectionHeadPlacer_32.png"),
+                    ToolTip = "Reference Section Head Placer"
                 },
                 new PushButtonData("Btn_SectionViewAutoTagger.V004", "Section View Auto Tagger", assemblyPath, "Revit26_Plugin.SectionViewAutoTagger.V004.SectionViewAutoTaggerCommand")
                 {
@@ -65,9 +70,10 @@ namespace Revit26_Plugin.Menu.Ribbon
                 },
                 // Two coexisting implementations of the same tool — version
                 // kept only here so the pair stays distinguishable.
-                new PushButtonData("Btn_ViewAutoRenamer_V003", "View Auto Renamer (V003)", assemblyPath, "Revit26_Plugin.ViewAutoRenamer.V003.Commands.OpenViewAutoRenamerCommand")
+                new PushButtonData("Btn_ViewAutoRenamer_V003", "Auto Renamer (V003)", assemblyPath, "Revit26_Plugin.ViewAutoRenamer.V003.Commands.OpenViewAutoRenamerCommand")
                 {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.ViewAutoRenamer_32.png")
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.ViewAutoRenamer_32.png"),
+                    ToolTip = "View Auto Renamer (V003)"
                 },
                 new PushButtonData("Btn_ViewAutoRenamer_V004", "View Auto Renamer (V004)", assemblyPath, "Revit26_Plugin.ViewAutoRenamer.V004.Commands.OpenViewAutoRenamerCommand")
                 {

@@ -13,17 +13,20 @@ namespace Revit26_Plugin.Menu.Ribbon
             {
                 // Two coexisting implementations of the same tool — version
                 // kept only here so the pair stays distinguishable.
-                new PushButtonData("Btn_PlanFromScopeBox.V003", "Plan From Scope Box (V003)", assemblyPath, "Revit26_Plugin.PlanFromScopeBox.V003.Commands.PlanFromScopeBoxCommand")
+                new PushButtonData("Btn_PlanFromScopeBox.V003", "Scope Box (V003)", assemblyPath, "Revit26_Plugin.PlanFromScopeBox.V003.Commands.PlanFromScopeBoxCommand")
                 {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.PlanFromScopeBox_32.png")
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.PlanFromScopeBox_32.png"),
+                    ToolTip = "Plan From Scope Box (V003)"
                 },
-                new PushButtonData("Btn_PlanFromScopeBox.V004", "Plan From Scope Box (V004)", assemblyPath, "Revit26_Plugin.PlanFromScopeBox.V004.Commands.PlanFromScopeBoxCommand")
+                new PushButtonData("Btn_PlanFromScopeBox.V004", "Scope Box (V004)", assemblyPath, "Revit26_Plugin.PlanFromScopeBox.V004.Commands.PlanFromScopeBoxCommand")
                 {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.PlanFromScopeBox_V004_32.png")
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.PlanFromScopeBox_V004_32.png"),
+                    ToolTip = "Plan From Scope Box (V004)"
                 },
-                new PushButtonData("Btn_SmartViewToSheetPlacer.V221", "Smart View To Sheet Placer (V221)", assemblyPath, "Revit26_Plugin.SmartViewToSheetPlacer.V221.SmartViewToSheetPlacerCommand")
+                new PushButtonData("Btn_SmartViewToSheetPlacer.V221", "Sheet Placer (V221)", assemblyPath, "Revit26_Plugin.SmartViewToSheetPlacer.V221.SmartViewToSheetPlacerCommand")
                 {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SmartViewToSheetPlacer_32.png")
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SmartViewToSheetPlacer_32.png"),
+                    ToolTip = "Smart View To Sheet Placer (V221)"
                 },
                 new PushButtonData("Btn_SmartViewToSheetPlacer.V222", "Smart View To Sheet Placer (V222)", assemblyPath, "Revit26_Plugin.SmartViewToSheetPlacer.V222.SmartViewToSheetPlacerCommand")
                 {
@@ -34,13 +37,15 @@ namespace Revit26_Plugin.Menu.Ribbon
             RibbonPanel placePanel = app.CreateRibbonPanel(tabName, "Sheet Place");
             RibbonLayoutHelper.AddStackedButtons(placePanel, new List<PushButtonData>
             {
-                new PushButtonData("Btn_SheetAutoRearrange.V024", "Sheet Auto Rearrange (V024)", assemblyPath, "Revit26_Plugin.SheetAutoRearrange.V024.Commands.SheetAutoRearrangeCommand")
+                new PushButtonData("Btn_SheetAutoRearrange.V024", "Rearrange (V024)", assemblyPath, "Revit26_Plugin.SheetAutoRearrange.V024.Commands.SheetAutoRearrangeCommand")
                 {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SheetAutoRearrange_32.png")
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SheetAutoRearrange_32.png"),
+                    ToolTip = "Sheet Auto Rearrange (V024)"
                 },
-                new PushButtonData("Btn_SheetAutoRearrange.V025", "Sheet Auto Rearrange (V025)", assemblyPath, "Revit26_Plugin.SheetAutoRearrange.V025.Commands.SheetAutoRearrangeCommand")
+                new PushButtonData("Btn_SheetAutoRearrange.V025", "Rearrange (V025)", assemblyPath, "Revit26_Plugin.SheetAutoRearrange.V025.Commands.SheetAutoRearrangeCommand")
                 {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SheetAutoRearrange_V025_32.png")
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SheetAutoRearrange_V025_32.png"),
+                    ToolTip = "Sheet Auto Rearrange (V025)"
                 },
             });
         }

@@ -13,13 +13,15 @@ namespace Revit26_Plugin.Menu.Ribbon
             {
                 // Two coexisting implementations of the same tool — version kept
                 // only here so the pair stays distinguishable.
-                new PushButtonData("Btn_ DeatailLInes VA003", "Create Detail Lines From Linked Files (VA003)", assemblyPath, "Revit26_Plugin.LinkedDetailLineGenerator.VA003.Commands.OpenLinkedDetailLineGeneratorCommand")
+                new PushButtonData("Btn_ DeatailLInes VA003", "From Links (VA003)", assemblyPath, "Revit26_Plugin.LinkedDetailLineGenerator.VA003.Commands.OpenLinkedDetailLineGeneratorCommand")
                 {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.CreateDetailLines.png")
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.CreateDetailLines.png"),
+                    ToolTip = "Create Detail Lines From Linked Files (VA003)"
                 },
-                new PushButtonData("Btn_ DeatailLInes VA006", "Create Detail Lines From Linked Files (VA006)", assemblyPath, "Revit26_Plugin.LinkedDetailLineGenerator.VA006.Commands.OpenLinkedDetailLineGeneratorCommand")
+                new PushButtonData("Btn_ DeatailLInes VA006", "From Links (VA006)", assemblyPath, "Revit26_Plugin.LinkedDetailLineGenerator.VA006.Commands.OpenLinkedDetailLineGeneratorCommand")
                 {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.Linematch32.png")
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.Linematch32.png"),
+                    ToolTip = "Create Detail Lines From Linked Files (VA006)"
                 },
             });
 
