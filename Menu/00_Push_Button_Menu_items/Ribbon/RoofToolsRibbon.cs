@@ -12,7 +12,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             RibbonPanel combinedPanel = app.CreateRibbonPanel(tabName, "Combined Roof Tools");
             RibbonLayoutHelper.AddStackedButtons(combinedPanel, new List<PushButtonData>
             {
-                new PushButtonData("Btn_CombinedRoofTools_V001", "Combined\nRoof Tools", assemblyPath, "Revit26_Plugin.CombinedRoofTools.V001.Commands.CombinedRoofToolsCommand")
+                new PushButtonData("Btn_CombinedRoofTools_V001", "Combined Roof Tools", assemblyPath, "Revit26_Plugin.CombinedRoofTools.V001.Commands.CombinedRoofToolsCommand")
                 {
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.CombinedTools_16.png"),
                     ToolTip = "Inner Loop Divider, Inner Loops And Perpendicular, Outer Curve Divider, " +
@@ -30,6 +30,16 @@ namespace Revit26_Plugin.Menu.Ribbon
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.by_point_16.png"),
                     ToolTip = "Auto Slope By Point"
                 },
+                new PushButtonData("Btn_AutoSlopeByDrain_V007", "By Drain", assemblyPath, "Revit26_Plugin.AutoSlopeByDrain.V007.Commands.AutoSlopeByDrain")
+                {
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.by_drain_16.png"),
+                    ToolTip = "Auto Slope By Drain"
+                },
+                new PushButtonData("Btn_AutoSlopeByDrain_V008", "By Drain (Multi)", assemblyPath, "Revit26_Plugin.MultiRoofSlopeByDrain.Commands.AutoSlopeByDrain")
+                {
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.AutoSlopeByDrain_MultiRoof_16.png"),
+                    ToolTip = "Auto Slope By Drain (Multi-Roof)"
+                },
                 new PushButtonData("Btn_AutoSlopeByPoint_028_KdTree", "By Point (KD-Tree)", assemblyPath, "Revit26_Plugin.AutoSlopeByPointKdTree.VKD01.Commands.AutoSlopeCommand")
                 {
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.AutoSlopeByPoint_KdTree_16.png"),
@@ -40,16 +50,6 @@ namespace Revit26_Plugin.Menu.Ribbon
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.AutoSlopeByPoint_Ridge_16.png"),
                     ToolTip = "Auto Slope By Point (Ridge) — V028 plus ridge handling: drains are grouped, ridge points are found on the basin boundaries " +
                               "between drain groups, and each ridge point is raised so water leaves it to every surrounding drain at the given slope."
-                },
-                new PushButtonData("Btn_AutoSlopeByDrain_V007", "By Drain", assemblyPath, "Revit26_Plugin.AutoSlopeByDrain.V007.Commands.AutoSlopeByDrain")
-                {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.by_drain_16.png"),
-                    ToolTip = "Auto Slope By Drain"
-                },
-                new PushButtonData("Btn_AutoSlopeByDrain_V008", "By Drain (Multi)", assemblyPath, "Revit26_Plugin.MultiRoofSlopeByDrain.Commands.AutoSlopeByDrain")
-                {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.AutoSlopeByDrain_MultiRoof_16.png"),
-                    ToolTip = "Auto Slope By Drain (Multi-Roof)"
                 },
             });
 
@@ -105,30 +105,19 @@ namespace Revit26_Plugin.Menu.Ribbon
                 },
             });
 
-            // Slope Liner
-            RibbonPanel slopeLinerPanel = app.CreateRibbonPanel(tabName, "Slope Liner");
-            RibbonLayoutHelper.AddStackedButtons(slopeLinerPanel, new List<PushButtonData>
+            // Slope Liner + Tag + Create — three single-tool panels merged into
+            // one 3-item stack (Revit's stacked-item limit is exactly 3 per column).
+            RibbonPanel roofToolsPanel = app.CreateRibbonPanel(tabName, "Roof Tools");
+            RibbonLayoutHelper.AddStackedButtons(roofToolsPanel, new List<PushButtonData>
             {
                 new PushButtonData("Btn_CreaserAdvCommand_V009_00", "Creaser Adv", assemblyPath, "Revit26_Plugin.CreaserAdv.V009.Commands.CreaserAdvCommand")
                 {
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.CreaserAdv_16.png")
                 },
-            });
-
-            // Tag
-            RibbonPanel tagPanel = app.CreateRibbonPanel(tabName, "Roof Tag");
-            RibbonLayoutHelper.AddStackedButtons(tagPanel, new List<PushButtonData>
-            {
                 new PushButtonData("Btn_RoofTagCommand_V016", "Roof Tag", assemblyPath, "Revit26_Plugin.RoofTag.V016.RoofTagCommand")
                 {
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.RoofTag_16.png")
                 },
-            });
-
-            // Create
-            RibbonPanel createPanel = app.CreateRibbonPanel(tabName, "Roof Create");
-            RibbonLayoutHelper.AddStackedButtons(createPanel, new List<PushButtonData>
-            {
                 new PushButtonData("Btn_RoofFromDetailLines.V007", "Roof From Detail Lines", assemblyPath, "Revit26_Plugin.RoofFromDetailLines.V007.Command")
                 {
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.CreateRoofromLInes_16.png")

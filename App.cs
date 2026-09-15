@@ -46,7 +46,6 @@ namespace Revit26_Plugin
             SheetToolsRibbon.Build(application, RibbonTabName, assemblyPath);
             DetailLInesRibbon.Build(application, RibbonTabName, assemblyPath);
             ManageRibbon.Build(application, RibbonTabName, assemblyPath);
-            QuickAccessRibbon.Build(application, RibbonTabName, assemblyPath);
         }
     }
 }
