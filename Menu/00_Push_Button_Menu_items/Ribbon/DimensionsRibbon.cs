@@ -14,7 +14,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             {
                 new PushButtonData("Btn_DtlLine_08", "Auto Dim Detail Line", assemblyPath, "Revit26_Plugin.DtlLineDim.V008.Commands.DtlLineDimCommand")
                 {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Dimensions.AutoDimDetailLine_32.png")
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Dimensions.AutoDimDetailLine_16.png")
                 },
             });
         }

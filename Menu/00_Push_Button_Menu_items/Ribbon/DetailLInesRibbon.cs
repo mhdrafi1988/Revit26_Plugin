@@ -15,12 +15,12 @@ namespace Revit26_Plugin.Menu.Ribbon
                 // only here so the pair stays distinguishable.
                 new PushButtonData("Btn_ DeatailLInes VA003", "From Links (VA003)", assemblyPath, "Revit26_Plugin.LinkedDetailLineGenerator.VA003.Commands.OpenLinkedDetailLineGeneratorCommand")
                 {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.CreateDetailLines.png"),
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.CreateDetailLines_16.png"),
                     ToolTip = "Create Detail Lines From Linked Files (VA003)"
                 },
                 new PushButtonData("Btn_ DeatailLInes VA006", "From Links (VA006)", assemblyPath, "Revit26_Plugin.LinkedDetailLineGenerator.VA006.Commands.OpenLinkedDetailLineGeneratorCommand")
                 {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.Linematch32.png"),
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.Linematch32_16.png"),
                     ToolTip = "Create Detail Lines From Linked Files (VA006)"
                 },
             });
@@ -30,7 +30,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             {
                 new PushButtonData("Btn_DetailLineClosedLoop_V001", "Detail Line Closed Loop", assemblyPath, "Revit26_Plugin.DetailLineClosedLoop.V001.Commands.DetailLineClosedLoopCommand")
                 {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.ClosedLoop_32.png")
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.ClosedLoop_16.png")
                 },
             });
         }
