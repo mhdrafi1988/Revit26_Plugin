@@ -8,7 +8,8 @@ namespace Revit26_Plugin.Menu.Ribbon
     {
         public static void Build(UIControlledApplication app, string tabName, string assemblyPath)
         {
-            // Combined launcher — its own small panel so it stays prominent.
+            // Combined launcher + the two Auto Slope By Point variants — grouped
+            // into one 3-item stack (Revit's stacked-item limit is exactly 3 per column).
             RibbonPanel combinedPanel = app.CreateRibbonPanel(tabName, "Combined Roof Tools");
             RibbonLayoutHelper.AddStackedButtons(combinedPanel, new List<PushButtonData>
             {
@@ -18,6 +19,17 @@ namespace Revit26_Plugin.Menu.Ribbon
                     ToolTip = "Inner Loop Divider, Inner Loops And Perpendicular, Outer Curve Divider, " +
                         "Auto Slope By Drain, and Creaser Adv — combined in one window with one shared roof pick. " +
                         "Opens on Auto Slope By Drain; use Run All to run every tool in order with one click."
+                },
+                new PushButtonData("Btn_AutoSlopeByPoint_028_KdTree", "By Point (KD-Tree)", assemblyPath, "Revit26_Plugin.AutoSlopeByPointKdTree.VKD01.Commands.AutoSlopeCommand")
+                {
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.AutoSlopeByPoint_KdTree_16.png"),
+                    ToolTip = "Auto Slope By Point (KD-Tree)"
+                },
+                new PushButtonData("Btn_AutoSlopeByPointRidge_001", "By Point (Ridge)", assemblyPath, "Revit26_Plugin.AutoSlopeByPointRidge.V001.Commands.AutoSlopeCommand")
+                {
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.AutoSlopeByPoint_Ridge_16.png"),
+                    ToolTip = "Auto Slope By Point (Ridge) — V028 plus ridge handling: drains are grouped, ridge points are found on the basin boundaries " +
+                              "between drain groups, and each ridge point is raised so water leaves it to every surrounding drain at the given slope."
                 },
             });
 
@@ -39,17 +51,6 @@ namespace Revit26_Plugin.Menu.Ribbon
                 {
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.AutoSlopeByDrain_MultiRoof_16.png"),
                     ToolTip = "Auto Slope By Drain (Multi-Roof)"
-                },
-                new PushButtonData("Btn_AutoSlopeByPoint_028_KdTree", "By Point (KD-Tree)", assemblyPath, "Revit26_Plugin.AutoSlopeByPointKdTree.VKD01.Commands.AutoSlopeCommand")
-                {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.AutoSlopeByPoint_KdTree_16.png"),
-                    ToolTip = "Auto Slope By Point (KD-Tree)"
-                },
-                new PushButtonData("Btn_AutoSlopeByPointRidge_001", "By Point (Ridge)", assemblyPath, "Revit26_Plugin.AutoSlopeByPointRidge.V001.Commands.AutoSlopeCommand")
-                {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.AutoSlopeByPoint_Ridge_16.png"),
-                    ToolTip = "Auto Slope By Point (Ridge) — V028 plus ridge handling: drains are grouped, ridge points are found on the basin boundaries " +
-                              "between drain groups, and each ridge point is raised so water leaves it to every surrounding drain at the given slope."
                 },
             });
 
