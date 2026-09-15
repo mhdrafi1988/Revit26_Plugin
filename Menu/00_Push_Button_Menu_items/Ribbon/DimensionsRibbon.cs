@@ -10,7 +10,7 @@ namespace Revit26_Plugin.Menu.Ribbon
         {
             RibbonPanel panel = app.CreateRibbonPanel(tabName, "Dimensions");
 
-            RibbonLayoutHelper.AddStackedButtons(panel, new List<PushButtonData>
+            RibbonLayoutHelper.AddStackedButtons(panel, new List<RibbonItemData>
             {
                 new PushButtonData("Btn_DtlLine_08", "Auto Dim Detail Line", assemblyPath, "Revit26_Plugin.DtlLineDim.V008.Commands.DtlLineDimCommand")
                 {

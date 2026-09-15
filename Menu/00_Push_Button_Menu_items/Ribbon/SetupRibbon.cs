@@ -12,7 +12,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             // panels — running a Family tool in a Project (or vice versa)
             // fails the context check, so the panel title now makes that clear.
             RibbonPanel familyPanel = app.CreateRibbonPanel(tabName, "Family Tools");
-            RibbonLayoutHelper.AddStackedButtons(familyPanel, new List<PushButtonData>
+            RibbonLayoutHelper.AddStackedButtons(familyPanel, new List<RibbonItemData>
             {
                 new PushButtonData("BatchLinkDwgCommand", "Batch Link DWG", assemblyPath, "BatchDwgFamilyLinker.Command.BatchLinkDwgCommand")
                 {
@@ -26,7 +26,23 @@ namespace Revit26_Plugin.Menu.Ribbon
             });
 
             RibbonPanel projectPanel = app.CreateRibbonPanel(tabName, "Project Tools");
-            RibbonLayoutHelper.AddStackedButtons(projectPanel, new List<PushButtonData>
+
+            // Two coexisting implementations of the same tool — one split
+            // button instead of two stacked entries: one click runs V011
+            // (the newer build), the dropdown arrow reveals V002.
+            var dwgLinesV011 = new PushButtonData("Btn_DwgToDetailLines_V011", "Detail Lines (V011)", assemblyPath, "Revit26_Plugin.DwgToDetailLines.V011.Commands.DwgToDetailLinesCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToDetailLines_V011_16.png"),
+                ToolTip = "DWG To Detail Lines (V011)"
+            };
+            var dwgLinesV002 = new PushButtonData("Btn_DwgToDetailLines_V002", "Detail Lines (V002)", assemblyPath, "Revit26_Plugin.DwgToDetailLines.V002.Commands.LaunchCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToDetailLines_16.png"),
+                ToolTip = "DWG To Detail Lines (V002)"
+            };
+            var dwgLinesSplitData = RibbonLayoutHelper.CreateSplitButtonData("Split_DwgToDetailLines", "Detail Lines", dwgLinesV011);
+
+            var projectItems = RibbonLayoutHelper.AddStackedButtons(projectPanel, new List<RibbonItemData>
             {
                 new PushButtonData("Btn_WorksetManager_11", "Worksets From Links", assemblyPath, "Revit26_Plugin.WSFL.V011.Commands.CreateWorksetsFromLinkedFiles")
                 {
@@ -41,19 +57,9 @@ namespace Revit26_Plugin.Menu.Ribbon
                 {
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.WorksetManager_16.png")
                 },
-                // Two coexisting implementations of the same tool — version
-                // kept only here so the pair stays distinguishable.
-                new PushButtonData("Btn_DwgToDetailLines_V002", "Detail Lines (V002)", assemblyPath, "Revit26_Plugin.DwgToDetailLines.V002.Commands.LaunchCommand")
-                {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToDetailLines_16.png"),
-                    ToolTip = "DWG To Detail Lines (V002)"
-                },
-                new PushButtonData("Btn_DwgToDetailLines_V011", "Detail Lines (V011)", assemblyPath, "Revit26_Plugin.DwgToDetailLines.V011.Commands.DwgToDetailLinesCommand")
-                {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToDetailLines_V011_16.png"),
-                    ToolTip = "DWG To Detail Lines (V011)"
-                },
+                dwgLinesSplitData,
             });
+            RibbonLayoutHelper.WireSplitButton(projectItems, "Split_DwgToDetailLines", dwgLinesV011, dwgLinesV002);
         }
     }
 }

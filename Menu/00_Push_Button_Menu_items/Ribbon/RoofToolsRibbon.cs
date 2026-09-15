@@ -11,7 +11,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             // Combined launcher + the two Auto Slope By Point variants — grouped
             // into one 3-item stack (Revit's stacked-item limit is exactly 3 per column).
             RibbonPanel combinedPanel = app.CreateRibbonPanel(tabName, "Combined Roof Tools");
-            RibbonLayoutHelper.AddStackedButtons(combinedPanel, new List<PushButtonData>
+            RibbonLayoutHelper.AddStackedButtons(combinedPanel, new List<RibbonItemData>
             {
                 new PushButtonData("Btn_CombinedRoofTools_V001", "Combined Roof Tools", assemblyPath, "Revit26_Plugin.CombinedRoofTools.V001.Commands.CombinedRoofToolsCommand")
                 {
@@ -35,7 +35,7 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             // Slope
             RibbonPanel slopePanel = app.CreateRibbonPanel(tabName, "Roof Slope");
-            RibbonLayoutHelper.AddStackedButtons(slopePanel, new List<PushButtonData>
+            RibbonLayoutHelper.AddStackedButtons(slopePanel, new List<RibbonItemData>
             {
                 new PushButtonData("Btn_AutoSlopeByPoint_028", "By Point", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.V028.Commands.AutoSlopeCommand")
                 {
@@ -56,7 +56,7 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             // Shape Points
             RibbonPanel shapePointsPanel = app.CreateRibbonPanel(tabName, "Shape Points");
-            RibbonLayoutHelper.AddStackedButtons(shapePointsPanel, new List<PushButtonData>
+            RibbonLayoutHelper.AddStackedButtons(shapePointsPanel, new List<RibbonItemData>
             {
                 new PushButtonData("Btn_InnerLoopDivider_V009", "Inner Loops", assemblyPath, "Revit26_Plugin.InnerLoopDivider.V009.Commands.InnerLoopDividerCommand")
                 {
@@ -92,7 +92,7 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             // Line & Point
             RibbonPanel linePointPanel = app.CreateRibbonPanel(tabName, "Line & Point");
-            RibbonLayoutHelper.AddStackedButtons(linePointPanel, new List<PushButtonData>
+            RibbonLayoutHelper.AddStackedButtons(linePointPanel, new List<RibbonItemData>
             {
                 new PushButtonData("Btn_RoofRidgeLines_V57", "By Points", assemblyPath, "Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.Commands.RoofRidgeCommand")
                 {
@@ -109,7 +109,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             // Slope Liner + Tag + Create — three single-tool panels merged into
             // one 3-item stack (Revit's stacked-item limit is exactly 3 per column).
             RibbonPanel roofToolsPanel = app.CreateRibbonPanel(tabName, "Roof Tools");
-            RibbonLayoutHelper.AddStackedButtons(roofToolsPanel, new List<PushButtonData>
+            RibbonLayoutHelper.AddStackedButtons(roofToolsPanel, new List<RibbonItemData>
             {
                 new PushButtonData("Btn_CreaserAdvCommand_V009_00", "Creaser Adv", assemblyPath, "Revit26_Plugin.CreaserAdv.V009.Commands.CreaserAdvCommand")
                 {
@@ -127,7 +127,7 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             // Compare
             RibbonPanel comparePanel = app.CreateRibbonPanel(tabName, "Compare");
-            RibbonLayoutHelper.AddStackedButtons(comparePanel, new List<PushButtonData>
+            RibbonLayoutHelper.AddStackedButtons(comparePanel, new List<RibbonItemData>
             {
                 new PushButtonData("Btn_RoofPointComparison_V001", "Comparison", assemblyPath, "Revit26_Plugin.RoofPointComparison.V001.Commands.RoofComparisonCommand")
                 {

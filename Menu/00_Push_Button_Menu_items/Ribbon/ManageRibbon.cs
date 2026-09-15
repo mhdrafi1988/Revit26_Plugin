@@ -10,7 +10,7 @@ namespace Revit26_Plugin.Menu.Ribbon
         {
             RibbonPanel panel = app.CreateRibbonPanel(tabName, "Manage");
 
-            RibbonLayoutHelper.AddStackedButtons(panel, new List<PushButtonData>
+            RibbonLayoutHelper.AddStackedButtons(panel, new List<RibbonItemData>
             {
                 new PushButtonData("Btn_AnnotationOverlapDetection_V002", "Overlap Detection", assemblyPath, "Revit26_Plugin.AnnotationOverlapDetection.V002.Command")
                 {
