@@ -10,9 +10,9 @@ namespace Revit26_Plugin.Menu.Ribbon
         {
             RibbonPanel createPanel = app.CreateRibbonPanel(tabName, "Sheet Create");
 
-            // Two coexisting implementations of the same tool — one split
-            // button instead of two stacked entries: one click runs the
-            // newer version, the dropdown arrow reveals the older one.
+            // Two coexisting implementations of the same tool, collected under
+            // one pulldown button — newest keeps its icon in the dropdown,
+            // the older version is text-only.
             var scopeBoxV004 = new PushButtonData("Btn_PlanFromScopeBox.V004", "Scope Box (V004)", assemblyPath, "Revit26_Plugin.PlanFromScopeBox.V004.Commands.PlanFromScopeBoxCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.PlanFromScopeBox_V004_16.png"),
@@ -20,10 +20,9 @@ namespace Revit26_Plugin.Menu.Ribbon
             };
             var scopeBoxV003 = new PushButtonData("Btn_PlanFromScopeBox.V003", "Scope Box (V003)", assemblyPath, "Revit26_Plugin.PlanFromScopeBox.V003.Commands.PlanFromScopeBoxCommand")
             {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.PlanFromScopeBox_16.png"),
                 ToolTip = "Plan From Scope Box (V003)"
             };
-            var scopeBoxSplitData = RibbonLayoutHelper.CreateSplitButtonData("Split_PlanFromScopeBox", "Scope Box", scopeBoxV004);
+            var scopeBoxPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_PlanFromScopeBox", "Scope Box", scopeBoxV004);
 
             var sheetPlacerV222 = new PushButtonData("Btn_SmartViewToSheetPlacer.V222", "View To Sheet (V222)", assemblyPath, "Revit26_Plugin.SmartViewToSheetPlacer.V222.SmartViewToSheetPlacerCommand")
             {
@@ -32,19 +31,15 @@ namespace Revit26_Plugin.Menu.Ribbon
             };
             var sheetPlacerV221 = new PushButtonData("Btn_SmartViewToSheetPlacer.V221", "Sheet Placer (V221)", assemblyPath, "Revit26_Plugin.SmartViewToSheetPlacer.V221.SmartViewToSheetPlacerCommand")
             {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SmartViewToSheetPlacer_16.png"),
                 ToolTip = "Smart View To Sheet Placer (V221)"
             };
-            var sheetPlacerSplitData = RibbonLayoutHelper.CreateSplitButtonData("Split_SmartViewToSheetPlacer", "Sheet Placer", sheetPlacerV222);
+            var sheetPlacerPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_SmartViewToSheetPlacer", "Sheet Placer", sheetPlacerV222);
 
-            // Kept as two standalone buttons rather than pairing them into one
-            // 2-item stack — only proven-safe placement for a split button is
-            // paired with a plain push button, or entirely on its own.
-            var scopeBoxItems = RibbonLayoutHelper.AddStackedButtons(createPanel, new List<RibbonItemData> { scopeBoxSplitData });
-            RibbonLayoutHelper.WireSplitButton(scopeBoxItems, "Split_PlanFromScopeBox", scopeBoxV004, scopeBoxV003);
-
-            var sheetPlacerItems = RibbonLayoutHelper.AddStackedButtons(createPanel, new List<RibbonItemData> { sheetPlacerSplitData });
-            RibbonLayoutHelper.WireSplitButton(sheetPlacerItems, "Split_SmartViewToSheetPlacer", sheetPlacerV222, sheetPlacerV221);
+            // Pulldown buttons can share a stack, so both tools now sit
+            // together in one 2-item stack instead of two lone buttons.
+            var sheetCreateItems = RibbonLayoutHelper.AddStackedButtons(createPanel, new List<RibbonItemData> { scopeBoxPulldownData, sheetPlacerPulldownData });
+            RibbonLayoutHelper.WirePulldownButton(sheetCreateItems, "Pulldown_PlanFromScopeBox", scopeBoxV004, scopeBoxV003);
+            RibbonLayoutHelper.WirePulldownButton(sheetCreateItems, "Pulldown_SmartViewToSheetPlacer", sheetPlacerV222, sheetPlacerV221);
 
             RibbonPanel placePanel = app.CreateRibbonPanel(tabName, "Sheet Place");
 
@@ -55,13 +50,12 @@ namespace Revit26_Plugin.Menu.Ribbon
             };
             var rearrangeV024 = new PushButtonData("Btn_SheetAutoRearrange.V024", "Rearrange (V024)", assemblyPath, "Revit26_Plugin.SheetAutoRearrange.V024.Commands.SheetAutoRearrangeCommand")
             {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SheetAutoRearrange_16.png"),
                 ToolTip = "Sheet Auto Rearrange (V024)"
             };
-            var rearrangeSplitData = RibbonLayoutHelper.CreateSplitButtonData("Split_SheetAutoRearrange", "Rearrange", rearrangeV025);
+            var rearrangePulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_SheetAutoRearrange", "Rearrange", rearrangeV025);
 
-            var placeItems = RibbonLayoutHelper.AddStackedButtons(placePanel, new List<RibbonItemData> { rearrangeSplitData });
-            RibbonLayoutHelper.WireSplitButton(placeItems, "Split_SheetAutoRearrange", rearrangeV025, rearrangeV024);
+            var placeItems = RibbonLayoutHelper.AddStackedButtons(placePanel, new List<RibbonItemData> { rearrangePulldownData });
+            RibbonLayoutHelper.WirePulldownButton(placeItems, "Pulldown_SheetAutoRearrange", rearrangeV025, rearrangeV024);
         }
     }
 }

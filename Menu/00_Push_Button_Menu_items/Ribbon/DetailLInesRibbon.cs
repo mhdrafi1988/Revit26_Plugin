@@ -10,9 +10,8 @@ namespace Revit26_Plugin.Menu.Ribbon
         {
             RibbonPanel createPanel = app.CreateRibbonPanel(tabName, "Detail Line Create");
 
-            // Two coexisting implementations of the same tool — one split
-            // button instead of two stacked entries: one click runs VA006
-            // (the newer build), the dropdown arrow reveals VA003.
+            // Two coexisting implementations of the same tool, collected under
+            // one pulldown button — newest keeps its icon, older is text-only.
             var linesVA006 = new PushButtonData("Btn_ DeatailLInes VA006", "From Links (VA006)", assemblyPath, "Revit26_Plugin.LinkedDetailLineGenerator.VA006.Commands.OpenLinkedDetailLineGeneratorCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.Linematch32_16.png"),
@@ -20,13 +19,12 @@ namespace Revit26_Plugin.Menu.Ribbon
             };
             var linesVA003 = new PushButtonData("Btn_ DeatailLInes VA003", "From Links (VA003)", assemblyPath, "Revit26_Plugin.LinkedDetailLineGenerator.VA003.Commands.OpenLinkedDetailLineGeneratorCommand")
             {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.CreateDetailLines_16.png"),
                 ToolTip = "Create Detail Lines From Linked Files (VA003)"
             };
-            var linesSplitData = RibbonLayoutHelper.CreateSplitButtonData("Split_DetailLinesFromLinks", "From Links", linesVA006);
+            var linesPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DetailLinesFromLinks", "From Links", linesVA006);
 
-            var createItems = RibbonLayoutHelper.AddStackedButtons(createPanel, new List<RibbonItemData> { linesSplitData });
-            RibbonLayoutHelper.WireSplitButton(createItems, "Split_DetailLinesFromLinks", linesVA006, linesVA003);
+            var createItems = RibbonLayoutHelper.AddStackedButtons(createPanel, new List<RibbonItemData> { linesPulldownData });
+            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_DetailLinesFromLinks", linesVA006, linesVA003);
 
             RibbonPanel processPanel = app.CreateRibbonPanel(tabName, "Detail Line Process");
             RibbonLayoutHelper.AddStackedButtons(processPanel, new List<RibbonItemData>
