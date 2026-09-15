@@ -48,6 +48,11 @@ namespace Revit26_Plugin.Menu.Ribbon
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SheetAutoRearrange_V025_16.png"),
                     ToolTip = "Sheet Auto Rearrange (V025)"
                 },
+                new PushButtonData("Btn_SheetAutoRearrange.V026", "Rearrange (V026)", assemblyPath, "Revit26_Plugin.SheetAutoRearrange.V026.Commands.SheetAutoRearrangeCommand")
+                {
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SheetAutoRearrange_V026_16.png"),
+                    ToolTip = "Sheet Auto Rearrange (V026) — adds Priority Groups (rank ViewTypes so e.g. all Sections place before any Drafting Views)"
+                },
             });
         }
     }
