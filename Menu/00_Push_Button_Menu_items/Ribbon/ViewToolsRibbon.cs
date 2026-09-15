@@ -25,6 +25,10 @@ namespace Revit26_Plugin.Menu.Ribbon
             };
             var edgeAroundSplitData = RibbonLayoutHelper.CreateSplitButtonData("Split_RoofEdgeAroundSections", "Edge Around", edgeAroundV004);
 
+            // A split/pulldown button can only sit in a stack of exactly 2 —
+            // Revit doesn't render the dropdown affordance in a stack of 3
+            // (falls back to something broken instead). So this is two calls:
+            // a 2-item stack (push + split), then the last button on its own.
             var createItems = RibbonLayoutHelper.AddStackedButtons(createPanel, new List<RibbonItemData>
             {
                 new PushButtonData("Btn_ Sections From Detail Lines V11", "Sections From Lines", assemblyPath, "Revit26_Plugin.CreateSections.V011.Commands.CreateSectionsFromDetailLines")
@@ -33,13 +37,17 @@ namespace Revit26_Plugin.Menu.Ribbon
                     ToolTip = "Create Sections From Detail Lines"
                 },
                 edgeAroundSplitData,
+            });
+            RibbonLayoutHelper.WireSplitButton(createItems, "Split_RoofEdgeAroundSections", edgeAroundV004, edgeAroundV003);
+
+            RibbonLayoutHelper.AddStackedButtons(createPanel, new List<RibbonItemData>
+            {
                 new PushButtonData("Btn_RoofEdgeElementSections_V001", "Roof Edge Sections", assemblyPath, "Revit26_Plugin.RoofEdgeElementSections.V001.RoofEdgeElementSectionsCommand")
                 {
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofEdgeElementSections_16.png"),
                     ToolTip = "Roof Edge Element Sections"
                 },
             });
-            RibbonLayoutHelper.WireSplitButton(createItems, "Split_RoofEdgeAroundSections", edgeAroundV004, edgeAroundV003);
 
             RibbonPanel placePanel = app.CreateRibbonPanel(tabName, "View Place");
             RibbonLayoutHelper.AddStackedButtons(placePanel, new List<RibbonItemData>
@@ -80,7 +88,9 @@ namespace Revit26_Plugin.Menu.Ribbon
             };
             var autoRenamerSplitData = RibbonLayoutHelper.CreateSplitButtonData("Split_ViewAutoRenamer", "Auto Renamer", autoRenamerV004);
 
-            var renameItems = RibbonLayoutHelper.AddStackedButtons(renamePanel, new List<RibbonItemData>
+            // Same stack-of-3 restriction as View Create: the split button can't
+            // share a 3-item stack, so it's on its own after a plain 2-item stack.
+            RibbonLayoutHelper.AddStackedButtons(renamePanel, new List<RibbonItemData>
             {
                 new PushButtonData("Btn_BubbleAutoRenumber_V006", "Bubble Renumber", assemblyPath, "Revit26_Plugin.BubbleAutoRenumber.V006.Commands.SectionAutoRenumberCommand")
                 {
@@ -92,8 +102,9 @@ namespace Revit26_Plugin.Menu.Ribbon
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.SectionAutoRenamer_16.png"),
                     ToolTip = "Section Auto Renamer"
                 },
-                autoRenamerSplitData,
             });
+
+            var renameItems = RibbonLayoutHelper.AddStackedButtons(renamePanel, new List<RibbonItemData> { autoRenamerSplitData });
             RibbonLayoutHelper.WireSplitButton(renameItems, "Split_ViewAutoRenamer", autoRenamerV004, autoRenamerV003);
         }
     }

@@ -37,13 +37,14 @@ namespace Revit26_Plugin.Menu.Ribbon
             };
             var sheetPlacerSplitData = RibbonLayoutHelper.CreateSplitButtonData("Split_SmartViewToSheetPlacer", "Sheet Placer", sheetPlacerV222);
 
-            var createItems = RibbonLayoutHelper.AddStackedButtons(createPanel, new List<RibbonItemData>
-            {
-                scopeBoxSplitData,
-                sheetPlacerSplitData,
-            });
-            RibbonLayoutHelper.WireSplitButton(createItems, "Split_PlanFromScopeBox", scopeBoxV004, scopeBoxV003);
-            RibbonLayoutHelper.WireSplitButton(createItems, "Split_SmartViewToSheetPlacer", sheetPlacerV222, sheetPlacerV221);
+            // Kept as two standalone buttons rather than pairing them into one
+            // 2-item stack — only proven-safe placement for a split button is
+            // paired with a plain push button, or entirely on its own.
+            var scopeBoxItems = RibbonLayoutHelper.AddStackedButtons(createPanel, new List<RibbonItemData> { scopeBoxSplitData });
+            RibbonLayoutHelper.WireSplitButton(scopeBoxItems, "Split_PlanFromScopeBox", scopeBoxV004, scopeBoxV003);
+
+            var sheetPlacerItems = RibbonLayoutHelper.AddStackedButtons(createPanel, new List<RibbonItemData> { sheetPlacerSplitData });
+            RibbonLayoutHelper.WireSplitButton(sheetPlacerItems, "Split_SmartViewToSheetPlacer", sheetPlacerV222, sheetPlacerV221);
 
             RibbonPanel placePanel = app.CreateRibbonPanel(tabName, "Sheet Place");
 
