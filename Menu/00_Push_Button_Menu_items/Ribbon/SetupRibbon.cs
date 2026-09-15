@@ -12,7 +12,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             // panels — running a Family tool in a Project (or vice versa)
             // fails the context check, so the panel title now makes that clear.
             RibbonPanel familyPanel = app.CreateRibbonPanel(tabName, "Family Tools");
-            RibbonLayoutHelper.AddStackedButtons(familyPanel, new List<PushButtonData>
+            RibbonLayoutHelper.AddStackedButtons(familyPanel, new List<RibbonItemData>
             {
                 new PushButtonData("BatchLinkDwgCommand", "Batch Link DWG", assemblyPath, "BatchDwgFamilyLinker.Command.BatchLinkDwgCommand")
                 {
@@ -26,34 +26,46 @@ namespace Revit26_Plugin.Menu.Ribbon
             });
 
             RibbonPanel projectPanel = app.CreateRibbonPanel(tabName, "Project Tools");
-            RibbonLayoutHelper.AddStackedButtons(projectPanel, new List<PushButtonData>
+
+            // Two coexisting implementations of the same tool, collected under
+            // one pulldown button — newest keeps its icon, older is text-only.
+            var dwgLinesV011 = new PushButtonData("Btn_DwgToDetailLines_V011", "Detail Lines (V011)", assemblyPath, "Revit26_Plugin.DwgToDetailLines.V011.Commands.DwgToDetailLinesCommand")
             {
-                new PushButtonData("Btn_WorksetManager_11", "Worksets From Links", assemblyPath, "Revit26_Plugin.WSFL.V011.Commands.CreateWorksetsFromLinkedFiles")
-                {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.WorksetsFromLinks_16.png"),
-                    ToolTip = "Create Worksets From Linked Files"
-                },
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToDetailLines_V011_16.png"),
+                ToolTip = "DWG To Detail Lines (V011)"
+            };
+            var dwgLinesV002 = new PushButtonData("Btn_DwgToDetailLines_V002", "Detail Lines (V002)", assemblyPath, "Revit26_Plugin.DwgToDetailLines.V002.Commands.LaunchCommand")
+            {
+                ToolTip = "DWG To Detail Lines (V002)"
+            };
+            var dwgLinesPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DwgToDetailLines", "Detail Lines", dwgLinesV011);
+
+            // Worksets From Links and Workset Manager aren't version numbers of
+            // literally the same tool, but cover the same job (getting worksets
+            // set up) — merged into one pulldown per request; Workset Manager
+            // (the newer "_New" build) keeps the icon, the other is text-only.
+            var worksetsFromLinks = new PushButtonData("Btn_WorksetManager_11", "Worksets From Links", assemblyPath, "Revit26_Plugin.WSFL.V011.Commands.CreateWorksetsFromLinkedFiles")
+            {
+                ToolTip = "Create Worksets From Linked Files"
+            };
+            var worksetManager = new PushButtonData("Btn_WorksetManager_V012_New", "Workset Manager", assemblyPath, "Revit26_Plugin.WorksetManager.V012.Commands.WorksetManagerCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.WorksetManager_16.png"),
+                ToolTip = "Workset Manager"
+            };
+            var worksetsPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_Worksets", "Worksets", worksetManager);
+
+            var projectItems = RibbonLayoutHelper.AddStackedButtons(projectPanel, new List<RibbonItemData>
+            {
+                worksetsPulldownData,
                 new PushButtonData("Btn_WorksetRenamer_V003", "Workset Renamer", assemblyPath, "Revit26_Plugin.WorksetRenamer.V003.Command")
                 {
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.WorksetRename_16.png")
                 },
-                new PushButtonData("Btn_WorksetManager_V012_New", "Workset Manager", assemblyPath, "Revit26_Plugin.WorksetManager.V012.Commands.WorksetManagerCommand")
-                {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.WorksetManager_16.png")
-                },
-                // Two coexisting implementations of the same tool — version
-                // kept only here so the pair stays distinguishable.
-                new PushButtonData("Btn_DwgToDetailLines_V002", "Detail Lines (V002)", assemblyPath, "Revit26_Plugin.DwgToDetailLines.V002.Commands.LaunchCommand")
-                {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToDetailLines_16.png"),
-                    ToolTip = "DWG To Detail Lines (V002)"
-                },
-                new PushButtonData("Btn_DwgToDetailLines_V011", "Detail Lines (V011)", assemblyPath, "Revit26_Plugin.DwgToDetailLines.V011.Commands.DwgToDetailLinesCommand")
-                {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToDetailLines_V011_16.png"),
-                    ToolTip = "DWG To Detail Lines (V011)"
-                },
+                dwgLinesPulldownData,
             });
+            RibbonLayoutHelper.WirePulldownButton(projectItems, "Pulldown_Worksets", worksetManager, worksetsFromLinks);
+            RibbonLayoutHelper.WirePulldownButton(projectItems, "Pulldown_DwgToDetailLines", dwgLinesV011, dwgLinesV002);
         }
     }
 }
