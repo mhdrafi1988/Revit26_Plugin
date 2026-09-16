@@ -17,10 +17,12 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Infrastructure.Helpers
         public const string Param_RunDuration           = "AutoSlope_RunDuration_sec";
         public const string Param_LongestPath           = "AutoSlope_LongestPath";
         public const string Param_SlopePercent          = "AutoSlope_SlopePercent";
+        public const string Param_SlopePercent_Text     = "AutoSlope_SlopePercent_Text";
         public const string Param_Threshold             = "AutoSlope_Threshold";
         public const string Param_RunDate               = "AutoSlope_RunDate";
         public const string Param_Status                = "AutoSlope_Status";
         public const string Param_Versions              = "AutoSlope_Versions";
+        public const string Param_DrainToleranceMm      = "AutoSlope_DrainToleranceMm";
 
         // Status Values
         public const int Status_OK      = 1;

@@ -60,11 +60,15 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Core.Parameters
             {
                 tx.Start();
 
-                // Integer parameters
-                TrySetInt(roof, AppConstants.Param_HighestElevation,
-                    (int)Math.Round(metrics.HighestElevationMm),
+                // Standardized (2026-09): HighestElevation now stored in Revit internal
+                // units (feet) via UnitUtils, matching the ByPoints tools — was
+                // previously an Integer (rounded mm), which mismatched the Length-typed
+                // shared parameter and silently failed to write.
+                TrySetDouble(roof, AppConstants.Param_HighestElevation,
+                    UnitUtils.ConvertToInternalUnits(metrics.HighestElevationMm, UnitTypeId.Millimeters),
                     ref successCount, ref failCount);
 
+                // Integer parameters
                 TrySetInt(roof, AppConstants.Param_VerticesProcessed,
                     metrics.ProcessedVertices,
                     ref successCount, ref failCount);
@@ -90,10 +94,18 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Core.Parameters
                     slopePercent,
                     ref successCount, ref failCount);
 
-                // FIX: stored in meters consistently (was inconsistent between
-                // ByPoint (mm) and ByDrain (m) writers targeting the same parameter name).
+                // Standardized (2026-09): Threshold now stored in Revit internal units
+                // (feet) via UnitUtils, matching the ByPoints tools and the shared-
+                // parameters spec, instead of a raw meters double.
                 TrySetDouble(roof, AppConstants.Param_Threshold,
-                    thresholdMeters,
+                    UnitUtils.ConvertToInternalUnits(thresholdMeters, UnitTypeId.Meters),
+                    ref successCount, ref failCount);
+
+                // Standardized (2026-09): slope percent as display text, matching the
+                // ByPoints tools. ByDrain has no separate "raw vs display" percent —
+                // the same slopePercent value used above is formatted here.
+                TrySetString(roof, AppConstants.Param_SlopePercent_Text,
+                    $"{slopePercent}%",
                     ref successCount, ref failCount);
 
                 // String parameters
@@ -104,6 +116,15 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Core.Parameters
                 // FIX: version now passed in rather than hardcoded.
                 TrySetString(roof, AppConstants.Param_Versions,
                     version ?? "006",
+                    ref successCount, ref failCount);
+
+                // Standardized (2026-09): AutoSlope_DrainToleranceMm added for parity
+                // with the ByPoints tools' shared-parameter set. ByDrain has no
+                // pick-point tolerance concept (drains are auto-detected from roof
+                // geometry, not picked), so this always writes 0. Kept as a plain
+                // millimeter Integer per Rafi's confirmed decision (2026-09).
+                TrySetInt(roof, AppConstants.Param_DrainToleranceMm,
+                    0,
                     ref successCount, ref failCount);
 
                 int statusValue = CalculateStatusValue(successCount, failCount);

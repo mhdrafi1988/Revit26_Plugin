@@ -207,6 +207,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint.V028.Core.Engine
             int processed = 0, skipped = 0;
             double maxPathFt = 0;
             var vertexDataList = new List<VertexData>();
+            DateTime runStartTime = DateTime.Now;
             Stopwatch sw = Stopwatch.StartNew();
 
             double drainBaselineZFt = drainIndices.Count > 0
@@ -333,6 +334,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint.V028.Core.Engine
             }
 
             sw.Stop();
+            DateTime runEndTime = DateTime.Now;
 
             int    highest_mm  = (int)Math.Round(
                 UnitUtils.ConvertFromInternalUnits(maxElevFt, UnitTypeId.Millimeters),
@@ -358,7 +360,9 @@ namespace Revit26_Plugin.AutoSlopeByPoint.V028.Core.Engine
             {
                 compactPath = ExcelExportService.ExportCompactVertexData(
                     data, vertexDataList, roof, data.SlopePercent,
-                    toolVersion, statusCode);
+                    toolVersion, statusCode,
+                    durationSec, runDate,
+                    runStartTime.ToString("HH:mm:ss"), runEndTime.ToString("HH:mm:ss"));
 
                 if (!string.IsNullOrEmpty(compactPath))
                 {
@@ -427,6 +431,8 @@ namespace Revit26_Plugin.AutoSlopeByPoint.V028.Core.Engine
                 LongestPath_m     = longest_m,
                 RunDuration_sec   = durationSec,
                 RunDate           = runDate,
+                RunStartTime      = runStartTime.ToString("HH:mm:ss"),
+                RunEndTime        = runEndTime.ToString("HH:mm:ss"),
                 CurvesCalculated  = boundaryArcs?.Count ?? 0,
                 Version           = toolVersion,
                 Status            = statusCode,
