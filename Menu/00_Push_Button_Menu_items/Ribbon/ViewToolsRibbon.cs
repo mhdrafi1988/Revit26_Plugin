@@ -63,6 +63,7 @@ namespace Revit26_Plugin.Menu.Ribbon
                 new PushButtonData("Btn_SectionViewAutoTagger.V004", "Section View Tagger", assemblyPath, "Revit26_Plugin.SectionViewAutoTagger.V004.SectionViewAutoTaggerCommand")
                 {
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.SectionAutoTagger_16.png"),
+                    LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.SectionAutoTagger_32.png"),
                     ToolTip = "Section View Auto Tagger"
                 },
             });
