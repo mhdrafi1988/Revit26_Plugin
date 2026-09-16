@@ -762,6 +762,12 @@
 	  <None Remove="Resources\Icons\ViewTools\SectionsFromDetailLines_16.png" />
 	  <None Remove="Resources\Icons\ViewTools\ViewAutoRenamer_16.png" />
 	  <None Remove="Resources\Icons\ViewTools\ViewAutoRenamer_V004_16.png" />
+	  <None Remove="Resources\Icons\Dimensions\AutoDimDetailLine_32.png" />
+	  <None Remove="Resources\Icons\Manage\AnnotationOverlapDetection_32.png" />
+	  <None Remove="Resources\Icons\DetailLiner\ClosedLoop_32.png" />
+	  <None Remove="Resources\Icons\DetailLiner\Linematch32_32.png" />
+	  <None Remove="Resources\Icons\ViewTools\SectionAutoTagger_32.png" />
+	  <None Remove="Resources\Icons\SheetTools\SheetAutoRearrange_V026_32.png" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Page Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_WIP2\UI\Views\UI_Autoslope - Copy.xaml" />
@@ -868,6 +874,12 @@
 	  <EmbeddedResource Include="Resources\Icons\ViewTools\SectionsFromDetailLines_16.png" />
 	  <EmbeddedResource Include="Resources\Icons\ViewTools\ViewAutoRenamer_16.png" />
 	  <EmbeddedResource Include="Resources\Icons\ViewTools\ViewAutoRenamer_V004_16.png" />
+	  <EmbeddedResource Include="Resources\Icons\Dimensions\AutoDimDetailLine_32.png" />
+	  <EmbeddedResource Include="Resources\Icons\Manage\AnnotationOverlapDetection_32.png" />
+	  <EmbeddedResource Include="Resources\Icons\DetailLiner\ClosedLoop_32.png" />
+	  <EmbeddedResource Include="Resources\Icons\DetailLiner\Linematch32_32.png" />
+	  <EmbeddedResource Include="Resources\Icons\ViewTools\SectionAutoTagger_32.png" />
+	  <EmbeddedResource Include="Resources\Icons\SheetTools\SheetAutoRearrange_V026_32.png" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Resource Include="Shared\SharedStyles.xaml" />

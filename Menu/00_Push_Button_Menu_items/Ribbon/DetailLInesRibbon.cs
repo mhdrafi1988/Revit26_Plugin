@@ -22,6 +22,7 @@ namespace Revit26_Plugin.Menu.Ribbon
                 ToolTip = "Create Detail Lines From Linked Files (VA003)"
             };
             var linesPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DetailLinesFromLinks", "From Links", linesVA006);
+            linesPulldownData.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.Linematch32_32.png");
 
             var createItems = RibbonLayoutHelper.AddStackedButtons(createPanel, new List<RibbonItemData> { linesPulldownData });
             RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_DetailLinesFromLinks", linesVA006, linesVA003);
@@ -31,7 +32,8 @@ namespace Revit26_Plugin.Menu.Ribbon
             {
                 new PushButtonData("Btn_DetailLineClosedLoop_V001", "Detail Line Closed Loop", assemblyPath, "Revit26_Plugin.DetailLineClosedLoop.V001.Commands.DetailLineClosedLoopCommand")
                 {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.ClosedLoop_16.png")
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.ClosedLoop_16.png"),
+                    LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.ClosedLoop_32.png")
                 },
             });
         }

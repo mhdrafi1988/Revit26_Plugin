@@ -57,6 +57,7 @@ namespace Revit26_Plugin.Menu.Ribbon
                 ToolTip = "Sheet Auto Rearrange (V024)"
             };
             var rearrangePulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_SheetAutoRearrange", "Rearrange", rearrangeV026);
+            rearrangePulldownData.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SheetAutoRearrange_V026_32.png");
 
             var placeItems = RibbonLayoutHelper.AddStackedButtons(placePanel, new List<RibbonItemData> { rearrangePulldownData });
             RibbonLayoutHelper.WirePulldownButton(placeItems, "Pulldown_SheetAutoRearrange", rearrangeV026, rearrangeV025, rearrangeV024);
