@@ -60,11 +60,15 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.Core.Parameters
             {
                 tx.Start();
 
-                // Integer parameters
-                TrySetInt(roof, AppConstants.Param_HighestElevation,
-                    (int)Math.Round(metrics.HighestElevationMm),
+                // Standardized (2026-09): HighestElevation now stored in Revit internal
+                // units (feet) via UnitUtils, matching the ByPoints tools — was
+                // previously an Integer (rounded mm), which mismatched the Length-typed
+                // shared parameter and silently failed to write.
+                TrySetDouble(roof, AppConstants.Param_HighestElevation,
+                    UnitUtils.ConvertToInternalUnits(metrics.HighestElevationMm, UnitTypeId.Millimeters),
                     ref successCount, ref failCount);
 
+                // Integer parameters
                 TrySetInt(roof, AppConstants.Param_VerticesProcessed,
                     metrics.ProcessedVertices,
                     ref successCount, ref failCount);
