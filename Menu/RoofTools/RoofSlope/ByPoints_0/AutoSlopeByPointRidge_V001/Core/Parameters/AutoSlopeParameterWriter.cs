@@ -75,9 +75,11 @@ namespace Revit26_Plugin.AutoSlopeByPointRidge.V001.Core.Parameters
                     longestPath_m,
                     ref successCount, ref failCount);
 
+                // Standardized (2026-09): store the raw slope percent (not divided by
+                // 100), matching the ByDrain tools and the shared-parameters spec.
                 TrySetDouble(roof,
                     AppConstants.Param_SlopePercent,
-                    data.SlopePercent / 100.0,
+                    data.SlopePercent,
                     ref successCount, ref failCount);
 
                 TrySetString(roof,
@@ -85,9 +87,11 @@ namespace Revit26_Plugin.AutoSlopeByPointRidge.V001.Core.Parameters
                     $"{data.SlopePercent}%",
                     ref successCount, ref failCount);
 
+                // Standardized (2026-09): Threshold now stored in Revit internal units
+                // (feet) via UnitUtils, instead of millimeters.
                 TrySetDouble(roof,
                     AppConstants.Param_Threshold,
-                    data.ThresholdMeters * 1000.0,
+                    UnitUtils.ConvertToInternalUnits(data.ThresholdMeters, UnitTypeId.Meters),
                     ref successCount, ref failCount);
 
                 // Fix #6: use the runDate passed in rather than a second DateTime.Now
@@ -101,6 +105,8 @@ namespace Revit26_Plugin.AutoSlopeByPointRidge.V001.Core.Parameters
                     version,
                     ref successCount, ref failCount);
 
+                // Kept as a plain millimeter value per Rafi's confirmed decision
+                // (2026-09) — DrainToleranceMm stays mm, not internal units.
                 TrySetInt(roof,
                     AppConstants.Param_DrainToleranceMm,
                     data.EnableDrainTolerance ? (int)Math.Round((double)data.DrainToleranceMm) : 0,
