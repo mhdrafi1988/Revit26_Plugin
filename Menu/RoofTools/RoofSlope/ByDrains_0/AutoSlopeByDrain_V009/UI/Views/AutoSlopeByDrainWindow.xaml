@@ -648,6 +648,22 @@
                                             <Style TargetType="TextBlock"><Setter Property="TextAlignment" Value="Right"/></Style>
                                         </DataGridTextColumn.ElementStyle>
                                     </DataGridTextColumn>
+                                    <DataGridTextColumn Header="⌀ (mm)" Binding="{Binding Diameter, StringFormat={}{0:F0}}" SortMemberPath="Diameter" Width="55">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="TextAlignment" Value="Right"/>
+                                                <Setter Property="ToolTip" Value="Diameter (Circle rows only)"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="R (mm)" Binding="{Binding Radius, StringFormat={}{0:F0}}" SortMemberPath="Radius" Width="50">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="TextAlignment" Value="Right"/>
+                                                <Setter Property="ToolTip" Value="Radius (Circle rows only)"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
                                     <DataGridTextColumn Header="X" Binding="{Binding CenterPoint.X, StringFormat={}{0:F0}}" Width="55">
                                         <DataGridTextColumn.ElementStyle>
                                             <Style TargetType="TextBlock"><Setter Property="TextAlignment" Value="Right"/></Style>
