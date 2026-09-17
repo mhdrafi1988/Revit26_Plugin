@@ -7,7 +7,7 @@
         Height="780" Width="880"
         MinHeight="780" MinWidth="880"
         WindowStartupLocation="CenterScreen"
-        Background="{StaticResource BrushSystemBackground}"
+        Background="{DynamicResource BrushSystemBackground}"
         Closing="Window_Closing">
 
     <Window.Resources>
