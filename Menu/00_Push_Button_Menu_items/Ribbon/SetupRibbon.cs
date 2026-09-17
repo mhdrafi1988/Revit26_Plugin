@@ -42,10 +42,10 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             // Worksets From Links and Workset Manager aren't version numbers of
             // literally the same tool, but cover the same job (getting worksets
-            // set up) — merged into one pulldown per request; Workset Manager
-            // (the newer "_New" build) keeps the icon, the other is text-only.
+            // set up) — merged into one pulldown per request.
             var worksetsFromLinks = new PushButtonData("Btn_WorksetManager_11", "Worksets From Links", assemblyPath, "Revit26_Plugin.WSFL.V011.Commands.CreateWorksetsFromLinkedFiles")
             {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.WorksetsFromLinks_16.png"),
                 ToolTip = "Create Worksets From Linked Files"
             };
             var worksetManager = new PushButtonData("Btn_WorksetManager_V012_New", "Workset Manager", assemblyPath, "Revit26_Plugin.WorksetManager.V012.Commands.WorksetManagerCommand")
