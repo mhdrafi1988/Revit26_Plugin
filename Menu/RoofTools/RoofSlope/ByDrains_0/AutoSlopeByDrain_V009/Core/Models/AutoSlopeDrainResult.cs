@@ -39,6 +39,12 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.V009.Core.Models
         public int RunDuration_sec { get; set; }
         public string RunDate { get; set; }
 
+        /// <summary>Wall-clock time this roof's run started, e.g. "14:32:05".</summary>
+        public string StartTime { get; set; }
+
+        /// <summary>Wall-clock time this roof's run finished, e.g. "14:32:41".</summary>
+        public string EndTime { get; set; }
+
         /// <summary>Parameter-write status code: 1=OK, 2=Partial, 3=Failed.</summary>
         public int Status { get; set; }
 

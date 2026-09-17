@@ -209,6 +209,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint.V028.Core.Engine
             var vertexDataList = new List<VertexData>();
             DateTime runStartTime = DateTime.Now;
             Stopwatch sw = Stopwatch.StartNew();
+            data.Log?.Invoke(new LogEntry(LogLevel.Info, $"Run started at {runStartTime:HH:mm:ss}"));
 
             double drainBaselineZFt = drainIndices.Count > 0
                 ? drainIndices.Average(idx => vertices[idx].Position.Z)
@@ -411,6 +412,8 @@ namespace Revit26_Plugin.AutoSlopeByPoint.V028.Core.Engine
             data.Log?.Invoke(new LogEntry(LogLevel.Info,    $"Final Drain Count        : {finalDrainPoints.Count}"));
             data.Log?.Invoke(new LogEntry(LogLevel.Info,    $"Run Duration             : {durationSec} sec"));
             data.Log?.Invoke(new LogEntry(LogLevel.Info,    $"Run Date                 : {runDate}"));
+            data.Log?.Invoke(new LogEntry(LogLevel.Info,
+                $"Run finished at {runEndTime:HH:mm:ss} | Started {runStartTime:HH:mm:ss} | Duration: {durationSec}s"));
             if (data.EnableDrainTolerance)
                 data.Log?.Invoke(new LogEntry(LogLevel.Info,
                     $"Drain Tolerance          : {data.DrainToleranceMm} mm (enabled)"));

@@ -207,7 +207,9 @@ namespace Revit26_Plugin.AutoSlopeByPointKdTree.VKD01.Core.Engine
             int processed = 0, skipped = 0;
             double maxPathFt = 0;
             var vertexDataList = new List<VertexData>();
+            DateTime runStartTime = DateTime.Now;
             Stopwatch sw = Stopwatch.StartNew();
+            data.Log?.Invoke(new LogEntry(LogLevel.Info, $"Run started at {runStartTime:HH:mm:ss}"));
 
             double drainBaselineZFt = drainIndices.Count > 0
                 ? drainIndices.Average(idx => vertices[idx].Position.Z)
@@ -333,6 +335,7 @@ namespace Revit26_Plugin.AutoSlopeByPointKdTree.VKD01.Core.Engine
             }
 
             sw.Stop();
+            DateTime runEndTime = DateTime.Now;
 
             int    highest_mm  = (int)Math.Round(
                 UnitUtils.ConvertFromInternalUnits(maxElevFt, UnitTypeId.Millimeters),
@@ -358,7 +361,9 @@ namespace Revit26_Plugin.AutoSlopeByPointKdTree.VKD01.Core.Engine
             {
                 compactPath = ExcelExportService.ExportCompactVertexData(
                     data, vertexDataList, roof, data.SlopePercent,
-                    toolVersion, statusCode);
+                    toolVersion, statusCode,
+                    durationSec, runDate,
+                    runStartTime.ToString("HH:mm:ss"), runEndTime.ToString("HH:mm:ss"));
 
                 if (!string.IsNullOrEmpty(compactPath))
                 {
@@ -407,6 +412,8 @@ namespace Revit26_Plugin.AutoSlopeByPointKdTree.VKD01.Core.Engine
             data.Log?.Invoke(new LogEntry(LogLevel.Info,    $"Final Drain Count        : {finalDrainPoints.Count}"));
             data.Log?.Invoke(new LogEntry(LogLevel.Info,    $"Run Duration             : {durationSec} sec"));
             data.Log?.Invoke(new LogEntry(LogLevel.Info,    $"Run Date                 : {runDate}"));
+            data.Log?.Invoke(new LogEntry(LogLevel.Info,
+                $"Run finished at {runEndTime:HH:mm:ss} | Started {runStartTime:HH:mm:ss} | Duration: {durationSec}s"));
             if (data.EnableDrainTolerance)
                 data.Log?.Invoke(new LogEntry(LogLevel.Info,
                     $"Drain Tolerance          : {data.DrainToleranceMm} mm (enabled)"));
@@ -427,6 +434,8 @@ namespace Revit26_Plugin.AutoSlopeByPointKdTree.VKD01.Core.Engine
                 LongestPath_m     = longest_m,
                 RunDuration_sec   = durationSec,
                 RunDate           = runDate,
+                RunStartTime      = runStartTime.ToString("HH:mm:ss"),
+                RunEndTime        = runEndTime.ToString("HH:mm:ss"),
                 CurvesCalculated  = boundaryArcs?.Count ?? 0,
                 Version           = toolVersion,
                 Status            = statusCode,

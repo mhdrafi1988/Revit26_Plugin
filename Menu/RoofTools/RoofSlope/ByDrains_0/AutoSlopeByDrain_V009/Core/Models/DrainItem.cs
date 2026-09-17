@@ -32,6 +32,12 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.V009.Core.Models
         /// <summary>Sort key for "sorted by opening size" within a group — the loop's bounding-box area.</summary>
         public double SizeSortKey => Width * Height;
 
+        /// <summary>Diameter in mm, for Circle rows only (bounding-box width == height); null for non-circle shapes so the grid cell renders blank.</summary>
+        public double? Diameter => ShapeGroup == "Circle" ? Width : (double?)null;
+
+        /// <summary>Radius in mm, for Circle rows only; null for non-circle shapes so the grid cell renders blank.</summary>
+        public double? Radius => ShapeGroup == "Circle" ? Width / 2.0 : (double?)null;
+
         /// <summary>Fixed display order for ShapeGroup, so groups always list as Circle, Rectangle, Other regardless of detection order.</summary>
         public int ShapeGroupOrder => ShapeGroup == "Circle" ? 0 : ShapeGroup == "Rectangle" ? 1 : 2;
 

@@ -269,7 +269,7 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.Infrastructure.Helpers
                 var sheet = package.Workbook.Worksheets.Add("Multi-Roof Summary");
 
                 sheet.Cells["A1"].Value = "AUTOSLOPE BY DRAIN — MULTI-ROOF SUMMARY";
-                sheet.Cells[1, 1, 1, 8].Merge = true;
+                sheet.Cells[1, 1, 1, 10].Merge = true;
                 sheet.Cells["A1"].Style.Font.Bold = true;
                 sheet.Cells["A1"].Style.Font.Size = 14;
                 sheet.Cells["A1"].Style.Fill.PatternType = ExcelFillStyle.Solid;
@@ -285,7 +285,7 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.Infrastructure.Helpers
                 var headers = new[]
                 {
                     "Roof Name", "Roof Id", "Status", "Drains Selected",
-                    "Longest Path (m)", "Highest Elevation (mm)", "Run Duration (sec)", "Exported File"
+                    "Longest Path (m)", "Highest Elevation (mm)", "Start Time", "End Time", "Run Duration (sec)", "Exported File"
                 };
 
                 int headerRow = 5;
@@ -309,6 +309,8 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.Infrastructure.Helpers
                     sheet.Cells[row, col++].Value = r?.SelectedCount ?? 0;
                     sheet.Cells[row, col++].Value = r?.Success == true ? (object)Math.Round(r.LongestPath_m, 2) : "—";
                     sheet.Cells[row, col++].Value = r?.Success == true ? (object)Math.Round(r.HighestElevation_mm, 0) : "—";
+                    sheet.Cells[row, col++].Value = r?.StartTime ?? "—";
+                    sheet.Cells[row, col++].Value = r?.EndTime ?? "—";
                     sheet.Cells[row, col++].Value = r?.RunDuration_sec ?? 0;
                     sheet.Cells[row, col++].Value = r?.ExportedFilePath ?? "—";
 
@@ -381,6 +383,8 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.Infrastructure.Helpers
 
             AddInfoRow(sheet, ref row, "Highest Elevation (mm)", $"{metrics.HighestElevationMm:0}");
             AddInfoRow(sheet, ref row, "Longest Path (m)", $"{metrics.LongestPathM:0.00}");
+            AddInfoRow(sheet, ref row, "Start Time", metrics.StartTime ?? "N/A");
+            AddInfoRow(sheet, ref row, "End Time", metrics.EndTime ?? "N/A");
             AddInfoRow(sheet, ref row, "Run Duration (sec)", metrics.RunDurationSec.ToString());
             row++; // blank separator
             AddInfoRow(sheet, ref row, "Export Folder", exportFolderPath);

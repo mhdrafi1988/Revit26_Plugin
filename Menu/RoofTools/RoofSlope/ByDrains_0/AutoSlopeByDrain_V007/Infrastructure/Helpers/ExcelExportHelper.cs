@@ -297,6 +297,8 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Infrastructure.Helpers
 
             AddInfoRow(sheet, ref row, "Highest Elevation (mm)", $"{metrics.HighestElevationMm:0}");
             AddInfoRow(sheet, ref row, "Longest Path (m)", $"{metrics.LongestPathM:0.00}");
+            AddInfoRow(sheet, ref row, "Start Time", metrics.StartTime ?? "N/A");
+            AddInfoRow(sheet, ref row, "End Time", metrics.EndTime ?? "N/A");
             AddInfoRow(sheet, ref row, "Run Duration (sec)", metrics.RunDurationSec.ToString());
             row++; // blank separator
             AddInfoRow(sheet, ref row, "Export Folder", exportFolderPath);
