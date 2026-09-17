@@ -53,6 +53,7 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.Core.Engine
             var log = payload.Log ?? (_ => { });
             var doc = app.ActiveUIDocument.Document;
             var startTime = DateTime.Now;
+            log(new LogEntry(LogLevel.Info, $"Run started at {startTime:HH:mm:ss}"));
 
             try
             {
@@ -149,7 +150,8 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.Core.Engine
                     payload.AllowedOffsetMarkerGroup,
                     payload.AllowedOffsetThresholdMm);
 
-                int durationSec = (int)(DateTime.Now - startTime).TotalSeconds;
+                var endTime = DateTime.Now;
+                int durationSec = (int)(endTime - startTime).TotalSeconds;
                 var vertexData = slopeService.GetLastExportData() ?? new List<DrainVertexData>();
 
                 int processedCount = vertexData.Count(v => v.WasProcessed);
@@ -165,6 +167,8 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.Core.Engine
                     SlopePercent = payload.SlopePercent,
                     RunDurationSec = durationSec,
                     RunDate = DateTime.Now.ToString("dd-MM-yy HH:mm"),
+                    StartTime = startTime.ToString("HH:mm:ss"),
+                    EndTime = endTime.ToString("HH:mm:ss"),
                     RoofId = roof.Id.Value.ToString(),
                     RoofName = roof.Name,
                     TotalDetectedCount = payload.TotalDetectedCount,
@@ -200,6 +204,8 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.Core.Engine
                     $"SUCCESS: {results.modifiedCount} vertices modified | Max offset {results.maxOffset:F1} mm | Longest path {results.longestPath:F2} m"));
                 log(new LogEntry(LogLevel.Info,
                     $"Circles Placed            : {slopeService.LastDrainCirclesPlaced} drain, {slopeService.LastHighestCirclesPlaced} highest, {slopeService.LastOffsetCirclesPlaced} allowed-offset"));
+                log(new LogEntry(LogLevel.Info,
+                    $"Run finished at {endTime:HH:mm:ss} | Started {startTime:HH:mm:ss} | Duration: {durationSec}s"));
 
                 return new AutoSlopeDrainResult
                 {
@@ -212,6 +218,8 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.Core.Engine
                     LongestPath_m = results.longestPath,
                     RunDuration_sec = durationSec,
                     RunDate = metrics.RunDate,
+                    StartTime = metrics.StartTime,
+                    EndTime = metrics.EndTime,
                     Status = AppConstants.Status_OK,
                     Version = ToolVersion,
                     TotalDetectedCount = payload.TotalDetectedCount,

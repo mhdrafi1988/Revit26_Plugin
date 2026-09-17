@@ -405,12 +405,14 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.UI.ViewModels
                 return;
             }
 
+            var overallStartTime = DateTime.Now;
+
             State = RunState.Running;
             LogEntries.Clear();
             AddLog(new LogEntry(LogLevel.Info,
                 runnableTabs.Count == 1
-                    ? "Starting AutoSlope By Drain..."
-                    : $"Starting AutoSlope By Drain on {runnableTabs.Count} of {RoofTabs.Count} selected roof(s)..."));
+                    ? $"Starting AutoSlope By Drain at {overallStartTime:HH:mm:ss}..."
+                    : $"Starting AutoSlope By Drain on {runnableTabs.Count} of {RoofTabs.Count} selected roof(s) at {overallStartTime:HH:mm:ss}..."));
 
             foreach (var skipped in RoofTabs.Except(runnableTabs))
                 AddLog(new LogEntry(LogLevel.Warning, $"[{skipped.RoofName}] Skipped — no drains selected."));
@@ -498,6 +500,11 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.UI.ViewModels
                         if (roofResults.Count > succeeded.Count)
                             AddLog(new LogEntry(LogLevel.Warning,
                                 $"{roofResults.Count - succeeded.Count} of {roofResults.Count} roof(s) failed — see log above for details."));
+
+                        var overallEndTime = DateTime.Now;
+                        int overallDurationSec = (int)(overallEndTime - overallStartTime).TotalSeconds;
+                        AddLog(new LogEntry(LogLevel.Info,
+                            $"All roofs completed — Started {overallStartTime:HH:mm:ss} | Finished {overallEndTime:HH:mm:ss} | Total duration: {overallDurationSec}s"));
 
                         State = RunState.Done;
 

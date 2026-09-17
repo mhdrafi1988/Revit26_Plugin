@@ -75,6 +75,12 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Core.Models
         public string RoofId { get; set; }
         public string RoofName { get; set; }
 
+        /// <summary>Wall-clock time this run started, e.g. "14:32:05".</summary>
+        public string StartTime { get; set; }
+
+        /// <summary>Wall-clock time this run finished, e.g. "14:32:41".</summary>
+        public string EndTime { get; set; }
+
         // ── NEW (V005) ─────────────────────────────────────────────────────
         /// <summary>Total drains found by DrainDetectionService, before any user selection.</summary>
         public int TotalDetectedCount { get; set; }

@@ -30,6 +30,12 @@ namespace Revit26_Plugin.AutoSlopeByPointRidge.V001.Core.Models
         public int RunDuration_sec { get; set; }
         public string RunDate { get; set; }
 
+        /// <summary>Wall-clock time this run started, e.g. "14:32:05".</summary>
+        public string RunStartTime { get; set; }
+
+        /// <summary>Wall-clock time this run finished, e.g. "14:32:41".</summary>
+        public string RunEndTime { get; set; }
+
         /// <summary>Number of boundary arc edges found on the roof (only populated when curve-intersection handling is enabled).</summary>
         public int CurvesCalculated { get; set; }
 

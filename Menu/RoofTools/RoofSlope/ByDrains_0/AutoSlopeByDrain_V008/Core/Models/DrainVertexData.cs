@@ -75,6 +75,12 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.Core.Models
         public string RoofId { get; set; }
         public string RoofName { get; set; }
 
+        /// <summary>Wall-clock time the engine started processing this roof, e.g. "14:32:05".</summary>
+        public string StartTime { get; set; }
+
+        /// <summary>Wall-clock time the engine finished processing this roof, e.g. "14:32:41".</summary>
+        public string EndTime { get; set; }
+
         // ── NEW (V005) ─────────────────────────────────────────────────────
         /// <summary>Total drains found by DrainDetectionService, before any user selection.</summary>
         public int TotalDetectedCount { get; set; }
