@@ -6,8 +6,8 @@
         Width="860" Height="620"
         MinWidth="720" MinHeight="480"
         WindowStartupLocation="CenterScreen"
-        Background="{StaticResource BrushSystemSecondaryBackground}"
-        FontFamily="{StaticResource SystemFont}">
+        Background="{DynamicResource BrushSystemSecondaryBackground}"
+        FontFamily="{DynamicResource SystemFont}">
 
     <Window.Resources>
         <ResourceDictionary>
