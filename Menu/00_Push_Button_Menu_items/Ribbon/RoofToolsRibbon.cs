@@ -55,6 +55,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             };
             var byDrainV009 = new PushButtonData("Btn_AutoSlopeByDrain_V009", "By Drain (Multi) V009", assemblyPath, "Revit26_Plugin.MultiRoofSlopeByDrain.V009.Commands.AutoSlopeByDrain")
             {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.AutoSlopeByDrain_MultiRoof_16.png"),
                 ToolTip = "Auto Slope By Drain (Multi-Roof) — V009"
             };
             var byDrainPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_AutoSlopeByDrain", "By Drain", byDrainV007);
