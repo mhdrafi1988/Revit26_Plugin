@@ -116,7 +116,7 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
             // 'source')" failing immediately on window construction.
             if (data?.Application?.ActiveUIDocument?.Document is not { } doc)
                 throw new InvalidOperationException(
-                    "Callout COP V019: no active document. Open a document and an active view before running this tool.");
+                    "Callout COP V19.0: no active document. Open a document and an active view before running this tool.");
 
             try
             {
@@ -141,7 +141,7 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
                     item.PropertyChanged += OnSheetFilterItemPropertyChanged;
 
                 SheetFilterItemsView = CollectionViewSource.GetDefaultView(SheetFilterItems)
-                    ?? throw new InvalidOperationException("Callout COP V019: failed to build the sheet-filter collection view.");
+                    ?? throw new InvalidOperationException("Callout COP V19.0: failed to build the sheet-filter collection view.");
                 SheetFilterItemsView.Filter = FilterSheetFilterItems;
 
                 // ── Parameter filter dependent dropdown ──
@@ -150,7 +150,7 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
                 // session's choice - per Rafi, this filter starts blank every
                 // time the window opens.
                 FilterParameterValuesView = CollectionViewSource.GetDefaultView(FilterParameterValues)
-                    ?? throw new InvalidOperationException("Callout COP V019: failed to build the filter-value collection view.");
+                    ?? throw new InvalidOperationException("Callout COP V19.0: failed to build the filter-value collection view.");
                 FilterParameterValuesView.Filter = FilterFilterParameterValues;
 
                 // ── Views collection + filter (depends on SheetFilterItems above) ──
@@ -159,7 +159,7 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
                 // null from the call above anymore, but this guard removes that
                 // exact failure mode regardless of upstream cause.
                 ViewsCollection = CollectionViewSource.GetDefaultView(Views)
-                    ?? throw new InvalidOperationException("Callout COP V019: failed to build the views collection view.");
+                    ?? throw new InvalidOperationException("Callout COP V19.0: failed to build the views collection view.");
                 ViewsCollection.Filter = FilterViews;
 
                 foreach (var vm in Views)
@@ -185,7 +185,7 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
                 PlacedCount = Views.Count(v => v.IsPlaced);
                 UpdateSelectedCount();
                 UpdateExpectedPlacementCount();
-                LogInfo("Callout COP V019 initialized.");
+                LogInfo("Callout COP V19.0 initialized.");
             }
             catch (Exception ex)
             {
@@ -195,7 +195,7 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
                 // with the original exception preserved as InnerException, so the
                 // real type/message/stack survives for diagnosis.
                 Logs.Add(new LogEntry(LogLevel.Error, $"Initialization failed: {ex.GetType().Name}: {ex.Message}"));
-                throw new InvalidOperationException($"Callout COP V019 failed to initialize: {ex.Message}", ex);
+                throw new InvalidOperationException($"Callout COP V19.0 failed to initialize: {ex.Message}", ex);
             }
         }
 
