@@ -182,7 +182,8 @@ namespace Revit26_Plugin.SmartViewToSheetPlacer.V222.Infrastructure.ExternalEven
                         upDirection: upDir,
                         cropCenterModel: cropCenter,
                         isMarkerResolved: isResolved,
-                        isAlreadyPlaced: isAlreadyPlaced);
+                        isAlreadyPlaced: isAlreadyPlaced,
+                        parameterValues: CollectParameterValues(v));
                     LoadedViews.Add(info);
                 }
                 catch (Exception ex)
@@ -528,6 +529,38 @@ namespace Revit26_Plugin.SmartViewToSheetPlacer.V222.Infrastructure.ExternalEven
             {
                 return 0;
             }
+        }
+
+        /// <summary>
+        /// Reads every parameter this View element carries — built-in, project,
+        /// and shared parameters bound to the Views category all show up the
+        /// same way in View.Parameters — as a Name -> display-string map.
+        /// Feeds Stage 1's generic Parameter/Value filter. Any parameter that
+        /// throws while being read (unusual, but seen with some read-only
+        /// calculated params) is skipped rather than failing the whole view.
+        /// </summary>
+        private static Dictionary<string, string> CollectParameterValues(View v)
+        {
+            var values = new Dictionary<string, string>();
+            foreach (Parameter p in v.Parameters)
+            {
+                try
+                {
+                    var name = p?.Definition?.Name;
+                    if (string.IsNullOrWhiteSpace(name) || values.ContainsKey(name)) continue;
+
+                    string? display = p!.HasValue ? p.AsValueString() : null;
+                    if (string.IsNullOrEmpty(display) && p.StorageType == StorageType.String)
+                        display = p.AsString();
+
+                    values[name] = display ?? string.Empty;
+                }
+                catch
+                {
+                    // Skip unreadable parameters — never fails the whole view load over one.
+                }
+            }
+            return values;
         }
     }
 }

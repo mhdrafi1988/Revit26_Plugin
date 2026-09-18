@@ -530,8 +530,12 @@
                     <StackPanel Visibility="{Binding ShowProgress, Converter={StaticResource BoolToVisibilityConverter}}"
                                 Margin="0,0,0,8">
                         <ProgressBar Height="6" Minimum="0" Maximum="100" Value="{Binding Progress.Percentage, Mode=OneWay}"/>
-                        <TextBlock Text="{Binding Progress.CurrentOperation}" FontSize="9" Margin="0,3,0,0"
-                                   Foreground="{StaticResource BrushTextSecondary}"/>
+                        <DockPanel Margin="0,3,0,0" LastChildFill="True">
+                            <TextBlock DockPanel.Dock="Right" Text="{Binding Progress.Percentage, StringFormat={}{0:F0}%}" FontSize="9"
+                                       Foreground="{StaticResource BrushTextSecondary}" Margin="6,0,0,0"/>
+                            <TextBlock Text="{Binding Progress.CurrentOperation}" FontSize="9"
+                                       Foreground="{StaticResource BrushTextSecondary}"/>
+                        </DockPanel>
                     </StackPanel>
 
                     <!-- Log panel -->

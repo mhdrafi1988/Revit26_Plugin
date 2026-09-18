@@ -59,6 +59,23 @@
                 <Setter Property="VerticalAlignment" Value="Center"/>
             </Style>
 
+            <!-- NEW: thin ProgressBar for the Run progress strip — defined
+                 LOCALLY (not in SharedStyles.xaml, which has no ProgressBar style
+                 today) so this stays scoped to this window only. Deliberately keeps
+                 WPF's DEFAULT ControlTemplate (only Height/Foreground/Background are
+                 restyled) rather than a custom one — the default template's built-in
+                 PART_Track/PART_Indicator sizing is what correctly handles both
+                 determinate width and the indeterminate animation; a hand-rolled
+                 template risks silently breaking one or the other. -->
+            <Style x:Key="ThinProgressBar" TargetType="ProgressBar">
+                <Setter Property="Height" Value="6"/>
+                <Setter Property="Minimum" Value="0"/>
+                <Setter Property="Maximum" Value="100"/>
+                <Setter Property="Foreground" Value="{StaticResource BrushAppleBlue}"/>
+                <Setter Property="Background" Value="{StaticResource BrushSystemTertiaryBackground}"/>
+                <Setter Property="BorderThickness" Value="0"/>
+            </Style>
+
             <!-- Group header style for the Detected Drains grid (Circle/Rectangle/Other) —
                  shows the group name + count and a per-group All/None pair. -->
             <!-- Expander wrapping ItemsPresenter — the actual grouped rows render
@@ -416,6 +433,15 @@
 
                 <!-- Run Button — right-aligned at the bottom, matching AutoSlopeByPoint VKD01's layout -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,3">
+                    <!-- NEW: Cancel sits next to Run, enabled only while a run
+                         is in progress (see CanCancelRun). -->
+                    <Button Content="Cancel"
+                            Command="{Binding CancelRunCommand}"
+                            ToolTip="Stop the run. Roof(s) already completed stay applied; the roof in progress rolls back (it hasn't written anything yet); remaining roofs are not started."
+                            Style="{StaticResource SecondaryButton}"
+                            Height="32"
+                            Width="70"
+                            Margin="0,0,6,0"/>
                     <Button Command="{Binding RunAutoSlopeCommand}"
                             ToolTip="Calculate and apply slope to the selected drains"
                             Height="32"
@@ -433,10 +459,46 @@
                                         <Setter Property="Content" Value="✓ Complete"/>
                                         <Setter Property="Background" Value="{StaticResource BrushSuccess}"/>
                                     </DataTrigger>
+                                    <DataTrigger Binding="{Binding StatusMessage}" Value="Cancelled">
+                                        <Setter Property="Content" Value="Cancelled — Run Again"/>
+                                        <Setter Property="Background" Value="{StaticResource BrushWarning}"/>
+                                    </DataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </Button.Style>
                     </Button>
+                </StackPanel>
+
+                <!-- NEW, per Rafi's confirmed progress-bar decision: one
+                     continuous bar spanning the whole batch, weighted by each roof's
+                     vertex count, with the current phase (and, in a multi-roof batch,
+                     which roof) as a label above it. Visible only while a run is in
+                     progress. -->
+                <StackPanel Margin="0,0,0,7" Visibility="{Binding IsProgressVisible, Converter={StaticResource BoolToVisibility}}">
+                    <DockPanel Margin="0,0,0,3" LastChildFill="True">
+                        <TextBlock DockPanel.Dock="Right"
+                                   Text="{Binding ProgressPercent, StringFormat={}{0:F0}%}"
+                                   FontSize="10"
+                                   Foreground="{StaticResource BrushTextSecondary}"
+                                   Margin="6,0,0,0">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ProgressIsIndeterminate}" Value="True">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <TextBlock Text="{Binding ProgressPhaseText}"
+                                   FontSize="10"
+                                   Foreground="{StaticResource BrushTextSecondary}"
+                                   TextTrimming="CharacterEllipsis"/>
+                    </DockPanel>
+                    <ProgressBar Style="{StaticResource ThinProgressBar}"
+                                 Value="{Binding ProgressPercent, Mode=OneWay}"
+                                 IsIndeterminate="{Binding ProgressIsIndeterminate}"/>
                 </StackPanel>
 
                 <!-- Inline hint shown only when Run is disabled specifically because

@@ -14,6 +14,9 @@ namespace Revit26_Plugin.AutoSlopeByPoint.V028.Core.Models
         /// <summary>True if the engine completed without fatal errors.</summary>
         public bool Success { get; set; }
 
+        /// <summary>NEW. True when this run was stopped by the user via Cancel.</summary>
+        public bool WasCancelled { get; set; }
+
         /// <summary>Human-readable error message when Success is false.</summary>
         public string ErrorMessage { get; set; }
 

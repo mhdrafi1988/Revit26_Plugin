@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 
@@ -91,6 +92,17 @@ namespace Revit26_Plugin.SmartViewToSheetPlacer.V222.Models
         /// </summary>
         public bool IsAlreadyPlaced { get; }
 
+        /// <summary>
+        /// Every parameter this View element carries — built-in (exposed as an
+        /// instance Parameter), project, and shared parameters bound to the
+        /// Views category alike — keyed by Definition.Name, value as its
+        /// display string (AsValueString/AsString). Populated once in the
+        /// handler's ExecuteLoadViews via View.Parameters. Feeds Stage 1's
+        /// generic Parameter/Value filter (FilterParameterOptions is the union
+        /// of these keys across all loaded views).
+        /// </summary>
+        public IReadOnlyDictionary<string, string> ParameterValues { get; }
+
         public ViewInfo(
             ElementId viewId,
             string name,
@@ -104,7 +116,8 @@ namespace Revit26_Plugin.SmartViewToSheetPlacer.V222.Models
             XYZ? cropCenterModel = null,
             bool isMarkerResolved = false,
             bool isAlreadyPlaced = false,
-            bool isSelected = false)
+            bool isSelected = false,
+            IReadOnlyDictionary<string, string>? parameterValues = null)
         {
             ViewId = viewId;
             Name = name;
@@ -119,6 +132,7 @@ namespace Revit26_Plugin.SmartViewToSheetPlacer.V222.Models
             IsMarkerResolved = isMarkerResolved;
             IsAlreadyPlaced = isAlreadyPlaced;
             _isSelected = isSelected;
+            ParameterValues = parameterValues ?? new Dictionary<string, string>();
         }
     }
 }

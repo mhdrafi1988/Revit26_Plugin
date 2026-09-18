@@ -9,6 +9,8 @@
 using Autodesk.Revit.DB;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
 
 namespace Revit26_Plugin.AutoSlopeByDrain.V007.Core.Engine
 {
@@ -34,6 +36,14 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Core.Engine
         // the tangent-arc engine took over edge validation.
         private readonly int _pathSampleCount;
 
+        /// <summary>NEW. Reports 0-100 progress through BuildGraph's outer loop. Throttled internally — safe to leave unset (null).</summary>
+        private readonly Action<double> _onBuildGraphProgress;
+
+        /// <summary>NEW. Checked right after each throttled progress report; throws OperationCanceledException if the user cancelled.</summary>
+        private readonly CancellationToken _cancelToken;
+
+        private const int ProgressThrottleMs = 150;
+
         /// <param name="vertices">All roof shape vertices (including any inserted curve-intersection points).</param>
         /// <param name="topFace">Roof top face.</param>
         /// <param name="edgeThresholdFt">Max candidate edge length (Max Edge Distance / ConnectionThresholdMeters, in feet).</param>
@@ -44,13 +54,17 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Core.Engine
         ///     it lies on the roof face — comes from the UI "Path Samples" field.
         ///     Clamped to a minimum of 2.
         /// </param>
+        /// <param name="onBuildGraphProgress">NEW. Optional throttled 0-100 progress callback for BuildGraph's outer loop.</param>
+        /// <param name="cancelToken">NEW. Optional cancellation token, checked after each throttled progress report.</param>
         public DijkstraPathEngine(
             List<SlabShapeVertex> vertices,
             Face topFace,
             double edgeThresholdFt,
             List<Arc> arcs = null,
             double curveTolFt = 0.0033, // ~1mm default
-            int pathSampleCount = 5)
+            int pathSampleCount = 5,
+            Action<double> onBuildGraphProgress = null,
+            CancellationToken cancelToken = default)
         {
             _verts = vertices;
             _topFace = topFace;
@@ -58,6 +72,8 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Core.Engine
             _arcs = arcs ?? new List<Arc>();
             _curveTolFt = curveTolFt;
             _pathSampleCount = Math.Max(2, pathSampleCount);
+            _onBuildGraphProgress = onBuildGraphProgress;
+            _cancelToken = cancelToken;
 
             var positions = new List<XYZ>(_verts.Count);
             foreach (var v in _verts) positions.Add(v.Position);
@@ -72,8 +88,18 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Core.Engine
             for (int i = 0; i < n; i++)
                 _adj[i] = new List<int>();
 
+            var progressStopwatch = _onBuildGraphProgress != null ? Stopwatch.StartNew() : null;
+
             for (int i = 0; i < n; i++)
             {
+                if (progressStopwatch != null && progressStopwatch.ElapsedMilliseconds >= ProgressThrottleMs)
+                {
+                    progressStopwatch.Restart();
+                    double frac = n <= 1 ? 100.0 : i * 100.0 / (n - 1);
+                    _onBuildGraphProgress(frac);
+                    _cancelToken.ThrowIfCancellationRequested();
+                }
+
                 XYZ a = _verts[i].Position;
                 for (int j = i + 1; j < n; j++)
                 {
@@ -126,6 +152,9 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Core.Engine
                     _edgeType[(j, i)] = type;
                 }
             }
+
+            _onBuildGraphProgress?.Invoke(100.0);
+            _cancelToken.ThrowIfCancellationRequested();
         }
 
         /// <summary>

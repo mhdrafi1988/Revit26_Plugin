@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -20,6 +21,29 @@ namespace Revit26_Plugin.SmartViewToSheetPlacer.V222.ViewModels
         [ObservableProperty] private double _marginBottomMm = 10.0;
         [ObservableProperty] private double _marginLeftMm = 10.0;
         [ObservableProperty] private double _marginRightMm = 10.0;
+
+        /// <summary>
+        /// V222: global H/V gap, moved here next to the Margin fields on the
+        /// Titleblock card — reverted from the per-ViewType-group gap cards
+        /// (confirmed with Rafi). Changing either value pushes it onto every
+        /// entry in GapSettingsGroups (Stage 2) so all groups always share the
+        /// same gap; new groups pick it up too (EnsureGapSettingsGroups).
+        /// </summary>
+        [ObservableProperty] private double _globalHorizontalGapMm = 5.0;
+        [ObservableProperty] private double _globalVerticalGapMm = 5.0;
+
+        partial void OnGlobalHorizontalGapMmChanged(double value)
+        {
+            foreach (var g in GapSettingsGroups)
+                g.HorizontalGapMm = value;
+        }
+
+        partial void OnGlobalVerticalGapMmChanged(double value)
+        {
+            foreach (var g in GapSettingsGroups)
+                g.VerticalGapMm = value;
+        }
+
         [ObservableProperty] private int _selectedViewCount;
         [ObservableProperty] private int _totalViewCount;
         [ObservableProperty] private bool _stage1Complete;
@@ -59,6 +83,77 @@ namespace Revit26_Plugin.SmartViewToSheetPlacer.V222.ViewModels
         [ObservableProperty] private PlacementFilterMode _placementFilter = PlacementFilterMode.All;
 
         partial void OnPlacementFilterChanged(PlacementFilterMode value) => ViewsView.Refresh();
+
+        /// <summary>
+        /// Generic parameter-driven filter: FilterParameterOptions lists every
+        /// parameter found POPULATED (non-blank on at least one loaded view) on
+        /// ANY loaded view — built-in (View Name, View Scale, View Template, ...),
+        /// project, and shared parameters bound to the Views category all show up
+        /// here alike (union of ViewInfo.ParameterValues keys across AllViews,
+        /// rebuilt in HandleLoadViewsCompleted; parameters blank on every view are
+        /// excluded so the picker doesn't get cluttered with dead entries).
+        /// Single-select, presented as a popover (ParameterFilterToggle/Popup in
+        /// XAML) with a live search box over the list — confirmed with Rafi,
+        /// same visual pattern as the View Type popover, but a single-select
+        /// ListBox instead of a checkbox list (only one parameter/value pair can
+        /// be active at a time). Picking one populates the dependent typable
+        /// Value dropdown (FilterValueOptions) with that parameter's distinct
+        /// values across AllViews. Purely a grid-visibility filter (like
+        /// ViewNameFilter/PlacementFilter) — never touches IsSelected; the data
+        /// grid's own checkboxes are the only thing that decides the final
+        /// selection. Resets to unset on every LoadViews/Refresh.
+        /// </summary>
+        public ObservableCollection<string> FilterParameterOptions { get; } = new();
+        public ObservableCollection<string> VisibleFilterParameterOptions { get; } = new();
+        public ObservableCollection<string> FilterValueOptions { get; } = new();
+
+        [ObservableProperty] private bool _isFilterParameterOpen;
+        [ObservableProperty] private string _filterParameterSearchText = string.Empty;
+        [ObservableProperty] private string? _selectedFilterParameter;
+        [ObservableProperty] private string? _selectedFilterValue;
+
+        private string? GetFilterParameterValue(ViewInfo v) =>
+            !string.IsNullOrEmpty(SelectedFilterParameter) &&
+            v.ParameterValues.TryGetValue(SelectedFilterParameter, out var val)
+                ? val
+                : null;
+
+        partial void OnFilterParameterSearchTextChanged(string value) => RefreshVisibleFilterParameterOptions();
+
+        private void RefreshVisibleFilterParameterOptions()
+        {
+            VisibleFilterParameterOptions.Clear();
+            var matches = string.IsNullOrWhiteSpace(FilterParameterSearchText)
+                ? FilterParameterOptions
+                : FilterParameterOptions.Where(p => p.IndexOf(FilterParameterSearchText, StringComparison.OrdinalIgnoreCase) >= 0);
+            foreach (var p in matches)
+                VisibleFilterParameterOptions.Add(p);
+        }
+
+        [RelayCommand]
+        private void ClearFilterParameter() => SelectedFilterParameter = null;
+
+        partial void OnSelectedFilterParameterChanged(string? value)
+        {
+            // Selecting (or clearing) a parameter closes the popover and resets
+            // its search box, same as picking a value closes any other dropdown.
+            IsFilterParameterOpen = false;
+            FilterParameterSearchText = string.Empty;
+
+            SelectedFilterValue = null;
+            FilterValueOptions.Clear();
+            if (!string.IsNullOrEmpty(value))
+            {
+                foreach (var v in AllViews.Select(GetFilterParameterValue)
+                             .Where(s => !string.IsNullOrEmpty(s))
+                             .Distinct()
+                             .OrderBy(s => s, StringComparer.OrdinalIgnoreCase))
+                    FilterValueOptions.Add(v!);
+            }
+            ViewsView.Refresh();
+        }
+
+        partial void OnSelectedFilterValueChanged(string? value) => ViewsView.Refresh();
 
         [RelayCommand]
         private void SetPlacementFilterAll() => PlacementFilter = PlacementFilterMode.All;
@@ -170,6 +265,10 @@ namespace Revit26_Plugin.SmartViewToSheetPlacer.V222.ViewModels
             if (PlacementFilter == PlacementFilterMode.NotPlaced && v.IsAlreadyPlaced)
                 return false;
 
+            if (!string.IsNullOrEmpty(SelectedFilterParameter) && !string.IsNullOrEmpty(SelectedFilterValue) &&
+                !string.Equals(GetFilterParameterValue(v), SelectedFilterValue, StringComparison.OrdinalIgnoreCase))
+                return false;
+
             return true;
         }
 
@@ -244,6 +343,16 @@ namespace Revit26_Plugin.SmartViewToSheetPlacer.V222.ViewModels
         /// </summary>
         private void HandleLoadViewsCompleted()
         {
+            // Reset all selections/filters on every load (initial page load and
+            // Refresh alike) — confirmed with Rafi: filters never carry over from
+            // a prior load, the grid always starts unfiltered.
+            ViewNameFilter = string.Empty;
+            PlacementFilter = PlacementFilterMode.All;
+            IsFilterParameterOpen = false;
+            SelectedFilterParameter = null;
+            SelectedFilterValue = null;
+            FilterValueOptions.Clear();
+
             // Unsubscribe from any views left over from a prior load (e.g. Refresh) —
             // the old ViewInfo instances are being discarded, so this isn't a leak,
             // but matches the same subscribe/unsubscribe hygiene used elsewhere.
@@ -257,6 +366,23 @@ namespace Revit26_Plugin.SmartViewToSheetPlacer.V222.ViewModels
                 AllViews.Add(v);
             }
             TotalViewCount = AllViews.Count;
+
+            // Rebuild the Parameter filter's options from scratch every load —
+            // populated-only (confirmed with Rafi): a parameter only shows up
+            // if at least one loaded view has a non-blank value for it, so the
+            // picker doesn't fill up with shared/project parameters nobody
+            // actually used on any view. Scope is ALL loaded views, not just
+            // currently-visible/selected ones.
+            FilterParameterOptions.Clear();
+            foreach (var name in AllViews
+                         .SelectMany(v => v.ParameterValues)
+                         .Where(kv => !string.IsNullOrWhiteSpace(kv.Value))
+                         .Select(kv => kv.Key)
+                         .Distinct()
+                         .OrderBy(n => n, StringComparer.OrdinalIgnoreCase))
+                FilterParameterOptions.Add(name);
+            FilterParameterSearchText = string.Empty;
+            RefreshVisibleFilterParameterOptions();
 
             // Preserve each type's checked state across a Refresh (match by RevitViewType)
             // so re-loading views doesn't silently clear a filter the user had set.

@@ -44,6 +44,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Data;
 
@@ -55,22 +56,28 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels
         // State property, and a public property cannot expose a less-accessible
         // type. The enum is still only meant for internal use within this
         // ViewModel; nothing outside binds to it directly.
-        public enum RunState { Ready, Running, Done }
+        // NEW: Cancelled added, per Rafi's confirmed Cancel decision.
+        public enum RunState { Ready, Running, Done, Cancelled }
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(StatusMessage))]
         [NotifyPropertyChangedFor(nameof(LongestPathDisplay))]
         [NotifyPropertyChangedFor(nameof(HighestElevationDisplay))]
         [NotifyCanExecuteChangedFor(nameof(RunAutoSlopeCommand))]
+        [NotifyCanExecuteChangedFor(nameof(CancelRunCommand))]
         private RunState state = RunState.Ready;
 
         private bool IsRunning => State == RunState.Running;
         private bool IsComplete => State == RunState.Done;
 
+        /// <summary>NEW. Done OR Cancelled — used only to gate display of real numbers; NOT used for Run-button re-enablement (see IsComplete), so cancelling never permanently locks the Run button.</summary>
+        private bool IsFinished => State == RunState.Done || State == RunState.Cancelled;
+
         public string StatusMessage => State switch
         {
             RunState.Running => "Processing...",
             RunState.Done => "Completed",
+            RunState.Cancelled => "Cancelled",
             _ => "Ready"
         };
 
@@ -170,15 +177,41 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(LongestPathDisplay))]
         private double longestPath_m;
-        public string LongestPathDisplay => IsComplete ? LongestPath_m.ToString("F2") : "N/A";
+        public string LongestPathDisplay => IsFinished ? LongestPath_m.ToString("F2") : "N/A";
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(HighestElevationDisplay))]
         private double highestElevation_mm;
-        public string HighestElevationDisplay => IsComplete ? HighestElevation_mm.ToString("F0") : "N/A";
+        public string HighestElevationDisplay => IsFinished ? HighestElevation_mm.ToString("F0") : "N/A";
 
         [ObservableProperty]
         private int runDuration_sec;
+
+        // ── Progress / Cancel — NEW, per Rafi's confirmed decisions ────────────
+        [ObservableProperty]
+        private bool isProgressVisible;
+
+        [ObservableProperty]
+        private double progressPercent;
+
+        [ObservableProperty]
+        private bool progressIsIndeterminate = true;
+
+        [ObservableProperty]
+        private string progressPhaseText = "";
+
+        private CancellationTokenSource _runCts;
+
+        private bool CanCancelRun() => State == RunState.Running;
+
+        [RelayCommand(CanExecute = nameof(CanCancelRun))]
+        private void CancelRun()
+        {
+            if (_runCts == null || _runCts.IsCancellationRequested) return;
+            _runCts.Cancel();
+            ProgressPhaseText = "Cancelling…";
+            AddLog(new LogEntry(LogLevel.Warning, "Cancel requested — the run rolls back (nothing has been written to the model yet) and stops."));
+        }
 
         [ObservableProperty]
         private int finalDrainCount;
@@ -477,6 +510,15 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels
 
             State = RunState.Running;
             LogEntries.Clear();
+
+            // NEW: fresh CancellationTokenSource per Run click. The bar starts
+            // indeterminate ("Starting…") since nothing has reported yet.
+            _runCts = new CancellationTokenSource();
+            IsProgressVisible = true;
+            ProgressPercent = 0;
+            ProgressIsIndeterminate = true;
+            ProgressPhaseText = "Starting…";
+
             AddLog(new LogEntry(LogLevel.Info, "Starting AutoSlope By Drain..."));
 
             if (!Directory.Exists(ExportFolderPath))
@@ -508,14 +550,41 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels
                     ExportPath = ExportFolderPath,
                     ExportToExcel = true
                 },
+                CancelToken = _runCts.Token,
+                // NEW: called synchronously on the SAME thread as this run
+                // (Revit's main thread), never via BeginInvoke — updates the
+                // properties and then immediately forces WPF to repaint + process a
+                // queued Cancel click.
+                Progress = info =>
+                {
+                    ProgressPhaseText = info.PhaseLabel;
+
+                    if (info.PercentWithinPhase.HasValue)
+                    {
+                        ProgressIsIndeterminate = false;
+                        ProgressPercent = Math.Max(ProgressPercent, Math.Min(100.0, info.PercentWithinPhase.Value));
+                    }
+                    else
+                    {
+                        ProgressIsIndeterminate = true;
+                    }
+
+                    UiPumpHelper.DoEvents();
+                },
                 OnCompleted = result =>
                 {
                     Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                     {
+                        IsProgressVisible = false;
+                        _runCts = null;
+
                         if (!result.Success)
                         {
-                            AddLog(new LogEntry(LogLevel.Error, $"Run failed: {result.ErrorMessage}"));
-                            State = RunState.Ready;
+                            bool wasCancelled = result.WasCancelled;
+                            AddLog(new LogEntry(
+                                wasCancelled ? LogLevel.Warning : LogLevel.Error,
+                                wasCancelled ? "Run cancelled by user." : $"Run failed: {result.ErrorMessage}"));
+                            State = wasCancelled ? RunState.Cancelled : RunState.Ready;
                             RunCompleted?.Invoke(false);
                             return;
                         }

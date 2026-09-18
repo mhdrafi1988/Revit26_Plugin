@@ -429,7 +429,8 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011
         public void ReportProgress(int processed)
         {
             ProcessedCount = processed;
-            ProgressText = $"Processing {processed} of {TotalCount}";
+            int percent = TotalCount > 0 ? (int)Math.Round(processed * 100.0 / TotalCount) : 0;
+            ProgressText = $"Processing {processed} of {TotalCount} ({percent}%)";
         }
 
         public void OnRunComplete(CreationMode mode, RunSummary summary, bool wasCancelled)

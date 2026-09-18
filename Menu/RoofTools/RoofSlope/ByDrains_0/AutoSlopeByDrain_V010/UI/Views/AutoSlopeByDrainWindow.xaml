@@ -488,11 +488,27 @@
                      which roof) as a label above it. Visible only while a run is in
                      progress. -->
                 <StackPanel Margin="0,0,0,7" Visibility="{Binding IsProgressVisible, Converter={StaticResource BoolToVisibility}}">
-                    <TextBlock Text="{Binding ProgressPhaseText}"
-                               FontSize="10"
-                               Foreground="{StaticResource BrushTextSecondary}"
-                               TextTrimming="CharacterEllipsis"
-                               Margin="0,0,0,3"/>
+                    <DockPanel Margin="0,0,0,3" LastChildFill="True">
+                        <TextBlock DockPanel.Dock="Right"
+                                   Text="{Binding ProgressPercent, StringFormat={}{0:F0}%}"
+                                   FontSize="10"
+                                   Foreground="{StaticResource BrushTextSecondary}"
+                                   Margin="6,0,0,0">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ProgressIsIndeterminate}" Value="True">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <TextBlock Text="{Binding ProgressPhaseText}"
+                                   FontSize="10"
+                                   Foreground="{StaticResource BrushTextSecondary}"
+                                   TextTrimming="CharacterEllipsis"/>
+                    </DockPanel>
                     <ProgressBar Style="{StaticResource ThinProgressBar}"
                                  Value="{Binding ProgressPercent, Mode=OneWay}"
                                  IsIndeterminate="{Binding ProgressIsIndeterminate}"/>

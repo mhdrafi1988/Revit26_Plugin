@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 
 namespace Revit26_Plugin.AutoSlopeByPointRidge.V001.UI.ViewModels
@@ -30,7 +31,8 @@ namespace Revit26_Plugin.AutoSlopeByPointRidge.V001.UI.ViewModels
     public partial class AutoSlopeViewModel : ObservableObject
     {
         // ── RunState ──────────────────────────────────────────────────────────
-        private enum RunState { Ready, Running, Done }
+        // NEW: Cancelled added, per Rafi's confirmed Cancel decision.
+        private enum RunState { Ready, Running, Done, Cancelled }
 
         private RunState _state = RunState.Ready;
         private RunState State
@@ -43,6 +45,7 @@ namespace Revit26_Plugin.AutoSlopeByPointRidge.V001.UI.ViewModels
                 OnPropertyChanged(nameof(StatusColor));
                 RunCommand.NotifyCanExecuteChanged();
                 ExportResultsCommand.NotifyCanExecuteChanged();
+                CancelRunCommand.NotifyCanExecuteChanged();
             }
         }
 
@@ -155,17 +158,45 @@ namespace Revit26_Plugin.AutoSlopeByPointRidge.V001.UI.ViewModels
         // ── Status ────────────────────────────────────────────────────────────
         public string StatusMessage => _state switch
         {
-            RunState.Running => "Processing...",
-            RunState.Done    => "Completed",
-            _                => "Ready to run"
+            RunState.Running   => "Processing...",
+            RunState.Done      => "Completed",
+            RunState.Cancelled => "Cancelled",
+            _                  => "Ready to run"
         };
 
         public string StatusColor => _state switch
         {
-            RunState.Running => AppConstants.Color_Processing,
-            RunState.Done    => AppConstants.Color_Success,
-            _                => AppConstants.Color_Ready
+            RunState.Running   => AppConstants.Color_Processing,
+            RunState.Done      => AppConstants.Color_Success,
+            RunState.Cancelled => AppConstants.Color_Warning,
+            _                  => AppConstants.Color_Ready
         };
+
+        // ── Progress / Cancel — NEW, per Rafi's confirmed decisions ────────────
+        [ObservableProperty]
+        private bool isProgressVisible;
+
+        [ObservableProperty]
+        private double progressPercent;
+
+        [ObservableProperty]
+        private bool progressIsIndeterminate = true;
+
+        [ObservableProperty]
+        private string progressPhaseText = "";
+
+        private CancellationTokenSource _runCts;
+
+        private bool CanCancelRun() => _state == RunState.Running;
+
+        [RelayCommand(CanExecute = nameof(CanCancelRun))]
+        private void CancelRun()
+        {
+            if (_runCts == null || _runCts.IsCancellationRequested) return;
+            _runCts.Cancel();
+            ProgressPhaseText = "Cancelling…";
+            AddLog(new LogEntry(LogLevel.Warning, "Cancel requested — the run rolls back (nothing has been written to the model yet) and stops."));
+        }
 
         // ── Result properties ─────────────────────────────────────────────────
         [ObservableProperty]
@@ -453,6 +484,15 @@ Circles Placed           : {DrainCirclesPlaced} drain / {HighestCirclesPlaced} h
         {
             State = RunState.Running;
             LogEntries.Clear();
+
+            // NEW: fresh CancellationTokenSource per Run click. The bar starts
+            // indeterminate ("Starting…") since nothing has reported yet.
+            _runCts = new CancellationTokenSource();
+            IsProgressVisible = true;
+            ProgressPercent = 0;
+            ProgressIsIndeterminate = true;
+            ProgressPhaseText = "Starting…";
+
             AddLog(new LogEntry(LogLevel.Info, "Starting AutoSlope (Ridge)..."));
 
             if (ExportToExcel && !Directory.Exists(ExportFolderPath))
@@ -496,15 +536,42 @@ Circles Placed           : {DrainCirclesPlaced} drain / {HighestCirclesPlaced} h
                 RidgeMarkerGroup         = RidgeMarkerGroup,
                 AllowedOffsetThresholdMm = AllowedOffsetThresholdMm,
 
+                CancelToken = _runCts.Token,
+                // NEW: called synchronously on the SAME thread as this run
+                // (Revit's main thread), never via BeginInvoke — updates the
+                // properties and then immediately forces WPF to repaint + process a
+                // queued Cancel click.
+                Progress = info =>
+                {
+                    ProgressPhaseText = info.PhaseLabel;
+
+                    if (info.PercentWithinPhase.HasValue)
+                    {
+                        ProgressIsIndeterminate = false;
+                        ProgressPercent = Math.Max(ProgressPercent, Math.Min(100.0, info.PercentWithinPhase.Value));
+                    }
+                    else
+                    {
+                        ProgressIsIndeterminate = true;
+                    }
+
+                    UiPumpHelper.DoEvents();
+                },
+
                 OnCompleted = result =>
                 {
                     Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                     {
+                        IsProgressVisible = false;
+                        _runCts = null;
+
                         if (!result.Success)
                         {
-                            AddLog(new LogEntry(LogLevel.Error,
-                                $"AutoSlope failed: {result.ErrorMessage}"));
-                            State = RunState.Ready;
+                            bool wasCancelled = result.WasCancelled;
+                            AddLog(new LogEntry(
+                                wasCancelled ? LogLevel.Warning : LogLevel.Error,
+                                wasCancelled ? "Run cancelled by user." : $"AutoSlope failed: {result.ErrorMessage}"));
+                            State = wasCancelled ? RunState.Cancelled : RunState.Ready;
                             return;
                         }
 

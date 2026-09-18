@@ -12,6 +12,7 @@ using Autodesk.Revit.DB;
 using Revit26_Plugin.Shared.Models;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Revit26_Plugin.AutoSlopeByPointKdTree.VKD01.Core.Models
 {
@@ -79,5 +80,20 @@ namespace Revit26_Plugin.AutoSlopeByPointKdTree.VKD01.Core.Models
         /// up as a lambda from the UI layer.
         /// </summary>
         public Action<AutoSlopeResult> OnCompleted { get; set; }
+
+        /// <summary>
+        /// NEW. Called at phase boundaries and, throttled, during
+        /// DijkstraPathEngine.BuildGraph to report run progress. The ViewModel
+        /// converts this into an on-screen percentage + phase label and pumps the
+        /// UI so it actually repaints.
+        /// </summary>
+        public Action<RunProgressInfo> Progress { get; set; }
+
+        /// <summary>
+        /// NEW. Checked inside DijkstraPathEngine.BuildGraph, which runs BEFORE the
+        /// "Apply AutoSlope" transaction opens — cancelling here costs nothing to
+        /// unwind, since nothing has been written to the model yet.
+        /// </summary>
+        public CancellationToken CancelToken { get; set; }
     }
 }

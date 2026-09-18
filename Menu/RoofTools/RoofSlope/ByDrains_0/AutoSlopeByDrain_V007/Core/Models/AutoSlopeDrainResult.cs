@@ -30,6 +30,9 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Core.Models
         public bool Success { get; set; }
         public string ErrorMessage { get; set; }
 
+        /// <summary>NEW. True when this roof's run was stopped by the user via Cancel (see AutoSlopeDrainEngine's OperationCanceledException handling).</summary>
+        public bool WasCancelled { get; set; }
+
         public int VerticesModified { get; set; }
         public int VerticesProcessed { get; set; }
         public int VerticesSkipped { get; set; }

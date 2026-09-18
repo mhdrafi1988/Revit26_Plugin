@@ -57,6 +57,8 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Core.Engine
 
             try
             {
+                payload.CancelToken.ThrowIfCancellationRequested();
+
                 var roof = doc.GetElement(payload.RoofId) as RoofBase;
                 if (roof == null)
                 {
@@ -74,6 +76,7 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Core.Engine
 
                 // ── Re-analyze geometry with FRESH handles ─────────────────────
                 log(new LogEntry(LogLevel.Info, "Re-reading roof geometry with fresh handles..."));
+                payload.Progress?.Invoke(new RunProgressInfo("Reading roof geometry"));
                 var roofData = new RoofData { Roof = roof };
                 var topFace = GetTopFace(roof);
                 if (topFace == null)
@@ -102,6 +105,8 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Core.Engine
                     // checked, so this path should be unreachable in normal use.
                     return Fail("No drains selected for slope application.", log);
                 }
+
+                payload.Progress?.Invoke(new RunProgressInfo("Matching drain vertices"));
 
                 // ── Match shape-edit vertices for SELECTED drains only ──────────
                 // Deferred from detection time (per Rafi's confirmed decision) to
@@ -146,7 +151,9 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Core.Engine
                     payload.ThresholdMeters,
                     activeView,
                     payload.DrainMarkerGroup,
-                    payload.HighestPointMarkerGroup);
+                    payload.HighestPointMarkerGroup,
+                    payload.Progress,
+                    payload.CancelToken);
 
                 var endTime = DateTime.Now;
                 int durationSec = (int)(endTime - startTime).TotalSeconds;
@@ -178,6 +185,7 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Core.Engine
                 };
 
                 // ── Write tracking parameters ───────────────────────────────────
+                payload.Progress?.Invoke(new RunProgressInfo("Writing tracking parameters"));
                 var paramWriter = new AutoSlopeDrainParameterWriter();
                 paramWriter.WriteAll(doc, roof, metrics, payload.SlopePercent, payload.ConnectionThresholdMeters,
                     ToolVersion, msg => log(new LogEntry(LogLevel.Info, msg)));
@@ -187,6 +195,7 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Core.Engine
 
                 if (payload.ExportConfig != null && payload.ExportConfig.ExportToExcel)
                 {
+                    payload.Progress?.Invoke(new RunProgressInfo("Exporting Excel workbook"));
                     System.IO.Directory.CreateDirectory(payload.ExportConfig.ExportPath);
 
                     exportedPath = ExcelExportService.ExportWorkbook(
@@ -230,18 +239,26 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Core.Engine
                     HighestCirclesPlaced = slopeService.LastHighestCirclesPlaced
                 };
             }
+            catch (OperationCanceledException)
+            {
+                log(new LogEntry(LogLevel.Warning, "Run cancelled by user."));
+                return Fail("Cancelled by user.", log, wasCancelled: true, alreadyLogged: true);
+            }
             catch (Exception ex)
             {
                 return Fail($"Unhandled exception: {ex.Message}", log);
             }
         }
 
-        private static AutoSlopeDrainResult Fail(string message, Action<LogEntry> log)
+        private static AutoSlopeDrainResult Fail(string message, Action<LogEntry> log, bool wasCancelled = false, bool alreadyLogged = false)
         {
-            log(new LogEntry(LogLevel.Error, message));
+            if (!alreadyLogged)
+                log(new LogEntry(LogLevel.Error, message));
+
             return new AutoSlopeDrainResult
             {
                 Success = false,
+                WasCancelled = wasCancelled,
                 ErrorMessage = message,
                 Status = AppConstants.Status_Failed,
                 Version = ToolVersion

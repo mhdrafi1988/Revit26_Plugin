@@ -26,6 +26,7 @@ using Revit26_Plugin.AutoSlopeByDrain.V007.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace Revit26_Plugin.AutoSlopeByDrain.V007.Core.Services
 {
@@ -83,7 +84,9 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Core.Services
             double thresholdMeters = 0,
             View activeView = null,
             CircleMarkerGroup drainMarkerGroup = null,
-            CircleMarkerGroup highestPointMarkerGroup = null)
+            CircleMarkerGroup highestPointMarkerGroup = null,
+            Action<RunProgressInfo> onProgress = null,
+            CancellationToken cancelToken = default)
         {
             var doc = roofData.Roof.Document;
             int modifiedCount = 0;
@@ -109,6 +112,7 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Core.Services
 
             if (insertCurveIntersectionPoints)
             {
+                onProgress?.Invoke(new RunProgressInfo("Inserting curve intersection points"));
                 if (boundaryArcs.Count == 0)
                 {
                     logAction("Curve intersection check enabled, but no arc edges found on this roof.");
@@ -167,13 +171,20 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Core.Services
 
                 try
                 {
+                    cancelToken.ThrowIfCancellationRequested();
+
                     logAction($"Building connectivity graph (max edge distance: {connectionThresholdMeters:F1} m, samples per edge: {pathSampleCount})...");
                     logAction($"Found {boundaryArcs.Count} boundary/opening arc(s) for tangent-route fallback.");
+                    onProgress?.Invoke(new RunProgressInfo("Building path graph"));
 
                     double connectionThresholdFeet = connectionThresholdMeters / 0.3048;
                     var pathEngine = new DijkstraPathEngine(
                         vertexList, topFace, connectionThresholdFeet, boundaryArcs,
-                        curveTolFt, pathSampleCount);
+                        curveTolFt, pathSampleCount,
+                        onBuildGraphProgress: pct => onProgress?.Invoke(new RunProgressInfo("Building path graph", pct)),
+                        cancelToken: cancelToken);
+
+                    cancelToken.ThrowIfCancellationRequested();
 
                     // Step 1: Get all drain vertices from SELECTED drains
                     var selectedDrainVertices = new HashSet<SlabShapeVertex>();
@@ -210,6 +221,7 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Core.Services
                             vertexToDrain[v] = drain;
 
                     logAction($"Computing multi-source shortest paths to {drainVertexIndices.Count} drain vertices for {vertexList.Count} roof vertices...");
+                    onProgress?.Invoke(new RunProgressInfo("Computing shortest paths"));
 
                     double[] distances = pathEngine.ComputeAllDistances(drainVertexIndices);
 
@@ -249,6 +261,7 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Core.Services
                     _lastOverThresholdCount = overThresholdCount;
 
                     logAction("Applying elevations based on path distances...");
+                    onProgress?.Invoke(new RunProgressInfo("Applying elevations"));
                     int slopeModifiedCount = ApplyElevationsWithDrainHierarchy(
                         roofData.Roof, pathResults, selectedDrainVertices, slopePercentage,
                         logAction, out maxOffset, out longestPath);
@@ -264,6 +277,7 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Core.Services
                     if ((drainMarkerGroup != null && drainMarkerGroup.IsEnabled) ||
                         (highestPointMarkerGroup != null && highestPointMarkerGroup.IsEnabled))
                     {
+                        onProgress?.Invoke(new RunProgressInfo("Placing circle markers"));
                         var drainCenterPoints = selectedDrains.Select(d => d.CenterPoint).Where(p => p != null).ToList();
                         var markerCounts = CircleMarkerService.PlaceMarkers(
                             doc,

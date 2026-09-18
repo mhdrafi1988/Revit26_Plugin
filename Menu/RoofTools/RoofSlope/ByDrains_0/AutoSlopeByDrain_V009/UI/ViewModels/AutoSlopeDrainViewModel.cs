@@ -54,6 +54,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 
 namespace Revit26_Plugin.MultiRoofSlopeByDrain.V009.UI.ViewModels
@@ -64,22 +65,28 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.V009.UI.ViewModels
         // State property, and a public property cannot expose a less-accessible
         // type. The enum is still only meant for internal use within this
         // ViewModel; nothing outside binds to it directly.
-        public enum RunState { Ready, Running, Done }
+        // NEW: Cancelled added, per Rafi's confirmed Cancel decision.
+        public enum RunState { Ready, Running, Done, Cancelled }
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(StatusMessage))]
         [NotifyPropertyChangedFor(nameof(LongestPathDisplay))]
         [NotifyPropertyChangedFor(nameof(HighestElevationDisplay))]
         [NotifyCanExecuteChangedFor(nameof(RunAutoSlopeCommand))]
+        [NotifyCanExecuteChangedFor(nameof(CancelRunCommand))]
         private RunState state = RunState.Ready;
 
         private bool IsRunning => State == RunState.Running;
         private bool IsComplete => State == RunState.Done;
 
+        /// <summary>NEW. Done OR Cancelled — used only to gate display of real numbers (metrics/timing); NOT used for Run-button re-enablement (see IsComplete), so cancelling never permanently locks the Run button.</summary>
+        private bool IsFinished => State == RunState.Done || State == RunState.Cancelled;
+
         public string StatusMessage => State switch
         {
             RunState.Running => "Processing...",
             RunState.Done => "Completed",
+            RunState.Cancelled => "Cancelled",
             _ => "Ready"
         };
 
@@ -189,15 +196,45 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.V009.UI.ViewModels
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(LongestPathDisplay))]
         private double longestPath_m;
-        public string LongestPathDisplay => IsComplete ? LongestPath_m.ToString("F2") : "N/A";
+        public string LongestPathDisplay => IsFinished ? LongestPath_m.ToString("F2") : "N/A";
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(HighestElevationDisplay))]
         private double highestElevation_mm;
-        public string HighestElevationDisplay => IsComplete ? HighestElevation_mm.ToString("F0") : "N/A";
+        public string HighestElevationDisplay => IsFinished ? HighestElevation_mm.ToString("F0") : "N/A";
 
         [ObservableProperty]
         private int runDuration_sec;
+
+        // ── Progress / Cancel — NEW, per Rafi's confirmed decisions ────────────
+        // One continuous bar spans the whole batch, pre-weighted by each roof's
+        // vertex count (known upfront, no extra Revit calls) so a big roof takes
+        // proportionally more of the bar than a small one. Updated from
+        // AutoSlopeDrainPayload.Progress callbacks — see RunAutoSlope below.
+        [ObservableProperty]
+        private bool isProgressVisible;
+
+        [ObservableProperty]
+        private double progressPercent;
+
+        [ObservableProperty]
+        private bool progressIsIndeterminate = true;
+
+        [ObservableProperty]
+        private string progressPhaseText = "";
+
+        private CancellationTokenSource _runCts;
+
+        private bool CanCancelRun() => State == RunState.Running;
+
+        [RelayCommand(CanExecute = nameof(CanCancelRun))]
+        private void CancelRun()
+        {
+            if (_runCts == null || _runCts.IsCancellationRequested) return;
+            _runCts.Cancel();
+            ProgressPhaseText = "Cancelling…";
+            AddLog(new LogEntry(LogLevel.Warning, "Cancel requested — finishing the current roof's in-progress work, then stopping."));
+        }
 
         [ObservableProperty]
         private int finalDrainCount;
@@ -409,6 +446,18 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.V009.UI.ViewModels
 
             State = RunState.Running;
             LogEntries.Clear();
+
+            // NEW: fresh CancellationTokenSource shared by every roof payload
+            // in this batch, so Cancel stops the whole run, not just one roof. The
+            // bar starts indeterminate ("Starting…") since nothing has reported yet.
+            _runCts = new CancellationTokenSource();
+            IsProgressVisible = true;
+            ProgressPercent = 0;
+            ProgressIsIndeterminate = true;
+            ProgressPhaseText = "Starting…";
+            // Note: State's setter already fires CancelRunCommand.NotifyCanExecuteChanged()
+            // via [NotifyCanExecuteChangedFor] above, so the Cancel button enables itself.
+
             AddLog(new LogEntry(LogLevel.Info,
                 runnableTabs.Count == 1
                     ? $"Starting AutoSlope By Drain at {overallStartTime:HH:mm:ss}..."
@@ -429,9 +478,21 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.V009.UI.ViewModels
             string projectTitle = UIDoc?.Document?.Title ?? "Unknown Project";
             var roofPayloads = new List<AutoSlopeDrainPayload>();
 
+            // NEW, per Rafi's confirmed multi-roof decision: one continuous
+            // progress bar spans the whole batch, weighted by each roof's shape-edit
+            // vertex count — the actual driver of BuildGraph's O(n^2) cost — so a big
+            // roof takes proportionally more of the bar than a small one. Math.Max(1, …)
+            // guards a roof with zero vertices (shouldn't happen, but avoids div-by-zero).
+            double totalWeight = runnableTabs.Sum(t => (double)Math.Max(1, t.RoofData.Vertices.Count));
+            double weightDoneSoFar = 0;
+
             foreach (var tab in runnableTabs)
             {
                 RoofTabViewModel capturedTab = tab;
+                double roofWeight = Math.Max(1, capturedTab.RoofData.Vertices.Count);
+                double weightBeforeThisRoof = weightDoneSoFar;
+                weightDoneSoFar += roofWeight;
+
                 roofPayloads.Add(new AutoSlopeDrainPayload
                 {
                     RoofId = tab.RoofId,
@@ -455,6 +516,31 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.V009.UI.ViewModels
                         ExportPath = ExportFolderPath,
                         ExportToExcel = true
                     },
+                    CancelToken = _runCts.Token,
+                    // NEW: called synchronously on the SAME thread as this run
+                    // (Revit's main thread, same thread the window lives on — see
+                    // UiPumpHelper) directly from inside BuildGraph/RoofSlopeProcessorService,
+                    // never via BeginInvoke — the whole point is to update the properties
+                    // and then immediately force WPF to actually repaint + process a
+                    // queued Cancel click, both of which BeginInvoke would just defer.
+                    Progress = info =>
+                    {
+                        string roofPrefix = runnableTabs.Count > 1 ? $"Roof {capturedTab.TabHeader.Replace("Roof ", "")} — " : "";
+                        ProgressPhaseText = roofPrefix + info.PhaseLabel;
+
+                        if (info.PercentWithinPhase.HasValue)
+                        {
+                            ProgressIsIndeterminate = false;
+                            double overall = (weightBeforeThisRoof + roofWeight * (info.PercentWithinPhase.Value / 100.0)) / totalWeight * 100.0;
+                            ProgressPercent = Math.Max(ProgressPercent, Math.Min(100.0, overall));
+                        }
+                        else
+                        {
+                            ProgressIsIndeterminate = true;
+                        }
+
+                        UiPumpHelper.DoEvents();
+                    },
                     OnCompleted = result =>
                     {
                         Application.Current.Dispatcher.BeginInvoke(new Action(() =>
@@ -477,11 +563,17 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.V009.UI.ViewModels
                     Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                     {
                         var succeeded = roofResults.Where(r => r.Result?.Success == true).ToList();
+                        bool wasCancelled = roofResults.Any(r => r.Result?.WasCancelled == true);
+
+                        IsProgressVisible = false;
+                        _runCts = null;
 
                         if (succeeded.Count == 0)
                         {
-                            AddLog(new LogEntry(LogLevel.Error, "Run failed on every roof."));
-                            State = RunState.Ready;
+                            AddLog(new LogEntry(
+                                wasCancelled ? LogLevel.Warning : LogLevel.Error,
+                                wasCancelled ? "Run cancelled before any roof completed." : "Run failed on every roof."));
+                            State = wasCancelled ? RunState.Cancelled : RunState.Ready;
                             return;
                         }
 
@@ -497,16 +589,24 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.V009.UI.ViewModels
                         HighestCirclesPlaced = succeeded.Sum(r => r.Result.HighestCirclesPlaced);
                         OffsetCirclesPlaced = succeeded.Sum(r => r.Result.OffsetCirclesPlaced);
 
-                        if (roofResults.Count > succeeded.Count)
+                        if (wasCancelled)
+                            AddLog(new LogEntry(LogLevel.Warning,
+                                $"Cancelled — {succeeded.Count} of {RoofTabs.Count} roof(s) had already completed and stay applied; the rest were not run."));
+                        else if (roofResults.Count > succeeded.Count)
                             AddLog(new LogEntry(LogLevel.Warning,
                                 $"{roofResults.Count - succeeded.Count} of {roofResults.Count} roof(s) failed — see log above for details."));
 
                         var overallEndTime = DateTime.Now;
                         int overallDurationSec = (int)(overallEndTime - overallStartTime).TotalSeconds;
                         AddLog(new LogEntry(LogLevel.Info,
-                            $"All roofs completed — Started {overallStartTime:HH:mm:ss} | Finished {overallEndTime:HH:mm:ss} | Total duration: {overallDurationSec}s"));
+                            $"{(wasCancelled ? "Run cancelled" : "All roofs completed")} — Started {overallStartTime:HH:mm:ss} | Finished {overallEndTime:HH:mm:ss} | Total duration: {overallDurationSec}s"));
 
-                        State = RunState.Done;
+                        // State stays Cancelled (not Done) when the user cancelled, even
+                        // though some roofs succeeded — per Rafi's confirmed Cancel-scope
+                        // decision, this is deliberately NOT the same as IsComplete
+                        // (RunState.Done), so the Run button does not get permanently
+                        // disabled after a cancel — the user can adjust settings and retry.
+                        State = wasCancelled ? RunState.Cancelled : RunState.Done;
 
                         SettingsService.Save(new AutoSlopeDrainSettings
                         {

@@ -1,6 +1,8 @@
 using Autodesk.Revit.DB;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
 
 namespace Revit26_Plugin.AutoSlopeByPointKdTree.VKD01.Core.Engine
 {
@@ -17,23 +19,37 @@ namespace Revit26_Plugin.AutoSlopeByPointKdTree.VKD01.Core.Engine
         private readonly KdTree3D _spatialIndex;
         private const double PROJ_TOL = 0.00328084;
 
+        /// <summary>NEW. Reports 0-100 progress through BuildGraph's outer loop. Throttled internally — safe to leave unset (null).</summary>
+        private readonly Action<double> _onBuildGraphProgress;
+
+        /// <summary>NEW. Checked right after each throttled progress report; throws OperationCanceledException if the user cancelled.</summary>
+        private readonly CancellationToken _cancelToken;
+
+        private const int ProgressThrottleMs = 150;
+
         /// <param name="vertices">All roof shape vertices (including any inserted curve-intersection points).</param>
         /// <param name="topFace">Roof top face.</param>
         /// <param name="edgeThresholdFt">Max candidate edge length.</param>
         /// <param name="arcs">Boundary/opening arcs (outer + inner loops). Pass null/empty to disable arc-length handling.</param>
         /// <param name="curveTolFt">Tolerance for treating a vertex as lying "on" an arc.</param>
+        /// <param name="onBuildGraphProgress">NEW. Optional throttled 0-100 progress callback for BuildGraph's outer loop.</param>
+        /// <param name="cancelToken">NEW. Optional cancellation token, checked after each throttled progress report.</param>
         public DijkstraPathEngine(
             List<SlabShapeVertex> vertices,
             Face topFace,
             double edgeThresholdFt,
             List<Arc> arcs = null,
-            double curveTolFt = 0.0033) // ~1mm default
+            double curveTolFt = 0.0033, // ~1mm default
+            Action<double> onBuildGraphProgress = null,
+            CancellationToken cancelToken = default)
         {
             _verts = vertices;
             _topFace = topFace;
             _edgeThresholdFt = edgeThresholdFt;
             _arcs = arcs ?? new List<Arc>();
             _curveTolFt = curveTolFt;
+            _onBuildGraphProgress = onBuildGraphProgress;
+            _cancelToken = cancelToken;
 
             var positions = new List<XYZ>(_verts.Count);
             foreach (var v in _verts) positions.Add(v.Position);
@@ -54,9 +70,18 @@ namespace Revit26_Plugin.AutoSlopeByPointKdTree.VKD01.Core.Engine
             // of `a` can ever pass the chord-length check below, so there is
             // no need to compare `a` against every other vertex in the model.
             var candidates = new List<int>();
+            var progressStopwatch = _onBuildGraphProgress != null ? Stopwatch.StartNew() : null;
 
             for (int i = 0; i < n; i++)
             {
+                if (progressStopwatch != null && progressStopwatch.ElapsedMilliseconds >= ProgressThrottleMs)
+                {
+                    progressStopwatch.Restart();
+                    double frac = n <= 1 ? 100.0 : i * 100.0 / (n - 1);
+                    _onBuildGraphProgress(frac);
+                    _cancelToken.ThrowIfCancellationRequested();
+                }
+
                 XYZ a = _verts[i].Position;
 
                 candidates.Clear();
@@ -109,6 +134,9 @@ namespace Revit26_Plugin.AutoSlopeByPointKdTree.VKD01.Core.Engine
                     _edgeWeight[(j, i)] = weight;
                 }
             }
+
+            _onBuildGraphProgress?.Invoke(100.0);
+            _cancelToken.ThrowIfCancellationRequested();
         }
 
         /// <summary>

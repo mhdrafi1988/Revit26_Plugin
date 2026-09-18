@@ -373,10 +373,27 @@
                                                     <TextBox Width="80" Style="{StaticResource BoxedTextInput}" MaxLength="10"
                                                              Text="{Binding MarginLeftMm, UpdateSourceTrigger=PropertyChanged}"/>
                                                 </StackPanel>
-                                                <StackPanel>
+                                                <StackPanel Margin="0,0,16,0">
                                                     <TextBlock Text="Right (mm)" Style="{StaticResource FieldLabel}"/>
                                                     <TextBox Width="80" Style="{StaticResource BoxedTextInput}" MaxLength="10"
                                                              Text="{Binding MarginRightMm, UpdateSourceTrigger=PropertyChanged}"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <!-- V222: global H-Gap/V-Gap, moved here from the per-ViewType-group
+                                             gap cards in Stage 2 — one gap pair now, applied to every group. -->
+                                        <StackPanel>
+                                            <TextBlock Text="Gap" Style="{StaticResource FieldLabel}" FontWeight="SemiBold" Margin="0,0,0,2"/>
+                                            <StackPanel Orientation="Horizontal">
+                                                <StackPanel Margin="0,0,16,0">
+                                                    <TextBlock Text="Horizontal (mm)" Style="{StaticResource FieldLabel}"/>
+                                                    <TextBox Width="80" Style="{StaticResource BoxedTextInput}" MaxLength="10"
+                                                             Text="{Binding GlobalHorizontalGapMm, UpdateSourceTrigger=PropertyChanged}"/>
+                                                </StackPanel>
+                                                <StackPanel>
+                                                    <TextBlock Text="Vertical (mm)" Style="{StaticResource FieldLabel}"/>
+                                                    <TextBox Width="80" Style="{StaticResource BoxedTextInput}" MaxLength="10"
+                                                             Text="{Binding GlobalVerticalGapMm, UpdateSourceTrigger=PropertyChanged}"/>
                                                 </StackPanel>
                                             </StackPanel>
                                         </StackPanel>
@@ -390,6 +407,13 @@
                             <Border Style="{StaticResource SectionCard}">
                                 <StackPanel Margin="12">
                                     <TextBlock Text="Project Views" Style="{StaticResource SectionTitle}" Margin="0,0,0,8"/>
+                                    <!-- V222: toolbar (Select All / Clear Selection / Refresh / Show / search /
+                                         View Type / Parameter+Value) all kept in ONE row per Rafi's request —
+                                         previously the search box + View Type dropdown sat on their own row
+                                         below, column-aligned to the DataGrid. That alignment is dropped now;
+                                         fixed widths instead. Filtering here only changes grid visibility —
+                                         it never touches IsSelected, so the final selection is always exactly
+                                         what's checked in the data grid. -->
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
                                         <Button Content="Select All" Style="{StaticResource SmallSecondaryButton}" Margin="0,0,6,0"
                                                 Command="{Binding SelectAllViewsCommand}"/>
@@ -442,30 +466,15 @@
                                                 </Style>
                                             </Button.Style>
                                         </Button>
-                                    </StackPanel>
-
-                                    <!-- Always-visible filter row (V213) — sits directly above the DataGrid
-                                         header, columns aligned to the DataGrid.Columns widths below
-                                         (36 / * / 140 / 90 / 160), so each filter lines up under its column. -->
-                                    <Grid Margin="0,0,0,4">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="36"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="140"/>
-                                            <ColumnDefinition Width="90"/>
-                                            <ColumnDefinition Width="160"/>
-                                        </Grid.ColumnDefinitions>
-
-                                        <!-- Checkbox column — no filter -->
 
                                         <!-- View Name filter: live text box -->
-                                        <TextBox Grid.Column="1" Style="{StaticResource StyledTextInput}"
-                                                 Margin="2,0,4,0" MaxLength="25"
+                                        <TextBox Width="150" Style="{StaticResource StyledTextInput}"
+                                                 Margin="14,0,6,0" MaxLength="25" VerticalAlignment="Center"
                                                  Text="{Binding ViewNameFilter, UpdateSourceTrigger=PropertyChanged}"/>
 
-                                        <!-- View Type filter: button in filter row opens popover with checkbox list -->
+                                        <!-- View Type filter: button opens popover with checkbox list -->
                                         <ToggleButton x:Name="ViewTypeFilterToggle"
-                                                      Grid.Column="2" Margin="0,0,4,0" HorizontalAlignment="Stretch"
+                                                      Width="110" Margin="0,0,10,0"
                                                       Height="28"
                                                       IsChecked="{Binding IsViewTypeFilterOpen, Mode=TwoWay}"
                                                       Background="{StaticResource BrushCardBackground}"
@@ -479,7 +488,7 @@
                                                                         Converter={StaticResource BoolToHeaderIconBrushConverter}}"/>
                                             </StackPanel>
                                         </ToggleButton>
-                                        <Popup Grid.Column="2" PlacementTarget="{Binding ElementName=ViewTypeFilterToggle}"
+                                        <Popup PlacementTarget="{Binding ElementName=ViewTypeFilterToggle}"
                                                IsOpen="{Binding IsViewTypeFilterOpen, Mode=TwoWay}"
                                                StaysOpen="False"
                                                AllowsTransparency="True"
@@ -519,8 +528,69 @@
                                             </Border>
                                         </Popup>
 
-                                        <!-- Scale / Size on Sheet columns — no filter -->
-                                    </Grid>
+                                        <!-- Parameter filter: button opens a popover with a live search box
+                                             over a single-select list (same visual pattern as the View Type
+                                             popover above, but a ListBox instead of a checkbox list — only one
+                                             parameter can be active at a time). Populated-only: the list only
+                                             ever contains parameters with a non-blank value on at least one
+                                             loaded view. Picking one closes the popover and populates the
+                                             dependent typable Value box next to it. -->
+                                        <ToggleButton x:Name="ParameterFilterToggle"
+                                                      Width="120" Margin="0,0,4,0" HorizontalAlignment="Stretch"
+                                                      Height="28"
+                                                      IsChecked="{Binding IsFilterParameterOpen, Mode=TwoWay}"
+                                                      Background="{StaticResource BrushCardBackground}"
+                                                      BorderBrush="{StaticResource BrushCardBorder}"
+                                                      BorderThickness="1"
+                                                      Cursor="Hand">
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                <TextBlock FontSize="11" VerticalAlignment="Center"
+                                                           MaxWidth="80" TextTrimming="CharacterEllipsis"
+                                                           Text="{Binding SelectedFilterParameter, TargetNullValue=Parameter, FallbackValue=Parameter}"/>
+                                                <TextBlock Text="&#9660;" FontSize="8" Margin="4,0,0,0" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </ToggleButton>
+                                        <Popup PlacementTarget="{Binding ElementName=ParameterFilterToggle}"
+                                               IsOpen="{Binding IsFilterParameterOpen, Mode=TwoWay}"
+                                               StaysOpen="False"
+                                               AllowsTransparency="True"
+                                               Placement="Bottom"
+                                               HorizontalOffset="0"
+                                               VerticalOffset="2">
+                                            <Border Background="{StaticResource BrushCardBackground}"
+                                                    BorderBrush="{StaticResource BrushCardBorder}"
+                                                    BorderThickness="1" CornerRadius="8" Padding="8"
+                                                    Width="220">
+                                                <Border.Effect>
+                                                    <DropShadowEffect ShadowDepth="2" BlurRadius="10" Opacity="0.25"/>
+                                                </Border.Effect>
+                                                <StackPanel>
+                                                    <Grid Margin="0,0,0,6">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBox Grid.Column="0" Style="{StaticResource StyledTextInput}"
+                                                                 Margin="0,0,6,0"
+                                                                 Text="{Binding FilterParameterSearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                                                        <Button Grid.Column="1" Content="Clear" Style="{StaticResource SecondaryButton}"
+                                                                Height="26" FontSize="10.5" Padding="6,0"
+                                                                Command="{Binding ClearFilterParameterCommand}"/>
+                                                    </Grid>
+                                                    <ListBox MaxHeight="220" BorderThickness="0" Background="Transparent"
+                                                             ItemsSource="{Binding VisibleFilterParameterOptions}"
+                                                             SelectedItem="{Binding SelectedFilterParameter, Mode=TwoWay}"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </Popup>
+
+                                        <!-- Dependent typable Value filter: populated with the selected
+                                             parameter's distinct values; typing narrows the dropdown list. -->
+                                        <ComboBox Width="130" Style="{StaticResource StandardComboBox}"
+                                                  IsEditable="True" IsTextSearchEnabled="True"
+                                                  ItemsSource="{Binding FilterValueOptions}"
+                                                  Text="{Binding SelectedFilterValue, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </StackPanel>
 
                                     <DataGrid ItemsSource="{Binding ViewsView}"
                                               Style="{StaticResource StandardDataGrid}"
@@ -729,7 +799,6 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="2*"/>
                                 </Grid.ColumnDefinitions>
 
                                 <!-- Reading Order — global, applies uniformly to all groups -->
@@ -767,7 +836,7 @@
                                      to every newly-created sheet's FillStrategy as its initial value
                                      (see SheetGroup.FillStrategy remarks). Per-sheet overrides live in
                                      the Generated Sheets list below, in the Sheet Preview card. -->
-                                <Border Grid.Column="1" Style="{StaticResource SectionCard}" Margin="0,0,8,0">
+                                <Border Grid.Column="1" Style="{StaticResource SectionCard}">
                                     <StackPanel Margin="10">
                                         <TextBlock Text="Placement Algorithm" Style="{StaticResource FieldValue}" FontWeight="SemiBold" Margin="0,0,0,6"/>
                                         <TextBlock Text="Strategy (default for new sheets)" Style="{StaticResource FieldLabel}"/>
@@ -779,49 +848,10 @@
                                                    Style="{StaticResource HintText}"/>
                                     </StackPanel>
                                 </Border>
-
-                                <!-- Per-ViewType-group gap values, compact, distributed evenly
-                                     across the remaining row width via UniformGrid (columns
-                                     auto-match the bound item count, so N groups always split the
-                                     available width into N equal shares). -->
-                                <ItemsControl Grid.Column="2" ItemsSource="{Binding GapSettingsGroups}">
-                                    <ItemsControl.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <UniformGrid Rows="1"/>
-                                        </ItemsPanelTemplate>
-                                    </ItemsControl.ItemsPanel>
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <Border Style="{StaticResource SectionCard}" Margin="0,0,8,0">
-                                                <StackPanel Margin="10">
-                                                    <TextBlock Text="{Binding ViewTypeLabel}" Style="{StaticResource FieldValue}" FontWeight="SemiBold" Margin="0,0,0,6"/>
-
-                                                    <!-- V220: Fixed/Even-Gap toggle REMOVED entirely — Fixed-gap-only now
-                                                         (EvenGap dropped per explicit confirmation, since none of the 7
-                                                         RowFillStrategy algorithms support a stretch-to-fill row layout).
-                                                         H-Gap/V-Gap fields below are the only per-group inputs now. -->
-                                                    <Grid>
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="*"/>
-                                                            <ColumnDefinition Width="*"/>
-                                                        </Grid.ColumnDefinitions>
-                                                        <StackPanel Grid.Column="0" Margin="0,0,6,0">
-                                                            <TextBlock Text="H-Gap (mm)" Style="{StaticResource FieldLabel}"/>
-                                                            <TextBox Style="{StaticResource BoxedTextInput}" MaxLength="10" HorizontalAlignment="Stretch"
-                                                                     Text="{Binding HorizontalGapMm, UpdateSourceTrigger=PropertyChanged}"/>
-                                                        </StackPanel>
-                                                        <StackPanel Grid.Column="1">
-                                                            <TextBlock Text="V-Gap (mm)" Style="{StaticResource FieldLabel}"/>
-                                                            <TextBox Style="{StaticResource BoxedTextInput}" MaxLength="10" HorizontalAlignment="Stretch"
-                                                                     Text="{Binding VerticalGapMm, UpdateSourceTrigger=PropertyChanged}"/>
-                                                        </StackPanel>
-                                                    </Grid>
-                                                </StackPanel>
-                                            </Border>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
                             </Grid>
+                            <!-- V222: H-Gap/V-Gap moved to the Titleblock card as one global
+                                 pair (next to the Margin fields) — the per-ViewType-group gap
+                                 cards that used to sit here were removed, per Rafi's request. -->
                             <TextBlock Text="Each view group (by Revit ViewType) is always placed on its own set of sheets; same-group views can still pack together if they fit, but different groups never share a sheet."
                                        Style="{StaticResource HintText}" Margin="2,4,2,8"/>
 

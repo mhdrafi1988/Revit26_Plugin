@@ -24,7 +24,29 @@ namespace Revit26_Plugin.AutoSlopeByPointKdTree.VKD01.Core.Engine
     {
         public static void Execute(UIApplication app, AutoSlopePayload data)
         {
+            try
+            {
+                ExecuteCore(app, data);
+            }
+            catch (OperationCanceledException)
+            {
+                data.Log?.Invoke(new LogEntry(LogLevel.Warning, "Run cancelled by user."));
+                data.OnCompleted?.Invoke(new AutoSlopeResult
+                {
+                    Success = false,
+                    WasCancelled = true,
+                    ErrorMessage = "Cancelled by user.",
+                    PickedDrainCount = 0,
+                    FinalDrainCount = 0
+                });
+            }
+        }
+
+        private static void ExecuteCore(UIApplication app, AutoSlopePayload data)
+        {
             Document doc = app.ActiveUIDocument.Document;
+
+            data.CancelToken.ThrowIfCancellationRequested();
 
             // ── Guard: roof ─────────────────────────────────────────────────
             RoofBase roof = doc.GetElement(data.RoofId) as RoofBase;
@@ -43,6 +65,8 @@ namespace Revit26_Plugin.AutoSlopeByPointKdTree.VKD01.Core.Engine
                 FireFailure(data, "Roof slab shape editor is not available.");
                 return;
             }
+
+            data.Progress?.Invoke(new RunProgressInfo("Resetting roof vertices"));
 
             // ── Reset vertices ───────────────────────────────────────────────
             using (Transaction tx = new Transaction(doc, "Reset Roof Vertices"))
@@ -171,8 +195,16 @@ namespace Revit26_Plugin.AutoSlopeByPointKdTree.VKD01.Core.Engine
                 return;
             }
 
+            data.CancelToken.ThrowIfCancellationRequested();
+
             // ── Build Dijkstra graph ─────────────────────────────────────────
-            var dijkstra = new DijkstraPathEngine(vertices, topFace, thresholdFt, boundaryArcs, curveTolFt);
+            data.Progress?.Invoke(new RunProgressInfo("Building path graph"));
+            var dijkstra = new DijkstraPathEngine(
+                vertices, topFace, thresholdFt, boundaryArcs, curveTolFt,
+                onBuildGraphProgress: pct => data.Progress?.Invoke(new RunProgressInfo("Building path graph", pct)),
+                cancelToken: data.CancelToken);
+
+            data.CancelToken.ThrowIfCancellationRequested();
 
             double drainMatchToleranceFt = data.EnableDrainTolerance && data.DrainToleranceMm > 0
                 ? UnitUtils.ConvertToInternalUnits(data.DrainToleranceMm, UnitTypeId.Millimeters)
@@ -201,6 +233,7 @@ namespace Revit26_Plugin.AutoSlopeByPointKdTree.VKD01.Core.Engine
             }
 
             // ── OPTIMIZATION: Single multi-source Dijkstra ───────────────────
+            data.Progress?.Invoke(new RunProgressInfo("Computing shortest paths"));
             double[] distances = dijkstra.ComputeAllDistances(drainIndices);
 
             // ── Main slope loop ──────────────────────────────────────────────
@@ -216,6 +249,8 @@ namespace Revit26_Plugin.AutoSlopeByPointKdTree.VKD01.Core.Engine
                 : 0;
 
             CircleMarkerService.PlacementCounts markerCounts = null;
+
+            data.Progress?.Invoke(new RunProgressInfo("Applying elevations"));
 
             using (Transaction tx = new Transaction(doc, "Apply AutoSlope"))
             {
@@ -275,6 +310,7 @@ namespace Revit26_Plugin.AutoSlopeByPointKdTree.VKD01.Core.Engine
                 // Runs inside this same transaction (one commit, one undo step
                 // for the whole Run) — see CircleMarkerService header comment
                 // for why Highest Point uses ElevationOffsetMm here.
+                data.Progress?.Invoke(new RunProgressInfo("Placing circle markers"));
                 View activeView = app.ActiveUIDocument?.ActiveView;
                 markerCounts = CircleMarkerService.PlaceMarkers(
                     doc,

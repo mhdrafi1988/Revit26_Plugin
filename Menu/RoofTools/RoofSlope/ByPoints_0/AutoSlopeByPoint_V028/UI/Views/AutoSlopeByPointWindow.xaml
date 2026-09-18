@@ -31,6 +31,21 @@
             <shared:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibility"/>
             <shared:LogLevelToColorConverter        x:Key="LogLevelToColor"/>
             <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
+
+            <!-- NEW: thin ProgressBar for the Run progress strip — defined
+                 LOCALLY so this stays scoped to this window only. Keeps WPF's
+                 DEFAULT ControlTemplate (only Height/Foreground/Background are
+                 restyled) — the default template's built-in PART_Track/
+                 PART_Indicator sizing correctly handles both determinate width
+                 and the indeterminate animation. -->
+            <Style x:Key="ThinProgressBar" TargetType="ProgressBar">
+                <Setter Property="Height" Value="6"/>
+                <Setter Property="Minimum" Value="0"/>
+                <Setter Property="Maximum" Value="100"/>
+                <Setter Property="Foreground" Value="{StaticResource BrushAppleBlue}"/>
+                <Setter Property="Background" Value="{StaticResource BrushSystemTertiaryBackground}"/>
+                <Setter Property="BorderThickness" Value="0"/>
+            </Style>
             <local:SlopePercentTextConverter    x:Key="SlopePercentText"/>
         </ResourceDictionary>
     </Window.Resources>
@@ -464,6 +479,35 @@
                                    VerticalAlignment="Center"/>
                     </StackPanel>
 
+                    <!-- NEW, per Rafi's confirmed progress-bar decision. Visible
+                         only while a run is in progress. -->
+                    <StackPanel Margin="0,0,0,6" Visibility="{Binding IsProgressVisible, Converter={StaticResource BoolToVisibility}}">
+                        <DockPanel Margin="0,0,0,3" LastChildFill="True">
+                            <TextBlock DockPanel.Dock="Right"
+                                       Text="{Binding ProgressPercent, StringFormat={}{0:F0}%}"
+                                       FontSize="10"
+                                       Foreground="{StaticResource BrushTextSecondary}"
+                                       Margin="6,0,0,0">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ProgressIsIndeterminate}" Value="True">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <TextBlock Text="{Binding ProgressPhaseText}"
+                                       FontSize="10"
+                                       Foreground="{StaticResource BrushTextSecondary}"
+                                       TextTrimming="CharacterEllipsis"/>
+                        </DockPanel>
+                        <ProgressBar Style="{StaticResource ThinProgressBar}"
+                                     Value="{Binding ProgressPercent, Mode=OneWay}"
+                                     IsIndeterminate="{Binding ProgressIsIndeterminate}"/>
+                    </StackPanel>
+
                     <!-- Row 2: Run timing (start/end/total, bottom-left) + Run AutoSlope/Close (right) -->
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -478,6 +522,15 @@
                                    HorizontalAlignment="Left"/>
 
                     <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <!-- NEW: Cancel sits next to Run, enabled only while a run
+                             is in progress (see CanCancelRun). -->
+                        <Button Content="Cancel"
+                                Command="{Binding CancelRunCommand}"
+                                ToolTip="Stop the run. Nothing has been written to the model yet, so cancelling is a true no-op."
+                                Style="{StaticResource SecondaryButton}"
+                                Height="32"
+                                Width="70"
+                                Margin="0,0,8,0"/>
                         <Button Command="{Binding RunCommand}"
                                 ToolTip="Calculate and apply slope to roof"
                                 Height="32"
@@ -495,6 +548,10 @@
                                         <DataTrigger Binding="{Binding StatusMessage}" Value="Completed">
                                             <Setter Property="Content" Value="✓ Complete"/>
                                             <Setter Property="Background" Value="{StaticResource BrushSuccess}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding StatusMessage}" Value="Cancelled">
+                                            <Setter Property="Content" Value="Cancelled — Run Again"/>
+                                            <Setter Property="Background" Value="{StaticResource BrushWarning}"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>

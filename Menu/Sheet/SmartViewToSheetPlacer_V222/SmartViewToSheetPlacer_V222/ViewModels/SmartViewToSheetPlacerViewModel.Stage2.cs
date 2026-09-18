@@ -25,9 +25,9 @@ namespace Revit26_Plugin.SmartViewToSheetPlacer.V222.ViewModels
         // ---- Stage 2 state ----
 
         /// <summary>One entry per distinct ViewType among selected views. Built once
-        /// when Stage 1 completes (NextToStage2) and persists across repacks — user's
-        /// per-group gap values (Fixed-gap-only, V220) survive edits, manual
-        /// overrides, and Refresh, per confirmed behavior.</summary>
+        /// when Stage 1 completes (NextToStage2) and persists across repacks. V222:
+        /// every entry always mirrors GlobalHorizontalGapMm/GlobalVerticalGapMm
+        /// (Stage 1) — no more independent per-group values.</summary>
         public ObservableCollection<ViewGroupGapSettings> GapSettingsGroups { get; } = new();
 
         /// <summary>Stage 5's "Newly Created Sheets" grid, grouped by RevitViewType.
@@ -211,8 +211,11 @@ namespace Revit26_Plugin.SmartViewToSheetPlacer.V222.ViewModels
             foreach (var vt in selectedTypes)
             {
                 if (existingTypes.Contains(vt)) continue;
-                var newGroup = new ViewGroupGapSettings(vt, Services.ViewTypeLabelHelper.Label(vt));
-                RestorePersistedGapSettings(newGroup);
+                var newGroup = new ViewGroupGapSettings(vt, Services.ViewTypeLabelHelper.Label(vt))
+                {
+                    HorizontalGapMm = GlobalHorizontalGapMm,
+                    VerticalGapMm = GlobalVerticalGapMm
+                };
                 newGroup.PropertyChanged += OnGapSettingsGroupPropertyChanged;
                 GapSettingsGroups.Add(newGroup);
             }

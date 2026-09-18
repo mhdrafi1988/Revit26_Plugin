@@ -35,6 +35,12 @@ namespace BatchDwgFamilyLinker.ViewModels
 
         [ObservableProperty] private string liveLog;
 
+        public string ProgressPercentText =>
+            TotalFamilies > 0 ? $"{(int)System.Math.Round(ProcessedCount * 100.0 / TotalFamilies)}%" : "0%";
+
+        partial void OnProcessedCountChanged(int value) => OnPropertyChanged(nameof(ProgressPercentText));
+        partial void OnTotalFamiliesChanged(int value) => OnPropertyChanged(nameof(ProgressPercentText));
+
         // --------------------------------------------------
         // Validation
         // --------------------------------------------------

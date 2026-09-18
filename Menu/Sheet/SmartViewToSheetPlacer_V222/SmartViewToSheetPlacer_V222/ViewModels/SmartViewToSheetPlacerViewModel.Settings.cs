@@ -28,6 +28,8 @@ namespace Revit26_Plugin.SmartViewToSheetPlacer.V222.ViewModels
                     MarginBottomMm = _settings.LastMarginBottomMm;
                     MarginLeftMm = _settings.LastMarginLeftMm;
                     MarginRightMm = _settings.LastMarginRightMm;
+                    GlobalHorizontalGapMm = _settings.LastHorizontalGapMm;
+                    GlobalVerticalGapMm = _settings.LastVerticalGapMm;
 
                     if (Enum.TryParse<Models.ReadingDirection>(_settings.LastReadingDirection, out var rd))
                         ReadingDirection = rd;
@@ -37,36 +39,12 @@ namespace Revit26_Plugin.SmartViewToSheetPlacer.V222.ViewModels
                         DefaultFillStrategy = fs;
                     YToleranceMm = _settings.LastYToleranceMm;
                     IsActivityLogExpanded = _settings.IsActivityLogExpanded;
-
-                    // Per-group gap settings are restored later, once the actual
-                    // ViewType groups for this run are known — see
-                    // RestorePersistedGapSettings(), called from
-                    // EnsureGapSettingsGroups() in Stage2.
                 }
             }
             catch
             {
                 _settings = new SmartViewToSheetPlacerSettings();
             }
-        }
-
-        /// <summary>
-        /// Matches a newly-created ViewGroupGapSettings against any previously
-        /// saved entry for the same ViewType (by name) and restores its H/V
-        /// gap values. Called once per group, right after construction, from
-        /// EnsureGapSettingsGroups() — mirrors the View Type filter checkbox
-        /// restore-by-match pattern in Stage 1.
-        /// </summary>
-        private void RestorePersistedGapSettings(ViewGroupGapSettings group)
-        {
-            var saved = _settings.GapSettingsByType
-                .FirstOrDefault(g => g.ViewTypeName == group.RevitViewType.ToString());
-            if (saved == null) return;
-
-            // V220: GapStyle restore removed — Fixed-gap-only now, see
-            // ViewGroupGapSettings remarks.
-            group.HorizontalGapMm = saved.HorizontalGapMm;
-            group.VerticalGapMm = saved.VerticalGapMm;
         }
 
         private void SaveSettings()
@@ -78,34 +56,14 @@ namespace Revit26_Plugin.SmartViewToSheetPlacer.V222.ViewModels
                 _settings.LastMarginBottomMm = MarginBottomMm;
                 _settings.LastMarginLeftMm = MarginLeftMm;
                 _settings.LastMarginRightMm = MarginRightMm;
+                _settings.LastHorizontalGapMm = GlobalHorizontalGapMm;
+                _settings.LastVerticalGapMm = GlobalVerticalGapMm;
 
                 _settings.LastReadingDirection = ReadingDirection.ToString();
                 _settings.LastRowTiebreak = RowTiebreak.ToString();
                 _settings.LastFillStrategy = DefaultFillStrategy.ToString();
                 _settings.LastYToleranceMm = YToleranceMm;
                 _settings.IsActivityLogExpanded = IsActivityLogExpanded;
-
-                // V213 fix: merge rather than overwrite — GapSettingsGroups only
-                // contains entries for ViewTypes selected in THIS session. A plain
-                // overwrite would silently discard any previously-saved entry for a
-                // ViewType not selected this time (e.g. Elevation configured last
-                // session, no Elevation views selected today) — merge preserves
-                // those untouched, same "restore/preserve by match" principle as
-                // the View Type filter checkbox persistence in Stage 1.
-                var currentSessionEntries = GapSettingsGroups
-                    .Select(g => new PersistedGapSetting
-                    {
-                        ViewTypeName = g.RevitViewType.ToString(),
-                        HorizontalGapMm = g.HorizontalGapMm,
-                        VerticalGapMm = g.VerticalGapMm
-                    })
-                    .ToList();
-
-                var currentSessionTypeNames = currentSessionEntries.Select(e => e.ViewTypeName).ToHashSet();
-                var untouchedFromPriorSessions = _settings.GapSettingsByType
-                    .Where(e => !currentSessionTypeNames.Contains(e.ViewTypeName));
-
-                _settings.GapSettingsByType = currentSessionEntries.Concat(untouchedFromPriorSessions).ToList();
 
                 var dir = Path.GetDirectoryName(SettingsPath)!;
                 Directory.CreateDirectory(dir);

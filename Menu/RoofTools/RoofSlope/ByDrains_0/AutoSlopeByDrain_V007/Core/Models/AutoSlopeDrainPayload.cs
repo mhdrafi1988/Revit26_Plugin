@@ -30,6 +30,7 @@ using Autodesk.Revit.DB;
 using Revit26_Plugin.Shared.Models;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Revit26_Plugin.AutoSlopeByDrain.V007.Core.Models
 {
@@ -101,5 +102,21 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Core.Models
 
         /// <summary>Called exactly once when the engine finishes (success or failure).</summary>
         public Action<AutoSlopeDrainResult> OnCompleted { get; set; }
+
+        /// <summary>
+        /// NEW. Called at phase boundaries and, throttled, during
+        /// DijkstraPathEngine.BuildGraph to report run progress. The ViewModel
+        /// converts this into an on-screen percentage + phase label and pumps the
+        /// UI so it actually repaints.
+        /// </summary>
+        public Action<RunProgressInfo> Progress { get; set; }
+
+        /// <summary>
+        /// NEW. Checked inside DijkstraPathEngine.BuildGraph right after each
+        /// throttled progress report. BuildGraph never writes to the model, so
+        /// cancelling mid-graph-build costs nothing — the transaction rolls back a
+        /// true no-op.
+        /// </summary>
+        public CancellationToken CancelToken { get; set; }
     }
 }
