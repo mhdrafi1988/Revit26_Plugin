@@ -415,6 +415,34 @@
                                    HorizontalAlignment="Right" VerticalAlignment="Center"/>
                     </Grid>
 
+                    <!-- V019: dependent parameter filter, directly under the
+                         search row. Selecting a parameter fills the typable
+                         value dropdown with that parameter's distinct values;
+                         picking a value applies the filter to the grid. Both
+                         reset to blank every time the window opens. -->
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="10,0,10,8">
+                        <TextBlock Text="Filter parameter" FontSize="10"
+                                   Foreground="{StaticResource BrushTextSecondary}"
+                                   VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <ComboBox ItemsSource="{Binding FilterParameterOptions}"
+                                  SelectedItem="{Binding SelectedFilterParameter}"
+                                  FontSize="10" Height="24" Width="140" Margin="0,0,14,0"/>
+
+                        <TextBlock Text="Value" FontSize="10"
+                                   Foreground="{StaticResource BrushTextSecondary}"
+                                   VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <ComboBox ItemsSource="{Binding FilterParameterValuesView}"
+                                  Text="{Binding FilterValueSearchText, UpdateSourceTrigger=PropertyChanged}"
+                                  SelectedItem="{Binding SelectedFilterValue, Mode=TwoWay}"
+                                  IsEditable="True" IsTextSearchEnabled="False"
+                                  FontSize="10" Height="24" Width="220" Margin="0,0,10,0"/>
+
+                        <Button Content="Clear filter"
+                                Command="{Binding ClearParameterFilterCommand}"
+                                Style="{StaticResource SmallSecondaryButton}"
+                                Padding="9,0" FontSize="9.5"/>
+                    </StackPanel>
+
                 <DataGrid ItemsSource="{Binding ViewsCollection}"
                           Style="{StaticResource StandardDataGrid}"
                           ColumnHeaderStyle="{StaticResource StandardDataGridColumnHeader}"

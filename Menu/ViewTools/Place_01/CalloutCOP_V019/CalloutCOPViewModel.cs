@@ -51,6 +51,19 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
         [ObservableProperty] private string _viewGridGroupBy = "None";
         public IReadOnlyList<string> ViewGridGroupByOptions { get; } = new[] { "None", "View type", "Placed status" };
 
+        // ── Parameter filter (search row) ──────────────────────────────
+        // User picks a parameter, the dependent typable dropdown fills with
+        // that parameter's distinct values, then picking a value filters the
+        // grid to rows matching it. Nothing here is remembered between
+        // window opens - all three reset to blank/None on every open.
+        public IReadOnlyList<string> FilterParameterOptions { get; } = new[] { "View type", "Sheet number", "Placed status" };
+        [ObservableProperty] private string _selectedFilterParameter;
+
+        public ObservableCollection<string> FilterParameterValues { get; } = new();
+        public ICollectionView FilterParameterValuesView { get; }
+        [ObservableProperty] private string _filterValueSearchText = string.Empty;
+        [ObservableProperty] private string _selectedFilterValue;
+
         // Bulk-fill toolbar - applies to all checked (IsSelected) rows on demand.
         // A null slot here is left untouched on target rows; only non-null slots overwrite.
         [ObservableProperty] private DraftingViewItemViewModel _bulkFillLeftView;
@@ -134,6 +147,15 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
                 SheetFilterItemsView = CollectionViewSource.GetDefaultView(SheetFilterItems)
                     ?? throw new InvalidOperationException("Callout COP V019: failed to build the sheet-filter collection view.");
                 SheetFilterItemsView.Filter = FilterSheetFilterItems;
+
+                // ── Parameter filter dependent dropdown ──
+                // Reset every open: SelectedFilterParameter/SelectedFilterValue
+                // default to null above, and nothing here restores a prior
+                // session's choice - per Rafi, this filter starts blank every
+                // time the window opens.
+                FilterParameterValuesView = CollectionViewSource.GetDefaultView(FilterParameterValues)
+                    ?? throw new InvalidOperationException("Callout COP V019: failed to build the filter-value collection view.");
+                FilterParameterValuesView.Filter = FilterFilterParameterValues;
 
                 // ── Views collection + filter (depends on SheetFilterItems above) ──
                 // FIX: CollectionViewSource.GetDefaultView(object source) throws
@@ -426,6 +448,44 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
             }
         }
 
+        // ── Parameter filter (search row) ───────────────────────────────
+        // Step 1: user selects a filter parameter -> rebuild the dependent
+        // typable dropdown's values for that parameter.
+        partial void OnSelectedFilterParameterChanged(string value)
+        {
+            SelectedFilterValue = null;
+            FilterValueSearchText = string.Empty;
+
+            FilterParameterValues.Clear();
+            IEnumerable<string> values = value switch
+            {
+                "View type" => Views.Select(v => v.ViewType.ToString()).Distinct().OrderBy(s => s),
+                "Sheet number" => Views.SelectMany(v => v.SheetNumberList).Distinct().OrderBy(s => s),
+                "Placed status" => new[] { "Placed", "Unplaced" },
+                _ => Enumerable.Empty<string>()
+            };
+            foreach (var v in values)
+                FilterParameterValues.Add(v);
+
+            FilterParameterValuesView?.Refresh();
+            ViewsCollection.Refresh();
+        }
+
+        // Step 2: dependent dropdown's typed text narrows the value list.
+        partial void OnFilterValueSearchTextChanged(string value) => FilterParameterValuesView?.Refresh();
+
+        private bool FilterFilterParameterValues(object obj)
+        {
+            if (obj is not string value)
+                return false;
+            if (string.IsNullOrWhiteSpace(FilterValueSearchText))
+                return true;
+            return value.Contains(FilterValueSearchText, StringComparison.OrdinalIgnoreCase);
+        }
+
+        // Step 3: user picks a value -> apply the filter to the grid.
+        partial void OnSelectedFilterValueChanged(string value) => ViewsCollection.Refresh();
+
         private bool CanPlaceCallouts() => !IsRunning && !HasPlacedThisSession;
 
         [RelayCommand(CanExecute = nameof(CanPlaceCallouts))]
@@ -515,6 +575,17 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
 
         [RelayCommand]
         private void ClearLogs() => Logs.Clear();
+
+        [RelayCommand]
+        private void ClearParameterFilter()
+        {
+            SelectedFilterParameter = null;
+            SelectedFilterValue = null;
+            FilterValueSearchText = string.Empty;
+            FilterParameterValues.Clear();
+            FilterParameterValuesView?.Refresh();
+            ViewsCollection.Refresh();
+        }
 
         private void OnPlacementFinished(int success, int failed, int skipped)
         {
@@ -630,6 +701,27 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
                 var matchesSheets = vm.SheetNumbers?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false;
                 if (!matchesName && !matchesType && !matchesSheets)
                     return false;
+            }
+
+            // Dependent parameter filter (parameter + value both required).
+            if (!string.IsNullOrEmpty(SelectedFilterParameter) && !string.IsNullOrEmpty(SelectedFilterValue))
+            {
+                switch (SelectedFilterParameter)
+                {
+                    case "View type":
+                        if (!string.Equals(vm.ViewType.ToString(), SelectedFilterValue, StringComparison.OrdinalIgnoreCase))
+                            return false;
+                        break;
+                    case "Sheet number":
+                        if (!vm.SheetNumberList.Contains(SelectedFilterValue, StringComparer.OrdinalIgnoreCase))
+                            return false;
+                        break;
+                    case "Placed status":
+                        var wantsPlaced = string.Equals(SelectedFilterValue, "Placed", StringComparison.OrdinalIgnoreCase);
+                        if (vm.IsPlaced != wantsPlaced)
+                            return false;
+                        break;
+                }
             }
 
             return true;
