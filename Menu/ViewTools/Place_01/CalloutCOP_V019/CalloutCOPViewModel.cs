@@ -47,10 +47,6 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
         // Quick text filter over the view grid - matches Name/Type/Sheets.
         [ObservableProperty] private string _viewGridSearchText = string.Empty;
 
-        // Row grouping for the view grid. "None" is the default (flat list).
-        [ObservableProperty] private string _viewGridGroupBy = "None";
-        public IReadOnlyList<string> ViewGridGroupByOptions { get; } = new[] { "None", "View type", "Placed status" };
-
         // ── Parameter filter (search row) ──────────────────────────────
         // User picks a parameter, the dependent typable dropdown fills with
         // that parameter's distinct values, then picking a value filters the
@@ -433,20 +429,6 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
         partial void OnShowElevationsChanged(bool value) => ViewsCollection.Refresh();
         partial void OnCalloutSizeChanged(double value) => IsSizeAutoSuggested = false;
         partial void OnViewGridSearchTextChanged(string value) => ViewsCollection.Refresh();
-
-        partial void OnViewGridGroupByChanged(string value)
-        {
-            ViewsCollection.GroupDescriptions.Clear();
-            switch (value)
-            {
-                case "View type":
-                    ViewsCollection.GroupDescriptions.Add(new PropertyGroupDescription(nameof(ViewItemViewModel.ViewType)));
-                    break;
-                case "Placed status":
-                    ViewsCollection.GroupDescriptions.Add(new PropertyGroupDescription(nameof(ViewItemViewModel.IsPlaced)));
-                    break;
-            }
-        }
 
         // ── Parameter filter (search row) ───────────────────────────────
         // Step 1: user selects a filter parameter -> rebuild the dependent

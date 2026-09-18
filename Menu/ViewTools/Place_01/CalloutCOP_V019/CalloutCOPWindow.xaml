@@ -374,14 +374,14 @@
             <!-- VIEW GRID CARD -->
             <Border Grid.Row="1" Style="{StaticResource ContentCard}">
                 <DockPanel LastChildFill="True">
-                    <!-- V019: selection actions, quick filter, and group-by
-                         collapsed onto a single toolbar row per Rafi. -->
+                    <!-- V019: selection actions and quick filter on a single
+                         toolbar row per Rafi. "Group by" was replaced with
+                         the "Filter by" row below, which actually narrows
+                         the grid instead of just grouping it. -->
                     <Grid DockPanel.Dock="Top" Margin="10,8,10,6">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="360"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="140"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Orientation="Horizontal">
@@ -403,25 +403,19 @@
                                   Text="{Binding ViewGridSearchText, UpdateSourceTrigger=PropertyChanged}"
                                   Style="{StaticResource StyledTextInput}"
                                   Height="24" Margin="0,0,10,0"/>
-                        <TextBlock Grid.Column="2" Text="Group by:" FontSize="10"
-                                   Foreground="{StaticResource BrushTextSecondary}"
-                                   VerticalAlignment="Center" Margin="0,0,6,0"/>
-                        <ComboBox Grid.Column="3"
-                                  ItemsSource="{Binding ViewGridGroupByOptions}"
-                                  SelectedItem="{Binding ViewGridGroupBy}"
-                                  FontSize="10" Height="24"/>
-                        <TextBlock Grid.Column="4" Text="Scoped to visible/filtered rows"
+                        <TextBlock Grid.Column="2" Text="Scoped to visible/filtered rows"
                                    FontSize="9.5" Foreground="{StaticResource BrushTextTertiary}"
                                    HorizontalAlignment="Right" VerticalAlignment="Center"/>
                     </Grid>
 
-                    <!-- V019: dependent parameter filter, directly under the
-                         search row. Selecting a parameter fills the typable
-                         value dropdown with that parameter's distinct values;
-                         picking a value applies the filter to the grid. Both
-                         reset to blank every time the window opens. -->
+                    <!-- V019: "Filter by" - was "Group by" (grouped rows but
+                         didn't actually filter them). Renamed and rewired to
+                         apply as a real filter: pick a parameter, the typable
+                         value dropdown fills with that parameter's distinct
+                         values, pick a value to narrow the grid. Both reset
+                         to blank every time the window opens. -->
                     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="10,0,10,8">
-                        <TextBlock Text="Filter parameter" FontSize="10"
+                        <TextBlock Text="Filter by" FontSize="10"
                                    Foreground="{StaticResource BrushTextSecondary}"
                                    VerticalAlignment="Center" Margin="0,0,6,0"/>
                         <ComboBox ItemsSource="{Binding FilterParameterOptions}"
@@ -477,35 +471,6 @@
                           HeadersVisibility="Column"
                           VirtualizingStackPanel.IsVirtualizing="True"
                           VirtualizingStackPanel.VirtualizationMode="Recycling">
-
-                    <DataGrid.GroupStyle>
-                        <GroupStyle>
-                            <GroupStyle.ContainerStyle>
-                                <Style TargetType="{x:Type GroupItem}">
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="{x:Type GroupItem}">
-                                                <Expander IsExpanded="True" Background="{StaticResource BrushSystemSecondaryBackground}">
-                                                    <Expander.Header>
-                                                        <TextBlock FontSize="10.5" FontWeight="SemiBold"
-                                                                   Foreground="{StaticResource BrushTextSecondary}">
-                                                            <TextBlock.Text>
-                                                                <MultiBinding StringFormat="{}{0}  ({1})">
-                                                                    <Binding Path="Name"/>
-                                                                    <Binding Path="ItemCount"/>
-                                                                </MultiBinding>
-                                                            </TextBlock.Text>
-                                                        </TextBlock>
-                                                    </Expander.Header>
-                                                    <ItemsPresenter/>
-                                                </Expander>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </GroupStyle.ContainerStyle>
-                        </GroupStyle>
-                    </DataGrid.GroupStyle>
 
                     <DataGrid.Columns>
 
