@@ -1,4 +1,5 @@
 using Autodesk.Revit.DB;
+using Revit26_Plugin.AutoSlopeByPoint.V028.Core.Engine;
 using Revit26_Plugin.Shared.Models;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,8 @@ namespace Revit26_Plugin.AutoSlopeByPoint.V028.Infrastructure.Helpers
             RoofBase roof,
             List<XYZ> selectedPoints,
             double toleranceMm,
-            Action<LogEntry> log)
+            Action<LogEntry> log,
+            Face topFace = null)
         {
             var result = new List<XYZ>();
 
@@ -74,18 +76,43 @@ namespace Revit26_Plugin.AutoSlopeByPoint.V028.Infrastructure.Helpers
                 return result;
             }
 
+            // Group the roof's boundary loops (outer edge + inner openings) so a
+            // picked point only pulls in vertices that sit on the SAME loop —
+            // not just whichever vertex happens to be within radius on some
+            // unrelated edge or opening elsewhere on the roof.
+            List<List<Curve>> boundaryLoops = AutoSlopeGeometry.GetBoundaryLoops(topFace);
+            bool loopAware = topFace != null && boundaryLoops.Count > 0;
+
+            if (!loopAware)
+            {
+                log?.Invoke(new LogEntry(LogLevel.Warning,
+                    "Drain tolerance: roof top face/boundary loops unavailable — falling back to radius-only matching (no same-edge/opening restriction)."));
+            }
+
             log?.Invoke(new LogEntry(LogLevel.Info,
-                $"Checking roof slab-shape vertices within {toleranceMm:0} mm of user-picked points..."));
+                $"Checking roof slab-shape vertices within {toleranceMm:0} mm of user-picked points on the same edge/opening..."));
 
             int foundCount = 0;
             foreach (XYZ selectedPoint in selectedPoints)
             {
                 if (selectedPoint == null) continue;
+
+                int selectedLoopIndex = loopAware
+                    ? AutoSlopeGeometry.GetClosestLoopIndex(selectedPoint, boundaryLoops)
+                    : -1;
+
                 foreach (SlabShapeVertex vertex in roofVertices)
                 {
                     if (vertex == null || !vertex.IsValidObject) continue;
                     XYZ vp = vertex.Position;
                     if (vp == null || selectedPoint.DistanceTo(vp) > toleranceFt) continue;
+
+                    if (loopAware)
+                    {
+                        int vertexLoopIndex = AutoSlopeGeometry.GetClosestLoopIndex(vp, boundaryLoops);
+                        if (vertexLoopIndex < 0 || vertexLoopIndex != selectedLoopIndex) continue;
+                    }
+
                     string key = GetPointKey(vp, toleranceFt);
                     if (addedKeys.Contains(key)) continue;
                     addedKeys.Add(key);

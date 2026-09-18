@@ -49,6 +49,59 @@ namespace Revit26_Plugin.AutoSlopeByPoint.V028.Core.Engine
             return lines;
         }
 
+        /// <summary>
+        /// Returns each of the top face's boundary loops (outer boundary AND
+        /// inner loops/openings) as its own list of curves. Used to tell which
+        /// loop a given point belongs to, so drain-tolerance matching can be
+        /// restricted to vertices on the same edge/opening as the picked point.
+        /// </summary>
+        public static List<List<Curve>> GetBoundaryLoops(Face topFace)
+        {
+            var loops = new List<List<Curve>>();
+            if (topFace == null) return loops;
+
+            foreach (EdgeArray loop in topFace.EdgeLoops)
+            {
+                var curves = new List<Curve>();
+                foreach (Edge edge in loop)
+                {
+                    Curve curve = edge.AsCurve();
+                    if (curve != null) curves.Add(curve);
+                }
+                if (curves.Count > 0) loops.Add(curves);
+            }
+            return loops;
+        }
+
+        /// <summary>
+        /// Returns the index into <paramref name="loops"/> (as returned by
+        /// GetBoundaryLoops) of the loop closest to the given point, or -1 if
+        /// there are no loops or the point is null.
+        /// </summary>
+        public static int GetClosestLoopIndex(XYZ point, List<List<Curve>> loops)
+        {
+            if (point == null || loops == null || loops.Count == 0) return -1;
+
+            int bestIndex = -1;
+            double bestDist = double.MaxValue;
+
+            for (int i = 0; i < loops.Count; i++)
+            {
+                foreach (Curve curve in loops[i])
+                {
+                    IntersectionResult proj = curve.Project(point);
+                    if (proj == null) continue;
+                    double dist = proj.XYZPoint.DistanceTo(point);
+                    if (dist < bestDist)
+                    {
+                        bestDist = dist;
+                        bestIndex = i;
+                    }
+                }
+            }
+            return bestIndex;
+        }
+
         public static Face GetTopFace(RoofBase roof)
         {
             if (roof == null) return null;

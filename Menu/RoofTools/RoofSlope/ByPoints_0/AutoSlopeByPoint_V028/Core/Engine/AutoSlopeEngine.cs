@@ -157,7 +157,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint.V028.Core.Engine
                     $"🔍 Checking for nearby roof shape points within {data.DrainToleranceMm}mm of selected points..."));
 
                 finalDrainPoints = DrainDetectionHelper.DetectDrainsWithinRadius(
-                    roof, finalDrainPoints, data.DrainToleranceMm, data.Log);
+                    roof, finalDrainPoints, data.DrainToleranceMm, data.Log, topFace);
 
                 finalDrainPoints = DrainDetectionHelper.RemoveDuplicates(
                     finalDrainPoints, data.DrainToleranceMm);
