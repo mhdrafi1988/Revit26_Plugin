@@ -57,11 +57,16 @@ namespace Revit26_Plugin.Menu.Ribbon
             {
                 ToolTip = "Auto Slope By Drain (Multi-Roof) — V009"
             };
+            var byDrainV010 = new PushButtonData("Btn_AutoSlopeByDrain_V010", "By Drain (Multi) V010", assemblyPath, "Revit26_Plugin.MultiRoofSlopeByDrain.V010.Commands.AutoSlopeByDrain")
+            {
+                ToolTip = "Auto Slope By Drain (Multi-Roof) — V010 — adds Start/End/Duration timing, a live progress bar with Cancel, " +
+                          "Circle-group-only default expansion in the drain grid, and smallest-circle default selection."
+            };
             var byDrainPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_AutoSlopeByDrain", "By Drain", byDrainV007);
 
             var slopeItems = RibbonLayoutHelper.AddStackedButtons(slopePanel, new List<RibbonItemData> { byPointPulldownData, byDrainPulldownData });
             RibbonLayoutHelper.WirePulldownButton(slopeItems, "Pulldown_AutoSlopeByPoint", byPointV028, byPointKdTree, byPointRidge);
-            RibbonLayoutHelper.WirePulldownButton(slopeItems, "Pulldown_AutoSlopeByDrain", byDrainV007, byDrainV008, byDrainV009);
+            RibbonLayoutHelper.WirePulldownButton(slopeItems, "Pulldown_AutoSlopeByDrain", byDrainV007, byDrainV008, byDrainV009, byDrainV010);
 
             // Shape Points
             RibbonPanel shapePointsPanel = app.CreateRibbonPanel(tabName, "Shape Points");
