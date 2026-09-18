@@ -44,6 +44,13 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
         [ObservableProperty] private string _sheetFilterSearchText = string.Empty;
         [ObservableProperty] private string _sheetFilterSummaryText = "ALL";
 
+        // Quick text filter over the view grid - matches Name/Type/Sheets.
+        [ObservableProperty] private string _viewGridSearchText = string.Empty;
+
+        // Row grouping for the view grid. "None" is the default (flat list).
+        [ObservableProperty] private string _viewGridGroupBy = "None";
+        public IReadOnlyList<string> ViewGridGroupByOptions { get; } = new[] { "None", "View type", "Placed status" };
+
         // Bulk-fill toolbar - applies to all checked (IsSelected) rows on demand.
         // A null slot here is left untouched on target rows; only non-null slots overwrite.
         [ObservableProperty] private DraftingViewItemViewModel _bulkFillLeftView;
@@ -100,7 +107,7 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
             // 'source')" failing immediately on window construction.
             if (data?.Application?.ActiveUIDocument?.Document is not { } doc)
                 throw new InvalidOperationException(
-                    "Callout COP V018: no active document. Open a document and an active view before running this tool.");
+                    "Callout COP V019: no active document. Open a document and an active view before running this tool.");
 
             try
             {
@@ -125,7 +132,7 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
                     item.PropertyChanged += OnSheetFilterItemPropertyChanged;
 
                 SheetFilterItemsView = CollectionViewSource.GetDefaultView(SheetFilterItems)
-                    ?? throw new InvalidOperationException("Callout COP V018: failed to build the sheet-filter collection view.");
+                    ?? throw new InvalidOperationException("Callout COP V019: failed to build the sheet-filter collection view.");
                 SheetFilterItemsView.Filter = FilterSheetFilterItems;
 
                 // ── Views collection + filter (depends on SheetFilterItems above) ──
@@ -134,7 +141,7 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
                 // null from the call above anymore, but this guard removes that
                 // exact failure mode regardless of upstream cause.
                 ViewsCollection = CollectionViewSource.GetDefaultView(Views)
-                    ?? throw new InvalidOperationException("Callout COP V018: failed to build the views collection view.");
+                    ?? throw new InvalidOperationException("Callout COP V019: failed to build the views collection view.");
                 ViewsCollection.Filter = FilterViews;
 
                 foreach (var vm in Views)
@@ -160,7 +167,7 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
                 PlacedCount = Views.Count(v => v.IsPlaced);
                 UpdateSelectedCount();
                 UpdateExpectedPlacementCount();
-                LogInfo("Callout COP V018 initialized.");
+                LogInfo("Callout COP V019 initialized.");
             }
             catch (Exception ex)
             {
@@ -170,7 +177,7 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
                 // with the original exception preserved as InnerException, so the
                 // real type/message/stack survives for diagnosis.
                 Logs.Add(new LogEntry(LogLevel.Error, $"Initialization failed: {ex.GetType().Name}: {ex.Message}"));
-                throw new InvalidOperationException($"Callout COP V018 failed to initialize: {ex.Message}", ex);
+                throw new InvalidOperationException($"Callout COP V019 failed to initialize: {ex.Message}", ex);
             }
         }
 
@@ -403,6 +410,21 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
         partial void OnShowSectionsChanged(bool value) => ViewsCollection.Refresh();
         partial void OnShowElevationsChanged(bool value) => ViewsCollection.Refresh();
         partial void OnCalloutSizeChanged(double value) => IsSizeAutoSuggested = false;
+        partial void OnViewGridSearchTextChanged(string value) => ViewsCollection.Refresh();
+
+        partial void OnViewGridGroupByChanged(string value)
+        {
+            ViewsCollection.GroupDescriptions.Clear();
+            switch (value)
+            {
+                case "View type":
+                    ViewsCollection.GroupDescriptions.Add(new PropertyGroupDescription(nameof(ViewItemViewModel.ViewType)));
+                    break;
+                case "Placed status":
+                    ViewsCollection.GroupDescriptions.Add(new PropertyGroupDescription(nameof(ViewItemViewModel.IsPlaced)));
+                    break;
+            }
+        }
 
         private bool CanPlaceCallouts() => !IsRunning && !HasPlacedThisSession;
 
@@ -599,6 +621,16 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
             if (!ShowUnplaced && !vm.IsPlaced) return false;
             if (vm.ViewType == ViewType.Section && !ShowSections) return false;
             if (vm.ViewType == ViewType.Elevation && !ShowElevations) return false;
+
+            if (!string.IsNullOrWhiteSpace(ViewGridSearchText))
+            {
+                var search = ViewGridSearchText.Trim();
+                var matchesName = vm.Name?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false;
+                var matchesType = vm.ViewType.ToString().Contains(search, StringComparison.OrdinalIgnoreCase);
+                var matchesSheets = vm.SheetNumbers?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false;
+                if (!matchesName && !matchesType && !matchesSheets)
+                    return false;
+            }
 
             return true;
         }
