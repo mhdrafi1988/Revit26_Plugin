@@ -6,7 +6,7 @@
         xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
         xmlns:local="clr-namespace:Revit26_Plugin.CalloutCOP.V019.Views"
         mc:Ignorable="d"
-        Title="Callout COP V019"
+        Title="Callout COP V19.0"
         Height="860"
         Width="1080"
         WindowStartupLocation="CenterOwner">
@@ -189,7 +189,7 @@
                 <Border Grid.Column="1" Style="{StaticResource BadgePill}"
                         Background="{StaticResource BrushNavyLight}"
                         VerticalAlignment="Center">
-                    <TextBlock Text="V019" Foreground="{StaticResource BrushTextOnDark}"
+                    <TextBlock Text="V19.0" Foreground="{StaticResource BrushTextOnDark}"
                                FontSize="11" FontWeight="SemiBold"/>
                 </Border>
             </Grid>
