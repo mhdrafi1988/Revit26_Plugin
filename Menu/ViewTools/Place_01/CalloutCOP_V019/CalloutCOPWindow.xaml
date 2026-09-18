@@ -6,7 +6,7 @@
         xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
         xmlns:local="clr-namespace:Revit26_Plugin.CalloutCOP.V019.Views"
         mc:Ignorable="d"
-        Title="Callout COP V018"
+        Title="Callout COP V019"
         Height="860"
         Width="1080"
         WindowStartupLocation="CenterOwner">
@@ -189,7 +189,7 @@
                 <Border Grid.Column="1" Style="{StaticResource BadgePill}"
                         Background="{StaticResource BrushNavyLight}"
                         VerticalAlignment="Center">
-                    <TextBlock Text="V018" Foreground="{StaticResource BrushTextOnDark}"
+                    <TextBlock Text="V019" Foreground="{StaticResource BrushTextOnDark}"
                                FontSize="11" FontWeight="SemiBold"/>
                 </Border>
             </Grid>
@@ -216,34 +216,39 @@
                                FontSize="10" FontWeight="SemiBold"
                                Foreground="{StaticResource BrushTextSecondary}"
                                Margin="0,0,0,6"/>
+                    <!-- V019: bulk-fill controls sized up 50% (24->36 height,
+                         10->15 font, widths scaled to match) so the row reads
+                         as the primary action on this card. -->
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,9">
                         <ComboBox ItemsSource="{Binding DraftingViews}"
                                   SelectedItem="{Binding BulkFillLeftView}"
                                   Style="{StaticResource DraftingViewComboBox}"
-                                  Width="150" Margin="0,0,6,0"/>
+                                  Width="225" Height="36" FontSize="15" Margin="0,0,9,0"/>
                         <ComboBox ItemsSource="{Binding DraftingViews}"
                                   SelectedItem="{Binding BulkFillCenterView}"
                                   Style="{StaticResource DraftingViewComboBox}"
-                                  Width="150" Margin="0,0,6,0"/>
+                                  Width="225" Height="36" FontSize="15" Margin="0,0,9,0"/>
                         <ComboBox ItemsSource="{Binding DraftingViews}"
                                   SelectedItem="{Binding BulkFillRightView}"
                                   Style="{StaticResource DraftingViewComboBox}"
-                                  Width="150" Margin="0,0,10,0"/>
+                                  Width="225" Height="36" FontSize="15" Margin="0,0,15,0"/>
                         <Button Content="Apply to checked"
                                 Command="{Binding ApplyBulkFillCommand}"
                                 Style="{StaticResource AccentButton}"
-                                Height="24" Width="130" FontSize="10"/>
+                                Height="36" Width="195" FontSize="15"/>
                     </StackPanel>
 
                     <Border Style="{StaticResource SeparatorLine}" Margin="0,0,0,9"/>
 
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,7">
+                    <!-- V019: sheet filter, callout size, and the show/hide
+                         checkboxes collapsed onto a single row per Rafi. -->
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
                         <TextBlock Text="Sheet filter" FontSize="10"
                                    Foreground="{StaticResource BrushTextSecondary}"
-                                   Width="150" VerticalAlignment="Center"/>
+                                   VerticalAlignment="Center" Margin="0,0,6,0"/>
 
                         <!-- Sheet filter button + popup (multi-select, OR-match) -->
-                        <Grid Width="220" HorizontalAlignment="Left">
+                        <Grid Width="150" Margin="0,0,14,0">
                             <Button x:Name="SheetFilterButton"
                                     Content="{Binding SheetFilterSummaryText}"
                                     Command="{Binding OpenSheetFilterPopupCommand}"
@@ -337,34 +342,30 @@
                                 </Border>
                             </Popup>
                         </Grid>
-                    </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,9">
                         <TextBlock Text="Callout size (mm)" FontSize="10"
                                    Foreground="{StaticResource BrushTextSecondary}"
-                                   Width="150" VerticalAlignment="Center"/>
+                                   VerticalAlignment="Center" Margin="0,0,6,0"/>
                         <TextBox Text="{Binding CalloutSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 MaxLength="10" FontSize="10" Width="80" Height="26"
-                                 VerticalContentAlignment="Center" Padding="6,0"/>
+                                 MaxLength="10" FontSize="10" Width="60" Height="26"
+                                 VerticalContentAlignment="Center" Padding="6,0" Margin="0,0,8,0"/>
                         <TextBlock Text="suggested from view scale" FontSize="10"
                                    Foreground="{StaticResource BrushTextTertiary}"
-                                   Margin="10,0,0,0" VerticalAlignment="Center"
+                                   Margin="0,0,8,0" VerticalAlignment="Center"
                                    Visibility="{Binding IsSizeAutoSuggested, Converter={StaticResource BoolToVisibilityConverter}}"/>
                         <Button Content="Reset to suggested"
                                 Command="{Binding ResetSizeToSuggestedCommand}"
                                 Style="{StaticResource SmallSecondaryButton}"
-                                Margin="12,0,0,0" Padding="9,0" FontSize="10"/>
-                    </StackPanel>
+                                Padding="9,0" FontSize="10" Margin="0,0,16,0"/>
 
-                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
                         <CheckBox Content="Show placed" IsChecked="{Binding ShowPlaced}"
-                                  FontSize="10" Margin="0,0,16,0"/>
+                                  FontSize="10" Margin="0,0,14,0" VerticalAlignment="Center"/>
                         <CheckBox Content="Show unplaced" IsChecked="{Binding ShowUnplaced}"
-                                  FontSize="10" Margin="0,0,16,0"/>
+                                  FontSize="10" Margin="0,0,14,0" VerticalAlignment="Center"/>
                         <CheckBox Content="Show sections" IsChecked="{Binding ShowSections}"
-                                  FontSize="10" Margin="0,0,16,0"/>
+                                  FontSize="10" Margin="0,0,14,0" VerticalAlignment="Center"/>
                         <CheckBox Content="Show elevations" IsChecked="{Binding ShowElevations}"
-                                  FontSize="10"/>
+                                  FontSize="10" VerticalAlignment="Center"/>
                     </StackPanel>
 
                 </StackPanel>
@@ -373,12 +374,17 @@
             <!-- VIEW GRID CARD -->
             <Border Grid.Row="1" Style="{StaticResource ContentCard}">
                 <DockPanel LastChildFill="True">
+                    <!-- V019: selection actions and quick filter on a single
+                         toolbar row per Rafi. "Group by" was replaced with
+                         the "Filter by" row below, which actually narrows
+                         the grid instead of just grouping it. -->
                     <Grid DockPanel.Dock="Top" Margin="10,8,10,6">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="360"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <StackPanel Orientation="Horizontal">
+                        <StackPanel Grid.Column="0" Orientation="Horizontal">
                             <Button Content="Select all"
                                     Command="{Binding SelectAllCommand}"
                                     Style="{StaticResource SmallSecondaryButton}"
@@ -390,12 +396,69 @@
                             <Button Content="Inverse selection"
                                     Command="{Binding InverseSelectionCommand}"
                                     Style="{StaticResource SmallSecondaryButton}"
-                                    Padding="9,0" FontSize="9.5"/>
+                                    Padding="9,0" FontSize="9.5" Margin="0,0,14,0"/>
                         </StackPanel>
-                        <TextBlock Grid.Column="1" Text="Scoped to visible/filtered rows"
+                        <!-- V019: search box widened 180->360 (2x) per Rafi. -->
+                        <TextBox Grid.Column="1"
+                                  Text="{Binding ViewGridSearchText, UpdateSourceTrigger=PropertyChanged}"
+                                  Style="{StaticResource StyledTextInput}"
+                                  Height="24" Margin="0,0,10,0"/>
+                        <TextBlock Grid.Column="2" Text="Scoped to visible/filtered rows"
                                    FontSize="9.5" Foreground="{StaticResource BrushTextTertiary}"
                                    HorizontalAlignment="Right" VerticalAlignment="Center"/>
                     </Grid>
+
+                    <!-- V019: "Filter by" - was "Group by" (grouped rows but
+                         didn't actually filter them). Renamed and rewired to
+                         apply as a real filter: pick a parameter, the typable
+                         value dropdown fills with that parameter's distinct
+                         values, pick a value to narrow the grid. Both reset
+                         to blank every time the window opens. -->
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="10,0,10,8">
+                        <TextBlock Text="Filter by" FontSize="10"
+                                   Foreground="{StaticResource BrushTextSecondary}"
+                                   VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <ComboBox ItemsSource="{Binding FilterParameterOptions}"
+                                  SelectedItem="{Binding SelectedFilterParameter}"
+                                  FontSize="10" Height="24" Width="140" Margin="0,0,14,0"/>
+
+                        <!-- V019: label + value combo stay visible always, but
+                             grey out (IsEnabled=False) until a parameter is
+                             picked, rather than appearing/disappearing. -->
+                        <TextBlock Text="Value" FontSize="10"
+                                   VerticalAlignment="Center" Margin="0,0,6,0">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SelectedFilterParameter}" Value="{x:Null}">
+                                            <Setter Property="Foreground" Value="{StaticResource BrushTextTertiary}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <ComboBox ItemsSource="{Binding FilterParameterValuesView}"
+                                  Text="{Binding FilterValueSearchText, UpdateSourceTrigger=PropertyChanged}"
+                                  SelectedItem="{Binding SelectedFilterValue, Mode=TwoWay}"
+                                  IsEditable="True" IsTextSearchEnabled="False"
+                                  FontSize="10" Height="24" Width="220" Margin="0,0,10,0">
+                            <ComboBox.Style>
+                                <Style TargetType="ComboBox">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SelectedFilterParameter}" Value="{x:Null}">
+                                            <Setter Property="IsEnabled" Value="False"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ComboBox.Style>
+                        </ComboBox>
+
+                        <Button Content="Clear filter"
+                                Command="{Binding ClearParameterFilterCommand}"
+                                Style="{StaticResource SmallSecondaryButton}"
+                                Padding="9,0" FontSize="9.5"/>
+                    </StackPanel>
 
                 <DataGrid ItemsSource="{Binding ViewsCollection}"
                           Style="{StaticResource StandardDataGrid}"
@@ -404,6 +467,7 @@
                           RowStyle="{StaticResource StandardDataGridRow}"
                           AutoGenerateColumns="False"
                           CanUserAddRows="False"
+                          CanUserSortColumns="True"
                           HeadersVisibility="Column"
                           VirtualizingStackPanel.IsVirtualizing="True"
                           VirtualizingStackPanel.VirtualizationMode="Recycling">
@@ -412,6 +476,7 @@
 
                         <DataGridCheckBoxColumn Header="&#10003;"
                                                  Binding="{Binding IsSelected, Mode=TwoWay}"
+                                                 CanUserSort="False"
                                                  Width="34"/>
 
                         <DataGridTextColumn Header="View name"
@@ -427,7 +492,7 @@
                                              Width="110"/>
 
                         <!-- LEFT -->
-                        <DataGridTemplateColumn Width="130">
+                        <DataGridTemplateColumn Width="130" SortMemberPath="LeftView.Name">
                             <DataGridTemplateColumn.Header>
                                 <StackPanel>
                                     <TextBlock Text="Left" FontSize="10" FontWeight="SemiBold"
@@ -448,7 +513,7 @@
                         </DataGridTemplateColumn>
 
                         <!-- CENTER -->
-                        <DataGridTemplateColumn Width="130">
+                        <DataGridTemplateColumn Width="130" SortMemberPath="CenterView.Name">
                             <DataGridTemplateColumn.Header>
                                 <StackPanel>
                                     <TextBlock Text="Center" FontSize="10" FontWeight="SemiBold"
@@ -469,7 +534,7 @@
                         </DataGridTemplateColumn>
 
                         <!-- RIGHT -->
-                        <DataGridTemplateColumn Width="130">
+                        <DataGridTemplateColumn Width="130" SortMemberPath="RightView.Name">
                             <DataGridTemplateColumn.Header>
                                 <StackPanel>
                                     <TextBlock Text="Right" FontSize="10" FontWeight="SemiBold"
@@ -489,7 +554,7 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTemplateColumn Header="Placed" Width="80" IsReadOnly="True">
+                        <DataGridTemplateColumn Header="Placed" Width="80" IsReadOnly="True" SortMemberPath="IsPlaced">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Border CornerRadius="8" Padding="7,2" HorizontalAlignment="Left">
