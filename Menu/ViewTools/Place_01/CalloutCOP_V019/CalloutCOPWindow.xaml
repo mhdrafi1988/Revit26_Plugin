@@ -428,14 +428,37 @@
                                   SelectedItem="{Binding SelectedFilterParameter}"
                                   FontSize="10" Height="24" Width="140" Margin="0,0,14,0"/>
 
+                        <!-- V019: label + value combo stay visible always, but
+                             grey out (IsEnabled=False) until a parameter is
+                             picked, rather than appearing/disappearing. -->
                         <TextBlock Text="Value" FontSize="10"
-                                   Foreground="{StaticResource BrushTextSecondary}"
-                                   VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                   VerticalAlignment="Center" Margin="0,0,6,0">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SelectedFilterParameter}" Value="{x:Null}">
+                                            <Setter Property="Foreground" Value="{StaticResource BrushTextTertiary}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
                         <ComboBox ItemsSource="{Binding FilterParameterValuesView}"
                                   Text="{Binding FilterValueSearchText, UpdateSourceTrigger=PropertyChanged}"
                                   SelectedItem="{Binding SelectedFilterValue, Mode=TwoWay}"
                                   IsEditable="True" IsTextSearchEnabled="False"
-                                  FontSize="10" Height="24" Width="220" Margin="0,0,10,0"/>
+                                  FontSize="10" Height="24" Width="220" Margin="0,0,10,0">
+                            <ComboBox.Style>
+                                <Style TargetType="ComboBox">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SelectedFilterParameter}" Value="{x:Null}">
+                                            <Setter Property="IsEnabled" Value="False"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ComboBox.Style>
+                        </ComboBox>
 
                         <Button Content="Clear filter"
                                 Command="{Binding ClearParameterFilterCommand}"
