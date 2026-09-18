@@ -10,19 +10,23 @@ namespace Revit26_Plugin.Menu.Ribbon
         {
             RibbonPanel createPanel = app.CreateRibbonPanel(tabName, "View Create");
 
-            // Two coexisting implementations of the same tool, collected under
+            // Three coexisting implementations of the same tool, collected under
             // one pulldown button — no default click, the list always shows.
-            // Newest (V004) keeps its icon in the dropdown; V003 is text-only.
+            // Newest (V005) keeps its icon in the dropdown; V004/V003 are text-only.
+            var edgeAroundV005 = new PushButtonData("Btn_RoofEdgeAroundSections_V005", "Edge Around (V005)", assemblyPath, "Revit26_Plugin.RoofEdgeAroundSections.V005.RoofEdgeAroundSectionsCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofEdgeAroundSections_V005_16.png"),
+                ToolTip = "Roof Edge Around Sections (V005)"
+            };
             var edgeAroundV004 = new PushButtonData("Btn_RoofEdgeAroundSections_V004", "Edge Around (V004)", assemblyPath, "Revit26_Plugin.RoofEdgeAroundSections.V004.RoofEdgeAroundSectionsCommand")
             {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofEdgeAroundSections_V004_16.png"),
                 ToolTip = "Roof Edge Around Sections (V004)"
             };
             var edgeAroundV003 = new PushButtonData("Btn_RoofEdgeAroundSections_V003", "Edge Around (V003)", assemblyPath, "Revit26_Plugin.RoofEdgeAroundSections.V003.RoofEdgeAroundSectionsCommand")
             {
                 ToolTip = "Roof Edge Around Sections (V003)"
             };
-            var edgeAroundPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofEdgeAroundSections", "Edge Around", edgeAroundV004);
+            var edgeAroundPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofEdgeAroundSections", "Edge Around", edgeAroundV005);
 
             // Pulldown buttons, unlike split buttons, are fine in a 3-item
             // stack — so this is one call instead of a stack-of-2 + lone item.
@@ -40,7 +44,7 @@ namespace Revit26_Plugin.Menu.Ribbon
                     ToolTip = "Roof Edge Element Sections"
                 },
             });
-            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeAroundSections", edgeAroundV004, edgeAroundV003);
+            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeAroundSections", edgeAroundV005, edgeAroundV004, edgeAroundV003);
 
             RibbonPanel placePanel = app.CreateRibbonPanel(tabName, "View Place");
             RibbonLayoutHelper.AddStackedButtons(placePanel, new List<RibbonItemData>
