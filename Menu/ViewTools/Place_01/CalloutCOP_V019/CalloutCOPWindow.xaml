@@ -379,7 +379,7 @@
                     <Grid DockPanel.Dock="Top" Margin="10,8,10,6">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="180"/>
+                            <ColumnDefinition Width="360"/>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="140"/>
                             <ColumnDefinition Width="*"/>
@@ -398,6 +398,7 @@
                                     Style="{StaticResource SmallSecondaryButton}"
                                     Padding="9,0" FontSize="9.5" Margin="0,0,14,0"/>
                         </StackPanel>
+                        <!-- V019: search box widened 180->360 (2x) per Rafi. -->
                         <TextBox Grid.Column="1"
                                   Text="{Binding ViewGridSearchText, UpdateSourceTrigger=PropertyChanged}"
                                   Style="{StaticResource StyledTextInput}"
