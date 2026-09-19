@@ -22,19 +22,22 @@ namespace Revit26_Plugin.CalloutCOP.V019.ExternalEvents
         private readonly ObservableCollection<LogEntry> _logs;
         private readonly Func<double> _sizeProvider; // mm
         private readonly Action<int, int, int> _onFinished; // success, failed, skipped
+        private readonly Action<int, int, string> _onProgress; // done, total, label
 
         public CalloutPlacementExternalEvent(
             Document doc,
             ObservableCollection<ViewItemViewModel> views,
             ObservableCollection<LogEntry> logs,
             Func<double> sizeProvider,
-            Action<int, int, int> onFinished)
+            Action<int, int, int> onFinished,
+            Action<int, int, string> onProgress = null)
         {
             _doc = doc;
             _views = views;
             _logs = logs;
             _sizeProvider = sizeProvider;
             _onFinished = onFinished;
+            _onProgress = onProgress;
         }
 
         public void Execute(UIApplication app)
@@ -53,15 +56,19 @@ namespace Revit26_Plugin.CalloutCOP.V019.ExternalEvents
 
             var sizeMm = _sizeProvider();
 
-            using var tx = new Transaction(_doc, "Callout COP V018 - Reference Callouts");
+            using var tx = new Transaction(_doc, $"{CalloutCOPInfo.DisplayName} - Reference Callouts");
             tx.Start();
 
             var options = tx.GetFailureHandlingOptions();
             options.SetFailuresPreprocessor(new CalloutFailuresPreprocessor());
             tx.SetFailureHandlingOptions(options);
 
+            var done = 0;
             foreach (var vm in targets)
             {
+                _onProgress?.Invoke(done, targets.Count, $"Placing {vm.Name} ({done + 1} of {targets.Count})");
+                done++;
+
                 var placements = BuildEffectivePlacements(vm);
 
                 if (!placements.Any())
@@ -104,6 +111,7 @@ namespace Revit26_Plugin.CalloutCOP.V019.ExternalEvents
                 }
             }
 
+            _onProgress?.Invoke(targets.Count, targets.Count, "Committing transaction");
             var status = tx.Commit();
             if (status != TransactionStatus.Committed)
             {
@@ -133,6 +141,6 @@ namespace Revit26_Plugin.CalloutCOP.V019.ExternalEvents
             return list;
         }
 
-        public string GetName() => "Callout COP V018 - Placement External Event";
+        public string GetName() => $"{CalloutCOPInfo.DisplayName} - Placement External Event";
     }
 }

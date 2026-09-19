@@ -90,6 +90,10 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
         [NotifyCanExecuteChangedFor(nameof(PlaceCalloutsCommand))]
         private bool _isRunning;
         [ObservableProperty] private string _progressText = string.Empty;
+        // 0-100: views placed / total scaled to 95; the last 5% is the single
+        // blocking transaction commit, 100 is set when the run finishes.
+        [ObservableProperty] private double _progressPercent;
+        [ObservableProperty] private bool _progressIsIndeterminate;
 
         // Summary card counts
         [ObservableProperty] private int _selectedCount;
@@ -116,7 +120,7 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
             // 'source')" failing immediately on window construction.
             if (data?.Application?.ActiveUIDocument?.Document is not { } doc)
                 throw new InvalidOperationException(
-                    "Callout COP V19.0: no active document. Open a document and an active view before running this tool.");
+                    $"{CalloutCOPInfo.DisplayName}: no active document. Open a document and an active view before running this tool.");
 
             try
             {
@@ -141,7 +145,7 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
                     item.PropertyChanged += OnSheetFilterItemPropertyChanged;
 
                 SheetFilterItemsView = CollectionViewSource.GetDefaultView(SheetFilterItems)
-                    ?? throw new InvalidOperationException("Callout COP V19.0: failed to build the sheet-filter collection view.");
+                    ?? throw new InvalidOperationException($"{CalloutCOPInfo.DisplayName}: failed to build the sheet-filter collection view.");
                 SheetFilterItemsView.Filter = FilterSheetFilterItems;
 
                 // ── Parameter filter dependent dropdown ──
@@ -150,7 +154,7 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
                 // session's choice - per Rafi, this filter starts blank every
                 // time the window opens.
                 FilterParameterValuesView = CollectionViewSource.GetDefaultView(FilterParameterValues)
-                    ?? throw new InvalidOperationException("Callout COP V19.0: failed to build the filter-value collection view.");
+                    ?? throw new InvalidOperationException($"{CalloutCOPInfo.DisplayName}: failed to build the filter-value collection view.");
                 FilterParameterValuesView.Filter = FilterFilterParameterValues;
 
                 // ── Views collection + filter (depends on SheetFilterItems above) ──
@@ -159,7 +163,7 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
                 // null from the call above anymore, but this guard removes that
                 // exact failure mode regardless of upstream cause.
                 ViewsCollection = CollectionViewSource.GetDefaultView(Views)
-                    ?? throw new InvalidOperationException("Callout COP V19.0: failed to build the views collection view.");
+                    ?? throw new InvalidOperationException($"{CalloutCOPInfo.DisplayName}: failed to build the views collection view.");
                 ViewsCollection.Filter = FilterViews;
 
                 foreach (var vm in Views)
@@ -178,14 +182,15 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
                     Views,
                     Logs,
                     () => CalloutSize,
-                    OnPlacementFinished);
+                    OnPlacementFinished,
+                    OnPlacementProgress);
 
                 _externalEvent = ExternalEvent.Create(_handler);
 
                 PlacedCount = Views.Count(v => v.IsPlaced);
                 UpdateSelectedCount();
                 UpdateExpectedPlacementCount();
-                LogInfo("Callout COP V19.0 initialized.");
+                LogInfo($"{CalloutCOPInfo.DisplayName} initialized.");
             }
             catch (Exception ex)
             {
@@ -195,7 +200,7 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
                 // with the original exception preserved as InnerException, so the
                 // real type/message/stack survives for diagnosis.
                 Logs.Add(new LogEntry(LogLevel.Error, $"Initialization failed: {ex.GetType().Name}: {ex.Message}"));
-                throw new InvalidOperationException($"Callout COP V19.0 failed to initialize: {ex.Message}", ex);
+                throw new InvalidOperationException($"{CalloutCOPInfo.DisplayName} failed to initialize: {ex.Message}", ex);
             }
         }
 
@@ -481,7 +486,15 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
             }
 
             IsRunning = true;
-            ProgressText = $"Running - {count} view(s)";
+            ProgressPercent = 0;
+            ProgressIsIndeterminate = true; // until the handler picks the run up
+            ProgressText = $"Waiting for Revit - {count} view(s)";
+
+            // Paint the disabled button / progress strip NOW. Raise() only queues
+            // the handler; Revit starts it on its next idle cycle and the handler
+            // then blocks the UI thread, so without this the window shows no
+            // reaction until the whole run is over.
+            UiPumpHelper.DoEvents();
             _externalEvent.Raise();
         }
 
@@ -569,9 +582,19 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
             ViewsCollection.Refresh();
         }
 
+        private void OnPlacementProgress(int done, int total, string label)
+        {
+            ProgressIsIndeterminate = false;
+            ProgressPercent = total <= 0 ? 0 : Math.Round(done * 95.0 / total);
+            ProgressText = label;
+            UiPumpHelper.DoEvents();
+        }
+
         private void OnPlacementFinished(int success, int failed, int skipped)
         {
             IsRunning = false;
+            ProgressIsIndeterminate = false;
+            ProgressPercent = 100;
             ProgressText = string.Empty;
             RunSuccessCount = success;
             RunFailedCount = failed;

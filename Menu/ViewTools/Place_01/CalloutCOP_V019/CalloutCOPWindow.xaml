@@ -5,8 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
         xmlns:local="clr-namespace:Revit26_Plugin.CalloutCOP.V019.Views"
+        xmlns:helpers="clr-namespace:Revit26_Plugin.CalloutCOP.V019.Helpers"
         mc:Ignorable="d"
-        Title="Callout COP V19.0"
+        Title="{x:Static helpers:CalloutCOPInfo.DisplayName}"
         Height="860"
         Width="1080"
         WindowStartupLocation="CenterOwner">
@@ -189,7 +190,7 @@
                 <Border Grid.Column="1" Style="{StaticResource BadgePill}"
                         Background="{StaticResource BrushNavyLight}"
                         VerticalAlignment="Center">
-                    <TextBlock Text="V19.0" Foreground="{StaticResource BrushTextOnDark}"
+                    <TextBlock Text="{x:Static helpers:CalloutCOPInfo.Version}" Foreground="{StaticResource BrushTextOnDark}"
                                FontSize="11" FontWeight="SemiBold"/>
                 </Border>
             </Grid>
@@ -656,11 +657,23 @@
 
             <!-- ACTION BAR -->
             <DockPanel Grid.Row="3" Margin="0,10,0,8">
-                <TextBlock Text="{Binding ProgressText}"
-                           FontSize="10.5" FontWeight="SemiBold"
-                           Foreground="{StaticResource BrushNavyPrimary}"
-                           VerticalAlignment="Center"
-                           Visibility="{Binding IsRunning, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                <!-- Run progress: label, percentage and bar. Visible only while running. -->
+                <StackPanel VerticalAlignment="Center" Margin="0,0,16,0"
+                            Visibility="{Binding IsRunning, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <DockPanel Margin="0,0,0,3">
+                        <TextBlock Text="{Binding ProgressPercent, StringFormat={}{0:F0}%}"
+                                   DockPanel.Dock="Right" FontSize="10.5" FontWeight="Bold"
+                                   Foreground="{StaticResource BrushNavyPrimary}"/>
+                        <TextBlock Text="{Binding ProgressText}"
+                                   FontSize="10.5" FontWeight="SemiBold"
+                                   Foreground="{StaticResource BrushNavyPrimary}"
+                                   TextTrimming="CharacterEllipsis"/>
+                    </DockPanel>
+                    <ProgressBar Height="8" Minimum="0" Maximum="100"
+                                 Value="{Binding ProgressPercent, Mode=OneWay}"
+                                 IsIndeterminate="{Binding ProgressIsIndeterminate}"
+                                 Foreground="{StaticResource BrushNavyPrimary}"/>
+                </StackPanel>
 
                 <!-- V018: reason shown once Run disables permanently after a
                      successful run this session. -->
