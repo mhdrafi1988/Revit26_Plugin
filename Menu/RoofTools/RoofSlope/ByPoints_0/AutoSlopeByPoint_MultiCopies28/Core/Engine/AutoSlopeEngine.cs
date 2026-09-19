@@ -32,7 +32,6 @@ using Revit26_Plugin.AutoSlopeByPoint.MultiCopies28.Infrastructure.Helpers;
 using Revit26_Plugin.Shared.Models;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies28.Core.Engine
@@ -50,6 +49,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies28.Core.Engine
         public static GeometryApplyOutcome ApplySlope(UIApplication app, AutoSlopePayload data)
         {
             Document doc = app.ActiveUIDocument.Document;
+            DateTime runStartTime = DateTime.Now;
 
             data.CancelToken.ThrowIfCancellationRequested();
 
@@ -191,7 +191,6 @@ namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies28.Core.Engine
             int processed = 0, skipped = 0;
             double maxPathFt = 0;
             var vertexDataList = new List<VertexData>();
-            Stopwatch sw = Stopwatch.StartNew();
 
             double drainBaselineZFt = drainIndices.Count > 0
                 ? drainIndices.Average(idx => vertices[idx].Position.Z)
@@ -311,7 +310,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies28.Core.Engine
                 }
             }
 
-            sw.Stop();
+            DateTime runEndTime = DateTime.Now;
 
             int    highest_mm  = (int)Math.Round(
                 UnitUtils.ConvertFromInternalUnits(maxElevFt, UnitTypeId.Millimeters),
@@ -319,7 +318,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies28.Core.Engine
             double longest_m   = Math.Round(
                 UnitUtils.ConvertFromInternalUnits(maxPathFt, UnitTypeId.Meters),
                 2, MidpointRounding.AwayFromZero);
-            int    durationSec = (int)Math.Round(sw.Elapsed.TotalSeconds);
+            int    durationSec = (int)(runEndTime - runStartTime).TotalSeconds;
             string runDate     = DateTime.Now.ToString("dd-MM-yy HH:mm");
 
             data.Log?.Invoke(new LogEntry(LogLevel.Success,
