@@ -119,8 +119,6 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.V010.UI.ViewModels
                 drain.PropertyChanged += OnDrainPropertyChanged;
             }
 
-            DefaultSelectionSummary = ApplyDefaultCircleSelection();
-
             foreach (var category in detectionService.GenerateSizeCategories(roofData.DetectedDrains))
                 SizeFilters.Add(category);
 
@@ -130,6 +128,10 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.V010.UI.ViewModels
             FilteredDrainsView.GroupDescriptions.Add(new PropertyGroupDescription(nameof(DrainItem.ShapeGroup)));
             FilteredDrainsView.SortDescriptions.Add(new SortDescription(nameof(DrainItem.ShapeGroupOrder), ListSortDirection.Ascending));
             FilteredDrainsView.SortDescriptions.Add(new SortDescription(nameof(DrainItem.SizeSortKey), ListSortDirection.Ascending));
+
+            // Must run AFTER FilteredDrainsView exists: setting IsSelected raises
+            // OnDrainPropertyChanged -> UpdateSelectedCount, which enumerates the view.
+            DefaultSelectionSummary = ApplyDefaultCircleSelection();
 
             TotalDetectedCount = roofData.DetectedDrains.Count;
 
