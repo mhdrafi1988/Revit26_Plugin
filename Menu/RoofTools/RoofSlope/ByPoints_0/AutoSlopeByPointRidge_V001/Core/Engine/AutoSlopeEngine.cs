@@ -27,7 +27,6 @@ using Revit26_Plugin.AutoSlopeByPointRidge.V001.Infrastructure.Helpers;
 using Revit26_Plugin.Shared.Models;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace Revit26_Plugin.AutoSlopeByPointRidge.V001.Core.Engine
@@ -57,6 +56,8 @@ namespace Revit26_Plugin.AutoSlopeByPointRidge.V001.Core.Engine
         private static void ExecuteCore(UIApplication app, AutoSlopePayload data)
         {
             Document doc = app.ActiveUIDocument.Document;
+            DateTime runStartTime = DateTime.Now;
+            data.Log?.Invoke(new LogEntry(LogLevel.Info, $"Run started at {runStartTime:HH:mm:ss}"));
 
             data.CancelToken.ThrowIfCancellationRequested();
 
@@ -324,9 +325,6 @@ namespace Revit26_Plugin.AutoSlopeByPointRidge.V001.Core.Engine
             int processed = 0, skipped = 0, ridgeCount = 0, watershedMoved = 0;
             double maxPathFt = 0;
             var vertexDataList = new List<VertexData>();
-            DateTime runStartTime = DateTime.Now;
-            Stopwatch sw = Stopwatch.StartNew();
-            data.Log?.Invoke(new LogEntry(LogLevel.Info, $"Run started at {runStartTime:HH:mm:ss}"));
 
             double drainBaselineZFt = drainIndices.Count > 0
                 ? drainIndices.Average(idx => vertices[idx].Position.Z)
@@ -480,7 +478,6 @@ namespace Revit26_Plugin.AutoSlopeByPointRidge.V001.Core.Engine
                 }
             }
 
-            sw.Stop();
             DateTime runEndTime = DateTime.Now;
 
             int    highest_mm  = (int)Math.Round(
@@ -489,7 +486,7 @@ namespace Revit26_Plugin.AutoSlopeByPointRidge.V001.Core.Engine
             double longest_m   = Math.Round(
                 UnitUtils.ConvertFromInternalUnits(maxPathFt, UnitTypeId.Meters),
                 2, MidpointRounding.AwayFromZero);
-            int    durationSec = (int)Math.Round(sw.Elapsed.TotalSeconds);
+            int    durationSec = (int)(runEndTime - runStartTime).TotalSeconds;
             string runDate     = DateTime.Now.ToString("dd-MM-yy HH:mm");
 
             const string toolVersion = "R.01.00";
