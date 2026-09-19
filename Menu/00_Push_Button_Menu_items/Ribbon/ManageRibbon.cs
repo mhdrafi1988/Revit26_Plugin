@@ -17,11 +17,16 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             var paraManagerV002 = new PushButtonData("Btn_ParaManager_V002", "ParaManager V002", assemblyPath, "Revit26_Plugin.ParaManager.V002.ParaManagerCommand")
             {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Manage.ParaManager_16.png"),
                 ToolTip = "ParaManager — bulk-assign shared parameters from a shared parameter file to categories, Instance or Type bound."
             };
 
-            var paraManagerPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_ParaManager", "ParaManager", paraManagerV002);
+            var paraManagerV003 = new PushButtonData("Btn_ParaManager_V003", "ParaManager V003", assemblyPath, "Revit26_Plugin.ParaManager.V003.ParaManagerCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Manage.ParaManager_16.png"),
+                ToolTip = "ParaManager — bulk-assign shared parameters from a shared parameter file to categories, Instance or Type bound, via a guided step-by-step flow."
+            };
+
+            var paraManagerPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_ParaManager", "ParaManager", paraManagerV003);
 
             var created = RibbonLayoutHelper.AddStackedButtons(panel, new List<RibbonItemData>
             {
@@ -33,7 +38,7 @@ namespace Revit26_Plugin.Menu.Ribbon
                 paraManagerPulldownData,
             });
 
-            RibbonLayoutHelper.WirePulldownButton(created, "Pulldown_ParaManager", paraManagerV002, paraManagerV001);
+            RibbonLayoutHelper.WirePulldownButton(created, "Pulldown_ParaManager", paraManagerV003, paraManagerV002, paraManagerV001);
         }
     }
 }
