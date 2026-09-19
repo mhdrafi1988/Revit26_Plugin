@@ -91,7 +91,7 @@ namespace Revit26_Plugin.Menu.Ribbon
         /// finds it among the returned items by name and adds every version to
         /// its dropdown list, in the given order (newest/primary first). Only
         /// the first (primary) version should carry an icon on its PushButtonData
-        /// — the rest are expected to be text-only in the dropdown.
+        /// — the rest carry their own icons and text in the dropdown.
         /// </summary>
         public static void WirePulldownButton(IList<RibbonItem> createdItems, string name, params PushButtonData[] versions)
         {

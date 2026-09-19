@@ -22,51 +22,60 @@ namespace Revit26_Plugin.Menu.Ribbon
                 },
             });
 
-            // Slope — By Point (3 coexisting implementations) and By Drain (2)
+            // Slope — By Point (4 coexisting implementations) and By Drain (4)
             // each collected under one pulldown button. V028 and V007 are the
             // base builds and keep their icons; the other variants are
-            // text-only in their dropdowns.
+            // each shown with an icon and text in its dropdown.
             RibbonPanel slopePanel = app.CreateRibbonPanel(tabName, "Roof Slope");
 
-            var byPointV028 = new PushButtonData("Btn_AutoSlopeByPoint_028", "By Point", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.V028.Commands.AutoSlopeCommand")
+            var byPointV028 = new PushButtonData("Btn_AutoSlopeByPoint_028", "By Point V028", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.V028.Commands.AutoSlopeCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.by_point_16.png"),
                 ToolTip = "Auto Slope By Point"
             };
-            var byPointKdTree = new PushButtonData("Btn_AutoSlopeByPoint_028_KdTree", "By Point (KD-Tree)", assemblyPath, "Revit26_Plugin.AutoSlopeByPointKdTree.VKD01.Commands.AutoSlopeCommand")
+            var byPointKdTree = new PushButtonData("Btn_AutoSlopeByPoint_028_KdTree", "By Point KD-Tree", assemblyPath, "Revit26_Plugin.AutoSlopeByPointKdTree.VKD01.Commands.AutoSlopeCommand")
             {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.AutoSlopeByPoint_KdTree_16.png"),
                 ToolTip = "Auto Slope By Point (KD-Tree)"
             };
-            var byPointRidge = new PushButtonData("Btn_AutoSlopeByPointRidge_001", "By Point (Ridge)", assemblyPath, "Revit26_Plugin.AutoSlopeByPointRidge.V001.Commands.AutoSlopeCommand")
+            var byPointRidge = new PushButtonData("Btn_AutoSlopeByPointRidge_001", "By Point Ridge", assemblyPath, "Revit26_Plugin.AutoSlopeByPointRidge.V001.Commands.AutoSlopeCommand")
             {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.AutoSlopeByPoint_Ridge_16.png"),
                 ToolTip = "Auto Slope By Point (Ridge) — V028 plus ridge handling: drains are grouped, ridge points are found on the basin boundaries " +
                           "between drain groups, and each ridge point is raised so water leaves it to every surrounding drain at the given slope."
             };
+            var byPointMultiCopies = new PushButtonData("Btn_AutoSlopeByPoint_MultiCopies28", "By Point Multi Copies", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.MultiCopies28.Commands.AutoSlopeCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.by_point_16.png"),
+                ToolTip = "Auto Slope By Point (Multi Copies, V028 base)"
+            };
             var byPointPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_AutoSlopeByPoint", "By Point", byPointV028);
 
-            var byDrainV007 = new PushButtonData("Btn_AutoSlopeByDrain_V007", "By Drain", assemblyPath, "Revit26_Plugin.AutoSlopeByDrain.V007.Commands.AutoSlopeByDrain")
+            var byDrainV007 = new PushButtonData("Btn_AutoSlopeByDrain_V007", "By Drain V007", assemblyPath, "Revit26_Plugin.AutoSlopeByDrain.V007.Commands.AutoSlopeByDrain")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.by_drain_16.png"),
                 ToolTip = "Auto Slope By Drain"
             };
-            var byDrainV008 = new PushButtonData("Btn_AutoSlopeByDrain_V008", "By Drain (Multi)", assemblyPath, "Revit26_Plugin.MultiRoofSlopeByDrain.Commands.AutoSlopeByDrain")
+            var byDrainV008 = new PushButtonData("Btn_AutoSlopeByDrain_V008", "By Drain V008", assemblyPath, "Revit26_Plugin.MultiRoofSlopeByDrain.Commands.AutoSlopeByDrain")
             {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.AutoSlopeByDrain_MultiRoof_16.png"),
                 ToolTip = "Auto Slope By Drain (Multi-Roof)"
             };
-            var byDrainV009 = new PushButtonData("Btn_AutoSlopeByDrain_V009", "By Drain (Multi) V009", assemblyPath, "Revit26_Plugin.MultiRoofSlopeByDrain.V009.Commands.AutoSlopeByDrain")
+            var byDrainV009 = new PushButtonData("Btn_AutoSlopeByDrain_V009", "By Drain V009", assemblyPath, "Revit26_Plugin.MultiRoofSlopeByDrain.V009.Commands.AutoSlopeByDrain")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.AutoSlopeByDrain_MultiRoof_16.png"),
                 ToolTip = "Auto Slope By Drain (Multi-Roof) — V009"
             };
-            var byDrainV010 = new PushButtonData("Btn_AutoSlopeByDrain_V010", "By Drain (Multi) V010", assemblyPath, "Revit26_Plugin.MultiRoofSlopeByDrain.V010.Commands.AutoSlopeByDrain")
+            var byDrainV010 = new PushButtonData("Btn_AutoSlopeByDrain_V010", "By Drain V010", assemblyPath, "Revit26_Plugin.MultiRoofSlopeByDrain.V010.Commands.AutoSlopeByDrain")
             {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.AutoSlopeByDrain_MultiRoof_16.png"),
                 ToolTip = "Auto Slope By Drain (Multi-Roof) — V010 — adds Start/End/Duration timing, a live progress bar with Cancel, " +
                           "Circle-group-only default expansion in the drain grid, and smallest-circle default selection."
             };
             var byDrainPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_AutoSlopeByDrain", "By Drain", byDrainV007);
 
             var slopeItems = RibbonLayoutHelper.AddStackedButtons(slopePanel, new List<RibbonItemData> { byPointPulldownData, byDrainPulldownData });
-            RibbonLayoutHelper.WirePulldownButton(slopeItems, "Pulldown_AutoSlopeByPoint", byPointV028, byPointKdTree, byPointRidge);
+            RibbonLayoutHelper.WirePulldownButton(slopeItems, "Pulldown_AutoSlopeByPoint", byPointV028, byPointKdTree, byPointRidge, byPointMultiCopies);
             RibbonLayoutHelper.WirePulldownButton(slopeItems, "Pulldown_AutoSlopeByDrain", byDrainV007, byDrainV008, byDrainV009, byDrainV010);
 
             // Shape Points
@@ -107,16 +116,17 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             // Line & Point — By Points and Multi Shapes collected under one
             // pulldown per request; the higher-version build (V68) keeps the
-            // icon, By Points (V57) is text-only.
+            // icon; both versions show icon and text in the dropdown.
             RibbonPanel linePointPanel = app.CreateRibbonPanel(tabName, "Line & Point");
 
-            var ridgeLinesMultiShape = new PushButtonData("Btn_RoofRidgeLines_V68", "Multi Shapes", assemblyPath, "Revit26_Plugin.RoofRidgeLines.V068.Commands.RoofRidgeCommand")
+            var ridgeLinesMultiShape = new PushButtonData("Btn_RoofRidgeLines_V68", "Ridge Multi Shapes V068", assemblyPath, "Revit26_Plugin.RoofRidgeLines.V068.Commands.RoofRidgeCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.RidgeLinesMultiShape_16.png"),
                 ToolTip = "Roof Ridge Lines (Multiple Shapes)"
             };
-            var ridgeLinesByPoints = new PushButtonData("Btn_RoofRidgeLines_V57", "By Points", assemblyPath, "Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.Commands.RoofRidgeCommand")
+            var ridgeLinesByPoints = new PushButtonData("Btn_RoofRidgeLines_V57", "Ridge By Points V057", assemblyPath, "Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.Commands.RoofRidgeCommand")
             {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.RidgeLinesByPoints_16.png"),
                 ToolTip = "Roof Ridge Lines (By Points)"
             };
             var ridgeLinesPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofRidgeLines", "Ridge Lines", ridgeLinesMultiShape);

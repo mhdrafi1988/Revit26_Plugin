@@ -12,11 +12,13 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             var paraManagerV001 = new PushButtonData("Btn_ParaManager_V001", "ParaManager V001", assemblyPath, "Revit26_Plugin.ParaManager.V001.ParaManagerCommand")
             {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Manage.ParaManager_16.png"),
                 ToolTip = "ParaManager — bulk-assign shared parameters from a shared parameter file to categories, Instance or Type bound."
             };
 
             var paraManagerV002 = new PushButtonData("Btn_ParaManager_V002", "ParaManager V002", assemblyPath, "Revit26_Plugin.ParaManager.V002.ParaManagerCommand")
             {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Manage.ParaManager_16.png"),
                 ToolTip = "ParaManager — bulk-assign shared parameters from a shared parameter file to categories, Instance or Type bound."
             };
 
