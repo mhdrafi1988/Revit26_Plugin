@@ -70,9 +70,81 @@ namespace Revit26_Plugin.InnerLoopDivider.V009.UI.ViewModels
         [ObservableProperty]
         private int globalDivisionPoints = 6;
 
+        // ── Size filters (circles) ────────────────────────────────────────────
+        public const string AllSizes = "All sizes";
+        public const string NonCircle = "Non-circle";
+
+        /// <summary>Distinct diameters (mm) found on the roof, ascending, for the filter drop-down.</summary>
+        public ObservableCollection<string> DiameterOptions { get; } = new() { AllSizes };
+
+        /// <summary>Distinct radii (mm) found on the roof, ascending, for the filter drop-down.</summary>
+        public ObservableCollection<string> RadiusOptions { get; } = new() { AllSizes };
+
+        [ObservableProperty]
+        private string selectedDiameterFilter = AllSizes;
+
+        [ObservableProperty]
+        private string selectedRadiusFilter = AllSizes;
+
+        partial void OnSelectedDiameterFilterChanged(string value) => OnFilterChanged();
+        partial void OnSelectedRadiusFilterChanged(string value) => OnFilterChanged();
+
+        private void OnFilterChanged()
+        {
+            LoopsView?.Refresh();
+            RecomputeCounts();
+            ApplyDivisionCommand.NotifyCanExecuteChanged();
+        }
+
+        private bool PassesFilter(RoofLoopModel l) =>
+            MatchesSize(SelectedDiameterFilter, l.DiameterMm.HasValue, l.DiameterText) &&
+            MatchesSize(SelectedRadiusFilter, l.RadiusMm.HasValue, l.RadiusText);
+
+        private static bool MatchesSize(string filter, bool isCircle, string text) =>
+            string.IsNullOrEmpty(filter) || filter == AllSizes ||
+            (filter == NonCircle ? !isCircle : isCircle && text == filter);
+
+        /// <summary>Loops currently shown in the grid (i.e. passing the size filters).</summary>
+        private IEnumerable<RoofLoopModel> VisibleLoops => Loops.Where(PassesFilter);
+
+        private void RebuildSizeOptions()
+        {
+            Fill(DiameterOptions, Loops.Where(l => l.DiameterMm.HasValue).OrderBy(l => l.DiameterMm).Select(l => l.DiameterText),
+                Loops.Any(l => !l.DiameterMm.HasValue), SelectedDiameterFilter, v => SelectedDiameterFilter = v);
+            Fill(RadiusOptions, Loops.Where(l => l.RadiusMm.HasValue).OrderBy(l => l.RadiusMm).Select(l => l.RadiusText),
+                Loops.Any(l => !l.RadiusMm.HasValue), SelectedRadiusFilter, v => SelectedRadiusFilter = v);
+
+            static void Fill(ObservableCollection<string> target, IEnumerable<string> sizes, bool hasNonCircle,
+                             string current, Action<string> setSelected)
+            {
+                target.Clear();
+                target.Add(AllSizes);
+                foreach (var s in sizes.Distinct()) target.Add(s);
+                if (hasNonCircle) target.Add(NonCircle);
+                setSelected(target.Contains(current) ? current : AllSizes);
+            }
+        }
+
+        // ── Sorting ───────────────────────────────────────────────────────────
+        /// <summary>
+        /// Sorts within each shape group by the given member. Group order is always kept
+        /// first so the grouped view doesn't fragment.
+        /// </summary>
+        public void SortBy(string memberPath, ListSortDirection direction)
+        {
+            using (LoopsView.DeferRefresh())
+            {
+                LoopsView.SortDescriptions.Clear();
+                LoopsView.SortDescriptions.Add(new SortDescription(nameof(RoofLoopModel.CategoryRank), ListSortDirection.Ascending));
+                LoopsView.SortDescriptions.Add(new SortDescription(memberPath, direction));
+                if (memberPath != nameof(RoofLoopModel.PerimeterMm))
+                    LoopsView.SortDescriptions.Add(new SortDescription(nameof(RoofLoopModel.PerimeterMm), ListSortDirection.Ascending));
+            }
+        }
+
         partial void OnGlobalDivisionPointsChanged(int value)
         {
-            foreach (var loop in Loops)
+            foreach (var loop in VisibleLoops)
                 loop.RecommendedPoints = value;
 
             RecomputeCounts();
@@ -97,8 +169,9 @@ namespace Revit26_Plugin.InnerLoopDivider.V009.UI.ViewModels
         {
             LoopsView = CollectionViewSource.GetDefaultView(Loops);
             LoopsView.GroupDescriptions.Add(new PropertyGroupDescription(nameof(RoofLoopModel.ShapeCategory)));
-            LoopsView.SortDescriptions.Add(new SortDescription(nameof(RoofLoopModel.CategoryRank), ListSortDirection.Ascending));
-            LoopsView.SortDescriptions.Add(new SortDescription(nameof(RoofLoopModel.PerimeterMm), ListSortDirection.Ascending));
+            LoopsView.Filter = o => o is RoofLoopModel l && PassesFilter(l);
+            // Default: circles by diameter (smallest first), then perimeter.
+            SortBy(nameof(RoofLoopModel.DiameterMm), ListSortDirection.Ascending);
         }
 
         private void PopulateLoops(List<RoofLoopModel> loops)
@@ -116,6 +189,7 @@ namespace Revit26_Plugin.InnerLoopDivider.V009.UI.ViewModels
                 Loops.Add(loop);
             }
 
+            RebuildSizeOptions();
             RecomputeCounts();
             ApplyDivisionCommand.NotifyCanExecuteChanged();
         }
@@ -170,7 +244,7 @@ namespace Revit26_Plugin.InnerLoopDivider.V009.UI.ViewModels
         [RelayCommand(CanExecute = nameof(CanApply))]
         private void ApplyDivision()
         {
-            var validLoops = Loops
+            var validLoops = VisibleLoops
                 .Where(l => l.IsSelected && l.RecommendedPoints >= 1)
                 .ToList();
 
@@ -206,24 +280,24 @@ namespace Revit26_Plugin.InnerLoopDivider.V009.UI.ViewModels
 
         public void SelectGroupLoops(string category)
         {
-            foreach (var loop in Loops.Where(l => l.ShapeCategory == category))
+            foreach (var loop in VisibleLoops.Where(l => l.ShapeCategory == category))
                 loop.IsSelected = true;
         }
 
         public void ClearGroupLoops(string category)
         {
-            foreach (var loop in Loops.Where(l => l.ShapeCategory == category))
+            foreach (var loop in VisibleLoops.Where(l => l.ShapeCategory == category))
                 loop.IsSelected = false;
         }
 
         [RelayCommand]
         private void ClearLog() => Log.Clear();
 
-        private bool CanApply() => Loops.Any(l => l.IsSelected && l.RecommendedPoints >= 1);
+        private bool CanApply() => VisibleLoops.Any(l => l.IsSelected && l.RecommendedPoints >= 1);
 
         private void SetAllSelected(bool value)
         {
-            foreach (var loop in Loops)
+            foreach (var loop in VisibleLoops)
                 loop.IsSelected = value;
         }
 
@@ -240,8 +314,8 @@ namespace Revit26_Plugin.InnerLoopDivider.V009.UI.ViewModels
         private void RecomputeCounts()
         {
             InnerLoopCount     = Loops.Count;
-            SelectedShapeCount = Loops.Count(l => l.IsSelected);
-            QueuedPointCount   = Loops.Where(l => l.IsSelected).Sum(l => l.RecommendedPoints);
+            SelectedShapeCount = VisibleLoops.Count(l => l.IsSelected);
+            QueuedPointCount   = VisibleLoops.Where(l => l.IsSelected).Sum(l => l.RecommendedPoints);
         }
 
         private void DetachLoopHandlers()
