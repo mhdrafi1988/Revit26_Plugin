@@ -12,14 +12,28 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             // Coexisting implementations of the same tool are collected under
             // one pulldown button — no default click, the list always shows.
-            // Only the current version (V005) is left; it stays in a pulldown
-            // so a future version can be added beside it.
+            // The newest version of each tool supplies the pulldown's own icon.
+            // Edge Around is down to its current version (V005); it stays in a
+            // pulldown so a future version can be added beside it. Edge Element
+            // keeps V002 and V001.
             var edgeAroundV005 = new PushButtonData("Btn_RoofEdgeAroundSections_V005", "Edge Around V005", assemblyPath, "Revit26_Plugin.RoofEdgeAroundSections.V005.RoofEdgeAroundSectionsCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofEdgeAroundSections_V005_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Roof Edge Around Sections", "V005")
             };
             var edgeAroundPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofEdgeAroundSections", "Edge Around", edgeAroundV005);
+
+            var edgeElementV002 = new PushButtonData("Btn_RoofEdgeElementSections_V002", "Edge Element V002", assemblyPath, "Revit26_Plugin.RoofEdgeElementSections.V002.RoofEdgeElementSectionsCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofEdgeElementSections_V002_16.png"),
+                ToolTip = RibbonLayoutHelper.VersionTip("Roof Edge Element Sections", "V002")
+            };
+            var edgeElementV001 = new PushButtonData("Btn_RoofEdgeElementSections_V001", "Edge Element V001", assemblyPath, "Revit26_Plugin.RoofEdgeElementSections.V001.RoofEdgeElementSectionsCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofEdgeElementSections_16.png"),
+                ToolTip = RibbonLayoutHelper.VersionTip("Roof Edge Element Sections", "V001")
+            };
+            var edgeElementPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofEdgeElementSections", "Edge Element", edgeElementV002);
 
             // Pulldown buttons, unlike split buttons, are fine in a 3-item
             // stack — so this is one call instead of a stack-of-2 + lone item.
@@ -31,13 +45,10 @@ namespace Revit26_Plugin.Menu.Ribbon
                     ToolTip = RibbonLayoutHelper.VersionTip("Create Sections From Detail Lines", "V011")
                 },
                 edgeAroundPulldownData,
-                new PushButtonData("Btn_RoofEdgeElementSections_V001", "Roof Edge Sections", assemblyPath, "Revit26_Plugin.RoofEdgeElementSections.V001.RoofEdgeElementSectionsCommand")
-                {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofEdgeElementSections_16.png"),
-                    ToolTip = RibbonLayoutHelper.VersionTip("Roof Edge Element Sections", "V001")
-                },
+                edgeElementPulldownData,
             });
             RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeAroundSections", edgeAroundV005);
+            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeElementSections", edgeElementV002, edgeElementV001);
 
             RibbonPanel placePanel = app.CreateRibbonPanel(tabName, "View Place");
             RibbonLayoutHelper.AddStackedButtons(placePanel, new List<RibbonItemData>
