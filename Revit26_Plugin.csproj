@@ -758,6 +758,7 @@
 	  <None Remove="Resources\Icons\ViewTools\RoofEdgeAroundSections_V004_16.png" />
 	  <None Remove="Resources\Icons\ViewTools\RoofEdgeAroundSections_V005_16.png" />
 	  <None Remove="Resources\Icons\ViewTools\RoofEdgeElementSections_16.png" />
+	  <None Remove="Resources\Icons\ViewTools\RoofEdgeElementSections_V002_16.png" />
 	  <None Remove="Resources\Icons\ViewTools\SectionAutoRenamer_16.png" />
 	  <None Remove="Resources\Icons\ViewTools\SectionAutoTagger_16.png" />
 	  <None Remove="Resources\Icons\ViewTools\SectionsFromDetailLines_16.png" />
@@ -865,6 +866,7 @@
 	  <EmbeddedResource Include="Resources\Icons\ViewTools\RoofEdgeAroundSections_V004_16.png" />
 	  <EmbeddedResource Include="Resources\Icons\ViewTools\RoofEdgeAroundSections_V005_16.png" />
 	  <EmbeddedResource Include="Resources\Icons\ViewTools\RoofEdgeElementSections_16.png" />
+	  <EmbeddedResource Include="Resources\Icons\ViewTools\RoofEdgeElementSections_V002_16.png" />
 	  <EmbeddedResource Include="Resources\Icons\ViewTools\SectionAutoRenamer_16.png" />
 	  <EmbeddedResource Include="Resources\Icons\ViewTools\SectionAutoTagger_16.png" />
 	  <EmbeddedResource Include="Resources\Icons\ViewTools\SectionsFromDetailLines_16.png" />
