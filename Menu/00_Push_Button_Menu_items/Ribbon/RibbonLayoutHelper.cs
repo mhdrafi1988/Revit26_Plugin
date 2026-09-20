@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Autodesk.Revit.UI;
 
 namespace Revit26_Plugin.Menu.Ribbon
@@ -11,6 +12,10 @@ namespace Revit26_Plugin.Menu.Ribbon
     /// </summary>
     internal static class RibbonLayoutHelper
     {
+        // Tooltip punctuation kept as escapes so the source stays ASCII-safe.
+        private const string TipSeparator = " — ";   // em dash
+        private const string TipBullet = "• ";       // bullet
+
         public static IList<RibbonItem> AddStackedButtons(RibbonPanel panel, IList<RibbonItemData> items)
         {
             var created = new List<RibbonItem>();
@@ -56,33 +61,41 @@ namespace Revit26_Plugin.Menu.Ribbon
         /// at render time (icon shows, text doesn't) — this only happens inside
         /// AddStackedItems, never on a lone button added via AddItem. Explicitly
         /// re-assigning ItemText on the RibbonItem AddStackedItems just returned
-        /// forces the label to actually bind.
+        /// forces the label to actually bind. The tooltip is re-applied the same
+        /// way, so every stacked button reliably shows its "Tool — Version" tip.
         /// </summary>
         private static void RebindStackedText(IList<RibbonItem> createdItems, params RibbonItemData[] sourceData)
         {
             for (int j = 0; j < createdItems.Count && j < sourceData.Length; j++)
             {
-                if (sourceData[j] is ButtonData buttonData && !string.IsNullOrEmpty(buttonData.Text))
-                    createdItems[j].ItemText = buttonData.Text;
+                if (sourceData[j] is ButtonData buttonData)
+                {
+                    if (!string.IsNullOrEmpty(buttonData.Text))
+                        createdItems[j].ItemText = buttonData.Text;
+                    if (!string.IsNullOrEmpty(buttonData.ToolTip))
+                        createdItems[j].ToolTip = buttonData.ToolTip;
+                }
             }
         }
 
         /// <summary>
-        /// Builds the placeholder PulldownButtonData for 2+ coexisting versions
+        /// Builds the placeholder PulldownButtonData for 1+ coexisting versions
         /// of the same tool, collected under one dropdown button — no version
         /// runs by default on a bare click, the list always shows on click.
         /// <paramref name="primary"/> (the newest version) supplies the button's
         /// own icon. Insert the returned data into the list passed to
         /// <see cref="AddStackedButtons"/>, then call <see cref="WirePulldownButton"/>
         /// afterward with the same name and every version (primary first) to
-        /// finish populating the dropdown.
+        /// finish populating the dropdown and its version-list tooltip.
         /// </summary>
         public static PulldownButtonData CreatePulldownButtonData(string name, string text, PushButtonData primary)
         {
             return new PulldownButtonData(name, text)
             {
                 Image = primary.Image,
-                ToolTip = primary.ToolTip
+                // Placeholder only — WirePulldownButton replaces it with the
+                // list of versions actually in the dropdown.
+                ToolTip = text
             };
         }
 
@@ -92,6 +105,9 @@ namespace Revit26_Plugin.Menu.Ribbon
         /// its dropdown list, in the given order (newest/primary first). Only
         /// the first (primary) version should carry an icon on its PushButtonData
         /// — the rest carry their own icons and text in the dropdown.
+        /// The pulldown's own tooltip is then set to list every version wired in
+        /// (see <see cref="VersionTip"/> — each entry is the version button's
+        /// tooltip title), so it can never disagree with the dropdown contents.
         /// </summary>
         public static void WirePulldownButton(IList<RibbonItem> createdItems, string name, params PushButtonData[] versions)
         {
@@ -100,6 +116,36 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             foreach (var version in versions)
                 pulldown.AddPushButton(version);
+
+            pulldown.ToolTip = BuildVersionsTip(pulldown.ItemText, versions);
+        }
+
+        /// <summary>
+        /// Standard tooltip for every tool button: a title line of
+        /// "Tool — Version", then an optional description on the next line.
+        /// Always build tool tooltips through this so the version is never left off.
+        /// </summary>
+        public static string VersionTip(string tool, string version, string detail = null)
+        {
+            string title = tool + TipSeparator + version;
+            return string.IsNullOrWhiteSpace(detail) ? title : title + "\n" + detail;
+        }
+
+        private static string BuildVersionsTip(string tool, PushButtonData[] versions)
+        {
+            var sb = new StringBuilder(tool)
+                .Append(TipSeparator)
+                .Append(versions.Length == 1 ? "1 version" : versions.Length + " versions");
+
+            foreach (var version in versions)
+            {
+                // First line of the version's own tooltip is its "Tool — Version" title.
+                string title = string.IsNullOrEmpty(version.ToolTip) ? version.Text : version.ToolTip;
+                int eol = title.IndexOf('\n');
+                if (eol >= 0) title = title.Substring(0, eol);
+                sb.Append('\n').Append(TipBullet).Append(title.TrimEnd());
+            }
+            return sb.ToString();
         }
     }
 }

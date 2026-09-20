@@ -15,17 +15,18 @@ namespace Revit26_Plugin.Menu.Ribbon
             var linesVA007 = new PushButtonData("Btn_ DeatailLInes VA007", "From Links VA007", assemblyPath, "Revit26_Plugin.LinkedDetailLineGenerator.VA007.Commands.OpenLinkedDetailLineGeneratorCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.Linematch32_16.png"),
-                ToolTip = "Create Detail Lines From Linked Files, clipped to a pre-selected Floor/Roof boundary (VA007)"
+                ToolTip = RibbonLayoutHelper.VersionTip("Detail Lines From Links", "VA007",
+                    "Create Detail Lines From Linked Files, clipped to a pre-selected Floor/Roof boundary")
             };
             var linesVA006 = new PushButtonData("Btn_ DeatailLInes VA006", "From Links VA006", assemblyPath, "Revit26_Plugin.LinkedDetailLineGenerator.VA006.Commands.OpenLinkedDetailLineGeneratorCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.Linematch32_16.png"),
-                ToolTip = "Create Detail Lines From Linked Files (VA006)"
+                ToolTip = RibbonLayoutHelper.VersionTip("Detail Lines From Links", "VA006", "Create Detail Lines From Linked Files")
             };
             var linesVA003 = new PushButtonData("Btn_ DeatailLInes VA003", "From Links VA003", assemblyPath, "Revit26_Plugin.LinkedDetailLineGenerator.VA003.Commands.OpenLinkedDetailLineGeneratorCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.Linematch32_16.png"),
-                ToolTip = "Create Detail Lines From Linked Files (VA003)"
+                ToolTip = RibbonLayoutHelper.VersionTip("Detail Lines From Links", "VA003", "Create Detail Lines From Linked Files")
             };
             var linesPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DetailLinesFromLinks", "From Links", linesVA007);
 
@@ -37,7 +38,8 @@ namespace Revit26_Plugin.Menu.Ribbon
             {
                 new PushButtonData("Btn_DetailLineClosedLoop_V001", "Detail Line Closed Loop", assemblyPath, "Revit26_Plugin.DetailLineClosedLoop.V001.Commands.DetailLineClosedLoopCommand")
                 {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.ClosedLoop_16.png")
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.ClosedLoop_16.png"),
+                    ToolTip = RibbonLayoutHelper.VersionTip("Detail Line Closed Loop", "V001")
                 },
             });
         }
