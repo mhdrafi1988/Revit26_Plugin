@@ -16,12 +16,12 @@ namespace Revit26_Plugin.Menu.Ribbon
             var fromRoomsV011 = new PushButtonData("Btn_FloorsAndRoofFromLinkedRooms_V011", "From Rooms V011", assemblyPath, "Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011.Command")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.FloorTools.FloorRoofFromRooms_16.png"),
-                ToolTip = "Floors And Roof From Linked Rooms"
+                ToolTip = RibbonLayoutHelper.VersionTip("Floors And Roof From Linked Rooms", "V011")
             };
             var fromRoomsPlanViewV004 = new PushButtonData("Btn_FloorsAndRoofFromLinkedRoomsViaPlanViewV004", "Rooms Plan View V004", assemblyPath, "Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V004.Command")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.FloorTools.FloorRoofFromRoomsPlanView_16.png"),
-                ToolTip = "Floors And Roof From Linked Rooms (Via Plan View)"
+                ToolTip = RibbonLayoutHelper.VersionTip("Floors And Roof From Linked Rooms (Via Plan View)", "V004")
             };
             var fromRoomsPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_FloorsAndRoofFromLinkedRooms", "From Rooms", fromRoomsV011);
 

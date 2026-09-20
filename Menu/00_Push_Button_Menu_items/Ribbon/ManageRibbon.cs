@@ -10,22 +10,25 @@ namespace Revit26_Plugin.Menu.Ribbon
         {
             RibbonPanel panel = app.CreateRibbonPanel(tabName, "Manage");
 
+            const string paraManagerDetail = "Bulk-assign shared parameters from a shared parameter file to categories, Instance or Type bound.";
+
             var paraManagerV001 = new PushButtonData("Btn_ParaManager_V001", "ParaManager V001", assemblyPath, "Revit26_Plugin.ParaManager.V001.ParaManagerCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Manage.ParaManager_16.png"),
-                ToolTip = "ParaManager — bulk-assign shared parameters from a shared parameter file to categories, Instance or Type bound."
+                ToolTip = RibbonLayoutHelper.VersionTip("ParaManager", "V001", paraManagerDetail)
             };
 
             var paraManagerV002 = new PushButtonData("Btn_ParaManager_V002", "ParaManager V002", assemblyPath, "Revit26_Plugin.ParaManager.V002.ParaManagerCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Manage.ParaManager_16.png"),
-                ToolTip = "ParaManager — bulk-assign shared parameters from a shared parameter file to categories, Instance or Type bound."
+                ToolTip = RibbonLayoutHelper.VersionTip("ParaManager", "V002", paraManagerDetail)
             };
 
             var paraManagerV003 = new PushButtonData("Btn_ParaManager_V003", "ParaManager V003", assemblyPath, "Revit26_Plugin.ParaManager.V003.ParaManagerCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Manage.ParaManager_16.png"),
-                ToolTip = "ParaManager — bulk-assign shared parameters from a shared parameter file to categories, Instance or Type bound, via a guided step-by-step flow."
+                ToolTip = RibbonLayoutHelper.VersionTip("ParaManager", "V003",
+                    "Bulk-assign shared parameters from a shared parameter file to categories, Instance or Type bound, via a guided step-by-step flow.")
             };
 
             var paraManagerPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_ParaManager", "ParaManager", paraManagerV003);
@@ -35,7 +38,7 @@ namespace Revit26_Plugin.Menu.Ribbon
                 new PushButtonData("Btn_AnnotationOverlapDetection_V002", "Overlap Detection", assemblyPath, "Revit26_Plugin.AnnotationOverlapDetection.V002.Command")
                 {
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Manage.AnnotationOverlapDetection_16.png"),
-                    ToolTip = "Annotation Overlap Detection"
+                    ToolTip = RibbonLayoutHelper.VersionTip("Annotation Overlap Detection", "V002")
                 },
                 paraManagerPulldownData,
             });
