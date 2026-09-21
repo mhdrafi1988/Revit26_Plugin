@@ -42,12 +42,14 @@
                 </ObjectDataProvider.MethodParameters>
             </ObjectDataProvider>
 
-            <!-- Point-group rows may only be Circle or Rectangle — RepresentationMode
-                 also has Boundary/Centerline (Profile/Linear), which don't apply here,
-                 so this is an explicit subset rather than the full enum. -->
+            <!-- Point-group rows may only be Circle, Rectangle or ActualProfile —
+                 RepresentationMode also has Boundary/Centerline (Profile/Linear),
+                 which don't apply here, so this is an explicit subset rather than
+                 the full enum. -->
             <x:Array x:Key="PointRepresentationValues" Type="{x:Type models:RepresentationMode}">
                 <models:RepresentationMode>Circle</models:RepresentationMode>
                 <models:RepresentationMode>Rectangle</models:RepresentationMode>
+                <models:RepresentationMode>ActualProfile</models:RepresentationMode>
             </x:Array>
 
             <!-- VA007 "Group by Type" flat view — shared by the Profile/Linear/Point
@@ -642,7 +644,7 @@
                                                   Visibility="{Binding IsPointGroup, Converter={StaticResource BoolToVisibilityConverter}}"
                                                   ItemsSource="{Binding Source={StaticResource PointRepresentationValues}}"
                                                   SelectedItem="{Binding Representation}"
-                                                  ToolTip="Point marker shape: Circle or Rectangle"/>
+                                                  ToolTip="Circle / Rectangle: fixed-size marker (Section 4). ActualProfile: the element's real footprint — true circle diameter, or rectangle size and rotation; other sections use their actual outline."/>
                                         <ComboBox Grid.Column="5" Style="{StaticResource StandardComboBox}" FontSize="12" VerticalAlignment="Center"
                                                   Visibility="{Binding IsProfileGroup, Converter={StaticResource BoolToVisibilityConverter}}"
                                                   ItemsSource="{Binding Source={StaticResource ExtractionMethodValues}}"

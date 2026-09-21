@@ -909,11 +909,16 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.UI.ViewModels
             if (Mappings.Any(m => m.LinkInstanceId == node.LinkInstanceId && m.TypeId == typeItem.TypeId))
                 return;
 
+            // Columns default to their real footprint (circle/rectangle, true size and
+            // rotation); other Point categories (e.g. Mechanical Equipment) keep the
+            // fixed-size Circle marker, which is still selectable per row.
+            bool isColumnCategory = cat.CategoryName is "Structural Columns" or "Columns";
+
             var defaultRepresentation = cat.Group switch
             {
                 RepresentationGroup.Profile => RepresentationMode.Boundary,
                 RepresentationGroup.Linear => RepresentationMode.Centerline,
-                RepresentationGroup.Point => RepresentationMode.Circle,
+                RepresentationGroup.Point => isColumnCategory ? RepresentationMode.ActualProfile : RepresentationMode.Circle,
                 _ => RepresentationMode.Boundary
             };
 

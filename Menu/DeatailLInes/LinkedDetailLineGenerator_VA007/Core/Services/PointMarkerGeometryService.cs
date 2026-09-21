@@ -42,9 +42,13 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.Core.Services
         /// documented workaround for Arc.Create throwing on a full 2pi sweep. Exact,
         /// not sampled: each half is still a true analytic Arc.</summary>
         private List<Curve> BuildCircle(XYZ center, double diameterMm)
-        {
-            double radiusFeet = MmToFeet(diameterMm) / 2.0;
+            => BuildCircleFromRadius(center, MmToFeet(diameterMm) / 2.0);
 
+        /// <summary>Same two-half-arc circle, from a radius in feet. Public so the
+        /// column footprint path can draw a detected circle with the identical
+        /// construction as a fixed-size Circle marker.</summary>
+        public List<Curve> BuildCircleFromRadius(XYZ center, double radiusFeet)
+        {
             XYZ p0 = center + new XYZ(radiusFeet, 0, 0);
             XYZ p1 = center - new XYZ(radiusFeet, 0, 0);
             XYZ topMid = center + new XYZ(0, radiusFeet, 0);

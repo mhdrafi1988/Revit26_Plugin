@@ -30,6 +30,7 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.Core.Engine
         private readonly PointGeometryExtractionService _pointExtraction = new();
         private readonly GeometryExtractionService _curveNormalizer = new();
         private readonly PointMarkerGeometryService _markerGeometry = new();
+        private readonly ColumnFootprintService _footprintService = new();
         private readonly GeometryTransformService _transform = new();
         private readonly GeometryProjectionService _projection = new();
         private readonly GeometryClippingService _clipping = new();
@@ -181,18 +182,38 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.Core.Engine
                 XYZ hostPoint = linkToHost.OfPoint(extraction.Point!);
                 XYZ planPoint = new XYZ(hostPoint.X, hostPoint.Y, planZ);
 
+                // ActualProfile: the element's real footprint (true size + rotation)
+                // instead of a fixed-size marker. Null means it was unavailable and
+                // has been logged — fall through to the Circle marker.
+                List<Curve>? markerCurves = null;
+                RepresentationMode markerMode = mapping.Representation;
+
+                if (markerMode == RepresentationMode.ActualProfile)
+                {
+                    markerCurves = TryBuildActualProfile(
+                        elem, extraction.Point!, linkToHost, planZ, complexCurveSettings, log, out XYZ profileCenter);
+
+                    if (markerCurves != null)
+                        planPoint = profileCenter;
+                    else
+                        markerMode = RepresentationMode.Circle;
+                }
+
                 if (scope.LimitToActiveView && !PointInPolygon(planPoint, processingBoundary))
                 {
                     // Outside processing scope — not an error.
                     return;
                 }
 
-                double rotationRadians = mapping.Representation == RepresentationMode.Rectangle
-                    ? ComputeRectangleRotationRadians(rectangleSettings, elem, linkToHost, hostDoc, activeView, complexCurveSettings, log)
-                    : 0.0;
+                if (markerCurves == null)
+                {
+                    double rotationRadians = markerMode == RepresentationMode.Rectangle
+                        ? ComputeRectangleRotationRadians(rectangleSettings, elem, linkToHost, hostDoc, activeView, complexCurveSettings, log)
+                        : 0.0;
 
-                List<Curve> markerCurves = _markerGeometry.BuildMarker(
-                    planPoint, mapping.Representation, circleSettings, rectangleSettings, rotationRadians);
+                    markerCurves = _markerGeometry.BuildMarker(
+                        planPoint, markerMode, circleSettings, rectangleSettings, rotationRadians);
+                }
 
                 // Marker is a small closed loop; clip it the same way Profile loops
                 // are clipped (it can straddle the boundary edge for markers near
@@ -248,6 +269,62 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.Core.Engine
             });
             result.ElementsProcessed++;
         }
+
+        /// <summary>RepresentationMode.ActualProfile — reads the element's real plan
+        /// footprint (ColumnFootprintService), then transforms it to the host and
+        /// flattens it to the view plane. Rotation needs no separate handling: the
+        /// footprint is read from the element's geometry, so a rotated column already
+        /// comes back rotated (and the link's own rotation is applied by the
+        /// transform). Returns null — after logging why — when no footprint could be
+        /// read, so the caller can fall back to a fixed-size marker.</summary>
+        private List<Curve>? TryBuildActualProfile(
+            Element elem, XYZ insertionPoint, Transform linkToHost, double planZ,
+            ComplexCurveSettings complexCurveSettings, Action<string, LogSeverity> log,
+            out XYZ planCenter)
+        {
+            planCenter = XYZ.Zero;
+
+            if (!_footprintService.TryExtract(elem, out ColumnFootprint? footprint, out string? reason) || footprint == null)
+            {
+                log($"Element {elem.Id.Value}: actual profile unavailable ({reason}) — used a Circle marker at the insertion point instead.", LogSeverity.Warning);
+                return null;
+            }
+
+            double linkRotation = Math.Atan2(linkToHost.BasisX.Y, linkToHost.BasisX.X);
+            string face = footprint.FromBottomFace ? "bottom" : "top";
+            string detail = footprint.Shape switch
+            {
+                ColumnFootprintShape.Circle =>
+                    $"circle Ø{FeetToMm(footprint.DiameterFeet):F0} mm",
+                ColumnFootprintShape.Rectangle =>
+                    $"rectangle {FeetToMm(footprint.WidthFeet):F0} x {FeetToMm(footprint.HeightFeet):F0} mm, "
+                    + $"rotation {(footprint.RotationRadians + linkRotation) * 180.0 / Math.PI:F1}° in host",
+                _ => $"custom outline of {footprint.Curves.Count} edge(s)"
+            };
+            log($"Element {elem.Id.Value}: actual profile from {face} face — {detail}.", LogSeverity.Debug);
+
+            double offsetMm = FeetToMm(Math.Sqrt(
+                Math.Pow(footprint.Center.X - insertionPoint.X, 2) + Math.Pow(footprint.Center.Y - insertionPoint.Y, 2)));
+            if (offsetMm > 1.0)
+                log($"Element {elem.Id.Value}: footprint centre is {offsetMm:F0} mm from the insertion point — drawn where the geometry actually is.", LogSeverity.Debug);
+
+            // Only a custom outline can hold spline edges worth simplifying; circles
+            // and rectangles are already exact arcs/lines.
+            List<Curve> curves = footprint.Shape == ColumnFootprintShape.Polygon
+                ? footprint.Curves
+                    .Select(c => _curveNormalizer.NormalizeSingleCurve(c, complexCurveSettings, elem.Id,
+                        (msg, id) => log($"Element {elem.Id.Value}: {msg}", LogSeverity.Warning)))
+                    .ToList()
+                : footprint.Curves;
+
+            List<Curve> planCurves = _projection.ProjectToPlan(_transform.TransformCurves(curves, linkToHost), planZ);
+
+            XYZ hostCenter = linkToHost.OfPoint(footprint.Center);
+            planCenter = new XYZ(hostCenter.X, hostCenter.Y, planZ);
+            return planCurves;
+        }
+
+        private static double FeetToMm(double feet) => feet * 304.8;
 
         /// <summary>Resolves RectangleMarkerSettings.AlignmentMode into an actual
         /// rotation angle (radians, host coordinates) for one element. See

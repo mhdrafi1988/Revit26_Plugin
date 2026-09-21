@@ -14,14 +14,21 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.Core.Models
 
     /// <summary>
     /// Specific representation mode within a RepresentationGroup.
-    /// Profile → Boundary. Linear → Centerline. Point → Circle / Rectangle.
+    /// Profile → Boundary. Linear → Centerline. Point → Circle / Rectangle / ActualProfile.
     /// </summary>
     public enum RepresentationMode
     {
         Boundary,
         Centerline,
         Circle,
-        Rectangle
+        Rectangle,
+
+        /// <summary>Point group only: instead of a fixed-size marker, draws the
+        /// element's real plan footprint (read from its solid geometry by
+        /// ColumnFootprintService) — a circle of its true diameter, a rectangle of
+        /// its true size and rotation, or its actual outline for other sections
+        /// (I, L, T…). Falls back to a Circle marker when no footprint is found.</summary>
+        ActualProfile
     }
 
     /// <summary>
