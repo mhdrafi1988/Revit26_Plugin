@@ -1,4 +1,6 @@
+using System;
 using System.Linq;
+using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Revit26_Plugin.Shared.Models;
@@ -15,6 +17,75 @@ namespace Revit26_Plugin.SmartViewToSheetPlacer.V222.ViewModels
         [ObservableProperty] private bool _stage4Complete;
         public string Stage4StatusLabel => Stage4Complete ? "Complete" : (Stage3Complete ? "In Progress" : "Not Started");
 
+        // ---- Placement progress (bar + percentage + placed / remaining) ----
+        [ObservableProperty] private int _progressTotal;
+        [ObservableProperty] private int _progressProcessed;
+        [ObservableProperty] private int _progressPlaced;
+        [ObservableProperty] private string _progressCurrent = string.Empty;
+
+        public bool HasProgress => ProgressTotal > 0;
+        public double ProgressPercent => ProgressTotal > 0 ? 100.0 * ProgressProcessed / ProgressTotal : 0;
+        public string ProgressPercentText => $"{ProgressPercent:0}%";
+        public int ProgressRemaining => Math.Max(0, ProgressTotal - ProgressProcessed);
+
+        /// <summary>"12 placed · 16 remaining of 28", plus a skipped/failed count when non-zero.</summary>
+        public string ProgressDetailText
+        {
+            get
+            {
+                var text = $"{ProgressPlaced} placed · {ProgressRemaining} remaining of {ProgressTotal}";
+                int notPlaced = ProgressProcessed - ProgressPlaced;
+                return notPlaced > 0 ? $"{text} · {notPlaced} skipped/failed" : text;
+            }
+        }
+
+        private void NotifyProgressChanged()
+        {
+            OnPropertyChanged(nameof(HasProgress));
+            OnPropertyChanged(nameof(ProgressPercent));
+            OnPropertyChanged(nameof(ProgressPercentText));
+            OnPropertyChanged(nameof(ProgressRemaining));
+            OnPropertyChanged(nameof(ProgressDetailText));
+        }
+
+        private void ResetProgress(int total)
+        {
+            ProgressTotal = total;
+            ProgressProcessed = 0;
+            ProgressPlaced = 0;
+            ProgressCurrent = string.Empty;
+            NotifyProgressChanged();
+        }
+
+        /// <summary>
+        /// Handler callback, fired once per processed view while Execute() is
+        /// still running. Execute() blocks Revit's UI thread, so after updating
+        /// the bound values we flush the dispatcher at Render priority — that
+        /// repaints the bar without pumping input (clicks stay queued until the
+        /// placement finishes).
+        /// </summary>
+        private void OnHandlerProgress(int processed, int total, int placed, string current)
+        {
+            void Apply()
+            {
+                ProgressTotal = total;
+                ProgressProcessed = processed;
+                ProgressPlaced = placed;
+                ProgressCurrent = current;
+                NotifyProgressChanged();
+            }
+
+            if (_dispatcher.CheckAccess())
+            {
+                Apply();
+                _dispatcher.Invoke(DispatcherPriority.Render, new Action(() => { }));
+            }
+            else
+            {
+                _dispatcher.BeginInvoke(new Action(Apply));
+            }
+        }
+
         [RelayCommand]
         private void BackToStage3()
         {
@@ -29,6 +100,7 @@ namespace Revit26_Plugin.SmartViewToSheetPlacer.V222.ViewModels
 
             IsBusy = true;
             BusyMessage = "Creating sheets and placing views...";
+            ResetProgress(SuggestedSheets.Sum(sh => sh.Placements.Count));
 
             _handler.TitleblockFamilySymbolId = SelectedTitleblock.FamilySymbolId;
             _handler.MarginTopMm = MarginTopMm;
@@ -64,6 +136,11 @@ namespace Revit26_Plugin.SmartViewToSheetPlacer.V222.ViewModels
             PlacedSheetCount = SuggestedSheets.Count(s => s.CreatedSheetId != null);
             PlacedViewCount = _handler.PlacedCount;
             FailedCount = _handler.FailedCount;
+
+            ProgressPlaced = _handler.PlacedCount;
+            ProgressProcessed = ProgressTotal;
+            ProgressCurrent = string.Empty;
+            NotifyProgressChanged();
 
             Stage4Complete = true;
             Stage4Expanded = false;

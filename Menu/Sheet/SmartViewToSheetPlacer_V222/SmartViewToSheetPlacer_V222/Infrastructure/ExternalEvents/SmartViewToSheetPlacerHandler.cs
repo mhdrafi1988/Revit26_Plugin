@@ -76,6 +76,23 @@ namespace Revit26_Plugin.SmartViewToSheetPlacer.V222.Infrastructure.ExternalEven
         /// <summary>Sheets that failed to create entirely (0 = normal run). Reported separately from FailedCount (views) in the Stage 5 summary.</summary>
         public int FailedSheetCount { get; private set; }
 
+        /// <summary>
+        /// Raised after every placement is processed during PlaceViews
+        /// (placed, skipped or failed) so the ViewModel can drive the Stage 4
+        /// progress bar. Args: processed, total, placed, current view name.
+        /// Fired synchronously inside Execute(), i.e. on Revit's UI thread.
+        /// </summary>
+        public event Action<int, int, int, string>? ProgressChanged;
+
+        private int _processedCount;
+        private int _totalToProcess;
+
+        private void ReportProgress(int processedDelta, string current)
+        {
+            _processedCount += processedDelta;
+            ProgressChanged?.Invoke(_processedCount, _totalToProcess, PlacedCount, current);
+        }
+
         /// <summary>Raised on the UI thread after Execute() completes, so the
         /// ViewModel can safely read outputs and refresh bound collections.</summary>
         public event Action? RequestCompleted;
@@ -234,6 +251,8 @@ namespace Revit26_Plugin.SmartViewToSheetPlacer.V222.Infrastructure.ExternalEven
             SkippedCount = 0;
             FailedCount = 0;
             FailedSheetCount = 0;
+            _processedCount = 0;
+            _totalToProcess = SheetsToPlace.Sum(sh => sh.Placements.Count);
 
             if (TitleblockFamilySymbolId == null)
             {
@@ -253,8 +272,11 @@ namespace Revit26_Plugin.SmartViewToSheetPlacer.V222.Infrastructure.ExternalEven
                 if (titleblockSymbol != null && !titleblockSymbol.IsActive)
                     titleblockSymbol.Activate();
 
+                ReportProgress(0, string.Empty);
+
                 foreach (var sheet in SheetsToPlace)
                 {
+                    int processedBeforeSheet = _processedCount;
                     try
                     {
                         var newSheet = ViewSheet.Create(doc, TitleblockFamilySymbolId);
@@ -291,10 +313,15 @@ namespace Revit26_Plugin.SmartViewToSheetPlacer.V222.Infrastructure.ExternalEven
                         foreach (var placement in sheet.Placements)
                         {
                             PlaceSingleViewport(doc, newSheet, placement, usableOrigin ?? XYZ.Zero);
+                            ReportProgress(1, placement.View.Name);
                         }
                     }
                     catch (Exception ex)
                     {
+                        // Whatever this sheet had not yet reported is now settled
+                        // (failed), so the progress bar still reaches its total.
+                        ReportProgress(sheet.Placements.Count - (_processedCount - processedBeforeSheet), sheet.GeneratedName);
+
                         // V213 fix: sheet creation itself failed — every queued
                         // placement on this sheet counts as a failed view, not
                         // a single generic failure, so FailedCount matches what
