@@ -867,6 +867,8 @@
 	  <EmbeddedResource Include="Resources\Icons\ViewTools\RoofEdgeAroundSections_V005_16.png" />
 	  <EmbeddedResource Include="Resources\Icons\ViewTools\RoofEdgeElementSections_16.png" />
 	  <EmbeddedResource Include="Resources\Icons\ViewTools\RoofEdgeElementSections_V002_16.png" />
+	  <EmbeddedResource Include="Resources\Icons\ViewTools\RoofViewFocus_16.png" />
+	  <EmbeddedResource Include="Resources\Icons\ViewTools\RoofViewFocus_32.png" />
 	  <EmbeddedResource Include="Resources\Icons\ViewTools\SectionAutoRenamer_16.png" />
 	  <EmbeddedResource Include="Resources\Icons\ViewTools\SectionAutoTagger_16.png" />
 	  <EmbeddedResource Include="Resources\Icons\ViewTools\SectionsFromDetailLines_16.png" />
