@@ -8,9 +8,11 @@ using System.Windows.Media;
 
 // ── CONVENTION ────────────────────────────────────────────────────────────────
 // These converters live in Revit26_Plugin.Shared.Models (same assembly).
-// Reference them in XAML with the FULL assembly-qualified xmlns:
+// Reference them in XAML with the same-assembly xmlns (NO ";assembly=" part —
+// the designer can't resolve a project's own assembly by name and reports
+// "name does not exist in the namespace" / "incompatible type"):
 //
-//   xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models;assembly=Revit26_Plugin"
+//   xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
 //
 // Then instantiate ONLY in the consuming Window's own Resources block:
 //
