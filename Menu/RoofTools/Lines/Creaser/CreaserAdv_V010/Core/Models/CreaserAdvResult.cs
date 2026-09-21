@@ -1,11 +1,11 @@
-// =======================================================
+﻿// =======================================================
 // File: CreaserAdvResult.cs
 // Location: Core/Models/
 // Returned by CreaserAdvEngine.Execute — crosses back over the
 // ExternalEvent boundary via CreaserAdvPayload.OnCompleted.
 // =======================================================
 
-namespace Revit26_Plugin.CreaserAdv.V009.Core.Models
+namespace Revit26_Plugin.CreaserAdv.V010.Core.Models
 {
     public class CreaserAdvResult
     {

@@ -1,6 +1,6 @@
-// ==================================
+﻿// ==================================
 // File: DijkstraPathValidityService.cs
-// Namespace: Revit26_Plugin.CreaserAdv_V008_00
+// Namespace: Revit26_Plugin.CreaserAdv.V010
 // ==================================
 
 using Autodesk.Revit.DB;
@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.CreaserAdv.V009.Services
+namespace Revit26_Plugin.CreaserAdv.V010.Services
 {
     /// <summary>
     /// Immutable result of a <see cref="DijkstraPathValidityService.FilterByPathValidity"/> run.
@@ -52,8 +52,9 @@ namespace Revit26_Plugin.CreaserAdv.V009.Services
     ///   4. Ridge points — a node with no descending edge to any neighbor
     ///      is flagged and excluded entirely; none of its edges are kept.
     ///
-    ///   5. Disconnected points — a node unreachable from any drain
-    ///      (dist == Infinity) is flagged and excluded entirely.
+    ///   5. Drains — the lowest nodes of each connected group of edges (V010; V009 used
+    ///      one roof-wide minimum). Disconnected points — a node unreachable from any drain
+    ///      (dist == Infinity) — kept as a safety net, no longer expected — is excluded.
     ///
     /// Graph construction: nodes are curve endpoints, merged within
     /// <see cref="NodeMergeToleranceMm"/> of each other. Edges are the curves
@@ -90,6 +91,16 @@ namespace Revit26_Plugin.CreaserAdv.V009.Services
             { this.u = u; this.v = v; this.w = w; this.isBoundary = isBoundary; this.idx = idx; }
         }
 
+        /// <summary>Slope figures gathered while building the graph, for the UI log.</summary>
+        private sealed class SlopeStats
+        {
+            public int    Checked;
+            public int    Rejected;
+            public double MaxSeen;
+            public double RejectedMin = double.PositiveInfinity;
+            public double RejectedMax = double.NegativeInfinity;
+        }
+
         public DijkstraPathValidityService(LoggingService log)
         {
             _log = log ?? throw new ArgumentNullException(nameof(log));
@@ -123,19 +134,28 @@ namespace Revit26_Plugin.CreaserAdv.V009.Services
             }
 
             var nodes = new List<XYZ>();
-            var edges = BuildEdges(creaseCurves, boundaryCurves, nodes, minimumSlopePercent, enforceMinimumSlope, out int slopeRejected);
+            var edges = BuildEdges(creaseCurves, boundaryCurves, nodes, minimumSlopePercent, enforceMinimumSlope, out SlopeStats slope);
+
+            if (enforceMinimumSlope && slope.Rejected > 0)
+            {
+                _log.Warning($"Minimum slope {minimumSlopePercent:F2}%: rejected {slope.Rejected} of {slope.Checked} edge(s) " +
+                             $"(rejected edges ranged {slope.RejectedMin:F2}% – {slope.RejectedMax:F2}%; steepest edge on the roof {slope.MaxSeen:F2}%).");
+            }
 
             if (nodes.Count == 0)
             {
-                _log.Info("Dijkstra path validity: no nodes remained after slope filtering.");
+                _log.Warning("Dijkstra path validity: no edges remained after slope filtering." +
+                             (enforceMinimumSlope
+                                 ? $" The steepest edge on this roof is {slope.MaxSeen:F2}% — lower the Minimum Slope below that, or untick 'Enforce minimum slope'."
+                                 : string.Empty));
                 return DijkstraFilterResult.Empty;
             }
 
             var adj = BuildAdjacency(edges);
-            var drains = FindDrainNodes(nodes);
+            var drains = FindDrainNodes(nodes, adj, out int componentCount);
 
-            _log.Info($"Dijkstra path validity: {nodes.Count} nodes, {edges.Count} edges, {drains.Count} drain node(s) at minimum elevation" +
-                      (enforceMinimumSlope ? $", {slopeRejected} edge(s) rejected below {minimumSlopePercent:F2}% slope." : "."));
+            _log.Info($"Dijkstra path validity: {nodes.Count} nodes, {edges.Count} edges in {componentCount} connected group(s); " +
+                      $"{drains.Count} drain node(s) at each group's lowest elevation.");
 
             var dist = RunReverseDijkstra(nodes.Count, drains, adj);
 
@@ -158,7 +178,7 @@ namespace Revit26_Plugin.CreaserAdv.V009.Services
             List<XYZ> nodes,
             double minimumSlopePercent,
             bool enforceMinimumSlope,
-            out int slopeRejected)
+            out SlopeStats slopeStats)
         {
             double mergeTolFt = NodeMergeToleranceMm * MmToFt;
             int GetOrAddNode(XYZ p)
@@ -171,7 +191,7 @@ namespace Revit26_Plugin.CreaserAdv.V009.Services
             }
 
             var edges = new List<Edge>();
-            int rejected = 0;
+            var stats = new SlopeStats();
 
             void CollectEdges(IList<Curve> curves, bool isBoundary)
             {
@@ -190,13 +210,18 @@ namespace Revit26_Plugin.CreaserAdv.V009.Services
                     double dz = p0.Z - p1.Z;
                     double horizLenFt = new XYZ(p0.X - p1.X, p0.Y - p1.Y, 0).GetLength();
 
-                    if (enforceMinimumSlope && horizLenFt > 1e-9)
+                    if (horizLenFt > 1e-9)
                     {
                         double slopePct = (dz / horizLenFt) * 100.0;
-                        if (slopePct < minimumSlopePercent)
+                        stats.Checked++;
+                        stats.MaxSeen = Math.Max(stats.MaxSeen, slopePct);
+
+                        if (enforceMinimumSlope && slopePct < minimumSlopePercent)
                         {
-                            _log.Warning($"{(isBoundary ? "Boundary" : "Crease")} curve #{k} rejected — slope {slopePct:F2}% below minimum {minimumSlopePercent:F2}%.");
-                            rejected++;
+                            _log.Debug($"  {(isBoundary ? "Boundary" : "Crease")} curve #{k + 1} rejected — slope {slopePct:F2}% below minimum {minimumSlopePercent:F2}%.");
+                            stats.Rejected++;
+                            stats.RejectedMin = Math.Min(stats.RejectedMin, slopePct);
+                            stats.RejectedMax = Math.Max(stats.RejectedMax, slopePct);
                             continue;
                         }
                     }
@@ -217,7 +242,7 @@ namespace Revit26_Plugin.CreaserAdv.V009.Services
             CollectEdges(creaseCurves, false);
             CollectEdges(boundaryCurves, true);
 
-            slopeRejected = rejected;
+            slopeStats = stats;
             return edges;
         }
 
@@ -238,16 +263,61 @@ namespace Revit26_Plugin.CreaserAdv.V009.Services
         }
 
         // --------------------------------------------------
-        // Step 3 — drain detection (lowest-Z nodes, within tolerance)
+        // Step 3 — drain detection: within each connected group of edges, the
+        // lowest-Z nodes (within tolerance) are that group's drains.
+        //
+        // V009 took the single lowest node of the whole roof as the only drain
+        // elevation. A roof whose drainage zones bottom out at different
+        // elevations, or whose crease network is split into separate groups, then
+        // had every group except the lowest one flagged "disconnected" and
+        // dropped — so nothing was placed there.
         // --------------------------------------------------
-        private static HashSet<int> FindDrainNodes(List<XYZ> nodes)
+        private HashSet<int> FindDrainNodes(List<XYZ> nodes, Dictionary<int, List<(int nb, double w)>> adj, out int componentCount)
         {
             double zTolFt = DrainZToleranceMm * MmToFt;
-            double minZ = nodes.Min(p => p.Z);
             var drains = new HashSet<int>();
-            for (int i = 0; i < nodes.Count; i++)
-                if (nodes[i].Z <= minZ + zTolFt)
-                    drains.Add(i);
+            var visited = new bool[nodes.Count];
+            int components = 0;
+
+            for (int seed = 0; seed < nodes.Count; seed++)
+            {
+                if (visited[seed]) continue;
+
+                var members = new List<int>();
+                var stack = new Stack<int>();
+                stack.Push(seed);
+                visited[seed] = true;
+
+                while (stack.Count > 0)
+                {
+                    int n = stack.Pop();
+                    members.Add(n);
+
+                    if (!adj.TryGetValue(n, out var nbrs)) continue;
+                    foreach (var (nb, _) in nbrs)
+                    {
+                        if (visited[nb]) continue;
+                        visited[nb] = true;
+                        stack.Push(nb);
+                    }
+                }
+
+                components++;
+                double minZ = members.Min(i => nodes[i].Z);
+                int groupDrains = 0;
+                foreach (int i in members)
+                {
+                    if (nodes[i].Z <= minZ + zTolFt)
+                    {
+                        drains.Add(i);
+                        groupDrains++;
+                    }
+                }
+
+                _log.Debug($"  Group {components}: {members.Count} node(s), lowest elevation {minZ * 304.8:F0} mm, {groupDrains} drain node(s).");
+            }
+
+            componentCount = components;
             return drains;
         }
 
