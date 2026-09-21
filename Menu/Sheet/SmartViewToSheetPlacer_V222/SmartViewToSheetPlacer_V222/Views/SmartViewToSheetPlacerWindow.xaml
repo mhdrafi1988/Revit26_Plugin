@@ -119,6 +119,48 @@
             <Style x:Key="CompactMetricCard" TargetType="Border" BasedOn="{StaticResource MetricCard}">
                 <Setter Property="Padding" Value="8,8"/>
             </Style>
+
+            <!-- V222 compact Titleblock card: shorter inputs / smaller labels,
+                 local to this Window (SharedStyles.xaml stays untouched). -->
+            <Style x:Key="CompactBoxedInput" TargetType="TextBox" BasedOn="{StaticResource BoxedTextInput}">
+                <Setter Property="Height" Value="26"/>
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="Width" Value="60"/>
+            </Style>
+            <Style x:Key="CompactCombo" TargetType="ComboBox" BasedOn="{StaticResource StandardComboBox}">
+                <Setter Property="Height" Value="26"/>
+                <Setter Property="FontSize" Value="12"/>
+            </Style>
+            <Style x:Key="CompactFieldLabel" TargetType="TextBlock" BasedOn="{StaticResource FieldLabel}">
+                <Setter Property="FontSize" Value="10.5"/>
+                <Setter Property="Margin" Value="0,0,0,1"/>
+            </Style>
+            <Style x:Key="CompactGroupLabel" TargetType="TextBlock" BasedOn="{StaticResource FieldLabel}">
+                <Setter Property="FontSize" Value="10.5"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+                <Setter Property="Foreground" Value="{StaticResource BrushNavyPrimary}"/>
+                <Setter Property="Margin" Value="0,0,0,1"/>
+            </Style>
+
+            <!-- Progress bar (Stage 4): slim rounded track, navy fill. -->
+            <Style x:Key="PlacementProgressBar" TargetType="ProgressBar">
+                <Setter Property="Height" Value="12"/>
+                <Setter Property="Minimum" Value="0"/>
+                <Setter Property="Maximum" Value="100"/>
+                <Setter Property="Foreground" Value="{StaticResource BrushNavyPrimary}"/>
+                <Setter Property="Background" Value="{StaticResource BrushSystemTertiaryBackground}"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ProgressBar">
+                            <Grid>
+                                <Border x:Name="PART_Track" CornerRadius="6" Background="{TemplateBinding Background}"/>
+                                <Border x:Name="PART_Indicator" CornerRadius="6" HorizontalAlignment="Left"
+                                        Background="{TemplateBinding Foreground}"/>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </ResourceDictionary>
     </Window.Resources>
 
@@ -341,41 +383,40 @@
                                 Visibility="{Binding Stage1Expanded, Converter={StaticResource BoolToVisibilityConverter}}">
                             <StackPanel Margin="14">
 
-                            <!-- Titleblock + Margin -->
+                            <!-- Titleblock + Margin + Gap — compact single row (V222): dropdown,
+                                 Margin group and Gap group side by side; unit moved to the group
+                                 headings; tighter inputs/spacing. -->
                             <Border Style="{StaticResource SectionCard}">
-                                <StackPanel Margin="12">
-                                    <TextBlock Text="Titleblock" Style="{StaticResource SectionTitle}" Margin="0,0,0,8"/>
-                                    <!-- Titleblock dropdown + all 4 Margin fields (grouped under a
-                                         "Margin" heading) in ONE horizontal row. -->
-                                    <StackPanel Orientation="Horizontal">
-                                        <StackPanel Margin="0,0,16,0">
-                                            <TextBlock Text="Titleblock (applies to all new sheets)" Style="{StaticResource FieldLabel}"/>
-                                            <ComboBox Width="280" Style="{StaticResource StandardComboBox}"
+                                <StackPanel Margin="10,8">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+                                        <StackPanel Margin="0,0,14,0">
+                                            <TextBlock Text="Titleblock (applies to all new sheets)" Style="{StaticResource CompactGroupLabel}"/>
+                                            <ComboBox Width="250" Style="{StaticResource CompactCombo}"
                                                       ItemsSource="{Binding Titleblocks}"
                                                       SelectedItem="{Binding SelectedTitleblock}"
                                                       DisplayMemberPath="Name"/>
                                         </StackPanel>
-                                        <StackPanel>
-                                            <TextBlock Text="Margin" Style="{StaticResource FieldLabel}" FontWeight="SemiBold" Margin="0,0,0,2"/>
+                                        <StackPanel Margin="0,0,14,0">
+                                            <TextBlock Text="Margin (mm)" Style="{StaticResource CompactGroupLabel}"/>
                                             <StackPanel Orientation="Horizontal">
-                                                <StackPanel Margin="0,0,16,0">
-                                                    <TextBlock Text="Top (mm)" Style="{StaticResource FieldLabel}"/>
-                                                    <TextBox Width="80" Style="{StaticResource BoxedTextInput}" MaxLength="10"
+                                                <StackPanel Margin="0,0,6,0">
+                                                    <TextBlock Text="Top" Style="{StaticResource CompactFieldLabel}"/>
+                                                    <TextBox Style="{StaticResource CompactBoxedInput}" MaxLength="10"
                                                              Text="{Binding MarginTopMm, UpdateSourceTrigger=PropertyChanged}"/>
                                                 </StackPanel>
-                                                <StackPanel Margin="0,0,16,0">
-                                                    <TextBlock Text="Bottom (mm)" Style="{StaticResource FieldLabel}"/>
-                                                    <TextBox Width="80" Style="{StaticResource BoxedTextInput}" MaxLength="10"
+                                                <StackPanel Margin="0,0,6,0">
+                                                    <TextBlock Text="Bottom" Style="{StaticResource CompactFieldLabel}"/>
+                                                    <TextBox Style="{StaticResource CompactBoxedInput}" MaxLength="10"
                                                              Text="{Binding MarginBottomMm, UpdateSourceTrigger=PropertyChanged}"/>
                                                 </StackPanel>
-                                                <StackPanel Margin="0,0,16,0">
-                                                    <TextBlock Text="Left (mm)" Style="{StaticResource FieldLabel}"/>
-                                                    <TextBox Width="80" Style="{StaticResource BoxedTextInput}" MaxLength="10"
+                                                <StackPanel Margin="0,0,6,0">
+                                                    <TextBlock Text="Left" Style="{StaticResource CompactFieldLabel}"/>
+                                                    <TextBox Style="{StaticResource CompactBoxedInput}" MaxLength="10"
                                                              Text="{Binding MarginLeftMm, UpdateSourceTrigger=PropertyChanged}"/>
                                                 </StackPanel>
-                                                <StackPanel Margin="0,0,16,0">
-                                                    <TextBlock Text="Right (mm)" Style="{StaticResource FieldLabel}"/>
-                                                    <TextBox Width="80" Style="{StaticResource BoxedTextInput}" MaxLength="10"
+                                                <StackPanel>
+                                                    <TextBlock Text="Right" Style="{StaticResource CompactFieldLabel}"/>
+                                                    <TextBox Style="{StaticResource CompactBoxedInput}" MaxLength="10"
                                                              Text="{Binding MarginRightMm, UpdateSourceTrigger=PropertyChanged}"/>
                                                 </StackPanel>
                                             </StackPanel>
@@ -383,23 +424,23 @@
                                         <!-- V222: global H-Gap/V-Gap, moved here from the per-ViewType-group
                                              gap cards in Stage 2 — one gap pair now, applied to every group. -->
                                         <StackPanel>
-                                            <TextBlock Text="Gap" Style="{StaticResource FieldLabel}" FontWeight="SemiBold" Margin="0,0,0,2"/>
+                                            <TextBlock Text="Gap (mm)" Style="{StaticResource CompactGroupLabel}"/>
                                             <StackPanel Orientation="Horizontal">
-                                                <StackPanel Margin="0,0,16,0">
-                                                    <TextBlock Text="Horizontal (mm)" Style="{StaticResource FieldLabel}"/>
-                                                    <TextBox Width="80" Style="{StaticResource BoxedTextInput}" MaxLength="10"
+                                                <StackPanel Margin="0,0,6,0">
+                                                    <TextBlock Text="Horizontal" Style="{StaticResource CompactFieldLabel}"/>
+                                                    <TextBox Style="{StaticResource CompactBoxedInput}" MaxLength="10"
                                                              Text="{Binding GlobalHorizontalGapMm, UpdateSourceTrigger=PropertyChanged}"/>
                                                 </StackPanel>
                                                 <StackPanel>
-                                                    <TextBlock Text="Vertical (mm)" Style="{StaticResource FieldLabel}"/>
-                                                    <TextBox Width="80" Style="{StaticResource BoxedTextInput}" MaxLength="10"
+                                                    <TextBlock Text="Vertical" Style="{StaticResource CompactFieldLabel}"/>
+                                                    <TextBox Style="{StaticResource CompactBoxedInput}" MaxLength="10"
                                                              Text="{Binding GlobalVerticalGapMm, UpdateSourceTrigger=PropertyChanged}"/>
                                                 </StackPanel>
                                             </StackPanel>
                                         </StackPanel>
                                     </StackPanel>
-                                    <TextBlock Style="{StaticResource HintText}" Margin="0,6,0,0"
-                                               Text="Usable sheet area = titleblock's actual paper size minus each independent margin (Top / Bottom / Left / Right). Used directly by the packing calculation."/>
+                                    <TextBlock Style="{StaticResource HintText}" Margin="0,4,0,0"
+                                               Text="Usable area = titleblock paper size minus each margin. Used directly by the packing calculation."/>
                                 </StackPanel>
                             </Border>
 
@@ -1338,6 +1379,34 @@
                                             </ItemsControl>
                                         </ScrollViewer>
                                     </Border>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Placement progress: bar + percentage + placed / remaining.
+                                 Shown from the moment Place Views is pressed and stays at
+                                 its final value once the run finishes. -->
+                            <Border Style="{StaticResource SectionCard}"
+                                    Visibility="{Binding HasProgress, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <StackPanel Margin="10,8">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding ProgressPercentText}"
+                                                   Style="{StaticResource FieldValue}" FontWeight="SemiBold"
+                                                   MinWidth="40" VerticalAlignment="Center"/>
+                                        <ProgressBar Grid.Column="1" Style="{StaticResource PlacementProgressBar}"
+                                                     Value="{Binding ProgressPercent, Mode=OneWay}" Margin="6,0,10,0"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding ProgressDetailText}"
+                                                   Style="{StaticResource FieldLabel}" Margin="0"
+                                                   VerticalAlignment="Center"/>
+                                    </Grid>
+                                    <TextBlock Style="{StaticResource HintText}" Margin="0,3,0,0"
+                                               TextTrimming="CharacterEllipsis"
+                                               Text="{Binding ProgressCurrent, StringFormat='Placing: {0}'}"
+                                               Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}"/>
                                 </StackPanel>
                             </Border>
 

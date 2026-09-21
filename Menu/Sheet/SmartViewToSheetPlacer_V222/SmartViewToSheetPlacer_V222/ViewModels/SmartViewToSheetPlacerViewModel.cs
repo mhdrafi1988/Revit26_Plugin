@@ -69,6 +69,7 @@ namespace Revit26_Plugin.SmartViewToSheetPlacer.V222.ViewModels
 
             _handler = new SmartViewToSheetPlacerHandler(uiDoc);
             _handler.RequestCompleted += OnHandlerRequestCompleted;
+            _handler.ProgressChanged += OnHandlerProgress;
             _event = ExternalEvent.Create(_handler);
 
             ViewsView = CollectionViewSource.GetDefaultView(AllViews);
@@ -111,6 +112,7 @@ namespace Revit26_Plugin.SmartViewToSheetPlacer.V222.ViewModels
         public void Dispose()
         {
             _handler.RequestCompleted -= OnHandlerRequestCompleted;
+            _handler.ProgressChanged -= OnHandlerProgress;
             _event?.Dispose();
         }
 
