@@ -47,6 +47,17 @@ namespace Revit26_Plugin.Menu.Ribbon
                 edgeAroundPulldownData,
                 edgeElementPulldownData,
             });
+            // Fourth item leaves a lone full-size button, so it carries the 32px
+            // icon as its LargeImage rather than an upscaled 16px one.
+            RibbonLayoutHelper.AddStackedButtons(createPanel, new List<RibbonItemData>
+            {
+                new PushButtonData("Btn_RoofViewFocus_V001", "Roof View Focus", assemblyPath, "Revit26_Plugin.RoofViewFocus.V001.Commands.RoofViewFocusCommand")
+                {
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofViewFocus_16.png"),
+                    LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofViewFocus_32.png"),
+                    ToolTip = RibbonLayoutHelper.VersionTip("Roof View Focus", "V001", "Crops the active plan view to the selected roofs.")
+                },
+            });
             RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeAroundSections", edgeAroundV005);
             RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeElementSections", edgeElementV002, edgeElementV001);
 
