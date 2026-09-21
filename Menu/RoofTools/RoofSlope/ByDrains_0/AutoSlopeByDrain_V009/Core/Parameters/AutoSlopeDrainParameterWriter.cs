@@ -127,6 +127,12 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.V009.Core.Parameters
                     0,
                     ref successCount, ref failCount);
 
+                // AutoSlope_DrainToleranceEnabled (shared-parameter file): ByDrain has no
+                // pick-point tolerance matching, so it is always written as 0 (= no).
+                TrySetInt(roof, AppConstants.Param_DrainToleranceEnabled,
+                    0,
+                    ref successCount, ref failCount);
+
                 int statusValue = CalculateStatusValue(successCount, failCount);
                 TrySetInt(roof, AppConstants.Param_Status, statusValue, ref successCount, ref failCount);
 
