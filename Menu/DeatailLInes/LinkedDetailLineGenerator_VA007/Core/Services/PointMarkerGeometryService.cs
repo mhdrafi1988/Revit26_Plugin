@@ -61,9 +61,15 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.Core.Services
         }
 
         private List<Curve> BuildRectangle(XYZ center, double widthMm, double heightMm, double rotationRadians)
+            => BuildRotatedRectangle(center, MmToFeet(widthMm), MmToFeet(heightMm), rotationRadians);
+
+        /// <summary>Rectangle from sizes in feet, rotated around its centre. Public
+        /// so the column footprint path can draw a parameter-sized rectangle with
+        /// the identical construction as a fixed-size Rectangle marker.</summary>
+        public List<Curve> BuildRotatedRectangle(XYZ center, double widthFeet, double heightFeet, double rotationRadians)
         {
-            double halfW = MmToFeet(widthMm) / 2.0;
-            double halfH = MmToFeet(heightMm) / 2.0;
+            double halfW = widthFeet / 2.0;
+            double halfH = heightFeet / 2.0;
 
             XYZ[] local =
             {

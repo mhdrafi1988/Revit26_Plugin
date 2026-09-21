@@ -56,6 +56,7 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.Core.Engine
             ComplexCurveSettings complexCurveSettings,
             CircleMarkerSettings circleSettings,
             RectangleMarkerSettings rectangleSettings,
+            ActualProfileSettings actualProfileSettings,
             Action<string, LogSeverity>? onLog = null)
         {
             var result = new MappingProcessingResult { MappingId = mapping.MappingId };
@@ -112,7 +113,7 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.Core.Engine
                     ProcessSingleElement(
                         hostDoc, activeView, elem, mapping, linkToHost, processingBoundary,
                         scope, complexCurveSettings, circleSettings, rectangleSettings,
-                        lineStyle, planZ, result, Log);
+                        actualProfileSettings, lineStyle, planZ, result, Log);
                 }
                 catch (Exception ex)
                 {
@@ -134,8 +135,8 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.Core.Engine
             Document hostDoc, View activeView, Element elem, ElementMapping mapping,
             Transform linkToHost, List<XYZ> processingBoundary, ProcessingScope scope,
             ComplexCurveSettings complexCurveSettings, CircleMarkerSettings circleSettings,
-            RectangleMarkerSettings rectangleSettings, GraphicsStyle? lineStyle,
-            double planZ, MappingProcessingResult result, Action<string, LogSeverity> log)
+            RectangleMarkerSettings rectangleSettings, ActualProfileSettings actualProfileSettings,
+            GraphicsStyle? lineStyle, double planZ, MappingProcessingResult result, Action<string, LogSeverity> log)
         {
             var extraction = _pointExtraction.Extract(elem,
                 (msg, id) =>
@@ -149,6 +150,8 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.Core.Engine
                 return; // already logged/counted by Extract's onWarning callback
 
             List<DetailCurve> createdCurves;
+            ColumnFootprint? actualProfile = null;   // set only for ActualProfile rows
+            double actualProfileHostRotation = 0.0;
 
             if (extraction.Kind == ElementLocationKind.Curve)
             {
@@ -182,21 +185,17 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.Core.Engine
                 XYZ hostPoint = linkToHost.OfPoint(extraction.Point!);
                 XYZ planPoint = new XYZ(hostPoint.X, hostPoint.Y, planZ);
 
-                // ActualProfile: the element's real footprint (true size + rotation)
-                // instead of a fixed-size marker. Null means it was unavailable and
-                // has been logged — fall through to the Circle marker.
+                // ActualProfile: the element's real footprint (true size + rotation),
+                // falling back to parameters and then a fixed marker — never null.
                 List<Curve>? markerCurves = null;
-                RepresentationMode markerMode = mapping.Representation;
 
-                if (markerMode == RepresentationMode.ActualProfile)
+                if (mapping.Representation == RepresentationMode.ActualProfile)
                 {
-                    markerCurves = TryBuildActualProfile(
-                        elem, extraction.Point!, linkToHost, planZ, complexCurveSettings, log, out XYZ profileCenter);
-
-                    if (markerCurves != null)
-                        planPoint = profileCenter;
-                    else
-                        markerMode = RepresentationMode.Circle;
+                    markerCurves = BuildActualProfile(
+                        elem, extraction.Point!, linkToHost, planZ, complexCurveSettings,
+                        circleSettings, rectangleSettings, actualProfileSettings, log,
+                        out XYZ profileCenter, out actualProfile, out actualProfileHostRotation);
+                    planPoint = profileCenter;
                 }
 
                 if (scope.LimitToActiveView && !PointInPolygon(planPoint, processingBoundary))
@@ -207,12 +206,12 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.Core.Engine
 
                 if (markerCurves == null)
                 {
-                    double rotationRadians = markerMode == RepresentationMode.Rectangle
+                    double rotationRadians = mapping.Representation == RepresentationMode.Rectangle
                         ? ComputeRectangleRotationRadians(rectangleSettings, elem, linkToHost, hostDoc, activeView, complexCurveSettings, log)
                         : 0.0;
 
                     markerCurves = _markerGeometry.BuildMarker(
-                        planPoint, markerMode, circleSettings, rectangleSettings, rotationRadians);
+                        planPoint, mapping.Representation, circleSettings, rectangleSettings, rotationRadians);
                 }
 
                 // Marker is a small closed loop; clip it the same way Profile loops
@@ -241,6 +240,9 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.Core.Engine
 
             log($"Element {elem.Id.Value}: {createdCurves.Count} Detail Line(s) created.", LogSeverity.Debug);
 
+            if (actualProfile != null)
+                log($"Element {elem.Id.Value}: column profile — {DescribeProfile(actualProfile, actualProfileHostRotation)}.", LogSeverity.Info);
+
             _lineCreation.ApplyLineStyle(createdCurves, lineStyle,
                 w => log($"Element {elem.Id.Value}: {w}", LogSeverity.Warning));
 
@@ -248,6 +250,9 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.Core.Engine
             {
                 _graphicsOverride.ApplyColorOverride(hostDoc, activeView, dc.Id, mapping.ColorName,
                     w => log($"Element {elem.Id.Value}: {w}", LogSeverity.Warning));
+
+                if (actualProfile != null)
+                    _metadata.WriteProfileMetadata(dc, actualProfile, actualProfileHostRotation);
 
                 _metadata.WriteMetadata(
                     dc,
@@ -270,38 +275,45 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.Core.Engine
             result.ElementsProcessed++;
         }
 
-        /// <summary>RepresentationMode.ActualProfile — reads the element's real plan
-        /// footprint (ColumnFootprintService), then transforms it to the host and
-        /// flattens it to the view plane. Rotation needs no separate handling: the
-        /// footprint is read from the element's geometry, so a rotated column already
-        /// comes back rotated (and the link's own rotation is applied by the
-        /// transform). Returns null — after logging why — when no footprint could be
-        /// read, so the caller can fall back to a fixed-size marker.</summary>
-        private List<Curve>? TryBuildActualProfile(
+        /// <summary>RepresentationMode.ActualProfile — resolves the element's footprint
+        /// with a three-step fallback, then transforms it to the host and flattens it
+        /// to the view plane:
+        ///   1. its real geometry (circle / rectangle / custom outline),
+        ///   2. its family size parameters (Diameter, b/h, Width/Depth),
+        ///   3. the fixed-size Circle or Rectangle marker chosen in Section 4c.
+        /// Every step is aligned to the element's own rotation — geometry carries it
+        /// implicitly, steps 2–3 read it from the instance transform — and the link's
+        /// own rotation is applied by the transform to host. Never returns null.</summary>
+        private List<Curve> BuildActualProfile(
             Element elem, XYZ insertionPoint, Transform linkToHost, double planZ,
-            ComplexCurveSettings complexCurveSettings, Action<string, LogSeverity> log,
-            out XYZ planCenter)
+            ComplexCurveSettings complexCurveSettings, CircleMarkerSettings circleSettings,
+            RectangleMarkerSettings rectangleSettings, ActualProfileSettings actualProfileSettings,
+            Action<string, LogSeverity> log,
+            out XYZ planCenter, out ColumnFootprint footprint, out double hostRotationRadians)
         {
-            planCenter = XYZ.Zero;
+            string? geometryFailure = null;
 
-            if (!_footprintService.TryExtract(elem, out ColumnFootprint? footprint, out string? reason) || footprint == null)
+            if (!_footprintService.TryExtract(elem, out ColumnFootprint? found, out geometryFailure) || found == null)
             {
-                log($"Element {elem.Id.Value}: actual profile unavailable ({reason}) — used a Circle marker at the insertion point instead.", LogSeverity.Warning);
-                return null;
+                if (_footprintService.TryExtractFromParameters(elem, insertionPoint, out found) && found != null)
+                {
+                    log($"Element {elem.Id.Value}: no usable geometry ({geometryFailure}) — profile taken from the family's size parameters.", LogSeverity.Warning);
+                }
+                else
+                {
+                    found = _footprintService.BuildFixedFootprint(
+                        elem, insertionPoint, actualProfileSettings.FallbackShape, circleSettings, rectangleSettings);
+                    log($"Element {elem.Id.Value}: no usable geometry ({geometryFailure}) and no size parameters found — used a fixed-size {found.Shape} marker.", LogSeverity.Warning);
+                }
             }
 
+            footprint = found!;
+
+            // Rotation in HOST coordinates: the footprint's own axis plus the link's rotation.
             double linkRotation = Math.Atan2(linkToHost.BasisX.Y, linkToHost.BasisX.X);
-            string face = footprint.FromBottomFace ? "bottom" : "top";
-            string detail = footprint.Shape switch
-            {
-                ColumnFootprintShape.Circle =>
-                    $"circle Ø{FeetToMm(footprint.DiameterFeet):F0} mm",
-                ColumnFootprintShape.Rectangle =>
-                    $"rectangle {FeetToMm(footprint.WidthFeet):F0} x {FeetToMm(footprint.HeightFeet):F0} mm, "
-                    + $"rotation {(footprint.RotationRadians + linkRotation) * 180.0 / Math.PI:F1}° in host",
-                _ => $"custom outline of {footprint.Curves.Count} edge(s)"
-            };
-            log($"Element {elem.Id.Value}: actual profile from {face} face — {detail}.", LogSeverity.Debug);
+            hostRotationRadians = footprint.Shape == ColumnFootprintShape.Rectangle
+                ? footprint.RotationRadians + linkRotation
+                : 0.0;
 
             double offsetMm = FeetToMm(Math.Sqrt(
                 Math.Pow(footprint.Center.X - insertionPoint.X, 2) + Math.Pow(footprint.Center.Y - insertionPoint.Y, 2)));
@@ -322,6 +334,39 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.Core.Engine
             XYZ hostCenter = linkToHost.OfPoint(footprint.Center);
             planCenter = new XYZ(hostCenter.X, hostCenter.Y, planZ);
             return planCurves;
+        }
+
+        /// <summary>One-line summary for the run log: shape, size, host rotation and
+        /// where it came from (geometry, parameters, or fixed marker).</summary>
+        private static string DescribeProfile(ColumnFootprint footprint, double hostRotationRadians)
+        {
+            string shape = footprint.Shape switch
+            {
+                ColumnFootprintShape.Circle => $"circle Ø{FeetToMm(footprint.DiameterFeet):F0} mm",
+                ColumnFootprintShape.Rectangle =>
+                    $"rectangle {FeetToMm(footprint.WidthFeet):F0} x {FeetToMm(footprint.HeightFeet):F0} mm, "
+                    + $"rotation {DisplayAngleDegrees(hostRotationRadians):F1}°",
+                _ => $"custom outline of {footprint.Curves.Count} edge(s)"
+            };
+
+            string source = footprint.Source switch
+            {
+                ColumnFootprintSource.Geometry => footprint.FromBottomFace ? "from geometry (bottom face)" : "from geometry (top face)",
+                ColumnFootprintSource.Parameters => "from family size parameters",
+                _ => "fixed-size marker, no profile found"
+            };
+
+            return $"{shape} — {source}";
+        }
+
+        /// <summary>Degrees in (-90, 90] — a rectangle looks the same after a half
+        /// turn, so this is its one canonical rotation.</summary>
+        private static double DisplayAngleDegrees(double radians)
+        {
+            double degrees = radians * 180.0 / Math.PI;
+            while (degrees > 90.0) degrees -= 180.0;
+            while (degrees <= -90.0) degrees += 180.0;
+            return degrees;
         }
 
         private static double FeetToMm(double feet) => feet * 304.8;

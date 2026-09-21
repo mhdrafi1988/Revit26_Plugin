@@ -739,6 +739,22 @@
                             </StackPanel>
                         </Border>
 
+                        <Border Style="{StaticResource ContentCard}" Margin="0,0,0,8">
+                            <StackPanel>
+                                <TextBlock Text="4C. ACTUAL PROFILE — FALLBACK" Style="{StaticResource SectionTitle}"/>
+                                <StackPanel Orientation="Horizontal" Margin="12,4,12,10">
+                                    <TextBlock Text="If no profile found" Style="{StaticResource FieldLabel}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                    <ComboBox Style="{StaticResource StandardComboBox}" Width="190"
+                                              SelectedValue="{Binding ActualProfile.FallbackShape}"
+                                              SelectedValuePath="Tag"
+                                              ToolTip="Used when neither the element's geometry nor its size parameters (Diameter, b/h, Width/Depth) can be read. A Rectangle is still rotated to the element's own rotation.">
+                                        <ComboBoxItem Content="Circle marker (4A)" Tag="{x:Static models:PointMarkerShape.Circle}"/>
+                                        <ComboBoxItem Content="Rectangle marker (4B)" Tag="{x:Static models:PointMarkerShape.Rectangle}"/>
+                                    </ComboBox>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
                         <Border Style="{StaticResource ContentCard}">
                             <StackPanel>
                                 <TextBlock Text="6. COMPLEX CURVE HANDLING" Style="{StaticResource SectionTitle}"/>
