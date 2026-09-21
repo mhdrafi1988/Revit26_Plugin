@@ -133,7 +133,7 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.Infrastructure.External
                                             hostDoc, activeView, linkInstance, mapping,
                                             request.ProcessingBoundary, request.ProcessingScope,
                                             request.ComplexCurveSettings, request.CircleMarkerSettings,
-                                            request.RectangleMarkerSettings, request.OnLog);
+                                            request.RectangleMarkerSettings, request.ActualProfileSettings, request.OnLog);
                                     }
 
                                     overallResult.ElementsFound += mapResult.ElementsFound;
@@ -219,6 +219,7 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.Infrastructure.External
         public ComplexCurveSettings ComplexCurveSettings { get; set; } = new();
         public CircleMarkerSettings CircleMarkerSettings { get; set; } = new();
         public RectangleMarkerSettings RectangleMarkerSettings { get; set; } = new();
+        public ActualProfileSettings ActualProfileSettings { get; set; } = new();
         public GlobalOverrideSettings GlobalOverride { get; set; } = new();
         public Action<string, LogSeverity>? OnLog { get; set; }
     }

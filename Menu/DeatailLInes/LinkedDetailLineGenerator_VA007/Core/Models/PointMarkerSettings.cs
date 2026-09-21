@@ -13,6 +13,18 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.Core.Models
     }
 
     /// <summary>
+    /// Section 4c. RepresentationMode.ActualProfile draws a column's real footprint;
+    /// when neither its geometry nor its size parameters can be read, this picks
+    /// which fixed-size marker (Circle → 4a, Rectangle → 4b) is drawn instead.
+    /// Persisted to settings.json.
+    /// </summary>
+    public partial class ActualProfileSettings : ObservableObject
+    {
+        [ObservableProperty]
+        private PointMarkerShape _fallbackShape = PointMarkerShape.Circle;
+    }
+
+    /// <summary>
     /// Rectangle marker sizing (Section 4b). Width/Height in mm, independent axes.
     /// Persisted to settings.json.
     /// </summary>

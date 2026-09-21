@@ -286,6 +286,7 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.UI.ViewModels
         // ── Section 4a/4b: Point Marker settings ───────────────────────
         public CircleMarkerSettings CircleMarker { get; } = new();
         public RectangleMarkerSettings RectangleMarker { get; } = new();
+        public ActualProfileSettings ActualProfile { get; } = new();
 
         // ── Section 5: Processing Scope ─────────────────────────────────
         public ProcessingScope ProcessingScope { get; } = new();
@@ -347,6 +348,9 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.UI.ViewModels
                 settings.RectangleMarker.AlignmentMode, out var alignment) ? alignment : RectangleAlignmentMode.InstanceRotation;
             RectangleMarker.ManualAngleDegrees = settings.RectangleMarker.ManualAngleDegrees;
 
+            ActualProfile.FallbackShape = Enum.TryParse<PointMarkerShape>(
+                settings.ActualProfile.FallbackShape, out var fallbackShape) ? fallbackShape : PointMarkerShape.Circle;
+
             ProcessingScope.LimitToActiveView = settings.ProcessingScope.LimitToActiveView;
             ProcessingScope.TrimToBoundary = settings.ProcessingScope.TrimToBoundary;
             ProcessingScope.OuterLoopClosing.CloseOpenLoops = settings.ProcessingScope.OuterLoopClosing.CloseOpenLoops;
@@ -381,6 +385,10 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.UI.ViewModels
                 HeightMm = RectangleMarker.HeightMm,
                 AlignmentMode = RectangleMarker.AlignmentMode.ToString(),
                 ManualAngleDegrees = RectangleMarker.ManualAngleDegrees
+            },
+            ActualProfile = new ActualProfileSettingsDto
+            {
+                FallbackShape = ActualProfile.FallbackShape.ToString()
             },
             ProcessingScope = new ProcessingScopeDto
             {
@@ -600,6 +608,10 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.UI.ViewModels
                     HeightMm = RectangleMarker.HeightMm,
                     AlignmentMode = RectangleMarker.AlignmentMode,
                     ManualAngleDegrees = RectangleMarker.ManualAngleDegrees
+                },
+                ActualProfileSettings = new ActualProfileSettings
+                {
+                    FallbackShape = ActualProfile.FallbackShape
                 },
                 GlobalOverride = new GlobalOverrideSettings
                 {

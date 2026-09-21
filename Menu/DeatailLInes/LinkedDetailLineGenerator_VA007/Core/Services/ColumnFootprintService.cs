@@ -2,10 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
+using Revit26_Plugin.LinkedDetailLineGenerator.VA007.Core.Models;
 
 namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.Core.Services
 {
     public enum ColumnFootprintShape { Circle, Rectangle, Polygon }
+
+    /// <summary>Where a footprint's shape and size came from, best to worst.</summary>
+    public enum ColumnFootprintSource { Geometry, Parameters, FixedMarker }
 
     /// <summary>A column's real plan footprint, in the LINKED document's coordinate
     /// system (transform to host happens in the engine, same as every other
@@ -14,6 +18,7 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.Core.Services
     public class ColumnFootprint
     {
         public ColumnFootprintShape Shape { get; set; }
+        public ColumnFootprintSource Source { get; set; } = ColumnFootprintSource.Geometry;
         public XYZ Center { get; set; } = XYZ.Zero;
         public List<Curve> Curves { get; set; } = new();
 
@@ -57,6 +62,11 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.Core.Services
     /// Limitations (by design, documented rather than guessed): only the outer
     /// loop is used, so a hollow section is drawn solid; a stepped column resolves
     /// to its largest bottom face (e.g. a base plate rather than the shaft).
+    ///
+    /// When geometry gives nothing, TryExtractFromParameters reads the family's own
+    /// size parameters, and BuildFixedFootprint is the last resort — both aligned to
+    /// the element's own rotation (GetOwnRotation) so the fallback still lines up
+    /// with the real column.
     /// </summary>
     public class ColumnFootprintService
     {
@@ -317,6 +327,152 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.Core.Services
             while (radians <= -Math.PI / 2) radians += Math.PI;
             return radians;
         }
+
+        // ── Fallback 1: family parameters ───────────────────────────────────
+
+        // Case-insensitive names tried in order. Steel sections (bf/d/tf…) are
+        // deliberately not guessed here — their outline comes from geometry.
+        private static readonly string[] DiameterNames = { "Diameter", "Column Diameter", "Dia" };
+
+        private static readonly (string Width, string Height)[] RectangleNames =
+        {
+            ("b", "h"),
+            ("Width", "Depth"),
+            ("Width", "Height"),
+            ("Column Width", "Column Depth"),
+            ("Breadth", "Depth"),
+        };
+
+        /// <summary>Circle from a Diameter parameter, or rectangle from a b/h-style
+        /// pair, centred on the insertion point and rotated to the element's own
+        /// rotation. Instance parameters win over type parameters. The Width/b
+        /// parameter is assumed to run along the family's local X axis.</summary>
+        public bool TryExtractFromParameters(Element element, XYZ insertionPoint, out ColumnFootprint? footprint)
+        {
+            footprint = null;
+
+            Dictionary<string, double> lengths = ReadLengthParameters(element);
+
+            foreach (string name in DiameterNames)
+            {
+                if (!lengths.TryGetValue(name, out double diameter)) continue;
+
+                footprint = new ColumnFootprint
+                {
+                    Shape = ColumnFootprintShape.Circle,
+                    Source = ColumnFootprintSource.Parameters,
+                    Center = insertionPoint,
+                    DiameterFeet = diameter,
+                    Curves = _markerGeometry.BuildCircleFromRadius(insertionPoint, diameter / 2.0)
+                };
+                return true;
+            }
+
+            foreach ((string widthName, string heightName) in RectangleNames)
+            {
+                if (!lengths.TryGetValue(widthName, out double width) || !lengths.TryGetValue(heightName, out double height))
+                    continue;
+
+                footprint = BuildRectangleFootprint(insertionPoint, width, height, GetOwnRotation(element), ColumnFootprintSource.Parameters);
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>Positive length-valued parameters of the instance and its type,
+        /// keyed case-insensitively; instance values override type values.</summary>
+        private static Dictionary<string, double> ReadLengthParameters(Element element)
+        {
+            var result = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
+
+            void AddFrom(Element? source)
+            {
+                if (source == null) return;
+                foreach (Parameter p in source.Parameters)
+                {
+                    if (p.StorageType != StorageType.Double || !p.HasValue) continue;
+                    if (p.Definition == null || p.Definition.GetDataType() != SpecTypeId.Length) continue;
+
+                    double value = p.AsDouble();
+                    if (value > 1e-6) result[p.Definition.Name] = value;
+                }
+            }
+
+            AddFrom(element.Document.GetElement(element.GetTypeId()));
+            AddFrom(element);
+            return result;
+        }
+
+        // ── Fallback 2: fixed-size marker ───────────────────────────────────
+
+        /// <summary>Last resort: the configured fixed-size Circle/Rectangle marker at
+        /// the insertion point. A Rectangle is still rotated to the element's own
+        /// rotation, regardless of the Alignment setting.</summary>
+        public ColumnFootprint BuildFixedFootprint(
+            Element element, XYZ insertionPoint, PointMarkerShape shape,
+            CircleMarkerSettings circle, RectangleMarkerSettings rectangle)
+        {
+            if (shape == PointMarkerShape.Rectangle)
+                return BuildRectangleFootprint(
+                    insertionPoint, MmToFeet(rectangle.WidthMm), MmToFeet(rectangle.HeightMm),
+                    GetOwnRotation(element), ColumnFootprintSource.FixedMarker);
+
+            double diameter = MmToFeet(circle.DiameterMm);
+            return new ColumnFootprint
+            {
+                Shape = ColumnFootprintShape.Circle,
+                Source = ColumnFootprintSource.FixedMarker,
+                Center = insertionPoint,
+                DiameterFeet = diameter,
+                Curves = _markerGeometry.BuildCircleFromRadius(insertionPoint, diameter / 2.0)
+            };
+        }
+
+        private ColumnFootprint BuildRectangleFootprint(
+            XYZ center, double widthFeet, double heightFeet, double rotationRadians, ColumnFootprintSource source)
+        {
+            // Same convention as a detected rectangle: Width is the longer side, and
+            // the rotation is the direction of that side, in (-90°, 90°].
+            bool swap = heightFeet > widthFeet;
+            double width = swap ? heightFeet : widthFeet;
+            double height = swap ? widthFeet : heightFeet;
+            double axis = NormalizeAxisAngle(swap ? rotationRadians + Math.PI / 2 : rotationRadians);
+
+            return new ColumnFootprint
+            {
+                Shape = ColumnFootprintShape.Rectangle,
+                Source = source,
+                Center = center,
+                WidthFeet = width,
+                HeightFeet = height,
+                RotationRadians = axis,
+                Curves = _markerGeometry.BuildRotatedRectangle(center, width, height, axis)
+            };
+        }
+
+        /// <summary>The element's own plan rotation in the LINKED document, in
+        /// radians. FamilyInstance.GetTransform() is used first because, unlike
+        /// LocationPoint.Rotation, it also reflects mirroring and flips.</summary>
+        public static double GetOwnRotation(Element element)
+        {
+            if (element is FamilyInstance instance)
+            {
+                try
+                {
+                    XYZ basisX = instance.GetTransform().BasisX;
+                    if (basisX.GetLength() > 1e-9) return Math.Atan2(basisX.Y, basisX.X);
+                }
+                catch (Autodesk.Revit.Exceptions.ApplicationException)
+                {
+                    // fall through to LocationPoint.Rotation
+                }
+            }
+
+            return element.Location is LocationPoint point ? point.Rotation : 0.0;
+        }
+
+        private static double MmToFeet(double mm) => mm / 304.8;
 
         // ── Anything else ───────────────────────────────────────────────────
 

@@ -19,6 +19,7 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.Core.Models
 
         public CircleMarkerSettingsDto CircleMarker { get; set; } = new();
         public RectangleMarkerSettingsDto RectangleMarker { get; set; } = new();
+        public ActualProfileSettingsDto ActualProfile { get; set; } = new();
 
         public ProcessingScopeDto ProcessingScope { get; set; } = new();
         public ComplexCurveSettingsDto ComplexCurve { get; set; } = new();
@@ -45,6 +46,12 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.Core.Models
         /// human-readable and tolerant of enum member reordering.</summary>
         public string AlignmentMode { get; set; } = "InstanceRotation";
         public double ManualAngleDegrees { get; set; } = 0;
+    }
+
+    public class ActualProfileSettingsDto
+    {
+        /// <summary>Stored as its enum name ("Circle" / "Rectangle").</summary>
+        public string FallbackShape { get; set; } = "Circle";
     }
 
     public class ProcessingScopeDto
