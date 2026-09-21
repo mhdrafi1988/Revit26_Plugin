@@ -157,6 +157,26 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.V010.Core.Services
                             vertexList.Add(v);
                         roofData.Vertices = vertexList;
 
+                        // The drain vertices matched by AutoSlopeDrainEngine are handles
+                        // into the PRE-insert vertex list; the regenerate above invalidated
+                        // them, so the refreshed list holds different SlabShapeVertex
+                        // objects. Re-match each selected drain's loop points against the
+                        // fresh list (same X/Y tolerance as the engine) or the drain
+                        // set below would be stale/empty and every vertex unreachable.
+                        var rematchService = new DrainDetectionService();
+                        foreach (var drain in selectedDrains)
+                        {
+                            var loopPoints = new List<XYZ>();
+                            if (drain.LoopCurves != null)
+                                foreach (var curve in drain.LoopCurves)
+                                    loopPoints.Add(curve.GetEndPoint(0));
+
+                            drain.DrainVertices = rematchService.FindShapeVerticesAtLoopPoints(
+                                loopPoints, vertexList,
+                                entry => logAction(entry.Message));
+                        }
+                        logAction($"Re-matched drain vertices after curve-point insertion: {selectedDrains.Sum(d => d.DrainVertices.Count)} vertex/vertices across {selectedDrains.Count} drain(s).");
+
                         topFace = GetTopFaceFresh(roofData.Roof);
                         if (topFace == null)
                         {
