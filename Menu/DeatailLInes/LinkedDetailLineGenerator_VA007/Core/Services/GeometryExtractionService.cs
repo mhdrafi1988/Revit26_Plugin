@@ -255,11 +255,6 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.Core.Services
         /// Applies the exact-reconstruction-vs-tessellation decision for a single edge
         /// curve. Line/Arc/Ellipse pass through unchanged (already exact analytic
         /// curves owned by Revit). Anything else is tessellated and rebuilt.
-        /// </summary>
-        /// <summary>
-        /// Applies the exact-reconstruction-vs-tessellation decision for a single edge
-        /// curve. Line/Arc/Ellipse pass through unchanged (already exact analytic
-        /// curves owned by Revit). Anything else is tessellated and rebuilt.
         /// Public (as NormalizeSingleCurve) so LinearGeometryExtractionService can
         /// reuse the same logic for Wall/Beam centerlines without duplicating it.
         /// </summary>
