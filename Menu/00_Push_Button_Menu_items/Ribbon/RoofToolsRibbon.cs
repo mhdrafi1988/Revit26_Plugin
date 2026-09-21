@@ -108,15 +108,15 @@ namespace Revit26_Plugin.Menu.Ribbon
             // icon; both versions show icon and text in the dropdown.
             RibbonPanel linePointPanel = app.CreateRibbonPanel(tabName, "Line & Point");
 
-            var ridgeLinesMultiShape = new PushButtonData("Btn_RoofRidgeLines_V68", "Ridge Multi Shapes V068", assemblyPath, "Revit26_Plugin.RoofRidgeLines.V068.Commands.RoofRidgeCommand")
+            var ridgeLinesMultiShape = new PushButtonData("Btn_RoofRidgeLines_V68", "Ridge By Openings V068", assemblyPath, "Revit26_Plugin.RoofRidgeLines.V068.Commands.RoofRidgeCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.RidgeLinesMultiShape_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("Roof Ridge Lines (Multiple Shapes)", "V068")
+                ToolTip = RibbonLayoutHelper.VersionTip("Ridge By Openings", "V068")
             };
             var ridgeLinesByPoints = new PushButtonData("Btn_RoofRidgeLines_V57", "Ridge By Points V057", assemblyPath, "Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.Commands.RoofRidgeCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.RidgeLinesByPoints_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("Roof Ridge Lines (By Points)", "V057")
+                ToolTip = RibbonLayoutHelper.VersionTip("Ridge By Points", "V057")
             };
             var ridgeLinesPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofRidgeLines", "Ridge Lines", ridgeLinesMultiShape);
 

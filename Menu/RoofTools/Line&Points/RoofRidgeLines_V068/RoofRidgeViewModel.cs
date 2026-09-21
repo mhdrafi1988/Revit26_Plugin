@@ -56,6 +56,27 @@ namespace Revit26_Plugin.RoofRidgeLines.V068.ViewModels
         /// <summary>
         /// Primary constructor. If a roof is provided, it loads the openings immediately.
         /// </summary>
+        /// <summary>Tool version shown in the window header and footer.</summary>
+        public string ToolName => "Ridge By Openings";
+        public string ToolVersion => "V068";
+
+        /// <summary>Plugin assembly version and build timestamp, for the version footer.</summary>
+        public string VersionDetails { get; } = BuildVersionDetails();
+
+        private static string BuildVersionDetails()
+        {
+            try
+            {
+                var asm = typeof(RoofRidgeViewModel).Assembly;
+                string built = System.IO.File.GetLastWriteTime(asm.Location).ToString("yyyy-MM-dd HH:mm");
+                return $"Ridge By Openings V068  |  assembly {asm.GetName().Version}  |  built {built}";
+            }
+            catch
+            {
+                return "Ridge By Openings V068";
+            }
+        }
+
         public RoofRidgeViewModel(UIDocument uiDoc, RoofBase roof = null)
         {
             _uiDoc = uiDoc ?? throw new ArgumentNullException(nameof(uiDoc));
@@ -593,9 +614,10 @@ namespace Revit26_Plugin.RoofRidgeLines.V068.ViewModels
                     var loop = loops[i];
                     var data = OpeningAnalyzerService.AnalyzeLoop(loop);
                     data.Index = i;
-                    data.IsSelected = true;
                     Openings.Add(data);
                 }
+
+                SelectSmallestCirclesOnly();
 
                 RebuildGroupedCollections();
 
@@ -607,13 +629,26 @@ namespace Revit26_Plugin.RoofRidgeLines.V068.ViewModels
                     : PipelineLogText + "\r\n" + logMsg;
 
                 UpdateSelectedCount();
-                StatusMessage = $"Loaded {Openings.Count} inner loops. Tick at least 2 to use as drainage seeds.";
+                StatusMessage = $"Loaded {Openings.Count} inner loops. Smallest-radius circles are pre-selected; tick at least 2 to use as drainage seeds.";
             }
             catch (Exception ex)
             {
                 StatusMessage = $"Failed to load openings: {ex.Message}";
                 PipelineLog.Add($"[ERROR] {ex.Message}");
             }
+        }
+
+        /// <summary>
+        /// Default selection: only the circular openings with the lowest radius are ticked
+        /// (within 0.5 mm); rectangles and other shapes start unticked.
+        /// </summary>
+        private void SelectSmallestCirclesOnly()
+        {
+            const double toleranceFt = 0.5 / 304.8;
+            var circles = Openings.Where(o => o.ShapeType == OpeningShapeType.Circle).ToList();
+            double minRadius = circles.Count > 0 ? circles.Min(o => o.Dim1) : 0;
+            foreach (var o in Openings)
+                o.IsSelected = o.ShapeType == OpeningShapeType.Circle && o.Dim1 <= minRadius + toleranceFt;
         }
 
         private void OnOpeningsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

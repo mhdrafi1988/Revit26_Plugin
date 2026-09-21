@@ -8,7 +8,7 @@
     xmlns:conv="clr-namespace:Revit26_Plugin.RoofRidgeLines.V068.Converters"
     xmlns:shared="clr-namespace:Revit26_Plugin.Shared.Models"
     mc:Ignorable="d"
-    Title="Roof Ridge Tool"
+    Title="Ridge By Openings V068"
     TitleCharacterCasing="Normal"
     Width="1050" Height="750" MinWidth="950" MinHeight="650"
     WindowStartupLocation="CenterScreen"
@@ -49,7 +49,12 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Grid.Row="0" Margin="0,0,0,20">
-                    <TextBlock Text="Voronoi Ridge Generation" FontSize="20" FontWeight="Bold" Foreground="{StaticResource BrushNavyPrimary}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Voronoi Ridge Generation" FontSize="20" FontWeight="Bold" Foreground="{StaticResource BrushNavyPrimary}"/>
+                        <Border Style="{StaticResource BadgePill}" Margin="10,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding ToolVersion}" Style="{StaticResource BadgeText}"/>
+                        </Border>
+                    </StackPanel>
                     <TextBlock Text="Select inner loops as drainage seeds to compute ridges." FontSize="12" Margin="0,4,0,0" Opacity="0.7" TextWrapping="Wrap"/>
                 </StackPanel>
 
@@ -230,7 +235,7 @@
                                 </Expander>
 
                                 <!-- ── Rectangles ── -->
-                                <Expander IsExpanded="True" Margin="0,0,0,8">
+                                <Expander IsExpanded="False" Margin="0,0,0,8">
                                     <Expander.Header>
                                         <Grid Width="330">
                                             <Grid.ColumnDefinitions>
@@ -276,7 +281,7 @@
                                 </Expander>
 
                                 <!-- ── Others ── -->
-                                <Expander IsExpanded="True">
+                                <Expander IsExpanded="False">
                                     <Expander.Header>
                                         <Grid Width="330">
                                             <Grid.ColumnDefinitions>
@@ -401,7 +406,14 @@
         </Grid>
 
         <Border Grid.Row="1" Background="{StaticResource BrushSystemSecondaryBackground}" BorderThickness="0,1,0,0" BorderBrush="{StaticResource BrushSeparatorThin}" Padding="16,6">
-            <TextBlock Text="{Binding StatusMessage}" Style="{StaticResource FieldLabel}" FontSize="11" TextTrimming="CharacterEllipsis" Opacity="0.8"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="{Binding StatusMessage}" Style="{StaticResource FieldLabel}" FontSize="11" TextTrimming="CharacterEllipsis" Opacity="0.8"/>
+                <TextBlock Grid.Column="1" Text="{Binding VersionDetails}" Style="{StaticResource FieldLabel}" FontSize="11" Margin="16,0,0,0" Opacity="0.6"/>
+            </Grid>
         </Border>
     </Grid>
 </mah:MetroWindow>
