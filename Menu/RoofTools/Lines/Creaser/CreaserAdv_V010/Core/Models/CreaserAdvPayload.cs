@@ -1,4 +1,4 @@
-// =======================================================
+﻿// =======================================================
 // File: CreaserAdvPayload.cs
 // Location: Core/Models/
 // Carries everything CreaserAdvEngine needs to run a single Run() pass
@@ -9,10 +9,10 @@
 // =======================================================
 
 using Autodesk.Revit.DB;
-using Revit26_Plugin.CreaserAdv.V009.Services;
+using Revit26_Plugin.CreaserAdv.V010.Services;
 using System;
 
-namespace Revit26_Plugin.CreaserAdv.V009.Core.Models
+namespace Revit26_Plugin.CreaserAdv.V010.Core.Models
 {
     public class CreaserAdvPayload
     {

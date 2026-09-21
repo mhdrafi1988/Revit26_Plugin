@@ -1,13 +1,13 @@
-// ==================================
+﻿// ==================================
 // File: MinimumLengthFilterService.cs
-// Namespace: Revit26_Plugin.CreaserAdv_V008_00
+// Namespace: Revit26_Plugin.CreaserAdv.V010
 // ==================================
 
 using Autodesk.Revit.DB;
 using System;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.CreaserAdv.V009.Services
+namespace Revit26_Plugin.CreaserAdv.V010.Services
 {
     /// <summary>
     /// Filters crease lines by minimum length threshold.
@@ -69,11 +69,11 @@ namespace Revit26_Plugin.CreaserAdv.V009.Services
                 else
                 {
                     skipped++;
-                    _log.Warning($"Crease skipped (too short): {len * 304.8:F0}mm < {minLengthMm:F0}mm");
+                    _log.Debug($"  Crease #{i + 1} dropped (too short): {len * 304.8:F0} mm < {minLengthMm:F0} mm");
                 }
             }
 
-            _log.Info($"Minimum length filter: kept {keptLines.Count}, skipped {skipped}");
+            _log.Info($"Minimum length filter (< {minLengthMm:F0} mm): kept {keptLines.Count}, dropped {skipped} of {lines2d.Count}");
             return (keptCurves, keptLines);
         }
     }
