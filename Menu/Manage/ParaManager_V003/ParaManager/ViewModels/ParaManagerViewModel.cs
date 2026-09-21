@@ -9,6 +9,7 @@ using Revit26_Plugin.Shared.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
@@ -145,6 +146,7 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
 
             QueueView = CollectionViewSource.GetDefaultView(QueueRows);
             QueueView.Filter = FilterQueueRow;
+            QueueRows.CollectionChanged += OnQueueRowsChanged;
 
             foreach (var cat in CategoryProvider.GetAvailableCategories())
                 AvailableCategories.Add(cat);
@@ -380,6 +382,28 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
         // ─────────────────────────────────────────────────────────────────
 
         private bool CanRun() => !IsRunning && QueueRows.Any(r => r.IsSelected);
+
+        // RelayCommand does not re-query CanExecute on its own — without this the Run
+        // button stays disabled from window-open (empty queue) onwards.
+        private void OnQueueRowsChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.OldItems != null)
+                foreach (ParameterAssignmentRow row in e.OldItems)
+                    row.PropertyChanged -= OnQueueRowPropertyChanged;
+
+            if (e.NewItems != null)
+                foreach (ParameterAssignmentRow row in e.NewItems)
+                    row.PropertyChanged += OnQueueRowPropertyChanged;
+
+            RunCommand.NotifyCanExecuteChanged();
+            NextStepCommand.NotifyCanExecuteChanged();
+        }
+
+        private void OnQueueRowPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ParameterAssignmentRow.IsSelected))
+                RunCommand.NotifyCanExecuteChanged();
+        }
 
         [RelayCommand(CanExecute = nameof(CanRun))]
         private void Run()
