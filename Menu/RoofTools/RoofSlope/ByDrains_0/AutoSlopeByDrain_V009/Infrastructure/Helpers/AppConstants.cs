@@ -23,6 +23,7 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.V009.Infrastructure.Helpers
         public const string Param_Status                = "AutoSlope_Status";
         public const string Param_Versions              = "AutoSlope_Versions";
         public const string Param_DrainToleranceMm      = "AutoSlope_DrainToleranceMm";
+        public const string Param_DrainToleranceEnabled = "AutoSlope_DrainToleranceEnabled";
 
         // Status Values
         public const int Status_OK      = 1;
