@@ -1,37 +1,40 @@
 // ==================================
 // File: CreaserAdvViewModel.cs
-// Namespace: Revit26_Plugin.CreaserAdv_V008_00
+// Namespace: Revit26_Plugin.CreaserAdv.V010.ViewModels
 // ==================================
 
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.CreaserAdv.V009.Core.Models;
-using Revit26_Plugin.CreaserAdv.V009.Infrastructure.ExternalEvents;
-using Revit26_Plugin.CreaserAdv.V009.Services;
+using Revit26_Plugin.CreaserAdv.V010.Core.Models;
+using Revit26_Plugin.CreaserAdv.V010.Infrastructure.ExternalEvents;
+using Revit26_Plugin.CreaserAdv.V010.Services;
 using Revit26_Plugin.Shared.Models;          // LogEntry, LogLevel, converters
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Text;
 using System.Windows;
+using System.Windows.Data;
 
-namespace Revit26_Plugin.CreaserAdv.V009.ViewModels
+namespace Revit26_Plugin.CreaserAdv.V010.ViewModels
 {
     /// <summary>
-    /// ViewModel for Creaser Advanced V008_00.
+    /// ViewModel for Creaser Advanced V010.
     ///
-    /// Pipeline:
+    /// Pipeline (runs in <see cref="Core.Engine.CreaserAdvEngine"/> via an ExternalEvent):
     ///   1. Extract crease curves  (top-face / top-face solid edges)
     ///   1b. Filter out horizontal creases (same Z on both endpoints) — always runs
     ///   2. Optionally extract boundary curves  (top-face / side-face edges)
     ///   2b. (Optional, ticked by default) Filter by Dijkstra path validity —
     ///       creases + boundary together; each point keeps exactly one edge,
     ///       its single shortest descending route to a minimum-elevation
-    ///       drain node. An optional minimum-slope threshold (also toggled
-    ///       here) rejects edges before path-finding. Ridge points (no valid
-    ///       descent) and disconnected points (unreachable from any drain)
-    ///       are excluded and counted in the run summary.
+    ///       drain node (per connected group of edges). An optional
+    ///       minimum-slope threshold (also toggled here) rejects edges before
+    ///       path-finding. Ridge points (no valid descent) are excluded and
+    ///       counted in the run summary.
     ///   3. Project all curves to plan-view Z elevation (curve+line pairs kept
     ///      index-aligned — a dropped zero-length projection removes both)
     ///   4. (Optional) Filter creases by minimum length (curve+line pairs, index-aligned)
@@ -56,8 +59,16 @@ namespace Revit26_Plugin.CreaserAdv.V009.ViewModels
         public ObservableCollection<FamilySymbol> DetailSymbols { get; }
             = new ObservableCollection<FamilySymbol>();
 
-        /// <summary>Bound to the log ListBox. Entries come from LoggingService.</summary>
+        /// <summary>Every log entry, unfiltered. Entries come from LoggingService.</summary>
         public ObservableCollection<LogEntry> LogEntries => _log.Entries;
+
+        /// <summary>
+        /// The standalone window's log list. Same entries as <see cref="LogEntries"/>,
+        /// with verbose (<see cref="LogLevel.Debug"/>) lines hidden when
+        /// <see cref="ShowDetailLog"/> is off. A private view, so filtering here does
+        /// not affect other bindings to <see cref="LogEntries"/> (e.g. the Combined tab).
+        /// </summary>
+        public ICollectionView VisibleLogEntries { get; }
 
         // --------------------------------------------------
         // Observable properties
@@ -83,10 +94,10 @@ namespace Revit26_Plugin.CreaserAdv.V009.ViewModels
         /// <summary>
         /// Drives the "Filter by Dijkstra path validity" checkbox (ticked by default).
         /// When enabled, every crease/boundary segment must genuinely descend toward
-        /// some minimum-elevation drain node. Each non-drain point keeps exactly
-        /// one outgoing edge — its single shortest descending route. Ridge points
-        /// (no valid descent) and disconnected points (unreachable from any drain)
-        /// are excluded and counted in the run summary.
+        /// a drain node (the lowest node of its connected group of edges). Each
+        /// non-drain point keeps exactly one outgoing edge — its single shortest
+        /// descending route. Ridge points (no valid descent) are excluded and
+        /// counted in the run summary.
         /// Runs on creases + boundary curves together, right after the horizontal filter,
         /// before minimum-length and drain-proximity grouping.
         /// </summary>
@@ -137,6 +148,17 @@ namespace Revit26_Plugin.CreaserAdv.V009.ViewModels
         [ObservableProperty]
         private bool _hasSummary = false;
 
+        /// <summary>True from the moment Run is requested until the engine reports back; blocks a second overlapping Run.</summary>
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(RunCommand))]
+        private bool _isRunning = false;
+
+        /// <summary>Drives the "Show detail" checkbox under the log. On by default.</summary>
+        [ObservableProperty]
+        private bool _showDetailLog = true;
+
+        partial void OnShowDetailLogChanged(bool value) => VisibleLogEntries.Refresh();
+
         // --------------------------------------------------
         // Constructor
         // --------------------------------------------------
@@ -151,6 +173,11 @@ namespace Revit26_Plugin.CreaserAdv.V009.ViewModels
             _doc    = uiApp.ActiveUIDocument.Document;
             _roofId = (roof ?? throw new ArgumentNullException(nameof(roof))).Id;
             _log    = log  ?? throw new ArgumentNullException(nameof(log));
+
+            VisibleLogEntries = new ListCollectionView(_log.Entries)
+            {
+                Filter = o => ShowDetailLog || (o is LogEntry e && e.Level != LogLevel.Debug)
+            };
 
             LoadDetailSymbols();
 
@@ -186,15 +213,30 @@ namespace Revit26_Plugin.CreaserAdv.V009.ViewModels
         /// "Run All" orchestrator) can await completion without polling.</summary>
         public event Action<bool> RunCompleted;
 
-        [RelayCommand]
+        private bool CanRun() => !IsRunning;
+
+        [RelayCommand(CanExecute = nameof(CanRun))]
         private void Run()
         {
             if (SelectedDetailSymbol == null)
             {
-                _log.Warning("Please select a detail item.");
+                _log.Warning("Please select a detail item. " +
+                             (DetailSymbols.Count == 0
+                                 ? "None are available — this project has no line-based detail component family loaded."
+                                 : string.Empty));
                 RunCompleted?.Invoke(false);
                 return;
             }
+
+            if (!TryValidateInputs(out string problem))
+            {
+                _log.Error($"Cannot run: {problem}");
+                RunCompleted?.Invoke(false);
+                return;
+            }
+
+            IsRunning = true;
+            _log.Info("Run requested — waiting for Revit to pick up the request…");
 
             CreaserAdvHandler.Payload = new CreaserAdvPayload
             {
@@ -213,6 +255,8 @@ namespace Revit26_Plugin.CreaserAdv.V009.ViewModels
                 {
                     System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                     {
+                        IsRunning = false;
+
                         if (!result.Success)
                         {
                             _log.Error($"Run failed: {result.ErrorMessage}");
@@ -227,19 +271,25 @@ namespace Revit26_Plugin.CreaserAdv.V009.ViewModels
                 }
             };
 
-            CreaserAdvEventManager.Event.Raise();
+            ExternalEventRequest request = CreaserAdvEventManager.Event.Raise();
+            _log.Debug($"  ExternalEvent request status: {request}.");
+
+            if (request == ExternalEventRequest.Denied || request == ExternalEventRequest.TimedOut)
+            {
+                // Revit refused the request, so the handler will never call back.
+                CreaserAdvHandler.Payload = null;
+                IsRunning = false;
+                _log.Error($"Revit did not accept the run request ({request}). Try again in a moment.");
+                RunCompleted?.Invoke(false);
+            }
         }
 
         // --------------------------------------------------
-        // Clear log command
+        // Clear / copy / open log
         // --------------------------------------------------
 
         [RelayCommand]
         private void ClearLog() => _log.Clear();
-
-        // --------------------------------------------------
-        // Copy log command
-        // --------------------------------------------------
 
         [RelayCommand]
         private void CopyLog()
@@ -254,9 +304,36 @@ namespace Revit26_Plugin.CreaserAdv.V009.ViewModels
             _log.Info("Log copied to clipboard.");
         }
 
+        [RelayCommand]
+        private void OpenLogFile()
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo(_log.LogFilePath) { UseShellExecute = true });
+            }
+            catch (Exception ex)
+            {
+                _log.Warning($"Could not open the log file ({_log.LogFilePath}): {ex.Message}");
+            }
+        }
+
         // --------------------------------------------------
         // Private helpers
         // --------------------------------------------------
+
+        private bool TryValidateInputs(out string problem)
+        {
+            problem = null;
+
+            if (EnableMinimumLength && (double.IsNaN(MinimumLengthMm) || MinimumLengthMm < 0))
+                problem = "Minimum length must be zero or more.";
+            else if (EnableDrainGrouping && (double.IsNaN(DrainGroupingRadiusMm) || DrainGroupingRadiusMm < 0))
+                problem = "Drain grouping radius must be zero or more.";
+            else if (EnableDijkstraPathFilter && EnableMinimumSlope && (double.IsNaN(MinimumSlopePercent) || MinimumSlopePercent < 0))
+                problem = "Minimum slope must be zero or more.";
+
+            return problem == null;
+        }
 
         private void UpdateSummary(int creasesFound, int boundaryFound, int created, int failed, int ridgePoints = 0, int disconnectedPoints = 0)
         {

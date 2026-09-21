@@ -3,16 +3,16 @@
 // Location: Infrastructure/ExternalEvents/
 // Mirrors InnerLoopDividerHandler's pattern — Run() mutates the document,
 // so it's wrapped in a TransactionGroup so a failure rolls back cleanly.
-// CreaserAdvEngine still opens its own inner Transaction (standard nested
-// Transaction/TransactionGroup pattern).
+// CreaserAdvEngine opens its own inner Transaction only for the placement
+// step (standard nested Transaction/TransactionGroup pattern).
 // =======================================================
 
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.CreaserAdv.V009.Core.Models;
+using Revit26_Plugin.CreaserAdv.V010.Core.Models;
 using System;
 
-namespace Revit26_Plugin.CreaserAdv.V009.Infrastructure.ExternalEvents
+namespace Revit26_Plugin.CreaserAdv.V010.Infrastructure.ExternalEvents
 {
     public class CreaserAdvHandler : IExternalEventHandler
     {
@@ -25,9 +25,12 @@ namespace Revit26_Plugin.CreaserAdv.V009.Infrastructure.ExternalEvents
 
         public void Execute(UIApplication app)
         {
-            if (Payload == null) return;
-
+            // Take the payload and clear the slot so a stray second Raise() can
+            // never re-run a request that has already been handled.
             CreaserAdvPayload current = Payload;
+            Payload = null;
+
+            if (current == null) return;
 
             using (TransactionGroup tg = new TransactionGroup(
                 app.ActiveUIDocument.Document, "Creaser Advanced"))
@@ -38,7 +41,9 @@ namespace Revit26_Plugin.CreaserAdv.V009.Infrastructure.ExternalEvents
                 {
                     var result = Core.Engine.CreaserAdvEngine.Execute(app, current);
 
-                    if (result.Success)
+                    // Nothing placed => nothing to merge; an empty group is rolled back
+                    // rather than assimilated.
+                    if (result.Success && result.Created > 0)
                         tg.Assimilate();
                     else
                         tg.RollBack();
@@ -47,8 +52,11 @@ namespace Revit26_Plugin.CreaserAdv.V009.Infrastructure.ExternalEvents
                 }
                 catch (Exception ex)
                 {
-                    tg.RollBack();
-                    current.Log?.Error($"[CreaserAdvHandler] Unhandled exception: {ex.Message}");
+                    if (tg.GetStatus() == TransactionStatus.Started)
+                        tg.RollBack();
+
+                    current.Log?.Error($"[CreaserAdvHandler] Unhandled {ex.GetType().Name}: {ex.Message}");
+                    current.Log?.Debug(ex.StackTrace ?? "(no stack trace)");
                     current.OnCompleted?.Invoke(new CreaserAdvResult
                     {
                         Success = false,

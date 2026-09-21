@@ -128,10 +128,10 @@ namespace Revit26_Plugin.Menu.Ribbon
             RibbonPanel roofToolsPanel = app.CreateRibbonPanel(tabName, "Roof Tools");
             RibbonLayoutHelper.AddStackedButtons(roofToolsPanel, new List<RibbonItemData>
             {
-                new PushButtonData("Btn_CreaserAdvCommand_V009_00", "Creaser Adv", assemblyPath, "Revit26_Plugin.CreaserAdv.V009.Commands.CreaserAdvCommand")
+                new PushButtonData("Btn_CreaserAdvCommand_V010_00", "Creaser Adv", assemblyPath, "Revit26_Plugin.CreaserAdv.V010.Commands.CreaserAdvCommand")
                 {
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.CreaserAdv_16.png"),
-                    ToolTip = RibbonLayoutHelper.VersionTip("Creaser Adv", "V009")
+                    ToolTip = RibbonLayoutHelper.VersionTip("Creaser Adv", "V010")
                 },
                 new PushButtonData("Btn_RoofTagCommand_V016", "Roof Tag", assemblyPath, "Revit26_Plugin.RoofTag.V016.RoofTagCommand")
                 {

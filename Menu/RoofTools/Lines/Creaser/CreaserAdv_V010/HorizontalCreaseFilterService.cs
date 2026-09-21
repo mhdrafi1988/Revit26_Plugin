@@ -1,13 +1,13 @@
-// ==================================
+﻿// ==================================
 // File: HorizontalCreaseFilterService.cs
-// Namespace: Revit26_Plugin.CreaserAdv_V008_00
+// Namespace: Revit26_Plugin.CreaserAdv.V010
 // ==================================
 
 using Autodesk.Revit.DB;
 using System;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.CreaserAdv.V009.Services
+namespace Revit26_Plugin.CreaserAdv.V010.Services
 {
     /// <summary>
     /// Filters out crease curves where both endpoints have the same Z elevation.
@@ -52,14 +52,14 @@ namespace Revit26_Plugin.CreaserAdv.V009.Services
                 if (Math.Abs(p0.Z - p1.Z) < Tol)
                 {
                     skipped++;
-                    _log.Warning($"Horizontal crease removed: Z={p0.Z:F3} (both endpoints same elevation)");
+                    _log.Debug($"  Horizontal crease removed: Z={p0.Z * 304.8:F0} mm (both endpoints same elevation), length {curve.Length * 304.8:F0} mm");
                     continue;
                 }
 
                 result.Add(curve);
             }
 
-            _log.Info($"Horizontal crease filter: kept {result.Count}, removed {skipped}");
+            _log.Info($"Horizontal crease filter: kept {result.Count}, removed {skipped} of {creaseCurves.Count}");
             return result;
         }
     }

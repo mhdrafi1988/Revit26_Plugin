@@ -1,6 +1,6 @@
-// ==================================
+﻿// ==================================
 // File: DrainPointGroupingService.cs
-// Namespace: Revit26_Plugin.CreaserAdv_V008_00
+// Namespace: Revit26_Plugin.CreaserAdv.V010
 // ==================================
 
 using Autodesk.Revit.DB;
@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.CreaserAdv.V009.Services
+namespace Revit26_Plugin.CreaserAdv.V010.Services
 {
     /// <summary>
     /// Groups crease lines by drain points (lowest Z endpoints) within a proximity radius.
@@ -173,7 +173,7 @@ namespace Revit26_Plugin.CreaserAdv.V009.Services
             int groupRemoved = 0;
 
             // For each start point, keep shortest only
-            _log.Info($"Drain group {groupNum}: {group.Count} lines, {byStartPt.Count} start points");
+            _log.Debug($"  Drain group {groupNum}: {group.Count} lines, {byStartPt.Count} start points");
 
             foreach (var kvp in byStartPt)
             {
@@ -187,12 +187,12 @@ namespace Revit26_Plugin.CreaserAdv.V009.Services
                 for (int i = 1; i < linesFromStart.Count; i++)
                 {
                     groupRemoved++;
-                    _log.Info($"  Removed: start {startKey}, length {linesFromStart[i].len:F2}mm");
+                    _log.Debug($"  Removed: start {startKey} ft, length {linesFromStart[i].len * 304.8:F0} mm");
                 }
 
                 if (linesFromStart.Count > 1)
                 {
-                    _log.Info($"  Kept: start {startKey}, length {linesFromStart[0].len:F2}mm " +
+                    _log.Debug($"  Kept: start {startKey} ft, length {linesFromStart[0].len * 304.8:F0} mm " +
                         $"({linesFromStart.Count - 1} removed)");
                 }
             }
