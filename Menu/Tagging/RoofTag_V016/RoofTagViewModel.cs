@@ -2,6 +2,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Revit26_Plugin.RoofTag.V016.Helpers;
 using Revit26_Plugin.Shared.Models;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -15,6 +16,7 @@ namespace Revit26_Plugin.RoofTag.V016
     {
         private readonly UIApplication _uiApp;
         private readonly Document _doc;
+        private readonly string _pendingSpotTagTypeName;
 
         private bool _useManualMode = false;
         private bool _isAngle45 = true;
@@ -25,6 +27,7 @@ namespace Revit26_Plugin.RoofTag.V016
         private double _endOffset = 2000.0;
         private bool _useLeader = true;
         private SpotTagTypeWrapper _selectedSpotTagType;
+        private RoofTagElevationFace _elevationFace = RoofTagElevationFace.Top;
         private int _placedCount;
         private int _failedCount;
 
@@ -188,6 +191,16 @@ namespace Revit26_Plugin.RoofTag.V016
             set => SetProperty(ref _selectedSpotTagType, value);
         }
 
+        /// <summary>Which roof face (top or bottom) the spot elevation tag reads from.</summary>
+        public RoofTagElevationFace ElevationFace
+        {
+            get => _elevationFace;
+            set => SetProperty(ref _elevationFace, value);
+        }
+
+        public RoofTagElevationFace[] ElevationFaceOptions { get; } =
+            (RoofTagElevationFace[])System.Enum.GetValues(typeof(RoofTagElevationFace));
+
         public ObservableCollection<LogEntry> LogEntries { get; } = new();
 
         public int PlacedCount
@@ -206,7 +219,57 @@ namespace Revit26_Plugin.RoofTag.V016
         {
             _uiApp = uiApp;
             _doc   = uiApp.ActiveUIDocument.Document;
+
+            RoofTagSettings settings = RoofTagSettingsService.Load(out string loadWarning);
+
+            UseManualMode = settings.UseManualMode;
+            IsAngle45 = settings.IsAngle45;
+            IsAngle30 = !settings.IsAngle45;
+            BendInward = settings.BendInward;
+            BendOutward = !settings.BendInward;
+            BendOffset = settings.BendOffset;
+            EndOffset = settings.EndOffset;
+            UseLeader = settings.UseLeader;
+            ClusterFilterEnabled = settings.ClusterFilterEnabled;
+            ClusterRadius = settings.ClusterRadius;
+            InteriorLoopReductionEnabled = settings.InteriorLoopReductionEnabled;
+            InteriorLoopSpacing = settings.InteriorLoopSpacing;
+            InteriorLoopBoundaryTolerance = settings.InteriorLoopBoundaryTolerance;
+            ExteriorLoopReductionEnabled = settings.ExteriorLoopReductionEnabled;
+            ExteriorLoopSpacing = settings.ExteriorLoopSpacing;
+            ExteriorLoopBoundaryTolerance = settings.ExteriorLoopBoundaryTolerance;
+            ElevationFace = settings.ElevationFace;
+            _pendingSpotTagTypeName = settings.SelectedSpotTagTypeName;
+
             LoadTagTypes();
+
+            if (loadWarning != null)
+                AddLog(new LogEntry(LogLevel.Warning, loadWarning));
+        }
+
+        public void SaveSettings()
+        {
+            var settings = new RoofTagSettings
+            {
+                UseManualMode = UseManualMode,
+                IsAngle45 = IsAngle45,
+                BendInward = BendInward,
+                BendOffset = BendOffset,
+                EndOffset = EndOffset,
+                UseLeader = UseLeader,
+                ClusterFilterEnabled = ClusterFilterEnabled,
+                ClusterRadius = ClusterRadius,
+                InteriorLoopReductionEnabled = InteriorLoopReductionEnabled,
+                InteriorLoopSpacing = InteriorLoopSpacing,
+                InteriorLoopBoundaryTolerance = InteriorLoopBoundaryTolerance,
+                ExteriorLoopReductionEnabled = ExteriorLoopReductionEnabled,
+                ExteriorLoopSpacing = ExteriorLoopSpacing,
+                ExteriorLoopBoundaryTolerance = ExteriorLoopBoundaryTolerance,
+                ElevationFace = ElevationFace,
+                SelectedSpotTagTypeName = SelectedSpotTagType?.Name
+            };
+
+            RoofTagSettingsService.Save(settings, out _);
         }
 
         private RelayCommand _copyLogCommand;
@@ -230,7 +293,11 @@ namespace Revit26_Plugin.RoofTag.V016
             foreach (var t in types)
                 SpotTagTypes.Add(t);
 
-            SelectedSpotTagType = SpotTagTypes.FirstOrDefault();
+            SelectedSpotTagType =
+                (_pendingSpotTagTypeName != null
+                    ? SpotTagTypes.FirstOrDefault(t => t.Name == _pendingSpotTagTypeName)
+                    : null)
+                ?? SpotTagTypes.FirstOrDefault();
         }
 
         public void AddLog(LogEntry entry)

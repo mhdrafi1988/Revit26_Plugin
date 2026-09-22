@@ -142,19 +142,34 @@
 
             <!-- ── SPOT TAG TYPE ─────────────────────────────────────── -->
             <Border Style="{StaticResource SectionCard}" Margin="0,0,0,6" Padding="10,8">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="Spot tag type" FontSize="10.5" FontWeight="SemiBold"
-                               Foreground="{StaticResource BrushNavyPrimary}" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                    <ComboBox Grid.Column="1" FontSize="10" Height="24"
-                              Background="White" Foreground="{StaticResource BrushTextPrimary}"
-                              ItemsSource="{Binding SpotTagTypes}"
-                              SelectedItem="{Binding SelectedSpotTagType}"
-                              DisplayMemberPath="Name"/>
-                </Grid>
+                <StackPanel>
+                    <Grid Margin="0,0,0,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Spot tag type" FontSize="10.5" FontWeight="SemiBold"
+                                   Foreground="{StaticResource BrushNavyPrimary}" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <ComboBox Grid.Column="1" FontSize="10" Height="24"
+                                  Background="White" Foreground="{StaticResource BrushTextPrimary}"
+                                  ItemsSource="{Binding SpotTagTypes}"
+                                  SelectedItem="{Binding SelectedSpotTagType}"
+                                  DisplayMemberPath="Name"/>
+                    </Grid>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Display elevation" FontSize="10.5" FontWeight="SemiBold"
+                                   Foreground="{StaticResource BrushNavyPrimary}" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <ComboBox Grid.Column="1" FontSize="10" Height="24"
+                                  Background="White" Foreground="{StaticResource BrushTextPrimary}"
+                                  ItemsSource="{Binding ElevationFaceOptions}"
+                                  SelectedItem="{Binding ElevationFace}"/>
+                    </Grid>
+                </StackPanel>
             </Border>
 
             <!-- ── CLUSTER FILTER (Rule 1) ────────────────────────────── -->
@@ -290,14 +305,13 @@
                 </Border>
             </Grid>
 
-            <!-- ── LOG PANEL (kept at bottom, above buttons) ──────────── -->
+            <!-- ── LOG PANEL (kept at bottom, above buttons; collapsed by default) ── -->
             <Border Style="{StaticResource SectionCard}" Margin="0,0,0,8" Padding="0">
-                <StackPanel>
-                    <Border Background="{StaticResource BrushLogTitleBar}"
-                            CornerRadius="8,8,0,0" Padding="10,5">
-                        <Grid>
+                <Expander IsExpanded="False">
+                    <Expander.Header>
+                        <Grid Margin="0,0,20,0">
                             <TextBlock Text="Log"
-                                       Foreground="{StaticResource BrushLogText}"
+                                       Foreground="{StaticResource BrushNavyPrimary}"
                                        FontSize="10.5" FontWeight="SemiBold"
                                        VerticalAlignment="Center"/>
                             <Button HorizontalAlignment="Right"
@@ -306,7 +320,7 @@
                                     Content="Copy" Padding="8,2"
                                     FontSize="10" Height="20"/>
                         </Grid>
-                    </Border>
+                    </Expander.Header>
 
                     <Border Background="{StaticResource BrushLogBg}"
                             CornerRadius="0,0,8,8" Padding="8,5">
@@ -319,7 +333,7 @@
                                  ScrollViewer.VerticalScrollBarVisibility="Auto"
                                  VirtualizingPanel.ScrollUnit="Pixel"/>
                     </Border>
-                </StackPanel>
+                </Expander>
             </Border>
 
             <!-- ── BUTTONS ───────────────────────────────────────────── -->
