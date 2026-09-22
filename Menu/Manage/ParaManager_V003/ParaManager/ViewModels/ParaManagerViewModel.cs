@@ -54,6 +54,12 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
         [ObservableProperty]
         private string _queueFilterText = string.Empty;
 
+        // ── Revit (Properties palette) group mapping ─────────────────────
+        public IReadOnlyList<RevitGroupOption> RevitGroupOptions => RevitGroupOption.All;
+
+        [ObservableProperty]
+        private RevitGroupOption _bulkGroupOption = RevitGroupOption.Default;
+
         // ── Log ───────────────────────────────────────────────────────────
         public ObservableCollection<LogEntry> LogEntries { get; } = new();
         public ObservableCollection<LogEntry> SelectedLogEntries { get; } = new();
@@ -363,6 +369,25 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
         [RelayCommand]
         private void RefreshQueue() => QueueView.Refresh();
 
+        /// <summary>Sets the Revit group on every ticked row currently visible in the (filtered) queue.</summary>
+        [RelayCommand]
+        private void ApplyGroupToSelected()
+        {
+            if (BulkGroupOption == null) return;
+
+            var targets = QueueView.Cast<ParameterAssignmentRow>().Where(r => r.IsSelected).ToList();
+            if (targets.Count == 0)
+            {
+                Log(LogLevel.Warning, "No rows selected — tick the parameters to map first.");
+                return;
+            }
+
+            foreach (var row in targets)
+                row.TargetGroup = BulkGroupOption;
+
+            Log(LogLevel.Info, $"Revit group '{BulkGroupOption.Name}' applied to {targets.Count} parameter(s).");
+        }
+
         [RelayCommand]
         private void RemoveQueueRow(ParameterAssignmentRow row)
         {
@@ -381,7 +406,11 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
         // Run
         // ─────────────────────────────────────────────────────────────────
 
-        private bool CanRun() => !IsRunning && QueueRows.Any(r => r.IsSelected);
+        // Set once a run completes without a run-level failure; cleared when the queue changes.
+        // Keeps Run disabled so the same batch can't be fired twice by accident.
+        private bool _hasRun;
+
+        private bool CanRun() => !IsRunning && !_hasRun && QueueRows.Any(r => r.IsSelected);
 
         // RelayCommand does not re-query CanExecute on its own — without this the Run
         // button stays disabled from window-open (empty queue) onwards.
@@ -395,6 +424,7 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
                 foreach (ParameterAssignmentRow row in e.NewItems)
                     row.PropertyChanged += OnQueueRowPropertyChanged;
 
+            _hasRun = false; // queue content changed — a new batch may be run
             RunCommand.NotifyCanExecuteChanged();
             NextStepCommand.NotifyCanExecuteChanged();
         }
@@ -464,6 +494,9 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
                     "ParaManager", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
+
+            _hasRun = true;
+            RunCommand.NotifyCanExecuteChanged();
 
             int assigned = 0, skipped = 0, failedCount = 0;
 

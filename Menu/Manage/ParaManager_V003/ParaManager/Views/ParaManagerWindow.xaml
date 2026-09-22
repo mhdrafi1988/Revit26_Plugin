@@ -403,6 +403,18 @@
                                         Command="{Binding RefreshQueueCommand}"/>
                             </StackPanel>
 
+                            <!-- Revit group mapping: bulk-apply to ticked rows (each row can also be set in the grid) -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                <TextBlock Text="Map ticked parameters to Revit group:" Style="{StaticResource HintText}"
+                                           VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <ComboBox Style="{StaticResource StandardComboBox}" Width="200"
+                                          ItemsSource="{Binding RevitGroupOptions}"
+                                          SelectedItem="{Binding BulkGroupOption}"
+                                          DisplayMemberPath="Name"/>
+                                <Button Content="Apply to Selected" Style="{StaticResource SmallSecondaryButton}" Margin="8,0,0,0"
+                                        Command="{Binding ApplyGroupToSelectedCommand}"/>
+                            </StackPanel>
+
                             <!-- Advanced DataGrid -->
                             <DataGrid ItemsSource="{Binding QueueView}"
                                       Style="{StaticResource StandardDataGrid}"
@@ -434,6 +446,17 @@
                                                          Width="*" IsReadOnly="True"/>
                                     <DataGridTextColumn Header="Category" Binding="{Binding CategoryDisplay}"
                                                          Width="1.4*" IsReadOnly="True"/>
+                                    <DataGridTemplateColumn Header="Revit Group" Width="1.3*" SortMemberPath="TargetGroup.Name">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <ComboBox Style="{StaticResource StandardComboBox}" Height="26" FontSize="12"
+                                                          ItemsSource="{Binding DataContext.RevitGroupOptions,
+                                                                        RelativeSource={RelativeSource AncestorType=Window}}"
+                                                          SelectedItem="{Binding TargetGroup, Mode=TwoWay}"
+                                                          DisplayMemberPath="Name"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
                                     <DataGridTextColumn Header="Binding" Binding="{Binding BindingTypeDisplay}"
                                                          Width="0.8*" IsReadOnly="True"/>
 
