@@ -153,13 +153,14 @@ namespace Revit26_Plugin.ParaManager.V003.Services
                     : _doc.Application.Create.NewTypeBinding(categorySet);
 
                 BindingMap map = _doc.ParameterBindings;
-                bool inserted = map.Insert(definition, newBinding, GroupTypeIdFor(row.ParameterGroup));
+                ForgeTypeId groupTypeId = (row.TargetGroup ?? RevitGroupOption.Default).GroupTypeId;
+                bool inserted = map.Insert(definition, newBinding, groupTypeId);
 
                 if (!inserted)
                 {
                     // Insert returns false if a binding already exists for this definition —
                     // fall back to ReInsert to extend categories on the existing binding.
-                    inserted = map.ReInsert(definition, newBinding, GroupTypeIdFor(row.ParameterGroup));
+                    inserted = map.ReInsert(definition, newBinding, groupTypeId);
                 }
 
                 if (!inserted)
@@ -170,7 +171,7 @@ namespace Revit26_Plugin.ParaManager.V003.Services
 
                 row.BindingTypeDisplay = binding.ToString();
                 return new RowResult(row, RowOutcome.Assigned,
-                    $"'{row.ParameterName}' bound to {row.CategoryDisplay} as {binding}.");
+                    $"'{row.ParameterName}' bound to {row.CategoryDisplay} as {binding} (group: {(row.TargetGroup ?? RevitGroupOption.Default).Name}).");
             }
             catch (Exception ex)
             {
@@ -205,34 +206,6 @@ namespace Revit26_Plugin.ParaManager.V003.Services
                 }
             }
             return null;
-        }
-
-        /// <summary>
-        /// Revit 2026 API uses ForgeTypeId-based parameter groups (GroupTypeId.*) rather than
-        /// the legacy BuiltInParameterGroup enum. Maps our file's group name to the closest
-        /// standard GroupTypeId, defaulting to GroupTypeId.Data when no match is found.
-        /// FLAGGED ASSUMPTION: this mapping is heuristic (string match) — if your shared
-        /// parameter file's group names don't match Revit's standard group names exactly,
-        /// some parameters may land in "Data" instead of their intended group. Confirm this
-        /// is acceptable, or provide an explicit name→GroupTypeId mapping table.
-        /// </summary>
-        private ForgeTypeId GroupTypeIdFor(string groupName)
-        {
-            return groupName?.Trim().ToLowerInvariant() switch
-            {
-                "text" => GroupTypeId.Text,
-                "dimensions" => GroupTypeId.Geometry,
-                "identity data" => GroupTypeId.IdentityData,
-                "general" => GroupTypeId.General,
-                "graphics" => GroupTypeId.Graphics,
-                "materials and finishes" => GroupTypeId.Materials,
-                "construction" => GroupTypeId.Construction,
-                "structural" => GroupTypeId.Structural,
-                "mechanical" => GroupTypeId.Mechanical,
-                "electrical" => GroupTypeId.Electrical,
-                "energy analysis" => GroupTypeId.EnergyAnalysis,
-                _ => GroupTypeId.Data
-            };
         }
     }
 }

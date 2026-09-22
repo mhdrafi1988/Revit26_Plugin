@@ -34,10 +34,17 @@ namespace Revit26_Plugin.ParaManager.V003.Models
         [ObservableProperty]
         private string _bindingTypeDisplay = string.Empty;
 
+        /// <summary>Properties-palette group this parameter is bound under in Revit.
+        /// Starts as the auto-mapped value from the file's group name; editable per row
+        /// (grid combo) or in bulk (Apply to Selected).</summary>
+        [ObservableProperty]
+        private RevitGroupOption _targetGroup;
+
         public ParameterAssignmentRow(SharedParameterInfo parameter, List<CategoryInfo> categories)
         {
             Parameter = parameter;
             Categories = categories;
+            _targetGroup = RevitGroupOption.FromFileGroupName(parameter.ParameterGroup);
         }
     }
 }
