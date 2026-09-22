@@ -37,9 +37,23 @@ namespace Revit26_Plugin.Menu.Ribbon
             };
             var sheetPlacerPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_SmartViewToSheetPlacer", "Sheet Placer", sheetPlacerV222);
 
+            // Automated Section Placer V001: new standalone tool (not a new
+            // SmartViewToSheetPlacer version) — detects section views visible
+            // on the active Plan View and runs them through the same
+            // packing/placement pipeline. Single version so far, no pulldown
+            // needed — same single-button pattern as CombinedRoofTools_V001.
+            var autoSectionPlacerV001 = new PushButtonData("Btn_AutomatedSectionPlacer_V001", "Auto Section Placer", assemblyPath, "Revit26_Plugin.AutomatedSectionPlacer.V001.AutomatedSectionPlacerCommand")
+            {
+                // TODO: swap for a dedicated icon — temporarily reusing the
+                // Sheet Placer icon so the button isn't blank.
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SmartViewToSheetPlacer_V222_16.png"),
+                ToolTip = RibbonLayoutHelper.VersionTip("Automated Section Placer", "V001",
+                    "Detects section views visible on the active Plan View and places them onto new or existing sheets")
+            };
+
             // Pulldown buttons can share a stack, so both tools now sit
             // together in one 2-item stack instead of two lone buttons.
-            var sheetCreateItems = RibbonLayoutHelper.AddStackedButtons(createPanel, new List<RibbonItemData> { scopeBoxPulldownData, sheetPlacerPulldownData });
+            var sheetCreateItems = RibbonLayoutHelper.AddStackedButtons(createPanel, new List<RibbonItemData> { scopeBoxPulldownData, sheetPlacerPulldownData, autoSectionPlacerV001 });
             RibbonLayoutHelper.WirePulldownButton(sheetCreateItems, "Pulldown_PlanFromScopeBox", scopeBoxV004, scopeBoxV003);
             RibbonLayoutHelper.WirePulldownButton(sheetCreateItems, "Pulldown_SmartViewToSheetPlacer", sheetPlacerV222, sheetPlacerV221);
 
