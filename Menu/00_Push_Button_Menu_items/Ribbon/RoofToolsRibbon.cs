@@ -147,21 +147,29 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             // Compare
             RibbonPanel comparePanel = app.CreateRibbonPanel(tabName, "Compare");
-            RibbonLayoutHelper.AddStackedButtons(comparePanel, new List<RibbonItemData>
+
+            var elevationSyncV003 = new PushButtonData("Btn_RoofPointElevationSync_V003", "Elevation Sync V003", assemblyPath, "Revit26_Plugin.RoofPointElevationSync.V003.Command")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.ElevationSync_16.png"),
+                ToolTip = RibbonLayoutHelper.VersionTip("Roof Point Elevation Sync", "V003")
+            };
+            var elevationSyncV002 = new PushButtonData("Btn_RoofPointElevationSync_V002", "Elevation Sync V002", assemblyPath, "Revit26_Plugin.RoofPointElevationSync.V002.Command")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.ElevationSync_16.png"),
+                ToolTip = RibbonLayoutHelper.VersionTip("Roof Point Elevation Sync", "V002")
+            };
+            var elevationSyncPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofPointElevationSync", "Elevation Sync", elevationSyncV003);
+
+            var compareItems = RibbonLayoutHelper.AddStackedButtons(comparePanel, new List<RibbonItemData>
             {
                 new PushButtonData("Btn_RoofPointComparison_V001", "Comparison", assemblyPath, "Revit26_Plugin.RoofPointComparison.V001.Commands.RoofComparisonCommand")
                 {
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.PointComparison_16.png"),
                     ToolTip = RibbonLayoutHelper.VersionTip("Roof Point Comparison", "V001")
                 },
-                // Button id says V001 but the command it launches is the V002
-                // build (CompareRoofs_V002) — the tooltip shows the real version.
-                new PushButtonData("Btn_RoofPointElevationSync_V001", "Elevation Sync", assemblyPath, "Revit26_Plugin.RoofPointElevationSync.V002.Command")
-                {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.ElevationSync_16.png"),
-                    ToolTip = RibbonLayoutHelper.VersionTip("Roof Point Elevation Sync", "V002")
-                },
+                elevationSyncPulldownData,
             });
+            RibbonLayoutHelper.WirePulldownButton(compareItems, "Pulldown_RoofPointElevationSync", elevationSyncV003, elevationSyncV002);
         }
     }
 }
