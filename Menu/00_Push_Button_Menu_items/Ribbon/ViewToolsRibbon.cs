@@ -35,8 +35,20 @@ namespace Revit26_Plugin.Menu.Ribbon
             };
             var edgeElementPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofEdgeElementSections", "Edge Element", edgeElementV002);
 
-            // Pulldown buttons, unlike split buttons, are fine in a 3-item
-            // stack — so this is one call instead of a stack-of-2 + lone item.
+            var roofViewFocusV002 = new PushButtonData("Btn_RoofViewFocus_V002", "Roof View Focus V002", assemblyPath, "Revit26_Plugin.RoofViewFocus.V002.Commands.RoofViewFocusCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofViewFocus_16.png"),
+                ToolTip = RibbonLayoutHelper.VersionTip("Roof View Focus", "V002", "Crops the active plan view to the selected roofs.")
+            };
+            var roofViewFocusV001 = new PushButtonData("Btn_RoofViewFocus_V001", "Roof View Focus V001", assemblyPath, "Revit26_Plugin.RoofViewFocus.V001.Commands.RoofViewFocusCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofViewFocus_16.png"),
+                ToolTip = RibbonLayoutHelper.VersionTip("Roof View Focus", "V001", "Crops the active plan view to the selected roofs.")
+            };
+            var roofViewFocusPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofViewFocus", "Roof View Focus", roofViewFocusV002);
+
+            // Pulldown buttons, unlike split buttons, are fine in a 4-item
+            // stack — so this is one call instead of a stack-of-2 + stack-of-2.
             var createItems = RibbonLayoutHelper.AddStackedButtons(createPanel, new List<RibbonItemData>
             {
                 new PushButtonData("Btn_ Sections From Detail Lines V11", "Sections From Lines", assemblyPath, "Revit26_Plugin.CreateSections.V011.Commands.CreateSectionsFromDetailLines")
@@ -46,20 +58,11 @@ namespace Revit26_Plugin.Menu.Ribbon
                 },
                 edgeAroundPulldownData,
                 edgeElementPulldownData,
-            });
-            // Fourth item leaves a lone full-size button, so it carries the 32px
-            // icon as its LargeImage rather than an upscaled 16px one.
-            RibbonLayoutHelper.AddStackedButtons(createPanel, new List<RibbonItemData>
-            {
-                new PushButtonData("Btn_RoofViewFocus_V001", "Roof View Focus", assemblyPath, "Revit26_Plugin.RoofViewFocus.V001.Commands.RoofViewFocusCommand")
-                {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofViewFocus_16.png"),
-                    LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofViewFocus_32.png"),
-                    ToolTip = RibbonLayoutHelper.VersionTip("Roof View Focus", "V001", "Crops the active plan view to the selected roofs.")
-                },
+                roofViewFocusPulldownData,
             });
             RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeAroundSections", edgeAroundV005);
             RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeElementSections", edgeElementV002, edgeElementV001);
+            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofViewFocus", roofViewFocusV002, roofViewFocusV001);
 
             RibbonPanel placePanel = app.CreateRibbonPanel(tabName, "View Place");
             RibbonLayoutHelper.AddStackedButtons(placePanel, new List<RibbonItemData>
