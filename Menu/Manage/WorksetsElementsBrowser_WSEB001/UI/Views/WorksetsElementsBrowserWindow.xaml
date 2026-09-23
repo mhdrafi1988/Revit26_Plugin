@@ -21,6 +21,7 @@
             <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
             <converters:IntToVisibilityConverter x:Key="IntToVisibilityConverter"/>
             <local:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+            <local:KindToTypeVisibilityConverter x:Key="KindToTypeVisibilityConverter"/>
 
             <!-- Recursive template: a workset/category/type row plus its children. -->
             <HierarchicalDataTemplate DataType="{x:Type vm:TreeNodeViewModel}" ItemsSource="{Binding Children}">
@@ -71,6 +72,15 @@
                                    FontSize="11"
                                    Foreground="{StaticResource BrushTextTertiary}"
                                    Visibility="{Binding Owner, Converter={StaticResource StringToVisibilityConverter}, FallbackValue=Collapsed}"/>
+
+                        <!-- Explicit per-row action, in addition to clicking the (easy to miss) name text. -->
+                        <Button Content="Show in 3D"
+                                Margin="10,0,0,0"
+                                Padding="6,1"
+                                FontSize="10.5"
+                                Style="{StaticResource SmallSecondaryButton}"
+                                Click="ShowTypeIn3D_Click"
+                                Visibility="{Binding Kind, Converter={StaticResource KindToTypeVisibilityConverter}, FallbackValue=Collapsed}"/>
                     </StackPanel>
                 </Border>
             </HierarchicalDataTemplate>
@@ -140,7 +150,8 @@
             <StackPanel Grid.Column="0" Orientation="Horizontal">
                 <Button Content="Isolate Checked" Style="{StaticResource SecondaryButton}" Command="{Binding IsolateCheckedCommand}"/>
                 <Button Content="Select Checked" Margin="8,0,0,0" Style="{StaticResource SecondaryButton}" Command="{Binding SelectCheckedCommand}"/>
-                <Button Content="Isolate + Select Checked" Margin="8,0,0,0" Style="{StaticResource PrimaryButton}" Command="{Binding IsolateAndSelectCheckedCommand}"/>
+                <Button Content="Isolate + Select Checked" Margin="8,0,0,0" Style="{StaticResource SecondaryButton}" Command="{Binding IsolateAndSelectCheckedCommand}"/>
+                <Button Content="Show Checked in 3D" Margin="8,0,0,0" Style="{StaticResource PrimaryButton}" Command="{Binding ShowCheckedIn3DCommand}"/>
             </StackPanel>
             <Button Grid.Column="1" Content="Close" Style="{StaticResource SecondaryButton}" Command="{Binding CloseCommand}"/>
         </Grid>
