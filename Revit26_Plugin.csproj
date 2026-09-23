@@ -718,6 +718,8 @@
 	  <None Remove="Resources\Icons\FloorTools\FloorRoofFromRoomsPlanView_16.png" />
 	  <None Remove="Resources\Icons\Manage\AnnotationOverlapDetection_16.png" />
 	  <None Remove="Resources\Icons\Manage\ParaManager_16.png" />
+	  <None Remove="Resources\Icons\Manage\WorksetsElementsBrowser_16.png" />
+	  <None Remove="Resources\Icons\Manage\WorksetsElementsBrowser_32.png" />
 	  <None Remove="Resources\Icons\RoofTools\AutoSlopeByDrain_MultiRoof_16.png" />
 	  <None Remove="Resources\Icons\RoofTools\AutoSlopeByPoint_KdTree_16.png" />
 	  <None Remove="Resources\Icons\RoofTools\AutoSlopeByPoint_Ridge_16.png" />
@@ -826,6 +828,8 @@
 	  <EmbeddedResource Include="Resources\Icons\FloorTools\FloorRoofFromRoomsPlanView_16.png" />
 	  <EmbeddedResource Include="Resources\Icons\Manage\AnnotationOverlapDetection_16.png" />
 	  <EmbeddedResource Include="Resources\Icons\Manage\ParaManager_16.png" />
+	  <EmbeddedResource Include="Resources\Icons\Manage\WorksetsElementsBrowser_16.png" />
+	  <EmbeddedResource Include="Resources\Icons\Manage\WorksetsElementsBrowser_32.png" />
 	  <EmbeddedResource Include="Resources\Icons\RoofTools\AutoSlopeByDrain_MultiRoof_16.png" />
 	  <EmbeddedResource Include="Resources\Icons\RoofTools\AutoSlopeByPoint_KdTree_16.png" />
 	  <EmbeddedResource Include="Resources\Icons\RoofTools\AutoSlopeByPoint_Ridge_16.png" />
