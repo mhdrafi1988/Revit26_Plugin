@@ -55,13 +55,24 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB001.UI.ViewModels
         // ─────────────────────────────────────────────────────────────
         // Load
         // ─────────────────────────────────────────────────────────────
-        private void RunLoadTree()
+
+        /// <summary>
+        /// Single choke point for every Raise() in this ViewModel. Guards
+        /// against a second request starting while one is still in flight
+        /// (e.g. a double-click on an action button) — without this, the
+        /// second call would overwrite _handler's input properties and
+        /// _pendingCompletion out from under the first request.
+        /// </summary>
+        private void RaiseRequest(WorksetsElementsBrowserRequest request, Action onCompleted)
         {
+            if (IsBusy) return;
             IsBusy = true;
-            _handler.Request = WorksetsElementsBrowserRequest.LoadTree;
-            _pendingCompletion = HandleLoadTreeCompleted;
+            _handler.Request = request;
+            _pendingCompletion = onCompleted;
             _event.Raise();
         }
+
+        private void RunLoadTree() => RaiseRequest(WorksetsElementsBrowserRequest.LoadTree, HandleLoadTreeCompleted);
 
         private void HandleLoadTreeCompleted()
         {
@@ -184,6 +195,10 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB001.UI.ViewModels
         [RelayCommand]
         private void IsolateAndSelectChecked() => RunCheckedAction(ElementActionMode.IsolateAndSelect);
 
+        /// <summary>The dedicated toolbar action requested alongside the three checked-rows buttons — always Isolate + Select, the "just show me everything checked" one-click case.</summary>
+        [RelayCommand]
+        private void ShowCheckedIn3D() => RunCheckedAction(ElementActionMode.IsolateAndSelect);
+
         private void RunCheckedAction(ElementActionMode mode)
         {
             var ids = CollectCheckedElementIds();
@@ -193,61 +208,55 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB001.UI.ViewModels
                     "Worksets & Elements Browser", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
-            PromptForViewAndApply($"Show all {ids.Count:N0} checked element(s) in a 3D view?", ids, mode);
+            ShowInThreeD($"Show all {ids.Count:N0} checked element(s) in a 3D view?", ids, mode);
         }
 
-        /// <summary>Invoked from the View's code-behind when the user clicks a Type row directly.</summary>
+        /// <summary>Invoked from the View's code-behind when the user clicks a Type row's name, or its dedicated "Show in 3D" button.</summary>
         public void OnTypeRowClicked(TreeNodeViewModel typeNode)
         {
             if (typeNode.Kind != ElementTreeNodeKind.Type) return;
 
-            var result = MessageBox.Show(
-                $"Show all {typeNode.ElementIds.Count:N0} elements of \"{typeNode.Name}\" in a 3D view?",
-                "Worksets & Elements Browser", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            string prompt = $"Show all {typeNode.ElementIds.Count:N0} elements of \"{typeNode.Name}\" in a 3D view?";
+            var result = MessageBox.Show(prompt, "Worksets & Elements Browser", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result != MessageBoxResult.Yes) return;
 
-            PromptForViewAndApply(
-                $"Show all {typeNode.ElementIds.Count:N0} elements of \"{typeNode.Name}\" in a 3D view?",
-                typeNode.ElementIds.ToList(),
-                ElementActionMode.IsolateAndSelect);
+            ShowInThreeD(prompt, typeNode.ElementIds.ToList(), ElementActionMode.IsolateAndSelect);
         }
 
-        private void PromptForViewAndApply(string prompt, List<ElementId> ids, ElementActionMode mode)
+        /// <summary>
+        /// Loads the model's 3D views, lets the user pick one, then applies
+        /// Isolate/Select/Both to it. Two Revit-API round trips chained
+        /// through RaiseRequest — never call ExternalEvent.Raise() directly
+        /// from inside a completion callback (see OnHandlerRequestCompleted).
+        /// </summary>
+        private void ShowInThreeD(string prompt, List<ElementId> ids, ElementActionMode mode)
         {
-            IsBusy = true;
-            _handler.Request = WorksetsElementsBrowserRequest.LoadViews;
-            _pendingCompletion = () => HandleLoadViewsCompleted(prompt, ids, mode);
-            _event.Raise();
-        }
-
-        private void HandleLoadViewsCompleted(string prompt, List<ElementId> ids, ElementActionMode mode)
-        {
-            if (!_handler.LastRunSucceeded)
+            RaiseRequest(WorksetsElementsBrowserRequest.LoadViews, () =>
             {
-                MessageBox.Show($"Could not load 3D views: {_handler.ErrorMessage}",
-                    "Worksets & Elements Browser", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
+                if (!_handler.LastRunSucceeded)
+                {
+                    MessageBox.Show($"Could not load 3D views: {_handler.ErrorMessage}",
+                        "Worksets & Elements Browser", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
 
-            if (_handler.LoadedViews.Count == 0)
-            {
-                MessageBox.Show("This model has no 3D views to show elements in.",
-                    "Worksets & Elements Browser", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
+                if (_handler.LoadedViews.Count == 0)
+                {
+                    MessageBox.Show("This model has no 3D views to show elements in.",
+                        "Worksets & Elements Browser", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
 
-            var picker = new View3DPickerWindow { Owner = Application.Current?.MainWindow };
-            picker.Initialize(prompt, _handler.LoadedViews);
-            bool? dialogResult = picker.ShowDialog();
-            if (dialogResult != true || picker.SelectedView == null) return;
+                var picker = new View3DPickerWindow { Owner = Application.Current?.MainWindow };
+                picker.Initialize(prompt, _handler.LoadedViews);
+                bool? dialogResult = picker.ShowDialog();
+                if (dialogResult != true || picker.SelectedView == null) return;
 
-            IsBusy = true;
-            _handler.ActionElementIds = ids;
-            _handler.TargetViewId = picker.SelectedView.ViewId;
-            _handler.ActionMode = mode;
-            _handler.Request = WorksetsElementsBrowserRequest.ApplyAction;
-            _pendingCompletion = HandleApplyActionCompleted;
-            _event.Raise();
+                _handler.ActionElementIds = ids;
+                _handler.TargetViewId = picker.SelectedView.ViewId;
+                _handler.ActionMode = mode;
+                RaiseRequest(WorksetsElementsBrowserRequest.ApplyAction, HandleApplyActionCompleted);
+            });
         }
 
         private void HandleApplyActionCompleted()
@@ -268,15 +277,27 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB001.UI.ViewModels
 
         public event Action CloseRequested;
 
+        /// <summary>
+        /// Fires from inside the handler's own Execute(UIApplication), on
+        /// Revit's UI thread but still nested in that call stack — Revit
+        /// denies/ignores ExternalEvent.Raise() called reentrantly like that,
+        /// and a modal ShowDialog() opened from the same nested frame is
+        /// unreliable too. BeginInvoke (not Invoke) defers the continuation
+        /// — including any chained Raise() for a follow-up request and any
+        /// ShowDialog() — to run only after Execute() has fully returned and
+        /// control is back with Revit's own message loop. Without this, the
+        /// LoadViews -> pick a view -> ApplyAction chain silently did
+        /// nothing: views never populated and isolate/select never ran.
+        /// </summary>
         private void OnHandlerRequestCompleted()
         {
-            _dispatcher.Invoke(() =>
+            _dispatcher.BeginInvoke(new Action(() =>
             {
                 IsBusy = false;
                 var completion = _pendingCompletion;
                 _pendingCompletion = null;
                 completion?.Invoke();
-            });
+            }));
         }
 
         public void Dispose()

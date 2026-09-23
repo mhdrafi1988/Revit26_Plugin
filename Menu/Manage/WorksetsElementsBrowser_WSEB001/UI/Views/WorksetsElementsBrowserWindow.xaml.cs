@@ -29,6 +29,16 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB001.UI.Views
             e.Handled = true;
         }
 
+        private void ShowTypeIn3D_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not FrameworkElement element) return;
+            if (element.DataContext is not TreeNodeViewModel node) return;
+            if (node.Kind != ElementTreeNodeKind.Type) return;
+
+            (DataContext as WorksetsElementsBrowserViewModel)?.OnTypeRowClicked(node);
+            e.Handled = true;
+        }
+
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             (DataContext as WorksetsElementsBrowserViewModel)?.Dispose();
