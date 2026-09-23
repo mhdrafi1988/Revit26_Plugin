@@ -1,0 +1,307 @@
+<Window x:Class="Revit26_Plugin.WorksetRenamer.FX03.Views.WorksetRenamerFxView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:Revit26_Plugin.WorksetRenamer.FX03.ViewModels"
+        Title="Workset Renamer — From Excel (FX03)"
+        Width="920" Height="660"
+        MinWidth="760" MinHeight="520"
+        WindowStartupLocation="CenterScreen"
+        AllowDrop="True"
+        Background="{DynamicResource BrushSystemSecondaryBackground}"
+        FontFamily="{DynamicResource SystemFont}">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Revit26_Plugin;component/Shared/SharedStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <vm:RowStatusToBrushConverter x:Key="RowStatusToBrush"/>
+            <vm:RowKindToBrushConverter x:Key="RowKindToBrush"/>
+            <vm:DuplicateWarningToBrushConverter x:Key="DuplicateWarningToBrush"/>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ══ Header ══════════════════════════════════════════════ -->
+        <Border Grid.Row="0" Style="{StaticResource AppIdentityCard}" Margin="0,0,0,8">
+            <StackPanel>
+                <TextBlock Text="Workset Renamer — From Excel" Style="{StaticResource AppName}"/>
+                <TextBlock Text="Load an Old Name / New Name mapping, review the dry run, then Update."
+                           Style="{StaticResource AppSubtitle}"/>
+            </StackPanel>
+        </Border>
+
+        <!-- ══ File input ══════════════════════════════════════════ -->
+        <Border Grid.Row="1" Style="{StaticResource ContentCard}" Margin="0,0,0,8"
+                Drop="Window_Drop" AllowDrop="True">
+            <Grid Margin="10,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                    <TextBlock FontSize="12">
+                        <Run Text="File: "/>
+                        <Run Text="{Binding ExcelFileName}" FontWeight="SemiBold" Foreground="{StaticResource BrushAppleBlue}"/>
+                    </TextBlock>
+                    <TextBlock Text="Drag &amp; drop an .xlsx file here, or click Browse. Column A = Old Name, Column B = New Name."
+                               Style="{StaticResource AppSubtitle}" FontSize="10" Margin="0,2,0,0"/>
+                </StackPanel>
+                <Button Grid.Column="1" Content="Browse..."
+                        Style="{StaticResource SecondaryButton}"
+                        Command="{Binding BrowseExcelCommand}"/>
+            </Grid>
+        </Border>
+
+        <!-- ══ Metric cards ════════════════════════════════════════ -->
+        <UniformGrid Grid.Row="2" Rows="1" Columns="6" Margin="0,0,0,8">
+            <Border Style="{StaticResource ContentCard}" Margin="0,0,4,0" BorderThickness="0,0,0,3" BorderBrush="{StaticResource BrushAppleBlue}">
+                <StackPanel Margin="8,6">
+                    <TextBlock Text="{Binding TotalRowsRead}" FontSize="20" FontWeight="Bold" Foreground="{StaticResource BrushTextPrimary}"/>
+                    <TextBlock Text="TOTAL ROWS" FontSize="9" Foreground="{StaticResource BrushTextSecondary}"/>
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource ContentCard}" Margin="4,0" BorderThickness="0,0,0,3" BorderBrush="#34C759">
+                <StackPanel Margin="8,6">
+                    <TextBlock Text="{Binding OkCount}" FontSize="20" FontWeight="Bold" Foreground="#1E7E1E"/>
+                    <TextBlock Text="OK TO RENAME" FontSize="9" Foreground="{StaticResource BrushTextSecondary}"/>
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource ContentCard}" Margin="4,0" BorderThickness="0,0,0,3" BorderBrush="#C98A00">
+                <StackPanel Margin="8,6">
+                    <TextBlock Text="{Binding DuplicateCount}" FontSize="20" FontWeight="Bold" Foreground="#A06A00"/>
+                    <TextBlock Text="DUPLICATE (AUTO)" FontSize="9" Foreground="{StaticResource BrushTextSecondary}"/>
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource ContentCard}" Margin="4,0" BorderThickness="0,0,0,3" BorderBrush="#999999">
+                <StackPanel Margin="8,6">
+                    <TextBlock Text="{Binding NoMatchCount}" FontSize="20" FontWeight="Bold" Foreground="#777777"/>
+                    <TextBlock Text="NO MATCH" FontSize="9" Foreground="{StaticResource BrushTextSecondary}"/>
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource ContentCard}" Margin="4,0" BorderThickness="0,0,0,3" BorderBrush="#B23B3B">
+                <StackPanel Margin="8,6">
+                    <TextBlock Text="{Binding InvalidCount}" FontSize="20" FontWeight="Bold" Foreground="#B23B3B"/>
+                    <TextBlock Text="BLANK / INVALID" FontSize="9" Foreground="{StaticResource BrushTextSecondary}"/>
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource ContentCard}" Margin="4,0,0,0" BorderThickness="0,0,0,3" BorderBrush="#2D7A5F">
+                <StackPanel Margin="8,6">
+                    <TextBlock Text="{Binding NewWorksetCount}" FontSize="20" FontWeight="Bold" Foreground="#1E7A52"/>
+                    <TextBlock Text="NEW WORKSETS" FontSize="9" Foreground="{StaticResource BrushTextSecondary}"/>
+                </StackPanel>
+            </Border>
+        </UniformGrid>
+
+        <!-- ══ Create-new-for-unmatched option ═════════════════════ -->
+        <Border Grid.Row="3" Style="{StaticResource ContentCard}" Margin="0,0,0,8" Background="#F2FAF6">
+            <StackPanel Orientation="Horizontal" Margin="10,6">
+                <CheckBox IsChecked="{Binding CreateNewForUnmatched, Mode=TwoWay}" VerticalAlignment="Center"/>
+                <TextBlock Margin="8,0,0,0" VerticalAlignment="Center" FontSize="11.5" TextWrapping="Wrap">
+                    <Run Text="Create new worksets" FontWeight="SemiBold"/>
+                    <Run Text=" for Excel rows whose Old Name has no match in the model"/>
+                </TextBlock>
+                <TextBlock Margin="8,0,0,0" VerticalAlignment="Center" FontSize="10"
+                           Foreground="{StaticResource BrushTextSecondary}"
+                           Text="(uses the row's New Name; unchecked = those rows are skipped)"/>
+            </StackPanel>
+        </Border>
+
+        <!-- ══ Toolbar ═════════════════════════════════════════════ -->
+        <Grid Grid.Row="4" Margin="0,0,0,8">
+            <Button Content="↻ Re-run Dry Run" HorizontalAlignment="Left"
+                    Style="{StaticResource SmallSecondaryButton}"
+                    Command="{Binding RerunDryRunCommand}"/>
+        </Grid>
+
+        <!-- ══ DataGrid ════════════════════════════════════════════ -->
+        <Border Grid.Row="5" Style="{StaticResource ContentCard}">
+            <DataGrid ItemsSource="{Binding Rows}"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      CanUserReorderColumns="False"
+                      CanUserResizeRows="False"
+                      SelectionMode="Extended"
+                      SelectionUnit="FullRow"
+                      GridLinesVisibility="Horizontal"
+                      HorizontalGridLinesBrush="{StaticResource BrushSeparatorThin}"
+                      AlternationCount="2"
+                      RowStyle="{StaticResource DataGridRowStyle}"
+                      CellStyle="{StaticResource DataGridCellStyle}"
+                      ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
+                      Background="{StaticResource BrushSystemBackground}"
+                      BorderThickness="0"
+                      RowHeight="30">
+
+                <DataGrid.Columns>
+
+                    <!-- ☑ Select -->
+                    <DataGridTemplateColumn Header="☑" Width="36" CanUserSort="False">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          IsEnabled="{Binding IsActionable}"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <!-- Kind icon -->
+                    <DataGridTemplateColumn Header="" Width="26" CanUserSort="False">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"
+                                           Foreground="{Binding Kind, Converter={StaticResource RowKindToBrush}}">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Text" Value="?"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Kind}" Value="Rename">
+                                                    <Setter Property="Text" Value="●"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Kind}" Value="CreateNew">
+                                                    <Setter Property="Text" Value="+"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Kind}" Value="Unmatched">
+                                                    <Setter Property="Text" Value="–"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Kind}" Value="Invalid">
+                                                    <Setter Property="Text" Value="✕"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <!-- Old Name (read-only) -->
+                    <DataGridTextColumn Header="Old Name / Current Workset"
+                                        Binding="{Binding OldName, Mode=OneWay}"
+                                        Width="*"
+                                        IsReadOnly="True">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}"/>
+                                <Setter Property="FontSize" Value="11"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <!-- New Name (editable — manual edit option) -->
+                    <DataGridTextColumn Header="New Name"
+                                        Binding="{Binding NewName, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                        Width="*"
+                                        IsReadOnly="False">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="Foreground" Value="{StaticResource BrushAppleBlue}"/>
+                                <Setter Property="FontSize" Value="11"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsDuplicateWarning}" Value="True">
+                                        <Setter Property="Foreground" Value="#A06A00"/>
+                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Kind}" Value="Unmatched">
+                                        <Setter Property="Foreground" Value="{StaticResource BrushTextTertiary}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                        <DataGridTextColumn.EditingElementStyle>
+                            <Style TargetType="TextBox">
+                                <Setter Property="FontSize" Value="11"/>
+                                <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}"/>
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                <Setter Property="IsEnabled" Value="{Binding IsActionable}"/>
+                            </Style>
+                        </DataGridTextColumn.EditingElementStyle>
+                    </DataGridTextColumn>
+
+                    <!-- Status -->
+                    <DataGridTemplateColumn Header="Status" Width="150" CanUserSort="False">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Ellipse Width="6" Height="6" Margin="0,0,5,0"
+                                             VerticalAlignment="Center"
+                                             Fill="{Binding Status, Converter={StaticResource RowStatusToBrush}}"/>
+                                    <TextBlock FontSize="10" VerticalAlignment="Center"
+                                               Foreground="{Binding Status, Converter={StaticResource RowStatusToBrush}}"
+                                               ToolTip="{Binding ErrorMessage}">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Text" Value="{Binding Status}"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Kind}" Value="Unmatched">
+                                                        <Setter Property="Text" Value="No match — unchanged"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Kind}" Value="CreateNew">
+                                                        <Setter Property="Text" Value="Will create new workset"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding IsDuplicateWarning}" Value="True">
+                                                        <Setter Property="Text" Value="Duplicate → auto-suffixed"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Kind}" Value="Invalid">
+                                                        <Setter Property="Text" Value="Invalid: new name empty"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <!-- ══ Footer buttons ══════════════════════════════════════ -->
+        <Grid Grid.Row="6" Margin="0,8,0,4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Content="Select All Valid"
+                    Style="{StaticResource SecondaryButton}"
+                    Command="{Binding SelectAllValidCommand}"
+                    Margin="0,0,6,0"/>
+            <Button Grid.Column="1" Content="Clear"
+                    Style="{StaticResource SecondaryButton}"
+                    Command="{Binding ClearAllCommand}"/>
+            <TextBlock Grid.Column="2" Text="⚠ Duplicates are re-checked at Update time, including manual edits."
+                       FontSize="10" Foreground="#A06A00" VerticalAlignment="Center" Margin="10,0"/>
+            <Button Grid.Column="3" Content="Update ▶"
+                    Style="{StaticResource PrimaryButton}"
+                    Command="{Binding UpdateCommand}"
+                    MinWidth="100"/>
+        </Grid>
+
+        <!-- ══ Status bar ══════════════════════════════════════════ -->
+        <TextBlock Grid.Row="7"
+                   Text="{Binding StatusMessage}"
+                   Style="{StaticResource StatusText}"
+                   Margin="2,0,0,2"/>
+    </Grid>
+</Window>
