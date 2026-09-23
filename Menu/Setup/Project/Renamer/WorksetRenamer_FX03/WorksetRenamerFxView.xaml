@@ -58,9 +58,16 @@
                     <TextBlock Text="Drag &amp; drop an .xlsx file here, or click Browse. Column A = Old Name, Column B = New Name."
                                Style="{StaticResource AppSubtitle}" FontSize="10" Margin="0,2,0,0"/>
                 </StackPanel>
-                <Button Grid.Column="1" Content="Browse..."
-                        Style="{StaticResource SecondaryButton}"
-                        Command="{Binding BrowseExcelCommand}"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="Export Worksets to Excel..."
+                            Style="{StaticResource SmallSecondaryButton}"
+                            ToolTip="Export the model's current worksets to an editable Old Name / New Name workbook"
+                            Command="{Binding ExportWorksetsCommand}"
+                            Margin="0,0,8,0"/>
+                    <Button Content="Browse..."
+                            Style="{StaticResource SecondaryButton}"
+                            Command="{Binding BrowseExcelCommand}"/>
+                </StackPanel>
             </Grid>
         </Border>
 
