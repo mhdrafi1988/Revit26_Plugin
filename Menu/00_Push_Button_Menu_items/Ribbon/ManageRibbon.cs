@@ -41,6 +41,12 @@ namespace Revit26_Plugin.Menu.Ribbon
                     ToolTip = RibbonLayoutHelper.VersionTip("Annotation Overlap Detection", "V002")
                 },
                 paraManagerPulldownData,
+                new PushButtonData("Btn_WorksetsElementsBrowser_WSEB001", "Worksets & Elements", assemblyPath, "Revit26_Plugin.WorksetsElementsBrowser.WSEB001.Commands.WorksetsElementsBrowserCommand")
+                {
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Manage.WorksetsElementsBrowser_16.png"),
+                    ToolTip = RibbonLayoutHelper.VersionTip("Worksets & Elements Browser", "WSEB001",
+                        "Browse worksets, categories and types in one checkbox tree; isolate or select checked elements in a chosen 3D view.")
+                },
             });
 
             RibbonLayoutHelper.WirePulldownButton(created, "Pulldown_ParaManager", paraManagerV003, paraManagerV002, paraManagerV001);
