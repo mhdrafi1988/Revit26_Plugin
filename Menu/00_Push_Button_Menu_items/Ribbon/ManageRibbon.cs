@@ -10,40 +10,22 @@ namespace Revit26_Plugin.Menu.Ribbon
         {
             RibbonPanel panel = app.CreateRibbonPanel(tabName, "Manage");
 
-            const string paraManagerDetail = "Bulk-assign shared parameters from a shared parameter file to categories, Instance or Type bound.";
-
-            var paraManagerV001 = new PushButtonData("Btn_ParaManager_V001", "ParaManager V001", assemblyPath, "Revit26_Plugin.ParaManager.V001.ParaManagerCommand")
-            {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Manage.ParaManager_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("ParaManager", "V001", paraManagerDetail)
-            };
-
-            var paraManagerV002 = new PushButtonData("Btn_ParaManager_V002", "ParaManager V002", assemblyPath, "Revit26_Plugin.ParaManager.V002.ParaManagerCommand")
-            {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Manage.ParaManager_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("ParaManager", "V002", paraManagerDetail)
-            };
-
-            var paraManagerV003 = new PushButtonData("Btn_ParaManager_V003", "ParaManager V003", assemblyPath, "Revit26_Plugin.ParaManager.V003.ParaManagerCommand")
+            var paraManagerV003 = new PushButtonData("Btn_ParaManager_V003", "ParaManager", assemblyPath, "Revit26_Plugin.ParaManager.V003.ParaManagerCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Manage.ParaManager_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("ParaManager", "V003",
                     "Bulk-assign shared parameters from a shared parameter file to categories, Instance or Type bound, via a guided step-by-step flow.")
             };
 
-            var paraManagerPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_ParaManager", "ParaManager", paraManagerV003);
-
-            var created = RibbonLayoutHelper.AddStackedButtons(panel, new List<RibbonItemData>
+            RibbonLayoutHelper.AddStackedButtons(panel, new List<RibbonItemData>
             {
                 new PushButtonData("Btn_AnnotationOverlapDetection_V002", "Overlap Detection", assemblyPath, "Revit26_Plugin.AnnotationOverlapDetection.V002.Command")
                 {
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Manage.AnnotationOverlapDetection_16.png"),
                     ToolTip = RibbonLayoutHelper.VersionTip("Annotation Overlap Detection", "V002")
                 },
-                paraManagerPulldownData,
+                paraManagerV003,
             });
-
-            RibbonLayoutHelper.WirePulldownButton(created, "Pulldown_ParaManager", paraManagerV003, paraManagerV002, paraManagerV001);
         }
     }
 }
