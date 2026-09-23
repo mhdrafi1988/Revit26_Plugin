@@ -143,6 +143,17 @@ public partial class ViewsListViewModel : ObservableObject
 
         BuildSheetFilters();
 
+        // Must exist before any property setter below can fire — several of the
+        // settings-driven assignments (StandardizeEnabled/-Case,
+        // CleanWhitespacePunctuation) trigger OnXxxChanged -> SchedulePreview(),
+        // which dereferences _previewTimer. A persisted settings value that
+        // differs from the field's compile-time default flips the property and
+        // fires that callback while still inside this constructor, so building
+        // the timer any later throws a NullReferenceException on every open
+        // once the user has saved a non-default value for one of these.
+        _previewTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(300) };
+        _previewTimer.Tick += (_, _) => { _previewTimer.Stop(); RunPreview(); };
+
         var settings = ViewAutoRenamerSettingsService.Load();
         BuildViewTypeFilterGroups(settings);
 
@@ -161,9 +172,6 @@ public partial class ViewsListViewModel : ObservableObject
                 : "All";
 
         RecalculateActiveFilterCount();
-
-        _previewTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(300) };
-        _previewTimer.Tick += (_, _) => { _previewTimer.Stop(); RunPreview(); };
 
         UpdateSelectedCount();
         RecalculateQuickFilterCounts();
