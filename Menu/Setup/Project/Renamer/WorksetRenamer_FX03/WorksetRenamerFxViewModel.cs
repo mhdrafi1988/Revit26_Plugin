@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Data;
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -19,6 +20,17 @@ namespace Revit26_Plugin.WorksetRenamer.FX03.ViewModels
         private bool _isRevalidating;
 
         public ObservableCollection<WorksetFxRowVM> Rows { get; } = new ObservableCollection<WorksetFxRowVM>();
+
+        // ── Grouped views over Rows — one per rename-possibility bucket, shown
+        // as its own expander. Each wraps the same underlying collection with a
+        // different filter, refreshed whenever Rows or a row's classification changes.
+        public ICollectionView OkRows { get; }
+        public ICollectionView DuplicateRows { get; }
+        public ICollectionView NewWorksetRows { get; }
+        public ICollectionView UnmatchedRows { get; }
+        public ICollectionView InvalidRows { get; }
+
+        private readonly ListCollectionView[] _groupViews;
 
         [ObservableProperty]
         private string excelFileName = string.Empty;
@@ -41,6 +53,25 @@ namespace Revit26_Plugin.WorksetRenamer.FX03.ViewModels
         public WorksetRenamerFxViewModel(Document doc)
         {
             _doc = doc;
+
+            var okView = new ListCollectionView(Rows) { Filter = r => ((WorksetFxRowVM)r).Kind == RowKind.Rename && !((WorksetFxRowVM)r).IsDuplicateWarning };
+            var dupView = new ListCollectionView(Rows) { Filter = r => ((WorksetFxRowVM)r).IsDuplicateWarning };
+            var newView = new ListCollectionView(Rows) { Filter = r => ((WorksetFxRowVM)r).Kind == RowKind.CreateNew && !((WorksetFxRowVM)r).IsDuplicateWarning };
+            var unmatchedView = new ListCollectionView(Rows) { Filter = r => ((WorksetFxRowVM)r).Kind == RowKind.Unmatched };
+            var invalidView = new ListCollectionView(Rows) { Filter = r => ((WorksetFxRowVM)r).Kind == RowKind.Invalid };
+
+            OkRows = okView;
+            DuplicateRows = dupView;
+            NewWorksetRows = newView;
+            UnmatchedRows = unmatchedView;
+            InvalidRows = invalidView;
+            _groupViews = new[] { okView, dupView, newView, unmatchedView, invalidView };
+        }
+
+        private void RefreshGroupViews()
+        {
+            foreach (var view in _groupViews)
+                view.Refresh();
         }
 
         // ══════════════════════════════════════════════════════════════
@@ -180,6 +211,7 @@ namespace Revit26_Plugin.WorksetRenamer.FX03.ViewModels
 
             RevalidateDuplicates();
             RecalculateMetrics();
+            RefreshGroupViews();
 
             StatusMessage = skippedUnmatched > 0
                 ? $"{skippedUnmatched} unmatched Excel row(s) skipped — enable \"Create new worksets\" to include them."
@@ -200,7 +232,10 @@ namespace Revit26_Plugin.WorksetRenamer.FX03.ViewModels
                 RevalidateDuplicates();
 
             if (e.PropertyName == nameof(WorksetFxRowVM.NewName) || e.PropertyName == nameof(WorksetFxRowVM.IsSelected))
+            {
                 RecalculateMetrics();
+                RefreshGroupViews();
+            }
         }
 
         // ══════════════════════════════════════════════════════════════
@@ -297,6 +332,7 @@ namespace Revit26_Plugin.WorksetRenamer.FX03.ViewModels
             _importedPairs.Clear();
             ExcelFileName = string.Empty;
             RecalculateMetrics();
+            RefreshGroupViews();
             StatusMessage = "Cleared. Load an Excel file to begin.";
         }
 
@@ -325,6 +361,8 @@ namespace Revit26_Plugin.WorksetRenamer.FX03.ViewModels
             // Final duplicate re-check right before the transaction — catches any
             // collision introduced by manual edits since the last dry run.
             RevalidateDuplicates();
+            RecalculateMetrics();
+            RefreshGroupViews();
             var stillColliding = FindRemainingCollisions(candidates);
             if (stillColliding.Any())
             {
