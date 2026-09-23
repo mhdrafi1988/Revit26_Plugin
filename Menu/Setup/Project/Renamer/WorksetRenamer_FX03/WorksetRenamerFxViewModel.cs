@@ -44,6 +44,54 @@ namespace Revit26_Plugin.WorksetRenamer.FX03.ViewModels
         }
 
         // ══════════════════════════════════════════════════════════════
+        // Export current worksets to Excel — a starter file the user can
+        // edit (New Name column) and re-import via Browse/drag-drop.
+        // ══════════════════════════════════════════════════════════════
+
+        [RelayCommand]
+        private void ExportWorksets()
+        {
+            var currentWorksets = new FilteredWorksetCollector(_doc)
+                .OfKind(WorksetKind.UserWorkset)
+                .Cast<Workset>()
+                .OrderBy(ws => ws.Name, StringComparer.OrdinalIgnoreCase)
+                .Select(ws => ws.Name)
+                .ToList();
+
+            if (!currentWorksets.Any())
+            {
+                MessageBox.Show("This model has no user worksets to export.", "Export Worksets",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var dlg = new SaveFileDialog
+            {
+                Title = "Export Worksets to Excel",
+                Filter = "Excel Files (*.xlsx)|*.xlsx",
+                FileName = "Worksets_Export.xlsx"
+            };
+            if (dlg.ShowDialog() != true) return;
+
+            try
+            {
+                ExcelMappingWriter.Write(dlg.FileName, currentWorksets);
+                StatusMessage = $"Exported {currentWorksets.Count} workset(s) to {Path.GetFileName(dlg.FileName)}";
+
+                var result = MessageBox.Show(
+                    $"Exported {currentWorksets.Count} workset(s) to:\n{dlg.FileName}\n\nEdit the New Name column, then load it back in now?",
+                    "Export Complete", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
+                    LoadExcelFile(dlg.FileName);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Could not write Excel file:\n{ex.Message}", "Export Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // ══════════════════════════════════════════════════════════════
         // Load Excel
         // ══════════════════════════════════════════════════════════════
 
