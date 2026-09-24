@@ -1,0 +1,205 @@
+<title>Reference Section Head Placer</title>
+<meta name="description" content="Showcase for the Reference Section Head Placer V013 Revit plugin — places section heads at linked-model elements mapped to drafting views, pulled from the real V013 source.">
+<style>
+:root{
+  --navy-950:#0a1728;--navy-900:#0e2036;--navy-800:#1e3a5f;--navy-700:#28496f;--navy-600:#345c86;
+  --line:#2c4666;--cyan:#33d1c9;--emerald:#3ddc97;--text:#e7eefb;--text-dim:#9fb3cc;--text-faint:#6e84a3;
+  --card:#132846;--card-alt:#0f2038;--warn:#f0b955;
+  --bg:var(--navy-950);--surface:var(--card);--surface-2:var(--card-alt);--ink:var(--text);--ink-dim:var(--text-dim);
+  --accent:var(--cyan);--accent-ink:var(--navy-950);--good:var(--emerald);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;padding-inline:20px;padding-block:32px 60px}
+.wrap{max-width:1020px;margin:0 auto}
+h1,h2,h3{font-family:"Sora",system-ui,sans-serif;font-weight:700;letter-spacing:-0.01em;text-wrap:balance;margin:0}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.hero{padding-block:8px 28px;border-bottom:1px solid var(--line);margin-bottom:28px}
+.hero h1{font-size:clamp(22px,5vw,36px);line-height:1.05;margin-top:10px}
+.hero p.lede{color:var(--ink-dim);font-size:16px;max-width:66ch;margin-top:14px;line-height:1.55}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.badge{border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:12px;color:var(--ink-dim);background:var(--surface)}
+section{margin-block:36px}
+section > h2{font-size:22px;margin-bottom:4px}
+section > .sub{color:var(--ink-dim);font-size:13.5px;margin-bottom:16px;max-width:64ch}
+
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px}
+.metric{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
+.metric .label{font-size:10px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.06em}
+.metric .val{font-family:"Sora",sans-serif;font-size:20px;margin-top:4px}
+.metric .val.accent{color:var(--accent)}
+.metric .val.good{color:var(--good)}
+.metric .val.warn{color:var(--warn)}
+
+.dialog{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.dialog-bar{background:var(--surface-2);padding:10px 16px;font-size:12px;color:var(--ink-dim);border-bottom:1px solid var(--line)}
+.dbody{padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:760px){.dbody{grid-template-columns:1fr}}
+.panel{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:12px;background:var(--bg)}
+.panel .t{font-family:"Sora";font-weight:700;font-size:11.5px;margin-bottom:8px;display:flex;justify-content:space-between}
+.panel .t .meta{font-weight:400;color:var(--ink-dim);font-size:10.5px}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field label{display:block;font-size:9.5px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.field .box{border:1px solid var(--line);border-radius:6px;padding:5px 8px;font-size:11.5px;background:var(--surface)}
+
+.qtable{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:10.5px;min-width:380px}
+th,td{padding:5px 8px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{background:var(--surface-2);font-size:9.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-dim)}
+
+.log{background:var(--navy-950);border-radius:8px;padding:10px 12px;font-family:"IBM Plex Mono",monospace;font-size:10.5px;line-height:1.9}
+.log .info{color:var(--cyan)}
+.log .ok{color:var(--emerald)}
+
+.btn{border-radius:8px;padding:8px 16px;font-size:12px;font-weight:600;border:1px solid var(--line);color:var(--ink-dim);display:inline-block}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+
+.matrix{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.mrow{display:grid;grid-template-columns:1.4fr 1fr 1fr;border-bottom:1px solid var(--line)}
+.mrow:last-child{border-bottom:none}
+.mrow > div{padding:10px 14px;font-size:12.5px;display:flex;align-items:center}
+.mrow.head > div{background:var(--surface-2);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-dim);font-weight:600}
+.tag-no{color:var(--warn)}
+.tag-yes{color:var(--good);font-weight:600}
+
+footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--line);color:var(--ink-dim);font-size:12px}
+footer .src{font-family:"IBM Plex Mono",monospace;font-size:11px;margin-top:6px}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="eyebrow">Revit26_Plugin · View Tools · Place</div>
+    <h1>Reference Section Head Placer</h1>
+    <p class="lede">Finds elements across linked models and host plan views, filters them by category and type, maps each type to a drafting view, and places a section head referencing that view — at every matching element, in one run.</p>
+    <div class="badges">
+      <span class="badge">V013</span>
+      <span class="badge">Revit 2026</span>
+      <span class="badge">Multi-link element scan</span>
+      <span class="badge">Type → drafting view mapping</span>
+    </div>
+  </div>
+
+  <section>
+    <div class="eyebrow">Source of truth</div>
+    <h2 style="margin-top:6px">Pulled from the real V013 source</h2>
+    <div class="sub">Menu/ViewTools/Place_01/RefSectionHeadPlacer_V013 — dialog fields from RefSectionHeadPlacerWindow.xaml. Run numbers below are illustrative example output.</div>
+  </section>
+
+  <section>
+    <h2>A run, at a glance</h2>
+    <div class="metrics">
+      <div class="metric"><div class="label">Elements</div><div class="val">64</div></div>
+      <div class="metric"><div class="label">Mapped</div><div class="val accent">58</div></div>
+      <div class="metric"><div class="label">Placed</div><div class="val good">55</div></div>
+      <div class="metric"><div class="label">Skipped</div><div class="val warn">3</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>The dialog</h2>
+    <div class="sub">Reconstructed from RefSectionHeadPlacerWindow.xaml — two-panel layout: setup on the left, element data and mapping on the right.</div>
+    <div class="dialog">
+      <div class="dialog-bar">Reference Section Head Placer — V013</div>
+      <div class="dbody">
+        <div>
+          <div class="panel">
+            <div class="t">Setup</div>
+            <div class="field-grid">
+              <div class="field"><label>Section type</label><div class="box">Detail Section</div></div>
+              <div class="field"><label>Tail length</label><div class="box">600 mm</div></div>
+              <div class="field"><label>Roof type</label><div class="box">2 selected</div></div>
+              <div class="field"><label>Boundary buffer</label><div class="box">500 mm</div></div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="t">Linked Files<span class="meta">2 of 3 selected</span></div>
+            <div class="qtable">
+              <table>
+                <tbody>
+                  <tr><td>☑</td><td>MEP-Mechanical-Link.rvt</td></tr>
+                  <tr><td>☑</td><td>ARCH-Structure-Link.rvt</td></tr>
+                  <tr><td>☐</td><td>SITE-Civil-Link.rvt</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="t">1 · Plan Views<span class="meta">4 selected</span></div>
+            <div class="qtable">
+              <table>
+                <thead><tr><th></th><th>View Name</th><th>Type</th><th>Level</th></tr></thead>
+                <tbody>
+                  <tr><td>☑</td><td>Level 2 - Roof Plan</td><td>Floor Plan</td><td>L2</td></tr>
+                  <tr><td>☑</td><td>Level 2 - Mech Plan</td><td>Floor Plan</td><td>L2</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="panel">
+            <div class="t">2 · Element Categories &amp; Types<span class="meta">64 elements</span></div>
+            <div class="qtable">
+              <table>
+                <thead><tr><th></th><th>Source</th><th>Category</th><th>Type</th><th>Count</th></tr></thead>
+                <tbody>
+                  <tr><td>☑</td><td>MEP-Link</td><td>Roof Drains</td><td>Standard</td><td>18</td></tr>
+                  <tr><td>☑</td><td>MEP-Link</td><td>Mech. Equip.</td><td>AHU — Rooftop</td><td>6</td></tr>
+                  <tr><td>☑</td><td>Host</td><td>Plumbing Fixtures</td><td>Wash Basin</td><td>12</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="t">3 · Map Type → Drafting View<span class="meta">from selected types</span></div>
+            <div class="qtable">
+              <table>
+                <thead><tr><th></th><th>File · Category · Type</th><th>Drafting View</th></tr></thead>
+                <tbody>
+                  <tr><td>☑</td><td>MEP-Link · Roof Drains · Standard</td><td>Detail — Roof Drain</td></tr>
+                  <tr><td>☑</td><td>MEP-Link · Mech. Equip. · AHU</td><td>Detail — AHU Curb</td></tr>
+                  <tr><td>☐</td><td>Host · Plumbing · Wash Basin</td><td style="color:var(--ink-dim)">— pick —</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="t">Activity Log</div>
+            <div class="log">
+              <div><span class="info">[INFO]</span> Scanned 2 linked files + host, 64 elements matched.</div>
+              <div><span class="ok">[OK]</span> 55 section heads placed, 3 skipped — unmapped type.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:0 16px 16px;display:flex;justify-content:flex-end;gap:8px">
+        <span class="btn">Close</span>
+        <span class="btn primary">Run</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Manual vs. Reference Section Head Placer</h2>
+    <div class="matrix">
+      <div class="mrow head"><div>Feature</div><div>Manual</div><div>Reference Section Head Placer</div></div>
+      <div class="mrow"><div>Finding elements across links</div><div class="tag-no">Open each link, search by eye</div><div class="tag-yes">Scanned automatically, categorized</div></div>
+      <div class="mrow"><div>Section head per element</div><div class="tag-no">Placed and oriented one at a time</div><div class="tag-yes">Whole batch, mapped types placed together</div></div>
+      <div class="mrow"><div>Drafting view reference</div><div class="tag-no">Set per instance, easy to miss</div><div class="tag-yes">One mapping per type, applied consistently</div></div>
+    </div>
+  </section>
+
+  <footer>
+    Built from the real RefSectionHeadPlacer_V013 source in Revit26_Plugin — dialog structure and field names are exact; run numbers above are illustrative example output.
+    <div class="src">Menu/ViewTools/Place_01/RefSectionHeadPlacer_V013</div>
+  </footer>
+
+</div>
