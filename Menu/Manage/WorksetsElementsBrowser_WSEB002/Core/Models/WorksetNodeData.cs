@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB001.Core.Models
+namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB002.Core.Models
 {
     /// <summary>Root of the tree: one user workset, holding its Categories.</summary>
     public class WorksetNodeData

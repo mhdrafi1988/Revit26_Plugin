@@ -1,9 +1,9 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
-using Revit26_Plugin.WorksetsElementsBrowser.WSEB001.UI.ViewModels;
+using Revit26_Plugin.WorksetsElementsBrowser.WSEB002.UI.ViewModels;
 
-namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB001.UI.Views
+namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB002.UI.Views
 {
     /// <summary>
     /// Code-behind is intentionally minimal — all behavior is driven by

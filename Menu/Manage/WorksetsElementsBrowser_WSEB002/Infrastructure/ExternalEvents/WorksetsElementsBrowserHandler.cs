@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.WorksetsElementsBrowser.WSEB001.Core.Models;
-using Revit26_Plugin.WorksetsElementsBrowser.WSEB001.Core.Services;
+using Revit26_Plugin.WorksetsElementsBrowser.WSEB002.Core.Models;
+using Revit26_Plugin.WorksetsElementsBrowser.WSEB002.Core.Services;
 
-namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB001.Infrastructure.ExternalEvents
+namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB002.Infrastructure.ExternalEvents
 {
     /// <summary>
     /// Requests this tool's orchestrator handler can execute, set by the
@@ -54,6 +54,7 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB001.Infrastructure.External
 
         public void Execute(UIApplication app)
         {
+            WsebDebugLog.Write($"Execute() entered, Request={Request}");
             ErrorMessage = string.Empty;
             try
             {
@@ -70,11 +71,13 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB001.Infrastructure.External
                         break;
                 }
                 LastRunSucceeded = true;
+                WsebDebugLog.Write($"Execute() finished OK, Request={Request}");
             }
             catch (Exception ex)
             {
                 LastRunSucceeded = false;
                 ErrorMessage = ex.Message;
+                WsebDebugLog.Write($"Execute() THREW, Request={Request}: {ex}");
             }
             finally
             {
@@ -109,6 +112,8 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB001.Infrastructure.External
         /// </summary>
         private void ExecuteApplyAction()
         {
+            WsebDebugLog.Write($"ExecuteApplyAction: TargetViewId={TargetViewId}, ActionMode={ActionMode}, ActionElementIds.Count={ActionElementIds?.Count ?? -1}");
+
             var doc = _uiDoc.Document;
             var view = doc.GetElement(TargetViewId) as View3D;
             if (view == null)
@@ -117,8 +122,10 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB001.Infrastructure.External
             var validIds = ActionElementIds
                 .Where(id => doc.GetElement(id) != null)
                 .ToList();
+            WsebDebugLog.Write($"ExecuteApplyAction: view resolved '{view.Name}', validIds.Count={validIds.Count}");
 
             _uiDoc.ActiveView = view;
+            WsebDebugLog.Write("ExecuteApplyAction: ActiveView set");
 
             if (ActionMode == ElementActionMode.Isolate || ActionMode == ElementActionMode.IsolateAndSelect)
             {
@@ -130,11 +137,13 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB001.Infrastructure.External
                 if (validIds.Count > 0)
                     view.IsolateElementsTemporary(validIds);
                 tx.Commit();
+                WsebDebugLog.Write("ExecuteApplyAction: isolate transaction committed");
             }
 
             if (ActionMode == ElementActionMode.Select || ActionMode == ElementActionMode.IsolateAndSelect)
             {
                 _uiDoc.Selection.SetElementIds(validIds);
+                WsebDebugLog.Write("ExecuteApplyAction: selection set");
             }
         }
     }

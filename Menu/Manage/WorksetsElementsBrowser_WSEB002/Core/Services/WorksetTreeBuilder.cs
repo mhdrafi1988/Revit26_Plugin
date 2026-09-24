@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.WorksetsElementsBrowser.WSEB001.Core.Models;
+using Revit26_Plugin.WorksetsElementsBrowser.WSEB002.Core.Models;
 
-namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB001.Core.Services
+namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB002.Core.Services
 {
     /// <summary>
     /// Builds the Workset -> Category -> Type hierarchy for the host document
-    /// (linked-model elements are never included — out of scope for WSEB001).
+    /// (linked-model elements are never included — out of scope for WSEB002).
     /// A model with no worksharing enabled reports every element under the
     /// implicit "Workset1" the API still returns via ELEM_PARTITION_PARAM.
     /// </summary>

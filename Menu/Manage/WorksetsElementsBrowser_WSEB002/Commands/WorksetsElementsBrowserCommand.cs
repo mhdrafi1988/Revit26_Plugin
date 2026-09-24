@@ -1,10 +1,11 @@
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.WorksetsElementsBrowser.WSEB001.UI.ViewModels;
-using Revit26_Plugin.WorksetsElementsBrowser.WSEB001.UI.Views;
+using Revit26_Plugin.WorksetsElementsBrowser.WSEB002.UI.ViewModels;
+using Revit26_Plugin.WorksetsElementsBrowser.WSEB002.UI.Views;
+using System.Windows.Interop;
 
-namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB001.Commands
+namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB002.Commands
 {
     /// <summary>
     /// Ribbon entry point for the Worksets &amp; Elements Browser tool. Opens a
@@ -26,11 +27,17 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB001.Commands
                     return Result.Failed;
                 }
 
-                var viewModel = new WorksetsElementsBrowserViewModel(uiDoc);
+                var viewModel = new WorksetsElementsBrowserViewModel(uiDoc, commandData.Application.MainWindowHandle);
                 var window = new WorksetsElementsBrowserWindow
                 {
                     DataContext = viewModel
                 };
+
+                // Parent to Revit's actual main window handle. System.Windows.Application.Current
+                // is not guaranteed to exist inside Revit's process, so Application.Current.MainWindow
+                // can NullReferenceException, or resolve to the wrong window and break z-order
+                // against Revit — same fix applied in WorksetManagerCommand.
+                new WindowInteropHelper(window).Owner = commandData.Application.MainWindowHandle;
 
                 viewModel.CloseRequested += window.Close;
 

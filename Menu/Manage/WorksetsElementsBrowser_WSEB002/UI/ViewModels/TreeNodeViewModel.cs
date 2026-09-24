@@ -5,7 +5,7 @@ using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB001.UI.ViewModels
+namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB002.UI.ViewModels
 {
     /// <summary>
     /// One row of the Workset -> Category -> Type tree. Carries a tri-state

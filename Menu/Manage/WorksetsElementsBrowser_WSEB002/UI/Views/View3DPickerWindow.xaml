@@ -1,4 +1,4 @@
-<Window x:Class="Revit26_Plugin.WorksetsElementsBrowser.WSEB001.UI.Views.View3DPickerWindow"
+<Window x:Class="Revit26_Plugin.WorksetsElementsBrowser.WSEB002.UI.Views.View3DPickerWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"

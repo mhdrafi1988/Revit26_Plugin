@@ -8,11 +8,11 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.WorksetsElementsBrowser.WSEB001.Core.Models;
-using Revit26_Plugin.WorksetsElementsBrowser.WSEB001.Infrastructure.ExternalEvents;
-using Revit26_Plugin.WorksetsElementsBrowser.WSEB001.UI.Views;
+using Revit26_Plugin.WorksetsElementsBrowser.WSEB002.Core.Models;
+using Revit26_Plugin.WorksetsElementsBrowser.WSEB002.Infrastructure.ExternalEvents;
+using Revit26_Plugin.WorksetsElementsBrowser.WSEB002.UI.Views;
 
-namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB001.UI.ViewModels
+namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB002.UI.ViewModels
 {
     public partial class WorksetsElementsBrowserViewModel : ObservableObject, IDisposable
     {
@@ -20,6 +20,7 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB001.UI.ViewModels
         private readonly ExternalEvent _event;
         private readonly WorksetsElementsBrowserHandler _handler;
         private readonly Dispatcher _dispatcher;
+        private readonly IntPtr _mainWindowHandle;
 
         /// <summary>Set right before Raise() to tell OnHandlerRequestCompleted what follow-up to run once results land.</summary>
         private Action _pendingCompletion;
@@ -32,9 +33,10 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB001.UI.ViewModels
         [ObservableProperty] private string _summaryText = string.Empty;
         [ObservableProperty] private string _checkedSummaryText = "0 elements checked";
 
-        public WorksetsElementsBrowserViewModel(UIDocument uiDoc)
+        public WorksetsElementsBrowserViewModel(UIDocument uiDoc, IntPtr mainWindowHandle)
         {
             _uiDoc = uiDoc;
+            _mainWindowHandle = mainWindowHandle;
             _dispatcher = Dispatcher.CurrentDispatcher;
 
             _handler = new WorksetsElementsBrowserHandler(uiDoc);
@@ -65,11 +67,16 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB001.UI.ViewModels
         /// </summary>
         private void RaiseRequest(WorksetsElementsBrowserRequest request, Action onCompleted)
         {
-            if (IsBusy) return;
+            if (IsBusy)
+            {
+                Infrastructure.ExternalEvents.WsebDebugLog.Write($"RaiseRequest({request}) SKIPPED: already IsBusy");
+                return;
+            }
             IsBusy = true;
             _handler.Request = request;
             _pendingCompletion = onCompleted;
-            _event.Raise();
+            var raiseResult = _event.Raise();
+            Infrastructure.ExternalEvents.WsebDebugLog.Write($"RaiseRequest({request}) -> Raise() returned {raiseResult}");
         }
 
         private void RunLoadTree() => RaiseRequest(WorksetsElementsBrowserRequest.LoadTree, HandleLoadTreeCompleted);
@@ -247,20 +254,24 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB001.UI.ViewModels
                     return;
                 }
 
-                var picker = new View3DPickerWindow { Owner = Application.Current?.MainWindow };
+                var picker = new View3DPickerWindow();
+                new System.Windows.Interop.WindowInteropHelper(picker).Owner = _mainWindowHandle;
                 picker.Initialize(prompt, _handler.LoadedViews);
                 bool? dialogResult = picker.ShowDialog();
+                Infrastructure.ExternalEvents.WsebDebugLog.Write($"Picker closed: dialogResult={dialogResult}, SelectedView={picker.SelectedView?.Name}");
                 if (dialogResult != true || picker.SelectedView == null) return;
 
                 _handler.ActionElementIds = ids;
                 _handler.TargetViewId = picker.SelectedView.ViewId;
                 _handler.ActionMode = mode;
+                Infrastructure.ExternalEvents.WsebDebugLog.Write($"About to RaiseRequest(ApplyAction), IsBusy={IsBusy}, ids.Count={ids.Count}, mode={mode}");
                 RaiseRequest(WorksetsElementsBrowserRequest.ApplyAction, HandleApplyActionCompleted);
             });
         }
 
         private void HandleApplyActionCompleted()
         {
+            Infrastructure.ExternalEvents.WsebDebugLog.Write($"HandleApplyActionCompleted: LastRunSucceeded={_handler.LastRunSucceeded}, ErrorMessage={_handler.ErrorMessage}");
             if (!_handler.LastRunSucceeded)
             {
                 MessageBox.Show($"Could not show elements in the selected view: {_handler.ErrorMessage}",

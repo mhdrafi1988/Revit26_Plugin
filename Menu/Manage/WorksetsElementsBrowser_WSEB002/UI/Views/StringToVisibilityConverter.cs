@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB001.UI.Views
+namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB002.UI.Views
 {
     /// <summary>Non-empty string -> Visible, empty/null -> Collapsed. Used to hide the owner/editable-badge cells when there's nothing to show (category/type rows).</summary>
     public class StringToVisibilityConverter : IValueConverter
