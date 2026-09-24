@@ -1,0 +1,157 @@
+<title>Creaser Advanced</title>
+<meta name="description" content="Showcase for the Creaser Advanced V010 Revit plugin — places crease detail items along Dijkstra-validated, slope-filtered ridge paths, pulled from the real V010 source.">
+<style>
+:root{
+  --navy-950:#0a1728;--navy-900:#0e2036;--navy-800:#1e3a5f;--navy-700:#28496f;--navy-600:#345c86;
+  --line:#2c4666;--cyan:#33d1c9;--emerald:#3ddc97;--text:#e7eefb;--text-dim:#9fb3cc;--text-faint:#6e84a3;
+  --card:#132846;--card-alt:#0f2038;--warn:#f0b955;--danger:#e0654a;
+  --bg:var(--navy-950);--surface:var(--card);--surface-2:var(--card-alt);--ink:var(--text);--ink-dim:var(--text-dim);
+  --accent:var(--cyan);--accent-ink:var(--navy-950);--good:var(--emerald);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;padding-inline:20px;padding-block:32px 60px}
+.wrap{max-width:820px;margin:0 auto}
+h1,h2,h3{font-family:"Sora",system-ui,sans-serif;font-weight:700;letter-spacing:-0.01em;text-wrap:balance;margin:0}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.hero{padding-block:8px 28px;border-bottom:1px solid var(--line);margin-bottom:28px}
+.hero h1{font-size:clamp(28px,5vw,42px);line-height:1.05;margin-top:10px}
+.hero p.lede{color:var(--ink-dim);font-size:16px;max-width:62ch;margin-top:14px;line-height:1.55}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.badge{border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:12px;color:var(--ink-dim);background:var(--surface)}
+section{margin-block:36px}
+section > h2{font-size:22px;margin-bottom:4px}
+section > .sub{color:var(--ink-dim);font-size:13.5px;margin-bottom:16px;max-width:64ch}
+
+.dialog{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;max-width:480px}
+.dialog-bar{background:var(--surface-2);padding:10px 16px;font-size:12px;color:var(--ink-dim);border-bottom:1px solid var(--line)}
+.dbody{padding:16px}
+.panel{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px;background:var(--bg)}
+.panel .t{font-family:"Sora";font-weight:700;font-size:12px;margin-bottom:8px}
+.field label{display:block;font-size:10px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.field .box{border:1px solid var(--line);border-radius:7px;padding:6px 9px;font-size:12px;background:var(--surface)}
+.chk-row{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--ink-dim);margin-bottom:8px}
+.chk-row input{accent-color:var(--cyan);margin-right:7px}
+.chk-row .val{display:flex;align-items:center;gap:6px}
+.chk-row .val .box{width:56px;text-align:right;padding:4px 7px;font-size:11px}
+.hint{font-size:10.5px;color:var(--text-faint);margin-top:2px}
+
+.btn{border-radius:8px;padding:8px 16px;font-size:12px;font-weight:600;border:1px solid var(--line);color:var(--ink-dim);display:inline-block}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+
+.summary{background:var(--navy-700);border-radius:8px;padding:12px;margin-bottom:10px}
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center}
+.summary-grid .n{font-family:"Sora";font-size:18px;color:#fff;font-variant-numeric:tabular-nums}
+.summary-grid .n.good{color:var(--good)}
+.summary-grid .n.danger{color:var(--danger)}
+.summary-grid .lbl{font-size:9.5px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
+
+.log{background:var(--navy-950);border-radius:8px;padding:10px 12px;font-family:"IBM Plex Mono",monospace;font-size:10.5px;line-height:1.9}
+.log .info{color:var(--cyan)}
+.log .ok{color:var(--emerald)}
+.log .warn{color:var(--warn)}
+.log .err{color:var(--danger)}
+
+.matrix{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.mrow{display:grid;grid-template-columns:1.4fr 1fr 1fr;border-bottom:1px solid var(--line)}
+.mrow:last-child{border-bottom:none}
+.mrow > div{padding:10px 14px;font-size:12.5px;display:flex;align-items:center}
+.mrow.head > div{background:var(--surface-2);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-dim);font-weight:600}
+.tag-no{color:var(--warn)}
+.tag-yes{color:var(--good);font-weight:600}
+
+footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--line);color:var(--ink-dim);font-size:12px}
+footer .src{font-family:"IBM Plex Mono",monospace;font-size:11px;margin-top:6px}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="eyebrow">Revit26_Plugin · Roof Tools · Lines</div>
+    <h1>Creaser Advanced</h1>
+    <p class="lede">Places crease detail items along valid roof edges — filtered by minimum length, grouped by drain proximity, and optionally validated by a Dijkstra path check with a minimum-slope cutoff before anything is created.</p>
+    <div class="badges">
+      <span class="badge">V010</span>
+      <span class="badge">Revit 2026</span>
+      <span class="badge">Dijkstra path validity</span>
+      <span class="badge">Minimum-slope filter</span>
+    </div>
+  </div>
+
+  <section>
+    <div class="eyebrow">Source of truth</div>
+    <h2 style="margin-top:6px">Pulled from the real V010 source</h2>
+    <div class="sub">Menu/RoofTools/Lines/Creaser/CreaserAdv_V010 — dialog fields from CreaserAdvWindow.xaml. Run numbers below are illustrative example output.</div>
+  </section>
+
+  <section>
+    <h2>The dialog</h2>
+    <div class="sub">Reconstructed from CreaserAdvWindow.xaml — Detail item, Filters, Minimum Slope, Run, summary bar, color-coded log.</div>
+    <div class="dialog">
+      <div class="dialog-bar">Revit26 – Creaser Advanced V010</div>
+      <div class="dbody">
+
+        <div class="panel">
+          <div class="t">Detail item</div>
+          <div class="field"><div class="box">Crease Symbol : Standard 5mm</div></div>
+        </div>
+
+        <div class="panel">
+          <div class="t">Filters</div>
+          <div class="chk-row"><span><input type="checkbox" checked>Include boundary lines</span></div>
+          <div class="chk-row"><span><input type="checkbox" checked>Drop lines less than minimum</span><span class="val"><div class="box">300</div>mm</span></div>
+          <div class="chk-row"><span><input type="checkbox" checked>Drain grouping radius</span><span class="val"><div class="box">500</div>mm</span></div>
+          <div class="chk-row"><span><input type="checkbox" checked>Filter by Dijkstra path validity</span></div>
+          <div class="hint">Horizontal-crease filter always runs, no toggle needed.</div>
+        </div>
+
+        <div class="panel">
+          <div class="t">Minimum Slope</div>
+          <div class="chk-row" style="margin-bottom:4px"><span><input type="checkbox" checked>Enforce minimum slope</span><span class="val"><div class="box">1.0</div>%</span></div>
+          <div class="hint">Edges below this slope are rejected before path-finding.</div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-bottom:12px">
+          <span class="btn primary">Run</span>
+          <span class="btn">Clear log</span>
+        </div>
+
+        <div class="summary">
+          <div class="summary-grid">
+            <div><div class="n">64</div><div class="lbl">Creases found</div></div>
+            <div><div class="n">6</div><div class="lbl">Boundary found</div></div>
+            <div><div class="n good">58</div><div class="lbl">Created</div></div>
+            <div><div class="n danger">2</div><div class="lbl">Failed</div></div>
+            <div><div class="n">112</div><div class="lbl">Ridge points</div></div>
+            <div><div class="n">4</div><div class="lbl">Disconnected</div></div>
+          </div>
+        </div>
+
+        <div class="log">
+          <div><span class="info">[INFO]</span> Dijkstra path check: 64 candidate edges, 58 valid.</div>
+          <div><span class="warn">[WARN]</span> 4 points disconnected from drain graph — skipped.</div>
+          <div><span class="ok">[OK]</span> 58 crease detail items placed.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Manual vs. Creaser Advanced</h2>
+    <div class="matrix">
+      <div class="mrow head"><div>Feature</div><div>Manual</div><div>Creaser Advanced</div></div>
+      <div class="mrow"><div>Placing crease lines</div><div class="tag-no">One detail item at a time, by eye</div><div class="tag-yes">All valid edges, one run</div></div>
+      <div class="mrow"><div>Short/noise segments</div><div class="tag-no">Manually skipped or missed</div><div class="tag-yes">Dropped below a minimum length</div></div>
+      <div class="mrow"><div>Path validity to drains</div><div class="tag-no">Not checked</div><div class="tag-yes">Dijkstra path validity, optional</div></div>
+      <div class="mrow"><div>Low-slope edges</div><div class="tag-no">No systematic check</div><div class="tag-yes">Rejected before path-finding</div></div>
+    </div>
+  </section>
+
+  <footer>
+    Built from the real CreaserAdv_V010 source in Revit26_Plugin — dialog structure and field names are exact; run numbers above are illustrative example output.
+    <div class="src">Menu/RoofTools/Lines/Creaser/CreaserAdv_V010</div>
+  </footer>
+
+</div>
