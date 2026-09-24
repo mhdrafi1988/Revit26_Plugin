@@ -1,0 +1,135 @@
+<title>DWG to Lines</title>
+<meta name="description" content="Showcase for the DWG to Lines V005 Revit plugin — converts a CAD import into Symbolic or Model lines inside the Family Editor, pulled from the real V005 source.">
+<style>
+:root{
+  --navy-950:#0a1728;--navy-900:#0e2036;--navy-800:#1e3a5f;--navy-700:#28496f;--navy-600:#345c86;
+  --line:#2c4666;--cyan:#33d1c9;--emerald:#3ddc97;--text:#e7eefb;--text-dim:#9fb3cc;--text-faint:#6e84a3;
+  --card:#132846;--card-alt:#0f2038;--warn:#f0b955;
+  --bg:var(--navy-950);--surface:var(--card);--surface-2:var(--card-alt);--ink:var(--text);--ink-dim:var(--text-dim);
+  --accent:var(--cyan);--accent-ink:var(--navy-950);--good:var(--emerald);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;padding-inline:20px;padding-block:32px 60px}
+.wrap{max-width:720px;margin:0 auto}
+h1,h2,h3{font-family:"Sora",system-ui,sans-serif;font-weight:700;letter-spacing:-0.01em;text-wrap:balance;margin:0}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.hero{padding-block:8px 28px;border-bottom:1px solid var(--line);margin-bottom:28px}
+.hero h1{font-size:clamp(26px,5vw,40px);line-height:1.05;margin-top:10px}
+.hero p.lede{color:var(--ink-dim);font-size:16px;max-width:60ch;margin-top:14px;line-height:1.55}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.badge{border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:12px;color:var(--ink-dim);background:var(--surface)}
+section{margin-block:36px}
+section > h2{font-size:22px;margin-bottom:4px}
+section > .sub{color:var(--ink-dim);font-size:13.5px;margin-bottom:16px;max-width:64ch}
+
+.dialog{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.dialog-bar{background:var(--surface-2);padding:10px 16px;font-size:12px;color:var(--ink-dim);border-bottom:1px solid var(--line)}
+.dbody{padding:16px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:10.5px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.field .box{border:1px solid var(--line);border-radius:8px;padding:8px 11px;font-size:12.5px;background:var(--bg)}
+.panel{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:12px;background:var(--bg)}
+.panel .t{font-family:"Sora";font-weight:700;font-size:12px;margin-bottom:8px}
+.radio-row{display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:var(--ink-dim)}
+.radio-row .active{color:var(--accent);font-weight:600}
+.chk-row{font-size:12px;color:var(--ink-dim);margin-bottom:12px}
+
+.log{background:var(--navy-950);border-radius:8px;padding:10px 12px;font-family:"IBM Plex Mono",monospace;font-size:10.5px;line-height:1.9}
+.log .info{color:var(--cyan)}
+.log .ok{color:var(--emerald)}
+
+.btn{border-radius:8px;padding:8px 16px;font-size:12px;font-weight:600;border:1px solid var(--line);color:var(--ink-dim);display:inline-block}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+
+.matrix{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.mrow{display:grid;grid-template-columns:1.4fr 1fr 1fr;border-bottom:1px solid var(--line)}
+.mrow:last-child{border-bottom:none}
+.mrow > div{padding:10px 14px;font-size:12.5px;display:flex;align-items:center}
+.mrow.head > div{background:var(--surface-2);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-dim);font-weight:600}
+.tag-no{color:var(--warn)}
+.tag-yes{color:var(--good);font-weight:600}
+
+footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--line);color:var(--ink-dim);font-size:12px}
+footer .src{font-family:"IBM Plex Mono",monospace;font-size:11px;margin-top:6px}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="eyebrow">Revit26_Plugin · Setup · Family</div>
+    <h1>DWG to Lines</h1>
+    <p class="lede">Converts an imported CAD file inside the Family Editor into real Symbolic and/or Model lines — with a choice of spline handling and an extrusion-ready mode that snaps endpoints and detects closed loops for downstream solids.</p>
+    <div class="badges">
+      <span class="badge">V005</span>
+      <span class="badge">Revit 2026</span>
+      <span class="badge">Family Editor</span>
+      <span class="badge">Extrusion-ready mode</span>
+    </div>
+  </div>
+
+  <section>
+    <div class="eyebrow">Source of truth</div>
+    <h2 style="margin-top:6px">Pulled from the real V005 source</h2>
+    <div class="sub">Menu/Setup/Familiy/DwgToLines_V005 — dialog fields from DwgToLinesWindow.xaml. Log lines below are illustrative example output.</div>
+  </section>
+
+  <section>
+    <h2>The dialog</h2>
+    <div class="sub">Reconstructed from DwgToLinesWindow.xaml — CAD picker, placement mode, spline handling, extrusion-ready toggle, activity log.</div>
+    <div class="dialog">
+      <div class="dialog-bar">DWG to Lines — Convert CAD import to Symbolic / Model lines (Family Editor) · V005</div>
+      <div class="dbody">
+
+        <div class="field">
+          <label>CAD Import</label>
+          <div class="box">Roof_Drain_Layout.dwg</div>
+        </div>
+
+        <div class="panel">
+          <div class="t">Placement Mode</div>
+          <div class="radio-row">
+            <span>○ Symbolic Only</span><span>○ Model Only</span><span class="active">● Symbolic + Model</span>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="t">Spline Handling</div>
+          <div class="radio-row">
+            <span class="active">● Preserve Splines</span><span>○ Tessellate</span>
+          </div>
+        </div>
+
+        <div class="chk-row">☑ Extrusion-ready mode (snap endpoints, detect loops)</div>
+
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:14px">
+          <span class="btn">Close</span>
+          <span class="btn primary">Convert DWG</span>
+        </div>
+
+        <div class="log">
+          <div><span class="info">[INFO]</span> Parsed Roof_Drain_Layout.dwg — 340 entities, 12 splines.</div>
+          <div><span class="ok">[OK]</span> 340 lines created (Symbolic + Model), 2 closed loops detected.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Manual vs. DWG to Lines</h2>
+    <div class="matrix">
+      <div class="mrow head"><div>Feature</div><div>Manual</div><div>DWG to Lines</div></div>
+      <div class="mrow"><div>Tracing a CAD import</div><div class="tag-no">Redraw over the linked geometry by hand</div><div class="tag-yes">Converted directly, one run</div></div>
+      <div class="mrow"><div>Splines</div><div class="tag-no">Approximated by eye</div><div class="tag-yes">Preserved exactly, or tessellated on purpose</div></div>
+      <div class="mrow"><div>Closed loops for extrusion</div><div class="tag-no">Endpoints manually snapped</div><div class="tag-yes">Extrusion-ready mode snaps and detects loops</div></div>
+    </div>
+  </section>
+
+  <footer>
+    Built from the real DwgToLines_V005 source in Revit26_Plugin — dialog structure and field names are exact; log lines above are illustrative example output.
+    <div class="src">Menu/Setup/Familiy/DwgToLines_V005</div>
+  </footer>
+
+</div>
