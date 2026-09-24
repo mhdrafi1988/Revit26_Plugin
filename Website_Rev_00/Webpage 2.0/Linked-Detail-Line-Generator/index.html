@@ -1,0 +1,223 @@
+<title>Linked Detail Line Generator</title>
+<meta name="description" content="Showcase for the Linked Detail Line Generator VA007 Revit plugin — traces linked-model elements into detail lines with per-type mapping, pulled from the real VA007 source.">
+<style>
+:root{
+  --navy-950:#0a1728;
+  --navy-900:#0e2036;
+  --navy-800:#1e3a5f;
+  --navy-700:#28496f;
+  --navy-600:#345c86;
+  --line:#2c4666;
+  --cyan:#33d1c9;
+  --emerald:#3ddc97;
+  --text:#e7eefb;
+  --text-dim:#9fb3cc;
+  --text-faint:#6e84a3;
+  --card:#132846;
+  --card-alt:#0f2038;
+  --warn:#f0b955;
+
+  --bg:var(--navy-950);
+  --surface:var(--card);
+  --surface-2:var(--card-alt);
+  --ink:var(--text);
+  --ink-dim:var(--text-dim);
+  --accent:var(--cyan);
+  --accent-ink:var(--navy-950);
+  --good:var(--emerald);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+  padding-inline:20px;
+  padding-block:32px 60px;
+}
+.wrap{max-width:1000px;margin:0 auto}
+h1,h2,h3{font-family:"Sora",system-ui,sans-serif;font-weight:700;letter-spacing:-0.01em;text-wrap:balance;margin:0}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+.eyebrow{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);
+}
+.hero{padding-block:8px 28px;border-bottom:1px solid var(--line);margin-bottom:28px}
+.hero h1{font-size:clamp(28px,5vw,42px);line-height:1.05;margin-top:10px}
+.hero p.lede{color:var(--ink-dim);font-size:16px;max-width:62ch;margin-top:14px;line-height:1.55}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.badge{border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:12px;color:var(--ink-dim);background:var(--surface)}
+section{margin-block:36px}
+section > h2{font-size:22px;margin-bottom:4px}
+section > .sub{color:var(--ink-dim);font-size:13.5px;margin-bottom:16px;max-width:64ch}
+
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.metric{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.metric .label{font-size:10.5px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.06em}
+.metric .val{font-family:"Sora",sans-serif;font-size:24px;margin-top:4px;font-variant-numeric:tabular-nums}
+.metric .val.good{color:var(--good)}
+.metric .val.warn{color:var(--warn)}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:14px}
+.panel .t{font-family:"Sora";font-weight:700;font-size:13px;letter-spacing:.02em;color:var(--ink);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.chip{font-size:11px;border:1px solid var(--line);border-radius:999px;padding:4px 11px;color:var(--ink-dim)}
+.chip.active{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+
+.tree{font-size:12.5px;line-height:2}
+.tree .cat{font-weight:600;color:var(--text)}
+.tree .fam{color:var(--text-dim);margin-left:16px}
+.tree .typ{color:var(--text-faint);margin-left:32px}
+.tree input{accent-color:var(--cyan);margin-right:6px}
+
+.filter-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:6px}
+@media (max-width:640px){.filter-grid{grid-template-columns:repeat(2,1fr)}}
+.filter-grid .f label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-dim);margin-bottom:4px}
+.filter-grid .f .box{border:1px solid var(--line);border-radius:7px;padding:6px 9px;font-size:12px;background:var(--bg);color:var(--ink-dim)}
+
+.map-table{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:11.5px;min-width:760px}
+th,td{padding:7px 10px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{background:var(--surface-2);font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-dim)}
+td.on{color:var(--good);font-weight:600;text-align:center}
+
+.markers{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:640px){.markers{grid-template-columns:1fr}}
+.marker-shape{width:28px;height:28px;border:2px solid var(--cyan);display:inline-block;vertical-align:middle;margin-right:10px}
+.marker-shape.circle{border-radius:50%}
+
+.params{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
+.param{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface)}
+.param .name{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--accent)}
+.param .desc{font-size:12px;color:var(--ink-dim);margin-top:3px}
+
+.matrix{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.mrow{display:grid;grid-template-columns:1.4fr 1fr 1fr;border-bottom:1px solid var(--line)}
+.mrow:last-child{border-bottom:none}
+.mrow > div{padding:10px 14px;font-size:12.5px;display:flex;align-items:center}
+.mrow.head > div{background:var(--surface-2);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-dim);font-weight:600}
+.tag-no{color:var(--warn)}
+.tag-yes{color:var(--good);font-weight:600}
+
+footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--line);color:var(--ink-dim);font-size:12px}
+footer .src{font-family:"IBM Plex Mono",monospace;font-size:11px;margin-top:6px}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="eyebrow">Revit26_Plugin · Detail Lines</div>
+    <h1>Linked Detail Line Generator</h1>
+    <p class="lede">Traces elements from any linked model — floors, roofs, walls, beams, columns, equipment — into native detail lines and filled regions in the host view, with a per-Type mapping table controlling line style, color, and representation.</p>
+    <div class="badges">
+      <span class="badge">VA007</span>
+      <span class="badge">Revit 2026</span>
+      <span class="badge">Profile / Linear / Point extraction</span>
+      <span class="badge">Global line-style override</span>
+    </div>
+  </div>
+
+  <section>
+    <div class="eyebrow">Source of truth</div>
+    <h2 style="margin-top:6px">Pulled from the real VA007 source</h2>
+    <div class="sub">Menu/DeatailLInes/LinkedDetailLineGenerator_VA007 — dialog fields from LinkedDetailLineGenerator.xaml. Run numbers below are illustrative example output, not a captured log.</div>
+  </section>
+
+  <section>
+    <h2>A run, at a glance</h2>
+    <div class="sub">The six metric cards shown across the top of the dialog.</div>
+    <div class="metrics">
+      <div class="metric"><div class="label">Elements Found</div><div class="val">312</div></div>
+      <div class="metric"><div class="label">Processed</div><div class="val good">298</div></div>
+      <div class="metric"><div class="label">Lines Created</div><div class="val good">1,140</div></div>
+      <div class="metric"><div class="label">Filled Regions</div><div class="val good">64</div></div>
+      <div class="metric"><div class="label">Skipped</div><div class="val warn">14</div></div>
+      <div class="metric"><div class="label">Errors</div><div class="val">0</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>The dialog</h2>
+    <div class="sub">Reconstructed from LinkedDetailLineGenerator.xaml — four numbered sections, top to bottom.</div>
+
+    <div class="panel">
+      <div class="t"><span class="dot"></span>1 · Linked Models &amp; Instances</div>
+      <div class="chips">
+        <span class="chip active">All</span><span class="chip">Loaded</span><span class="chip">Needs Review</span>
+      </div>
+      <div style="font-size:12px;color:var(--ink-dim);line-height:2">
+        ☑ ARCH-Structure-Link.rvt <span style="color:var(--good)">Loaded</span><br>
+        ☑ MEP-Mechanical-Link.rvt <span style="color:var(--warn)">Needs Review</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="t"><span class="dot"></span>Categories — filter &amp; grouping</div>
+      <div class="filter-grid">
+        <div class="f"><label>Width (ft)</label><div class="box">— to —</div></div>
+        <div class="f"><label>Height (ft)</label><div class="box">— to —</div></div>
+        <div class="f"><label>Perimeter (ft)</label><div class="box">— to —</div></div>
+        <div class="f"><label>Area (sq ft)</label><div class="box">— to —</div></div>
+      </div>
+      <div class="chips" style="margin-top:8px"><span class="chip active">Category</span><span class="chip">Type</span></div>
+    </div>
+
+    <div class="panel">
+      <div class="t"><span class="dot"></span>2a · Element Selection — Profile (Floor / Roof)</div>
+      <div class="tree">
+        <div class="cat">☑ Roofs</div>
+        <div class="fam">☑ Basic Roof</div>
+        <div class="typ">☑ Generic — 300mm</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="t"><span class="dot"></span>3 · Mapping</div>
+      <div style="font-size:11.5px;color:var(--ink-dim);margin-bottom:10px">Global Override <b style="color:var(--ink)">On</b> — Line Style: Thin Lines · Color: Cyan</div>
+      <div class="map-table">
+        <table>
+          <thead><tr><th>Link</th><th>Category</th><th>Type</th><th>Representation</th><th>Line Style</th><th>Color</th><th>On</th></tr></thead>
+          <tbody>
+            <tr><td>ARCH-Structure-Link</td><td>Roofs</td><td>Generic — 300mm</td><td>Boundary</td><td>Thin Lines</td><td>Cyan</td><td class="on">✓</td></tr>
+            <tr><td>ARCH-Structure-Link</td><td>Walls</td><td>Ext — 200mm CMU</td><td>Centerline</td><td>Thin Lines</td><td>Cyan</td><td class="on">✓</td></tr>
+            <tr><td>MEP-Mechanical-Link</td><td>Mech. Equipment</td><td>AHU — Rooftop</td><td>Rectangle</td><td>Thin Lines</td><td>Cyan</td><td class="on">✓</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="text-align:right;font-size:12px;color:var(--ink-dim);margin-top:8px">Total Mappings: <b style="color:var(--accent)">3</b></div>
+    </div>
+
+    <div class="markers">
+      <div class="panel">
+        <div class="t"><span class="dot"></span>4A · Point Marker — Circle</div>
+        <div style="display:flex;align-items:center"><span class="marker-shape circle"></span>Diameter <b class="mono" style="margin-left:8px">150 mm</b></div>
+      </div>
+      <div class="panel">
+        <div class="t"><span class="dot"></span>4B · Point Marker — Rectangle</div>
+        <div style="display:flex;align-items:center;margin-bottom:8px"><span class="marker-shape"></span>W <b class="mono" style="margin:0 8px">400</b> H <b class="mono" style="margin-left:8px">400 mm</b></div>
+        <div style="font-size:11.5px;color:var(--ink-dim)">Alignment: Outer Profile Detection</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Manual vs. Linked Detail Line Generator</h2>
+    <div class="matrix">
+      <div class="mrow head"><div>Feature</div><div>Manual</div><div>Linked Detail Line Generator</div></div>
+      <div class="mrow"><div>Tracing linked geometry</div><div class="tag-no">Redraw by eye, per view</div><div class="tag-yes">Generated once, per selected Type</div></div>
+      <div class="mrow"><div>Floor / roof outlines</div><div class="tag-no">Manual boundary pick</div><div class="tag-yes">Solid geometry or sketch-curve extraction</div></div>
+      <div class="mrow"><div>Columns / equipment</div><div class="tag-no">Symbol per instance</div><div class="tag-yes">Circle / rectangle / actual-profile markers</div></div>
+      <div class="mrow"><div>Line style consistency</div><div class="tag-no">Per-line manual styling</div><div class="tag-yes">Global override across all mappings</div></div>
+      <div class="mrow"><div>Multiple links / categories</div><div class="tag-no">One at a time</div><div class="tag-yes">All selected Types, one run</div></div>
+    </div>
+  </section>
+
+  <footer>
+    Built from the real LinkedDetailLineGenerator_VA007 source in Revit26_Plugin — dialog structure and field names are exact; run numbers above are illustrative example output.
+    <div class="src">Menu/DeatailLInes/LinkedDetailLineGenerator_VA007</div>
+  </footer>
+
+</div>
