@@ -30,6 +30,7 @@ namespace Revit26_Plugin.RoofViewFocus.V001.Core.Services
 
                 if (!IsValid(s.ViewMarginMm)) s.ViewMarginMm = RoofViewFocusDefaults.DefaultMarginMm;
                 if (!IsValid(s.AnnotationMarginMm)) s.AnnotationMarginMm = RoofViewFocusDefaults.DefaultMarginMm;
+                if (!IsValid(s.DefaultOffsetMm)) s.DefaultOffsetMm = RoofViewFocusDefaults.DefaultOffsetMm;
                 return s;
             }
             catch (Exception ex)

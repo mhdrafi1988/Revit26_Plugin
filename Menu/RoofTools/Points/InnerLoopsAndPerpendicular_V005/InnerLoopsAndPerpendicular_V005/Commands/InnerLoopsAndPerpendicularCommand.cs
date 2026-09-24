@@ -91,7 +91,7 @@ namespace Revit26_Plugin.InnerLoopsAndPerpendicular.V005.Commands
                 var innerLoops = allLoops.Where(l => l.LoopType == "Inner").ToList();
 
                 // ── Launch UI (modeless) ─────────────────────────────────────
-                var vm = new InnerLoopsAndPerpendicularViewModel(commandData.Application, roof.Id, innerLoops, outerLoop);
+                var vm = new InnerLoopsAndPerpendicularViewModel(commandData.Application, roof.Id, innerLoops, outerLoop, circlesOnlyByDefault: true);
 
                 var window = new InnerLoopsAndPerpendicularWindow { DataContext = vm };
                 new WindowInteropHelper(window).Owner = commandData.Application.MainWindowHandle;

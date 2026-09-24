@@ -60,7 +60,7 @@
                  StrategySelectedBrushConverter. -->
             <Style x:Key="StrategySegmentButton" TargetType="Button">
                 <Setter Property="Background" Value="White"/>
-                <Setter Property="BorderBrush" Value="{StaticResource BrushBorderSubtle}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource BrushCardBorder}"/>
                 <Setter Property="BorderThickness" Value="1.5"/>
                 <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}"/>
                 <Setter Property="Cursor" Value="Hand"/>
@@ -558,7 +558,7 @@
                             <ListBox ItemsSource="{Binding PriorityGroups}"
                                      AlternationCount="{Binding PriorityGroups.Count}"
                                      IsEnabled="{Binding EnablePriorityGroups}"
-                                     BorderThickness="1" BorderBrush="{StaticResource BrushBorderSubtle}"
+                                     BorderThickness="1" BorderBrush="{StaticResource BrushCardBorder}"
                                      Margin="12,0,12,8" MaxHeight="220" ScrollViewer.VerticalScrollBarVisibility="Auto">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>

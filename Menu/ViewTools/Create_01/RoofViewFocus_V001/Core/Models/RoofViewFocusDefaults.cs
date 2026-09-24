@@ -10,7 +10,7 @@ namespace Revit26_Plugin.RoofViewFocus.V001.Core.Models
         /// <summary>Default value of both margin input fields (mm).</summary>
         public const double DefaultMarginMm = 20.0;
 
-        /// <summary>Fixed offset (mm) added on top of the user-entered margin. Not editable in UI.</summary>
+        /// <summary>Default value of the offset input field (mm). Editable in UI.</summary>
         public const double DefaultOffsetMm = 20.0;
     }
 }

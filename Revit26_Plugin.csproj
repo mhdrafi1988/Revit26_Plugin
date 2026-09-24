@@ -7,7 +7,7 @@
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<PackageId />
 		<AssemblyName>Revit26_Plugin</AssemblyName>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\18-09-2026-03</BaseOutputPath>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\24-09-2026-02</BaseOutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 	  <IsPublishable>False</IsPublishable>
@@ -691,81 +691,7 @@
 	  <None Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_002_02.rar" />
 	  <None Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_002_03.rar" />
 	  <None Remove="Menu\RoofTools\Lines\SlopeToDetailItem\CreasToDetalLines_002_dup.rar" />
-	  <None Remove="Resources\Icons\DetailLiner\Addlines_32.png" />
-	  <None Remove="Resources\Icons\DetailLiner\ClosedLoop_16.png" />
-	  <None Remove="Resources\Icons\DetailLiner\CreateDetailLines_16.png" />
-	  <None Remove="Resources\Icons\DetailLiner\Linematch32_16.png" />
-	  <None Remove="Resources\Icons\DetailLiner\Looper_32.png" />
-	  <None Remove="Resources\Icons\Dimensions\DimMenu_32.png" />
-	  <None Remove="Resources\Icons\FloorTools\FloorCreate_32.png" />
-	  <None Remove="Resources\Icons\Manage\Manage32.png" />
-	  <None Remove="Resources\Icons\RoofTools\Addtag32.png" />
-	  <None Remove="Resources\Icons\RoofTools\Autoslope32.png" />
-	  <None Remove="Resources\Icons\RoofTools\CreateRoofromLInes_16.png" />
-	  <None Remove="Resources\Icons\RoofTools\Divider.png" />
-	  <None Remove="Resources\Icons\RoofTools\LinePoint.png" />
-	  <None Remove="Resources\Icons\RoofTools\Shapepoints32.png" />
-	  <None Remove="Resources\Icons\RoofTools\SlopeLiner.png" />
-	  <None Remove="Resources\Icons\SetupTools\Linker_16.png" />
-	  <None Remove="Resources\Icons\SetupTools\Setting32.png" />
-	  <None Remove="Resources\Icons\SheetTools\SBtoSheet.png" />
-	  <None Remove="Resources\Icons\SheetTools\ViewToSheet.png" />
-	  <None Remove="Resources\Icons\ViewTools\Create_32.png" />
-	  <None Remove="Resources\Icons\ViewTools\Place_32.png" />
-	  <None Remove="Resources\Icons\ViewTools\Rename_32.png" />
-	  <None Remove="Resources\Icons\Dimensions\AutoDimDetailLine_16.png" />
-	  <None Remove="Resources\Icons\FloorTools\FloorRoofFromRooms_16.png" />
-	  <None Remove="Resources\Icons\FloorTools\FloorRoofFromRoomsPlanView_16.png" />
-	  <None Remove="Resources\Icons\Manage\AnnotationOverlapDetection_16.png" />
-	  <None Remove="Resources\Icons\Manage\ParaManager_16.png" />
-	  <None Remove="Resources\Icons\Manage\WorksetsElementsBrowser_16.png" />
-	  <None Remove="Resources\Icons\Manage\WorksetsElementsBrowser_32.png" />
-	  <None Remove="Resources\Icons\RoofTools\AutoSlopeByDrain_MultiRoof_16.png" />
-	  <None Remove="Resources\Icons\RoofTools\AutoSlopeByPoint_KdTree_16.png" />
-	  <None Remove="Resources\Icons\RoofTools\AutoSlopeByPoint_Ridge_16.png" />
-	  <None Remove="Resources\Icons\RoofTools\by_drain_16.png" />
-	  <None Remove="Resources\Icons\RoofTools\by_point_16.png" />
-	  <None Remove="Resources\Icons\RoofTools\CombinedTools_16.png" />
-	  <None Remove="Resources\Icons\RoofTools\Compare_32.png" />
-	  <None Remove="Resources\Icons\RoofTools\CreaserAdv_16.png" />
-	  <None Remove="Resources\Icons\RoofTools\DetailLineIntersect_16.png" />
-	  <None Remove="Resources\Icons\RoofTools\ElevationSync_16.png" />
-	  <None Remove="Resources\Icons\RoofTools\InnerLoopDivider_16.png" />
-	  <None Remove="Resources\Icons\RoofTools\InnerLoopsPerpendicular_16.png" />
-	  <None Remove="Resources\Icons\RoofTools\MultiplePoints_16.png" />
-	  <None Remove="Resources\Icons\RoofTools\OuterCurveDivider_16.png" />
-	  <None Remove="Resources\Icons\RoofTools\PointComparison_16.png" />
-	  <None Remove="Resources\Icons\RoofTools\RidgeLinesByPoints_16.png" />
-	  <None Remove="Resources\Icons\RoofTools\RidgeLinesMultiShape_16.png" />
-	  <None Remove="Resources\Icons\RoofTools\RoofTag_16.png" />
-	  <None Remove="Resources\Icons\RoofTools\VertexReducer_16.png" />
-	  <None Remove="Resources\Icons\SetupTools\DwgToDetailLines_16.png" />
-	  <None Remove="Resources\Icons\SetupTools\DwgToDetailLines_V011_16.png" />
-	  <None Remove="Resources\Icons\SetupTools\DwgToLines_16.png" />
-	  <None Remove="Resources\Icons\SetupTools\WorksetManager_16.png" />
-	  <None Remove="Resources\Icons\SetupTools\WorksetRename_16.png" />
-	  <None Remove="Resources\Icons\SetupTools\WorksetsFromLinks_16.png" />
-	  <None Remove="Resources\Icons\SheetTools\PlanFromScopeBox_16.png" />
-	  <None Remove="Resources\Icons\SheetTools\PlanFromScopeBox_V004_16.png" />
-	  <None Remove="Resources\Icons\SheetTools\SheetAutoRearrange_16.png" />
-	  <None Remove="Resources\Icons\SheetTools\SheetAutoRearrange_V025_16.png" />
-	  <None Remove="Resources\Icons\SheetTools\SheetAutoRearrange_V026_16.png" />
-	  <None Remove="Resources\Icons\SheetTools\SmartViewToSheetPlacer_16.png" />
-	  <None Remove="Resources\Icons\SheetTools\SmartViewToSheetPlacer_V222_16.png" />
-	  <None Remove="Resources\Icons\ViewTools\AutoPlaceSections_16.png" />
-	  <None Remove="Resources\Icons\ViewTools\BubbleAutoRenumber_16.png" />
-	  <None Remove="Resources\Icons\ViewTools\CalloutToSection_16.png" />
-	  <None Remove="Resources\Icons\ViewTools\RefSectionHeadPlacer_16.png" />
-	  <None Remove="Resources\Icons\ViewTools\RoofEdgeAroundSections_16.png" />
-	  <None Remove="Resources\Icons\ViewTools\RoofEdgeAroundSections_V004_16.png" />
-	  <None Remove="Resources\Icons\ViewTools\RoofEdgeAroundSections_V005_16.png" />
-	  <None Remove="Resources\Icons\ViewTools\RoofEdgeElementSections_16.png" />
-	  <None Remove="Resources\Icons\ViewTools\RoofEdgeElementSections_V002_16.png" />
-	  <None Remove="Resources\Icons\ViewTools\SectionAutoRenamer_16.png" />
-	  <None Remove="Resources\Icons\ViewTools\SectionAutoTagger_16.png" />
-	  <None Remove="Resources\Icons\ViewTools\SectionsFromDetailLines_16.png" />
-	  <None Remove="Resources\Icons\ViewTools\ViewAutoRenamer_16.png" />
-	  <None Remove="Resources\Icons\ViewTools\ViewAutoRenamer_V004_16.png" />
+	  <None Remove="Resources\Icons\**\*.png" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Page Remove="Menu\RoofTools\RoofSlope\ByPoints_0\AutoSlopeByPoint_04_WIP2\UI\Views\UI_Autoslope - Copy.xaml" />
@@ -801,83 +727,7 @@
 	  <Folder Include="Resources\Icons\FloorTools\" />
 	</ItemGroup>
 	<ItemGroup>
-	  <EmbeddedResource Include="Resources\Icons\DetailLiner\Addlines_32.png" />
-	  <EmbeddedResource Include="Resources\Icons\DetailLiner\ClosedLoop_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\DetailLiner\CreateDetailLines_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\DetailLiner\Linematch32_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\DetailLiner\Looper_32.png" />
-	  <EmbeddedResource Include="Resources\Icons\Dimensions\DimMenu_32.png" />
-	  <EmbeddedResource Include="Resources\Icons\FloorTools\FloorCreate_32.png" />
-	  <EmbeddedResource Include="Resources\Icons\Manage\Manage32.png" />
-	  <EmbeddedResource Include="Resources\Icons\RoofTools\Addtag32.png" />
-	  <EmbeddedResource Include="Resources\Icons\RoofTools\Autoslope32.png" />
-	  <EmbeddedResource Include="Resources\Icons\RoofTools\CreateRoofromLInes_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\RoofTools\Divider.png" />
-	  <EmbeddedResource Include="Resources\Icons\RoofTools\LinePoint.png" />
-	  <EmbeddedResource Include="Resources\Icons\RoofTools\Shapepoints32.png" />
-	  <EmbeddedResource Include="Resources\Icons\RoofTools\SlopeLiner.png" />
-	  <EmbeddedResource Include="Resources\Icons\SetupTools\Linker_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\SetupTools\Setting32.png" />
-	  <EmbeddedResource Include="Resources\Icons\SheetTools\SBtoSheet.png" />
-	  <EmbeddedResource Include="Resources\Icons\SheetTools\ViewToSheet.png" />
-	  <EmbeddedResource Include="Resources\Icons\ViewTools\Create_32.png" />
-	  <EmbeddedResource Include="Resources\Icons\ViewTools\Place_32.png" />
-	  <EmbeddedResource Include="Resources\Icons\ViewTools\Rename_32.png" />
-	  <EmbeddedResource Include="Resources\Icons\Dimensions\AutoDimDetailLine_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\FloorTools\FloorRoofFromRooms_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\FloorTools\FloorRoofFromRoomsPlanView_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\Manage\AnnotationOverlapDetection_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\Manage\ParaManager_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\Manage\WorksetsElementsBrowser_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\Manage\WorksetsElementsBrowser_32.png" />
-	  <EmbeddedResource Include="Resources\Icons\RoofTools\AutoSlopeByDrain_MultiRoof_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\RoofTools\AutoSlopeByPoint_KdTree_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\RoofTools\AutoSlopeByPoint_Ridge_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\RoofTools\by_drain_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\RoofTools\by_point_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\RoofTools\CombinedTools_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\RoofTools\Compare_32.png" />
-	  <EmbeddedResource Include="Resources\Icons\RoofTools\CreaserAdv_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\RoofTools\DetailLineIntersect_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\RoofTools\ElevationSync_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\RoofTools\InnerLoopDivider_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\RoofTools\InnerLoopsPerpendicular_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\RoofTools\MultiplePoints_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\RoofTools\OuterCurveDivider_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\RoofTools\PointComparison_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\RoofTools\RidgeLinesByPoints_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\RoofTools\RidgeLinesMultiShape_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\RoofTools\RoofTag_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\RoofTools\VertexReducer_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\SetupTools\DwgToDetailLines_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\SetupTools\DwgToDetailLines_V011_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\SetupTools\DwgToLines_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\SetupTools\WorksetManager_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\SetupTools\WorksetRename_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\SetupTools\WorksetsFromLinks_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\SheetTools\PlanFromScopeBox_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\SheetTools\PlanFromScopeBox_V004_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\SheetTools\SheetAutoRearrange_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\SheetTools\SheetAutoRearrange_V025_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\SheetTools\SheetAutoRearrange_V026_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\SheetTools\SmartViewToSheetPlacer_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\SheetTools\SmartViewToSheetPlacer_V222_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\ViewTools\AutoPlaceSections_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\ViewTools\BubbleAutoRenumber_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\ViewTools\CalloutToSection_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\ViewTools\RefSectionHeadPlacer_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\ViewTools\RoofEdgeAroundSections_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\ViewTools\RoofEdgeAroundSections_V004_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\ViewTools\RoofEdgeAroundSections_V005_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\ViewTools\RoofEdgeElementSections_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\ViewTools\RoofEdgeElementSections_V002_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\ViewTools\RoofViewFocus_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\ViewTools\RoofViewFocus_32.png" />
-	  <EmbeddedResource Include="Resources\Icons\ViewTools\SectionAutoRenamer_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\ViewTools\SectionAutoTagger_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\ViewTools\SectionsFromDetailLines_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\ViewTools\ViewAutoRenamer_16.png" />
-	  <EmbeddedResource Include="Resources\Icons\ViewTools\ViewAutoRenamer_V004_16.png" />
+	  <EmbeddedResource Include="Resources\Icons\**\*.png" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Resource Include="Shared\SharedStyles.xaml" />

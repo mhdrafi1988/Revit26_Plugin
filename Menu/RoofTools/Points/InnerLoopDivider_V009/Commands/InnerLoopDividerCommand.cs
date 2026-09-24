@@ -87,7 +87,7 @@ namespace Revit26_Plugin.InnerLoopDivider.V009.Commands
                     .ToList();
 
                 // ── Launch UI (modeless) ─────────────────────────────────────
-                var vm = new InnerLoopDividerViewModel(commandData.Application, roof.Id, initialLoops);
+                var vm = new InnerLoopDividerViewModel(commandData.Application, roof.Id, initialLoops, circlesOnlyByDefault: true);
 
                 var window = new InnerLoopDividerWindow { DataContext = vm };
                 new WindowInteropHelper(window).Owner = commandData.Application.MainWindowHandle;

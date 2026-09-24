@@ -55,6 +55,7 @@ namespace Revit26_Plugin.RoofViewFocus.V001.UI.ViewModels
             RoofViewFocusSettings settings = RoofViewFocusSettingsService.Load(out string? loadWarning);
             ViewMarginText = FormatMm(settings.ViewMarginMm);
             AnnotationMarginText = FormatMm(settings.AnnotationMarginMm);
+            DefaultOffsetText = FormatMm(settings.DefaultOffsetMm);
             Validate();
 
             AddLog(LogLevel.Info, $"Tool opened — {RoofViewFocusDefaults.Title}");
@@ -64,7 +65,7 @@ namespace Revit26_Plugin.RoofViewFocus.V001.UI.ViewModels
                 AddLog(LogLevel.Warning, $"{ignoredCount} non-roof element(s) in the selection were ignored");
             if (loadWarning != null)
                 AddLog(LogLevel.Warning, loadWarning);
-            AddLog(LogLevel.Info, $"Settings loaded — margins {ViewMarginText} / {AnnotationMarginText} mm");
+            AddLog(LogLevel.Info, $"Settings loaded — margins {ViewMarginText} / {AnnotationMarginText} mm, offset {DefaultOffsetText} mm");
         }
 
         // ── Bindable data ────────────────────────────────────────────────────
@@ -72,7 +73,6 @@ namespace Revit26_Plugin.RoofViewFocus.V001.UI.ViewModels
         public string ViewName { get; }
         public string ViewTypeText { get; }
         public string ViewDisplay => $"{ViewName} ({ViewTypeText})";
-        public string DefaultOffsetText => $"{RoofViewFocusDefaults.DefaultOffsetMm:0.##} mm (fixed)";
 
         public ObservableCollection<RoofInfo> Roofs { get; }
         public ObservableCollection<LogEntry> Log { get; } = new();
@@ -91,6 +91,7 @@ namespace Revit26_Plugin.RoofViewFocus.V001.UI.ViewModels
         // ── Inputs ───────────────────────────────────────────────────────────
         [ObservableProperty] private string _viewMarginText = "20";
         [ObservableProperty] private string _annotationMarginText = "20";
+        [ObservableProperty] private string _defaultOffsetText = "20";
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(RunCommand))]
@@ -103,9 +104,12 @@ namespace Revit26_Plugin.RoofViewFocus.V001.UI.ViewModels
 
         partial void OnViewMarginTextChanged(string value) => Validate();
         partial void OnAnnotationMarginTextChanged(string value) => Validate();
+        partial void OnDefaultOffsetTextChanged(string value) => Validate();
 
         private void Validate()
-            => HasInputError = !TryParseMm(ViewMarginText, out _) || !TryParseMm(AnnotationMarginText, out _);
+            => HasInputError = !TryParseMm(ViewMarginText, out _)
+                             || !TryParseMm(AnnotationMarginText, out _)
+                             || !TryParseMm(DefaultOffsetText, out _);
 
         // ── Commands ─────────────────────────────────────────────────────────
         private bool CanRun() => !IsBusy && !HasInputError && Roofs.Count > 0;
@@ -114,7 +118,8 @@ namespace Revit26_Plugin.RoofViewFocus.V001.UI.ViewModels
         private void Run()
         {
             if (!TryParseMm(ViewMarginText, out double viewMm) ||
-                !TryParseMm(AnnotationMarginText, out double annMm))
+                !TryParseMm(AnnotationMarginText, out double annMm) ||
+                !TryParseMm(DefaultOffsetText, out double offsetMm))
             {
                 HasInputError = true;
                 return;
@@ -130,7 +135,7 @@ namespace Revit26_Plugin.RoofViewFocus.V001.UI.ViewModels
                 RoofUniqueIds = Roofs.Select(r => r.UniqueId).ToList(),
                 ViewMarginMm = viewMm,
                 AnnotationMarginMm = annMm,
-                DefaultOffsetMm = RoofViewFocusDefaults.DefaultOffsetMm,
+                DefaultOffsetMm = offsetMm,
                 OnLog = (level, msg) => PostToUi(() => AddLog(level, msg)),
                 OnCompleted = result => PostToUi(() => OnRunCompleted(result))
             };
@@ -157,6 +162,7 @@ namespace Revit26_Plugin.RoofViewFocus.V001.UI.ViewModels
         {
             ViewMarginText = FormatMm(RoofViewFocusDefaults.DefaultMarginMm);
             AnnotationMarginText = FormatMm(RoofViewFocusDefaults.DefaultMarginMm);
+            DefaultOffsetText = FormatMm(RoofViewFocusDefaults.DefaultOffsetMm);
             BoundingBoxText = "—";
             MarginText = "—";
             ViewStatusText = ViewTypeText;
@@ -279,11 +285,13 @@ namespace Revit26_Plugin.RoofViewFocus.V001.UI.ViewModels
 
         private void SaveSettings()
         {
-            if (!TryParseMm(ViewMarginText, out double v) || !TryParseMm(AnnotationMarginText, out double a))
+            if (!TryParseMm(ViewMarginText, out double v) ||
+                !TryParseMm(AnnotationMarginText, out double a) ||
+                !TryParseMm(DefaultOffsetText, out double o))
                 return;
 
             RoofViewFocusSettingsService.Save(
-                new RoofViewFocusSettings { ViewMarginMm = v, AnnotationMarginMm = a },
+                new RoofViewFocusSettings { ViewMarginMm = v, AnnotationMarginMm = a, DefaultOffsetMm = o },
                 out string? warning);
             if (warning != null)
                 AddLog(LogLevel.Warning, warning);

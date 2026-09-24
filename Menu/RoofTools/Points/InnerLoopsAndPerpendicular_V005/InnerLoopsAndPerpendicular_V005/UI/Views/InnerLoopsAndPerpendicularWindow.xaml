@@ -43,7 +43,17 @@ mockup applies to this tool too):
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="GroupItem">
-                            <Expander IsExpanded="True" Margin="0">
+                            <Expander Margin="0">
+                                <Expander.Style>
+                                    <Style TargetType="Expander">
+                                        <Setter Property="IsExpanded" Value="False"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Name}" Value="Circular">
+                                                <Setter Property="IsExpanded" Value="True"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Expander.Style>
                                 <Expander.Header>
                                     <Grid Background="#DCE6F2" Height="32">
                                         <Grid.ColumnDefinitions>

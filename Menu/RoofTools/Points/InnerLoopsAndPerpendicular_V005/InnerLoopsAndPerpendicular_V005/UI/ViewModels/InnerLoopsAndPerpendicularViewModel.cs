@@ -83,11 +83,17 @@ namespace Revit26_Plugin.InnerLoopsAndPerpendicular.V005.UI.ViewModels
         [ObservableProperty]
         private double groupProximityMm = 500.0;
 
+        // When true, only Circular loops start selected; Rectangular/Other start unselected.
+        // Opt-in so Combined Roof Tools (which shares this ViewModel) keeps select-all.
+        private readonly bool _circlesOnlyByDefault;
+
         public InnerLoopsAndPerpendicularViewModel(
-            UIApplication app, ElementId roofId, List<RoofLoopModel> initialInnerLoops, RoofLoopModel initialOuterLoop)
+            UIApplication app, ElementId roofId, List<RoofLoopModel> initialInnerLoops, RoofLoopModel initialOuterLoop,
+            bool circlesOnlyByDefault = false)
         {
             _app = app;
             _roofId = roofId;
+            _circlesOnlyByDefault = circlesOnlyByDefault;
 
             SetupCollectionView();
             PopulateLoops(initialInnerLoops, initialOuterLoop);
@@ -116,7 +122,7 @@ namespace Revit26_Plugin.InnerLoopsAndPerpendicular.V005.UI.ViewModels
 
             foreach (var loop in innerLoops)
             {
-                loop.IsSelected = true;
+                loop.IsSelected = !_circlesOnlyByDefault || loop.LoopShapeType == "Circular";
                 loop.PropertyChanged += OnLoopPropertyChanged;
                 Loops.Add(loop);
             }

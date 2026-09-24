@@ -79,10 +79,16 @@ namespace Revit26_Plugin.InnerLoopDivider.V009.UI.ViewModels
             ApplyDivisionCommand.NotifyCanExecuteChanged();
         }
 
-        public InnerLoopDividerViewModel(UIApplication app, ElementId roofId, List<RoofLoopModel> initialLoops)
+        // When true, only Circular loops start selected; Rectangular/Other start unselected.
+        // Opt-in so Combined Roof Tools (which shares this ViewModel) keeps select-all.
+        private readonly bool _circlesOnlyByDefault;
+
+        public InnerLoopDividerViewModel(UIApplication app, ElementId roofId, List<RoofLoopModel> initialLoops,
+                                         bool circlesOnlyByDefault = false)
         {
             _app = app;
             _roofId = roofId;
+            _circlesOnlyByDefault = circlesOnlyByDefault;
 
             SetupCollectionView();
             PopulateLoops(initialLoops);
@@ -108,7 +114,7 @@ namespace Revit26_Plugin.InnerLoopDivider.V009.UI.ViewModels
 
             foreach (var loop in loops)
             {
-                loop.IsSelected = true;
+                loop.IsSelected = !_circlesOnlyByDefault || loop.LoopShapeType == "Circular";
                 // Circular → 6, everything else → 4
                 loop.RecommendedPoints = loop.LoopShapeType == "Circular" ? 6 : 4;
 
