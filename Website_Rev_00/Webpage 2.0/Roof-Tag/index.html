@@ -1,0 +1,163 @@
+<title>Roof Tag</title>
+<meta name="description" content="Showcase for the Roof Tag V016 Revit plugin — places spot-elevation tags on roof high points with cluster and loop-reduction rules, pulled from the real V016 source.">
+<style>
+:root{
+  --navy-950:#0a1728;--navy-900:#0e2036;--navy-800:#1e3a5f;--navy-700:#28496f;--navy-600:#345c86;
+  --line:#2c4666;--cyan:#33d1c9;--emerald:#3ddc97;--text:#e7eefb;--text-dim:#9fb3cc;--text-faint:#6e84a3;
+  --card:#132846;--card-alt:#0f2038;--warn:#f0b955;--danger:#e0654a;
+  --bg:var(--navy-950);--surface:var(--card);--surface-2:var(--card-alt);--ink:var(--text);--ink-dim:var(--text-dim);
+  --accent:var(--cyan);--accent-ink:var(--navy-950);--good:var(--emerald);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;padding-inline:20px;padding-block:32px 60px}
+.wrap{max-width:820px;margin:0 auto}
+h1,h2,h3{font-family:"Sora",system-ui,sans-serif;font-weight:700;letter-spacing:-0.01em;text-wrap:balance;margin:0}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.hero{padding-block:8px 28px;border-bottom:1px solid var(--line);margin-bottom:28px}
+.hero h1{font-size:clamp(26px,5vw,40px);line-height:1.05;margin-top:10px}
+.hero p.lede{color:var(--ink-dim);font-size:16px;max-width:62ch;margin-top:14px;line-height:1.55}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.badge{border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:12px;color:var(--ink-dim);background:var(--surface)}
+section{margin-block:36px}
+section > h2{font-size:22px;margin-bottom:4px}
+section > .sub{color:var(--ink-dim);font-size:13.5px;margin-bottom:16px;max-width:64ch}
+
+.dialog{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.dialog-bar{background:var(--surface-2);padding:10px 16px;font-size:12px;color:var(--ink-dim);border-bottom:1px solid var(--line)}
+.dbody{padding:16px}
+.warn-box{background:#3a2c14;border:1px solid var(--warn);border-radius:8px;padding:8px 10px;font-size:11.5px;color:var(--warn);margin-bottom:12px}
+.panel{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px;background:var(--bg)}
+.panel .t{font-family:"Sora";font-weight:700;font-size:12px;margin-bottom:8px;display:flex;justify-content:space-between}
+.row{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--ink-dim);align-items:center}
+.row b{color:var(--ink)}
+.hint{font-size:10.5px;color:var(--text-faint);margin-top:6px;line-height:1.5}
+.pill{font-size:10px;border:1px solid var(--line);border-radius:999px;padding:2px 9px;color:var(--ink-dim)}
+.pill.active{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+
+.summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.summary .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
+.summary .n{font-family:"Sora";font-size:22px;font-variant-numeric:tabular-nums}
+.summary .n.good{color:var(--good)}
+.summary .n.danger{color:var(--danger)}
+.summary .lbl{font-size:10px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
+
+.log{background:var(--navy-950);border-radius:8px;padding:10px 12px;font-family:"IBM Plex Mono",monospace;font-size:10.5px;line-height:1.9}
+.log .info{color:var(--cyan)}
+.log .ok{color:var(--emerald)}
+
+.btn{border-radius:8px;padding:8px 16px;font-size:12px;font-weight:600;border:1px solid var(--line);color:var(--ink-dim);display:inline-block}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+
+.matrix{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.mrow{display:grid;grid-template-columns:1.4fr 1fr 1fr;border-bottom:1px solid var(--line)}
+.mrow:last-child{border-bottom:none}
+.mrow > div{padding:10px 14px;font-size:12.5px;display:flex;align-items:center}
+.mrow.head > div{background:var(--surface-2);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-dim);font-weight:600}
+.tag-no{color:var(--warn)}
+.tag-yes{color:var(--good);font-weight:600}
+
+footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--line);color:var(--ink-dim);font-size:12px}
+footer .src{font-family:"IBM Plex Mono",monospace;font-size:11px;margin-top:6px}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="eyebrow">Revit26_Plugin · Tagging</div>
+    <h1>Roof Tag</h1>
+    <p class="lede">Places spot-elevation tags at a roof's high points using the FaceRef method, with a cluster filter to keep tags off drains and two independent loop-reduction rules so interior and exterior boundaries don't end up crowded.</p>
+    <div class="badges">
+      <span class="badge">V016</span>
+      <span class="badge">Revit 2026</span>
+      <span class="badge">Auto / Manual pick modes</span>
+      <span class="badge">Interior + exterior loop reduction</span>
+    </div>
+  </div>
+
+  <section>
+    <div class="eyebrow">Source of truth</div>
+    <h2 style="margin-top:6px">Pulled from the real V016 source</h2>
+    <div class="sub">Menu/Tagging/RoofTag_V016 — dialog fields from RoofTagWindow.xaml. Run numbers below are illustrative example output.</div>
+  </section>
+
+  <section>
+    <h2>The dialog</h2>
+    <div class="sub">Reconstructed from RoofTagWindow.xaml — tag mode, leader geometry, spot tag type, three placement rules, summary, log.</div>
+    <div class="dialog">
+      <div class="dialog-bar">Roof Tag — FaceRef method · V016</div>
+      <div class="dbody">
+        <div class="warn-box">⚠ FaceRef method — tags DELETE if slab shape is edited after placement. Place tags after finalizing slope.</div>
+
+        <div class="panel">
+          <div class="t">Tag mode<span><span class="pill active">Auto</span> <span class="pill">Manual (pick points)</span></span></div>
+        </div>
+
+        <div class="panel">
+          <div class="t">Leader geometry</div>
+          <div class="row" style="margin-bottom:8px">
+            <span>Angle: <span class="pill active">45°</span> <span class="pill">30°</span></span>
+            <span>Bend: <span class="pill active">Inward</span> <span class="pill">Outward</span></span>
+          </div>
+          <div class="row">Bend offset <b>25 mm</b> · End offset <b>50 mm</b> · ☑ Use leader</div>
+        </div>
+
+        <div class="panel">
+          <div class="t">Spot tag type</div>
+          <div class="row">Spot Elevation — Top of Roof</div>
+        </div>
+
+        <div class="panel">
+          <div class="t">Cluster filter — rule 1</div>
+          <div class="row">☑ Avoid clustered tags near drains · Radius <b>600 mm</b></div>
+        </div>
+
+        <div class="panel">
+          <div class="t">Interior loop reduction — rule 2</div>
+          <div class="row">☑ Spacing <b>1200 mm</b> · Boundary tol. <b>150 mm</b></div>
+          <div class="hint">Top 4 highest points per interior loop, kept only if each neighbor pair is at least the spacing value apart — otherwise only the highest point is kept.</div>
+        </div>
+
+        <div class="panel">
+          <div class="t">Exterior loop reduction — rule 3</div>
+          <div class="row">☑ Spacing <b>1500 mm</b> · Boundary tol. <b>150 mm</b></div>
+          <div class="hint">Same mechanism as rule 2, scoped to only the roof's outer boundary loop, with its own spacing and tolerance.</div>
+        </div>
+
+        <div class="summary">
+          <div class="card"><div class="n good">22</div><div class="lbl">Placed</div></div>
+          <div class="card"><div class="n danger">1</div><div class="lbl">Failed</div></div>
+        </div>
+
+        <div class="log" style="margin-bottom:12px">
+          <div><span class="info">[INFO]</span> Cluster filter removed 4 points within 600mm of a drain.</div>
+          <div><span class="ok">[OK]</span> 22 spot-elevation tags placed via FaceRef.</div>
+        </div>
+
+        <div style="text-align:right;display:flex;justify-content:flex-end;gap:8px">
+          <span class="btn">Cancel</span>
+          <span class="btn primary">OK</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Manual vs. Roof Tag</h2>
+    <div class="matrix">
+      <div class="mrow head"><div>Feature</div><div>Manual</div><div>Roof Tag</div></div>
+      <div class="mrow"><div>Finding high points to tag</div><div class="tag-no">Hover the roof surface by eye</div><div class="tag-yes">Auto mode finds them, or pick manually</div></div>
+      <div class="mrow"><div>Tags crowding near drains</div><div class="tag-no">Manually skipped or moved after</div><div class="tag-yes">Cluster filter removes them up front</div></div>
+      <div class="mrow"><div>Dense loop boundaries</div><div class="tag-no">Every point tagged, cluttered</div><div class="tag-yes">Interior/exterior reduction, independent settings</div></div>
+      <div class="mrow"><div>Leader style consistency</div><div class="tag-no">Set per tag</div><div class="tag-yes">One angle/bend/offset for the whole batch</div></div>
+    </div>
+  </section>
+
+  <footer>
+    Built from the real RoofTag_V016 source in Revit26_Plugin — dialog structure and field names are exact; run numbers above are illustrative example output.
+    <div class="src">Menu/Tagging/RoofTag_V016</div>
+  </footer>
+
+</div>
