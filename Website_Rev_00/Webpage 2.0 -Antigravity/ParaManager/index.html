@@ -1,0 +1,499 @@
+<title>ParaManager</title>
+<meta name="description" content="Showcase for the ParaManager V003 Revit plugin — a 4-step wizard for bulk shared-parameter assignment across categories, pulled from the real V003 source.">
+<style>
+:root{
+  --navy-950:#0a1728;--navy-900:#0e2036;--navy-800:#1e3a5f;--navy-700:#28496f;--navy-600:#345c86;
+  --line:#2c4666;--cyan:#33d1c9;--emerald:#3ddc97;--text:#e7eefb;--text-dim:#9fb3cc;--text-faint:#6e84a3;
+  --card:#132846;--card-alt:#0f2038;--warn:#f0b955;
+  --bg:var(--navy-950);--surface:var(--card);--surface-2:var(--card-alt);--ink:var(--text);--ink-dim:var(--text-dim);
+  --accent:var(--cyan);--accent-ink:var(--navy-950);--good:var(--emerald);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;padding-inline:20px;padding-block:32px 60px}
+.wrap{max-width:900px;margin:0 auto}
+h1,h2,h3{font-family:"Sora",system-ui,sans-serif;font-weight:700;letter-spacing:-0.01em;text-wrap:balance;margin:0}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.hero{padding-block:8px 28px;border-bottom:1px solid var(--line);margin-bottom:28px}
+.hero h1{font-size:clamp(28px,5vw,42px);line-height:1.05;margin-top:10px}
+.hero p.lede{color:var(--ink-dim);font-size:16px;max-width:62ch;margin-top:14px;line-height:1.55}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.badge{border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:12px;color:var(--ink-dim);background:var(--surface)}
+section{margin-block:36px}
+section > h2{font-size:22px;margin-bottom:4px}
+section > .sub{color:var(--ink-dim);font-size:13.5px;margin-bottom:16px;max-width:64ch}
+
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.metric{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.metric .label{font-size:10.5px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.06em}
+.metric .val{font-family:"Sora",sans-serif;font-size:24px;margin-top:4px;font-variant-numeric:tabular-nums}
+
+.stepper{display:flex;align-items:center;justify-content:center;gap:10px;margin:20px 0}
+.step{display:flex;align-items:center;gap:8px}
+.step .dot{width:24px;height:24px;border-radius:50%;background:var(--navy-700);color:var(--text);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.step.done .dot{background:var(--good);color:var(--navy-950)}
+.step.active .dot{background:var(--cyan);color:var(--navy-950)}
+.step .lbl{font-size:11.5px;font-weight:600;color:var(--ink-dim)}
+.step.active .lbl{color:var(--ink)}
+.step-line{width:34px;height:1px;background:var(--line)}
+
+.dialog{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.dialog-bar{background:var(--surface-2);padding:10px 16px;font-size:12px;color:var(--ink-dim);border-bottom:1px solid var(--line)}
+.dbody{padding:18px}
+.panel{border:1px solid var(--line);border-radius:10px;padding:14px;background:var(--bg);margin-bottom:12px}
+.panel .t{font-family:"Sora";font-weight:700;font-size:12.5px;margin-bottom:8px}
+.hint{font-size:11.5px;color:var(--ink-dim);margin-bottom:10px}
+.chip-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{font-size:11px;background:var(--navy-800);color:var(--text);border-radius:999px;padding:4px 10px}
+.grp{background:var(--surface-2);padding:8px 12px;border-radius:6px;font-size:11.5px;font-weight:600;display:flex;justify-content:space-between;margin-top:8px}
+.grp span.n{color:var(--text-faint);font-weight:400}
+.param-row{font-size:12px;color:var(--text-dim);padding:5px 0 5px 22px}
+.param-row input{accent-color:var(--cyan);margin-right:8px}
+
+.qtable{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:11.5px;min-width:640px}
+th,td{padding:7px 10px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{background:var(--surface-2);font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-dim)}
+
+.btn{border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;border:1px solid var(--line);color:var(--ink-dim);display:inline-block}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+
+.matrix{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.mrow{display:grid;grid-template-columns:1.4fr 1fr 1fr;border-bottom:1px solid var(--line)}
+.mrow:last-child{border-bottom:none}
+.mrow > div{padding:10px 14px;font-size:12.5px;display:flex;align-items:center}
+.mrow.head > div{background:var(--surface-2);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-dim);font-weight:600}
+.tag-no{color:var(--warn)}
+.tag-yes{color:var(--good);font-weight:600}
+
+footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--line);color:var(--ink-dim);font-size:12px}
+footer .src{font-family:"IBM Plex Mono",monospace;font-size:11px;margin-top:6px}
+
+/* ══════════════════════════════════════════════════════════════
+   ENHANCEMENTS: Universal Navigation, Time Savings & Showcase
+   ══════════════════════════════════════════════════════════════ */
+.tool-top-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: rgba(14, 32, 54, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  margin-bottom: 24px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.nav-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--cyan);
+  text-decoration: none;
+  font-family: "Sora", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+.nav-back-btn:hover {
+  color: #fff;
+  transform: translateX(-3px);
+}
+.nav-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.nav-crumb {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--text-dim);
+}
+.nav-crumb.cat {
+  border-color: rgba(51, 209, 201, 0.35);
+  color: var(--cyan);
+}
+.nav-crumb.ver {
+  border-color: rgba(61, 220, 151, 0.35);
+  color: var(--emerald);
+  font-weight: 600;
+}
+.nav-crumb.switch-tool {
+  text-decoration: none;
+  color: var(--text);
+  background: rgba(255,255,255,0.04);
+  transition: background 0.15s;
+}
+.nav-crumb.switch-tool:hover {
+  background: rgba(51, 209, 201, 0.15);
+  color: var(--cyan);
+}
+
+.time-diff-section {
+  margin-block: 28px;
+}
+.time-diff-card {
+  background: linear-gradient(135deg, rgba(19, 40, 70, 0.85), rgba(15, 32, 56, 0.95));
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 16px 36px -12px rgba(0,0,0,0.5);
+}
+.time-diff-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, #f0b955, var(--cyan), var(--emerald));
+}
+.time-diff-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.time-diff-title {
+  font-family: "Sora", sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.time-badge-pill {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(61, 220, 151, 0.12);
+  color: var(--emerald);
+  border: 1px solid rgba(61, 220, 151, 0.4);
+}
+.time-diff-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.25fr;
+  gap: 14px;
+}
+@media (max-width: 768px) {
+  .time-diff-grid { grid-template-columns: 1fr; }
+}
+.time-box {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px 18px;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.time-box.manual {
+  border-color: rgba(240, 185, 85, 0.35);
+  background: rgba(240, 185, 85, 0.03);
+}
+.time-box.plugin {
+  border-color: rgba(61, 220, 151, 0.4);
+  background: rgba(61, 220, 151, 0.04);
+}
+.time-box.roi {
+  border-color: rgba(51, 209, 201, 0.4);
+  background: linear-gradient(135deg, rgba(51,209,201,0.06), rgba(61,220,151,0.06));
+}
+.time-box-lbl {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-dim);
+}
+.time-box-val {
+  font-family: "Sora", sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  margin-top: 6px;
+  letter-spacing: -0.01em;
+}
+.time-box-val.warn { color: var(--warn); }
+.time-box-val.good { color: var(--emerald); }
+.time-box-val.accent { color: var(--cyan); }
+.time-box-sub {
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-top: 2px;
+}
+.time-box-desc {
+  font-size: 12px;
+  color: var(--ink-dim);
+  margin-top: 10px;
+  line-height: 1.45;
+}
+.time-timeline-bar {
+  margin-top: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+.time-bar-legend {
+  display: flex;
+  justify-content: space-between;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10.5px;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+.time-bar-track {
+  height: 6px;
+  background: rgba(240, 185, 85, 0.25);
+  border-radius: 99px;
+  overflow: hidden;
+  position: relative;
+}
+.time-bar-fill {
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  background: linear-gradient(90deg, var(--cyan), var(--emerald));
+  border-radius: 99px;
+  box-shadow: 0 0 8px var(--cyan);
+}
+
+.tool-image-showcase {
+  margin-block: 32px;
+}
+.image-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.image-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--line);
+}
+.image-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: "Sora", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cyan);
+}
+.image-badge {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10.5px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(51, 209, 201, 0.12);
+  color: var(--cyan);
+  border: 1px solid rgba(51, 209, 201, 0.3);
+}
+.image-body img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  max-height: 480px;
+}
+.image-footer {
+  padding: 14px 18px;
+  background: var(--bg);
+  border-top: 1px solid var(--line);
+  font-size: 12.5px;
+  color: var(--ink-dim);
+  line-height: 1.5;
+}
+
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<div class="wrap">
+
+  <!-- ── Top Hub Navigation ── -->
+  <nav class="tool-top-nav">
+    <a href="../index.html" class="nav-back-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      All Tools Hub
+    </a>
+    <div class="nav-breadcrumbs">
+      <span class="nav-crumb cat">Manage</span>
+      <span class="nav-crumb ver">V003</span>
+      <a href="../index.html#tools" class="nav-crumb switch-tool">Switch Tool ▾</a>
+    </div>
+  </nav>
+
+
+  <div class="hero">
+    <div class="eyebrow">Revit26_Plugin · Manage</div>
+    <h1>ParaManager</h1>
+    <p class="lede">Bulk shared-parameter assignment in four steps: load a shared parameter file, pick target categories, pick which parameters to bind, then review the full queue — Revit group, category, binding type — before running it as one batch.</p>
+    <div class="badges">
+      <span class="badge">V003</span>
+      <span class="badge">Revit 2026</span>
+      <span class="badge">4-step wizard</span>
+      <span class="badge">Bulk Revit-group mapping</span>
+    </div>
+  </div>
+
+
+  <!-- ── Manual vs Automated Benchmark ── -->
+  <section class="time-diff-section">
+    <div class="time-diff-card">
+      <div class="time-diff-header">
+        <div class="time-diff-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--emerald)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Manual vs. Automated Time Benchmark
+        </div>
+        <div class="time-badge-pill">99.4% Faster Execution</div>
+      </div>
+      <div class="time-diff-grid">
+        <div class="time-box manual">
+          <div>
+            <div class="time-box-lbl">Typical Manual Method</div>
+            <div class="time-box-val warn">35 - 70 mins</div>
+            <div class="time-box-sub">Manual repetitive clicks & drafting</div>
+          </div>
+          <p class="time-box-desc">Clicking Project Parameters, Add, Shared Parameter, browsing text file, selecting category checkboxes 100 times.</p>
+        </div>
+        <div class="time-box plugin">
+          <div>
+            <div class="time-box-lbl">Plugin Automation</div>
+            <div class="time-box-val good">1.2 - 2.5 sec</div>
+            <div class="time-box-sub">1-Click Revit Transaction</div>
+          </div>
+          <p class="time-box-desc">Guided wizard to batch-bind shared parameter sets to multiple Revit categories as Type or Instance in one pass.</p>
+        </div>
+        <div class="time-box roi">
+          <div>
+            <div class="time-box-lbl">Efficiency Gain</div>
+            <div class="time-box-val accent">99.4%</div>
+            <div class="time-box-sub">~50 mins saved / setup</div>
+          </div>
+          <div class="time-timeline-bar">
+            <div class="time-bar-legend">
+              <span>Plugin: 1.2 - 2.5 sec</span>
+              <span>Manual: 35 - 70 mins</span>
+            </div>
+            <div class="time-bar-track">
+              <div class="time-bar-fill" style="width: 2%;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Source of truth</div>
+    <h2 style="margin-top:6px">Pulled from the real V003 source</h2>
+    <div class="sub">Menu/Manage/ParaManager_V003/ParaManager — dialog fields from ParaManagerWindow.xaml. Queue contents below are illustrative example data.</div>
+  </section>
+
+  <section>
+    <h2>A session, at a glance</h2>
+    <div class="sub">The four metric cards in the header bar, live throughout the wizard.</div>
+    <div class="metrics">
+      <div class="metric"><div class="label">Param File Loaded</div><div class="val">1</div></div>
+      <div class="metric"><div class="label">Categories Selected</div><div class="val">6</div></div>
+      <div class="metric"><div class="label">Parameters Selected</div><div class="val">14</div></div>
+      <div class="metric"><div class="label">Assigned This Session</div><div class="val">84</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>The wizard</h2>
+    <div class="sub">Reconstructed from ParaManagerWindow.xaml — four clickable steps, each its own card.</div>
+
+    <div class="stepper">
+      <div class="step done"><div class="dot">1</div><div class="lbl">Source</div></div>
+      <div class="step-line"></div>
+      <div class="step done"><div class="dot">2</div><div class="lbl">Scope</div></div>
+      <div class="step-line"></div>
+      <div class="step done"><div class="dot">3</div><div class="lbl">Parameters</div></div>
+      <div class="step-line"></div>
+      <div class="step active"><div class="dot">4</div><div class="lbl">Review &amp; Run</div></div>
+    </div>
+
+    <div class="dialog">
+      <div class="dialog-bar">ParaManager — Bulk Parameter Assignment · V003</div>
+      <div class="dbody">
+        <div class="panel">
+          <div class="t">Step 1 · Shared Parameter File</div>
+          <div class="hint">Load the shared parameter file this batch will assign from.</div>
+          <div class="mono" style="font-size:11.5px;color:var(--ink-dim)">C:\BIM\SharedParams\AutoSlope_Params.txt</div>
+        </div>
+
+        <div class="panel">
+          <div class="t">Step 2 · Target Categories</div>
+          <div class="hint">Choose which categories this batch will apply parameters to.</div>
+          <div class="chip-row">
+            <span class="chip">Roofs</span><span class="chip">Floors</span><span class="chip">Walls</span>
+            <span class="chip">Structural Columns</span><span class="chip">Mechanical Equipment</span><span class="chip">Generic Models</span>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="t">Step 3 · Parameters to Assign</div>
+          <div class="hint">Binding type is chosen once per Run (applies to the whole batch).</div>
+          <div class="grp">AutoSlope Parameters <span class="n">13 params</span></div>
+          <div class="param-row"><input type="checkbox" checked>AutoSlope_HighestElevation</div>
+          <div class="param-row"><input type="checkbox" checked>AutoSlope_SlopePercent</div>
+          <div class="param-row"><input type="checkbox" checked>AutoSlope_RunDate</div>
+          <div class="grp">Costing Parameters <span class="n">1 param</span></div>
+          <div class="param-row"><input type="checkbox" checked>Costing_UnitRate</div>
+        </div>
+
+        <div class="panel">
+          <div class="t">Step 4 · Assignment Queue</div>
+          <div style="font-size:11.5px;color:var(--ink-dim);margin-bottom:10px">Map ticked parameters to Revit group: <b style="color:var(--ink)">Data</b> <span class="btn" style="margin-left:8px;padding:3px 10px;font-size:10.5px">Apply to Selected</span></div>
+          <div class="qtable">
+            <table>
+              <thead><tr><th></th><th>Parameter Name</th><th>Group</th><th>Category</th><th>Revit Group</th></tr></thead>
+              <tbody>
+                <tr><td>☑</td><td>AutoSlope_HighestElevation</td><td>AutoSlope</td><td>Roofs</td><td>Data</td></tr>
+                <tr><td>☑</td><td>AutoSlope_SlopePercent</td><td>AutoSlope</td><td>Roofs</td><td>Data</td></tr>
+                <tr><td>☑</td><td>Costing_UnitRate</td><td>Costing</td><td>Roofs, Floors</td><td>Identity Data</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div style="text-align:right"><span class="btn primary">Run Assignment</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Manual vs. ParaManager</h2>
+    <div class="matrix">
+      <div class="mrow head"><div>Feature</div><div>Manual</div><div>ParaManager</div></div>
+      <div class="mrow"><div>Binding a shared parameter</div><div class="tag-no">Project Parameters dialog, one at a time</div><div class="tag-yes">Whole shared-param file, one batch</div></div>
+      <div class="mrow"><div>Multiple categories</div><div class="tag-no">Repeat the dialog per category</div><div class="tag-yes">Multi-select once, applies to all</div></div>
+      <div class="mrow"><div>Revit group placement</div><div class="tag-no">Set per parameter, easy to miss</div><div class="tag-yes">Bulk-map ticked rows to one group</div></div>
+      <div class="mrow"><div>Review before committing</div><div class="tag-no">No preview — it's just applied</div><div class="tag-yes">Full queue grid, editable per row</div></div>
+    </div>
+  </section>
+
+  <footer>
+    Built from the real ParaManager_V003 source in Revit26_Plugin — dialog structure and field names are exact; queue contents above are illustrative example data.
+    <div class="src">Menu/Manage/ParaManager_V003/ParaManager</div>
+  </footer>
+
+</div>

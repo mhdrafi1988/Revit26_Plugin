@@ -7,7 +7,7 @@
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<PackageId />
 		<AssemblyName>Revit26_Plugin</AssemblyName>
-		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\24-09-2026-02</BaseOutputPath>
+		<BaseOutputPath></BaseOutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 	  <IsPublishable>False</IsPublishable>
@@ -701,16 +701,7 @@
 	  <Page Remove="Shared\SharedStyles.xaml" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Reference Include="RevitAPI">
-	    <HintPath>D:\Github\Revit_26\Apiref\RevitAPI.dll</HintPath>
-	    <Private>False</Private>
-	  </Reference>
-	  <Reference Include="RevitAPIUI">
-	    <HintPath>D:\Github\Revit_26\Apiref\RevitAPIUI.dll</HintPath>
-	    <Private>False</Private>
-	  </Reference>
-	</ItemGroup>
-	<ItemGroup>
+	  <PackageReference Include="Autodesk.Revit.SDK" Version="2026.0.0.9999" />
 	  <PackageReference Include="ClosedXML" Version="0.105.0" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 	  <PackageReference Include="EPPlus" Version="5.8.0" />

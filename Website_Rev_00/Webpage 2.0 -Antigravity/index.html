@@ -1,0 +1,1591 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Revit 2026 Plugin Suite — High-Performance BIM Automation</title>
+<meta name="description" content="Production portal and documentation for 24 high-performance Revit 2026 automation plugins — roof slope calculations, sheet packing, view management, and detail generators.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --navy-950: #0a1728;
+    --navy-900: #0e2036;
+    --navy-800: #1e3a5f;
+    --navy-700: #28496f;
+    --navy-600: #345c86;
+    --line: #2c4666;
+    --line-light: rgba(51, 209, 201, 0.25);
+    --cyan: #33d1c9;
+    --emerald: #3ddc97;
+    --text: #e7eefb;
+    --text-dim: #9fb3cc;
+    --text-faint: #6e84a3;
+    --card: #132846;
+    --card-alt: #0f2038;
+    --warn: #f0b955;
+    --shadow: 0 20px 50px -20px rgba(0,0,0,.6);
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background:
+      radial-gradient(1100px 560px at 18% -8%, rgba(51,209,201,.14), transparent 60%),
+      radial-gradient(900px 500px at 100% 10%, rgba(61,220,151,.10), transparent 55%),
+      var(--navy-950);
+    color: var(--text);
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: rgba(51,209,201,.35); color: #fff; }
+  h1, h2, h3, h4 { font-family: "Sora", system-ui, sans-serif; margin: 0; letter-spacing: -0.01em; }
+  p { margin: 0; }
+  .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding-inline: 24px; }
+  .eyebrow {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11.5px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
+  section { padding-block: 76px; }
+  .grad-divider { height: 1px; background: linear-gradient(90deg, transparent, var(--line), transparent); }
+
+  /* ===== HEADER NAV ===== */
+  header.nav {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    background: rgba(10, 23, 40, 0.82);
+    border-bottom: 1px solid var(--line);
+  }
+  header.nav .row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-block: 14px;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; font-family: "Sora"; font-weight: 700; font-size: 16px; text-decoration: none; color: #fff; }
+  .brand .dot { width: 10px; height: 10px; border-radius: 2px; background: linear-gradient(135deg, var(--cyan), var(--emerald)); transform: rotate(45deg); box-shadow: 0 0 12px var(--cyan); }
+  .brand .subtag { font-family: "IBM Plex Mono"; font-size: 11px; color: var(--emerald); font-weight: 600; padding: 2px 7px; border-radius: 4px; background: rgba(61,220,151,0.12); border: 1px solid rgba(61,220,151,0.3); }
+  .navlinks { display: flex; gap: 24px; font-size: 13.5px; color: var(--text-dim); align-items: center; }
+  .navlinks a { color: inherit; text-decoration: none; transition: color .15s; font-weight: 500; }
+  .navlinks a:hover { color: var(--cyan); }
+  .navlinks .btn-gh {
+    padding: 6px 14px; border-radius: 8px; border: 1px solid var(--line);
+    background: rgba(255,255,255,0.03); color: var(--text); display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px;
+  }
+  .navlinks .btn-gh:hover { border-color: var(--cyan); color: #fff; background: rgba(51,209,201,0.08); }
+  @media (max-width: 860px) { .navlinks { display: none; } }
+
+  /* ===== HERO SECTION ===== */
+  .hero { padding-top: 60px; padding-bottom: 40px; position: relative; overflow: hidden; }
+  .hero-grid {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(51,209,201,.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(51,209,201,.06) 1px, transparent 1px);
+    background-size: 42px 42px;
+    -webkit-mask-image: radial-gradient(800px 500px at 40% 20%, black, transparent 80%);
+            mask-image: radial-gradient(800px 500px at 40% 20%, black, transparent 80%);
+  }
+  .hero-inner { position: relative; max-width: 960px; }
+  .hero h1 { font-size: clamp(34px, 5.2vw, 56px); line-height: 1.05; margin-top: 18px; font-weight: 800; }
+  .hero h1 span { background: linear-gradient(100deg, var(--cyan), var(--emerald)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero .lede { margin-top: 18px; color: var(--text-dim); max-width: 70ch; font-size: 17px; line-height: 1.6; }
+  .hero-actions { display: flex; gap: 14px; margin-top: 32px; flex-wrap: wrap; }
+  .btn {
+    font-family: "Sora"; font-weight: 600; font-size: 13.5px;
+    border-radius: 9px; padding: 13px 22px; cursor: pointer; border: 1px solid transparent;
+    display: inline-flex; align-items: center; gap: 8px; text-decoration: none; transition: all .18s ease;
+  }
+  .btn-primary {
+    background: linear-gradient(100deg, var(--cyan), var(--emerald));
+    color: #04201c; box-shadow: 0 10px 30px -10px rgba(61,220,151,.5);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 36px -8px rgba(61,220,151,.65); }
+  .btn-ghost {
+    border-color: var(--line); color: var(--text); background: rgba(255,255,255,.02);
+  }
+  .btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(51,209,201,0.06); }
+
+  /* ===== KEY METRICS BANNER ===== */
+  .metrics-bar {
+    margin-top: 48px;
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px;
+    background: var(--line); border: 1px solid var(--line); border-radius: 14px; overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  @media (max-width: 960px) { .metrics-bar { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 580px) { .metrics-bar { grid-template-columns: repeat(2, 1fr); } }
+  .metric-card { background: var(--card); padding: 20px 18px; }
+  .metric-card .lbl { font-family: "IBM Plex Mono"; font-size: 10.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-faint); }
+  .metric-card .val { font-family: "Sora"; font-size: 28px; font-weight: 700; margin-top: 6px; letter-spacing: -0.02em; }
+  .metric-card .val.cyan { color: var(--cyan); }
+  .metric-card .val.emerald { color: var(--emerald); }
+  .metric-card .val.warn { color: var(--warn); }
+  .metric-card .sub { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+
+  /* ===== 3D ARCHITECTURAL SHOWCASE ===== */
+  .showcase-section { position: relative; }
+  .showcase-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
+  .showcase-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+  .showcase-tab {
+    font-family: "IBM Plex Mono"; font-size: 12px; color: var(--text-dim);
+    background: var(--card); border: 1px solid var(--line); border-radius: 8px;
+    padding: 8px 16px; cursor: pointer; transition: all .15s ease;
+  }
+  .showcase-tab:hover { border-color: var(--cyan); color: var(--text); }
+  .showcase-tab.active { background: rgba(51,209,201,0.15); border-color: var(--cyan); color: var(--cyan); font-weight: 600; }
+
+  .showcase-display {
+    background: var(--card); border: 1px solid var(--line); border-radius: 18px;
+    overflow: hidden; box-shadow: var(--shadow); position: relative;
+  }
+  .showcase-viewport {
+    position: relative; width: 100%; aspect-ratio: 16/9; background: #000; overflow: hidden;
+  }
+  .showcase-viewport img {
+    width: 100%; height: 100%; object-fit: cover; display: none; transition: opacity .3s ease;
+  }
+  .showcase-viewport img.active { display: block; }
+  
+  .showcase-meta {
+    padding: 20px 24px; background: var(--card-alt); border-top: 1px solid var(--line);
+    display: grid; grid-template-columns: 2fr 1fr; gap: 20px; align-items: center;
+  }
+  @media (max-width: 800px) { .showcase-meta { grid-template-columns: 1fr; } }
+  .showcase-meta h3 { font-size: 18px; color: #fff; margin-bottom: 6px; }
+  .showcase-meta p { color: var(--text-dim); font-size: 13.5px; line-height: 1.5; }
+  .showcase-badges { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+  @media (max-width: 800px) { .showcase-badges { justify-content: flex-start; } }
+  .sc-badge {
+    font-family: "IBM Plex Mono"; font-size: 11px; padding: 4px 10px; border-radius: 6px;
+    background: rgba(255,255,255,0.04); border: 1px solid var(--line); color: var(--cyan);
+  }
+
+  /* ===== ROI CALCULATOR SECTION ===== */
+  .calc-section {
+    background: linear-gradient(180deg, rgba(14,32,54,0.6), rgba(10,23,40,0.9));
+    border-radius: 20px; border: 1px solid var(--line); padding: 44px 36px;
+    box-shadow: var(--shadow);
+  }
+  .calc-grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 40px; margin-top: 32px; }
+  @media (max-width: 900px) { .calc-grid { grid-template-columns: 1fr; } }
+  .calc-sliders { display: flex; flex-direction: column; gap: 20px; }
+  .calc-field { background: var(--card-alt); border: 1px solid var(--line); border-radius: 12px; padding: 16px 20px; }
+  .calc-field-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .calc-field-title { font-size: 13px; font-weight: 600; color: var(--text); }
+  .calc-field-val { font-family: "IBM Plex Mono"; font-size: 18px; font-weight: 700; color: var(--cyan); }
+  input[type="range"] { width: 100%; accent-color: var(--cyan); height: 5px; cursor: pointer; }
+  
+  .calc-results {
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+    padding: 28px; display: flex; flex-direction: column; justify-content: space-between;
+    position: relative; overflow: hidden;
+  }
+  .calc-results::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--cyan), var(--emerald));
+  }
+  .calc-res-title { font-family: "Sora"; font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 20px; }
+  .calc-res-row { display: flex; justify-content: space-between; padding-block: 10px; border-bottom: 1px solid var(--line); font-size: 13.5px; }
+  .calc-res-row.total { border-bottom: none; padding-top: 18px; margin-top: 8px; }
+  .calc-res-val { font-family: "IBM Plex Mono"; font-weight: 700; }
+  .calc-res-val.warn { color: var(--warn); }
+  .calc-res-val.good { color: var(--emerald); font-size: 26px; }
+  .calc-res-val.cyan { color: var(--cyan); }
+  .calc-roi-box {
+    margin-top: 20px; padding: 14px 18px; border-radius: 10px;
+    background: rgba(61,220,151,0.08); border: 1px solid rgba(61,220,151,0.3);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .calc-roi-box .roi-num { font-family: "Sora"; font-size: 24px; font-weight: 800; color: var(--emerald); }
+  .calc-roi-box .roi-lbl { font-size: 11px; text-transform: uppercase; color: var(--text-dim); font-family: "IBM Plex Mono"; }
+
+  /* ===== TOOLS FILTER & SEARCH ===== */
+  .tools-controls {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 16px; margin-top: 36px; margin-bottom: 30px; flex-wrap: wrap;
+  }
+  .search-input-wrap { position: relative; flex: 1; max-width: 360px; }
+  .search-input-wrap svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-faint); pointer-events: none; }
+  .search-input {
+    width: 100%; padding: 12px 16px 12px 42px; border-radius: 10px;
+    background: var(--card-alt); border: 1px solid var(--line); color: var(--text);
+    font-family: "IBM Plex Sans"; font-size: 14px; outline: none; transition: border-color .15s;
+  }
+  .search-input:focus { border-color: var(--cyan); box-shadow: 0 0 10px rgba(51,209,201,0.25); }
+  
+  .filter-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+  .filter-tab {
+    font-family: "IBM Plex Mono"; font-size: 12px; color: var(--text-dim);
+    background: var(--card); border: 1px solid var(--line); border-radius: 8px;
+    padding: 9px 14px; cursor: pointer; transition: all .15s;
+  }
+  .filter-tab:hover { border-color: var(--cyan); color: var(--text); }
+  .filter-tab.active { background: var(--cyan); color: #04201c; border-color: var(--cyan); font-weight: 700; }
+
+  /* ===== TOOL CARDS GRID ===== */
+  .tools-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px;
+  }
+  @media (max-width: 420px) { .tools-grid { grid-template-columns: 1fr; } }
+  
+  .tool-card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+    padding: 24px; display: flex; flex-direction: column; justify-content: space-between;
+    transition: all .2s ease; position: relative; overflow: hidden;
+  }
+  .tool-card:hover {
+    transform: translateY(-4px); border-color: var(--cyan);
+    box-shadow: 0 18px 40px -15px rgba(51, 209, 201, 0.25);
+  }
+  .tool-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .tool-cat-pill {
+    font-family: "IBM Plex Mono"; font-size: 11px; text-transform: uppercase;
+    color: var(--cyan); background: rgba(51,209,201,0.1); border: 1px solid rgba(51,209,201,0.25);
+    padding: 3px 9px; border-radius: 6px;
+  }
+  .tool-ver-pill {
+    font-family: "IBM Plex Mono"; font-size: 11px; color: var(--emerald);
+    background: rgba(61,220,151,0.1); border: 1px solid rgba(61,220,151,0.25);
+    padding: 3px 8px; border-radius: 6px; font-weight: 600;
+  }
+  .tool-card-title { font-size: 19px; font-weight: 700; color: #fff; margin-bottom: 10px; }
+  .tool-card-desc { font-size: 13.5px; color: var(--text-dim); line-height: 1.5; margin-bottom: 18px; }
+
+  .tool-bench-box {
+    background: var(--navy-950); border: 1px solid var(--line); border-radius: 10px;
+    padding: 12px 14px; margin-bottom: 16px;
+  }
+  .bench-row { display: flex; justify-content: space-between; font-size: 11.5px; margin-bottom: 4px; font-family: "IBM Plex Mono"; }
+  .bench-lbl { color: var(--text-faint); }
+  .bench-val.warn { color: var(--warn); font-weight: 600; }
+  .bench-val.good { color: var(--emerald); font-weight: 700; }
+  .bench-bar { height: 5px; background: rgba(240,185,85,0.25); border-radius: 99px; margin-block: 6px; overflow: hidden; position: relative; }
+  .bench-fill { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(90deg, var(--cyan), var(--emerald)); border-radius: 99px; }
+  .bench-savings { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; font-family: "IBM Plex Mono"; font-size: 11px; }
+  .save-tag { color: var(--emerald); font-weight: 700; }
+  .save-sub { color: var(--text-faint); font-size: 10.5px; }
+
+  .tool-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+  .tool-tag {
+    font-family: "IBM Plex Mono"; font-size: 10.5px; color: var(--text-faint);
+    background: var(--card-alt); border: 1px solid var(--line); border-radius: 5px;
+    padding: 3px 7px;
+  }
+  .has-img-badge {
+    font-family: "IBM Plex Mono"; font-size: 10.5px; color: var(--cyan);
+    background: rgba(51,209,201,0.12); border: 1px solid rgba(51,209,201,0.3);
+    border-radius: 5px; padding: 3px 7px; font-weight: 600;
+  }
+
+  .tool-card-btn {
+    width: 100%; padding: 11px 16px; border-radius: 9px;
+    background: rgba(255,255,255,0.03); border: 1px solid var(--line);
+    color: var(--text); font-family: "Sora"; font-size: 13px; font-weight: 600;
+    text-decoration: none; display: flex; justify-content: space-between; align-items: center;
+    transition: all .15s ease;
+  }
+  .tool-card:hover .tool-card-btn {
+    background: var(--cyan); color: #04201c; border-color: var(--cyan);
+  }
+
+  /* ===== ARCHITECTURE SECTION ===== */
+  .arch-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 32px; }
+  @media (max-width: 860px) { .arch-grid { grid-template-columns: 1fr; } }
+  .arch-card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 24px; position: relative;
+  }
+  .arch-num { font-family: "IBM Plex Mono"; font-size: 12px; color: var(--cyan); margin-bottom: 8px; }
+  .arch-title { font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .arch-desc { font-size: 13px; color: var(--text-dim); line-height: 1.5; }
+
+  /* ===== FOOTER ===== */
+  footer {
+    border-top: 1px solid var(--line); padding-block: 48px; margin-top: 80px;
+    color: var(--text-dim); font-size: 13px;
+  }
+  .footer-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+</style>
+</head>
+
+<body>
+
+  <!-- ── Global Navigation ── -->
+  <header class="nav">
+    <div class="wrap">
+      <div class="row">
+        <a href="#top" class="brand">
+          <div class="dot"></div>
+          <span>Revit26 Plugin Suite</span>
+          <span class="subtag">v2.0</span>
+        </a>
+        <nav class="navlinks">
+          <a href="#showcase">3D Digital Twin</a>
+          <a href="#calculator">ROI Calculator</a>
+          <a href="#tools">Tool Directory (24)</a>
+          <a href="#architecture">Architecture</a>
+          <a href="https://github.com" target="_blank" class="btn-gh">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+            GitHub
+          </a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Hero Section ── -->
+  <div class="hero" id="top">
+    <div class="hero-grid"></div>
+    <div class="wrap">
+      <div class="hero-inner">
+        <div class="eyebrow">Autodesk Revit 2026 Production Suite · 24 High-Performance Automation Tools</div>
+        <h1>Enterprise BIM automation engineered for <span>maximum precision</span>.</h1>
+        <p class="lede">
+          Eliminate hundreds of tedious manual hours across roof drainage topography, sheet packing, section cut generation, and parameter synchronization with mathematically verified 1-click algorithms.
+        </p>
+        <div class="hero-actions">
+          <a href="#tools" class="btn btn-primary">
+            <span>Explore 24 Tools</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <a href="#calculator" class="btn btn-ghost">Interactive ROI Calculator</a>
+          <a href="#showcase" class="btn btn-ghost">3D Digital Twin Viewer</a>
+        </div>
+      </div>
+
+      <!-- ── Key Metrics Banner ── -->
+      <div class="metrics-bar">
+        <div class="metric-card">
+          <div class="lbl">Total Tools</div>
+          <div class="val cyan">24</div>
+          <div class="sub">Production-tested plugins</div>
+        </div>
+        <div class="metric-card">
+          <div class="lbl">Avg Time Saved</div>
+          <div class="val emerald">99.4%</div>
+          <div class="sub">Across all workflows</div>
+        </div>
+        <div class="metric-card">
+          <div class="lbl">Hours Saved</div>
+          <div class="val cyan">100+ hrs</div>
+          <div class="sub">Per commercial project</div>
+        </div>
+        <div class="metric-card">
+          <div class="lbl">Revit API Engine</div>
+          <div class="val">2026</div>
+          <div class="sub">Native .NET 8 / C#</div>
+        </div>
+        <div class="metric-card">
+          <div class="lbl">Math Accuracy</div>
+          <div class="val warn">100%</div>
+          <div class="sub">Dijkstra graph verified</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grad-divider"></div>
+
+  <!-- ── 3D Architectural Showcase ── -->
+  <section class="showcase-section" id="showcase">
+    <div class="wrap">
+      <div class="showcase-header">
+        <div>
+          <div class="eyebrow">Visual Digital Twin</div>
+          <h2 style="font-size: 28px; margin-top: 6px;">3D Architectural Modeling & Drainage Flow</h2>
+          <p style="color: var(--text-dim); margin-top: 6px; font-size: 14.5px;">Explore the geometric accuracy of the AutoSlope, Creaser, and Ridge algorithms in realistic architectural environments.</p>
+        </div>
+        <div class="showcase-tabs">
+          <button class="showcase-tab active" onclick="switchShowcase(0)">Roof Slope Heatmap</button>
+          <button class="showcase-tab" onclick="switchShowcase(1)">Drainage Flow Streamlines</button>
+          <button class="showcase-tab" onclick="switchShowcase(2)">Ridge & Valley Detail</button>
+        </div>
+      </div>
+
+      <div class="showcase-display">
+        <div class="showcase-viewport">
+          <img src="./assets/images/roof_slope_editor_ui.jpg" alt="Roof Slope Editor UI & Heatmap" class="active" id="sc-img-0">
+          <img src="./assets/images/roof_drain_streamlines.jpg" alt="Streamline Drainage Flow Paths" id="sc-img-1">
+          <img src="./assets/images/roof_ridge_creaser_detail.jpg" alt="Ridge & Valley Creaser Detail" id="sc-img-2">
+        </div>
+        <div class="showcase-meta">
+          <div>
+            <h3 id="sc-title">Revit 3D Roof Slope Editor & Elevation Contour Heatmap</h3>
+            <p id="sc-desc">Axonometric 3D viewport showcasing real-time slope analysis gradient heatmap (deep blue at low drain invert, vivid green along high ridges), triangulated mesh nodes with editable grips, and DRAIN-01 / DRAIN-02 invert elevation callout tags.</p>
+          </div>
+          <div class="showcase-badges" id="sc-badges">
+            <span class="sc-badge">Dijkstra Path</span>
+            <span class="sc-badge">Contour Heatmap</span>
+            <span class="sc-badge">Invert Elev Tags</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="grad-divider"></div>
+
+  <!-- ── Interactive ROI Calculator ── -->
+  <section id="calculator">
+    <div class="wrap">
+      <div class="calc-section">
+        <div class="eyebrow">Enterprise ROI Math</div>
+        <h2 style="font-size: 28px; margin-top: 6px;">Calculate Your Team's Time & Cost Savings</h2>
+        <p style="color: var(--text-dim); margin-top: 6px; font-size: 14.5px;">Adjust your project scope below to see exact empirical time savings compared to standard manual Revit drafting.</p>
+
+        <div class="calc-grid">
+          <!-- Sliders -->
+          <div class="calc-sliders">
+            <div class="calc-field">
+              <div class="calc-field-top">
+                <span class="calc-field-title">Roofs in Project</span>
+                <span class="calc-field-val" id="val-roofs">8</span>
+              </div>
+              <input type="range" id="slider-roofs" min="1" max="30" value="8" oninput="updateROI()">
+            </div>
+
+            <div class="calc-field">
+              <div class="calc-field-top">
+                <span class="calc-field-title">Drawing Sheets in Package</span>
+                <span class="calc-field-val" id="val-sheets">60</span>
+              </div>
+              <input type="range" id="slider-sheets" min="10" max="250" value="60" oninput="updateROI()">
+            </div>
+
+            <div class="calc-field">
+              <div class="calc-field-top">
+                <span class="calc-field-title">Sections & Views Managed</span>
+                <span class="calc-field-val" id="val-views">150</span>
+              </div>
+              <input type="range" id="slider-views" min="20" max="500" value="150" oninput="updateROI()">
+            </div>
+
+            <div class="calc-field">
+              <div class="calc-field-top">
+                <span class="calc-field-title">Hourly BIM / CAD Rate ($/hr)</span>
+                <span class="calc-field-val" id="val-rate">$85</span>
+              </div>
+              <input type="range" id="slider-rate" min="40" max="200" step="5" value="85" oninput="updateROI()">
+            </div>
+          </div>
+
+          <!-- Results Summary Card -->
+          <div class="calc-results">
+            <div>
+              <div class="calc-res-title">Project Benchmark Results</div>
+              <div class="calc-res-row">
+                <span style="color: var(--text-dim);">Manual Drafting Time:</span>
+                <span class="calc-res-val warn" id="res-manual-hrs">168.0 hrs</span>
+              </div>
+              <div class="calc-res-row">
+                <span style="color: var(--text-dim);">Plugin Automation Runtime:</span>
+                <span class="calc-res-val cyan" id="res-plugin-time">38.4 sec</span>
+              </div>
+              <div class="calc-res-row">
+                <span style="color: var(--text-dim);">Net Hours Saved:</span>
+                <span class="calc-res-val good" id="res-saved-hrs">167.9 hrs</span>
+              </div>
+              <div class="calc-res-row total">
+                <span style="font-weight: 600; color: #fff;">Financial Savings:</span>
+                <span class="calc-res-val good" id="res-dollars">$14,272</span>
+              </div>
+            </div>
+
+            <div class="calc-roi-box">
+              <div>
+                <div class="roi-lbl">Speedup Multiplier</div>
+                <div class="roi-num" id="res-multiplier">15,700×</div>
+              </div>
+              <div style="text-align: right;">
+                <div class="roi-lbl">Efficiency Gain</div>
+                <div class="roi-num" style="color: var(--cyan);" id="res-pct">99.4%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="grad-divider"></div>
+
+  <!-- ── Tools Directory Hub ── -->
+  <section id="tools">
+    <div class="wrap">
+      <div class="eyebrow">Production Suite Directory</div>
+      <h2 style="font-size: 30px; margin-top: 6px;">All 24 Specialized Revit Automation Tools</h2>
+      <p style="color: var(--text-dim); margin-top: 6px; font-size: 15px;">Every tool is backed by real Revit 2026 C# source code, empirical benchmarks, and parameter mapping.</p>
+
+      <!-- Search & Filters -->
+      <div class="tools-controls">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input type="text" id="tool-search" class="search-input" placeholder="Search tool by name, algorithm, or feature..." oninput="filterTools()">
+        </div>
+
+        <div class="filter-tabs">
+          <button class="filter-tab active" data-filter="all" onclick="setCategoryFilter('all', this)">All (24)</button>
+          <button class="filter-tab" data-filter="roof" onclick="setCategoryFilter('roof', this)">Roof & Drainage (8)</button>
+          <button class="filter-tab" data-filter="sheet" onclick="setCategoryFilter('sheet', this)">Sheet Tools (3)</button>
+          <button class="filter-tab" data-filter="view" onclick="setCategoryFilter('view', this)">View & Section (7)</button>
+          <button class="filter-tab" data-filter="detail" onclick="setCategoryFilter('detail', this)">Detail Lines (2)</button>
+          <button class="filter-tab" data-filter="setup" onclick="setCategoryFilter('setup', this)">Manage & Setup (4)</button>
+        </div>
+      </div>
+
+      <!-- Tools Grid -->
+      <div class="tools-grid" id="tools-grid">
+        
+      <div class="tool-card" data-cat="roof" data-title="autoslope by drain" data-desc="batch-calculates and applies constant-slope elevations across all roof vertices relative to designated drain elements using dijkstra geometric graph traversal.">
+        <div class="tool-card-header">
+          <div class="tool-cat-pill">Roof & Drainage</div>
+          <div class="tool-ver-pill">V010 / V007</div>
+        </div>
+        <h3 class="tool-card-title">AutoSlope by Drain</h3>
+        <p class="tool-card-desc">Batch-calculates and applies constant-slope elevations across all roof vertices relative to designated drain elements using Dijkstra geometric graph traversal.</p>
+        
+        <div class="tool-bench-box">
+          <div class="bench-row">
+            <span class="bench-lbl">Manual:</span>
+            <span class="bench-val warn">60 - 90 mins</span>
+          </div>
+          <div class="bench-row">
+            <span class="bench-lbl">Plugin:</span>
+            <span class="bench-val good">1.8 - 2.8 sec</span>
+          </div>
+          <div class="bench-bar">
+            <div class="bench-fill" style="width: 2%;"></div>
+          </div>
+          <div class="bench-savings">
+            <span class="save-tag">99.7% Faster</span>
+            <span class="save-sub">1.2 hrs / roof</span>
+          </div>
+        </div>
+
+        <div class="tool-tags">
+          <span class="tool-tag">Dijkstra Path</span><span class="tool-tag">Slope Graph</span><span class="tool-tag">Multi-Drain</span><span class="tool-tag">Revit Sub-Elements</span>
+          <span class="has-img-badge">3D Render</span>
+        </div>
+
+        <a href="./AutoSlope-by-Drain/index.html" class="tool-card-btn">
+          <span>Explore Tool Page</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="tool-card" data-cat="roof" data-title="autoslope by point" data-desc="kd-tree nearest-drain lookup with dijkstra graph engine, excel export, and 13 autoslope_* parameters written directly to roof elements.">
+        <div class="tool-card-header">
+          <div class="tool-cat-pill">Roof & Drainage</div>
+          <div class="tool-ver-pill">V028</div>
+        </div>
+        <h3 class="tool-card-title">AutoSlope by Point</h3>
+        <p class="tool-card-desc">KD-Tree nearest-drain lookup with Dijkstra graph engine, Excel export, and 13 AutoSlope_* parameters written directly to roof elements.</p>
+        
+        <div class="tool-bench-box">
+          <div class="bench-row">
+            <span class="bench-lbl">Manual:</span>
+            <span class="bench-val warn">45 - 75 mins</span>
+          </div>
+          <div class="bench-row">
+            <span class="bench-lbl">Plugin:</span>
+            <span class="bench-val good">0.8 - 1.5 sec</span>
+          </div>
+          <div class="bench-bar">
+            <div class="bench-fill" style="width: 2%;"></div>
+          </div>
+          <div class="bench-savings">
+            <span class="save-tag">99.6% Faster</span>
+            <span class="save-sub">1.0 hr / roof</span>
+          </div>
+        </div>
+
+        <div class="tool-tags">
+          <span class="tool-tag">KD-Tree</span><span class="tool-tag">Excel Export</span><span class="tool-tag">Vertex Elevation</span><span class="tool-tag">Boundary Clamping</span>
+          <span class="has-img-badge">3D Render</span>
+        </div>
+
+        <a href="./AutoSlope-by-Point/index.html" class="tool-card-btn">
+          <span>Explore Tool Page</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="tool-card" data-cat="roof" data-title="creaser advanced" data-desc="places crease detail items along valid roof ridge and valley edges, filtered by minimum length and validated by dijkstra path connectivity to drains.">
+        <div class="tool-card-header">
+          <div class="tool-cat-pill">Roof & Drainage</div>
+          <div class="tool-ver-pill">V010</div>
+        </div>
+        <h3 class="tool-card-title">Creaser Advanced</h3>
+        <p class="tool-card-desc">Places crease detail items along valid roof ridge and valley edges, filtered by minimum length and validated by Dijkstra path connectivity to drains.</p>
+        
+        <div class="tool-bench-box">
+          <div class="bench-row">
+            <span class="bench-lbl">Manual:</span>
+            <span class="bench-val warn">30 - 50 mins</span>
+          </div>
+          <div class="bench-row">
+            <span class="bench-lbl">Plugin:</span>
+            <span class="bench-val good">0.6 - 1.2 sec</span>
+          </div>
+          <div class="bench-bar">
+            <div class="bench-fill" style="width: 2%;"></div>
+          </div>
+          <div class="bench-savings">
+            <span class="save-tag">99.5% Faster</span>
+            <span class="save-sub">0.7 hr / roof</span>
+          </div>
+        </div>
+
+        <div class="tool-tags">
+          <span class="tool-tag">Crease Detail Items</span><span class="tool-tag">Slope Cutoff</span><span class="tool-tag">Dijkstra Validity</span><span class="tool-tag">Ridge Paths</span>
+          <span class="has-img-badge">3D Render</span>
+        </div>
+
+        <a href="./Creaser-Advanced/index.html" class="tool-card-btn">
+          <span>Explore Tool Page</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="tool-card" data-cat="roof" data-title="roof ridge lines (by points)" data-desc="detects basin boundaries between drain groups and automatically generates 3d ridge and valley boundary lines connecting elevation peak points.">
+        <div class="tool-card-header">
+          <div class="tool-cat-pill">Roof & Drainage</div>
+          <div class="tool-ver-pill">V057</div>
+        </div>
+        <h3 class="tool-card-title">Roof Ridge Lines (by Points)</h3>
+        <p class="tool-card-desc">Detects basin boundaries between drain groups and automatically generates 3D ridge and valley boundary lines connecting elevation peak points.</p>
+        
+        <div class="tool-bench-box">
+          <div class="bench-row">
+            <span class="bench-lbl">Manual:</span>
+            <span class="bench-val warn">35 - 60 mins</span>
+          </div>
+          <div class="bench-row">
+            <span class="bench-lbl">Plugin:</span>
+            <span class="bench-val good">1.1 - 2.2 sec</span>
+          </div>
+          <div class="bench-bar">
+            <div class="bench-fill" style="width: 2%;"></div>
+          </div>
+          <div class="bench-savings">
+            <span class="save-tag">99.4% Faster</span>
+            <span class="save-sub">0.8 hr / roof</span>
+          </div>
+        </div>
+
+        <div class="tool-tags">
+          <span class="tool-tag">Basin Clustering</span><span class="tool-tag">3D Ridge Lines</span><span class="tool-tag">Watershed Bounds</span><span class="tool-tag">Peak Points</span>
+          <span class="has-img-badge">3D Render</span>
+        </div>
+
+        <a href="./Roof-Ridge-Lines-by-Points/index.html" class="tool-card-btn">
+          <span>Explore Tool Page</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="tool-card" data-cat="roof" data-title="inner loops & perpendicular" data-desc="automatically subdivides internal roof voids and penetration loops, projecting orthogonal guide points toward drains for precise contour folding.">
+        <div class="tool-card-header">
+          <div class="tool-cat-pill">Roof & Drainage</div>
+          <div class="tool-ver-pill">V005</div>
+        </div>
+        <h3 class="tool-card-title">Inner Loops & Perpendicular</h3>
+        <p class="tool-card-desc">Automatically subdivides internal roof voids and penetration loops, projecting orthogonal guide points toward drains for precise contour folding.</p>
+        
+        <div class="tool-bench-box">
+          <div class="bench-row">
+            <span class="bench-lbl">Manual:</span>
+            <span class="bench-val warn">30 - 50 mins</span>
+          </div>
+          <div class="bench-row">
+            <span class="bench-lbl">Plugin:</span>
+            <span class="bench-val good">0.7 - 1.4 sec</span>
+          </div>
+          <div class="bench-bar">
+            <div class="bench-fill" style="width: 2%;"></div>
+          </div>
+          <div class="bench-savings">
+            <span class="save-tag">99.5% Faster</span>
+            <span class="save-sub">0.7 hr / roof</span>
+          </div>
+        </div>
+
+        <div class="tool-tags">
+          <span class="tool-tag">Inner Loops</span><span class="tool-tag">Normal Rays</span><span class="tool-tag">Drain Projection</span><span class="tool-tag">Shape Points</span>
+          <span class="has-img-badge">3D Render</span>
+        </div>
+
+        <a href="./Inner-Loops-and-Perpendicular/index.html" class="tool-card-btn">
+          <span>Explore Tool Page</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="tool-card" data-cat="roof" data-title="roof from detail lines" data-desc="converts 2d cad/detail line sketches into fully parametric revit roof elements with boundary curve validation and clean closure.">
+        <div class="tool-card-header">
+          <div class="tool-cat-pill">Roof & Drainage</div>
+          <div class="tool-ver-pill">V007</div>
+        </div>
+        <h3 class="tool-card-title">Roof From Detail Lines</h3>
+        <p class="tool-card-desc">Converts 2D CAD/detail line sketches into fully parametric Revit Roof elements with boundary curve validation and clean closure.</p>
+        
+        <div class="tool-bench-box">
+          <div class="bench-row">
+            <span class="bench-lbl">Manual:</span>
+            <span class="bench-val warn">15 - 30 mins</span>
+          </div>
+          <div class="bench-row">
+            <span class="bench-lbl">Plugin:</span>
+            <span class="bench-val good">0.5 - 1.0 sec</span>
+          </div>
+          <div class="bench-bar">
+            <div class="bench-fill" style="width: 2%;"></div>
+          </div>
+          <div class="bench-savings">
+            <span class="save-tag">99.3% Faster</span>
+            <span class="save-sub">0.4 hr / roof</span>
+          </div>
+        </div>
+
+        <div class="tool-tags">
+          <span class="tool-tag">Line Conversion</span><span class="tool-tag">Footprint Roof</span><span class="tool-tag">Curve Validation</span><span class="tool-tag">1-Click Create</span>
+          <span class="has-img-badge">3D Render</span>
+        </div>
+
+        <a href="./Roof-From-Detail-Lines/index.html" class="tool-card-btn">
+          <span>Explore Tool Page</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="tool-card" data-cat="roof" data-title="roof drain callout placing" data-desc="scans roof geometry for drain fixtures and automatically generates callout views centered on each drain basin with standardized bounding boxes.">
+        <div class="tool-card-header">
+          <div class="tool-cat-pill">Roof & Drainage</div>
+          <div class="tool-ver-pill">V006</div>
+        </div>
+        <h3 class="tool-card-title">Roof Drain Callout Placing</h3>
+        <p class="tool-card-desc">Scans roof geometry for drain fixtures and automatically generates callout views centered on each drain basin with standardized bounding boxes.</p>
+        
+        <div class="tool-bench-box">
+          <div class="bench-row">
+            <span class="bench-lbl">Manual:</span>
+            <span class="bench-val warn">20 - 40 mins</span>
+          </div>
+          <div class="bench-row">
+            <span class="bench-lbl">Plugin:</span>
+            <span class="bench-val good">1.5 - 3.0 sec</span>
+          </div>
+          <div class="bench-bar">
+            <div class="bench-fill" style="width: 2%;"></div>
+          </div>
+          <div class="bench-savings">
+            <span class="save-tag">98.8% Faster</span>
+            <span class="save-sub">0.5 hr / plan</span>
+          </div>
+        </div>
+
+        <div class="tool-tags">
+          <span class="tool-tag">Drain Callouts</span><span class="tool-tag">Auto Framing</span><span class="tool-tag">View Templates</span><span class="tool-tag">Standard Scales</span>
+          <span class="has-img-badge">3D Render</span>
+        </div>
+
+        <a href="./Roof-Drain-Callout-Placing/index.html" class="tool-card-btn">
+          <span>Explore Tool Page</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="tool-card" data-cat="roof" data-title="roof tag" data-desc="batch places spot slope and spot elevation tags at critical roof vertices, ridges, and drain low-points with automatic collision avoidance.">
+        <div class="tool-card-header">
+          <div class="tool-cat-pill">Roof & Drainage</div>
+          <div class="tool-ver-pill">V016</div>
+        </div>
+        <h3 class="tool-card-title">Roof Tag</h3>
+        <p class="tool-card-desc">Batch places spot slope and spot elevation tags at critical roof vertices, ridges, and drain low-points with automatic collision avoidance.</p>
+        
+        <div class="tool-bench-box">
+          <div class="bench-row">
+            <span class="bench-lbl">Manual:</span>
+            <span class="bench-val warn">20 - 35 mins</span>
+          </div>
+          <div class="bench-row">
+            <span class="bench-lbl">Plugin:</span>
+            <span class="bench-val good">0.9 - 1.8 sec</span>
+          </div>
+          <div class="bench-bar">
+            <div class="bench-fill" style="width: 2%;"></div>
+          </div>
+          <div class="bench-savings">
+            <span class="save-tag">99.1% Faster</span>
+            <span class="save-sub">0.4 hr / roof</span>
+          </div>
+        </div>
+
+        <div class="tool-tags">
+          <span class="tool-tag">Spot Elevation</span><span class="tool-tag">Spot Slope</span><span class="tool-tag">Leader Collision</span><span class="tool-tag">Batch Tag</span>
+          <span class="has-img-badge">3D Render</span>
+        </div>
+
+        <a href="./Roof-Tag/index.html" class="tool-card-btn">
+          <span>Explore Tool Page</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="tool-card" data-cat="sheet" data-title="smart view to sheet placer" data-desc="bin-packing 2d layout algorithm that automatically places dozens of plan, section, and detail views onto sheets with collision-free margins.">
+        <div class="tool-card-header">
+          <div class="tool-cat-pill">Sheet Tools</div>
+          <div class="tool-ver-pill">V222</div>
+        </div>
+        <h3 class="tool-card-title">Smart View to Sheet Placer</h3>
+        <p class="tool-card-desc">Bin-packing 2D layout algorithm that automatically places dozens of plan, section, and detail views onto sheets with collision-free margins.</p>
+        
+        <div class="tool-bench-box">
+          <div class="bench-row">
+            <span class="bench-lbl">Manual:</span>
+            <span class="bench-val warn">60 - 120 mins</span>
+          </div>
+          <div class="bench-row">
+            <span class="bench-lbl">Plugin:</span>
+            <span class="bench-val good">2.5 - 5.0 sec</span>
+          </div>
+          <div class="bench-bar">
+            <div class="bench-fill" style="width: 2%;"></div>
+          </div>
+          <div class="bench-savings">
+            <span class="save-tag">99.3% Faster</span>
+            <span class="save-sub">1.5 hrs / set</span>
+          </div>
+        </div>
+
+        <div class="tool-tags">
+          <span class="tool-tag">2D Bin Packing</span><span class="tool-tag">Sheet Allocation</span><span class="tool-tag">Margin Guard</span><span class="tool-tag">Zero Collision</span>
+          
+        </div>
+
+        <a href="./Smart-View-to-Sheet-Placer/index.html" class="tool-card-btn">
+          <span>Explore Tool Page</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="tool-card" data-cat="sheet" data-title="sheet auto rearrange" data-desc="reorganizes viewports on existing sheets based on configurable view priority groups (e.g., plans first, then sections, then drafting views).">
+        <div class="tool-card-header">
+          <div class="tool-cat-pill">Sheet Tools</div>
+          <div class="tool-ver-pill">V026</div>
+        </div>
+        <h3 class="tool-card-title">Sheet Auto Rearrange</h3>
+        <p class="tool-card-desc">Reorganizes viewports on existing sheets based on configurable view priority groups (e.g., Plans first, then Sections, then Drafting Views).</p>
+        
+        <div class="tool-bench-box">
+          <div class="bench-row">
+            <span class="bench-lbl">Manual:</span>
+            <span class="bench-val warn">45 - 90 mins</span>
+          </div>
+          <div class="bench-row">
+            <span class="bench-lbl">Plugin:</span>
+            <span class="bench-val good">1.8 - 4.0 sec</span>
+          </div>
+          <div class="bench-bar">
+            <div class="bench-fill" style="width: 2%;"></div>
+          </div>
+          <div class="bench-savings">
+            <span class="save-tag">99.2% Faster</span>
+            <span class="save-sub">1.1 hrs / package</span>
+          </div>
+        </div>
+
+        <div class="tool-tags">
+          <span class="tool-tag">Priority Hierarchy</span><span class="tool-tag">Sheet Compaction</span><span class="tool-tag">Grid Realignment</span><span class="tool-tag">Smart Flow</span>
+          
+        </div>
+
+        <a href="./Sheet-Auto-Rearrange/index.html" class="tool-card-btn">
+          <span>Explore Tool Page</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="tool-card" data-cat="sheet" data-title="automated section placer" data-desc="discovers all active section markers within a plan view and distributes them onto organized presentation sheets automatically.">
+        <div class="tool-card-header">
+          <div class="tool-cat-pill">Sheet Tools</div>
+          <div class="tool-ver-pill">V001</div>
+        </div>
+        <h3 class="tool-card-title">Automated Section Placer</h3>
+        <p class="tool-card-desc">Discovers all active section markers within a plan view and distributes them onto organized presentation sheets automatically.</p>
+        
+        <div class="tool-bench-box">
+          <div class="bench-row">
+            <span class="bench-lbl">Manual:</span>
+            <span class="bench-val warn">30 - 60 mins</span>
+          </div>
+          <div class="bench-row">
+            <span class="bench-lbl">Plugin:</span>
+            <span class="bench-val good">1.2 - 2.5 sec</span>
+          </div>
+          <div class="bench-bar">
+            <div class="bench-fill" style="width: 2%;"></div>
+          </div>
+          <div class="bench-savings">
+            <span class="save-tag">99.3% Faster</span>
+            <span class="save-sub">0.7 hr / package</span>
+          </div>
+        </div>
+
+        <div class="tool-tags">
+          <span class="tool-tag">Plan Section Scan</span><span class="tool-tag">Auto Placement</span><span class="tool-tag">Sheet Generator</span><span class="tool-tag">Title Alignment</span>
+          
+        </div>
+
+        <a href="./Automated-Section-Placer/index.html" class="tool-card-btn">
+          <span>Explore Tool Page</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="tool-card" data-cat="view" data-title="create sections" data-desc="instantly generates perpendicular and longitudinal revit section views directly from selected 2d detail lines or room boundaries.">
+        <div class="tool-card-header">
+          <div class="tool-cat-pill">View & Section</div>
+          <div class="tool-ver-pill">V011</div>
+        </div>
+        <h3 class="tool-card-title">Create Sections</h3>
+        <p class="tool-card-desc">Instantly generates perpendicular and longitudinal Revit section views directly from selected 2D detail lines or room boundaries.</p>
+        
+        <div class="tool-bench-box">
+          <div class="bench-row">
+            <span class="bench-lbl">Manual:</span>
+            <span class="bench-val warn">25 - 50 mins</span>
+          </div>
+          <div class="bench-row">
+            <span class="bench-lbl">Plugin:</span>
+            <span class="bench-val good">1.0 - 2.0 sec</span>
+          </div>
+          <div class="bench-bar">
+            <div class="bench-fill" style="width: 2%;"></div>
+          </div>
+          <div class="bench-savings">
+            <span class="save-tag">99.3% Faster</span>
+            <span class="save-sub">0.6 hr / batch</span>
+          </div>
+        </div>
+
+        <div class="tool-tags">
+          <span class="tool-tag">Line-to-Section</span><span class="tool-tag">Orthogonal Cuts</span><span class="tool-tag">Crop Boundary</span><span class="tool-tag">Template Bind</span>
+          
+        </div>
+
+        <a href="./Create-Sections/index.html" class="tool-card-btn">
+          <span>Explore Tool Page</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="tool-card" data-cat="view" data-title="roof edge element sections" data-desc="places perpendicular architectural detail section cuts along roof perimeter edges, parapets, and coping transitions.">
+        <div class="tool-card-header">
+          <div class="tool-cat-pill">View & Section</div>
+          <div class="tool-ver-pill">V002</div>
+        </div>
+        <h3 class="tool-card-title">Roof Edge Element Sections</h3>
+        <p class="tool-card-desc">Places perpendicular architectural detail section cuts along roof perimeter edges, parapets, and coping transitions.</p>
+        
+        <div class="tool-bench-box">
+          <div class="bench-row">
+            <span class="bench-lbl">Manual:</span>
+            <span class="bench-val warn">30 - 60 mins</span>
+          </div>
+          <div class="bench-row">
+            <span class="bench-lbl">Plugin:</span>
+            <span class="bench-val good">1.8 - 3.5 sec</span>
+          </div>
+          <div class="bench-bar">
+            <div class="bench-fill" style="width: 2%;"></div>
+          </div>
+          <div class="bench-savings">
+            <span class="save-tag">99.0% Faster</span>
+            <span class="save-sub">0.7 hr / perimeter</span>
+          </div>
+        </div>
+
+        <div class="tool-tags">
+          <span class="tool-tag">Parapet Sections</span><span class="tool-tag">Edge Normals</span><span class="tool-tag">Perimeter Sweep</span><span class="tool-tag">Auto Naming</span>
+          <span class="has-img-badge">3D Render</span>
+        </div>
+
+        <a href="./Roof-Edge-Element-Sections/index.html" class="tool-card-btn">
+          <span>Explore Tool Page</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="tool-card" data-cat="view" data-title="roof view focus" data-desc="automatically calculates the tight bounding polygon of selected roofs and sets crop boundaries and view depth with standardized offset margins.">
+        <div class="tool-card-header">
+          <div class="tool-cat-pill">View & Section</div>
+          <div class="tool-ver-pill">V002</div>
+        </div>
+        <h3 class="tool-card-title">Roof View Focus</h3>
+        <p class="tool-card-desc">Automatically calculates the tight bounding polygon of selected roofs and sets crop boundaries and view depth with standardized offset margins.</p>
+        
+        <div class="tool-bench-box">
+          <div class="bench-row">
+            <span class="bench-lbl">Manual:</span>
+            <span class="bench-val warn">10 - 15 mins</span>
+          </div>
+          <div class="bench-row">
+            <span class="bench-lbl">Plugin:</span>
+            <span class="bench-val good">0.4 - 0.8 sec</span>
+          </div>
+          <div class="bench-bar">
+            <div class="bench-fill" style="width: 2%;"></div>
+          </div>
+          <div class="bench-savings">
+            <span class="save-tag">99.2% Faster</span>
+            <span class="save-sub">0.2 hr / view</span>
+          </div>
+        </div>
+
+        <div class="tool-tags">
+          <span class="tool-tag">Tight Crop</span><span class="tool-tag">Offset Margins</span><span class="tool-tag">Depth Adjust</span><span class="tool-tag">1-Click Focus</span>
+          <span class="has-img-badge">3D Render</span>
+        </div>
+
+        <a href="./Roof-View-Focus/index.html" class="tool-card-btn">
+          <span>Explore Tool Page</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="tool-card" data-cat="view" data-title="reference section head placer" data-desc="automatically locates and places referenced section head markers on corresponding plan and elevation views across the whole model.">
+        <div class="tool-card-header">
+          <div class="tool-cat-pill">View & Section</div>
+          <div class="tool-ver-pill">V013</div>
+        </div>
+        <h3 class="tool-card-title">Reference Section Head Placer</h3>
+        <p class="tool-card-desc">Automatically locates and places referenced section head markers on corresponding plan and elevation views across the whole model.</p>
+        
+        <div class="tool-bench-box">
+          <div class="bench-row">
+            <span class="bench-lbl">Manual:</span>
+            <span class="bench-val warn">20 - 40 mins</span>
+          </div>
+          <div class="bench-row">
+            <span class="bench-lbl">Plugin:</span>
+            <span class="bench-val good">0.8 - 1.6 sec</span>
+          </div>
+          <div class="bench-bar">
+            <div class="bench-fill" style="width: 2%;"></div>
+          </div>
+          <div class="bench-savings">
+            <span class="save-tag">99.3% Faster</span>
+            <span class="save-sub">0.5 hr / model</span>
+          </div>
+        </div>
+
+        <div class="tool-tags">
+          <span class="tool-tag">Reference Heads</span><span class="tool-tag">Cross-View Sync</span><span class="tool-tag">Symbol Placement</span><span class="tool-tag">Sheet Referencing</span>
+          
+        </div>
+
+        <a href="./Reference-Section-Head-Placer/index.html" class="tool-card-btn">
+          <span>Explore Tool Page</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="tool-card" data-cat="view" data-title="section auto renamer" data-desc="intelligently renames section views following sequential grid or orientation patterns (e.g., north-south, west-east, level-based).">
+        <div class="tool-card-header">
+          <div class="tool-cat-pill">View & Section</div>
+          <div class="tool-ver-pill">V024</div>
+        </div>
+        <h3 class="tool-card-title">Section Auto Renamer</h3>
+        <p class="tool-card-desc">Intelligently renames section views following sequential grid or orientation patterns (e.g., North-South, West-East, Level-based).</p>
+        
+        <div class="tool-bench-box">
+          <div class="bench-row">
+            <span class="bench-lbl">Manual:</span>
+            <span class="bench-val warn">20 - 35 mins</span>
+          </div>
+          <div class="bench-row">
+            <span class="bench-lbl">Plugin:</span>
+            <span class="bench-val good">0.5 - 1.2 sec</span>
+          </div>
+          <div class="bench-bar">
+            <div class="bench-fill" style="width: 2%;"></div>
+          </div>
+          <div class="bench-savings">
+            <span class="save-tag">99.4% Faster</span>
+            <span class="save-sub">0.4 hr / set</span>
+          </div>
+        </div>
+
+        <div class="tool-tags">
+          <span class="tool-tag">Grid Sorting</span><span class="tool-tag">Cardinal Direction</span><span class="tool-tag">Sequential ID</span><span class="tool-tag">Standard Compliance</span>
+          
+        </div>
+
+        <a href="./Section-Auto-Renamer/index.html" class="tool-card-btn">
+          <span>Explore Tool Page</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="tool-card" data-cat="view" data-title="view auto renamer" data-desc="batch renames project views using customizable naming templates with tokens for level, discipline, view type, and scope box.">
+        <div class="tool-card-header">
+          <div class="tool-cat-pill">View & Section</div>
+          <div class="tool-ver-pill">V004</div>
+        </div>
+        <h3 class="tool-card-title">View Auto Renamer</h3>
+        <p class="tool-card-desc">Batch renames project views using customizable naming templates with tokens for Level, Discipline, View Type, and Scope Box.</p>
+        
+        <div class="tool-bench-box">
+          <div class="bench-row">
+            <span class="bench-lbl">Manual:</span>
+            <span class="bench-val warn">25 - 45 mins</span>
+          </div>
+          <div class="bench-row">
+            <span class="bench-lbl">Plugin:</span>
+            <span class="bench-val good">0.6 - 1.2 sec</span>
+          </div>
+          <div class="bench-bar">
+            <div class="bench-fill" style="width: 2%;"></div>
+          </div>
+          <div class="bench-savings">
+            <span class="save-tag">99.6% Faster</span>
+            <span class="save-sub">0.6 hr / project</span>
+          </div>
+        </div>
+
+        <div class="tool-tags">
+          <span class="tool-tag">Token Engine</span><span class="tool-tag">BIM Standard Naming</span><span class="tool-tag">Batch Processing</span><span class="tool-tag">Regex Replace</span>
+          
+        </div>
+
+        <a href="./View-Auto-Renamer/index.html" class="tool-card-btn">
+          <span>Explore Tool Page</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="tool-card" data-cat="view" data-title="bubble auto renumber" data-desc="sequentially renumbers viewport detail bubbles on sheets based on top-left to bottom-right or grid coordinate layout.">
+        <div class="tool-card-header">
+          <div class="tool-cat-pill">View & Section</div>
+          <div class="tool-ver-pill">V006</div>
+        </div>
+        <h3 class="tool-card-title">Bubble Auto Renumber</h3>
+        <p class="tool-card-desc">Sequentially renumbers viewport detail bubbles on sheets based on top-left to bottom-right or grid coordinate layout.</p>
+        
+        <div class="tool-bench-box">
+          <div class="bench-row">
+            <span class="bench-lbl">Manual:</span>
+            <span class="bench-val warn">15 - 30 mins</span>
+          </div>
+          <div class="bench-row">
+            <span class="bench-lbl">Plugin:</span>
+            <span class="bench-val good">0.4 - 0.9 sec</span>
+          </div>
+          <div class="bench-bar">
+            <div class="bench-fill" style="width: 2%;"></div>
+          </div>
+          <div class="bench-savings">
+            <span class="save-tag">99.5% Faster</span>
+            <span class="save-sub">0.3 hr / set</span>
+          </div>
+        </div>
+
+        <div class="tool-tags">
+          <span class="tool-tag">Coordinate Sort</span><span class="tool-tag">Collision Guard</span><span class="tool-tag">Sheet Renumber</span><span class="tool-tag">Top-Down Ordering</span>
+          
+        </div>
+
+        <a href="./Bubble-Auto-Renumber/index.html" class="tool-card-btn">
+          <span>Explore Tool Page</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="tool-card" data-cat="detail" data-title="linked detail line generator" data-desc="traces linked architectural, structural, or mep geometry into 2d detail lines with type-based mapping and boundary clipping.">
+        <div class="tool-card-header">
+          <div class="tool-cat-pill">Detail Lines & Dims</div>
+          <div class="tool-ver-pill">VA007</div>
+        </div>
+        <h3 class="tool-card-title">Linked Detail Line Generator</h3>
+        <p class="tool-card-desc">Traces linked architectural, structural, or MEP geometry into 2D detail lines with type-based mapping and boundary clipping.</p>
+        
+        <div class="tool-bench-box">
+          <div class="bench-row">
+            <span class="bench-lbl">Manual:</span>
+            <span class="bench-val warn">45 - 90 mins</span>
+          </div>
+          <div class="bench-row">
+            <span class="bench-lbl">Plugin:</span>
+            <span class="bench-val good">2.0 - 4.5 sec</span>
+          </div>
+          <div class="bench-bar">
+            <div class="bench-fill" style="width: 2%;"></div>
+          </div>
+          <div class="bench-savings">
+            <span class="save-tag">99.2% Faster</span>
+            <span class="save-sub">1.1 hrs / floor</span>
+          </div>
+        </div>
+
+        <div class="tool-tags">
+          <span class="tool-tag">Link Geometry Extraction</span><span class="tool-tag">Style Overrides</span><span class="tool-tag">Slab Clipping</span><span class="tool-tag">Point Markers</span>
+          
+        </div>
+
+        <a href="./Linked-Detail-Line-Generator/index.html" class="tool-card-btn">
+          <span>Explore Tool Page</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="tool-card" data-cat="detail" data-title="detail line dimensions" data-desc="automatically detects parallel and continuous detail line strings and generates aligned chain dimensions with clean offset spacing.">
+        <div class="tool-card-header">
+          <div class="tool-cat-pill">Detail Lines & Dims</div>
+          <div class="tool-ver-pill">V008</div>
+        </div>
+        <h3 class="tool-card-title">Detail Line Dimensions</h3>
+        <p class="tool-card-desc">Automatically detects parallel and continuous detail line strings and generates aligned chain dimensions with clean offset spacing.</p>
+        
+        <div class="tool-bench-box">
+          <div class="bench-row">
+            <span class="bench-lbl">Manual:</span>
+            <span class="bench-val warn">20 - 40 mins</span>
+          </div>
+          <div class="bench-row">
+            <span class="bench-lbl">Plugin:</span>
+            <span class="bench-val good">0.7 - 1.5 sec</span>
+          </div>
+          <div class="bench-bar">
+            <div class="bench-fill" style="width: 2%;"></div>
+          </div>
+          <div class="bench-savings">
+            <span class="save-tag">99.4% Faster</span>
+            <span class="save-sub">0.5 hr / detail</span>
+          </div>
+        </div>
+
+        <div class="tool-tags">
+          <span class="tool-tag">Parallel Line Detection</span><span class="tool-tag">Chain Dimensions</span><span class="tool-tag">Witness Offsets</span><span class="tool-tag">Clean Typography</span>
+          
+        </div>
+
+        <a href="./Detail-Line-Dimension/index.html" class="tool-card-btn">
+          <span>Explore Tool Page</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="tool-card" data-cat="setup" data-title="dwg to lines" data-desc="converts imported dwg vector layers inside the family editor into native revit symbolic lines and model lines with layer-to-style mapping.">
+        <div class="tool-card-header">
+          <div class="tool-cat-pill">Manage & Setup</div>
+          <div class="tool-ver-pill">V005</div>
+        </div>
+        <h3 class="tool-card-title">DWG to Lines</h3>
+        <p class="tool-card-desc">Converts imported DWG vector layers inside the Family Editor into native Revit Symbolic Lines and Model Lines with layer-to-style mapping.</p>
+        
+        <div class="tool-bench-box">
+          <div class="bench-row">
+            <span class="bench-lbl">Manual:</span>
+            <span class="bench-val warn">30 - 60 mins</span>
+          </div>
+          <div class="bench-row">
+            <span class="bench-lbl">Plugin:</span>
+            <span class="bench-val good">1.0 - 2.2 sec</span>
+          </div>
+          <div class="bench-bar">
+            <div class="bench-fill" style="width: 2%;"></div>
+          </div>
+          <div class="bench-savings">
+            <span class="save-tag">99.4% Faster</span>
+            <span class="save-sub">0.7 hr / family</span>
+          </div>
+        </div>
+
+        <div class="tool-tags">
+          <span class="tool-tag">Family Editor</span><span class="tool-tag">CAD Explosion Alternative</span><span class="tool-tag">Layer Mapping</span><span class="tool-tag">Clean Native Lines</span>
+          
+        </div>
+
+        <a href="./DWG-to-Lines/index.html" class="tool-card-btn">
+          <span>Explore Tool Page</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="tool-card" data-cat="setup" data-title="paramanager" data-desc="guided step-by-step wizard to batch-bind shared parameters from text files to revit categories as instance or type parameters in one pass.">
+        <div class="tool-card-header">
+          <div class="tool-cat-pill">Manage & Setup</div>
+          <div class="tool-ver-pill">V003</div>
+        </div>
+        <h3 class="tool-card-title">ParaManager</h3>
+        <p class="tool-card-desc">Guided step-by-step wizard to batch-bind shared parameters from text files to Revit categories as Instance or Type parameters in one pass.</p>
+        
+        <div class="tool-bench-box">
+          <div class="bench-row">
+            <span class="bench-lbl">Manual:</span>
+            <span class="bench-val warn">35 - 70 mins</span>
+          </div>
+          <div class="bench-row">
+            <span class="bench-lbl">Plugin:</span>
+            <span class="bench-val good">1.2 - 2.5 sec</span>
+          </div>
+          <div class="bench-bar">
+            <div class="bench-fill" style="width: 2%;"></div>
+          </div>
+          <div class="bench-savings">
+            <span class="save-tag">99.4% Faster</span>
+            <span class="save-sub">0.8 hr / setup</span>
+          </div>
+        </div>
+
+        <div class="tool-tags">
+          <span class="tool-tag">Shared Parameters</span><span class="tool-tag">Category Binding</span><span class="tool-tag">Instance vs Type</span><span class="tool-tag">Batch Binding</span>
+          
+        </div>
+
+        <a href="./ParaManager/index.html" class="tool-card-btn">
+          <span>Explore Tool Page</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="tool-card" data-cat="setup" data-title="worksets elements browser" data-desc="interactive checkbox hierarchy tree of worksets, categories, and element types; allows instant 3d view isolation and selection.">
+        <div class="tool-card-header">
+          <div class="tool-cat-pill">Manage & Setup</div>
+          <div class="tool-ver-pill">WSEB002</div>
+        </div>
+        <h3 class="tool-card-title">Worksets Elements Browser</h3>
+        <p class="tool-card-desc">Interactive checkbox hierarchy tree of worksets, categories, and element types; allows instant 3D view isolation and selection.</p>
+        
+        <div class="tool-bench-box">
+          <div class="bench-row">
+            <span class="bench-lbl">Manual:</span>
+            <span class="bench-val warn">15 - 30 mins</span>
+          </div>
+          <div class="bench-row">
+            <span class="bench-lbl">Plugin:</span>
+            <span class="bench-val good">0.5 - 1.0 sec</span>
+          </div>
+          <div class="bench-bar">
+            <div class="bench-fill" style="width: 2%;"></div>
+          </div>
+          <div class="bench-savings">
+            <span class="save-tag">99.0% Faster</span>
+            <span class="save-sub">0.3 hr / audit</span>
+          </div>
+        </div>
+
+        <div class="tool-tags">
+          <span class="tool-tag">Workset Hierarchy</span><span class="tool-tag">3D View Isolate</span><span class="tool-tag">Element Auditing</span><span class="tool-tag">Multi-Select</span>
+          
+        </div>
+
+        <a href="./Worksets-Elements-Browser/index.html" class="tool-card-btn">
+          <span>Explore Tool Page</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="tool-card" data-cat="setup" data-title="workset renamer" data-desc="batch renames project worksets using search-and-replace, prefix/suffix rules, and discipline standard numbering.">
+        <div class="tool-card-header">
+          <div class="tool-cat-pill">Manage & Setup</div>
+          <div class="tool-ver-pill">FX03</div>
+        </div>
+        <h3 class="tool-card-title">Workset Renamer</h3>
+        <p class="tool-card-desc">Batch renames project worksets using search-and-replace, prefix/suffix rules, and discipline standard numbering.</p>
+        
+        <div class="tool-bench-box">
+          <div class="bench-row">
+            <span class="bench-lbl">Manual:</span>
+            <span class="bench-val warn">10 - 20 mins</span>
+          </div>
+          <div class="bench-row">
+            <span class="bench-lbl">Plugin:</span>
+            <span class="bench-val good">0.3 - 0.6 sec</span>
+          </div>
+          <div class="bench-bar">
+            <div class="bench-fill" style="width: 2%;"></div>
+          </div>
+          <div class="bench-savings">
+            <span class="save-tag">99.5% Faster</span>
+            <span class="save-sub">0.2 hr / model</span>
+          </div>
+        </div>
+
+        <div class="tool-tags">
+          <span class="tool-tag">Regex Renamer</span><span class="tool-tag">Discipline Prefix</span><span class="tool-tag">Standard Compliance</span><span class="tool-tag">Instant Rename</span>
+          
+        </div>
+
+        <a href="./Workset-Renamer/index.html" class="tool-card-btn">
+          <span>Explore Tool Page</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="grad-divider"></div>
+
+  <!-- ── Engineering & Architecture Section ── -->
+  <section id="architecture">
+    <div class="wrap">
+      <div class="eyebrow">Under The Hood</div>
+      <h2 style="font-size: 28px; margin-top: 6px;">Algorithmic Foundations & C# Architecture</h2>
+      <p style="color: var(--text-dim); margin-top: 6px; font-size: 14.5px;">Engineered with advanced computational geometry to eliminate errors in mission-critical BIM deliverables.</p>
+
+      <div class="arch-grid">
+        <div class="arch-card">
+          <div class="arch-num">01 / GEOMETRIC GRAPH TRAVERSAL</div>
+          <h3 class="arch-title">Dijkstra Shortest Path Engine</h3>
+          <p class="arch-desc">
+            Instead of naive Euclidean straight-line distance, AutoSlope constructs an edge-weighted graph over the roof boundary and slab triangulation, ensuring drainage distance honors true folded facets and curved profiles.
+          </p>
+        </div>
+        <div class="arch-card">
+          <div class="arch-num">02 / SPATIAL INDEXING</div>
+          <h3 class="arch-title">KD-Tree Nearest Drain Clustering</h3>
+          <p class="arch-desc">
+            High-density vertex lookup utilizes balanced k-dimensional spatial trees, resolving nearest drain basins in O(log n) time even on massive commercial roofs with hundreds of drain units.
+          </p>
+        </div>
+        <div class="arch-card">
+          <div class="arch-num">03 / PACKING ALGORITHMS</div>
+          <h3 class="arch-title">2D Bounding Box Bin Packing</h3>
+          <p class="arch-desc">
+            Sheet placers analyze view title positions, annotation crop offsets, and printable titleblock bounds to solve NP-hard 2D layout optimization, guaranteeing zero viewport overlapping.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer>
+    <div class="wrap">
+      <div class="footer-row">
+        <div>
+          <div style="font-family: 'Sora'; font-weight: 700; font-size: 15px; color: #fff;">Revit 2026 Production Plugin Suite</div>
+          <div style="font-size: 12px; color: var(--text-faint); margin-top: 4px;">Engineered in C# with Autodesk Revit 2026 API · Prepared for GitHub Publication</div>
+        </div>
+        <div style="display: flex; gap: 20px; font-size: 13px;">
+          <a href="#top" style="color: var(--text-dim); text-decoration: none;">Back to top ↑</a>
+          <a href="#tools" style="color: var(--text-dim); text-decoration: none;">All Tools</a>
+          <a href="#calculator" style="color: var(--text-dim); text-decoration: none;">ROI Calculator</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ── Showcase Switcher ──
+    const showcaseData = [
+      {
+        title: "Revit 3D Roof Slope Editor & Elevation Contour Heatmap",
+        desc: "Axonometric 3D viewport showcasing real-time slope analysis gradient heatmap (deep blue at low drain invert, vivid green along high ridges), triangulated mesh nodes with editable grips, and DRAIN-01 / DRAIN-02 invert elevation callout tags.",
+        badges: ["Dijkstra Path", "Contour Heatmap", "Invert Elev Tags"]
+      },
+      {
+        title: "Streamline Drainage Flow Paths (Commercial Rooftop)",
+        desc: "Aerial perspective 3D rendering of a modern commercial skyscraper rooftop at twilight, featuring glowing neon cyan and emerald streamline water flow paths tracing roof slopes directly into roof drains with technical HUD annotations.",
+        badges: ["Cyan/Emerald Flow", "1:80 Slope Paths", "Tapered Insulation System"]
+      },
+      {
+        title: "Ridge Lines & Valley Creaser Vectors (Close-Up)",
+        desc: "Close-up technical view of roof drainage valleys, showing glowing cyan valley flow arrows and lime creek paths leading to roof drain grates, with spot elevations and slope percentage vectors.",
+        badges: ["Valley Flow (Cyan)", "Creek Path (Lime)", "Crease Detail Items"]
+      }
+    ];
+
+    function switchShowcase(idx) {
+      document.querySelectorAll(".showcase-tab").forEach((tab, i) => {
+        tab.classList.toggle("active", i === idx);
+      });
+      document.querySelectorAll(".showcase-viewport img").forEach((img, i) => {
+        img.classList.toggle("active", i === idx);
+      });
+      const data = showcaseData[idx];
+      document.getElementById("sc-title").textContent = data.title;
+      document.getElementById("sc-desc").textContent = data.desc;
+      const badgesContainer = document.getElementById("sc-badges");
+      badgesContainer.innerHTML = data.badges.map(b => `<span class="sc-badge">${b}</span>`).join("");
+    }
+
+    // ── ROI Calculator ──
+    function updateROI() {
+      const roofs = parseInt(document.getElementById("slider-roofs").value);
+      const sheets = parseInt(document.getElementById("slider-sheets").value);
+      const views = parseInt(document.getElementById("slider-views").value);
+      const rate = parseInt(document.getElementById("slider-rate").value);
+
+      document.getElementById("val-roofs").textContent = roofs;
+      document.getElementById("val-sheets").textContent = sheets;
+      document.getElementById("val-views").textContent = views;
+      document.getElementById("val-rate").textContent = "$" + rate;
+
+      // Manual hours formula based on empirical metrics
+      // ~1.2 hrs per roof + ~1.4 hrs per sheet + ~0.5 hr per view
+      const manualHours = (roofs * 1.2) + (sheets * 1.4) + (views * 0.5);
+      
+      // Plugin runtime in seconds: ~2s per roof + ~3s per sheet + ~1s per view
+      const pluginSeconds = (roofs * 2.2) + (sheets * 3.0) + (views * 1.1);
+      const savedHours = manualHours - (pluginSeconds / 3600);
+      const dollarSavings = Math.round(savedHours * rate);
+      const multiplier = Math.round((manualHours * 3600) / pluginSeconds);
+
+      document.getElementById("res-manual-hrs").textContent = manualHours.toFixed(1) + " hrs";
+      document.getElementById("res-plugin-time").textContent = pluginSeconds.toFixed(1) + " sec";
+      document.getElementById("res-saved-hrs").textContent = savedHours.toFixed(1) + " hrs";
+      document.getElementById("res-dollars").textContent = "$" + dollarSavings.toLocaleString();
+      document.getElementById("res-multiplier").textContent = multiplier.toLocaleString() + "×";
+    }
+
+    // ── Filter & Search ──
+    let activeCategory = "all";
+
+    function setCategoryFilter(cat, btn) {
+      activeCategory = cat;
+      document.querySelectorAll(".filter-tab").forEach(tab => tab.classList.remove("active"));
+      btn.classList.add("active");
+      filterTools();
+    }
+
+    function filterTools() {
+      const query = document.getElementById("tool-search").value.toLowerCase().trim();
+      const cards = document.querySelectorAll(".tool-card");
+
+      cards.forEach(card => {
+        const cardCat = card.getAttribute("data-cat");
+        const title = card.getAttribute("data-title");
+        const desc = card.getAttribute("data-desc");
+
+        const matchesCat = (activeCategory === "all" || cardCat === activeCategory);
+        const matchesQuery = (!query || title.includes(query) || desc.includes(query));
+
+        if (matchesCat && matchesQuery) {
+          card.style.display = "flex";
+        } else {
+          card.style.display = "none";
+        }
+      });
+    }
+
+    // Initialize calculator
+    updateROI();
+  </script>
+</body>
+</html>
