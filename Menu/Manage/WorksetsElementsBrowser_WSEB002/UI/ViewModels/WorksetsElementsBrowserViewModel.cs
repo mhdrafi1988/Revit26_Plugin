@@ -32,6 +32,7 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB002.UI.ViewModels
         [ObservableProperty] private bool _isBusy;
         [ObservableProperty] private string _summaryText = string.Empty;
         [ObservableProperty] private string _checkedSummaryText = "0 elements checked";
+        [ObservableProperty] private bool _hideEmptyWorksets = true;
 
         public WorksetsElementsBrowserViewModel(UIDocument uiDoc, IntPtr mainWindowHandle)
         {
@@ -52,6 +53,20 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB002.UI.ViewModels
         {
             foreach (var root in RootNodes)
                 root.ApplyFilter(value ?? string.Empty);
+        }
+
+        partial void OnHideEmptyWorksetsChanged(bool value)
+        {
+            ApplyEmptyWorksetsVisibility(value);
+        }
+
+        private void ApplyEmptyWorksetsVisibility(bool hideEmpty)
+        {
+            foreach (var root in RootNodes)
+            {
+                if (root.Kind == ElementTreeNodeKind.Workset && root.Children.Count == 0)
+                    root.IsVisible = !hideEmpty;
+            }
         }
 
         // ─────────────────────────────────────────────────────────────
@@ -138,6 +153,7 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB002.UI.ViewModels
                            $"{typeCount} type{(typeCount == 1 ? "" : "s")} · " +
                            $"{elementCount:N0} elements";
 
+            ApplyEmptyWorksetsVisibility(HideEmptyWorksets);
             RefreshCheckedSummary();
         }
 

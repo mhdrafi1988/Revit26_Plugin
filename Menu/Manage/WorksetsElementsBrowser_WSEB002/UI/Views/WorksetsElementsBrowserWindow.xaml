@@ -124,6 +124,11 @@
             <Border Width="1" Margin="10,2" Background="{StaticResource BrushSeparator}"/>
             <Button Content="Check All" Margin="10,0,0,0" Style="{StaticResource SmallSecondaryButton}" Command="{Binding CheckAllCommand}"/>
             <Button Content="Clear Checks" Margin="6,0,0,0" Style="{StaticResource SmallSecondaryButton}" Command="{Binding ClearChecksCommand}"/>
+            <Border Width="1" Margin="10,2" Background="{StaticResource BrushSeparator}"/>
+            <CheckBox Content="Hide empty worksets"
+                      Margin="10,0,0,0"
+                      VerticalAlignment="Center"
+                      IsChecked="{Binding HideEmptyWorksets, Mode=TwoWay}"/>
         </StackPanel>
 
         <!-- Status strip -->

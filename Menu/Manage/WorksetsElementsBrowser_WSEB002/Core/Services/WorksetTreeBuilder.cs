@@ -60,24 +60,31 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB002.Core.Services
             }
 
             var result = new List<WorksetNodeData>();
-            foreach (var kvp in grouped.OrderBy(k => worksetsById[k.Key].Name))
+            foreach (var ws in worksetsById.Values.OrderBy(w => w.Name))
             {
-                var workset = worksetsById[kvp.Key];
-                var categories = kvp.Value
-                    .OrderBy(c => c.Key)
-                    .Select(c => new CategoryNodeData(
-                        c.Key,
-                        c.Value
-                            .OrderBy(t => t.Key)
-                            .Select(t => new TypeNodeData(t.Key, t.Value))
-                            .ToList()))
-                    .ToList();
+                List<CategoryNodeData> categories;
+                if (grouped.TryGetValue(ws.Id.IntegerValue, out var byCategory))
+                {
+                    categories = byCategory
+                        .OrderBy(c => c.Key)
+                        .Select(c => new CategoryNodeData(
+                            c.Key,
+                            c.Value
+                                .OrderBy(t => t.Key)
+                                .Select(t => new TypeNodeData(t.Key, t.Value))
+                                .ToList()))
+                        .ToList();
+                }
+                else
+                {
+                    categories = new List<CategoryNodeData>();
+                }
 
                 result.Add(new WorksetNodeData(
-                    workset.Name,
-                    workset.Id.IntegerValue,
-                    workset.IsEditable,
-                    workset.Owner ?? string.Empty,
+                    ws.Name,
+                    ws.Id.IntegerValue,
+                    ws.IsEditable,
+                    ws.Owner ?? string.Empty,
                     categories));
             }
 
