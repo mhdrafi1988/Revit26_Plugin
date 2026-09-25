@@ -85,6 +85,7 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V004
             foreach (var d in LinkedRoomService.GetLinkedDocumentsWithRooms(_hostDoc))
                 LinkedDocuments.Add(d);
 
+            AddLog(LogLevel.Info, $"Found {LinkedDocuments.Count} linked file(s) containing rooms.");
             if (LinkedDocuments.Count == 0)
                 AddLog(LogLevel.Warning, "No linked files with rooms were found in this model.");
         }
@@ -109,6 +110,9 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V004
 
             foreach (var t in types) RoofTypes.Add(t);
             SelectedRoofType = RoofTypes.FirstOrDefault();
+
+            if (RoofTypes.Count == 0)
+                AddLog(LogLevel.Warning, "No roof types found in host model — Create Roof will be unavailable.");
         }
 
         partial void OnSelectedLinkedDocumentChanged(LinkedDocumentOption value)
@@ -215,6 +219,9 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V004
 
             if (mode == CreationMode.Floor) FloorSummaryText = text;
             else RoofSummaryText = text;
+
+            AddLog(wasCancelled ? LogLevel.Warning : LogLevel.Info,
+                $"{(mode == CreationMode.Floor ? "Floor" : "Roof")} run {(wasCancelled ? "cancelled" : "completed")} — {text}");
 
             RunFloorCommand.NotifyCanExecuteChanged();
             RunRoofCommand.NotifyCanExecuteChanged();

@@ -13,10 +13,28 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V004
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
+            try
+            {
+                return ExecuteInternal(commandData, ref message, elements);
+            }
+            catch (Autodesk.Revit.Exceptions.OperationCanceledException)
+            {
+                return Result.Cancelled;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Command", ex);
+                message = ex.Message;
+                TaskDialog.Show("Floors and Roofs From Linked Rooms", $"An unexpected error occurred: {ex.Message}");
+                return Result.Failed;
+            }
+        }
+
+        private Result ExecuteInternal(ExternalCommandData commandData, ref string message, ElementSet elements)
+        {
             var uidoc = commandData.Application.ActiveUIDocument;
             var doc = uidoc.Document;
 
-            // Step 1 — must be a plan view.
             if (doc.ActiveView is not ViewPlan planView)
             {
                 TaskDialog.Show(
@@ -33,26 +51,17 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V004
                 return Result.Cancelled;
             }
 
-            try
-            {
-                var handler = new RunCreateElementsExternalEventHandler();
-                var externalEvent = ExternalEvent.Create(handler);
+            var handler = new RunCreateElementsExternalEventHandler();
+            var externalEvent = ExternalEvent.Create(handler);
 
-                var viewModel = new MainViewModel(doc, planView, handler, externalEvent);
-                handler.ViewModel = viewModel;
+            var viewModel = new MainViewModel(doc, planView, handler, externalEvent);
+            handler.ViewModel = viewModel;
 
-                var window = new FloorsFromLinkedRoomsWindow { DataContext = viewModel };
-                new WindowInteropHelper(window).Owner = commandData.Application.MainWindowHandle;
-                window.Show();
+            var window = new FloorsFromLinkedRoomsWindow { DataContext = viewModel };
+            new WindowInteropHelper(window).Owner = commandData.Application.MainWindowHandle;
+            window.Show();
 
-                return Result.Succeeded;
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("FloorsAndRoofFromLinkedRoomsViaPlanView", ex);
-                message = ex.Message;
-                return Result.Failed;
-            }
+            return Result.Succeeded;
         }
     }
 }

@@ -8,7 +8,17 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V004
 {
     /// <summary>Runs either a floor-creation pass or a roof-creation pass, depending on
     /// which button the ViewModel set on CreateRunRequest.Mode. Same per-room
-    /// dedupe/trim/validate boundary logic feeds both.</summary>
+    /// dedupe/trim/validate boundary logic feeds both.
+    ///
+    /// V005 fixes (carried forward from V011):
+    /// - Both doc.Regenerate() calls removed (Revit regenerates on commit; faster runs).
+    /// - FIX: processed count now advances on EVERY room outcome (success, failure,
+    ///   exception) — the previous continue on invalid boundaries skipped ReportProgress,
+    ///   so the progress bar undercounted on failed rooms.
+    /// - FIX: roof inner-loop count now combines BOTH skip sources — valid inner loops
+    ///   (unsupported by NewFootPrintRoof) AND loops that failed validation.
+    /// - Cancel now records how many rooms were never reached (RunSummary.NotProcessedCount);
+    ///   already-created elements are kept.</summary>
     public class RunCreateElementsExternalEventHandler : IExternalEventHandler
     {
         public MainViewModel ViewModel { get; set; }
@@ -25,6 +35,11 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V004
 
             var summary = new RunSummary();
             bool wasCancelled = false;
+            int total = request.Rooms.Count;
+            int processed = 0;
+
+            ViewModel.AddLog(LogLevel.Info,
+                $"Run started — mode: {request.Mode}, {total} room(s), type id {request.TypeId.Value}.");
 
             using var tx = new Transaction(doc, isRoof ? "Create roofs from linked rooms" : "Create floors from linked rooms");
             var failureOptions = tx.GetFailureHandlingOptions();
@@ -32,78 +47,78 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V004
             tx.SetFailureHandlingOptions(failureOptions);
             tx.Start();
 
-            int processed = 0;
             foreach (var candidate in request.Rooms)
             {
                 if (request.Cancel != null && request.Cancel.IsCancelled)
                 {
                     wasCancelled = true;
-                    ViewModel.AddLog(LogLevel.Warning, "Run cancelled by user — remaining rooms skipped.");
+                    summary.NotProcessedCount = total - processed;
+                    ViewModel.AddLog(LogLevel.Warning,
+                        $"Run cancelled by user — {summary.NotProcessedCount} remaining room(s) not processed; " +
+                        "already-created elements are kept.");
                     break;
                 }
 
-                using var subTx = new SubTransaction(doc);
-                subTx.Start();
-
-                try
+                using (var subTx = new SubTransaction(doc))
                 {
-                    var boundary = RoomBoundaryService.BuildLoops(candidate.RoomElement, request.LinkTransform);
-
-                    if (!boundary.OuterValid)
+                    subTx.Start();
+                    try
                     {
-                        subTx.RollBack();
+                        var boundary = RoomBoundaryService.BuildLoops(candidate.RoomElement, request.LinkTransform);
+
+                        if (!boundary.OuterValid)
+                        {
+                            subTx.RollBack();
+                            summary.FailedCount++;
+                            ViewModel.AddLog(LogLevel.Warning, $"{candidate.DisplayName} — skipped: {boundary.FailureReason}");
+                        }
+                        else
+                        {
+                            if (isRoof)
+                                RoofCreationService.Create(doc, boundary.Loops[0], request.TypeId, request.TargetLevel);
+                            else
+                                FloorCreationService.Create(doc, boundary.Loops, request.TypeId, request.TargetLevel);
+
+                            subTx.Commit();
+                            summary.SuccessCount++;
+
+                            if (boundary.WasTrimmedOrFixed)
+                            {
+                                summary.TrimmedFixedCount++;
+                                ViewModel.AddLog(LogLevel.Warning, $"{candidate.DisplayName} — {verb} created (boundary trimmed/fixed)");
+                            }
+                            else
+                            {
+                                ViewModel.AddLog(LogLevel.Success, $"{candidate.DisplayName} — {verb} created");
+                            }
+
+                            // Inner-loop accounting: for roofs, BOTH valid inner loops
+                            // (unsupported by NewFootPrintRoof) AND validation-failed loops
+                            // are skipped; for floors, only validation-failed ones are.
+                            int skippedInner = isRoof
+                                ? (boundary.Loops.Count - 1) + boundary.InnerLoopsSkipped
+                                : boundary.InnerLoopsSkipped;
+
+                            if (skippedInner > 0)
+                            {
+                                summary.InnerLoopsSkippedCount += skippedInner;
+                                ViewModel.AddLog(LogLevel.Warning, isRoof
+                                    ? $"{candidate.DisplayName} — {skippedInner} inner loop(s) not supported for roofs, outer boundary used"
+                                    : $"{candidate.DisplayName} — {skippedInner} inner loop(s) skipped, outer boundary used");
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        if (subTx.GetStatus() == TransactionStatus.Started)
+                            subTx.RollBack();
+
                         summary.FailedCount++;
-                        ViewModel.AddLog(LogLevel.Warning, $"{candidate.DisplayName} — skipped: {boundary.FailureReason}");
-                        continue;
-                    }
-
-                    doc.Regenerate();
-
-                    if (isRoof)
-                        RoofCreationService.Create(doc, boundary.Loops[0], request.TypeId, request.TargetLevel);
-                    else
-                        FloorCreationService.Create(doc, boundary.Loops, request.TypeId, request.TargetLevel);
-
-                    doc.Regenerate();
-
-                    subTx.Commit();
-                    summary.SuccessCount++;
-
-                    if (boundary.WasTrimmedOrFixed)
-                    {
-                        summary.TrimmedFixedCount++;
-                        ViewModel.AddLog(LogLevel.Warning, $"{candidate.DisplayName} — {verb} created (boundary trimmed/fixed)");
-                    }
-                    else
-                    {
-                        ViewModel.AddLog(LogLevel.Success, $"{candidate.DisplayName} — {verb} created");
-                    }
-
-                    if (isRoof && boundary.Loops.Count > 1)
-                    {
-                        // Roofs only ever get the outer loop (see RoofCreationService) — every
-                        // inner loop present counts as skipped here, unlike floors.
-                        int skipped = boundary.Loops.Count - 1;
-                        summary.InnerLoopsSkippedCount += skipped;
-                        ViewModel.AddLog(LogLevel.Warning,
-                            $"{candidate.DisplayName} — {skipped} inner loop(s) not supported for roofs, outer boundary used");
-                    }
-                    else if (boundary.InnerLoopsSkipped > 0)
-                    {
-                        summary.InnerLoopsSkippedCount += boundary.InnerLoopsSkipped;
-                        ViewModel.AddLog(LogLevel.Warning,
-                            $"{candidate.DisplayName} — {boundary.InnerLoopsSkipped} inner loop(s) skipped, outer boundary used");
+                        ViewModel.AddLog(LogLevel.Warning, $"{candidate.DisplayName} — skipped: {ex.Message}");
                     }
                 }
-                catch (Exception ex)
-                {
-                    if (subTx.GetStatus() == TransactionStatus.Started)
-                        subTx.RollBack();
 
-                    summary.FailedCount++;
-                    ViewModel.AddLog(LogLevel.Warning, $"{candidate.DisplayName} — skipped: {ex.Message}");
-                }
-
+                // Every room outcome advances the progress count — no continue paths bypass this.
                 processed++;
                 ViewModel.ReportProgress(processed);
 
