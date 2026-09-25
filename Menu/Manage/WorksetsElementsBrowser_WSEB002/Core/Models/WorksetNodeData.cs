@@ -10,6 +10,7 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB002.Core.Models
         public bool IsEditable { get; }
         public string Owner { get; }
         public List<CategoryNodeData> Categories { get; }
+        public bool IsEmpty => Categories.Count == 0;
 
         public WorksetNodeData(string name, int worksetId, bool isEditable, string owner, List<CategoryNodeData> categories)
         {
