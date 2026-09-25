@@ -38,7 +38,7 @@
                     <TextBlock Text="Create floors from linked room boundaries" Style="{StaticResource HeaderSubtitle}"/>
                 </StackPanel>
                 <Border Grid.Column="1" Style="{StaticResource BadgePill}" VerticalAlignment="Center" Margin="0,0,8,0">
-                    <TextBlock Text="V003" Style="{StaticResource BadgeText}"/>
+                    <TextBlock Text="V004" Style="{StaticResource BadgeText}"/>
                 </Border>
                 <Button Grid.Column="2" Content="Close" Click="Close_Click"
                         Style="{StaticResource DarkGhostButton}" VerticalAlignment="Center"/>

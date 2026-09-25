@@ -44,6 +44,7 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V004
         public int TrimmedFixedCount { get; set; }
         public int FailedCount { get; set; }
         public int InnerLoopsSkippedCount { get; set; }
+        public int NotProcessedCount { get; set; }
     }
 
     /// <summary>Simple mutable flag shared between the ViewModel (Cancel button) and the
