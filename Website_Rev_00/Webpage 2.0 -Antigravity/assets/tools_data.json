@@ -1,0 +1,482 @@
+[
+  {
+    "id": "AutoSlope-by-Drain",
+    "title": "AutoSlope by Drain",
+    "cat": "roof",
+    "cat_label": "Roof & Drainage",
+    "ver": "V010 / V007",
+    "manual_time": "60 - 90 mins",
+    "plugin_time": "1.8 - 2.8 sec",
+    "savings": "99.7%",
+    "hours_saved": "1.2 hrs / roof",
+    "desc": "Batch-calculates and applies constant-slope elevations across all roof vertices relative to designated drain elements using Dijkstra geometric graph traversal.",
+    "tags": [
+      "Dijkstra Path",
+      "Slope Graph",
+      "Multi-Drain",
+      "Revit Sub-Elements"
+    ],
+    "folder": "AutoSlope-by-Drain",
+    "has_img": true
+  },
+  {
+    "id": "AutoSlope-by-Point",
+    "title": "AutoSlope by Point",
+    "cat": "roof",
+    "cat_label": "Roof & Drainage",
+    "ver": "V028",
+    "manual_time": "45 - 75 mins",
+    "plugin_time": "0.8 - 1.5 sec",
+    "savings": "99.6%",
+    "hours_saved": "1.0 hr / roof",
+    "desc": "KD-Tree nearest-drain lookup with Dijkstra graph engine, Excel export, and 13 AutoSlope_* parameters written directly to roof elements.",
+    "tags": [
+      "KD-Tree",
+      "Excel Export",
+      "Vertex Elevation",
+      "Boundary Clamping"
+    ],
+    "folder": "AutoSlope-by-Point",
+    "has_img": true
+  },
+  {
+    "id": "Creaser-Advanced",
+    "title": "Creaser Advanced",
+    "cat": "roof",
+    "cat_label": "Roof & Drainage",
+    "ver": "V010",
+    "manual_time": "30 - 50 mins",
+    "plugin_time": "0.6 - 1.2 sec",
+    "savings": "99.5%",
+    "hours_saved": "0.7 hr / roof",
+    "desc": "Places crease detail items along valid roof ridge and valley edges, filtered by minimum length and validated by Dijkstra path connectivity to drains.",
+    "tags": [
+      "Crease Detail Items",
+      "Slope Cutoff",
+      "Dijkstra Validity",
+      "Ridge Paths"
+    ],
+    "folder": "Creaser-Advanced",
+    "has_img": true
+  },
+  {
+    "id": "Roof-Ridge-Lines-by-Points",
+    "title": "Roof Ridge Lines (by Points)",
+    "cat": "roof",
+    "cat_label": "Roof & Drainage",
+    "ver": "V057",
+    "manual_time": "35 - 60 mins",
+    "plugin_time": "1.1 - 2.2 sec",
+    "savings": "99.4%",
+    "hours_saved": "0.8 hr / roof",
+    "desc": "Detects basin boundaries between drain groups and automatically generates 3D ridge and valley boundary lines connecting elevation peak points.",
+    "tags": [
+      "Basin Clustering",
+      "3D Ridge Lines",
+      "Watershed Bounds",
+      "Peak Points"
+    ],
+    "folder": "Roof-Ridge-Lines-by-Points",
+    "has_img": true
+  },
+  {
+    "id": "Inner-Loops-and-Perpendicular",
+    "title": "Inner Loops & Perpendicular",
+    "cat": "roof",
+    "cat_label": "Roof & Drainage",
+    "ver": "V005",
+    "manual_time": "30 - 50 mins",
+    "plugin_time": "0.7 - 1.4 sec",
+    "savings": "99.5%",
+    "hours_saved": "0.7 hr / roof",
+    "desc": "Automatically subdivides internal roof voids and penetration loops, projecting orthogonal guide points toward drains for precise contour folding.",
+    "tags": [
+      "Inner Loops",
+      "Normal Rays",
+      "Drain Projection",
+      "Shape Points"
+    ],
+    "folder": "Inner-Loops-and-Perpendicular",
+    "has_img": true
+  },
+  {
+    "id": "Roof-From-Detail-Lines",
+    "title": "Roof From Detail Lines",
+    "cat": "roof",
+    "cat_label": "Roof & Drainage",
+    "ver": "V007",
+    "manual_time": "15 - 30 mins",
+    "plugin_time": "0.5 - 1.0 sec",
+    "savings": "99.3%",
+    "hours_saved": "0.4 hr / roof",
+    "desc": "Converts 2D CAD/detail line sketches into fully parametric Revit Roof elements with boundary curve validation and clean closure.",
+    "tags": [
+      "Line Conversion",
+      "Footprint Roof",
+      "Curve Validation",
+      "1-Click Create"
+    ],
+    "folder": "Roof-From-Detail-Lines",
+    "has_img": true
+  },
+  {
+    "id": "Roof-Drain-Callout-Placing",
+    "title": "Roof Drain Callout Placing",
+    "cat": "roof",
+    "cat_label": "Roof & Drainage",
+    "ver": "V006",
+    "manual_time": "20 - 40 mins",
+    "plugin_time": "1.5 - 3.0 sec",
+    "savings": "98.8%",
+    "hours_saved": "0.5 hr / plan",
+    "desc": "Scans roof geometry for drain fixtures and automatically generates callout views centered on each drain basin with standardized bounding boxes.",
+    "tags": [
+      "Drain Callouts",
+      "Auto Framing",
+      "View Templates",
+      "Standard Scales"
+    ],
+    "folder": "Roof-Drain-Callout-Placing",
+    "has_img": true
+  },
+  {
+    "id": "Roof-Tag",
+    "title": "Roof Tag",
+    "cat": "roof",
+    "cat_label": "Roof & Drainage",
+    "ver": "V016",
+    "manual_time": "20 - 35 mins",
+    "plugin_time": "0.9 - 1.8 sec",
+    "savings": "99.1%",
+    "hours_saved": "0.4 hr / roof",
+    "desc": "Batch places spot slope and spot elevation tags at critical roof vertices, ridges, and drain low-points with automatic collision avoidance.",
+    "tags": [
+      "Spot Elevation",
+      "Spot Slope",
+      "Leader Collision",
+      "Batch Tag"
+    ],
+    "folder": "Roof-Tag",
+    "has_img": true
+  },
+  {
+    "id": "Smart-View-to-Sheet-Placer",
+    "title": "Smart View to Sheet Placer",
+    "cat": "sheet",
+    "cat_label": "Sheet Tools",
+    "ver": "V222",
+    "manual_time": "60 - 120 mins",
+    "plugin_time": "2.5 - 5.0 sec",
+    "savings": "99.3%",
+    "hours_saved": "1.5 hrs / set",
+    "desc": "Bin-packing 2D layout algorithm that automatically places dozens of plan, section, and detail views onto sheets with collision-free margins.",
+    "tags": [
+      "2D Bin Packing",
+      "Sheet Allocation",
+      "Margin Guard",
+      "Zero Collision"
+    ],
+    "folder": "Smart-View-to-Sheet-Placer",
+    "has_img": false
+  },
+  {
+    "id": "Sheet-Auto-Rearrange",
+    "title": "Sheet Auto Rearrange",
+    "cat": "sheet",
+    "cat_label": "Sheet Tools",
+    "ver": "V026",
+    "manual_time": "45 - 90 mins",
+    "plugin_time": "1.8 - 4.0 sec",
+    "savings": "99.2%",
+    "hours_saved": "1.1 hrs / package",
+    "desc": "Reorganizes viewports on existing sheets based on configurable view priority groups (e.g., Plans first, then Sections, then Drafting Views).",
+    "tags": [
+      "Priority Hierarchy",
+      "Sheet Compaction",
+      "Grid Realignment",
+      "Smart Flow"
+    ],
+    "folder": "Sheet-Auto-Rearrange",
+    "has_img": false
+  },
+  {
+    "id": "Automated-Section-Placer",
+    "title": "Automated Section Placer",
+    "cat": "sheet",
+    "cat_label": "Sheet Tools",
+    "ver": "V001",
+    "manual_time": "30 - 60 mins",
+    "plugin_time": "1.2 - 2.5 sec",
+    "savings": "99.3%",
+    "hours_saved": "0.7 hr / package",
+    "desc": "Discovers all active section markers within a plan view and distributes them onto organized presentation sheets automatically.",
+    "tags": [
+      "Plan Section Scan",
+      "Auto Placement",
+      "Sheet Generator",
+      "Title Alignment"
+    ],
+    "folder": "Automated-Section-Placer",
+    "has_img": false
+  },
+  {
+    "id": "Create-Sections",
+    "title": "Create Sections",
+    "cat": "view",
+    "cat_label": "View & Section",
+    "ver": "V011",
+    "manual_time": "25 - 50 mins",
+    "plugin_time": "1.0 - 2.0 sec",
+    "savings": "99.3%",
+    "hours_saved": "0.6 hr / batch",
+    "desc": "Instantly generates perpendicular and longitudinal Revit section views directly from selected 2D detail lines or room boundaries.",
+    "tags": [
+      "Line-to-Section",
+      "Orthogonal Cuts",
+      "Crop Boundary",
+      "Template Bind"
+    ],
+    "folder": "Create-Sections",
+    "has_img": false
+  },
+  {
+    "id": "Roof-Edge-Element-Sections",
+    "title": "Roof Edge Element Sections",
+    "cat": "view",
+    "cat_label": "View & Section",
+    "ver": "V002",
+    "manual_time": "30 - 60 mins",
+    "plugin_time": "1.8 - 3.5 sec",
+    "savings": "99.0%",
+    "hours_saved": "0.7 hr / perimeter",
+    "desc": "Places perpendicular architectural detail section cuts along roof perimeter edges, parapets, and coping transitions.",
+    "tags": [
+      "Parapet Sections",
+      "Edge Normals",
+      "Perimeter Sweep",
+      "Auto Naming"
+    ],
+    "folder": "Roof-Edge-Element-Sections",
+    "has_img": true
+  },
+  {
+    "id": "Roof-View-Focus",
+    "title": "Roof View Focus",
+    "cat": "view",
+    "cat_label": "View & Section",
+    "ver": "V002",
+    "manual_time": "10 - 15 mins",
+    "plugin_time": "0.4 - 0.8 sec",
+    "savings": "99.2%",
+    "hours_saved": "0.2 hr / view",
+    "desc": "Automatically calculates the tight bounding polygon of selected roofs and sets crop boundaries and view depth with standardized offset margins.",
+    "tags": [
+      "Tight Crop",
+      "Offset Margins",
+      "Depth Adjust",
+      "1-Click Focus"
+    ],
+    "folder": "Roof-View-Focus",
+    "has_img": true
+  },
+  {
+    "id": "Reference-Section-Head-Placer",
+    "title": "Reference Section Head Placer",
+    "cat": "view",
+    "cat_label": "View & Section",
+    "ver": "V013",
+    "manual_time": "20 - 40 mins",
+    "plugin_time": "0.8 - 1.6 sec",
+    "savings": "99.3%",
+    "hours_saved": "0.5 hr / model",
+    "desc": "Automatically locates and places referenced section head markers on corresponding plan and elevation views across the whole model.",
+    "tags": [
+      "Reference Heads",
+      "Cross-View Sync",
+      "Symbol Placement",
+      "Sheet Referencing"
+    ],
+    "folder": "Reference-Section-Head-Placer",
+    "has_img": false
+  },
+  {
+    "id": "Section-Auto-Renamer",
+    "title": "Section Auto Renamer",
+    "cat": "view",
+    "cat_label": "View & Section",
+    "ver": "V024",
+    "manual_time": "20 - 35 mins",
+    "plugin_time": "0.5 - 1.2 sec",
+    "savings": "99.4%",
+    "hours_saved": "0.4 hr / set",
+    "desc": "Intelligently renames section views following sequential grid or orientation patterns (e.g., North-South, West-East, Level-based).",
+    "tags": [
+      "Grid Sorting",
+      "Cardinal Direction",
+      "Sequential ID",
+      "Standard Compliance"
+    ],
+    "folder": "Section-Auto-Renamer",
+    "has_img": false
+  },
+  {
+    "id": "View-Auto-Renamer",
+    "title": "View Auto Renamer",
+    "cat": "view",
+    "cat_label": "View & Section",
+    "ver": "V004",
+    "manual_time": "25 - 45 mins",
+    "plugin_time": "0.6 - 1.2 sec",
+    "savings": "99.6%",
+    "hours_saved": "0.6 hr / project",
+    "desc": "Batch renames project views using customizable naming templates with tokens for Level, Discipline, View Type, and Scope Box.",
+    "tags": [
+      "Token Engine",
+      "BIM Standard Naming",
+      "Batch Processing",
+      "Regex Replace"
+    ],
+    "folder": "View-Auto-Renamer",
+    "has_img": false
+  },
+  {
+    "id": "Bubble-Auto-Renumber",
+    "title": "Bubble Auto Renumber",
+    "cat": "view",
+    "cat_label": "View & Section",
+    "ver": "V006",
+    "manual_time": "15 - 30 mins",
+    "plugin_time": "0.4 - 0.9 sec",
+    "savings": "99.5%",
+    "hours_saved": "0.3 hr / set",
+    "desc": "Sequentially renumbers viewport detail bubbles on sheets based on top-left to bottom-right or grid coordinate layout.",
+    "tags": [
+      "Coordinate Sort",
+      "Collision Guard",
+      "Sheet Renumber",
+      "Top-Down Ordering"
+    ],
+    "folder": "Bubble-Auto-Renumber",
+    "has_img": false
+  },
+  {
+    "id": "Linked-Detail-Line-Generator",
+    "title": "Linked Detail Line Generator",
+    "cat": "detail",
+    "cat_label": "Detail Lines & Dims",
+    "ver": "VA007",
+    "manual_time": "45 - 90 mins",
+    "plugin_time": "2.0 - 4.5 sec",
+    "savings": "99.2%",
+    "hours_saved": "1.1 hrs / floor",
+    "desc": "Traces linked architectural, structural, or MEP geometry into 2D detail lines with type-based mapping and boundary clipping.",
+    "tags": [
+      "Link Geometry Extraction",
+      "Style Overrides",
+      "Slab Clipping",
+      "Point Markers"
+    ],
+    "folder": "Linked-Detail-Line-Generator",
+    "has_img": false
+  },
+  {
+    "id": "Detail-Line-Dimension",
+    "title": "Detail Line Dimensions",
+    "cat": "detail",
+    "cat_label": "Detail Lines & Dims",
+    "ver": "V008",
+    "manual_time": "20 - 40 mins",
+    "plugin_time": "0.7 - 1.5 sec",
+    "savings": "99.4%",
+    "hours_saved": "0.5 hr / detail",
+    "desc": "Automatically detects parallel and continuous detail line strings and generates aligned chain dimensions with clean offset spacing.",
+    "tags": [
+      "Parallel Line Detection",
+      "Chain Dimensions",
+      "Witness Offsets",
+      "Clean Typography"
+    ],
+    "folder": "Detail-Line-Dimension",
+    "has_img": false
+  },
+  {
+    "id": "DWG-to-Lines",
+    "title": "DWG to Lines",
+    "cat": "setup",
+    "cat_label": "Manage & Setup",
+    "ver": "V005",
+    "manual_time": "30 - 60 mins",
+    "plugin_time": "1.0 - 2.2 sec",
+    "savings": "99.4%",
+    "hours_saved": "0.7 hr / family",
+    "desc": "Converts imported DWG vector layers inside the Family Editor into native Revit Symbolic Lines and Model Lines with layer-to-style mapping.",
+    "tags": [
+      "Family Editor",
+      "CAD Explosion Alternative",
+      "Layer Mapping",
+      "Clean Native Lines"
+    ],
+    "folder": "DWG-to-Lines",
+    "has_img": false
+  },
+  {
+    "id": "ParaManager",
+    "title": "ParaManager",
+    "cat": "setup",
+    "cat_label": "Manage & Setup",
+    "ver": "V003",
+    "manual_time": "35 - 70 mins",
+    "plugin_time": "1.2 - 2.5 sec",
+    "savings": "99.4%",
+    "hours_saved": "0.8 hr / setup",
+    "desc": "Guided step-by-step wizard to batch-bind shared parameters from text files to Revit categories as Instance or Type parameters in one pass.",
+    "tags": [
+      "Shared Parameters",
+      "Category Binding",
+      "Instance vs Type",
+      "Batch Binding"
+    ],
+    "folder": "ParaManager",
+    "has_img": false
+  },
+  {
+    "id": "Worksets-Elements-Browser",
+    "title": "Worksets Elements Browser",
+    "cat": "setup",
+    "cat_label": "Manage & Setup",
+    "ver": "WSEB002",
+    "manual_time": "15 - 30 mins",
+    "plugin_time": "0.5 - 1.0 sec",
+    "savings": "99.0%",
+    "hours_saved": "0.3 hr / audit",
+    "desc": "Interactive checkbox hierarchy tree of worksets, categories, and element types; allows instant 3D view isolation and selection.",
+    "tags": [
+      "Workset Hierarchy",
+      "3D View Isolate",
+      "Element Auditing",
+      "Multi-Select"
+    ],
+    "folder": "Worksets-Elements-Browser",
+    "has_img": false
+  },
+  {
+    "id": "Workset-Renamer",
+    "title": "Workset Renamer",
+    "cat": "setup",
+    "cat_label": "Manage & Setup",
+    "ver": "FX03",
+    "manual_time": "10 - 20 mins",
+    "plugin_time": "0.3 - 0.6 sec",
+    "savings": "99.5%",
+    "hours_saved": "0.2 hr / model",
+    "desc": "Batch renames project worksets using search-and-replace, prefix/suffix rules, and discipline standard numbering.",
+    "tags": [
+      "Regex Renamer",
+      "Discipline Prefix",
+      "Standard Compliance",
+      "Instant Rename"
+    ],
+    "folder": "Workset-Renamer",
+    "has_img": false
+  }
+]

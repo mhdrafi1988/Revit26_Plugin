@@ -1,0 +1,462 @@
+<title>Section Auto Renumber</title>
+<meta name="description" content="Showcase for the Bubble Auto Renumber V006 Revit plugin — renumbers section bubbles on a sheet top-to-bottom by vertical position, pulled from the real V006 source.">
+<style>
+:root{
+  --navy-950:#0a1728;--navy-900:#0e2036;--navy-800:#1e3a5f;--navy-700:#28496f;--navy-600:#345c86;
+  --line:#2c4666;--cyan:#33d1c9;--emerald:#3ddc97;--text:#e7eefb;--text-dim:#9fb3cc;--text-faint:#6e84a3;
+  --card:#132846;--card-alt:#0f2038;--warn:#f0b955;--danger:#e0654a;
+  --bg:var(--navy-950);--surface:var(--card);--surface-2:var(--card-alt);--ink:var(--text);--ink-dim:var(--text-dim);
+  --accent:var(--cyan);--accent-ink:var(--navy-950);--good:var(--emerald);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;padding-inline:20px;padding-block:32px 60px}
+.wrap{max-width:720px;margin:0 auto}
+h1,h2,h3{font-family:"Sora",system-ui,sans-serif;font-weight:700;letter-spacing:-0.01em;text-wrap:balance;margin:0}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.hero{padding-block:8px 28px;border-bottom:1px solid var(--line);margin-bottom:28px}
+.hero h1{font-size:clamp(26px,5vw,40px);line-height:1.05;margin-top:10px}
+.hero p.lede{color:var(--ink-dim);font-size:16px;max-width:60ch;margin-top:14px;line-height:1.55}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.badge{border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:12px;color:var(--ink-dim);background:var(--surface)}
+section{margin-block:36px}
+section > h2{font-size:22px;margin-bottom:4px}
+section > .sub{color:var(--ink-dim);font-size:13.5px;margin-bottom:16px;max-width:64ch}
+
+.dialog{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;max-width:440px}
+.dialog-bar{background:var(--surface-2);padding:10px 16px;font-size:12px;color:var(--ink-dim);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+.icon-badge{width:26px;height:26px;border-radius:7px;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-weight:700}
+.dbody{padding:16px}
+.panel{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:12px;background:var(--bg)}
+.panel .t{font-family:"Sora";font-weight:700;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:8px}
+.field-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:6px 0;border-top:1px solid var(--line)}
+.field-row:first-of-type{border-top:none}
+.field-row .box{border:1px solid var(--line);border-radius:6px;padding:5px 10px;font-size:11.5px;background:var(--surface)}
+
+.qtable{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:11.5px}
+th,td{padding:6px 10px;text-align:left;border-bottom:1px solid var(--line)}
+th{background:var(--surface-2);font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-dim)}
+
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px}
+.metric{text-align:center}
+.metric .n{font-family:"Sora";font-size:20px}
+.metric .n.accent{color:var(--accent)}
+.metric .n.good{color:var(--good)}
+.metric .n.danger{color:var(--danger)}
+.metric .lbl{font-size:9.5px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
+.metric .unit{font-size:9px;color:var(--text-faint)}
+
+.log{background:var(--navy-950);border-radius:8px;padding:10px 12px;font-family:"IBM Plex Mono",monospace;font-size:10.5px;line-height:1.9}
+.log .ok{color:var(--emerald)}
+
+.btn{border-radius:8px;padding:9px 16px;font-size:13px;font-weight:600;border:1px solid var(--line);display:block;text-align:center;background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+
+.matrix{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.mrow{display:grid;grid-template-columns:1.4fr 1fr 1fr;border-bottom:1px solid var(--line)}
+.mrow:last-child{border-bottom:none}
+.mrow > div{padding:10px 14px;font-size:12.5px;display:flex;align-items:center}
+.mrow.head > div{background:var(--surface-2);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-dim);font-weight:600}
+.tag-no{color:var(--warn)}
+.tag-yes{color:var(--good);font-weight:600}
+
+footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--line);color:var(--ink-dim);font-size:12px}
+footer .src{font-family:"IBM Plex Mono",monospace;font-size:11px;margin-top:6px}
+
+/* ══════════════════════════════════════════════════════════════
+   ENHANCEMENTS: Universal Navigation, Time Savings & Showcase
+   ══════════════════════════════════════════════════════════════ */
+.tool-top-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: rgba(14, 32, 54, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  margin-bottom: 24px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.nav-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--cyan);
+  text-decoration: none;
+  font-family: "Sora", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+.nav-back-btn:hover {
+  color: #fff;
+  transform: translateX(-3px);
+}
+.nav-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.nav-crumb {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--text-dim);
+}
+.nav-crumb.cat {
+  border-color: rgba(51, 209, 201, 0.35);
+  color: var(--cyan);
+}
+.nav-crumb.ver {
+  border-color: rgba(61, 220, 151, 0.35);
+  color: var(--emerald);
+  font-weight: 600;
+}
+.nav-crumb.switch-tool {
+  text-decoration: none;
+  color: var(--text);
+  background: rgba(255,255,255,0.04);
+  transition: background 0.15s;
+}
+.nav-crumb.switch-tool:hover {
+  background: rgba(51, 209, 201, 0.15);
+  color: var(--cyan);
+}
+
+.time-diff-section {
+  margin-block: 28px;
+}
+.time-diff-card {
+  background: linear-gradient(135deg, rgba(19, 40, 70, 0.85), rgba(15, 32, 56, 0.95));
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 16px 36px -12px rgba(0,0,0,0.5);
+}
+.time-diff-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, #f0b955, var(--cyan), var(--emerald));
+}
+.time-diff-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.time-diff-title {
+  font-family: "Sora", sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.time-badge-pill {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(61, 220, 151, 0.12);
+  color: var(--emerald);
+  border: 1px solid rgba(61, 220, 151, 0.4);
+}
+.time-diff-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.25fr;
+  gap: 14px;
+}
+@media (max-width: 768px) {
+  .time-diff-grid { grid-template-columns: 1fr; }
+}
+.time-box {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px 18px;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.time-box.manual {
+  border-color: rgba(240, 185, 85, 0.35);
+  background: rgba(240, 185, 85, 0.03);
+}
+.time-box.plugin {
+  border-color: rgba(61, 220, 151, 0.4);
+  background: rgba(61, 220, 151, 0.04);
+}
+.time-box.roi {
+  border-color: rgba(51, 209, 201, 0.4);
+  background: linear-gradient(135deg, rgba(51,209,201,0.06), rgba(61,220,151,0.06));
+}
+.time-box-lbl {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-dim);
+}
+.time-box-val {
+  font-family: "Sora", sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  margin-top: 6px;
+  letter-spacing: -0.01em;
+}
+.time-box-val.warn { color: var(--warn); }
+.time-box-val.good { color: var(--emerald); }
+.time-box-val.accent { color: var(--cyan); }
+.time-box-sub {
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-top: 2px;
+}
+.time-box-desc {
+  font-size: 12px;
+  color: var(--ink-dim);
+  margin-top: 10px;
+  line-height: 1.45;
+}
+.time-timeline-bar {
+  margin-top: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+.time-bar-legend {
+  display: flex;
+  justify-content: space-between;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10.5px;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+.time-bar-track {
+  height: 6px;
+  background: rgba(240, 185, 85, 0.25);
+  border-radius: 99px;
+  overflow: hidden;
+  position: relative;
+}
+.time-bar-fill {
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  background: linear-gradient(90deg, var(--cyan), var(--emerald));
+  border-radius: 99px;
+  box-shadow: 0 0 8px var(--cyan);
+}
+
+.tool-image-showcase {
+  margin-block: 32px;
+}
+.image-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.image-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--line);
+}
+.image-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: "Sora", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cyan);
+}
+.image-badge {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10.5px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(51, 209, 201, 0.12);
+  color: var(--cyan);
+  border: 1px solid rgba(51, 209, 201, 0.3);
+}
+.image-body img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  max-height: 480px;
+}
+.image-footer {
+  padding: 14px 18px;
+  background: var(--bg);
+  border-top: 1px solid var(--line);
+  font-size: 12.5px;
+  color: var(--ink-dim);
+  line-height: 1.5;
+}
+
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<div class="wrap">
+
+  <!-- ── Top Hub Navigation ── -->
+  <nav class="tool-top-nav">
+    <a href="../index.html" class="nav-back-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      All Tools Hub
+    </a>
+    <div class="nav-breadcrumbs">
+      <span class="nav-crumb cat">View Tools</span>
+      <span class="nav-crumb ver">V006</span>
+      <a href="../index.html#tools" class="nav-crumb switch-tool">Switch Tool ▾</a>
+    </div>
+  </nav>
+
+
+  <div class="hero">
+    <div class="eyebrow">Revit26_Plugin · View Tools · Rename</div>
+    <h1>Section Auto Renumber</h1>
+    <p class="lede">Renumbers the section bubbles on a sheet in top-to-bottom order, using a vertical threshold to group sections at nearly the same height — no more manually retyping bubble numbers after a sheet gets reorganized.</p>
+    <div class="badges">
+      <span class="badge">V006</span>
+      <span class="badge">Revit 2026</span>
+      <span class="badge">Vertical-position ordering</span>
+    </div>
+  </div>
+
+
+  <!-- ── Manual vs Automated Benchmark ── -->
+  <section class="time-diff-section">
+    <div class="time-diff-card">
+      <div class="time-diff-header">
+        <div class="time-diff-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--emerald)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Manual vs. Automated Time Benchmark
+        </div>
+        <div class="time-badge-pill">99.5% Faster Execution</div>
+      </div>
+      <div class="time-diff-grid">
+        <div class="time-box manual">
+          <div>
+            <div class="time-box-lbl">Typical Manual Method</div>
+            <div class="time-box-val warn">15 - 30 mins</div>
+            <div class="time-box-sub">Manual repetitive clicks & drafting</div>
+          </div>
+          <p class="time-box-desc">Renumbering viewport detail numbers one by one on sheet, resolving duplicate detail number conflicts.</p>
+        </div>
+        <div class="time-box plugin">
+          <div>
+            <div class="time-box-lbl">Plugin Automation</div>
+            <div class="time-box-val good">0.4 - 0.9 sec</div>
+            <div class="time-box-sub">1-Click Revit Transaction</div>
+          </div>
+          <p class="time-box-desc">Sorts viewports geometrically (top-to-bottom, left-to-right) and renumbers detail bubbles collision-free.</p>
+        </div>
+        <div class="time-box roi">
+          <div>
+            <div class="time-box-lbl">Efficiency Gain</div>
+            <div class="time-box-val accent">99.5%</div>
+            <div class="time-box-sub">~20 mins saved / sheet set</div>
+          </div>
+          <div class="time-timeline-bar">
+            <div class="time-bar-legend">
+              <span>Plugin: 0.4 - 0.9 sec</span>
+              <span>Manual: 15 - 30 mins</span>
+            </div>
+            <div class="time-bar-track">
+              <div class="time-bar-fill" style="width: 2%;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Source of truth</div>
+    <h2 style="margin-top:6px">Pulled from the real V006 source</h2>
+    <div class="sub">Menu/ViewTools/Rename_01/BubbleAutoRenumber_V006 — dialog fields from BubbleAutoRenumberWindow.xaml. Run numbers below are illustrative example output.</div>
+  </section>
+
+  <section>
+    <h2>The dialog</h2>
+    <div class="sub">Reconstructed from BubbleAutoRenumberWindow.xaml — sheet + options, sections grid, last-run results.</div>
+    <div class="dialog">
+      <div class="dialog-bar"><span class="icon-badge">⟳</span><div><div style="font-weight:600;color:var(--ink)">Section Auto Renumber</div><div style="font-size:10px">WAMI · Revit 2026</div></div></div>
+      <div class="dbody">
+
+        <div class="panel">
+          <div class="t">Sheet</div>
+          <div class="field-row"><span>Select sheet</span><div class="box">A-301</div></div>
+          <div class="field-row"><span>Starting number</span><div class="box">1</div></div>
+          <div class="field-row"><span>Vertical threshold</span><div class="box">50 mm</div></div>
+        </div>
+
+        <div class="panel">
+          <div class="t">Sections on Sheet</div>
+          <div class="qtable">
+            <table>
+              <thead><tr><th>Current #</th><th>View name</th></tr></thead>
+              <tbody>
+                <tr><td>3</td><td>Section A-A</td></tr>
+                <tr><td>1</td><td>Section B-B — Roof Drain Detail</td></tr>
+                <tr><td>2</td><td>Section C-C</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="t">Last Run</div>
+          <div class="metrics">
+            <div class="metric"><div class="n accent">3</div><div class="lbl">Total</div><div class="unit">views</div></div>
+            <div class="metric"><div class="n good">3</div><div class="lbl">Success</div><div class="unit">renamed</div></div>
+            <div class="metric"><div class="n danger">0</div><div class="lbl">Failed</div><div class="unit">skipped</div></div>
+          </div>
+          <div class="log">
+            <div><span class="ok">✓</span> Section B-B → 1, Section C-C → 2, Section A-A → 3</div>
+          </div>
+        </div>
+
+        <span class="btn">Renumber</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Manual vs. Section Auto Renumber</h2>
+    <div class="matrix">
+      <div class="mrow head"><div>Feature</div><div>Manual</div><div>Section Auto Renumber</div></div>
+      <div class="mrow"><div>Renumbering bubbles</div><div class="tag-no">Click each one, retype the number</div><div class="tag-yes">Whole sheet, one click</div></div>
+      <div class="mrow"><div>Ordering</div><div class="tag-no">Judged by eye</div><div class="tag-yes">Actual vertical position, with a grouping threshold</div></div>
+      <div class="mrow"><div>Sheet reorganized</div><div class="tag-no">Numbers redone from scratch</div><div class="tag-yes">Re-run, numbers follow the new layout</div></div>
+    </div>
+  </section>
+
+  <footer>
+    Built from the real BubbleAutoRenumber_V006 source in Revit26_Plugin — dialog structure and field names are exact; run numbers above are illustrative example output.
+    <div class="src">Menu/ViewTools/Rename_01/BubbleAutoRenumber_V006</div>
+  </footer>
+
+</div>

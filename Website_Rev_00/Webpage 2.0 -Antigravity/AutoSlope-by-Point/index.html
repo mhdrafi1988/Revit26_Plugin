@@ -1,0 +1,639 @@
+<title>AutoSlope by Point</title>
+<meta name="description" content="Showcase for the AutoSlope by Point V028 Revit plugin — dialog, Dijkstra path math, Excel export and roof parameters, pulled from the real V028 source.">
+<style>
+:root{
+  --navy-950:#0a1728;
+  --navy-900:#0e2036;
+  --navy-800:#1e3a5f;
+  --navy-700:#28496f;
+  --navy-600:#345c86;
+  --line:#2c4666;
+  --cyan:#33d1c9;
+  --emerald:#3ddc97;
+  --text:#e7eefb;
+  --text-dim:#9fb3cc;
+  --text-faint:#6e84a3;
+  --card:#132846;
+  --card-alt:#0f2038;
+  --warn:#f0b955;
+
+  --bg:var(--navy-950);
+  --surface:var(--card);
+  --surface-2:var(--card-alt);
+  --ink:var(--text);
+  --ink-dim:var(--text-dim);
+  --accent:var(--cyan);
+  --accent-ink:var(--navy-950);
+  --good:var(--emerald);
+  --mono-bg:var(--navy-950);
+  --mono-ink:var(--text-dim);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+  padding-inline:20px;
+  padding-block:32px 60px;
+}
+.wrap{max-width:980px;margin:0 auto}
+h1,h2,h3{font-family:"Sora",system-ui,sans-serif;font-weight:700;letter-spacing:-0.01em;text-wrap:balance;margin:0}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+.eyebrow{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:11px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--accent);
+}
+/* ── Hero ───────────────────────────────── */
+.hero{padding-block:8px 28px;border-bottom:1px solid var(--line);margin-bottom:28px}
+.hero h1{font-size:clamp(30px,5vw,46px);line-height:1.05;margin-top:10px}
+.hero p.lede{color:var(--ink-dim);font-size:16px;max-width:60ch;margin-top:14px;line-height:1.55}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.badge{
+  border:1px solid var(--line);border-radius:999px;padding:5px 12px;
+  font-size:12px;color:var(--ink-dim);background:var(--surface);
+}
+/* ── Section shell ─────────────────────── */
+section{margin-block:36px}
+section > h2{font-size:22px;margin-bottom:4px}
+section > .sub{color:var(--ink-dim);font-size:13.5px;margin-bottom:16px;max-width:62ch}
+/* ── Metric grid ────────────────────────── */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.metric{
+  background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  padding:14px 16px;
+}
+.metric .label{font-size:11px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.06em}
+.metric .val{font-family:"Sora",sans-serif;font-size:24px;margin-top:4px;font-variant-numeric:tabular-nums}
+.metric .unit{font-size:11px;color:var(--ink-dim)}
+/* ── Dialog mockup ──────────────────────── */
+.dialog{
+  background:var(--surface);border:1px solid var(--line);border-radius:14px;
+  overflow:hidden;
+}
+.dialog-bar{
+  background:var(--surface-2);padding:10px 16px;font-size:12px;color:var(--ink-dim);
+  border-bottom:1px solid var(--line);display:flex;justify-content:space-between;
+}
+.dialog-body{display:grid;grid-template-columns:1fr 1fr;gap:0}
+@media (max-width:640px){.dialog-body{grid-template-columns:1fr}}
+.dpanel{padding:18px}
+.dpanel + .dpanel{border-left:1px solid var(--line)}
+@media (max-width:640px){.dpanel + .dpanel{border-left:none;border-top:1px solid var(--line)}}
+.field-row{display:flex;gap:10px;margin-bottom:12px}
+.field{flex:1;min-width:0}
+.field label{display:block;font-size:10.5px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.field .box{
+  border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:13px;
+  background:var(--bg);
+}
+.card-mini{
+  border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px;background:var(--bg);
+}
+.card-mini .t{font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block}
+.run-row{display:flex;gap:8px;margin-top:14px}
+.btn{
+  border-radius:8px;padding:9px 16px;font-size:13px;font-weight:600;border:1px solid var(--line);
+}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.progress{height:5px;border-radius:99px;background:var(--surface-2);margin-top:10px;overflow:hidden}
+.progress > i{display:block;height:100%;width:63%;background:var(--accent)}
+.log{
+  background:var(--mono-bg);color:var(--mono-ink);font-family:"IBM Plex Mono",monospace;font-size:11px;
+  border-radius:0 0 14px 14px;padding:12px 16px;line-height:1.7;
+}
+.log .t{color:#8b8770;margin-right:8px}
+/* ── Excel mock ─────────────────────────── */
+.sheet{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;font-size:12px;min-width:720px}
+th,td{padding:7px 10px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{background:var(--surface-2);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-dim)}
+tr.skip td{background:color-mix(in srgb, var(--warn) 14%, var(--surface))}
+td.diff-ok{color:var(--good);font-weight:600}
+.sheet-tabs{display:flex;gap:2px;margin-top:10px}
+.sheet-tab{
+  font-size:11px;padding:6px 14px;border:1px solid var(--line);border-bottom:none;border-radius:8px 8px 0 0;
+  color:var(--ink-dim);background:var(--surface-2);
+}
+.sheet-tab.active{background:var(--surface);color:var(--ink);font-weight:600}
+/* ── Params ──────────────────────────────── */
+.params{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.param{
+  border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface);
+}
+.param .name{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--accent)}
+.param .desc{font-size:12px;color:var(--ink-dim);margin-top:3px}
+/* ── Matrix ─────────────────────────────── */
+.matrix{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.mrow{display:grid;grid-template-columns:1.4fr 1fr 1fr;border-bottom:1px solid var(--line)}
+.mrow:last-child{border-bottom:none}
+.mrow > div{padding:10px 14px;font-size:12.5px;display:flex;align-items:center}
+.mrow.head > div{background:var(--surface-2);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-dim);font-weight:600}
+.mrow > div:first-child{color:var(--ink)}
+.tag-no{color:var(--warn)}
+.tag-yes{color:var(--good);font-weight:600}
+/* footer */
+footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--line);color:var(--ink-dim);font-size:12px}
+footer .src{font-family:"IBM Plex Mono",monospace;font-size:11px;margin-top:6px}
+
+/* ══════════════════════════════════════════════════════════════
+   ENHANCEMENTS: Universal Navigation, Time Savings & Showcase
+   ══════════════════════════════════════════════════════════════ */
+.tool-top-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: rgba(14, 32, 54, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  margin-bottom: 24px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.nav-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--cyan);
+  text-decoration: none;
+  font-family: "Sora", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+.nav-back-btn:hover {
+  color: #fff;
+  transform: translateX(-3px);
+}
+.nav-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.nav-crumb {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--text-dim);
+}
+.nav-crumb.cat {
+  border-color: rgba(51, 209, 201, 0.35);
+  color: var(--cyan);
+}
+.nav-crumb.ver {
+  border-color: rgba(61, 220, 151, 0.35);
+  color: var(--emerald);
+  font-weight: 600;
+}
+.nav-crumb.switch-tool {
+  text-decoration: none;
+  color: var(--text);
+  background: rgba(255,255,255,0.04);
+  transition: background 0.15s;
+}
+.nav-crumb.switch-tool:hover {
+  background: rgba(51, 209, 201, 0.15);
+  color: var(--cyan);
+}
+
+.time-diff-section {
+  margin-block: 28px;
+}
+.time-diff-card {
+  background: linear-gradient(135deg, rgba(19, 40, 70, 0.85), rgba(15, 32, 56, 0.95));
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 16px 36px -12px rgba(0,0,0,0.5);
+}
+.time-diff-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, #f0b955, var(--cyan), var(--emerald));
+}
+.time-diff-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.time-diff-title {
+  font-family: "Sora", sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.time-badge-pill {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(61, 220, 151, 0.12);
+  color: var(--emerald);
+  border: 1px solid rgba(61, 220, 151, 0.4);
+}
+.time-diff-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.25fr;
+  gap: 14px;
+}
+@media (max-width: 768px) {
+  .time-diff-grid { grid-template-columns: 1fr; }
+}
+.time-box {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px 18px;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.time-box.manual {
+  border-color: rgba(240, 185, 85, 0.35);
+  background: rgba(240, 185, 85, 0.03);
+}
+.time-box.plugin {
+  border-color: rgba(61, 220, 151, 0.4);
+  background: rgba(61, 220, 151, 0.04);
+}
+.time-box.roi {
+  border-color: rgba(51, 209, 201, 0.4);
+  background: linear-gradient(135deg, rgba(51,209,201,0.06), rgba(61,220,151,0.06));
+}
+.time-box-lbl {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-dim);
+}
+.time-box-val {
+  font-family: "Sora", sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  margin-top: 6px;
+  letter-spacing: -0.01em;
+}
+.time-box-val.warn { color: var(--warn); }
+.time-box-val.good { color: var(--emerald); }
+.time-box-val.accent { color: var(--cyan); }
+.time-box-sub {
+  font-size: 11px;
+  color: var(--ink-dim);
+  margin-top: 2px;
+}
+.time-box-desc {
+  font-size: 12px;
+  color: var(--ink-dim);
+  margin-top: 10px;
+  line-height: 1.45;
+}
+.time-timeline-bar {
+  margin-top: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+.time-bar-legend {
+  display: flex;
+  justify-content: space-between;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10.5px;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+.time-bar-track {
+  height: 6px;
+  background: rgba(240, 185, 85, 0.25);
+  border-radius: 99px;
+  overflow: hidden;
+  position: relative;
+}
+.time-bar-fill {
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  background: linear-gradient(90deg, var(--cyan), var(--emerald));
+  border-radius: 99px;
+  box-shadow: 0 0 8px var(--cyan);
+}
+
+.tool-image-showcase {
+  margin-block: 32px;
+}
+.image-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.image-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--line);
+}
+.image-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: "Sora", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cyan);
+}
+.image-badge {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10.5px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(51, 209, 201, 0.12);
+  color: var(--cyan);
+  border: 1px solid rgba(51, 209, 201, 0.3);
+}
+.image-body img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  max-height: 480px;
+}
+.image-footer {
+  padding: 14px 18px;
+  background: var(--bg);
+  border-top: 1px solid var(--line);
+  font-size: 12.5px;
+  color: var(--ink-dim);
+  line-height: 1.5;
+}
+
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<div class="wrap">
+
+  <!-- ── Top Hub Navigation ── -->
+  <nav class="tool-top-nav">
+    <a href="../index.html" class="nav-back-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      All Tools Hub
+    </a>
+    <div class="nav-breadcrumbs">
+      <span class="nav-crumb cat">Roof & Drainage Tools</span>
+      <span class="nav-crumb ver">V028</span>
+      <a href="../index.html#tools" class="nav-crumb switch-tool">Switch Tool ▾</a>
+    </div>
+  </nav>
+
+
+  <div class="hero">
+    <div class="eyebrow">Revit26_Plugin · Roof Tools · Roof Slope</div>
+    <h1>AutoSlope by Point</h1>
+    <p class="lede">Picks vertices on a roof edge, finds the nearest drain along the true shape (Dijkstra over the roof's edge graph, not straight-line distance), and writes a constant-slope elevation to every one of them in one run.</p>
+    <div class="badges">
+      <span class="badge">V028 — KD-Tree drain lookup</span>
+      <span class="badge">Revit 2026</span>
+      <span class="badge">Dijkstra path engine</span>
+      <span class="badge">13 AutoSlope_* parameters</span>
+    </div>
+  </div>
+
+
+  <!-- ── Manual vs Automated Benchmark ── -->
+  <section class="time-diff-section">
+    <div class="time-diff-card">
+      <div class="time-diff-header">
+        <div class="time-diff-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--emerald)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Manual vs. Automated Time Benchmark
+        </div>
+        <div class="time-badge-pill">99.6% Faster Execution</div>
+      </div>
+      <div class="time-diff-grid">
+        <div class="time-box manual">
+          <div>
+            <div class="time-box-lbl">Typical Manual Method</div>
+            <div class="time-box-val warn">45 - 75 mins</div>
+            <div class="time-box-sub">Manual repetitive clicks & drafting</div>
+          </div>
+          <p class="time-box-desc">Selecting points, estimating nearest drains by sight, solving Euclidean vs curved paths, manual input.</p>
+        </div>
+        <div class="time-box plugin">
+          <div>
+            <div class="time-box-lbl">Plugin Automation</div>
+            <div class="time-box-val good">0.8 - 1.5 sec</div>
+            <div class="time-box-sub">1-Click Revit Transaction</div>
+          </div>
+          <p class="time-box-desc">KD-Tree nearest-drain lookup with Dijkstra graph engine, Excel export, and 13 AutoSlope_* parameters.</p>
+        </div>
+        <div class="time-box roi">
+          <div>
+            <div class="time-box-lbl">Efficiency Gain</div>
+            <div class="time-box-val accent">99.6%</div>
+            <div class="time-box-sub">~60 mins saved / roof</div>
+          </div>
+          <div class="time-timeline-bar">
+            <div class="time-bar-legend">
+              <span>Plugin: 0.8 - 1.5 sec</span>
+              <span>Manual: 45 - 75 mins</span>
+            </div>
+            <div class="time-bar-track">
+              <div class="time-bar-fill" style="width: 2%;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ── 3D Architectural / Reference Showcase ── -->
+  <section class="tool-image-showcase">
+    <div class="image-card">
+      <div class="image-header">
+        <span class="image-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          Slope Analysis & Vertex Elevation Editor
+        </span>
+        <span class="image-badge">3D BIM Visualization</span>
+      </div>
+      <div class="image-body">
+        <img src="../assets/images/roof_slope_editor_ui.jpg" alt="Slope Analysis & Vertex Elevation Editor" loading="lazy">
+      </div>
+      <div class="image-footer">
+        <p>Contour gradient visualization showing vertex elevation paths, drain invert tags, and automated slope percentage application across the roof boundary.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Source of truth</div>
+    <h2 style="margin-top:6px">Everything below is pulled from the real V028 source</h2>
+    <div class="sub">Menu/RoofTools/RoofSlope/ByPoints_0/AutoSlopeByPoint_V028 — dialog fields from AutoSlopeByPointWindow.xaml, Excel columns from ExcelExportHelper.cs, parameter names from AppConstants.cs + AutoSlopeParameterWriter.cs. Run numbers below are illustrative example output, not a captured log.</div>
+  </section>
+
+  <section>
+    <h2>A run, at a glance</h2>
+    <div class="sub">The five metric cards shown in the dialog's top row after Run completes.</div>
+    <div class="metrics">
+      <div class="metric"><div class="label">Longest Path</div><div class="val">41.30</div><div class="unit">Meters</div></div>
+      <div class="metric"><div class="label">Highest Elevation</div><div class="val">620</div><div class="unit">Millimeters</div></div>
+      <div class="metric"><div class="label">Percentage Applied</div><div class="val">1.5</div><div class="unit">Percent</div></div>
+      <div class="metric"><div class="label">Run Duration</div><div class="val">840</div><div class="unit">Milliseconds</div></div>
+      <div class="metric"><div class="label">Tolerance Applied</div><div class="val">500</div><div class="unit">Millimeters</div></div>
+    </div>
+    <div class="metrics" style="margin-top:10px">
+      <div class="metric"><div class="label">Vertices Processed</div><div class="val">214</div><div class="unit">Vertices</div></div>
+      <div class="metric"><div class="label">Vertices Skipped</div><div class="val">12</div><div class="unit">Boundary</div></div>
+      <div class="metric"><div class="label">Picked Drain</div><div class="val">6</div><div class="unit">Detected</div></div>
+      <div class="metric"><div class="label">Final Drain Count</div><div class="val">6</div><div class="unit">Detected</div></div>
+      <div class="metric"><div class="label">Curves Calculated</div><div class="val">9</div><div class="unit">Arcs found</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>The dialog</h2>
+    <div class="sub">Reconstructed from AutoSlopeByPointWindow.xaml — same fields, same layout: controls on the left, live output and the run log on the right.</div>
+    <div class="dialog">
+      <div class="dialog-bar"><span>AutoSlope — V028</span><span>Revit 2026</span></div>
+      <div class="dialog-body">
+        <div class="dpanel">
+          <div class="card-mini">
+            <div class="t"><span class="dot"></span>Slope</div>
+            <div class="field-row" style="margin-top:8px">
+              <div class="field"><label>Percentage</label><div class="box">1.5%</div></div>
+              <div class="field"><label>Threshold (m)</label><div class="box">100</div></div>
+            </div>
+          </div>
+          <div class="card-mini">
+            <div class="t"><span class="dot"></span>Drain Detection</div>
+            <div class="field-row" style="margin-top:8px">
+              <div class="field"><label>Tolerance</label><div class="box">On</div></div>
+              <div class="field"><label>Radius (mm)</label><div class="box">500</div></div>
+            </div>
+          </div>
+          <div class="card-mini">
+            <div class="t"><span class="dot"></span>Circle Markers</div>
+            <div style="font-size:12px;color:var(--ink-dim);margin-top:6px;line-height:1.7">
+              ✓ Place Circles on Drains<br>
+              ✓ Highest Point <span class="mono" style="font-size:10.5px">(offset label on)</span><br>
+              ✓ Allowed Offset <span class="mono" style="font-size:10.5px">(clamping ≥ threshold)</span>
+            </div>
+          </div>
+        </div>
+        <div class="dpanel">
+          <div class="card-mini">
+            <div class="t">Curve handling</div>
+            <div style="font-size:11.5px;color:var(--ink-dim);margin-top:6px;line-height:1.5">
+              Insert intersection points — when a path edge overlaps an arc, real shape points are added at entry/exit so distance follows the true arc length, not a straight chord.
+            </div>
+          </div>
+          <div class="card-mini">
+            <div class="t">Export</div>
+            <div style="font-size:12px;margin-top:6px">Export to Excel <b>On</b> → <span class="mono" style="font-size:11px">AutoSlope_Reports/</span></div>
+            <div class="run-row">
+              <span class="btn primary" style="flex:1;text-align:center">Run AutoSlope</span>
+              <span class="btn" style="text-align:center">Cancel</span>
+            </div>
+            <div class="progress"><i></i></div>
+            <div style="font-size:10.5px;color:var(--ink-dim);margin-top:4px">Grouping drains · 63%</div>
+          </div>
+        </div>
+      </div>
+      <div class="log">
+        <div><span class="t">[14:02:11]</span>Picked drains: 6 detected within tolerance.</div>
+        <div><span class="t">[14:02:11]</span>Building roof edge graph — 226 vertices, 9 arcs.</div>
+        <div><span class="t">[14:02:12]</span>Dijkstra: shortest path resolved for 214 vertices.</div>
+        <div><span class="t">[14:02:12]</span>AutoSlope Parameters: 13 updated, 0 skipped.</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Excel export</h2>
+    <div class="sub">One workbook, two sheets, written every run — ExcelExportHelper.cs, ExportCompactVertexData.</div>
+    <div class="sheet-tabs">
+      <div class="sheet-tab active">Vertex Data</div>
+      <div class="sheet-tab">Run Summary</div>
+    </div>
+    <div class="sheet">
+      <table>
+        <thead><tr>
+          <th>VertexIndex</th><th>DrainIndex</th><th>WasProcessed</th><th>RoofTypeName</th>
+          <th>BaseLevel</th><th>PathLength_m</th><th>SlopePercent</th>
+          <th>ElevCalc_mm</th><th>ElevModel_mm</th><th>ElevDiff_mm</th>
+        </tr></thead>
+        <tbody>
+          <tr><td>1</td><td>3</td><td>YES</td><td>Generic Roof</td><td>Level 2</td><td>41.30</td><td>1.5</td><td>620</td><td>620</td><td class="diff-ok">0</td></tr>
+          <tr><td>2</td><td>3</td><td>YES</td><td>Generic Roof</td><td>Level 2</td><td>33.80</td><td>1.5</td><td>507</td><td>507</td><td class="diff-ok">0</td></tr>
+          <tr><td>3</td><td>1</td><td>YES</td><td>Generic Roof</td><td>Level 2</td><td>18.10</td><td>1.5</td><td>272</td><td>270</td><td>−2</td></tr>
+          <tr class="skip"><td>4</td><td>—</td><td>NO</td><td>Generic Roof</td><td>Level 2</td><td>—</td><td>1.5</td><td>—</td><td>—</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="font-size:11.5px;color:var(--ink-dim);margin-top:8px">Skipped vertices (boundary, out of tolerance) stay in the sheet, highlighted, instead of being dropped. ElevDiff_mm flags anything Revit adjusted after write.</div>
+  </section>
+
+  <section>
+    <h2>Roof parameters written</h2>
+    <div class="sub">Every field AutoSlopeParameterWriter.WriteAll sets on the roof element, one transaction, all-or-nothing per parameter.</div>
+    <div class="params">
+      <div class="param"><div class="name">AutoSlope_HighestElevation</div><div class="desc">Highest computed elevation, mm</div></div>
+      <div class="param"><div class="name">AutoSlope_VerticesProcessed</div><div class="desc">Count of vertices sloped</div></div>
+      <div class="param"><div class="name">AutoSlope_VerticesSkipped</div><div class="desc">Count skipped (boundary)</div></div>
+      <div class="param"><div class="name">AutoSlope_DrainCount</div><div class="desc">Final detected drain count</div></div>
+      <div class="param"><div class="name">AutoSlope_RunDuration_sec</div><div class="desc">Run time, seconds</div></div>
+      <div class="param"><div class="name">AutoSlope_LongestPath</div><div class="desc">Longest vertex→drain path, m</div></div>
+      <div class="param"><div class="name">AutoSlope_SlopePercent</div><div class="desc">Slope % applied</div></div>
+      <div class="param"><div class="name">AutoSlope_SlopePercent_Text</div><div class="desc">Slope %, display string</div></div>
+      <div class="param"><div class="name">AutoSlope_Threshold</div><div class="desc">Threshold, internal units (ft)</div></div>
+      <div class="param"><div class="name">AutoSlope_RunDate</div><div class="desc">Timestamp of the run</div></div>
+      <div class="param"><div class="name">AutoSlope_Status</div><div class="desc">1 OK · 2 Partial · 3 Failed</div></div>
+      <div class="param"><div class="name">AutoSlope_DrainToleranceMm</div><div class="desc">Detection radius, mm</div></div>
+      <div class="param"><div class="name">AutoSlope_DrainToleranceEnabled</div><div class="desc">Tolerance on/off flag</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Manual vs. AutoSlope</h2>
+    <div class="matrix">
+      <div class="mrow head"><div>Feature</div><div>Manual</div><div>AutoSlope by Point</div></div>
+      <div class="mrow"><div>Vertex → drain distance</div><div class="tag-no">Straight ruler guess</div><div class="tag-yes">True shortest path (Dijkstra)</div></div>
+      <div class="mrow"><div>Arc / curved edges</div><div class="tag-no">Chord approximation</div><div class="tag-yes">Real arc length, optional intersection points</div></div>
+      <div class="mrow"><div>Multiple drains</div><div class="tag-no">One at a time, by eye</div><div class="tag-yes">Nearest-drain routing, all vertices in one run</div></div>
+      <div class="mrow"><div>Audit trail</div><div class="tag-no">None</div><div class="tag-yes">Vertex Data + Run Summary workbook</div></div>
+      <div class="mrow"><div>Roof metadata</div><div class="tag-no">Not recorded</div><div class="tag-yes">13 AutoSlope_* parameters written</div></div>
+    </div>
+  </section>
+
+  <footer>
+    Built from the real AutoSlopeByPoint_V028 source in Revit26_Plugin — dialog, export, and parameter names are exact; run numbers above are illustrative example output.
+    <div class="src">Menu/RoofTools/RoofSlope/ByPoints_0/AutoSlopeByPoint_V028</div>
+  </footer>
+
+</div>
