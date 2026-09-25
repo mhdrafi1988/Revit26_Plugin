@@ -1,6 +1,6 @@
 # Revit26_Plugin
 
-Revit add-in ("Water Poofer_2015" ribbon tab, see `App.cs`), single monolithic
+Revit add-in ("SloperPro" ribbon tab, see `App.cs`), single monolithic
 `Revit26_Plugin.csproj` (`net8.0-windows`) with ~60 independent tools under `Menu/`.
 
 ## Build prerequisites

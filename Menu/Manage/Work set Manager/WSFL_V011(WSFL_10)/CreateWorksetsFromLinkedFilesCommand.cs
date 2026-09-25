@@ -3,6 +3,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.WSFL.V011.ViewModels;
 using Revit26_Plugin.WSFL.V011.Views;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.WSFL.V011.Commands
 {
@@ -24,6 +25,7 @@ namespace Revit26_Plugin.WSFL.V011.Commands
             }
             catch (System.Exception ex)
             {
+                Logger.Error("CreateWorksetsFromLinkedFiles", ex);
                 message = ex.Message;
                 TaskDialog.Show("WSFL 009", $"An unexpected error occurred: {ex.Message}");
                 return Result.Failed;
@@ -48,7 +50,7 @@ namespace Revit26_Plugin.WSFL.V011.Commands
 
             var vm = new WorksetsViewModel(commandData);
             var window = new WorksetSelectorWindow(vm);
-            window.ShowDialog();
+            window.Show();
 
             return Result.Succeeded;
         }

@@ -2,6 +2,7 @@ using System.Windows.Interop;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011
 {
@@ -55,6 +56,7 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011
             }
             catch (System.Exception ex)
             {
+                Logger.Error("Command", ex);
                 message = ex.Message;
                 TaskDialog.Show("Floors And Roof From Linked Rooms", $"An unexpected error occurred: {ex.Message}");
                 return Result.Failed;

@@ -3,6 +3,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.SmartViewToSheetPlacer.V221.ViewModels;
 using Revit26_Plugin.SmartViewToSheetPlacer.V221.Views;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.SmartViewToSheetPlacer.V221
 {
@@ -42,6 +43,7 @@ namespace Revit26_Plugin.SmartViewToSheetPlacer.V221
             }
             catch (System.Exception ex)
             {
+                Logger.Error("SmartViewToSheetPlacerCommand", ex);
                 message = ex.Message;
                 return Result.Failed;
             }

@@ -5,10 +5,12 @@ using Revit26_Plugin.SectionAutoRenamer.V024.Services;
 using Revit26_Plugin.SectionAutoRenamer.V024.ViewModels;
 using Revit26_Plugin.SectionAutoRenamer.V024.Views;
 using System.Linq;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.SectionAutoRenamer.V024.Commands;
 
 [Transaction(TransactionMode.Manual)]
+[Regeneration(RegenerationOption.NotNeeded)]
 public class OpenSectionManagerCommand : IExternalCommand
 {
     public Result Execute(ExternalCommandData c, ref string m, ElementSet e)
@@ -23,6 +25,7 @@ public class OpenSectionManagerCommand : IExternalCommand
         }
         catch (System.Exception ex)
         {
+            Logger.Error("OpenSectionManagerCommand", ex);
             m = ex.Message;
             TaskDialog.Show("Section Manager", $"An unexpected error occurred: {ex.Message}");
             return Result.Failed;

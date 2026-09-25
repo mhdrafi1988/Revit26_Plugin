@@ -3,6 +3,7 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.PlanFromScopeBox.V004.UI.Views;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.PlanFromScopeBox.V004.Commands
 {
@@ -34,6 +35,7 @@ namespace Revit26_Plugin.PlanFromScopeBox.V004.Commands
             }
             catch (Exception ex)
             {
+                Logger.Error("PlanFromScopeBoxCommand", ex);
                 message = ex.Message;
                 return Result.Failed;
             }

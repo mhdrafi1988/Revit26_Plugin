@@ -9,6 +9,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.DwgToLines.V005.Infrastructure.Helpers;
 using Revit26_Plugin.DwgToLines.V005.UI.Views;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.DwgToLines.V005.Commands
 {
@@ -17,6 +18,7 @@ namespace Revit26_Plugin.DwgToLines.V005.Commands
     /// Enforces Family Editor context and launches the UI.
     /// </summary>
     [Transaction(TransactionMode.Manual)]
+    [Regeneration(RegenerationOption.NotNeeded)]
     public class DwgToLinesCommand : IExternalCommand
     {
         public Result Execute(
@@ -34,6 +36,7 @@ namespace Revit26_Plugin.DwgToLines.V005.Commands
             }
             catch (System.Exception ex)
             {
+                Logger.Error("DwgToLinesCommand", ex);
                 message = ex.Message;
                 TaskDialog.Show("DWG to Lines", $"An unexpected error occurred: {ex.Message}");
                 return Result.Failed;
@@ -54,7 +57,7 @@ namespace Revit26_Plugin.DwgToLines.V005.Commands
             }
 
             var view = new DwgToLinesWindow(uiApp);
-            view.ShowDialog();
+            view.Show();
 
             return Result.Succeeded;
         }

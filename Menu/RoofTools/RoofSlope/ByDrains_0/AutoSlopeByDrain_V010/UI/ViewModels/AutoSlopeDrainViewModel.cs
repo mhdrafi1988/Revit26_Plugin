@@ -55,7 +55,6 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Windows;
 
 namespace Revit26_Plugin.MultiRoofSlopeByDrain.V010.UI.ViewModels
 {
@@ -673,15 +672,12 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.V010.UI.ViewModels
                         bool anyExported = succeeded.Any(r => !string.IsNullOrEmpty(r.Result.ExportedFilePath));
                         if (anyExported)
                         {
-                            var answer = MessageBox.Show(
-                                roofResults.Count > 1
-                                    ? "Excel export completed for each roof. Open the export folder now?"
-                                    : "Excel export completed. Open the export folder now?",
-                                "Export Complete",
-                                MessageBoxButton.YesNo,
-                                MessageBoxImage.Question);
-
-                            if (answer == MessageBoxResult.Yes)
+                            var tdDrain = new TaskDialog("Export Complete");
+                            tdDrain.MainContent = roofResults.Count > 1
+                                ? "Excel export completed for each roof. Open the export folder now?"
+                                : "Excel export completed. Open the export folder now?";
+                            tdDrain.CommonButtons = TaskDialogCommonButtons.Yes | TaskDialogCommonButtons.No;
+                            if (tdDrain.Show() == TaskDialogResult.Yes)
                                 System.Diagnostics.Process.Start("explorer.exe", ExportFolderPath);
                         }
                     }));

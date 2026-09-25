@@ -1,13 +1,16 @@
+using System;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 using Revit26_Plugin.RoofPointComparison.V001.Infrastructure.Helpers;
 using Revit26_Plugin.RoofPointComparison.V001.UI.Views;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.RoofPointComparison.V001.Commands
 {
     [Transaction(TransactionMode.Manual)]
+    [Regeneration(RegenerationOption.NotNeeded)]
     public class RoofComparisonCommand : IExternalCommand
     {
         public Result Execute(ExternalCommandData data, ref string msg, ElementSet elems)
@@ -56,10 +59,18 @@ namespace Revit26_Plugin.RoofPointComparison.V001.Commands
                 return Result.Cancelled;
             }
 
-            var win = new RoofComparisonWindow(uidoc, data.Application, roofA.Id, roofB.Id);
-            win.Show();
-
-            return Result.Succeeded;
+            try
+            {
+                var win = new RoofComparisonWindow(uidoc, data.Application, roofA.Id, roofB.Id);
+                win.Show();
+                return Result.Succeeded;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("RoofPointComparison", ex);
+                msg = ex.Message;
+                return Result.Failed;
+            }
         }
     }
 }

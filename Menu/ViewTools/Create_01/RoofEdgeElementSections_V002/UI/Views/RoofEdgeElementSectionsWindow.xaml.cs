@@ -96,16 +96,16 @@ namespace Revit26_Plugin.RoofEdgeElementSections.V002
         {
             if (createdViewIds.Count == 0) return;
 
-            bool shouldOpen = openViewsMode switch
+            bool shouldOpen;
+            if (openViewsMode == "OpenAll") shouldOpen = true;
+            else if (openViewsMode == "DontOpen") shouldOpen = false;
+            else
             {
-                "OpenAll" => true,
-                "DontOpen" => false,
-                _ => System.Windows.MessageBox.Show(
-                        $"{createdViewIds.Count} section view(s) were created. Open them now?",
-                        "Roof Edge Element Sections",
-                        MessageBoxButton.YesNo,
-                        MessageBoxImage.Question) == MessageBoxResult.Yes
-            };
+                var tdOpen = new TaskDialog("Roof Edge Element Sections");
+                tdOpen.MainContent = $"{createdViewIds.Count} section view(s) were created. Open them now?";
+                tdOpen.CommonButtons = TaskDialogCommonButtons.Yes | TaskDialogCommonButtons.No;
+                shouldOpen = tdOpen.Show() == TaskDialogResult.Yes;
+            }
 
             if (!shouldOpen) return;
 

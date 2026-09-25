@@ -9,6 +9,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.DwgToDetailLines.V011.Infrastructure.Helpers;
 using Revit26_Plugin.DwgToDetailLines.V011.UI.Views;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.DwgToDetailLines.V011.Commands
 {
@@ -34,6 +35,7 @@ namespace Revit26_Plugin.DwgToDetailLines.V011.Commands
             }
             catch (System.Exception ex)
             {
+                Logger.Error("DwgToDetailLinesCommand", ex);
                 message = ex.Message;
                 TaskDialog.Show("DWG to Detail Lines", $"An unexpected error occurred: {ex.Message}");
                 return Result.Failed;

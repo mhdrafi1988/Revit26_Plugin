@@ -1,3 +1,4 @@
+using Autodesk.Revit.UI;
 using Revit26_Plugin.CombinedRoofTools.V001.UI.ViewModels;
 using System.ComponentModel;
 using System.Windows;
@@ -19,8 +20,7 @@ namespace Revit26_Plugin.CombinedRoofTools.V001.UI.Views
             {
                 if (vm.IsRunningAll)
                 {
-                    MessageBox.Show(this, "Run All is still in progress. Please wait for it to finish before closing.",
-                        "Combined Roof Tools", MessageBoxButton.OK, MessageBoxImage.Information);
+                    TaskDialog.Show("Combined Roof Tools", "Run All is still in progress. Please wait for it to finish before closing.");
                     e.Cancel = true;
                     return;
                 }

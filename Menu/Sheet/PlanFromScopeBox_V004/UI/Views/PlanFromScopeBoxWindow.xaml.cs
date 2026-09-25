@@ -71,10 +71,8 @@ namespace Revit26_Plugin.PlanFromScopeBox.V004.UI.Views
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"Could not load shared styles: {ex.Message}\n\nThe window will display with default WPF styling.",
-                    "Plan From Scope Box — Style Load Warning",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                TaskDialog.Show("Plan From Scope Box — Style Load Warning",
+                    $"Could not load shared styles: {ex.Message}\n\nThe window will display with default WPF styling.");
             }
         }
 

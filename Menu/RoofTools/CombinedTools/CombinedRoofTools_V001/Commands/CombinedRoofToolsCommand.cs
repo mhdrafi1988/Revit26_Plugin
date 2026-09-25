@@ -17,6 +17,7 @@ using Revit26_Plugin.CombinedRoofTools.V001.UI.ViewModels;
 using Revit26_Plugin.CombinedRoofTools.V001.UI.Views;
 using System;
 using System.Windows.Interop;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.CombinedRoofTools.V001.Commands
 {
@@ -59,6 +60,7 @@ namespace Revit26_Plugin.CombinedRoofTools.V001.Commands
             }
             catch (Exception ex)
             {
+                Logger.Error("CombinedRoofToolsCommand", ex);
                 message = ex.Message;
                 return Result.Failed;
             }

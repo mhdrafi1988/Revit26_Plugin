@@ -3,10 +3,12 @@ using Autodesk.Revit.UI;
 using System.Windows.Interop;
 using Revit26_Plugin.DtlLineDim.V008.UI.ViewModels;
 using Revit26_Plugin.DtlLineDim.V008.UI.Views;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.DtlLineDim.V008.Commands
 {
     [Transaction(TransactionMode.Manual)]
+    [Regeneration(RegenerationOption.NotNeeded)]
     public class DtlLineDimCommand : IExternalCommand
     {
         public Result Execute(
@@ -44,6 +46,7 @@ namespace Revit26_Plugin.DtlLineDim.V008.Commands
             }
             catch (System.Exception ex)
             {
+                Logger.Error("DtlLineDimCommand", ex);
                 message = ex.ToString();
                 return Result.Failed;
             }

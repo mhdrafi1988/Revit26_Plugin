@@ -6,6 +6,7 @@ using Revit26_Plugin.APUS.V322.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.APUS.V322.Commands
 {
@@ -80,6 +81,7 @@ namespace Revit26_Plugin.APUS.V322.Commands
             }
             catch (Exception ex)
             {
+                Logger.Error("AutoPlaceSectionsCommand", ex);
                 TaskDialog.Show("APUS V321 — Error",
                     $"Failed to start Auto Place Sections:\n{ex.Message}");
                 return Result.Failed;

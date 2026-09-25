@@ -20,10 +20,12 @@ using Revit26_Plugin.CreaserAdv.V010.ViewModels;
 using Revit26_Plugin.CreaserAdv.V010.Views;
 using System;
 using System.Windows.Interop;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.CreaserAdv.V010.Commands
 {
     [Transaction(TransactionMode.Manual)]
+    [Regeneration(RegenerationOption.NotNeeded)]
     public class CreaserAdvCommand : IExternalCommand
     {
         public Result Execute(
@@ -74,6 +76,7 @@ namespace Revit26_Plugin.CreaserAdv.V010.Commands
             }
             catch (Exception ex)
             {
+                Logger.Error("CreaserAdvCommand", ex);
                 message = ex.Message;
                 return Result.Failed;
             }

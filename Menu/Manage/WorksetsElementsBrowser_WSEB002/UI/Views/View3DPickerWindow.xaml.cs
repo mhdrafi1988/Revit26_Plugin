@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using Autodesk.Revit.UI;
 using Revit26_Plugin.WorksetsElementsBrowser.WSEB002.Core.Models;
 
 namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB002.UI.Views
@@ -80,8 +81,7 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB002.UI.Views
                 ?? ViewsListBox.Items.Cast<View3DOption>().FirstOrDefault();
             if (selected == null)
             {
-                MessageBox.Show(this, "No 3D view matches your search.", "Worksets & Elements Browser",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                TaskDialog.Show("Worksets & Elements Browser", "No 3D view matches your search.");
                 return;
             }
             SelectedView = selected;

@@ -6,7 +6,7 @@ picture — what calls what, and where the sharp edges are.
 
 ## 1. Startup → ribbon
 
-`App.cs : OnStartup` creates the `"Water Poofer_2015"` ribbon tab, then calls
+`App.cs : OnStartup` creates the `"SloperPro"` ribbon tab, then calls
 one `Build(application, tabName, assemblyPath)` per category from
 `Menu/00_Push_Button_Menu_items/Ribbon/*Ribbon.cs` (`RoofToolsRibbon`,
 `FloorToolsRibbon`, `SheetToolsRibbon`, ... plus `QuickAcces.cs` →

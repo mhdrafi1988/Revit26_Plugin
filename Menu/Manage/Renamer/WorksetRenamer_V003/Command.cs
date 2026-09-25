@@ -4,6 +4,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.WorksetRenamer.V003.ViewModels;
 using Revit26_Plugin.WorksetRenamer.V003.Views;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.WorksetRenamer.V003
 {
@@ -28,12 +29,13 @@ namespace Revit26_Plugin.WorksetRenamer.V003
 
                 var viewModel = new WorksetRenamerViewModel(doc);
                 var view      = new WorksetRenamerView(viewModel);
-                view.ShowDialog();
+                view.Show();
 
                 return Result.Succeeded;
             }
             catch (Exception ex)
             {
+                Logger.Error("Command", ex);
                 message = ex.Message;
                 return Result.Failed;
             }

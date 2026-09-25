@@ -4,6 +4,7 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.LinkedDetailLineGenerator.VA003.UI.Views;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.LinkedDetailLineGenerator.VA003.Commands
 {
@@ -49,6 +50,7 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA003.Commands
             }
             catch (Exception ex)
             {
+                Logger.Error("OpenLinkedDetailLineGeneratorCommand", ex);
                 message = $"Failed to validate linked models: {ex.Message}";
                 return Result.Failed;
             }
@@ -69,6 +71,7 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA003.Commands
             }
             catch (Exception ex)
             {
+                Logger.Error("OpenLinkedDetailLineGeneratorCommand", ex);
                 message = $"Failed to open Linked Detail Line Generator: {ex.Message}";
                 return Result.Failed;
             }

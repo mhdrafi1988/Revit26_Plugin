@@ -4,6 +4,7 @@ using Autodesk.Revit.UI;
 using Revit26_Plugin.ParaManager.V003.Services;
 using Revit26_Plugin.ParaManager.V003.ViewModels;
 using Revit26_Plugin.ParaManager.V003.Views;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.ParaManager.V003
 {
@@ -45,6 +46,7 @@ namespace Revit26_Plugin.ParaManager.V003
             }
             catch (System.Exception ex)
             {
+                Logger.Error("ParaManagerCommand", ex);
                 message = ex.Message;
                 return Result.Failed;
             }

@@ -5,6 +5,7 @@ using Revit26_Plugin.SheetAutoRearrange.V026.UI.ViewModels;
 using Revit26_Plugin.SheetAutoRearrange.V026.UI.Views;
 using System;
 using System.Windows.Interop;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.SheetAutoRearrange.V026.Commands
 {
@@ -28,6 +29,7 @@ namespace Revit26_Plugin.SheetAutoRearrange.V026.Commands
             }
             catch (Exception ex)
             {
+                Logger.Error("SheetAutoRearrangeCommand", ex);
                 message = ex.Message;
                 return Result.Failed;
             }

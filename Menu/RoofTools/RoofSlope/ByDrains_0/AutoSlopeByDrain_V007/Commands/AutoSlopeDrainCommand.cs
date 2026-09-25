@@ -21,6 +21,7 @@ using Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels;
 using Revit26_Plugin.AutoSlopeByDrain.V007.UI.Views;
 using System.Collections.Generic;
 using System.Windows.Interop;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.AutoSlopeByDrain.V007.Commands
 {
@@ -91,6 +92,7 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Commands
             }
             catch (System.Exception ex)
             {
+                Logger.Error("AutoSlopeByDrain", ex);
                 message = $"Failed to initialize plugin: {ex.Message}";
                 return Result.Failed;
             }

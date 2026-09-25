@@ -22,11 +22,13 @@ using Autodesk.Revit.UI.Selection;
 using Revit26_Plugin.AutoSlopeByPointRidge.V001.UI.Views;
 using System;
 using System.Collections.Generic;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.AutoSlopeByPointRidge.V001.Commands
 
 {
     [Transaction(TransactionMode.Manual)]
+    [Regeneration(RegenerationOption.NotNeeded)]
     public class AutoSlopeCommand : IExternalCommand
     {
         public Result Execute(ExternalCommandData data, ref string msg, ElementSet elems)
@@ -77,6 +79,7 @@ namespace Revit26_Plugin.AutoSlopeByPointRidge.V001.Commands
                     }
                     catch (Exception ex)
                     {
+                        Logger.Error("AutoSlopeCommand", ex);
                         tx.RollBack();
                         tg.RollBack();
                         TaskDialog.Show("AutoSlope",

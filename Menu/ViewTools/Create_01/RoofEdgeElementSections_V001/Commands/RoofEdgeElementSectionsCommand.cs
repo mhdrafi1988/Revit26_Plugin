@@ -1,6 +1,8 @@
+using System;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.RoofEdgeElementSections.V001
 {
@@ -15,19 +17,28 @@ namespace Revit26_Plugin.RoofEdgeElementSections.V001
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
-            UIApplication uiApp = commandData.Application;
-            UIDocument uiDoc = uiApp.ActiveUIDocument;
-            Document doc = uiDoc.Document;
+            try
+            {
+                UIApplication uiApp = commandData.Application;
+                UIDocument uiDoc = uiApp.ActiveUIDocument;
+                Document doc = uiDoc.Document;
 
-            var handler = new RoofEdgeElementSectionsEventHandler();
-            ExternalEvent externalEvent = ExternalEvent.Create(handler);
+                var handler = new RoofEdgeElementSectionsEventHandler();
+                ExternalEvent externalEvent = ExternalEvent.Create(handler);
 
-            var viewModel = new RoofEdgeElementSectionsViewModel(doc, uiDoc, externalEvent, handler);
+                var viewModel = new RoofEdgeElementSectionsViewModel(doc, uiDoc, externalEvent, handler);
 
-            var window = new RoofEdgeElementSectionsWindow(viewModel, uiApp, uiApp.MainWindowHandle);
-            window.Show();
+                var window = new RoofEdgeElementSectionsWindow(viewModel, uiApp, uiApp.MainWindowHandle);
+                window.Show();
 
-            return Result.Succeeded;
+                return Result.Succeeded;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("RoofEdgeElementSections", ex);
+                message = ex.Message;
+                return Result.Failed;
+            }
         }
     }
 }

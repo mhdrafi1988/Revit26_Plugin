@@ -9,6 +9,7 @@ using Autodesk.Revit.UI;
 using Revit26_Plugin.RoofViewFocus.V002.Core.Models;
 using Revit26_Plugin.RoofViewFocus.V002.UI.ViewModels;
 using Revit26_Plugin.RoofViewFocus.V002.UI.Views;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.RoofViewFocus.V002.Commands
 {
@@ -17,6 +18,7 @@ namespace Revit26_Plugin.RoofViewFocus.V002.Commands
     /// pre-selection (one or more roofs), then opens the modeless window.
     /// </summary>
     [Transaction(TransactionMode.Manual)]
+    [Regeneration(RegenerationOption.NotNeeded)]
     public class RoofViewFocusCommand : IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
@@ -85,6 +87,7 @@ namespace Revit26_Plugin.RoofViewFocus.V002.Commands
             }
             catch (Exception ex)
             {
+                Logger.Error("RoofViewFocusCommand", ex);
                 message = ex.Message;
                 TaskDialog.Show(RoofViewFocusDefaults.Title, $"The tool could not start.\n\n{ex.Message}");
                 return Result.Failed;

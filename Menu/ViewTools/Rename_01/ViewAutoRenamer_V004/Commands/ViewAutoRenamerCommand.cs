@@ -7,10 +7,12 @@ using Revit26_Plugin.ViewAutoRenamer.V004.ViewModels;
 using Revit26_Plugin.ViewAutoRenamer.V004.Views;
 using System.Collections.Generic;
 using System.Linq;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.ViewAutoRenamer.V004.Commands;
 
 [Transaction(TransactionMode.Manual)]
+[Regeneration(RegenerationOption.NotNeeded)]
 public class OpenViewAutoRenamerCommand : IExternalCommand
 {
     // Exact ViewType values in scope, per confirmed requirements:
@@ -44,6 +46,7 @@ public class OpenViewAutoRenamerCommand : IExternalCommand
         }
         catch (System.Exception ex)
         {
+            Logger.Error("OpenViewAutoRenamerCommand", ex);
             m = ex.Message;
             TaskDialog.Show("View Auto Renamer", $"An unexpected error occurred: {ex.Message}");
             return Result.Failed;

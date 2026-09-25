@@ -3,6 +3,7 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.RefSectionHeadPlacer.V013.UI.Views;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.RefSectionHeadPlacer.V013.Commands
 {
@@ -44,6 +45,7 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V013.Commands
             }
             catch (Exception ex)
             {
+                Logger.Error("RefSectionHeadPlacerCommand", ex);
                 message = ex.Message;
                 return Result.Failed;
             }

@@ -4,6 +4,7 @@ using Autodesk.Revit.UI;
 using Revit26_Plugin.WorksetManager.V012.UI.ViewModels;
 using Revit26_Plugin.WorksetManager.V012.UI.Views;
 using System.Windows.Interop;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.WorksetManager.V012.Commands
 {
@@ -23,6 +24,7 @@ namespace Revit26_Plugin.WorksetManager.V012.Commands
             }
             catch (System.Exception ex)
             {
+                Logger.Error("WorksetManagerCommand", ex);
                 message = ex.Message;
                 TaskDialog.Show("Workset Manager", $"An unexpected error occurred: {ex.Message}");
                 return Result.Failed;
@@ -49,7 +51,7 @@ namespace Revit26_Plugin.WorksetManager.V012.Commands
             // WindowStartupLocation="CenterOwner" / z-order against Revit.
             new WindowInteropHelper(window).Owner = commandData.Application.MainWindowHandle;
 
-            window.ShowDialog();
+            window.Show();
             return Result.Succeeded;
         }
     }

@@ -5,6 +5,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.WorksetRenamer.FX03.ViewModels;
 using Revit26_Plugin.WorksetRenamer.FX03.Views;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.WorksetRenamer.FX03
 {
@@ -30,12 +31,13 @@ namespace Revit26_Plugin.WorksetRenamer.FX03
                 var viewModel = new WorksetRenamerFxViewModel(doc);
                 var view = new WorksetRenamerFxView(viewModel);
                 new WindowInteropHelper(view).Owner = commandData.Application.MainWindowHandle;
-                view.ShowDialog();
+                view.Show();
 
                 return Result.Succeeded;
             }
             catch (Exception ex)
             {
+                Logger.Error("Command", ex);
                 message = ex.Message;
                 return Result.Failed;
             }
