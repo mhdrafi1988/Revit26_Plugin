@@ -97,13 +97,18 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB002.UI.ViewModels
             foreach (var worksetData in _handler.LoadedTree)
             {
                 worksetCount++;
+                int worksetElementCount = worksetData.Categories
+                    .SelectMany(c => c.Types)
+                    .Sum(t => t.ElementIds.Count);
+
                 var worksetNode = new TreeNodeViewModel(
                     ElementTreeNodeKind.Workset,
                     worksetData.Name,
+                    elementCount: worksetElementCount,
                     editableBadge: worksetData.IsEditable ? "editable" : "not editable",
                     owner: worksetData.Owner)
                 {
-                    IsExpanded = true
+                    IsExpanded = false
                 };
                 worksetNode.CheckedChanged += RefreshCheckedSummary;
 
