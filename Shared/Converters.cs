@@ -1,4 +1,3 @@
-using Revit26_Plugin.Shared.Models;   // LogLevel — required for LogLevelToColorConverter
 using System;
 using System.Collections.Generic;
 using System.Globalization;
