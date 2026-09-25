@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Windows;
+using Autodesk.Revit.UI;
 
 namespace Revit26_Plugin.AutomatedSectionPlacer.V001.Services
 {
@@ -73,8 +74,7 @@ namespace Revit26_Plugin.AutomatedSectionPlacer.V001.Services
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error selecting folder: {ex.Message}\n\nUsing default folder.",
-                    "Folder Selection Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                TaskDialog.Show("Folder Selection Error", $"Error selecting folder: {ex.Message}\n\nUsing default folder.");
                 return initialPath;
             }
         }

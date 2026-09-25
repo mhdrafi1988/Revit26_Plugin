@@ -4,11 +4,13 @@
 // Namespace: Revit26_Plugin.DwgToDetailLines.V001.Commands
 // ==============================================
 
+using System;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.DwgToDetailLines.V002.Helpers;
 using Revit26_Plugin.DwgToDetailLines.V002.Views;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.DwgToDetailLines.V002.Commands
 {
@@ -38,10 +40,18 @@ namespace Revit26_Plugin.DwgToDetailLines.V002.Commands
             // --------------------------------------------------
             // Launch WPF window (modeless-style, Close only)
             // --------------------------------------------------
-            var view = new DwgToDetailLinesView(uiApp);
-            view.Show();
-
-            return Result.Succeeded;
+            try
+            {
+                var view = new DwgToDetailLinesView(uiApp);
+                view.Show();
+                return Result.Succeeded;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("DwgToDetailLines", ex);
+                message = ex.Message;
+                return Result.Failed;
+            }
         }
     }
 }

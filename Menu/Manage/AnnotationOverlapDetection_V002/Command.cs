@@ -3,10 +3,12 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.AnnotationOverlapDetection.V002.ViewModels;
 using Revit26_Plugin.AnnotationOverlapDetection.V002.Views;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.AnnotationOverlapDetection.V002
 {
     [Transaction(TransactionMode.ReadOnly)]
+    [Regeneration(RegenerationOption.NotNeeded)]
     public class Command : IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
@@ -21,6 +23,7 @@ namespace Revit26_Plugin.AnnotationOverlapDetection.V002
             }
             catch (System.Exception ex)
             {
+                Logger.Error("Command", ex);
                 message = ex.Message;
                 TaskDialog.Show("Annotation Overlap Detection", $"An unexpected error occurred: {ex.Message}");
                 return Result.Failed;

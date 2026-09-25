@@ -5,6 +5,7 @@ using Autodesk.Revit.UI;
 using Revit26_Plugin.RoofEdgeVertexReducer.V007.Infrastructure.ExternalEvents;
 using Revit26_Plugin.RoofEdgeVertexReducer.V007.UI.ViewModels;
 using Revit26_Plugin.RoofEdgeVertexReducer.V007.UI.Views;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.RoofEdgeVertexReducer.V007.Commands
 {
@@ -26,6 +27,7 @@ namespace Revit26_Plugin.RoofEdgeVertexReducer.V007.Commands
             }
             catch (System.Exception ex)
             {
+                Logger.Error("RoofEdgeVertexReducerCommand", ex);
                 message = ex.Message;
                 TaskDialog.Show("Roof Edge Vertex Reducer", $"An unexpected error occurred: {ex.Message}");
                 return Result.Failed;

@@ -24,7 +24,6 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Windows;
 
 namespace Revit26_Plugin.AutoSlopeByPointRidge.V001.UI.ViewModels
 {
@@ -603,13 +602,10 @@ Circles Placed           : {DrainCirclesPlaced} drain / {HighestCirclesPlaced} h
 
                         if (!string.IsNullOrEmpty(result.ExportedFilePath) && AskToOpenAfterExport)
                         {
-                            var answer = MessageBox.Show(
-                                "Excel file saved. Open it now?",
-                                "Export Complete",
-                                MessageBoxButton.YesNo,
-                                MessageBoxImage.Question);
-
-                            if (answer == MessageBoxResult.Yes)
+                            var tdExport = new TaskDialog("Export Complete");
+                            tdExport.MainContent = "Excel file saved. Open it now?";
+                            tdExport.CommonButtons = TaskDialogCommonButtons.Yes | TaskDialogCommonButtons.No;
+                            if (tdExport.Show() == TaskDialogResult.Yes)
                             {
                                 try
                                 {
@@ -689,13 +685,10 @@ Circles Placed           : {DrainCirclesPlaced} drain / {HighestCirclesPlaced} h
 
                 if (AskToOpenAfterExport)
                 {
-                    var answer = MessageBox.Show(
-                        "Excel file saved. Open it now?",
-                        "Export Complete",
-                        MessageBoxButton.YesNo,
-                        MessageBoxImage.Question);
-
-                    if (answer == MessageBoxResult.Yes)
+                    var tdSave = new TaskDialog("Export Complete");
+                    tdSave.MainContent = "Excel file saved. Open it now?";
+                    tdSave.CommonButtons = TaskDialogCommonButtons.Yes | TaskDialogCommonButtons.No;
+                    if (tdSave.Show() == TaskDialogResult.Yes)
                         System.Diagnostics.Process.Start(
                             new System.Diagnostics.ProcessStartInfo
                             {

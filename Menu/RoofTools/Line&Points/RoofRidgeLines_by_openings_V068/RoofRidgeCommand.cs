@@ -5,6 +5,7 @@ using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 using Revit26_Plugin.RoofRidgeLines.V068.ViewModels;
 using Revit26_Plugin.RoofRidgeLines.V068.Views;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.RoofRidgeLines.V068.Commands
 {
@@ -48,12 +49,13 @@ namespace Revit26_Plugin.RoofRidgeLines.V068.Commands
                 var viewModel = new RoofRidgeViewModel(uiDoc, selectedRoof);
                 var view = new RoofRidgeView(viewModel);
                 viewModel.SetOwnerWindow(view);
-                view.ShowDialog();
+                view.Show();
 
                 return Result.Succeeded;
             }
             catch (Exception ex)
             {
+                Logger.Error("RoofRidgeCommand", ex);
                 // For XAML/BAML load failures, ex.Message itself is always the same
                 // generic "Provide value on '...MarkupExtension' threw an exception"
                 // wrapper — WPF's loader adds it automatically whenever a markup

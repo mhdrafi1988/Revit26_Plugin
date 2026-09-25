@@ -574,11 +574,8 @@ namespace Revit26_Plugin.APUS.V322.ViewModels
                 {
                     LogError($"All refresh methods failed: {innerEx.Message}");
 
-                    System.Windows.MessageBox.Show(
-                        "Could not automatically refresh. Please close this window and restart the command from the Revit ribbon.",
-                        "APUS V321 - Refresh Failed",
-                        System.Windows.MessageBoxButton.OK,
-                        System.Windows.MessageBoxImage.Warning);
+                    TaskDialog.Show("APUS V321 - Refresh Failed",
+                        "Could not automatically refresh. Please close this window and restart the command from the Revit ribbon.");
                 }
             }
         }

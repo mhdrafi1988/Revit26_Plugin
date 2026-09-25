@@ -4,9 +4,9 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Windows;
 using System.Windows.Data;
 using Autodesk.Revit.DB;
+using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
@@ -91,8 +91,7 @@ namespace Revit26_Plugin.WorksetRenamer.FX03.ViewModels
 
             if (!currentWorksets.Any())
             {
-                MessageBox.Show("This model has no user worksets to export.", "Export Worksets",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                TaskDialog.Show("Export Worksets", "This model has no user worksets to export.");
                 return;
             }
 
@@ -109,16 +108,15 @@ namespace Revit26_Plugin.WorksetRenamer.FX03.ViewModels
                 ExcelMappingWriter.Write(dlg.FileName, currentWorksets);
                 StatusMessage = $"Exported {currentWorksets.Count} workset(s) to {Path.GetFileName(dlg.FileName)}";
 
-                var result = MessageBox.Show(
-                    $"Exported {currentWorksets.Count} workset(s) to:\n{dlg.FileName}\n\nEdit the New Name column, then load it back in now?",
-                    "Export Complete", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (result == MessageBoxResult.Yes)
+                var td = new TaskDialog("Export Complete");
+                td.MainContent = $"Exported {currentWorksets.Count} workset(s) to:\n{dlg.FileName}\n\nEdit the New Name column, then load it back in now?";
+                td.CommonButtons = TaskDialogCommonButtons.Yes | TaskDialogCommonButtons.No;
+                if (td.Show() == TaskDialogResult.Yes)
                     LoadExcelFile(dlg.FileName);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Could not write Excel file:\n{ex.Message}", "Export Error",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                TaskDialog.Show("Export Error", $"Could not write Excel file:\n{ex.Message}");
             }
         }
 
@@ -149,8 +147,7 @@ namespace Revit26_Plugin.WorksetRenamer.FX03.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Could not read Excel file:\n{ex.Message}", "Import Error",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                TaskDialog.Show("Import Error", $"Could not read Excel file:\n{ex.Message}");
             }
         }
 
@@ -353,8 +350,7 @@ namespace Revit26_Plugin.WorksetRenamer.FX03.ViewModels
             var emptyRow = candidates.FirstOrDefault(r => string.IsNullOrWhiteSpace(r.NewName));
             if (emptyRow != null)
             {
-                MessageBox.Show($"New name for '{emptyRow.OldName}' cannot be empty.",
-                    "Invalid Name", MessageBoxButton.OK, MessageBoxImage.Warning);
+                TaskDialog.Show("Invalid Name", $"New name for '{emptyRow.OldName}' cannot be empty.");
                 return;
             }
 
@@ -366,9 +362,8 @@ namespace Revit26_Plugin.WorksetRenamer.FX03.ViewModels
             var stillColliding = FindRemainingCollisions(candidates);
             if (stillColliding.Any())
             {
-                MessageBox.Show(
-                    $"Duplicate new name(s) remain after auto-resolve:\n{string.Join(", ", stillColliding)}\n\nAdjust them manually and try again.",
-                    "Duplicate Name", MessageBoxButton.OK, MessageBoxImage.Warning);
+                TaskDialog.Show("Duplicate Name",
+                    $"Duplicate new name(s) remain after auto-resolve:\n{string.Join(", ", stillColliding)}\n\nAdjust them manually and try again.");
                 return;
             }
 
@@ -408,8 +403,7 @@ namespace Revit26_Plugin.WorksetRenamer.FX03.ViewModels
                 catch (Exception ex)
                 {
                     tx.RollBack();
-                    MessageBox.Show($"Transaction failed: {ex.Message}", "Update Error",
-                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    TaskDialog.Show("Update Error", $"Transaction failed: {ex.Message}");
                     return;
                 }
             }

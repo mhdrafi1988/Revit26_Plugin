@@ -4,10 +4,12 @@ using Autodesk.Revit.UI;
 using Revit26_Plugin.BubbleAutoRenumber.V006.Handlers;
 using Revit26_Plugin.BubbleAutoRenumber.V006.Views;
 using System;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.BubbleAutoRenumber.V006.Commands
 {
     [Transaction(TransactionMode.Manual)]
+    [Regeneration(RegenerationOption.NotNeeded)]
     public class SectionAutoRenumberCommand : IExternalCommand
     {
         // Single window instance — prevents opening duplicates
@@ -43,6 +45,7 @@ namespace Revit26_Plugin.BubbleAutoRenumber.V006.Commands
             }
             catch (Exception ex)
             {
+                Logger.Error("SectionAutoRenumberCommand", ex);
                 TaskDialog.Show("Section Auto Renumber — Error", ex.Message);
                 return Result.Failed;
             }

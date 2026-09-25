@@ -34,6 +34,7 @@ using Revit26_Plugin.Shared.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Interop;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.MultiRoofSlopeByDrain.V010.Commands
 {
@@ -134,6 +135,7 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.V010.Commands
             }
             catch (System.Exception ex)
             {
+                Logger.Error("AutoSlopeByDrain", ex);
                 message = $"Failed to initialize plugin: {ex.Message}";
                 return Result.Failed;
             }

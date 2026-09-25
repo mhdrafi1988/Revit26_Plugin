@@ -45,7 +45,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Windows;
 using System.Windows.Data;
 
 namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels
@@ -619,13 +618,10 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels
 
                         if (!string.IsNullOrEmpty(result.ExportedFilePath))
                         {
-                            var answer = MessageBox.Show(
-                                "Excel export completed. Open the export folder now?",
-                                "Export Complete",
-                                MessageBoxButton.YesNo,
-                                MessageBoxImage.Question);
-
-                            if (answer == MessageBoxResult.Yes)
+                            var tdDrain = new TaskDialog("Export Complete");
+                            tdDrain.MainContent = "Excel export completed. Open the export folder now?";
+                            tdDrain.CommonButtons = TaskDialogCommonButtons.Yes | TaskDialogCommonButtons.No;
+                            if (tdDrain.Show() == TaskDialogResult.Yes)
                                 System.Diagnostics.Process.Start("explorer.exe", ExportFolderPath);
                         }
 

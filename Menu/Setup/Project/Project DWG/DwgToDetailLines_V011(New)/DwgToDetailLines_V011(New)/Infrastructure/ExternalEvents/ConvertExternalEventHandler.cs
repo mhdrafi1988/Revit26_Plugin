@@ -5,6 +5,7 @@
 
 using Autodesk.Revit.UI;
 using System;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.DwgToDetailLines.V011.Infrastructure.ExternalEvents
 {
@@ -29,6 +30,10 @@ namespace Revit26_Plugin.DwgToDetailLines.V011.Infrastructure.ExternalEvents
             try
             {
                 _pendingAction?.Invoke(app);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("DwgToDetailLines", ex);
             }
             finally
             {

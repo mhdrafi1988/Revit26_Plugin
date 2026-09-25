@@ -4,9 +4,9 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Windows;
 using System.Windows.Input;
 using Autodesk.Revit.DB;
+using Autodesk.Revit.UI;
 
 namespace Revit26_Plugin.WorksetRenamer.V003.ViewModels
 {
@@ -251,7 +251,7 @@ namespace Revit26_Plugin.WorksetRenamer.V003.ViewModels
             string dupError = CheckDuplicates(candidates);
             if (dupError != null)
             {
-                MessageBox.Show(dupError, "Duplicate Name", MessageBoxButton.OK, MessageBoxImage.Warning);
+                TaskDialog.Show("Duplicate Name", dupError);
                 return;
             }
 
@@ -259,8 +259,7 @@ namespace Revit26_Plugin.WorksetRenamer.V003.ViewModels
             var emptyRow = candidates.FirstOrDefault(r => string.IsNullOrWhiteSpace(r.NewName));
             if (emptyRow != null)
             {
-                MessageBox.Show($"New name for '{emptyRow.CurrentName}' cannot be empty.",
-                    "Invalid Name", MessageBoxButton.OK, MessageBoxImage.Warning);
+                TaskDialog.Show("Invalid Name", $"New name for '{emptyRow.CurrentName}' cannot be empty.");
                 return;
             }
 
@@ -292,8 +291,7 @@ namespace Revit26_Plugin.WorksetRenamer.V003.ViewModels
                 catch (Exception ex)
                 {
                     tx.RollBack();
-                    MessageBox.Show($"Transaction failed: {ex.Message}",
-                        "Apply Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    TaskDialog.Show("Apply Error", $"Transaction failed: {ex.Message}");
                     return;
                 }
             }

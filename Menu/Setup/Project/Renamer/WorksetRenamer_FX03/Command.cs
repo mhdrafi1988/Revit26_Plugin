@@ -5,6 +5,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.WorksetRenamer.FX03.ViewModels;
 using Revit26_Plugin.WorksetRenamer.FX03.Views;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.WorksetRenamer.FX03
 {
@@ -36,6 +37,7 @@ namespace Revit26_Plugin.WorksetRenamer.FX03
             }
             catch (Exception ex)
             {
+                Logger.Error("Command", ex);
                 message = ex.Message;
                 return Result.Failed;
             }

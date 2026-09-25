@@ -27,6 +27,7 @@ using Revit26_Plugin.OuterCurveDivider.V004.UI.ViewModels;
 using Revit26_Plugin.OuterCurveDivider.V004.UI.Views;
 using System;
 using System.Windows.Interop;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.OuterCurveDivider.V004.Commands
 {
@@ -70,6 +71,7 @@ namespace Revit26_Plugin.OuterCurveDivider.V004.Commands
             }
             catch (Exception ex)
             {
+                Logger.Error("CurveDividerCommand", ex);
                 TaskDialog.Show("Curve Point Divider — Exception", ex.Message);
                 return Result.Failed;
             }

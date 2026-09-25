@@ -5,10 +5,12 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.DetailLineClosedLoop.V001.UI.ViewModels;
 using Revit26_Plugin.DetailLineClosedLoop.V001.UI.Views;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.DetailLineClosedLoop.V001.Commands
 {
     [Transaction(TransactionMode.Manual)]
+    [Regeneration(RegenerationOption.NotNeeded)]
     public class DetailLineClosedLoopCommand : IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
@@ -40,6 +42,7 @@ namespace Revit26_Plugin.DetailLineClosedLoop.V001.Commands
             }
             catch (Exception ex)
             {
+                Logger.Error("DetailLineClosedLoopCommand", ex);
                 message = ex.ToString();
                 return Result.Failed;
             }

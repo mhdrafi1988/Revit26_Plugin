@@ -3,6 +3,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.AutomatedSectionPlacer.V001.ViewModels;
 using Revit26_Plugin.AutomatedSectionPlacer.V001.Views;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.AutomatedSectionPlacer.V001
 {
@@ -49,6 +50,7 @@ namespace Revit26_Plugin.AutomatedSectionPlacer.V001
             }
             catch (System.Exception ex)
             {
+                Logger.Error("AutomatedSectionPlacerCommand", ex);
                 message = ex.Message;
                 return Result.Failed;
             }

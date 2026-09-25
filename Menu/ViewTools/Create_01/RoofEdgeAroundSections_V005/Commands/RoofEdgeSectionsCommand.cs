@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.RoofEdgeAroundSections.V005
 {
@@ -41,15 +43,24 @@ namespace Revit26_Plugin.RoofEdgeAroundSections.V005
                 return Result.Cancelled;
             }
 
-            var handler = new RoofEdgeSectionsEventHandler();
-            ExternalEvent externalEvent = ExternalEvent.Create(handler);
+            try
+            {
+                var handler = new RoofEdgeSectionsEventHandler();
+                ExternalEvent externalEvent = ExternalEvent.Create(handler);
 
-            var viewModel = new RoofEdgeSectionsViewModel(doc, externalEvent, handler, roofs, nonRoofs);
+                var viewModel = new RoofEdgeSectionsViewModel(doc, externalEvent, handler, roofs, nonRoofs);
 
-            var window = new RoofEdgeSectionsWindow(viewModel, uiApp, uiApp.MainWindowHandle);
-            window.Show();
+                var window = new RoofEdgeSectionsWindow(viewModel, uiApp, uiApp.MainWindowHandle);
+                window.Show();
 
-            return Result.Succeeded;
+                return Result.Succeeded;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("RoofEdgeAroundSections", ex);
+                message = ex.Message;
+                return Result.Failed;
+            }
         }
     }
 }

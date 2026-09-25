@@ -53,8 +53,7 @@ namespace Revit26_Plugin.APUS.V322.Views
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to initialize window: {ex.Message}",
-                    "APUS Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                TaskDialog.Show("APUS Error", $"Failed to initialize window: {ex.Message}");
                 Close();
             }
         }
@@ -65,13 +64,10 @@ namespace Revit26_Plugin.APUS.V322.Views
         // MessageBox out of the ViewModel for testability).
         private void OnPendingConfirmation(object sender, PlacementConfirmationEventArgs e)
         {
-            var result = MessageBox.Show(
-                $"About to place {e.SectionCount} section(s) across an estimated {e.EstimatedSheetCount} sheet(s). Proceed?",
-                "Confirm Placement",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Question);
-
-            e.Confirmed = result == MessageBoxResult.Yes;
+            var tdConfirm = new TaskDialog("Confirm Placement");
+            tdConfirm.MainContent = $"About to place {e.SectionCount} section(s) across an estimated {e.EstimatedSheetCount} sheet(s). Proceed?";
+            tdConfirm.CommonButtons = TaskDialogCommonButtons.Yes | TaskDialogCommonButtons.No;
+            e.Confirmed = tdConfirm.Show() == TaskDialogResult.Yes;
         }
 
         // ---------------- Sortable grid headers ----------------
@@ -191,11 +187,10 @@ namespace Revit26_Plugin.APUS.V322.Views
 
                 if (vm.IsProcessing)
                 {
-                    var r = MessageBox.Show(
-                        "Placement is in progress. Are you sure you want to cancel and close?",
-                        "Confirm Close", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-
-                    if (r == MessageBoxResult.Yes)
+                    var tdClose = new TaskDialog("Confirm Close");
+                    tdClose.MainContent = "Placement is in progress. Are you sure you want to cancel and close?";
+                    tdClose.CommonButtons = TaskDialogCommonButtons.Yes | TaskDialogCommonButtons.No;
+                    if (tdClose.Show() == TaskDialogResult.Yes)
                     {
                         vm.Progress.Cancel();
                         vm.LogWarning("Window closed by user during placement.");

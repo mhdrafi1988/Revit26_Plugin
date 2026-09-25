@@ -87,8 +87,7 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB002.UI.ViewModels
 
             if (!_handler.LastRunSucceeded)
             {
-                MessageBox.Show($"Could not load worksets and elements: {_handler.ErrorMessage}",
-                    "Worksets & Elements Browser", MessageBoxButton.OK, MessageBoxImage.Error);
+                TaskDialog.Show("Worksets & Elements Browser", $"Could not load worksets and elements: {_handler.ErrorMessage}");
                 return;
             }
 
@@ -216,8 +215,7 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB002.UI.ViewModels
             var ids = CollectCheckedElementIds();
             if (ids.Count == 0)
             {
-                MessageBox.Show("No elements are checked. Check one or more types first.",
-                    "Worksets & Elements Browser", MessageBoxButton.OK, MessageBoxImage.Information);
+                TaskDialog.Show("Worksets & Elements Browser", "No elements are checked. Check one or more types first.");
                 return;
             }
             ShowInThreeD($"Show all {ids.Count:N0} checked element(s) in a 3D view?", ids, mode);
@@ -229,8 +227,10 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB002.UI.ViewModels
             if (typeNode.Kind != ElementTreeNodeKind.Type) return;
 
             string prompt = $"Show all {typeNode.ElementIds.Count:N0} elements of \"{typeNode.Name}\" in a 3D view?";
-            var result = MessageBox.Show(prompt, "Worksets & Elements Browser", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (result != MessageBoxResult.Yes) return;
+            var td = new TaskDialog("Worksets & Elements Browser");
+            td.MainContent = prompt;
+            td.CommonButtons = TaskDialogCommonButtons.Yes | TaskDialogCommonButtons.No;
+            if (td.Show() != TaskDialogResult.Yes) return;
 
             ShowInThreeD(prompt, typeNode.ElementIds.ToList(), ElementActionMode.IsolateAndSelect);
         }
@@ -247,15 +247,13 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB002.UI.ViewModels
             {
                 if (!_handler.LastRunSucceeded)
                 {
-                    MessageBox.Show($"Could not load 3D views: {_handler.ErrorMessage}",
-                        "Worksets & Elements Browser", MessageBoxButton.OK, MessageBoxImage.Error);
+                    TaskDialog.Show("Worksets & Elements Browser", $"Could not load 3D views: {_handler.ErrorMessage}");
                     return;
                 }
 
                 if (_handler.LoadedViews.Count == 0)
                 {
-                    MessageBox.Show("This model has no 3D views to show elements in.",
-                        "Worksets & Elements Browser", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    TaskDialog.Show("Worksets & Elements Browser", "This model has no 3D views to show elements in.");
                     return;
                 }
 
@@ -279,8 +277,7 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB002.UI.ViewModels
             Infrastructure.ExternalEvents.WsebDebugLog.Write($"HandleApplyActionCompleted: LastRunSucceeded={_handler.LastRunSucceeded}, ErrorMessage={_handler.ErrorMessage}");
             if (!_handler.LastRunSucceeded)
             {
-                MessageBox.Show($"Could not show elements in the selected view: {_handler.ErrorMessage}",
-                    "Worksets & Elements Browser", MessageBoxButton.OK, MessageBoxImage.Error);
+                TaskDialog.Show("Worksets & Elements Browser", $"Could not show elements in the selected view: {_handler.ErrorMessage}");
             }
             // Window stays open per this project's window-lifecycle convention.
         }

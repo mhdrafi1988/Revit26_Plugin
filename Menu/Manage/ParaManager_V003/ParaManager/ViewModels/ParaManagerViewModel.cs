@@ -12,7 +12,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Windows;
 using System.Windows.Data;
 
 namespace Revit26_Plugin.ParaManager.V003.ViewModels
@@ -210,8 +209,7 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
             {
                 MetricParamsFileCount = 0;
                 Log(LogLevel.Error, $"Failed to load shared parameter file — {ex.Message}");
-                MessageBox.Show($"Could not load shared parameter file:\n{ex.Message}",
-                    "ParaManager", MessageBoxButton.OK, MessageBoxImage.Error);
+                TaskDialog.Show("ParaManager", $"Could not load shared parameter file:\n{ex.Message}");
             }
         }
 
@@ -465,16 +463,15 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
 
         private BindingChoice? PromptBindingChoice()
         {
-            var result = MessageBox.Show(
-                "Choose binding type for this batch:\n\nYes = Instance binding\nNo = Type binding\nCancel = abort run",
-                "ParaManager — Binding Type",
-                MessageBoxButton.YesNoCancel,
-                MessageBoxImage.Question);
+            var td = new TaskDialog("ParaManager — Binding Type");
+            td.MainContent = "Choose binding type for this batch:\n\nYes = Instance binding\nNo = Type binding\nCancel = abort run";
+            td.CommonButtons = TaskDialogCommonButtons.Yes | TaskDialogCommonButtons.No | TaskDialogCommonButtons.Cancel;
+            var result = td.Show();
 
             return result switch
             {
-                MessageBoxResult.Yes => BindingChoice.Instance,
-                MessageBoxResult.No => BindingChoice.Type,
+                TaskDialogResult.Yes => BindingChoice.Instance,
+                TaskDialogResult.No => BindingChoice.Type,
                 _ => null
             };
         }
@@ -490,8 +487,7 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
             if (failure != null)
             {
                 Log(LogLevel.Error, $"Run failed — {failure.Message}");
-                MessageBox.Show($"ParaManager run failed:\n{failure.Message}",
-                    "ParaManager", MessageBoxButton.OK, MessageBoxImage.Error);
+                TaskDialog.Show("ParaManager", $"ParaManager run failed:\n{failure.Message}");
                 return;
             }
 

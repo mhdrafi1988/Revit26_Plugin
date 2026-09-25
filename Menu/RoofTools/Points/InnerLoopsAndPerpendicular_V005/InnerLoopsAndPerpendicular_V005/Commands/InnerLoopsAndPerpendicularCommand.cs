@@ -35,6 +35,7 @@ using Revit26_Plugin.InnerLoopsAndPerpendicular.V005.UI.Views;
 using System;
 using System.Linq;
 using System.Windows.Interop;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.InnerLoopsAndPerpendicular.V005.Commands
 {
@@ -105,6 +106,7 @@ namespace Revit26_Plugin.InnerLoopsAndPerpendicular.V005.Commands
             }
             catch (Exception ex)
             {
+                Logger.Error("InnerLoopsAndPerpendicularCommand", ex);
                 message = ex.Message;
                 return Result.Failed;
             }

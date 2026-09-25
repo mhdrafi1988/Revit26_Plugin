@@ -6,6 +6,7 @@ using Autodesk.Revit.UI;
 using Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.Services;
 using Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.ViewModels;
 using Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.Views;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.Commands
 {
@@ -56,6 +57,7 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.Commands
                 }
                 catch (Exception ex)
                 {
+                    Logger.Error("RoofRidgeCommand", ex);
                     message = $"Drain selection failed: {ex.Message}";
                     return Result.Failed;
                 }
@@ -70,12 +72,13 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.Commands
                 var viewModel = new RoofRidgeViewModel(uiDoc, selectedRoof, drainPoints);
                 var view = new RoofRidgeView(viewModel);
                 viewModel.SetOwnerWindow(view);
-                view.ShowDialog();
+                view.Show();
 
                 return Result.Succeeded;
             }
             catch (Exception ex)
             {
+                Logger.Error("RoofRidgeCommand", ex);
                 message = $"Roof Ridge Command failed: {ex.Message}";
                 return Result.Failed;
             }

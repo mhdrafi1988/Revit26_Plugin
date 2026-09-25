@@ -6,10 +6,12 @@ using Revit26_Plugin.RoofTag.V016.Helpers;
 using Revit26_Plugin.Shared.Models;
 using System.Collections.Generic;
 using System.Linq;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.RoofTag.V016
 {
     [Transaction(TransactionMode.Manual)]
+    [Regeneration(RegenerationOption.NotNeeded)]
     public class RoofTagCommand : IExternalCommand
     {
         private const double PointDedupTolFt = 10.0 / 304.8;
@@ -29,6 +31,7 @@ namespace Revit26_Plugin.RoofTag.V016
             }
             catch (System.Exception ex)
             {
+                Logger.Error("RoofTagCommand", ex);
                 message = ex.Message;
                 TaskDialog.Show("Roof Tag V015 (FaceRef)", $"An unexpected error occurred: {ex.Message}");
                 return Result.Failed;
@@ -61,8 +64,7 @@ namespace Revit26_Plugin.RoofTag.V016
 
             // ── 3. Show settings window ──────────────────────────────────
             RoofTagWindow window = new RoofTagWindow(uiApp);
-            if (window.ShowDialog() != true)
-                return Result.Cancelled;
+            window.Show();
 
             RoofTagViewModel vm = (RoofTagViewModel)window.DataContext;
             vm.ResetCounters();

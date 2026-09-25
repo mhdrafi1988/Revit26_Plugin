@@ -4,10 +4,12 @@ using Autodesk.Revit.Attributes;
 using BatchDwgFamilyLinker.UI;
 using BatchDwgFamilyLinker.ViewModels;
 using System.Windows.Interop;
+using Revit26_Plugin.Utilities;
 
 namespace BatchDwgFamilyLinker.Command
 {
     [Transaction(TransactionMode.Manual)]
+    [Regeneration(RegenerationOption.NotNeeded)]
     public class BatchLinkDwgCommand : IExternalCommand
     {
         public Result Execute(
@@ -25,6 +27,7 @@ namespace BatchDwgFamilyLinker.Command
             }
             catch (System.Exception ex)
             {
+                Logger.Error("BatchLinkDwgCommand", ex);
                 message = ex.Message;
                 TaskDialog.Show("Batch DWG Family Linker", $"An unexpected error occurred: {ex.Message}");
                 return Result.Failed;

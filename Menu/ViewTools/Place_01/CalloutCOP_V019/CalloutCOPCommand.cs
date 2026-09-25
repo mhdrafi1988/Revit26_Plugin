@@ -4,10 +4,12 @@ using Autodesk.Revit.UI;
 using System;
 using System.Windows.Interop;
 using Revit26_Plugin.CalloutCOP.V019.Views;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.CalloutCOP.V019.Commands
 {
     [Transaction(TransactionMode.Manual)]
+    [Regeneration(RegenerationOption.NotNeeded)]
     public class CalloutCOPCommand : IExternalCommand
     {
         public Result Execute(
@@ -27,6 +29,7 @@ namespace Revit26_Plugin.CalloutCOP.V019.Commands
             }
             catch (Exception ex)
             {
+                Logger.Error("CalloutCOPCommand", ex);
                 message = ex.Message;
 
                 var dlg = new TaskDialog("Callout COP V018")

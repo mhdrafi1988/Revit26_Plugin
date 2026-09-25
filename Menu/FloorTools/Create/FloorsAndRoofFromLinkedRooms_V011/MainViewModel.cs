@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Windows;
 using Microsoft.Win32;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
@@ -531,9 +530,10 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011
         private void ClearLogs()
         {
             if (Logs.Count == 0) return;
-            var result = MessageBox.Show("Clear all logs?", "Floors and Roofs From Linked Rooms",
-                MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (result == MessageBoxResult.Yes) Logs.Clear();
+            var td = new TaskDialog("Floors and Roofs From Linked Rooms");
+            td.MainContent = "Clear all logs?";
+            td.CommonButtons = TaskDialogCommonButtons.Yes | TaskDialogCommonButtons.No;
+            if (td.Show() == TaskDialogResult.Yes) Logs.Clear();
         }
 
         [RelayCommand]

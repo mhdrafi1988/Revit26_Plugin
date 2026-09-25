@@ -30,6 +30,7 @@ using Revit26_Plugin.InnerLoopDivider.V009.UI.Views;
 using System;
 using System.Linq;
 using System.Windows.Interop;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.InnerLoopDivider.V009.Commands
 {
@@ -101,6 +102,7 @@ namespace Revit26_Plugin.InnerLoopDivider.V009.Commands
             }
             catch (Exception ex)
             {
+                Logger.Error("InnerLoopDividerCommand", ex);
                 message = ex.Message;
                 return Result.Failed;
             }

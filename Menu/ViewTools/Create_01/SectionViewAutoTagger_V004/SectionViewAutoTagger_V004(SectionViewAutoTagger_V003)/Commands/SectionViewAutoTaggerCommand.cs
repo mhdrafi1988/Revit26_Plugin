@@ -1,6 +1,7 @@
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.SectionViewAutoTagger.V004
 {
@@ -20,6 +21,7 @@ namespace Revit26_Plugin.SectionViewAutoTagger.V004
             }
             catch (System.Exception ex)
             {
+                Logger.Error("SectionViewAutoTaggerCommand", ex);
                 message = ex.Message;
                 TaskDialog.Show("Section View Auto Tagger", $"An unexpected error occurred: {ex.Message}");
                 return Result.Failed;

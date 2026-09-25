@@ -1,7 +1,9 @@
+using System;
 using System.Linq;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.RoofPointElevationSync.V003
 {
@@ -52,15 +54,18 @@ namespace Revit26_Plugin.RoofPointElevationSync.V003
                 // the Roof A / Roof B buttons instead.
             }
 
-            var window = new MainWindow(uiDoc, roofA, roofB)
+            try
             {
-                Owner = null
-            };
-            // Modeless, Close-only per Autodesk API dialog guideline (no OK/Cancel that could
-            // desync from a live Revit selection state).
-            window.Show();
-
-            return Result.Succeeded;
+                var window = new MainWindow(uiDoc, roofA, roofB) { Owner = null };
+                window.Show();
+                return Result.Succeeded;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("CompareRoofs", ex);
+                message = ex.Message;
+                return Result.Failed;
+            }
         }
     }
 }

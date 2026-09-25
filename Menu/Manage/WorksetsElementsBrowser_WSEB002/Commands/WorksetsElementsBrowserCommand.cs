@@ -4,6 +4,7 @@ using Autodesk.Revit.UI;
 using Revit26_Plugin.WorksetsElementsBrowser.WSEB002.UI.ViewModels;
 using Revit26_Plugin.WorksetsElementsBrowser.WSEB002.UI.Views;
 using System.Windows.Interop;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB002.Commands
 {
@@ -47,6 +48,7 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB002.Commands
             }
             catch (System.Exception ex)
             {
+                Logger.Error("WorksetsElementsBrowserCommand", ex);
                 message = ex.Message;
                 return Result.Failed;
             }

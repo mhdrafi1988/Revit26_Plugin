@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
+using Autodesk.Revit.UI;
 using Revit26_Plugin.SmartViewToSheetPlacer.V222.ViewModels;
 
 namespace Revit26_Plugin.SmartViewToSheetPlacer.V222.Views
@@ -57,10 +58,8 @@ namespace Revit26_Plugin.SmartViewToSheetPlacer.V222.Views
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"Could not load shared styles: {ex.Message}\n\nThe window will display with default WPF styling.",
-                    "SmartViewToSheetPlacer — Style Load Warning",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                TaskDialog.Show("SmartViewToSheetPlacer — Style Load Warning",
+                    $"Could not load shared styles: {ex.Message}\n\nThe window will display with default WPF styling.");
             }
         }
 

@@ -3,6 +3,7 @@ using System.Windows.Interop;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using Revit26_Plugin.Utilities;
 
 namespace Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V004
 {
@@ -32,17 +33,26 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V004
                 return Result.Cancelled;
             }
 
-            var handler = new RunCreateElementsExternalEventHandler();
-            var externalEvent = ExternalEvent.Create(handler);
+            try
+            {
+                var handler = new RunCreateElementsExternalEventHandler();
+                var externalEvent = ExternalEvent.Create(handler);
 
-            var viewModel = new MainViewModel(doc, planView, handler, externalEvent);
-            handler.ViewModel = viewModel;
+                var viewModel = new MainViewModel(doc, planView, handler, externalEvent);
+                handler.ViewModel = viewModel;
 
-            var window = new FloorsFromLinkedRoomsWindow { DataContext = viewModel };
-            new WindowInteropHelper(window).Owner = commandData.Application.MainWindowHandle;
-            window.Show();
+                var window = new FloorsFromLinkedRoomsWindow { DataContext = viewModel };
+                new WindowInteropHelper(window).Owner = commandData.Application.MainWindowHandle;
+                window.Show();
 
-            return Result.Succeeded;
+                return Result.Succeeded;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("FloorsAndRoofFromLinkedRoomsViaPlanView", ex);
+                message = ex.Message;
+                return Result.Failed;
+            }
         }
     }
 }
