@@ -45,31 +45,8 @@ namespace Revit26_Plugin.Menu.Ribbon
             };
             var dwgLinesPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DwgToDetailLines", "Detail Lines", dwgLinesV011);
 
-            var worksetsFromLinks = new PushButtonData("Btn_WorksetManager_11", "Worksets From Links", assemblyPath, "Revit26_Plugin.WSFL.V011.Commands.CreateWorksetsFromLinkedFiles")
-            {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.WorksetsFromLinks_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("Create Worksets From Linked Files", "V011")
-            };
-            var worksetManager = new PushButtonData("Btn_WorksetManager_V012_New", "Workset Manager", assemblyPath, "Revit26_Plugin.WorksetManager.V012.Commands.WorksetManagerCommand")
-            {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.WorksetManager_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("Workset Manager", "V012")
-            };
-
             var projectItems = RibbonLayoutHelper.AddStackedButtons(projectPanel, new List<RibbonItemData>
             {
-                worksetManager,
-                worksetsFromLinks,
-                new PushButtonData("Btn_WorksetRenamer_V003", "Workset Renamer", assemblyPath, "Revit26_Plugin.WorksetRenamer.V003.Command")
-                {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.WorksetRename_16.png"),
-                    ToolTip = RibbonLayoutHelper.VersionTip("Workset Renamer", "V003")
-                },
-                new PushButtonData("Btn_WorksetRenamer_FX03", "Workset Renamer (Excel)", assemblyPath, "Revit26_Plugin.WorksetRenamer.FX03.Command")
-                {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.WorksetRename_16.png"),
-                    ToolTip = RibbonLayoutHelper.VersionTip("Workset Renamer (From Excel)", "FX03")
-                },
                 dwgLinesPulldownData,
             });
             RibbonLayoutHelper.WirePulldownButton(projectItems, "Pulldown_DwgToDetailLines", dwgLinesV011, dwgLinesV002);
