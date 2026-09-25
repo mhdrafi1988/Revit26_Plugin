@@ -1,4 +1,4 @@
-using Autodesk.Revit.Attributes;
+﻿using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.WSFL.V011.ViewModels;
@@ -8,6 +8,7 @@ using Revit26_Plugin.Utilities;
 namespace Revit26_Plugin.WSFL.V011.Commands
 {
     [Transaction(TransactionMode.Manual)]
+    [Regeneration(RegenerationOption.Manual)]
     public class CreateWorksetsFromLinkedFiles : IExternalCommand
     {
         public Result Execute(
@@ -56,3 +57,4 @@ namespace Revit26_Plugin.WSFL.V011.Commands
         }
     }
 }
+

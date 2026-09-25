@@ -1,4 +1,4 @@
-// ==============================================
+﻿// ==============================================
 // File: LaunchCommand.cs
 // Layer: Commands
 // Namespace: Revit26_Plugin.DwgToDetailLines.V001.Commands
@@ -19,6 +19,7 @@ namespace Revit26_Plugin.DwgToDetailLines.V002.Commands
     /// Enforces Project + Drafting View context and launches the UI.
     /// </summary>
     [Transaction(TransactionMode.Manual)]
+    [Regeneration(RegenerationOption.Manual)]
     public class LaunchCommand : IExternalCommand
     {
         public Result Execute(
@@ -55,3 +56,5 @@ namespace Revit26_Plugin.DwgToDetailLines.V002.Commands
         }
     }
 }
+
+
