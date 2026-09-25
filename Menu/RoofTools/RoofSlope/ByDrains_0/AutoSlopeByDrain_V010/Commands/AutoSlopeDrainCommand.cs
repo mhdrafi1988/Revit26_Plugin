@@ -125,7 +125,7 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.V010.Commands
                 var window = new AutoSlopeByDrainWindow(viewModel);
 
                 // FIX (V005): parent to Revit's main window per standing convention —
-                // never Application.Current.MainWindow, which is null/unreliable in
+                // never System.Windows.Application.Current.MainWindow, which is null/unreliable in
                 // an add-in context.
                 new WindowInteropHelper(window).Owner = commandData.Application.MainWindowHandle;
 
@@ -170,3 +170,4 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.V010.Commands
         public bool AllowReference(Reference reference, XYZ position) => false;
     }
 }
+

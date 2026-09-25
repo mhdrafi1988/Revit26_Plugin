@@ -86,7 +86,7 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.V010.UI.Views
         {
             try
             {
-                Clipboard.SetText(text);
+                System.Windows.Clipboard.SetText(text);
             }
             catch
             {
@@ -157,3 +157,4 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.V010.UI.Views
         }
     }
 }
+

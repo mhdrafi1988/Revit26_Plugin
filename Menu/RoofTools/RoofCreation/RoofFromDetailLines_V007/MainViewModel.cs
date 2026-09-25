@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -14,13 +14,13 @@ using Revit26_Plugin.Shared.Models;
 
 namespace Revit26_Plugin.RoofFromDetailLines.V007
 {
-    /// <summary>Row shown in the Roof Loops Preview grid — one row per resulting roof
+    /// <summary>Row shown in the Roof Loops Preview grid â€” one row per resulting roof
     /// (outer boundary + its openings grouped together), per confirmed spec.</summary>
     public class RoofPreviewRow
     {
         public int RoofNumber { get; set; }
         public string StatusLabel { get; set; }
-        public string StatusKind { get; set; } // "Ready" | "Opening" | "AutoClosed" — for XAML style trigger
+        public string StatusKind { get; set; } // "Ready" | "Opening" | "AutoClosed" â€” for XAML style trigger
         public string LevelName { get; set; }
         public string BoundaryLineIds { get; set; }
         public string OpeningLineIds { get; set; }
@@ -51,7 +51,7 @@ namespace Revit26_Plugin.RoofFromDetailLines.V007
         [ObservableProperty] private bool isBusy;
 
         /// <summary>Confirmed spec: Run disables permanently after a successful run and
-        /// only re-enables via Refresh Preview — not the usual busy-only disable. Guards
+        /// only re-enables via Refresh Preview â€” not the usual busy-only disable. Guards
         /// against re-running against a preview the user hasn't re-validated.</summary>
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(RunCommand))]
@@ -70,7 +70,7 @@ namespace Revit26_Plugin.RoofFromDetailLines.V007
         [ObservableProperty] private int selectedArcCount;
         [ObservableProperty] private int tinyElementCount;
 
-        // ── Live preview metrics ────────────────────────────────────────────────
+        // â”€â”€ Live preview metrics â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [ObservableProperty] private int metricClosedLoops;
         [ObservableProperty] private int metricAutoClosed;
         [ObservableProperty] private int metricCornerTrimmed;
@@ -79,7 +79,7 @@ namespace Revit26_Plugin.RoofFromDetailLines.V007
         [ObservableProperty] private int metricRoofsToCreate;
         [ObservableProperty] private int metricWithOpenings;
 
-        // ── Copyable outputs ─────────────────────────────────────────────────────
+        // â”€â”€ Copyable outputs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [ObservableProperty] private string autoClosedLinesText = "";
         [ObservableProperty] private string roofsFromAutoClosedText = "(populated after Run)";
         [ObservableProperty] private string skippedLinesText = "";
@@ -130,7 +130,7 @@ namespace Revit26_Plugin.RoofFromDetailLines.V007
 
             LoadRoofTypes();
 
-            AddLog(LogLevel.Info, $"Command started — active view '{ActiveViewName}', type {activeView.ViewType} ✓");
+            AddLog(LogLevel.Info, $"Command started â€” active view '{ActiveViewName}', type {activeView.ViewType} âœ“");
             AddLog(LogLevel.Info, $"Attached level resolved: '{level.Name}' (elev {level.Elevation * 304.8:0}mm)");
             AddLog(LogLevel.Info, $"Pre-selection filtered to {detailElements.Count} DetailLine/DetailArc element(s) " +
                                    $"({SelectedArcCount} arc(s), {TinyElementCount} under 10mm).");
@@ -158,7 +158,7 @@ namespace Revit26_Plugin.RoofFromDetailLines.V007
                         : "No roof types found in host model.");
 
             if (RoofTypes.Count == 0)
-                AddLog(LogLevel.Warning, "No RoofType elements found — Run will be unavailable.");
+                AddLog(LogLevel.Warning, "No RoofType elements found â€” Run will be unavailable.");
         }
 
         private double ToleranceFeet()
@@ -205,13 +205,13 @@ namespace Revit26_Plugin.RoofFromDetailLines.V007
                     BoundaryLineIds = string.Join(", ", g.Outer.SourceLineIds.Distinct().Select(i => i.Value)),
                     OpeningLineIds = g.Openings.Count > 0
                         ? string.Join(", ", g.Openings.SelectMany(o => o.SourceLineIds).Distinct().Select(i => i.Value))
-                        : "—",
+                        : "â€”",
                     AreaSqM = areaSqM,
                     Group = g
                 });
             }
 
-            // ── Metrics ──────────────────────────────────────────────────────────
+            // â”€â”€ Metrics â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             MetricClosedLoops = loopResult.ValidLoops.Count;
             MetricAutoClosed = loopResult.ValidLoops.Count(l => l.WasAutoClosed);
             MetricCornerTrimmed = loopResult.ValidLoops.Count(l => l.WasCornerTrimmed && !l.WasAutoClosed);
@@ -220,7 +220,7 @@ namespace Revit26_Plugin.RoofFromDetailLines.V007
             MetricRoofsToCreate = roofGroups.Count;
             MetricWithOpenings = roofGroups.Count(g => g.Openings.Count > 0);
 
-            // ── Copyable outputs ─────────────────────────────────────────────────
+            // â”€â”€ Copyable outputs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             var autoClosedLineIds = loopResult.ValidLoops
                 .Where(l => l.WasAutoClosed)
                 .SelectMany(l => l.SourceLineIds)
@@ -265,11 +265,11 @@ namespace Revit26_Plugin.RoofFromDetailLines.V007
         {
             IsBusy = false;
 
-            // Confirmed spec: Run stays disabled after completion — only Refresh Preview
+            // Confirmed spec: Run stays disabled after completion â€” only Refresh Preview
             // (which re-validates the model against current geometry) re-enables it.
             HasRunSinceLastPreview = true;
 
-            // Confirmed spec: Roof Loops Preview collapses after a successful run —
+            // Confirmed spec: Roof Loops Preview collapses after a successful run â€”
             // its data is now stale (pre-run state), so results live in Element ID
             // Outputs / Activity Log / footer summary instead until Refresh Preview.
             IsLoopsPreviewExpanded = false;
@@ -291,7 +291,7 @@ namespace Revit26_Plugin.RoofFromDetailLines.V007
                           $"{MetricStrandedElements} stranded ({MetricSkipped} groups)" +
                           (summary.SourceLinesDeletedCount > 0 ? $" | {summary.SourceLinesDeletedCount} source lines deleted" : "");
 
-            AddLog(LogLevel.Info, $"Run completed — {SummaryText}");
+            AddLog(LogLevel.Info, $"Run completed â€” {SummaryText}");
 
             SaveSettings("after run");
             RunCommand.NotifyCanExecuteChanged();
@@ -317,26 +317,26 @@ namespace Revit26_Plugin.RoofFromDetailLines.V007
         }
 
         [RelayCommand]
-        private void CopyAutoClosedLines() { Clipboard.SetText(AutoClosedLinesText); ShowToast("Auto-closed line IDs copied"); }
+        private void CopyAutoClosedLines() { System.Windows.Clipboard.SetText(AutoClosedLinesText); ShowToast("Auto-closed line IDs copied"); }
 
         [RelayCommand]
-        private void CopyRoofsFromAutoClosed() { Clipboard.SetText(RoofsFromAutoClosedText); ShowToast("Roof IDs copied"); }
+        private void CopyRoofsFromAutoClosed() { System.Windows.Clipboard.SetText(RoofsFromAutoClosedText); ShowToast("Roof IDs copied"); }
 
         [RelayCommand]
-        private void CopySkippedLines() { Clipboard.SetText(SkippedLinesText); ShowToast("Skipped line IDs copied"); }
+        private void CopySkippedLines() { System.Windows.Clipboard.SetText(SkippedLinesText); ShowToast("Skipped line IDs copied"); }
 
         [RelayCommand]
-        private void CopyAllCreatedRoofs() { Clipboard.SetText(AllCreatedRoofsText); ShowToast("All created roof IDs copied"); }
+        private void CopyAllCreatedRoofs() { System.Windows.Clipboard.SetText(AllCreatedRoofsText); ShowToast("All created roof IDs copied"); }
 
         [RelayCommand]
-        private void CopyRoofsWithOpenings() { Clipboard.SetText(RoofsWithOpeningsText); ShowToast("Roof-with-openings IDs copied"); }
+        private void CopyRoofsWithOpenings() { System.Windows.Clipboard.SetText(RoofsWithOpeningsText); ShowToast("Roof-with-openings IDs copied"); }
 
         [RelayCommand]
         private void CopyAllLogs()
         {
             var sb = new StringBuilder();
             foreach (var l in Logs) sb.AppendLine(l.ToString());
-            Clipboard.SetText(sb.ToString());
+            System.Windows.Clipboard.SetText(sb.ToString());
             ShowToast("Logs copied to clipboard");
         }
 
@@ -375,3 +375,4 @@ namespace Revit26_Plugin.RoofFromDetailLines.V007
         // Copy Selected (log rows) handled in code-behind, per suite convention.
     }
 }
+

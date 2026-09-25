@@ -1,19 +1,19 @@
-// File: AutoSlopeByDrainTabView.xaml.cs
+﻿// File: AutoSlopeByDrainTabView.xaml.cs
 // Location: UI/Views/Tabs/
 // Base: extracted from AutoSlopeByDrain_V007's AutoSlopeByDrainWindow, converted
 //   from a standalone Window into an embeddable UserControl for hosting as a tab
 //   inside CombinedRoofTools_V001.
 //
 // CHANGES vs. the original AutoSlopeByDrainWindow.xaml.cs:
-//   Window -> UserControl; the class no longer owns its own DataContext —
+//   Window -> UserControl; the class no longer owns its own DataContext â€”
 //     the combined window supplies it externally when this tab is selected.
-//   REMOVED the viewModel constructor parameter and the _viewModel field —
+//   REMOVED the viewModel constructor parameter and the _viewModel field â€”
 //     use the parameterless constructor instead.
-//   REMOVED OnClosing override — UserControl has no such lifecycle hook;
+//   REMOVED OnClosing override â€” UserControl has no such lifecycle hook;
 //     the combined window's own top-level Closing handler is responsible for
 //     calling SaveSettingsOnClose() on this tab's ViewModel separately.
 //   KEPT CopySelectedLogs_Click and DrainCheckBox_PreviewMouseLeftButtonDown
-//     unchanged — both still work fine on a UserControl.
+//     unchanged â€” both still work fine on a UserControl.
 
 using Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels;
 using Revit26_Plugin.Shared.Models; // LogEntry
@@ -32,7 +32,7 @@ namespace Revit26_Plugin.CombinedRoofTools.V001.UI.Views.Tabs
             InitializeComponent();
         }
 
-        // ── Copy Selected (rows highlighted in the log ListBox) ─────────────────
+        // â”€â”€ Copy Selected (rows highlighted in the log ListBox) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         // Kept as code-behind (not a [RelayCommand]) because it needs direct
         // access to LogListBox.SelectedItems, which ListBox doesn't expose as a
         // bindable dependency property.
@@ -45,10 +45,10 @@ namespace Revit26_Plugin.CombinedRoofTools.V001.UI.Views.Tabs
             TrySetClipboardText(text);
         }
 
-        // ── DataGrid checkbox: block row-select cascade ─────────────────────────
+        // â”€â”€ DataGrid checkbox: block row-select cascade â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         // Per Rafi's DataGrid spec: clicking the checkbox should toggle selection
         // only, not also trigger the DataGrid's native row-selection behavior.
-        // PreviewMouseLeftButtonDown is a TUNNELING event — it fires BEFORE the
+        // PreviewMouseLeftButtonDown is a TUNNELING event â€” it fires BEFORE the
         // CheckBox's own click handling, and setting e.Handled = true here
         // suppresses that later handling entirely. So IsChecked must be toggled
         // manually right here; it is NOT redundant with the CheckBox's own logic.
@@ -65,13 +65,14 @@ namespace Revit26_Plugin.CombinedRoofTools.V001.UI.Views.Tabs
         {
             try
             {
-                Clipboard.SetText(text);
+                System.Windows.Clipboard.SetText(text);
             }
             catch
             {
-                // Clipboard can be transiently locked by another process — fail silently,
+                // Clipboard can be transiently locked by another process â€” fail silently,
                 // consistent with this suite's "never block the UI on a non-critical error" rule.
             }
         }
     }
 }
+

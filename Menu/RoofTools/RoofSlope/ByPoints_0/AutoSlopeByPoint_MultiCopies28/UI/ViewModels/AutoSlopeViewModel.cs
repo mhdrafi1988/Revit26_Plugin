@@ -1,10 +1,10 @@
-// =======================================================
+﻿// =======================================================
 // File: AutoSlopeViewModel.cs
 // Namespace: Revit26_Plugin.AutoSlopeByPoint.MultiCopies28
 // Refactored to CommunityToolkit.Mvvm ([ObservableProperty]/[RelayCommand])
 // per MasterGuide stack convention, matching CircleMarkerGroup.cs in this
 // same tool. Same public API (property/command names unchanged, so XAML
-// bindings are untouched) — INotifyPropertyChanged/RelayCommand backing
+// bindings are untouched) â€” INotifyPropertyChanged/RelayCommand backing
 // fields are now source-generated instead of hand-written.
 // =======================================================
 
@@ -27,7 +27,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies28.UI.ViewModels
 {
     public partial class AutoSlopeViewModel : ObservableObject
     {
-        // ── RunState ──────────────────────────────────────────────────────────
+        // â”€â”€ RunState â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         // NEW: Cancelled added, per Rafi's confirmed Cancel decision.
         private enum RunState { Ready, Running, Done, Cancelled }
 
@@ -49,13 +49,13 @@ namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies28.UI.ViewModels
         private bool IsRunning  => _state == RunState.Running;
         private bool IsComplete => _state == RunState.Done;
 
-        // ── Multi-Slope Roof Variants: 4 fixed rows ─────────────────────────────
-        /// <summary>Suggested slope % values offered in each row's typable ComboBox — not a restriction, any positive value can be typed.</summary>
+        // â”€â”€ Multi-Slope Roof Variants: 4 fixed rows â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        /// <summary>Suggested slope % values offered in each row's typable ComboBox â€” not a restriction, any positive value can be typed.</summary>
         public List<double> PercentPresets { get; } = new List<double> { 0.5, 1, 1.5, 2, 3, 4 };
 
         public List<SlopeRowViewModel> SlopeRows { get; }
 
-        // ── Live metrics (recalculated as checkboxes/combos change) ────────────
+        // â”€â”€ Live metrics (recalculated as checkboxes/combos change) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [ObservableProperty]
         private string selectedRoofLabel;
 
@@ -97,7 +97,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies28.UI.ViewModels
         private static string FormatPercent(double percent) =>
             percent % 1 == 0 ? percent.ToString("0") : percent.ToString("0.##");
 
-        // ── Input properties ──────────────────────────────────────────────────
+        // â”€â”€ Input properties â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [ObservableProperty]
         private int thresholdMeters = AppConstants.DefaultThresholdMeters;
 
@@ -110,7 +110,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies28.UI.ViewModels
         [ObservableProperty]
         private bool insertCurveIntersectionPoints = true;
 
-        // ── Circle Markers (V026) ────────────────────────────────────────────
+        // â”€â”€ Circle Markers (V026) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         /// <summary>Style/config for circles placed on final drain points.</summary>
         public CircleMarkerGroup DrainMarkerGroup { get; } = new CircleMarkerGroup
         {
@@ -144,7 +144,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies28.UI.ViewModels
         /// <summary>
         /// Project's existing Line Style options (OST_Lines subcategories),
         /// populated in the constructor via FilteredElementCollector. The tool
-        /// never creates new line styles — user picks from what already exists.
+        /// never creates new line styles â€” user picks from what already exists.
         /// </summary>
         public ObservableCollection<LineStyleOption> LineStyleOptions { get; } = new ObservableCollection<LineStyleOption>();
 
@@ -167,14 +167,14 @@ namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies28.UI.ViewModels
         /// <summary>UI-only gate: the "Ask to open" checkbox is enabled only when Export to Excel is on.</summary>
         public bool CanAskToOpenAfterExport => ExportToExcel;
 
-        // ── Log (Shared LogEntry collection) ──────────────────────────────────
+        // â”€â”€ Log (Shared LogEntry collection) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         /// <summary>
         /// Bound to the log ListView/ItemsControl in the View.
         /// Each entry carries LogLevel for colour-coding via LogLevelToColorConverter.
         /// </summary>
         public ObservableCollection<LogEntry> LogEntries { get; } = new ObservableCollection<LogEntry>();
 
-        // ── Status ────────────────────────────────────────────────────────────
+        // â”€â”€ Status â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public string StatusMessage => _state switch
         {
             RunState.Running   => "Processing...",
@@ -191,7 +191,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies28.UI.ViewModels
             _                  => AppConstants.Color_Ready
         };
 
-        // ── Progress / Cancel — NEW, per Rafi's confirmed decisions ────────────
+        // â”€â”€ Progress / Cancel â€” NEW, per Rafi's confirmed decisions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [ObservableProperty]
         private bool isProgressVisible;
 
@@ -213,11 +213,11 @@ namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies28.UI.ViewModels
         {
             if (_runCts == null || _runCts.IsCancellationRequested) return;
             _runCts.Cancel();
-            ProgressPhaseText = "Cancelling…";
-            AddLog(new LogEntry(LogLevel.Warning, "Cancel requested — finishing the current slope's in-progress work, then stopping."));
+            ProgressPhaseText = "Cancellingâ€¦";
+            AddLog(new LogEntry(LogLevel.Warning, "Cancel requested â€” finishing the current slope's in-progress work, then stopping."));
         }
 
-        // ── Result properties ─────────────────────────────────────────────────
+        // â”€â”€ Result properties â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(SummaryText))]
         private int verticesProcessed;
@@ -251,8 +251,8 @@ namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies28.UI.ViewModels
         [NotifyPropertyChangedFor(nameof(RunDuration_ms))]
         private int runDuration_sec;
 
-        // Displayed in milliseconds: whole-seconds value from the engine × 1000
-        // (quick display-only conversion — not true ms-precision timing).
+        // Displayed in milliseconds: whole-seconds value from the engine Ã— 1000
+        // (quick display-only conversion â€” not true ms-precision timing).
         public string RunDurationDisplay => $"{RunDuration_ms} ms";
         public int RunDuration_ms => RunDuration_sec * 1000;
 
@@ -263,7 +263,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies28.UI.ViewModels
         [NotifyPropertyChangedFor(nameof(SummaryText))]
         private string runDate;
 
-        // ── Circle Marker result counts (V026) ───────────────────────────────
+        // â”€â”€ Circle Marker result counts (V026) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(SummaryText))]
         private int drainCirclesPlaced;
@@ -276,7 +276,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies28.UI.ViewModels
         [NotifyPropertyChangedFor(nameof(SummaryText))]
         private int offsetCirclesPlaced;
 
-        // ── Multi-Slope completion totals ───────────────────────────────────
+        // â”€â”€ Multi-Slope completion totals â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(CompletionSummaryText))]
         private int copiesCreatedCount;
@@ -292,7 +292,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies28.UI.ViewModels
         public string CompletionSummaryText =>
             $"{CopiesCreatedCount} copies created | {WorksetsCreatedCount} worksets created | {FailedCount} failed";
 
-        /// <summary>Engine result for the last successfully-completed copy in the run — feeds SummaryText and the manual Export Results command.</summary>
+        /// <summary>Engine result for the last successfully-completed copy in the run â€” feeds SummaryText and the manual Export Results command.</summary>
         private AutoSlopeResult _lastResult;
 
         [ObservableProperty]
@@ -313,7 +313,7 @@ Export Folder            : {ExportFolderPath}
 Circles Placed           : {DrainCirclesPlaced} drain / {HighestCirclesPlaced} highest / {OffsetCirclesPlaced} offset
 {CompletionSummaryText}";
 
-        // ── Constructor fields ────────────────────────────────────────────────
+        // â”€â”€ Constructor fields â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public UIDocument UIDoc { get; }
         public UIApplication App { get; }
         public ElementId RoofId { get; }
@@ -356,10 +356,10 @@ Circles Placed           : {DrainCirclesPlaced} drain / {HighestCirclesPlaced} h
             AutoSlopeEventManager.Init();
         }
 
-        // ── LoadLineStyleOptions ─────────────────────────────────────────────
+        // â”€â”€ LoadLineStyleOptions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         /// <summary>
         /// Populates LineStyleOptions from the project's existing OST_Lines
-        /// subcategories (GraphicsStyle elements) — the same list Revit shows
+        /// subcategories (GraphicsStyle elements) â€” the same list Revit shows
         /// in its own "Line Style" dropdowns. No new line styles are created.
         /// </summary>
         private void LoadLineStyleOptions()
@@ -403,7 +403,7 @@ Circles Placed           : {DrainCirclesPlaced} drain / {HighestCirclesPlaced} h
             }
         }
 
-        // ── LoadAllSettings ───────────────────────────────────────────────────
+        // â”€â”€ LoadAllSettings â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         /// <summary>
         /// Applies ALL persisted settings (settings.json) onto the ViewModel:
         /// the 3 Circle Marker groups, the offset threshold, the run-input
@@ -411,7 +411,7 @@ Circles Placed           : {DrainCirclesPlaced} drain / {HighestCirclesPlaced} h
         /// toggle), and the export fields (folder, export-to-Excel,
         /// ask-to-open-after-export). Must run AFTER LoadLineStyleOptions,
         /// since the persisted LineStyleName is matched against the freshly
-        /// loaded LineStyleOptions — a name from a previous project that no
+        /// loaded LineStyleOptions â€” a name from a previous project that no
         /// longer exists here simply leaves the constructor's default line
         /// style in place. Window size/position is intentionally not part
         /// of this scope.
@@ -466,13 +466,13 @@ Circles Placed           : {DrainCirclesPlaced} drain / {HighestCirclesPlaced} h
             }
         }
 
-        // ── SaveAllSettings ───────────────────────────────────────────────────
+        // â”€â”€ SaveAllSettings â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         /// <summary>
         /// Persists ALL user-changeable fields to settings.json: the 3 marker
         /// groups + offset threshold, the run inputs, and the export fields.
         /// Called after a completed Run and again on window close, so the
-        /// last values used — whichever came last — are what's remembered.
-        /// Best-effort — failures are logged, not thrown. Public: also
+        /// last values used â€” whichever came last â€” are what's remembered.
+        /// Best-effort â€” failures are logged, not thrown. Public: also
         /// invoked from AutoSlopeByPointWindow.OnClosing (code-behind).
         /// </summary>
         public void SaveAllSettings()
@@ -515,7 +515,7 @@ Circles Placed           : {DrainCirclesPlaced} drain / {HighestCirclesPlaced} h
             ShowOffsetText = group.ShowOffsetText
         };
 
-        // ── Run ───────────────────────────────────────────────────────────────
+        // â”€â”€ Run â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [RelayCommand(CanExecute = nameof(CanRun))]
         private void Run()
         {
@@ -523,12 +523,12 @@ Circles Placed           : {DrainCirclesPlaced} drain / {HighestCirclesPlaced} h
             LogEntries.Clear();
 
             // NEW: fresh CancellationTokenSource per Run click. The bar starts
-            // indeterminate ("Starting…") since nothing has reported yet.
+            // indeterminate ("Startingâ€¦") since nothing has reported yet.
             _runCts = new CancellationTokenSource();
             IsProgressVisible = true;
             ProgressPercent = 0;
             ProgressIsIndeterminate = true;
-            ProgressPhaseText = "Starting…";
+            ProgressPhaseText = "Startingâ€¦";
 
             AddLog(new LogEntry(LogLevel.Info, "Starting Multi-Slope Roof Variants..."));
 
@@ -578,7 +578,7 @@ Circles Placed           : {DrainCirclesPlaced} drain / {HighestCirclesPlaced} h
 
                 CancelToken = _runCts.Token,
                 // NEW: called synchronously on the SAME thread as this run
-                // (Revit's main thread), never via BeginInvoke — updates the
+                // (Revit's main thread), never via BeginInvoke â€” updates the
                 // properties and then immediately forces WPF to repaint + process a
                 // queued Cancel click.
                 Progress = info =>
@@ -600,7 +600,7 @@ Circles Placed           : {DrainCirclesPlaced} drain / {HighestCirclesPlaced} h
 
                 OnCompleted = summary =>
                 {
-                    Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                     {
                         IsProgressVisible = false;
                         _runCts = null;
@@ -644,7 +644,7 @@ Circles Placed           : {DrainCirclesPlaced} drain / {HighestCirclesPlaced} h
                         RecalculateLiveMetrics();
 
                         // State stays Cancelled (not Done) when the user cancelled, even
-                        // though some rows succeeded — the Run button does not get
+                        // though some rows succeeded â€” the Run button does not get
                         // permanently disabled after a cancel, so the user can retry.
                         State = summary.WasCancelled ? RunState.Cancelled : RunState.Done;
                         ExportResultsCommand.NotifyCanExecuteChanged();
@@ -675,7 +675,7 @@ Circles Placed           : {DrainCirclesPlaced} drain / {HighestCirclesPlaced} h
                                     catch (Exception ex)
                                     {
                                         AddLog(new LogEntry(LogLevel.Warning,
-                                            $"⚠ Could not open file: {ex.Message}"));
+                                            $"âš  Could not open file: {ex.Message}"));
                                     }
                                 }
                             }
@@ -691,7 +691,7 @@ Circles Placed           : {DrainCirclesPlaced} drain / {HighestCirclesPlaced} h
 
         partial void OnActiveSlopeCountChanged(int value) => RunCommand.NotifyCanExecuteChanged();
 
-        // ── BrowseFolder ──────────────────────────────────────────────────────
+        // â”€â”€ BrowseFolder â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [RelayCommand]
         private void BrowseFolder()
         {
@@ -703,7 +703,7 @@ Circles Placed           : {DrainCirclesPlaced} drain / {HighestCirclesPlaced} h
             }
         }
 
-        // ── ClearLog ──────────────────────────────────────────────────────────
+        // â”€â”€ ClearLog â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [RelayCommand]
         private void ClearLog()
         {
@@ -711,7 +711,7 @@ Circles Placed           : {DrainCirclesPlaced} drain / {HighestCirclesPlaced} h
             AddLog(new LogEntry(LogLevel.Info, "Log cleared."));
         }
 
-        // ── ExportResults ─────────────────────────────────────────────────────
+        // â”€â”€ ExportResults â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [RelayCommand(CanExecute = nameof(CanExportResults))]
         private void ExportResults()
         {
@@ -740,7 +740,7 @@ Circles Placed           : {DrainCirclesPlaced} drain / {HighestCirclesPlaced} h
 
             if (!string.IsNullOrEmpty(savedPath))
             {
-                AddLog(new LogEntry(LogLevel.Success, $"✅ Results exported to: {savedPath}"));
+                AddLog(new LogEntry(LogLevel.Success, $"âœ… Results exported to: {savedPath}"));
 
                 if (AskToOpenAfterExport)
                 {
@@ -760,14 +760,14 @@ Circles Placed           : {DrainCirclesPlaced} drain / {HighestCirclesPlaced} h
 
         private bool CanExportResults() => IsComplete && _lastResult?.Success == true;
 
-        // ── AddLog ────────────────────────────────────────────────────────────
+        // â”€â”€ AddLog â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         /// <summary>
         /// Thread-safe: if already on the UI thread, adds directly;
         /// otherwise dispatches via BeginInvoke.
         /// </summary>
         private void AddLog(LogEntry entry)
         {
-            var dispatcher = Application.Current.Dispatcher;
+            var dispatcher = System.Windows.Application.Current.Dispatcher;
             if (dispatcher.CheckAccess())
                 LogEntries.Add(entry);
             else
@@ -775,3 +775,4 @@ Circles Placed           : {DrainCirclesPlaced} drain / {HighestCirclesPlaced} h
         }
     }
 }
+

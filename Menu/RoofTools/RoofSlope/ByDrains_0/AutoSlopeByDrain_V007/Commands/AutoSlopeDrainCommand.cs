@@ -1,13 +1,13 @@
-// File: AutoSlopeDrainCommand.cs
+﻿// File: AutoSlopeDrainCommand.cs
 // Location: Commands/
-// Base: ported from AutoSlopeByDrain V004 — roof pick, enable shape editing,
+// Base: ported from AutoSlopeByDrain V004 â€” roof pick, enable shape editing,
 // reset vertices to zero, initial drain detection all happen here
 // synchronously BEFORE the window is shown (safe since the window hasn't
 // opened yet). Window shown modeless via window.Show().
 //
 // FIX (V005): neither AutoSlopeByPoint V018 nor AutoSlopeByDrain V004
 // actually set the window's Owner via WindowInteropHelper, despite that
-// being the project's stated standing convention — confirmed as a real gap
+// being the project's stated standing convention â€” confirmed as a real gap
 // during the merge audit. Fixed here per Rafi's confirmed decision
 // (2026-07-21), even though neither prior tool does this.
 
@@ -43,7 +43,7 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Commands
                     roofRef = uidoc.Selection.PickObject(
                         ObjectType.Element,
                         new RoofFilter(),
-                        "Select a roof (FootPrintRoof only — required for sketch-based opening detection)");
+                        "Select a roof (FootPrintRoof only â€” required for sketch-based opening detection)");
                 }
                 catch (Autodesk.Revit.Exceptions.OperationCanceledException)
                 {
@@ -53,7 +53,7 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Commands
                 var roof = doc.GetElement(roofRef) as FootPrintRoof;
                 if (roof == null)
                 {
-                    // Defensive fallback only — RoofFilter already restricts PickObject
+                    // Defensive fallback only â€” RoofFilter already restricts PickObject
                     // to FootPrintRoof, so this should not be reachable in normal use.
                     TaskDialog.Show("AutoSlope By Drain", "Selected element is not a FootPrintRoof. This tool requires a sketch-based roof for opening detection.");
                     return Result.Cancelled;
@@ -64,7 +64,7 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Commands
                 RoofGeometryService.InitializeRoofGeometry(roof, doc);
                 AnalyzeRoofGeometry(roofData);
 
-                // Buffer diagnostic (DRAIN-DEBUG) entries here — the log panel doesn't
+                // Buffer diagnostic (DRAIN-DEBUG) entries here â€” the log panel doesn't
                 // exist yet at this point, so we collect them and flush into the
                 // ViewModel's log once it's constructed below. Detection results
                 // (detectedDrains) are completely unaffected by this.
@@ -81,8 +81,8 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Commands
 
                 var window = new AutoSlopeByDrainWindow(viewModel);
 
-                // FIX (V005): parent to Revit's main window per standing convention —
-                // never Application.Current.MainWindow, which is null/unreliable in
+                // FIX (V005): parent to Revit's main window per standing convention â€”
+                // never System.Windows.Application.Current.MainWindow, which is null/unreliable in
                 // an add-in context.
                 new WindowInteropHelper(window).Owner = commandData.Application.MainWindowHandle;
 
@@ -116,7 +116,7 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Commands
     }
 
     /// <summary>
-    /// Restricts roof selection to FootPrintRoof only — confirmed by Rafi
+    /// Restricts roof selection to FootPrintRoof only â€” confirmed by Rafi
     /// (2026-07-22) since opening detection is now Sketch-based, and only
     /// FootPrintRoof carries a dependent Sketch element. ExtrusionRoof and any
     /// other RoofBase subtype are not selectable with this tool.
@@ -127,3 +127,4 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Commands
         public bool AllowReference(Reference reference, XYZ position) => false;
     }
 }
+

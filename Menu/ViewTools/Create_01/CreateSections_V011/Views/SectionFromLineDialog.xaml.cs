@@ -104,7 +104,7 @@ namespace Revit26_Plugin.CreateSections.V011.Views.SectionFromLineDialog
                 sb.AppendLine(entry.ToString());
 
             if (sb.Length > 0)
-                Clipboard.SetText(sb.ToString());
+                System.Windows.Clipboard.SetText(sb.ToString());
         }
 
         private void CopySelected_Click(object sender, RoutedEventArgs e)
@@ -117,7 +117,7 @@ namespace Revit26_Plugin.CreateSections.V011.Views.SectionFromLineDialog
             foreach (var item in selected)
                 sb.AppendLine(item.ToString());
 
-            Clipboard.SetText(sb.ToString());
+            System.Windows.Clipboard.SetText(sb.ToString());
         }
 
         private void Clear_Click(object sender, RoutedEventArgs e)

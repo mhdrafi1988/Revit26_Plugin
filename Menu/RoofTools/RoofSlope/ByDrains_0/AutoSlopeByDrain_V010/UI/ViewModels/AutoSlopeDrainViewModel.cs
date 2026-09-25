@@ -584,7 +584,7 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.V010.UI.ViewModels
                     },
                     OnCompleted = result =>
                     {
-                        Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                        System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                         {
                             capturedTab.ApplyRunResult(result);
                         }));
@@ -601,7 +601,7 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.V010.UI.ViewModels
                 Log = entry => AddLog(entry),
                 OnAllCompleted = roofResults =>
                 {
-                    Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                     {
                         var succeeded = roofResults.Where(r => r.Result?.Success == true).ToList();
                         bool wasCancelled = roofResults.Any(r => r.Result?.WasCancelled == true);
@@ -717,7 +717,7 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.V010.UI.ViewModels
         {
             if (LogEntries.Count == 0) return;
             string text = string.Join(Environment.NewLine, LogEntries.Select(e => e.ToString()));
-            Clipboard.SetText(text);
+            System.Windows.Clipboard.SetText(text);
         }
 
         /// <summary>
@@ -751,7 +751,7 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.V010.UI.ViewModels
         // ── AddLog (thread-safe) ──────────────────────────────────────────────
         private void AddLog(LogEntry entry)
         {
-            var dispatcher = Application.Current.Dispatcher;
+            var dispatcher = System.Windows.Application.Current.Dispatcher;
             if (dispatcher.CheckAccess())
                 LogEntries.Add(entry);
             else
@@ -759,3 +759,4 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.V010.UI.ViewModels
         }
     }
 }
+

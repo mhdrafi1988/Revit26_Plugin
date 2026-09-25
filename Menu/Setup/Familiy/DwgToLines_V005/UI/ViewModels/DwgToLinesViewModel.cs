@@ -1,9 +1,9 @@
-// ==============================================
+﻿// ==============================================
 // File: DwgToLinesViewModel.cs
 // Layer: UI/ViewModels
 // Changes vs V004:
 //   FIX  AvailableCads was declared but never populated (dropdown was
-//        always empty) — now loaded from CadImportCollectorService in
+//        always empty) â€” now loaded from CadImportCollectorService in
 //        the constructor.
 //   FIX  LogEntries collection did not exist at all (XAML bound to it
 //        anyway, a silent binding failure) and the log callback passed
@@ -103,7 +103,7 @@ namespace Revit26_Plugin.DwgToLines.V005.UI.ViewModels
 
             try
             {
-                Clipboard.SetText(string.Join(Environment.NewLine, LogEntries.Select(e => e.ToString())));
+                System.Windows.Clipboard.SetText(string.Join(Environment.NewLine, LogEntries.Select(e => e.ToString())));
             }
             catch (Exception ex)
             {
@@ -121,7 +121,7 @@ namespace Revit26_Plugin.DwgToLines.V005.UI.ViewModels
 
             try
             {
-                Clipboard.SetText(string.Join(
+                System.Windows.Clipboard.SetText(string.Join(
                     Environment.NewLine,
                     SelectedLogEntries.Cast<LogEntry>().Select(e => e.ToString())));
             }
@@ -159,3 +159,4 @@ namespace Revit26_Plugin.DwgToLines.V005.UI.ViewModels
         }
     }
 }
+

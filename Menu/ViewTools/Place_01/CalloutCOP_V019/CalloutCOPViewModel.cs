@@ -1,4 +1,4 @@
-using Autodesk.Revit.DB;
+﻿using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -47,7 +47,7 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
         // Quick text filter over the view grid - matches Name/Type/Sheets.
         [ObservableProperty] private string _viewGridSearchText = string.Empty;
 
-        // ── Parameter filter (search row) ──────────────────────────────
+        // â”€â”€ Parameter filter (search row) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         // User picks a parameter, the dependent typable dropdown fills with
         // that parameter's distinct values, then picking a value filters the
         // grid to rows matching it. Nothing here is remembered between
@@ -123,7 +123,7 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
                 Views = ViewCollectionService.CollectViews(doc) ?? new ObservableCollection<ViewItemViewModel>();
                 DraftingViews = ViewCollectionService.CollectDraftingViews(doc) ?? new ObservableCollection<DraftingViewItemViewModel>();
 
-                // ── Sheet filter checklist setup ──
+                // â”€â”€ Sheet filter checklist setup â”€â”€
                 // FIX: this block must run BEFORE ViewsCollection.Filter is assigned
                 // below. Setting ICollectionView.Filter triggers an immediate,
                 // synchronous Refresh() that calls FilterViews(), which reads
@@ -144,7 +144,7 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
                     ?? throw new InvalidOperationException("Callout COP V19.0: failed to build the sheet-filter collection view.");
                 SheetFilterItemsView.Filter = FilterSheetFilterItems;
 
-                // ── Parameter filter dependent dropdown ──
+                // â”€â”€ Parameter filter dependent dropdown â”€â”€
                 // Reset every open: SelectedFilterParameter/SelectedFilterValue
                 // default to null above, and nothing here restores a prior
                 // session's choice - per Rafi, this filter starts blank every
@@ -153,7 +153,7 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
                     ?? throw new InvalidOperationException("Callout COP V19.0: failed to build the filter-value collection view.");
                 FilterParameterValuesView.Filter = FilterFilterParameterValues;
 
-                // ── Views collection + filter (depends on SheetFilterItems above) ──
+                // â”€â”€ Views collection + filter (depends on SheetFilterItems above) â”€â”€
                 // FIX: CollectionViewSource.GetDefaultView(object source) throws
                 // ArgumentNullException("source") if handed null. Views can't be
                 // null from the call above anymore, but this guard removes that
@@ -167,7 +167,7 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
 
                 InitializeSheetFilterDefault(doc);
 
-                // ── Bulk-fill / per-row last-used session defaults ──
+                // â”€â”€ Bulk-fill / per-row last-used session defaults â”€â”€
                 ApplySessionDefaultsToBlankRows();
                 BulkFillLeftView = CalloutCOPSessionDefaults.ResolveLastUsed(CalloutCOPSessionDefaults.LastLeftViewName, DraftingViews);
                 BulkFillCenterView = CalloutCOPSessionDefaults.ResolveLastUsed(CalloutCOPSessionDefaults.LastCenterViewName, DraftingViews);
@@ -199,9 +199,9 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
             }
         }
 
-        // ─────────────────────────────────────────────────────────────
+        // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         // Sheet filter: default + selection handling
-        // ─────────────────────────────────────────────────────────────
+        // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         /// <summary>
         /// First open this Revit session: default to the active sheet (if the
@@ -389,9 +389,9 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
             ViewsCollection.Refresh();
         }
 
-        // ─────────────────────────────────────────────────────────────
+        // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         // Session "last used" defaults for bulk-fill / per-row combos
-        // ─────────────────────────────────────────────────────────────
+        // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         /// <summary>
         /// Pre-fills any row whose Left/Center/Right slot is still blank with
@@ -430,7 +430,7 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
         partial void OnCalloutSizeChanged(double value) => IsSizeAutoSuggested = false;
         partial void OnViewGridSearchTextChanged(string value) => ViewsCollection.Refresh();
 
-        // ── Parameter filter (search row) ───────────────────────────────
+        // â”€â”€ Parameter filter (search row) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         // Step 1: user selects a filter parameter -> rebuild the dependent
         // typable dropdown's values for that parameter.
         partial void OnSelectedFilterParameterChanged(string value)
@@ -552,7 +552,7 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
                 return;
 
             var text = string.Join(System.Environment.NewLine, Logs.Select(l => l.ToString()));
-            Clipboard.SetText(text);
+            System.Windows.Clipboard.SetText(text);
         }
 
         [RelayCommand]
@@ -719,3 +719,4 @@ namespace Revit26_Plugin.CalloutCOP.V019.ViewModels
             => Logs.Add(new LogEntry(LogLevel.Error, msg));
     }
 }
+

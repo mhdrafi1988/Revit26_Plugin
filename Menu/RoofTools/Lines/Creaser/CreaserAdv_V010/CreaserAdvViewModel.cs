@@ -1,4 +1,4 @@
-// ==================================
+﻿// ==================================
 // File: CreaserAdvViewModel.cs
 // Namespace: Revit26_Plugin.CreaserAdv.V010.ViewModels
 // ==================================
@@ -26,9 +26,9 @@ namespace Revit26_Plugin.CreaserAdv.V010.ViewModels
     ///
     /// Pipeline (runs in <see cref="Core.Engine.CreaserAdvEngine"/> via an ExternalEvent):
     ///   1. Extract crease curves  (top-face / top-face solid edges)
-    ///   1b. Filter out horizontal creases (same Z on both endpoints) — always runs
+    ///   1b. Filter out horizontal creases (same Z on both endpoints) â€” always runs
     ///   2. Optionally extract boundary curves  (top-face / side-face edges)
-    ///   2b. (Optional, ticked by default) Filter by Dijkstra path validity —
+    ///   2b. (Optional, ticked by default) Filter by Dijkstra path validity â€”
     ///       creases + boundary together; each point keeps exactly one edge,
     ///       its single shortest descending route to a minimum-elevation
     ///       drain node (per connected group of edges). An optional
@@ -36,7 +36,7 @@ namespace Revit26_Plugin.CreaserAdv.V010.ViewModels
     ///       path-finding. Ridge points (no valid descent) are excluded and
     ///       counted in the run summary.
     ///   3. Project all curves to plan-view Z elevation (curve+line pairs kept
-    ///      index-aligned — a dropped zero-length projection removes both)
+    ///      index-aligned â€” a dropped zero-length projection removes both)
     ///   4. (Optional) Filter creases by minimum length (curve+line pairs, index-aligned)
     ///   5. (Optional) Group creases by drain proximity, remove longest per start point
     ///   6. Place detail items along filtered lines
@@ -95,7 +95,7 @@ namespace Revit26_Plugin.CreaserAdv.V010.ViewModels
         /// Drives the "Filter by Dijkstra path validity" checkbox (ticked by default).
         /// When enabled, every crease/boundary segment must genuinely descend toward
         /// a drain node (the lowest node of its connected group of edges). Each
-        /// non-drain point keeps exactly one outgoing edge — its single shortest
+        /// non-drain point keeps exactly one outgoing edge â€” its single shortest
         /// descending route. Ridge points (no valid descent) are excluded and
         /// counted in the run summary.
         /// Runs on creases + boundary curves together, right after the horizontal filter,
@@ -107,14 +107,14 @@ namespace Revit26_Plugin.CreaserAdv.V010.ViewModels
         /// <summary>
         /// Drives the "Enforce minimum slope" checkbox in the Minimum Slope card.
         /// Only meaningful (and only shown enabled in the UI) when
-        /// <see cref="EnableDijkstraPathFilter"/> is also on — the slope check
+        /// <see cref="EnableDijkstraPathFilter"/> is also on â€” the slope check
         /// runs inside the same Dijkstra graph-build step.
         /// </summary>
         [ObservableProperty]
         private bool _enableMinimumSlope = true;
 
         /// <summary>
-        /// Minimum required slope as a percentage (ΔZ / horizontal 2D length × 100).
+        /// Minimum required slope as a percentage (Î”Z / horizontal 2D length Ã— 100).
         /// Edges below this are rejected before path-finding. Default 1.5%.
         /// </summary>
         [ObservableProperty]
@@ -144,7 +144,7 @@ namespace Revit26_Plugin.CreaserAdv.V010.ViewModels
         [ObservableProperty]
         private RunSummary _summary;
 
-        /// <summary>Controls summary bar visibility — false until first Run.</summary>
+        /// <summary>Controls summary bar visibility â€” false until first Run.</summary>
         [ObservableProperty]
         private bool _hasSummary = false;
 
@@ -203,7 +203,7 @@ namespace Revit26_Plugin.CreaserAdv.V010.ViewModels
         // Run command (via ExternalEvent)
         // --------------------------------------------------
         // A modeless window cannot call the Revit API directly from a button
-        // click — the pipeline that used to run here directly now lives in
+        // click â€” the pipeline that used to run here directly now lives in
         // CreaserAdvEngine, invoked through CreaserAdvHandler/EventManager,
         // matching the convention already used by InnerLoopDivider/
         // InnerLoopsAndPerpendicular/OuterCurveDivider/AutoSlopeByDrain.
@@ -222,7 +222,7 @@ namespace Revit26_Plugin.CreaserAdv.V010.ViewModels
             {
                 _log.Warning("Please select a detail item. " +
                              (DetailSymbols.Count == 0
-                                 ? "None are available — this project has no line-based detail component family loaded."
+                                 ? "None are available â€” this project has no line-based detail component family loaded."
                                  : string.Empty));
                 RunCompleted?.Invoke(false);
                 return;
@@ -236,7 +236,7 @@ namespace Revit26_Plugin.CreaserAdv.V010.ViewModels
             }
 
             IsRunning = true;
-            _log.Info("Run requested — waiting for Revit to pick up the request…");
+            _log.Info("Run requested â€” waiting for Revit to pick up the requestâ€¦");
 
             CreaserAdvHandler.Payload = new CreaserAdvPayload
             {
@@ -300,8 +300,8 @@ namespace Revit26_Plugin.CreaserAdv.V010.ViewModels
             foreach (LogEntry entry in _log.Entries)
                 sb.AppendLine(entry.ToString());
 
-            Clipboard.SetText(sb.ToString());
-            _log.Info("Log copied to clipboard.");
+            System.Windows.Clipboard.SetText(sb.ToString());
+            _log.Info("Log copied to System.Windows.Clipboard.");
         }
 
         [RelayCommand]
@@ -342,3 +342,4 @@ namespace Revit26_Plugin.CreaserAdv.V010.ViewModels
         }
     }
 }
+

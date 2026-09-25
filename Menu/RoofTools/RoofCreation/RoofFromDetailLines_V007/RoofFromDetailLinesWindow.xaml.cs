@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
 using System.Windows;
 using Revit26_Plugin.Shared.Models;
@@ -13,7 +13,7 @@ namespace Revit26_Plugin.RoofFromDetailLines.V007
             Closing += RoofFromDetailLinesWindow_Closing;
         }
 
-        // Window stays open after Run completes (per confirmed spec) — Close is the
+        // Window stays open after Run completes (per confirmed spec) â€” Close is the
         // only way out, matching the suite's modeless dialog convention.
         private void CloseButton_Click(object sender, RoutedEventArgs e) => Close();
 
@@ -36,9 +36,10 @@ namespace Revit26_Plugin.RoofFromDetailLines.V007
             foreach (var item in LogListBox.SelectedItems.Cast<LogEntry>())
                 sb.AppendLine(item.ToString());
 
-            Clipboard.SetText(sb.ToString());
+            System.Windows.Clipboard.SetText(sb.ToString());
 
             if (DataContext is MainViewModel vm) vm.ShowToast("Selected log lines copied");
         }
     }
 }
+

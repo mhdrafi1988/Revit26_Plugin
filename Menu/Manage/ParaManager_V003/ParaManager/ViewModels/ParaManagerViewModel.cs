@@ -1,4 +1,4 @@
-using Autodesk.Revit.UI;
+﻿using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
@@ -24,20 +24,20 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
         private readonly ExternalEvent _externalEvent;
         private readonly ParaManagerSettings _settings;
 
-        // ── Shared Parameter File ────────────────────────────────────────
+        // â”€â”€ Shared Parameter File â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [ObservableProperty]
         private string _sharedParameterFilePath = string.Empty;
 
         private List<SharedParameterInfo> _allParameters = new();
 
-        // ── Categories ────────────────────────────────────────────────────
+        // â”€â”€ Categories â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public ObservableCollection<CategoryInfo> AvailableCategories { get; } = new();
         public ObservableCollection<CategoryInfo> SelectedCategories { get; } = new();
 
         [ObservableProperty]
         private bool _isCategoryPopupOpen;
 
-        // ── Parameter popover ─────────────────────────────────────────────
+        // â”€â”€ Parameter popover â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public ObservableCollection<ParameterGroupNode> ParameterGroups { get; } = new();
 
         [ObservableProperty]
@@ -46,20 +46,20 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
         [ObservableProperty]
         private string _parameterFilterText = string.Empty;
 
-        // ── Assignment Queue (Advanced DataGrid) ─────────────────────────
+        // â”€â”€ Assignment Queue (Advanced DataGrid) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public ObservableCollection<ParameterAssignmentRow> QueueRows { get; } = new();
         public ICollectionView QueueView { get; }
 
         [ObservableProperty]
         private string _queueFilterText = string.Empty;
 
-        // ── Revit (Properties palette) group mapping ─────────────────────
+        // â”€â”€ Revit (Properties palette) group mapping â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public IReadOnlyList<RevitGroupOption> RevitGroupOptions => RevitGroupOption.All;
 
         [ObservableProperty]
         private RevitGroupOption _bulkGroupOption = RevitGroupOption.Default;
 
-        // ── Log ───────────────────────────────────────────────────────────
+        // â”€â”€ Log â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public ObservableCollection<LogEntry> LogEntries { get; } = new();
         public ObservableCollection<LogEntry> SelectedLogEntries { get; } = new();
 
@@ -69,7 +69,7 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
         [ObservableProperty]
         private int _unreadLogCount;
 
-        // ── Wizard step ───────────────────────────────────────────────────
+        // â”€â”€ Wizard step â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [ObservableProperty]
         private int _currentStep = 1;
 
@@ -130,14 +130,14 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
             if (IsLogExpanded) UnreadLogCount = 0;
         }
 
-        // ── Run state ─────────────────────────────────────────────────────
+        // â”€â”€ Run state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [ObservableProperty]
         private bool _isRunning;
 
         [ObservableProperty]
         private string _summaryLine = "0 queued | 0 assigned | 0 failed";
 
-        // ── Metrics (top cards) ─────────────────────────────────────────
+        // â”€â”€ Metrics (top cards) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [ObservableProperty] private int _metricParamsFileCount;
         [ObservableProperty] private int _metricCategoriesSelected;
         [ObservableProperty] private int _metricParametersSelected;
@@ -162,9 +162,9 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
             Log(LogLevel.Info, "ParaManager ready.");
         }
 
-        // ─────────────────────────────────────────────────────────────────
+        // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         // Shared Parameter File
-        // ─────────────────────────────────────────────────────────────────
+        // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         [RelayCommand]
         private void BrowseSharedParameterFile()
@@ -200,7 +200,7 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
                 MetricParamsFileCount = 1;
 
                 RebuildParameterGroups();
-                Log(LogLevel.Info, $"Shared parameter file loaded — {_allParameters.Count} parameters found.");
+                Log(LogLevel.Info, $"Shared parameter file loaded â€” {_allParameters.Count} parameters found.");
 
                 _settings.LastSharedParameterFilePath = path;
                 SettingsService<ParaManagerSettings>.Save(ToolFolderName, _settings);
@@ -208,7 +208,7 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
             catch (Exception ex)
             {
                 MetricParamsFileCount = 0;
-                Log(LogLevel.Error, $"Failed to load shared parameter file — {ex.Message}");
+                Log(LogLevel.Error, $"Failed to load shared parameter file â€” {ex.Message}");
                 TaskDialog.Show("ParaManager", $"Could not load shared parameter file:\n{ex.Message}");
             }
         }
@@ -225,9 +225,9 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
             }
         }
 
-        // ─────────────────────────────────────────────────────────────────
+        // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         // Categories (multi-select)
-        // ─────────────────────────────────────────────────────────────────
+        // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         [RelayCommand]
         private void ToggleCategoryPopup() => IsCategoryPopupOpen = !IsCategoryPopupOpen;
@@ -257,9 +257,9 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
             MetricCategoriesSelected = 0;
         }
 
-        // ─────────────────────────────────────────────────────────────────
+        // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         // Parameter popover
-        // ─────────────────────────────────────────────────────────────────
+        // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         [RelayCommand]
         private void OpenParameterPopover()
@@ -332,9 +332,9 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
             Log(LogLevel.Info, $"{checkedParams.Count} parameter(s) staged for assignment across {categoriesSnapshot.Count} categor{(categoriesSnapshot.Count == 1 ? "y" : "ies")}.");
         }
 
-        // ─────────────────────────────────────────────────────────────────
+        // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         // Queue grid (filter / select all / clear / refresh)
-        // ─────────────────────────────────────────────────────────────────
+        // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         partial void OnQueueFilterTextChanged(string value) => QueueView.Refresh();
 
@@ -376,7 +376,7 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
             var targets = QueueView.Cast<ParameterAssignmentRow>().Where(r => r.IsSelected).ToList();
             if (targets.Count == 0)
             {
-                Log(LogLevel.Warning, "No rows selected — tick the parameters to map first.");
+                Log(LogLevel.Warning, "No rows selected â€” tick the parameters to map first.");
                 return;
             }
 
@@ -400,9 +400,9 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
         private void RecalculateParametersSelectedMetric()
             => MetricParametersSelected = QueueRows.Select(r => r.Parameter.Guid).Distinct().Count();
 
-        // ─────────────────────────────────────────────────────────────────
+        // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         // Run
-        // ─────────────────────────────────────────────────────────────────
+        // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         // Set once a run completes without a run-level failure; cleared when the queue changes.
         // Keeps Run disabled so the same batch can't be fired twice by accident.
@@ -410,7 +410,7 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
 
         private bool CanRun() => !IsRunning && !_hasRun && QueueRows.Any(r => r.IsSelected);
 
-        // RelayCommand does not re-query CanExecute on its own — without this the Run
+        // RelayCommand does not re-query CanExecute on its own â€” without this the Run
         // button stays disabled from window-open (empty queue) onwards.
         private void OnQueueRowsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -422,7 +422,7 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
                 foreach (ParameterAssignmentRow row in e.NewItems)
                     row.PropertyChanged += OnQueueRowPropertyChanged;
 
-            _hasRun = false; // queue content changed — a new batch may be run
+            _hasRun = false; // queue content changed â€” a new batch may be run
             RunCommand.NotifyCanExecuteChanged();
             NextStepCommand.NotifyCanExecuteChanged();
         }
@@ -447,13 +447,13 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
             var choice = PromptBindingChoice();
             if (choice == null)
             {
-                Log(LogLevel.Info, "Run cancelled — no binding type chosen.");
+                Log(LogLevel.Info, "Run cancelled â€” no binding type chosen.");
                 return;
             }
 
             IsRunning = true;
             RunCommand.NotifyCanExecuteChanged();
-            Log(LogLevel.Info, $"Run started — {selectedRows.Count} parameter(s), binding: {choice}.");
+            Log(LogLevel.Info, $"Run started â€” {selectedRows.Count} parameter(s), binding: {choice}.");
 
             _eventHandler.SharedParameterFilePath = SharedParameterFilePath;
             _eventHandler.RowsToAssign = selectedRows;
@@ -463,7 +463,7 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
 
         private BindingChoice? PromptBindingChoice()
         {
-            var td = new TaskDialog("ParaManager — Binding Type");
+            var td = new TaskDialog("ParaManager â€” Binding Type");
             td.MainContent = "Choose binding type for this batch:\n\nYes = Instance binding\nNo = Type binding\nCancel = abort run";
             td.CommonButtons = TaskDialogCommonButtons.Yes | TaskDialogCommonButtons.No | TaskDialogCommonButtons.Cancel;
             var result = td.Show();
@@ -478,7 +478,7 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
 
         private void OnRunCompleted(List<RowResult> results, Exception failure)
         {
-            // Marshal back if needed — Completed is invoked from the API thread's
+            // Marshal back if needed â€” Completed is invoked from the API thread's
             // synchronization context set up by ExternalEvent, safe to touch UI-bound
             // collections directly here per standard IExternalEventHandler pattern.
             IsRunning = false;
@@ -486,7 +486,7 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
 
             if (failure != null)
             {
-                Log(LogLevel.Error, $"Run failed — {failure.Message}");
+                Log(LogLevel.Error, $"Run failed â€” {failure.Message}");
                 TaskDialog.Show("ParaManager", $"ParaManager run failed:\n{failure.Message}");
                 return;
             }
@@ -517,7 +517,7 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
 
             MetricAssignedThisSession += assigned;
             SummaryLine = $"{QueueRows.Count} queued | {assigned} assigned | {skipped} skipped | {failedCount} failed";
-            Log(LogLevel.Success, $"Run complete — {assigned} assigned | {skipped} skipped | {failedCount} failed.");
+            Log(LogLevel.Success, $"Run complete â€” {assigned} assigned | {skipped} skipped | {failedCount} failed.");
 
             AutoSaveLog();
         }
@@ -525,9 +525,9 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
         private void UpdateSummaryLine()
             => SummaryLine = $"{QueueRows.Count} queued | 0 assigned | 0 skipped | 0 failed";
 
-        // ─────────────────────────────────────────────────────────────────
+        // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         // Log
-        // ─────────────────────────────────────────────────────────────────
+        // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         private void Log(LogLevel level, string message)
         {
@@ -551,8 +551,8 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
 
         private void SafeSetClipboard(string text)
         {
-            try { Clipboard.SetText(text ?? string.Empty); }
-            catch { /* clipboard can be locked by another process — non-fatal */ }
+            try { System.Windows.Clipboard.SetText(text ?? string.Empty); }
+            catch { /* clipboard can be locked by another process â€” non-fatal */ }
         }
 
         [RelayCommand]
@@ -577,7 +577,7 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
             }
             catch (Exception ex)
             {
-                Log(LogLevel.Error, $"Log export failed — {ex.Message}");
+                Log(LogLevel.Error, $"Log export failed â€” {ex.Message}");
             }
         }
 
@@ -598,9 +598,9 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
             }
         }
 
-        // ─────────────────────────────────────────────────────────────────
+        // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         // Session restore
-        // ─────────────────────────────────────────────────────────────────
+        // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         private void RestoreLastSession()
         {
@@ -629,3 +629,4 @@ namespace Revit26_Plugin.ParaManager.V003.ViewModels
         }
     }
 }
+

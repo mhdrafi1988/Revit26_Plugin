@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -67,7 +67,7 @@ namespace Revit26_Plugin.RoofEdgeVertexReducer.V007.UI.ViewModels
         private void CopyAllLogs()
         {
             if (Logs.Count == 0) return;
-            Clipboard.SetText(string.Join(Environment.NewLine, Logs.Select(l => l.ToString())));
+            System.Windows.Clipboard.SetText(string.Join(Environment.NewLine, Logs.Select(l => l.ToString())));
         }
 
         [RelayCommand]
@@ -77,7 +77,7 @@ namespace Revit26_Plugin.RoofEdgeVertexReducer.V007.UI.ViewModels
         {
             if (selected == null || selected.Count == 0) return;
             var lines = selected.Cast<LogEntry>().Select(l => l.ToString());
-            Clipboard.SetText(string.Join(Environment.NewLine, lines));
+            System.Windows.Clipboard.SetText(string.Join(Environment.NewLine, lines));
         }
 
         /// <summary>Called from the event handler after a roof pick completes.</summary>
@@ -118,7 +118,7 @@ namespace Revit26_Plugin.RoofEdgeVertexReducer.V007.UI.ViewModels
             VertexAction.KeepNeighbor => "Keep (neighbor)",
             VertexAction.KeepUnmatched => "Keep (unmatched)",
             VertexAction.Remove => "Remove",
-            _ => "—"
+            _ => "â€”"
         };
 
         private static string ActionColorKey(VertexDecision d) =>
@@ -131,3 +131,4 @@ namespace Revit26_Plugin.RoofEdgeVertexReducer.V007.UI.ViewModels
         public void SetSummary(string text) => SummaryText = text;
     }
 }
+

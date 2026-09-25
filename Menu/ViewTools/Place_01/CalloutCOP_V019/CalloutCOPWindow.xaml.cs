@@ -1,4 +1,4 @@
-using Autodesk.Revit.UI;
+﻿using Autodesk.Revit.UI;
 using System.Linq;
 using System.Windows;
 using Revit26_Plugin.CalloutCOP.V019.ViewModels;
@@ -22,7 +22,8 @@ namespace Revit26_Plugin.CalloutCOP.V019.Views
                 return;
 
             var text = string.Join(System.Environment.NewLine, selected.Select(l => l.ToString()));
-            Clipboard.SetText(text);
+            System.Windows.Clipboard.SetText(text);
         }
     }
 }
+

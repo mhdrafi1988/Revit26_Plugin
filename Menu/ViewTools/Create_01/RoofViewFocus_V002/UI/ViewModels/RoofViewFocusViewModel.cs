@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,12 +17,12 @@ using Revit26_Plugin.Shared.Models;
 namespace Revit26_Plugin.RoofViewFocus.V002.UI.ViewModels
 {
     /// <summary>
-    /// Window state for Roof View Focus. No Revit API types here — the Revit-side work
+    /// Window state for Roof View Focus. No Revit API types here â€” the Revit-side work
     /// is delegated to <see cref="RoofViewFocusHandler"/> via a <see cref="FocusRequest"/>.
     /// </summary>
     public partial class RoofViewFocusViewModel : ObservableObject
     {
-        /// <summary>Fixed log folder — no folder picker; both auto-save and Export write here silently.</summary>
+        /// <summary>Fixed log folder â€” no folder picker; both auto-save and Export write here silently.</summary>
         private static readonly string LogFolder = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "Revit26_Plugin", RoofViewFocusDefaults.ToolName, "Logs");
@@ -43,7 +43,7 @@ namespace Revit26_Plugin.RoofViewFocus.V002.UI.ViewModels
             _viewUniqueId = viewUniqueId;
             _ignoredCount = ignoredCount;
 
-            // Constructed inside Command.Execute → valid Revit API context for ExternalEvent.Create.
+            // Constructed inside Command.Execute â†’ valid Revit API context for ExternalEvent.Create.
             RoofViewFocusEventManager.Init();
 
             ViewName = viewName;
@@ -52,24 +52,24 @@ namespace Revit26_Plugin.RoofViewFocus.V002.UI.ViewModels
 
             RoofCountText = roofs.Count.ToString(CultureInfo.CurrentCulture);
             ViewStatusText = viewTypeText;
-            ScopeBoxText = string.IsNullOrEmpty(scopeBoxName) ? "None" : $"{scopeBoxName}  →  None on Run";
+            ScopeBoxText = string.IsNullOrEmpty(scopeBoxName) ? "None" : $"{scopeBoxName}  â†’  None on Run";
 
             RoofViewFocusSettings settings = RoofViewFocusSettingsService.Load(out string? loadWarning);
             ViewMarginText = FormatMm(settings.ViewMarginMm);
             AnnotationMarginText = FormatMm(settings.AnnotationMarginMm);
             Validate();
 
-            AddLog(LogLevel.Info, $"Tool opened — {RoofViewFocusDefaults.Title}");
+            AddLog(LogLevel.Info, $"Tool opened â€” {RoofViewFocusDefaults.Title}");
             AddLog(LogLevel.Info, $"Target view: '{viewName}' ({viewTypeText}), scope box: {(string.IsNullOrEmpty(scopeBoxName) ? "None" : scopeBoxName)}");
-            AddLog(LogLevel.Info, $"Roofs selected: {roofs.Count} — Ids: {FormatIds(roofs)}");
+            AddLog(LogLevel.Info, $"Roofs selected: {roofs.Count} â€” Ids: {FormatIds(roofs)}");
             if (ignoredCount > 0)
                 AddLog(LogLevel.Warning, $"{ignoredCount} non-roof element(s) in the selection were ignored");
             if (loadWarning != null)
                 AddLog(LogLevel.Warning, loadWarning);
-            AddLog(LogLevel.Info, $"Settings loaded — margins {ViewMarginText} / {AnnotationMarginText} mm");
+            AddLog(LogLevel.Info, $"Settings loaded â€” margins {ViewMarginText} / {AnnotationMarginText} mm");
         }
 
-        // ── Bindable data ────────────────────────────────────────────────────
+        // â”€â”€ Bindable data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public string Title => RoofViewFocusDefaults.Title;
         public string ViewName { get; }
         public string ViewTypeText { get; }
@@ -79,15 +79,15 @@ namespace Revit26_Plugin.RoofViewFocus.V002.UI.ViewModels
         public ObservableCollection<RoofInfo> Roofs { get; }
         public ObservableCollection<LogEntry> Log { get; } = new();
 
-        // ── Metrics ──────────────────────────────────────────────────────────
+        // â”€â”€ Metrics â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [ObservableProperty] private string _roofCountText = "0";
-        [ObservableProperty] private string _boundingBoxText = "—";
-        [ObservableProperty] private string _marginText = "—";
+        [ObservableProperty] private string _boundingBoxText = "â€”";
+        [ObservableProperty] private string _marginText = "â€”";
         [ObservableProperty] private string _viewStatusText = string.Empty;
         [ObservableProperty] private string _scopeBoxText = "None";
         [ObservableProperty] private string _summaryText = string.Empty;
 
-        // ── Inputs ───────────────────────────────────────────────────────────
+        // â”€â”€ Inputs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [ObservableProperty] private string _viewMarginText = "20";
         [ObservableProperty] private string _annotationMarginText = "20";
 
@@ -106,7 +106,7 @@ namespace Revit26_Plugin.RoofViewFocus.V002.UI.ViewModels
         private void Validate()
             => HasInputError = !TryParseMm(ViewMarginText, out _) || !TryParseMm(AnnotationMarginText, out _);
 
-        // ── Commands ─────────────────────────────────────────────────────────
+        // â”€â”€ Commands â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         private bool CanRun() => !IsBusy && !HasInputError && Roofs.Count > 0;
 
         [RelayCommand(CanExecute = nameof(CanRun))]
@@ -121,7 +121,7 @@ namespace Revit26_Plugin.RoofViewFocus.V002.UI.ViewModels
 
             IsBusy = true;
             SummaryText = string.Empty;
-            AddLog(LogLevel.Info, $"Run started — view '{ViewName}', {Roofs.Count} roof(s)");
+            AddLog(LogLevel.Info, $"Run started â€” view '{ViewName}', {Roofs.Count} roof(s)");
 
             var request = new FocusRequest
             {
@@ -156,8 +156,8 @@ namespace Revit26_Plugin.RoofViewFocus.V002.UI.ViewModels
         {
             ViewMarginText = FormatMm(RoofViewFocusDefaults.DefaultMarginMm);
             AnnotationMarginText = FormatMm(RoofViewFocusDefaults.DefaultMarginMm);
-            BoundingBoxText = "—";
-            MarginText = "—";
+            BoundingBoxText = "â€”";
+            MarginText = "â€”";
             ViewStatusText = ViewTypeText;
             SummaryText = string.Empty;
             AddLog(LogLevel.Info, "Inputs reset to defaults");
@@ -204,27 +204,27 @@ namespace Revit26_Plugin.RoofViewFocus.V002.UI.ViewModels
         /// <summary>Called by the window on Closing.</summary>
         public void OnWindowClosing() => SaveSettings();
 
-        // ── Run completion ───────────────────────────────────────────────────
+        // â”€â”€ Run completion â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         private void OnRunCompleted(FocusResult r)
         {
             IsBusy = false;
 
             if (r.Success)
             {
-                BoundingBoxText = string.Format(CultureInfo.CurrentCulture, "{0:N0} × {1:N0}", r.BoxWidthMm, r.BoxHeightMm);
+                BoundingBoxText = string.Format(CultureInfo.CurrentCulture, "{0:N0} Ã— {1:N0}", r.BoxWidthMm, r.BoxHeightMm);
                 MarginText = r.ViewMarginTotalMm.ToString("0.##", CultureInfo.CurrentCulture);
                 ViewStatusText = "Crop On";
                 ScopeBoxText = "None";
             }
             else
             {
-                BoundingBoxText = "—";
-                MarginText = "—";
+                BoundingBoxText = "â€”";
+                MarginText = "â€”";
             }
 
             int skipped = r.Skipped + _ignoredCount;
             string summary = string.Format(CultureInfo.CurrentCulture,
-                "{0} roof(s) focused | {1} skipped | {2} failed — {3:0.0} s",
+                "{0} roof(s) focused | {1} skipped | {2} failed â€” {3:0.0} s",
                 r.Included, skipped, r.Failed, r.Duration.TotalSeconds);
 
             SummaryText = summary;
@@ -234,7 +234,7 @@ namespace Revit26_Plugin.RoofViewFocus.V002.UI.ViewModels
             AutoSaveLog();
         }
 
-        // ── Log / settings helpers ───────────────────────────────────────────
+        // â”€â”€ Log / settings helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         private void AddLog(LogLevel level, string message) => Log.Add(new LogEntry(level, message));
 
         private void PostToUi(Action action)
@@ -270,11 +270,11 @@ namespace Revit26_Plugin.RoofViewFocus.V002.UI.ViewModels
 
         private static void CopyToClipboard(string text)
         {
-            try { Clipboard.SetText(text); }
-            catch (Exception) { /* clipboard can be locked by another process — nothing to recover */ }
+            try { System.Windows.Clipboard.SetText(text); }
+            catch (Exception) { /* clipboard can be locked by another process â€” nothing to recover */ }
         }
 
-        // ── Pure helpers ─────────────────────────────────────────────────────
+        // â”€â”€ Pure helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         private static bool TryParseMm(string? text, out double mm)
         {
             string t = (text ?? string.Empty).Trim();
@@ -289,7 +289,8 @@ namespace Revit26_Plugin.RoofViewFocus.V002.UI.ViewModels
         {
             const int max = 50;
             string ids = string.Join(", ", roofs.Take(max).Select(r => r.Id));
-            return roofs.Count > max ? $"{ids} … (+{roofs.Count - max} more)" : ids;
+            return roofs.Count > max ? $"{ids} â€¦ (+{roofs.Count - max} more)" : ids;
         }
     }
 }
+

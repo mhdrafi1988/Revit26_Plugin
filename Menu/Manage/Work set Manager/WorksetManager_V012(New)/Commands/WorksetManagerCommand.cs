@@ -1,4 +1,4 @@
-using Autodesk.Revit.Attributes;
+﻿using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.WorksetManager.V012.UI.ViewModels;
@@ -46,7 +46,7 @@ namespace Revit26_Plugin.WorksetManager.V012.Commands
             var window = new WorksetSelectorWindow(viewModel);
 
             // Parent to Revit's actual main window handle. System.Windows.Application.Current
-            // is not guaranteed to exist inside Revit's process, so Application.Current.MainWindow
+            // is not guaranteed to exist inside Revit's process, so System.Windows.Application.Current.MainWindow
             // can NullReferenceException, or resolve to the wrong window and break
             // WindowStartupLocation="CenterOwner" / z-order against Revit.
             new WindowInteropHelper(window).Owner = commandData.Application.MainWindowHandle;
@@ -56,3 +56,4 @@ namespace Revit26_Plugin.WorksetManager.V012.Commands
         }
     }
 }
+

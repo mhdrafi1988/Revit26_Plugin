@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -70,7 +70,7 @@ namespace Revit26_Plugin.RoofEdgeElementSections.V002
             var sb = new StringBuilder();
             foreach (var e in entries)
                 sb.AppendLine(e.ToString());
-            Clipboard.SetText(sb.ToString());
+            System.Windows.Clipboard.SetText(sb.ToString());
         }
 
         private void OnExportLogsRequested(List<LogEntry> entries, string lastFolder)
@@ -115,9 +115,10 @@ namespace Revit26_Plugin.RoofEdgeElementSections.V002
                 if (doc.GetElement(id) is View view)
                 {
                     try { _uiApp.ActiveUIDocument.ActiveView = view; }
-                    catch { /* best-effort — some views may not be openable in the current context */ }
+                    catch { /* best-effort â€” some views may not be openable in the current context */ }
                 }
             }
         }
     }
 }
+

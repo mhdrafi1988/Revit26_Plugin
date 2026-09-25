@@ -1,4 +1,4 @@
-using Autodesk.Revit.Attributes;
+﻿using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.WorksetsElementsBrowser.WSEB002.UI.ViewModels;
@@ -35,14 +35,14 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB002.Commands
                 };
 
                 // Parent to Revit's actual main window handle. System.Windows.Application.Current
-                // is not guaranteed to exist inside Revit's process, so Application.Current.MainWindow
+                // is not guaranteed to exist inside Revit's process, so System.Windows.Application.Current.MainWindow
                 // can NullReferenceException, or resolve to the wrong window and break z-order
-                // against Revit — same fix applied in WorksetManagerCommand.
+                // against Revit â€” same fix applied in WorksetManagerCommand.
                 new WindowInteropHelper(window).Owner = commandData.Application.MainWindowHandle;
 
                 viewModel.CloseRequested += window.Close;
 
-                window.Show(); // modeless — matches our Close-only modeless dialog convention
+                window.Show(); // modeless â€” matches our Close-only modeless dialog convention
 
                 return Result.Succeeded;
             }
@@ -55,3 +55,4 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB002.Commands
         }
     }
 }
+

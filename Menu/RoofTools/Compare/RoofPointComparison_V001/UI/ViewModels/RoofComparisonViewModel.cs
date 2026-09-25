@@ -1,4 +1,4 @@
-using Autodesk.Revit.DB;
+﻿using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -20,14 +20,14 @@ namespace Revit26_Plugin.RoofPointComparison.V001.UI.ViewModels
         public ElementId RoofAId { get; }
         public ElementId RoofBId { get; }
 
-        // ── Tolerances ────────────────────────────────────────────────────────
+        // â”€â”€ Tolerances â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [ObservableProperty]
         private double positionToleranceMm = 10;
 
         [ObservableProperty]
         private double elevationToleranceMm = 1;
 
-        // ── Marker styles ─────────────────────────────────────────────────────
+        // â”€â”€ Marker styles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public MarkerStyleGroup MissingMarkerGroup { get; } = new MarkerStyleGroup
         {
             GroupLabel = "Missing Point",
@@ -44,11 +44,11 @@ namespace Revit26_Plugin.RoofPointComparison.V001.UI.ViewModels
 
         public IReadOnlyList<string> ColorPalette { get; } = NamedColorHelper.PaletteNames;
 
-        // ── Metrics (bound by the Metrics Card) ─────────────────────────────────
+        // â”€â”€ Metrics (bound by the Metrics Card) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [ObservableProperty]
         private ComparisonMetrics metrics = new ComparisonMetrics();
 
-        // ── Log ───────────────────────────────────────────────────────────────
+        // â”€â”€ Log â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public ObservableCollection<LogEntry> LogEntries { get; } = new ObservableCollection<LogEntry>();
 
         [ObservableProperty]
@@ -71,7 +71,7 @@ namespace Revit26_Plugin.RoofPointComparison.V001.UI.ViewModels
             Recalculate();
         }
 
-        // ── Recalculate ───────────────────────────────────────────────────────
+        // â”€â”€ Recalculate â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [RelayCommand]
         private void Recalculate()
         {
@@ -114,14 +114,14 @@ namespace Revit26_Plugin.RoofPointComparison.V001.UI.ViewModels
                 StatusMessage = "Done";
 
                 AddLog(new LogEntry(LogLevel.Success,
-                    $"Compared {result.Metrics.TotalPointsA} vs {result.Metrics.TotalPointsB} points — " +
+                    $"Compared {result.Metrics.TotalPointsA} vs {result.Metrics.TotalPointsB} points â€” " +
                     $"{result.Metrics.MatchedCount} matched, {result.Metrics.DifferencesCount} difference(s)."));
 
                 PlaceMarkersCommand.NotifyCanExecuteChanged();
             });
         }
 
-        // ── PlaceMarkers ──────────────────────────────────────────────────────
+        // â”€â”€ PlaceMarkers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [RelayCommand(CanExecute = nameof(CanPlaceMarkers))]
         private void PlaceMarkers()
         {
@@ -157,7 +157,7 @@ namespace Revit26_Plugin.RoofPointComparison.V001.UI.ViewModels
             });
         }
 
-        // ── ClearLog ──────────────────────────────────────────────────────────
+        // â”€â”€ ClearLog â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [RelayCommand]
         private void ClearLog()
         {
@@ -169,7 +169,7 @@ namespace Revit26_Plugin.RoofPointComparison.V001.UI.ViewModels
 
         private static void RunOnUiThread(Action action)
         {
-            var dispatcher = Application.Current?.Dispatcher;
+            var dispatcher = System.Windows.Application.Current?.Dispatcher;
             if (dispatcher == null || dispatcher.CheckAccess())
                 action();
             else
@@ -177,3 +177,4 @@ namespace Revit26_Plugin.RoofPointComparison.V001.UI.ViewModels
         }
     }
 }
+

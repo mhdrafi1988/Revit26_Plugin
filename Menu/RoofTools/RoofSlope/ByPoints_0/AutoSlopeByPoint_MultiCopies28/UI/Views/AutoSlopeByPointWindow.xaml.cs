@@ -1,4 +1,4 @@
-// =======================================================
+﻿// =======================================================
 // File: AutoSlopeByPointWindow.xaml.cs
 // Fixes:
 //   #1  Corrected namespace to match XAML (041)
@@ -16,7 +16,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies28.UI.Views      // ✅ changed from _04 to _041
+namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies28.UI.Views      // âœ… changed from _04 to _041
 {
     public partial class AutoSlopeByPointWindow : Window
     {
@@ -35,7 +35,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies28.UI.Views      // ✅ cha
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
-            // Persist last-used field values/options (V026) — window size/position
+            // Persist last-used field values/options (V026) â€” window size/position
             // is intentionally NOT part of this scope.
             if (DataContext is AutoSlopeViewModel vm)
                 vm.SaveAllSettings();
@@ -43,7 +43,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies28.UI.Views      // ✅ cha
             base.OnClosing(e);
         }
 
-        // ── Esc = Close (modeless dialog convention) ─────────────────────────
+        // â”€â”€ Esc = Close (modeless dialog convention) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Escape) Close();
@@ -51,7 +51,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies28.UI.Views      // ✅ cha
 
         private void CloseButton_Click(object sender, RoutedEventArgs e) => Close();
 
-        // ── Copy All ──────────────────────────────────────────────────────────
+        // â”€â”€ Copy All â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         private void CopyAllLogs_Click(object sender, RoutedEventArgs e)
         {
             if (DataContext is not AutoSlopeViewModel vm || vm.LogEntries.Count == 0) return;
@@ -60,7 +60,7 @@ namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies28.UI.Views      // ✅ cha
             TrySetClipboardText(text);
         }
 
-        // ── Copy Selected (rows highlighted in the log ListBox) ─────────────────
+        // â”€â”€ Copy Selected (rows highlighted in the log ListBox) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         private void CopySelectedLogs_Click(object sender, RoutedEventArgs e)
         {
             var selected = LogListBox.SelectedItems.Cast<LogEntry>().ToList();
@@ -74,11 +74,11 @@ namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies28.UI.Views      // ✅ cha
         {
             try
             {
-                Clipboard.SetText(text);
+                System.Windows.Clipboard.SetText(text);
             }
             catch
             {
-                // Clipboard can be transiently locked by another process — fail silently,
+                // Clipboard can be transiently locked by another process â€” fail silently,
                 // consistent with this suite's "never block the UI on a non-critical error" rule.
             }
         }

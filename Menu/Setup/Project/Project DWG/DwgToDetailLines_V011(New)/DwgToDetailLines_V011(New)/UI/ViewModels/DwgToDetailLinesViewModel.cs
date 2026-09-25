@@ -1,4 +1,4 @@
-// ==============================================
+﻿// ==============================================
 // File: DwgToDetailLinesViewModel.cs
 // Layer: UI/ViewModels
 // Changes vs V010:
@@ -10,7 +10,7 @@
 //        shared LogEntry(Level,Message) model, matching every other tool
 //        in the suite.
 //   ADDED Close/Copy Selected/Export log commands (log panel convention
-//        from MasterGuide.md section 10) — this window previously had no
+//        from MasterGuide.md section 10) â€” this window previously had no
 //        Close button at all (modeless, closed only via the window chrome).
 // ==============================================
 
@@ -45,7 +45,7 @@ namespace Revit26_Plugin.DwgToDetailLines.V011.UI.ViewModels
         public ObservableCollection<LogEntry> LogEntries { get; } = new();
         public ObservableCollection<LayerRow> LayerRows { get; } = new();
 
-        /// <summary>Grouped view of LayerRows for the grid — groups by EntityType (Lines / Hatches).</summary>
+        /// <summary>Grouped view of LayerRows for the grid â€” groups by EntityType (Lines / Hatches).</summary>
         public ICollectionView LayerRowsView { get; }
 
         public List<string> AvailableLineStyles { get; private set; } = new();
@@ -234,14 +234,14 @@ namespace Revit26_Plugin.DwgToDetailLines.V011.UI.ViewModels
 
             try
             {
-                Clipboard.SetText(string.Join(Environment.NewLine, LogEntries.Select(e => e.ToString())));
+                System.Windows.Clipboard.SetText(string.Join(Environment.NewLine, LogEntries.Select(e => e.ToString())));
             }
             catch (System.Runtime.InteropServices.COMException)
             {
                 // Clipboard can transiently fail if another process holds it
-                // (common on Windows). Not worth surfacing as a hard error —
+                // (common on Windows). Not worth surfacing as a hard error â€”
                 // log it so the attempt isn't silently swallowed.
-                AddLog(LogLevel.Warning, "Copy to clipboard failed (clipboard busy) — try again.");
+                AddLog(LogLevel.Warning, "Copy to clipboard failed (clipboard busy) â€” try again.");
             }
         }
 
@@ -255,13 +255,13 @@ namespace Revit26_Plugin.DwgToDetailLines.V011.UI.ViewModels
 
             try
             {
-                Clipboard.SetText(string.Join(
+                System.Windows.Clipboard.SetText(string.Join(
                     Environment.NewLine,
                     SelectedLogEntries.Cast<LogEntry>().Select(e => e.ToString())));
             }
             catch (System.Runtime.InteropServices.COMException)
             {
-                AddLog(LogLevel.Warning, "Copy to clipboard failed (clipboard busy) — try again.");
+                AddLog(LogLevel.Warning, "Copy to clipboard failed (clipboard busy) â€” try again.");
             }
         }
 
@@ -343,3 +343,4 @@ namespace Revit26_Plugin.DwgToDetailLines.V011.UI.ViewModels
         }
     }
 }
+

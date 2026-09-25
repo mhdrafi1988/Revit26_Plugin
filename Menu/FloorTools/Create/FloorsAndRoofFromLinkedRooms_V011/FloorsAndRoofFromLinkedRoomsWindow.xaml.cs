@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -40,7 +40,7 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011
             }
         }
 
-        // ─── New Level live-filter combo (V005) ─────────────────────────────────
+        // â”€â”€â”€ New Level live-filter combo (V005) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         // Each row's ComboBox gets its OWN ListCollectionView over the shared
         // HostLevels collection, so filtering one row never affects another (the
         // default CollectionView would be shared). Typing live-filters the dropdown
@@ -56,7 +56,7 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011
             if (cb.ItemsSource is not ListCollectionView)
             {
                 // Swapping ItemsSource can momentarily null the TwoWay SelectedItem
-                // binding — capture and restore so the row's mapping is preserved.
+                // binding â€” capture and restore so the row's mapping is preserved.
                 var current = cb.SelectedItem;
                 cb.ItemsSource = new ListCollectionView(vm.HostLevels);
                 cb.SelectedItem = current;
@@ -83,7 +83,7 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011
             string text = cb.Text?.Trim() ?? "";
 
             // If the text exactly matches the current selection, the user just picked an
-            // item — show the full list again rather than filtering down to one entry.
+            // item â€” show the full list again rather than filtering down to one entry.
             if (cb.SelectedItem is HostLevelOption sel &&
                 string.Equals(sel.Name, text, StringComparison.OrdinalIgnoreCase))
             {
@@ -120,7 +120,7 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011
             _suppressComboFilter = false;
         }
 
-        // ─── Log panel ──────────────────────────────────────────────────────────
+        // â”€â”€â”€ Log panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         private void CopySelected_Click(object sender, RoutedEventArgs e)
         {
@@ -129,7 +129,7 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011
 
             var sb = new StringBuilder();
             foreach (var entry in selected) sb.AppendLine(entry.ToString());
-            Clipboard.SetText(sb.ToString());
+            System.Windows.Clipboard.SetText(sb.ToString());
 
             if (DataContext is MainViewModel vm) vm.ShowToast("Selected logs copied to clipboard");
         }
@@ -137,3 +137,4 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011
         private void Close_Click(object sender, RoutedEventArgs e) => Close();
     }
 }
+

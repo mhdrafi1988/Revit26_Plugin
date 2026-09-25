@@ -1,4 +1,4 @@
-// File: AutoPlaceSectionsViewModel.cs
+﻿// File: AutoPlaceSectionsViewModel.cs
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.Input;
 using Revit26_Plugin.APUS.V322.Commands;
@@ -20,14 +20,14 @@ namespace Revit26_Plugin.APUS.V322.ViewModels
 {
     /// <summary>
     /// V321 changes vs V320:
-    ///  - Grid rows/columns/MaxViewsPerSheet removed — no per-sheet cap;
+    ///  - Grid rows/columns/MaxViewsPerSheet removed â€” no per-sheet cap;
     ///    sheets fill by real footprint and overflow to the next sheet.
     ///  - PlacementScopes / SheetNumberOptions / SelectedPlacementScope /
-    ///    SheetNumberFilter removed — Whole Model is the only scope, and
+    ///    SheetNumberFilter removed â€” Whole Model is the only scope, and
     ///    filtering narrows to name search + placed/unplaced only.
     ///  - NameSearch + PlacementFilterState added for the new filter row.
     ///  - Reading Order card inputs added: ReadingDirection, YToleranceMm
-    ///    (now actually exposed — V320 had the field but no UI for it),
+    ///    (now actually exposed â€” V320 had the field but no UI for it),
     ///    RowTiebreak, MarkerSource, SortFallback.
     ///  - SheetNumberFormat / SheetPrefix drive SheetNumberService's
     ///    "{prefix}-{3-digit}" numbering.
@@ -171,7 +171,7 @@ namespace Revit26_Plugin.APUS.V322.ViewModels
         public string SheetNumberFormatPreview => $"{SheetPrefix}-001";
 
         // ===================== PLACEMENT ALGORITHM =====================
-        // Only one algorithm remains in V321 — no selector shown in the UI.
+        // Only one algorithm remains in V321 â€” no selector shown in the UI.
         public PlacementAlgorithm SelectedAlgorithm => PlacementAlgorithm.Grid;
 
         // ===================== LAYOUT SETTINGS (mm) =====================
@@ -204,7 +204,7 @@ namespace Revit26_Plugin.APUS.V322.ViewModels
         }
 
         private double _horizontalGapMm = 10;
-        /// <summary>Minimum horizontal gap — rows spread edge-to-edge, this is the floor, not a fixed value.</summary>
+        /// <summary>Minimum horizontal gap â€” rows spread edge-to-edge, this is the floor, not a fixed value.</summary>
         public double HorizontalGapMm
         {
             get => _horizontalGapMm;
@@ -230,7 +230,7 @@ namespace Revit26_Plugin.APUS.V322.ViewModels
             new(Enum.GetValues(typeof(ReadingDirection)).Cast<ReadingDirection>());
 
         private double _yToleranceMm = 50;
-        /// <summary>Row band width — points within this Y distance of the band average are treated as the same reading-order row. Default 50mm; V320 had a same-named field defaulting to 10mm but never surfaced it in the UI.</summary>
+        /// <summary>Row band width â€” points within this Y distance of the band average are treated as the same reading-order row. Default 50mm; V320 had a same-named field defaulting to 10mm but never surfaced it in the UI.</summary>
         public double YToleranceMm
         {
             get => _yToleranceMm;
@@ -340,7 +340,7 @@ namespace Revit26_Plugin.APUS.V322.ViewModels
         /// Raised right before the placement event fires, so the View can show
         /// a Yes/No confirmation ("Place N sections across ~M sheets?").
         /// The handler passed in the args must be invoked with the user's
-        /// choice via args.Respond(true/false) — placement only proceeds on true.
+        /// choice via args.Respond(true/false) â€” placement only proceeds on true.
         /// </summary>
         public event EventHandler<PlacementConfirmationEventArgs> PendingConfirmation;
 
@@ -388,7 +388,7 @@ namespace Revit26_Plugin.APUS.V322.ViewModels
 
             LogEntries.CollectionChanged += (s, e) => OnPropertyChanged(nameof(LogEntries));
 
-            LogInfo("UI ready — data pre-loaded from Revit context.");
+            LogInfo("UI ready â€” data pre-loaded from Revit context.");
             LogInfo($"Sections: {Sections.Count} total, {Sections.Count(s => !s.IsPlaced)} unplaced.");
             LogInfo($"Title blocks: {TitleBlocks.Count}.");
 
@@ -461,7 +461,7 @@ namespace Revit26_Plugin.APUS.V322.ViewModels
                 return;
             }
 
-            // Rough sheet estimate for the confirmation dialog only — the
+            // Rough sheet estimate for the confirmation dialog only â€” the
             // real count comes from EvenGapPlacementService.BuildPlan, which
             // the handler runs before actually creating anything. This
             // estimate exists purely so the dialog can show a number without
@@ -545,9 +545,9 @@ namespace Revit26_Plugin.APUS.V322.ViewModels
                         LogWarning($"Direct command invocation returned: {result}");
                 }
 
-                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    foreach (Window window in Application.Current.Windows)
+                    foreach (Window window in System.Windows.Application.Current.Windows)
                     {
                         if (window.DataContext == this)
                         {
@@ -582,7 +582,7 @@ namespace Revit26_Plugin.APUS.V322.ViewModels
 
         private void ExecuteSelectAll()
         {
-            // Respects the active filter — only currently-visible, unplaced
+            // Respects the active filter â€” only currently-visible, unplaced
             // rows are selected. Placed rows stay locked out regardless.
             int count = 0;
             foreach (var item in FilteredSections.Cast<SectionItemViewModel>())
@@ -665,8 +665,8 @@ namespace Revit26_Plugin.APUS.V322.ViewModels
             {
                 if (!string.IsNullOrEmpty(CopyableLogText))
                 {
-                    Clipboard.SetText(CopyableLogText);
-                    LogSuccess("Logs copied to clipboard.");
+                    System.Windows.Clipboard.SetText(CopyableLogText);
+                    LogSuccess("Logs copied to System.Windows.Clipboard.");
                 }
                 else
                 {
@@ -708,7 +708,7 @@ namespace Revit26_Plugin.APUS.V322.ViewModels
 
         private void AddLog(LogLevel level, string msg)
         {
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+            System.Windows.Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
             {
                 var timestamp = DateTime.Now;
                 var entry = new LogEntryViewModel(timestamp, level, msg);
@@ -728,7 +728,7 @@ namespace Revit26_Plugin.APUS.V322.ViewModels
         // ---------------- PLACEMENT COMPLETION ----------------
         public void OnPlacementComplete(bool success, string message = "")
         {
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+            System.Windows.Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
             {
                 if (CurrentState == PluginState.Cancelling)
                 {
@@ -773,7 +773,7 @@ namespace Revit26_Plugin.APUS.V322.ViewModels
 
             if (IsProcessing)
             {
-                LogWarning("Placement in progress — cancelling...");
+                LogWarning("Placement in progress â€” cancelling...");
                 Progress.Cancel();
             }
 
@@ -786,7 +786,7 @@ namespace Revit26_Plugin.APUS.V322.ViewModels
 
     /// <summary>
     /// Args for the pre-placement confirmation dialog: "Place N sections
-    /// across ~M sheets?" — the View sets Confirmed via a synchronous
+    /// across ~M sheets?" â€” the View sets Confirmed via a synchronous
     /// MessageBox call before returning control to ExecutePlacement.
     /// </summary>
     public class PlacementConfirmationEventArgs : EventArgs
@@ -802,3 +802,4 @@ namespace Revit26_Plugin.APUS.V322.ViewModels
         }
     }
 }
+

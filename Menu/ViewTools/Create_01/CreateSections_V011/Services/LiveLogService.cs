@@ -1,4 +1,4 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows;
 using Revit26_Plugin.Shared.Models;
 
@@ -22,7 +22,7 @@ namespace Revit26_Plugin.CreateSections.V011.Services
 
         private void Add(LogLevel level, string msg)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            System.Windows.Application.Current.Dispatcher.Invoke(() =>
                 _log.Add(new LogEntry(level, msg)));
         }
 
@@ -32,3 +32,4 @@ namespace Revit26_Plugin.CreateSections.V011.Services
         public void Success(string msg) => Add(LogLevel.Success, msg);
     }
 }
+

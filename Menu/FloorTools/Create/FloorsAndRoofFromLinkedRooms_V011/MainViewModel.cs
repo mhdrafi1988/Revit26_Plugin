@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -69,14 +69,14 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011
         [ObservableProperty] private int processedCount;
         [ObservableProperty] private string progressText = "";
 
-        // ── Elevation match tolerance ─────────────────────────────────────
+        // â”€â”€ Elevation match tolerance â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [ObservableProperty] private bool exactElevationMatch;
 
         /// <summary>Tolerance in millimeters, as entered/displayed in the UI.
         /// Ignored (treated as 0) when ExactElevationMatch is true.</summary>
         [ObservableProperty] private string toleranceMmText = "1";
 
-        /// <summary>True while ExactElevationMatch is false — bound to the tolerance
+        /// <summary>True while ExactElevationMatch is false â€” bound to the tolerance
         /// field's IsEnabled so it greys out when exact-match is checked.</summary>
         public bool IsToleranceEditable => !ExactElevationMatch;
 
@@ -89,7 +89,7 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011
         partial void OnToleranceMmTextChanged(string value) => RematchAllRooms();
 
         /// <summary>Parses ToleranceMmText to feet for use in LevelMatchingService.
-        /// Invalid/empty text falls back to 0 (exact match) rather than throwing —
+        /// Invalid/empty text falls back to 0 (exact match) rather than throwing â€”
         /// a malformed tolerance should never silently widen matching.</summary>
         private double ToleranceFeet()
         {
@@ -98,7 +98,7 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011
             return UnitUtils.ConvertToInternalUnits(mm, UnitTypeId.Millimeters);
         }
 
-        // ── Live grid metrics (top metrics card, left group) ─────────────
+        // â”€â”€ Live grid metrics (top metrics card, left group) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public int MetricTotalRooms => Rooms.Count;
         public int MetricSelectedCount => Rooms.Count(r => r.IsSelected);
         public int MetricMappedCount => Rooms.Count(r => r.IsMapped);
@@ -112,7 +112,7 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011
             OnPropertyChanged(nameof(MetricUnmappedCount));
         }
 
-        // ── Post-run metrics (top metrics card, right group) ─────────────
+        // â”€â”€ Post-run metrics (top metrics card, right group) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [ObservableProperty] private int metricCreatedCount;
         [ObservableProperty] private int metricSkippedCount;
         [ObservableProperty] private int metricFailedCount;
@@ -158,7 +158,7 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011
 
             AddLog(LogLevel.Info, $"Loaded {HostLevels.Count} host level(s).");
             if (HostLevels.Count == 0)
-                AddLog(LogLevel.Warning, "No levels found in the host model — New Level mapping will be unavailable.");
+                AddLog(LogLevel.Warning, "No levels found in the host model â€” New Level mapping will be unavailable.");
         }
 
         private void LoadLinkedDocuments()
@@ -204,7 +204,7 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011
                 AddLog(LogLevel.Info, $"Roof type restored from settings: '{restored.Name}'.");
 
             if (RoofTypes.Count == 0)
-                AddLog(LogLevel.Warning, "No roof types found in host model — Create Roof will be unavailable.");
+                AddLog(LogLevel.Warning, "No roof types found in host model â€” Create Roof will be unavailable.");
         }
 
         /// <summary>V005: select the link saved in settings if it still exists, otherwise
@@ -235,7 +235,7 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011
             // when exactly one existed). Triggers OnSelectedInstanceChanged -> room load.
             SelectedInstance = AvailableInstances.FirstOrDefault();
             if (AvailableInstances.Count > 1)
-                AddLog(LogLevel.Info, $"{AvailableInstances.Count} instances of this link — first selected by default.");
+                AddLog(LogLevel.Info, $"{AvailableInstances.Count} instances of this link â€” first selected by default.");
         }
 
         partial void OnSelectedInstanceChanged(LinkInstanceOption value)
@@ -246,7 +246,7 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011
             var found = LinkedRoomService.GetAllRooms(SelectedLinkedDocument.LinkDocument);
 
             // Elevation-based auto-match.
-            // Left null ("unmapped" in the grid) when no host level is within tolerance —
+            // Left null ("unmapped" in the grid) when no host level is within tolerance â€”
             // never defaulted to any level, and no host level is ever created, per
             // confirmed spec.
             double toleranceFeet = ToleranceFeet();
@@ -278,11 +278,11 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011
                     $"from '{value.DisplayName}'.");
 
             if (unmatched > 0)
-                AddLog(LogLevel.Warning, $"{unmatched} room(s) had no matching host level within tolerance — map manually via New Level.");
+                AddLog(LogLevel.Warning, $"{unmatched} room(s) had no matching host level within tolerance â€” map manually via New Level.");
         }
 
         /// <summary>Re-runs elevation matching for all currently loaded rooms
-        /// without a full reload — used when the user toggles Exact Match or edits the
+        /// without a full reload â€” used when the user toggles Exact Match or edits the
         /// tolerance field. No-op if no rooms are loaded yet (e.g. during startup restore).</summary>
         private void RematchAllRooms()
         {
@@ -301,8 +301,8 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011
             NotifyLiveMetricsChanged();
 
             AddLog(LogLevel.Info, ExactElevationMatch
-                ? $"Re-matched {Rooms.Count} room(s) by elevation (exact match) — {unmatched} unmapped."
-                : $"Re-matched {Rooms.Count} room(s) by elevation (tolerance: {ToleranceMmText}mm) — {unmatched} unmapped.");
+                ? $"Re-matched {Rooms.Count} room(s) by elevation (exact match) â€” {unmatched} unmapped."
+                : $"Re-matched {Rooms.Count} room(s) by elevation (tolerance: {ToleranceMmText}mm) â€” {unmatched} unmapped.");
         }
 
         private void ClearRooms()
@@ -384,11 +384,11 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011
             var unmapped = allSelected.Where(r => !r.IsMapped).ToList();
 
             foreach (var r in unmapped)
-                AddLog(LogLevel.Warning, $"{r.DisplayName} — skipped: no New Level mapped.");
+                AddLog(LogLevel.Warning, $"{r.DisplayName} â€” skipped: no New Level mapped.");
 
             if (runnable.Count == 0)
             {
-                AddLog(LogLevel.Warning, "No mapped rooms to process — run cancelled.");
+                AddLog(LogLevel.Warning, "No mapped rooms to process â€” run cancelled.");
                 return;
             }
 
@@ -447,14 +447,14 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011
             // Completion summary also goes to the log panel so it's part of Copy All /
             // Export output, per confirmed spec ("everything to UI log and copyable").
             AddLog(wasCancelled ? LogLevel.Warning : LogLevel.Info,
-                $"{(mode == CreationMode.Floor ? "Floor" : "Roof")} run {(wasCancelled ? "cancelled" : "completed")} — {text}");
+                $"{(mode == CreationMode.Floor ? "Floor" : "Roof")} run {(wasCancelled ? "cancelled" : "completed")} â€” {text}");
 
             // Post-run metrics card (right group). Skipped = unmapped + inner-loop
             // skips, matching the same tallies already surfaced in the summary text above.
             MetricCreatedCount = summary.SuccessCount;
             MetricSkippedCount = summary.UnmappedSkippedCount + summary.InnerLoopsSkippedCount;
             MetricFailedCount = summary.FailedCount;
-            MetricLastRunLabel = $"{(mode == CreationMode.Floor ? "Floors" : "Roof")} · {DateTime.Now:HH:mm:ss}";
+            MetricLastRunLabel = $"{(mode == CreationMode.Floor ? "Floors" : "Roof")} Â· {DateTime.Now:HH:mm:ss}";
             HasLastRun = true;
 
             SaveSettings("after run");
@@ -474,7 +474,7 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011
             _settings.LastRoofTypeName = SelectedRoofType?.Name;
 
             // Persist tolerance preference. Malformed tolerance text is not
-            // persisted as garbage — falls back to the last-known-good value (1.0 default).
+            // persisted as garbage â€” falls back to the last-known-good value (1.0 default).
             _settings.ExactElevationMatch = ExactElevationMatch;
             if (double.TryParse(ToleranceMmText, out double mm) && mm >= 0)
                 _settings.ToleranceMm = mm;
@@ -495,7 +495,7 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011
         private void CopyFloorSummary()
         {
             if (!HasFloorSummary) return;
-            Clipboard.SetText(FloorSummaryText);
+            System.Windows.Clipboard.SetText(FloorSummaryText);
             ShowToast("Floor summary copied to clipboard");
         }
 
@@ -503,7 +503,7 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011
         private void CopyRoofSummary()
         {
             if (!HasRoofSummary) return;
-            Clipboard.SetText(RoofSummaryText);
+            System.Windows.Clipboard.SetText(RoofSummaryText);
             ShowToast("Roof summary copied to clipboard");
         }
 
@@ -512,7 +512,7 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011
         {
             var sb = new StringBuilder();
             foreach (var l in Logs) sb.AppendLine(l.ToString());
-            Clipboard.SetText(sb.ToString());
+            System.Windows.Clipboard.SetText(sb.ToString());
             ShowToast("Logs copied to clipboard");
         }
 
@@ -556,6 +556,7 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011
         }
 
         // Copy Selected is handled in code-behind (DataGrid/list selection is a UI concern),
-        // per the suite convention — see FloorsFromLinkedRoomsWindow.xaml.cs.
+        // per the suite convention â€” see FloorsFromLinkedRoomsWindow.xaml.cs.
     }
 }
+

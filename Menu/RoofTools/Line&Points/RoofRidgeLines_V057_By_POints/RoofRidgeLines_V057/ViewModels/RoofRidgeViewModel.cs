@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -17,7 +17,7 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.ViewModels
 {
     public partial class RoofRidgeViewModel : ObservableObject
     {
-        // ── Services ──────────────────────────────────────────────────────────────
+        // â”€â”€ Services â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         private readonly UIDocument _uiDoc;
         private readonly Document _doc;
         private readonly DrainGroupingService _groupingSvc;
@@ -29,20 +29,20 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.ViewModels
         private readonly InnerLoopService _innerLoopSvc;
         private readonly InnerLoopIntersectionService _innerLoopIntersectionSvc;
 
-        // ── Internal state ────────────────────────────────────────────────────────
+        // â”€â”€ Internal state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         private RoofBase _selectedRoof;
         private List<XYZ> _selectedDrainLocations = new List<XYZ>();
         private VoronoiRidgeResult _lastResult;
         private Window _ownerWindow;
 
-        // ── Pipeline log ──────────────────────────────────────────────────────────
+        // â”€â”€ Pipeline log â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public ObservableCollection<string> PipelineLog { get; }
             = new ObservableCollection<string>();
 
         [ObservableProperty]
         private string _pipelineLogText = string.Empty;
 
-        // ── Constructors ──────────────────────────────────────────────────────────
+        // â”€â”€ Constructors â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         public RoofRidgeViewModel(UIDocument uiDoc, RoofBase roof, List<XYZ> drainLocations)
             : this(uiDoc)
@@ -70,7 +70,7 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.ViewModels
 
         public void SetOwnerWindow(Window window) => _ownerWindow = window;
 
-        // ── Standard observable properties ────────────────────────────────────────
+        // â”€â”€ Standard observable properties â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(RunCommand))]
@@ -113,10 +113,10 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.ViewModels
         [ObservableProperty]
         private string _groupCountDisplay = "0";
 
-        // ── 5 Status Cards ────────────────────────────────────────────────────────
+        // â”€â”€ 5 Status Cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         [ObservableProperty]
-        private string _firstResetStatus = "—";
+        private string _firstResetStatus = "â€”";
 
         [ObservableProperty]
         private int _totalCalculatedPoints;
@@ -134,14 +134,14 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.ViewModels
         private int _detailLinesAddedCount;
 
         [ObservableProperty]
-        private string _lastResetStatus = "—";
+        private string _lastResetStatus = "â€”";
 
-        // ── Validation log ────────────────────────────────────────────────────────
+        // â”€â”€ Validation log â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         public ObservableCollection<ValidationEntry> ValidationLog { get; }
             = new ObservableCollection<ValidationEntry>();
 
-        // ── Commands ──────────────────────────────────────────────────────────────
+        // â”€â”€ Commands â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         [RelayCommand]
         private void SelectRoof()
@@ -149,7 +149,7 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.ViewModels
             try
             {
                 _ownerWindow?.Hide();
-                StatusMessage = "Click on a Roof element in the view…";
+                StatusMessage = "Click on a Roof element in the viewâ€¦";
                 var ref_ = _uiDoc.Selection.PickObject(
                     ObjectType.Element,
                     new RoofSelectionFilter(),
@@ -158,7 +158,7 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.ViewModels
                 _selectedRoof = _doc.GetElement(ref_) as RoofBase;
                 if (_selectedRoof == null)
                 {
-                    RoofDescription = "Selection failed — please retry";
+                    RoofDescription = "Selection failed â€” please retry";
                     StatusMessage = "Roof selection cancelled or invalid.";
                     return;
                 }
@@ -218,18 +218,18 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.ViewModels
                 return;
             }
             var sb = new StringBuilder();
-            sb.AppendLine("════════════════════════════════════════════════════════════");
-            sb.AppendLine("  ROOF RIDGE LINES V057 – PIPELINE LOG");
+            sb.AppendLine("â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•");
+            sb.AppendLine("  ROOF RIDGE LINES V057 â€“ PIPELINE LOG");
             sb.AppendLine($"  Copied: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
-            sb.AppendLine("════════════════════════════════════════════════════════════");
+            sb.AppendLine("â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•");
             foreach (var line in PipelineLog) sb.AppendLine(line);
 
             if (ValidationLog.Count > 0)
             {
                 sb.AppendLine();
-                sb.AppendLine("════════════════════════════════════════════════════════════");
-                sb.AppendLine("  VALIDATION TABLE  (tab-separated — paste into Excel)");
-                sb.AppendLine("════════════════════════════════════════════════════════════");
+                sb.AppendLine("â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•");
+                sb.AppendLine("  VALIDATION TABLE  (tab-separated â€” paste into Excel)");
+                sb.AppendLine("â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•");
                 sb.AppendLine("Pt#\tX (ft)\tY (ft)\tX (mm)\tY (mm)\tMaxDev (ft)\tMaxDev (mm)\tTol (ft)\tPassed\tGroups\tNote");
                 foreach (var e in ValidationLog)
                 {
@@ -249,7 +249,7 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.ViewModels
             }
             try
             {
-                Clipboard.SetText(sb.ToString());
+                System.Windows.Clipboard.SetText(sb.ToString());
                 StatusMessage = $"Full log copied to clipboard ({PipelineLog.Count} lines, {ValidationLog.Count} validation rows).";
             }
             catch (Exception ex)
@@ -258,7 +258,7 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.ViewModels
             }
         }
 
-        // ── Run ───────────────────────────────────────────────────────────────────
+        // â”€â”€ Run â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         [RelayCommand(CanExecute = nameof(CanRun))]
         private async Task Run()
@@ -267,16 +267,16 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.ViewModels
             ValidationLog.Clear();
             PipelineLog.Clear();
             PipelineLogText = string.Empty;
-            StatusMessage = "Running Voronoi ridge generation…";
+            StatusMessage = "Running Voronoi ridge generationâ€¦";
 
             // Reset cards
-            FirstResetStatus = "Pending…";
+            FirstResetStatus = "Pendingâ€¦";
             TotalCalculatedPoints = 0;
             TotalAddedPoints = 0;
             TotalFailedPoints = 0;
             TotalSkippedPoints = 0;
             DetailLinesAddedCount = 0;
-            LastResetStatus = "Pending…";
+            LastResetStatus = "Pendingâ€¦";
 
             var runStart = DateTime.Now;
             Log($"[START]  {runStart:HH:mm:ss}");
@@ -293,9 +293,9 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.ViewModels
 
             try
             {
-                // ── Step 1: Drain grouping ─────────────────────────────────────────
-                UpdateProgress("Grouping drains by proximity…");
-                Log("[STEP 1] Grouping drains by proximity…");
+                // â”€â”€ Step 1: Drain grouping â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                UpdateProgress("Grouping drains by proximityâ€¦");
+                Log("[STEP 1] Grouping drains by proximityâ€¦");
 
                 double proxFeet = DrainGroupingService.MmToFeet(ProximityDistanceMm);
                 var drainGroups = _groupingSvc.GroupDrains(_selectedDrainLocations, proxFeet);
@@ -314,17 +314,17 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.ViewModels
                         "At least two distinct drain groups are required.");
 
                 if (groupCount < 3)
-                    Log($"  [WARN] Only {groupCount} groups — midline bisector mode will be used.");
+                    Log($"  [WARN] Only {groupCount} groups â€” midline bisector mode will be used.");
 
-                // ── Step 2: Boundary + inner-loop extraction ────────────────────────
+                // â”€â”€ Step 2: Boundary + inner-loop extraction â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                 // These call into the Revit API (get_Geometry, GetDependentElements,
                 // GetElement) and therefore MUST run on the UI/API thread. They run
                 // here, before Task.Run, rather than inside it.
                 var result = new VoronoiRidgeResult();
                 result.DrainGroups = drainGroups;
 
-                UpdateProgress("Extracting roof boundary…");
-                Log("[STEP 2] Extracting roof boundary…");
+                UpdateProgress("Extracting roof boundaryâ€¦");
+                Log("[STEP 2] Extracting roof boundaryâ€¦");
                 List<XYZ> boundary = _boundarySvc.ExtractBoundary(_selectedRoof);
 
                 // Store boundary + centroid for AddPoint fallback in RidgeCreationService
@@ -341,17 +341,17 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.ViewModels
                     Log($"  Boundary BBox  X=[{minX * 304.8:F1}, {maxX * 304.8:F1}] mm  Y=[{minY * 304.8:F1}, {maxY * 304.8:F1}] mm");
                 }
 
-                UpdateProgress("Detecting inner loops…");
-                Log("[STEP 2a] Detecting inner loops…");
+                UpdateProgress("Detecting inner loopsâ€¦");
+                Log("[STEP 2a] Detecting inner loopsâ€¦");
                 result.InnerLoops = _innerLoopSvc.ExtractInnerLoops(_selectedRoof);
                 Log($"  Inner loops found: {result.InnerLoops.Count}");
 
-                // ── Steps 3–5: pure geometry/math — no Revit API calls, safe to run
-                //              on a background thread for UI responsiveness ─────────
+                // â”€â”€ Steps 3â€“5: pure geometry/math â€” no Revit API calls, safe to run
+                //              on a background thread for UI responsiveness â”€â”€â”€â”€â”€â”€â”€â”€â”€
                 await Task.Run(() =>
                 {
                     // Step 3: Voronoi
-                    Dispatch(() => { UpdateProgress("Computing Voronoi diagram…"); Log("[STEP 3] Computing Voronoi diagram…"); });
+                    Dispatch(() => { UpdateProgress("Computing Voronoi diagramâ€¦"); Log("[STEP 3] Computing Voronoi diagramâ€¦"); });
                     _voronoiSvc.Compute(result.DrainGroups, result);
                     Dispatch(() =>
                     {
@@ -360,7 +360,7 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.ViewModels
                     });
 
                     // Step 4: Clipping
-                    Dispatch(() => { UpdateProgress("Clipping Voronoi to roof boundary…"); Log("[STEP 4] Clipping Voronoi to roof boundary…"); });
+                    Dispatch(() => { UpdateProgress("Clipping Voronoi to roof boundaryâ€¦"); Log("[STEP 4] Clipping Voronoi to roof boundaryâ€¦"); });
                     _clippingSvc.ClipAndCollect(result, boundary, result.DrainGroups);
                     Dispatch(() =>
                     {
@@ -375,17 +375,17 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.ViewModels
                         .ToList();
                     Dispatch(() => Log($"  Ridge mid-points: {result.RidgeEdgeMidPoints.Count}"));
 
-                    // Step 4b: Inner-loop × ridge-line intersections (pure math — the
+                    // Step 4b: Inner-loop Ã— ridge-line intersections (pure math â€” the
                     //          loops themselves were already extracted on the UI thread above)
                     if (result.InnerLoops.Count > 0)
                     {
-                        Dispatch(() => Log("[STEP 4b] Computing inner-loop intersections…"));
+                        Dispatch(() => Log("[STEP 4b] Computing inner-loop intersectionsâ€¦"));
                         int innerPtCount = _innerLoopIntersectionSvc.ComputeInnerLoopIntersections(result, boundary);
                         Dispatch(() => Log($"  Inner loop intersection points: {innerPtCount}"));
                     }
 
                     // Step 5: Validation
-                    Dispatch(() => { UpdateProgress("Validating equidistance…"); Log("[STEP 5] Validating equidistance…"); });
+                    Dispatch(() => { UpdateProgress("Validating equidistanceâ€¦"); Log("[STEP 5] Validating equidistanceâ€¦"); });
                     _validationSvc.ToleranceFeet = DrainGroupingService.MmToFeet(ValidationToleranceMm);
                     _validationSvc.Validate(result, result.DrainGroups);
                     Dispatch(() =>
@@ -396,9 +396,9 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.ViewModels
                     _lastResult = result;
                 });
 
-                // ── Step 6: Revit element creation (UI thread) ─────────────────────
-                UpdateProgress("Creating Revit elements…");
-                Log("[STEP 6] Creating Revit elements…");
+                // â”€â”€ Step 6: Revit element creation (UI thread) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                UpdateProgress("Creating Revit elementsâ€¦");
+                Log("[STEP 6] Creating Revit elementsâ€¦");
 
                 // Wire up per-TX card callbacks before calling CreateAll
                 _creationSvc.OnFirstResetDone = () =>
@@ -413,7 +413,7 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.ViewModels
                     TotalAddedPoints = _creationSvc.TotalAdded;
                     TotalFailedPoints = _creationSvc.TotalFailed;
                     TotalSkippedPoints = _creationSvc.TotalSkipped;
-                    Log($"  [TX-2] Points — Calculated: {TotalCalculatedPoints}  Added: {TotalAddedPoints}  " +
+                    Log($"  [TX-2] Points â€” Calculated: {TotalCalculatedPoints}  Added: {TotalAddedPoints}  " +
                         $"Failed: {TotalFailedPoints}  Skipped: {TotalSkippedPoints}");
                 };
 
@@ -429,7 +429,7 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.ViewModels
                 DetailLinesAddedCount = _creationSvc.DetailLinesAdded;
                 Log($"  Detail lines created: {DetailLinesAddedCount}");
 
-                // ── Populate validation log ────────────────────────────────────────
+                // â”€â”€ Populate validation log â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                 foreach (var entry in _lastResult.ValidationLog)
                     ValidationLog.Add(entry);
 
@@ -462,7 +462,7 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.ViewModels
         private bool CanRun() => _selectedRoof != null && DrainCount >= 2 && ProximityDistanceMm > 0
             && (AddDetailLines || AddShapePoints);
 
-        // ── Log helpers ───────────────────────────────────────────────────────────
+        // â”€â”€ Log helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         private void Log(string message)
         {
@@ -473,18 +473,18 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.ViewModels
                     ? message
                     : PipelineLogText + "\r\n" + message;
             }
-            if (Application.Current?.Dispatcher?.CheckAccess() == true)
+            if (System.Windows.Application.Current?.Dispatcher?.CheckAccess() == true)
                 Append();
             else
-                Application.Current?.Dispatcher?.Invoke(Append);
+                System.Windows.Application.Current?.Dispatcher?.Invoke(Append);
         }
 
         private static void Dispatch(Action action)
-            => Application.Current?.Dispatcher?.Invoke(action);
+            => System.Windows.Application.Current?.Dispatcher?.Invoke(action);
 
         private void UpdateProgress(string message) => ProgressDetail = message;
 
-        // ── Roof selection filter ─────────────────────────────────────────────────
+        // â”€â”€ Roof selection filter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         private class RoofSelectionFilter : ISelectionFilter
         {

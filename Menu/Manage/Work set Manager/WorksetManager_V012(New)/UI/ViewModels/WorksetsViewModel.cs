@@ -1,8 +1,8 @@
-// ==============================================
+﻿// ==============================================
 // File: WorksetsViewModel.cs
 // Layer: UI/ViewModels
 // Changes vs V011:
-//   FIX  OnPatternChanged was never wired up — AssembleWorksetNameSilent /
+//   FIX  OnPatternChanged was never wired up â€” AssembleWorksetNameSilent /
 //        UpdateProposedNamesSilent existed but were unreachable, so editing
 //        the Pattern textbox did nothing until the next full RefreshData().
 //        Restored the hook (present in the WSFL fork this tool split from,
@@ -35,15 +35,15 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
         private readonly Document _doc;
 
         // Captured on the UI thread at construction time. Do NOT use
-        // System.Windows.Application.Current.Dispatcher here — Revit doesn't
+        // System.Windows.Application.Current.Dispatcher here â€” Revit doesn't
         // guarantee a System.Windows.Application instance exists in-process,
-        // so Application.Current can be null and NullReferenceException.
+        // so System.Windows.Application.Current can be null and NullReferenceException.
         private readonly Dispatcher _dispatcher;
 
         public ObservableCollection<WorksetItem> Items { get; } = new();
         public ObservableCollection<LogEntry>    Log   { get; } = new();
 
-        // ── Filtered views ────────────────────────────────────────────────────
+        // â”€â”€ Filtered views â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         private ICollectionView _grid1AssignedItems;
         public ICollectionView Grid1AssignedItems
@@ -66,7 +66,7 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
             private set => SetProperty(ref _grid3NoInstanceItems, value);
         }
 
-        // ── Observable properties ─────────────────────────────────────────────
+        // â”€â”€ Observable properties â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         [ObservableProperty] private string pattern              = "+Link({name})";
         [ObservableProperty] private string patternErrorMessage  = string.Empty;
@@ -78,7 +78,7 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
         [ObservableProperty] private int    grid3Count;
         [ObservableProperty] private int    totalSelectedCount;
 
-        // ── Commands ──────────────────────────────────────────────────────────
+        // â”€â”€ Commands â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         public IRelayCommand CreateCommand       { get; }
         public IRelayCommand ResyncCommand       { get; }
@@ -92,7 +92,7 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
 
         public event Action RequestClose;
 
-        // ── Constructor ───────────────────────────────────────────────────────
+        // â”€â”€ Constructor â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         public WorksetsViewModel(ExternalCommandData commandData)
         {
@@ -134,7 +134,7 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
             };
         }
 
-        // ── Filtered view management ──────────────────────────────────────────
+        // â”€â”€ Filtered view management â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         private void RecreateFilteredViews()
         {
@@ -150,7 +150,7 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
             return cvs.View;
         }
 
-        // ── Data loading ──────────────────────────────────────────────────────
+        // â”€â”€ Data loading â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         private void LoadData()
         {
@@ -274,7 +274,7 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
             }
         }
 
-        // ── Selection helpers ─────────────────────────────────────────────────
+        // â”€â”€ Selection helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         private void SetGrid2Selection(bool selected)
         {
@@ -292,7 +292,7 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
             RefreshCommandStates();
         }
 
-        // ── Command guards ────────────────────────────────────────────────────
+        // â”€â”€ Command guards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         private bool CanCreate() =>
             IsCreateEnabled &&
@@ -308,7 +308,7 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
                             i.GridCategory == WorksetGridCategory.NoInstances ||
                             i.GridCategory == WorksetGridCategory.AlreadyAssigned));
 
-        // ── Command executions ────────────────────────────────────────────────
+        // â”€â”€ Command executions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         private void ExecuteCreate()
         {
@@ -333,7 +333,7 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
             {
                 _service.CreateAndAssign(_doc, toProcess, this);
                 AddLog(new LogEntry(LogLevel.Info,
-                    $"Done — created and assigned {toProcess.Count} workset(s)."));
+                    $"Done â€” created and assigned {toProcess.Count} workset(s)."));
             }
             catch (Exception ex)
             {
@@ -351,7 +351,7 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
         private void ExecuteResync()
         {
             // Resync scope: Grid 2 & Grid 3 selected items only.
-            // Grid 1 items are already correctly assigned — don't touch them.
+            // Grid 1 items are already correctly assigned â€” don't touch them.
             var toProcess = Items
                 .Where(i => i.IsSelected &&
                             (i.GridCategory == WorksetGridCategory.NeedsWorkset ||
@@ -404,8 +404,8 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
 
             try
             {
-                Clipboard.SetText(sb.ToString());
-                AddLog(new LogEntry(LogLevel.Info, "Log copied to clipboard."));
+                System.Windows.Clipboard.SetText(sb.ToString());
+                AddLog(new LogEntry(LogLevel.Info, "Log copied to System.Windows.Clipboard."));
             }
             catch (Exception ex)
             {
@@ -413,7 +413,7 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
             }
         }
 
-        /// <summary>Copies only the given entries (used by the "Copy selected" button — selection is read from the ListBox in code-behind).</summary>
+        /// <summary>Copies only the given entries (used by the "Copy selected" button â€” selection is read from the ListBox in code-behind).</summary>
         public void CopySelectedLog(System.Collections.IList selectedEntries)
         {
             if (selectedEntries == null || selectedEntries.Count == 0)
@@ -428,7 +428,7 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
 
             try
             {
-                Clipboard.SetText(sb.ToString());
+                System.Windows.Clipboard.SetText(sb.ToString());
                 AddLog(new LogEntry(LogLevel.Info, $"Copied {selectedEntries.Count} selected log row(s)."));
             }
             catch (Exception ex)
@@ -437,7 +437,7 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
             }
         }
 
-        // ── UI helpers ────────────────────────────────────────────────────────
+        // â”€â”€ UI helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         private void RefreshCounts()
         {
@@ -470,3 +470,4 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
         }
     }
 }
+

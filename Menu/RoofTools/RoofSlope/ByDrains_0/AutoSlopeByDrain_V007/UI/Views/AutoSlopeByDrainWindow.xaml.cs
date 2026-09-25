@@ -1,16 +1,16 @@
-// File: AutoSlopeByDrainWindow.xaml.cs
+﻿// File: AutoSlopeByDrainWindow.xaml.cs
 // Location: UI/Views/
 // Base: ported from AutoSlopeByDrain V004.
 //
 // CHANGES (V005):
-//   REMOVED CopyAllLogs_Click — "Copy all" is now a [RelayCommand] on the
+//   REMOVED CopyAllLogs_Click â€” "Copy all" is now a [RelayCommand] on the
 //     ViewModel (CopyAllLogsCommand) since it needs no code-behind access;
 //     only "Copy selected" still needs code-behind (it reads
 //     LogListBox.SelectedItems, which isn't cleanly bindable).
-//   ADDED   OnClosing override — calls ViewModel.SaveSettingsOnClose() so
+//   ADDED   OnClosing override â€” calls ViewModel.SaveSettingsOnClose() so
 //     settings are captured even if the user closes the window without
 //     ever clicking Run this session.
-//   ADDED   DrainCheckBox_PreviewMouseLeftButtonDown — blocks the DataGrid
+//   ADDED   DrainCheckBox_PreviewMouseLeftButtonDown â€” blocks the DataGrid
 //     row-select cascade on checkbox click, per Rafi's DataGrid spec.
 
 using Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels;
@@ -42,7 +42,7 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.Views
             base.OnClosing(e);
         }
 
-        // ── Copy Selected (rows highlighted in the log ListBox) ─────────────────
+        // â”€â”€ Copy Selected (rows highlighted in the log ListBox) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         // Kept as code-behind (not a [RelayCommand]) because it needs direct
         // access to LogListBox.SelectedItems, which ListBox doesn't expose as a
         // bindable dependency property.
@@ -55,10 +55,10 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.Views
             TrySetClipboardText(text);
         }
 
-        // ── DataGrid checkbox: block row-select cascade ─────────────────────────
+        // â”€â”€ DataGrid checkbox: block row-select cascade â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         // Per Rafi's DataGrid spec: clicking the checkbox should toggle selection
         // only, not also trigger the DataGrid's native row-selection behavior.
-        // PreviewMouseLeftButtonDown is a TUNNELING event — it fires BEFORE the
+        // PreviewMouseLeftButtonDown is a TUNNELING event â€” it fires BEFORE the
         // CheckBox's own click handling, and setting e.Handled = true here
         // suppresses that later handling entirely. So IsChecked must be toggled
         // manually right here; it is NOT redundant with the CheckBox's own logic.
@@ -75,13 +75,14 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.Views
         {
             try
             {
-                Clipboard.SetText(text);
+                System.Windows.Clipboard.SetText(text);
             }
             catch
             {
-                // Clipboard can be transiently locked by another process — fail silently,
+                // Clipboard can be transiently locked by another process â€” fail silently,
                 // consistent with this suite's "never block the UI on a non-critical error" rule.
             }
         }
     }
 }
+

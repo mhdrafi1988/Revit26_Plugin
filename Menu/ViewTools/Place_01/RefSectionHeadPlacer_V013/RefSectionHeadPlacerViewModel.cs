@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -23,12 +23,12 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V013.UI.ViewModels
     /// MEMORY: implements IDisposable. The ViewModel subscribes to the long-lived
     /// ExternalEvent handler's events; if it never unsubscribed, the handler would
     /// keep the ViewModel (and every collection/LogEntry) alive after the window
-    /// closed — a classic WPF/Revit leak. Dispose() unsubscribes and disposes the
+    /// closed â€” a classic WPF/Revit leak. Dispose() unsubscribes and disposes the
     /// ExternalEvent. The window calls Dispose() in OnClosed.
     ///
     /// THREADING: engine callbacks arrive on Revit's API thread. We marshal to the
     /// UI thread with the dispatcher captured at construction (the VM is built on
-    /// the UI thread). Application.Current is NOT used — it is frequently null in a
+    /// the UI thread). System.Windows.Application.Current is NOT used â€” it is frequently null in a
     /// Revit add-in, which would NRE.
     /// </summary>
     public partial class RefSectionHeadPlacerViewModel : ObservableObject, IDisposable
@@ -48,11 +48,11 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V013.UI.ViewModels
         /// <summary>Raised when the Close command runs; the window subscribes and closes itself.</summary>
         public event Action CloseRequested;
 
-        // ── Selectors ─────────────────────────────────────────────────
+        // â”€â”€ Selectors â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public ObservableCollection<ViewFamilyType> SectionTypes { get; } = new();
         [ObservableProperty] private ViewFamilyType selectedSectionType;
 
-        // ── Reference section tail length (head->tail marker length) ──
+        // â”€â”€ Reference section tail length (head->tail marker length) â”€â”€
         private const double DefaultTailLengthMm = 2000.0;
         private const double MmPerFoot = 304.8;
 
@@ -60,22 +60,22 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V013.UI.ViewModels
         private string tailLengthMmText = DefaultTailLengthMm.ToString("F0");
 
         /// <summary>Parsed, validated tail length in mm. Falls back to the 2000 mm default
-        /// on empty/invalid/non-positive input rather than blocking Run — flagged via log.</summary>
+        /// on empty/invalid/non-positive input rather than blocking Run â€” flagged via log.</summary>
         public double TailLengthMm =>
             double.TryParse(TailLengthMmText, out var v) && v > 0 ? v : DefaultTailLengthMm;
 
-        // ── Boundary buffer (roof bounding-box expansion for Grid 2 link scoping) ──
+        // â”€â”€ Boundary buffer (roof bounding-box expansion for Grid 2 link scoping) â”€â”€
         private const double DefaultBoundaryBufferMm = 100.0;
 
         [ObservableProperty]
         private string boundaryBufferMmText = DefaultBoundaryBufferMm.ToString("F0");
 
         /// <summary>Parsed, validated boundary buffer in mm. Falls back to the 100 mm default
-        /// on empty/invalid/non-positive input — flagged via log, doesn't block Run.</summary>
+        /// on empty/invalid/non-positive input â€” flagged via log, doesn't block Run.</summary>
         public double BoundaryBufferMm =>
             double.TryParse(BoundaryBufferMmText, out var v) && v > 0 ? v : DefaultBoundaryBufferMm;
 
-        /// <summary>Grid 2 header meta text — reflects the live buffer value.</summary>
+        /// <summary>Grid 2 header meta text â€” reflects the live buffer value.</summary>
         public string ElementScopeSummary => $"roofs + linked items within {BoundaryBufferMm:F0}mm";
 
         partial void OnBoundaryBufferMmTextChanged(string value)
@@ -84,11 +84,11 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V013.UI.ViewModels
             RefreshElementTypes();
         }
 
-        // ── Roof type filter (popover) — narrows which roofs anchor the boundary buffer ──
+        // â”€â”€ Roof type filter (popover) â€” narrows which roofs anchor the boundary buffer â”€â”€
         private List<RoofTypeOption> _allRoofTypeOptions = new();
         private bool _suppressRoofTypeRecalc;
 
-        /// <summary>Visible rows in the popover — narrowed by RoofTypeSearchText.</summary>
+        /// <summary>Visible rows in the popover â€” narrowed by RoofTypeSearchText.</summary>
         public ObservableCollection<RoofTypeOption> RoofTypeOptions { get; } = new();
 
         [ObservableProperty]
@@ -97,7 +97,7 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V013.UI.ViewModels
         [ObservableProperty]
         private bool isRoofTypePopoverOpen;
 
-        /// <summary>Button label — "All types" / "No types" / "2 of 3".</summary>
+        /// <summary>Button label â€” "All types" / "No types" / "2 of 3".</summary>
         public string RoofTypeSelectionSummary
         {
             get
@@ -115,7 +115,7 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V013.UI.ViewModels
         public string LinkSelectionSummary =>
             $"{Links.Count(l => l.IsSelected)} of {Links.Count} selected";
 
-        // ── Grid 1: Plan views ────────────────────────────────────────
+        // â”€â”€ Grid 1: Plan views â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public ObservableCollection<PlanViewRow> PlanViews { get; } = new();
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(PlanViewSelectionSummary))]
@@ -123,7 +123,7 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V013.UI.ViewModels
         public string PlanViewSelectionSummary =>
             $"{_allPlanViews.Count(v => v.IsSelected)} of {_allPlanViews.Count} selected";
 
-        // ── Grid 1: Plan Type filter (popover) ─────────────────────────
+        // â”€â”€ Grid 1: Plan Type filter (popover) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         private List<PlanTypeOption> _allPlanTypeOptions = new();
         private bool _suppressPlanTypeRecalc;
 
@@ -138,7 +138,7 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V013.UI.ViewModels
         // This mirrors the existing _suppressPlanTypeRecalc pattern below.
         private bool _suppressPlanViewRecalc;
 
-        /// <summary>Visible rows in the popover — narrowed by PlanTypeSearchText.</summary>
+        /// <summary>Visible rows in the popover â€” narrowed by PlanTypeSearchText.</summary>
         public ObservableCollection<PlanTypeOption> PlanTypeOptions { get; } = new();
 
         [ObservableProperty]
@@ -147,7 +147,7 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V013.UI.ViewModels
         [ObservableProperty]
         private bool isPlanTypePopoverOpen;
 
-        /// <summary>Button label — "All types" / "No types" / "2 of 4".</summary>
+        /// <summary>Button label â€” "All types" / "No types" / "2 of 4".</summary>
         public string PlanTypeSelectionSummary
         {
             get
@@ -161,7 +161,7 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V013.UI.ViewModels
             }
         }
 
-        // ── Grid 2: Element categories & types ────────────────────────
+        // â”€â”€ Grid 2: Element categories & types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         private List<ElementTypeRow> _allElementTypeRows = new();
         public ObservableCollection<ElementTypeRow> ElementTypes { get; } = new();
 
@@ -170,14 +170,14 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V013.UI.ViewModels
 
         partial void OnElementTypeFilterChanged(string value) => ApplyElementTypeFilter();
 
-        // ── Grid 3: Type -> drafting view mapping (built from Grid 2 selections) ──
+        // â”€â”€ Grid 3: Type -> drafting view mapping (built from Grid 2 selections) â”€â”€
         // V005: session-level pick memory. Keyed by (SourceLabel, Bic, TypeName),
         // it outlives the mapping-row instances themselves. Before V005, a Grid 2
         // untick (or a type dropping out of a rescan) discarded its Grid 3 row;
         // when the type came back it was treated as brand-new. Now a returning
         // type restores exactly the view it was last mapped to. Cleared only when
         // the window closes.
-        // V006: dropped the auto/manual flag — auto-match no longer exists, so
+        // V006: dropped the auto/manual flag â€” auto-match no longer exists, so
         // every entry here is by definition a user pick.
         private readonly Dictionary<(string SourceLabel, BuiltInCategory Bic, string TypeName),
             DraftingViewOption> _sessionPickMemory = new();
@@ -191,13 +191,13 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V013.UI.ViewModels
 
         partial void OnCategoryMappingFilterChanged(string value) => ApplyCategoryMappingFilter();
 
-        // ── Metrics ───────────────────────────────────────────────────
+        // â”€â”€ Metrics â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [ObservableProperty] private int elementCount;
         [ObservableProperty] private int mappedCount;
         [ObservableProperty] private int placedCount;
         [ObservableProperty] private int skippedCount;
 
-        // ── Run state / progress ──────────────────────────────────────
+        // â”€â”€ Run state / progress â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(RunCommand))]
         private bool isRunning;
@@ -205,7 +205,7 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V013.UI.ViewModels
         [ObservableProperty] private string progressPercentText = "0%";
         [ObservableProperty] private double progressPercent;
 
-        // ── Log ───────────────────────────────────────────────────────
+        // â”€â”€ Log â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public ObservableCollection<LogEntry> LogEntries { get; } = new();
 
         public RefSectionHeadPlacerViewModel(Document doc)
@@ -262,8 +262,8 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V013.UI.ViewModels
                 DraftingViews.Add(dv);
 
             Log(LogLevel.Info, Links.Count == 0
-                ? "Ready. No loaded links found — link a model to target doors/plumbing/walls."
-                : "Ready. All plan views and links selected by default — scanning now.");
+                ? "Ready. No loaded links found â€” link a model to target doors/plumbing/walls."
+                : "Ready. All plan views and links selected by default â€” scanning now.");
 
             // V003: trigger the same pipeline SelectAllPlanViews would, so Grid 2/3
             // (element types + mapping) are populated before the window is shown,
@@ -320,7 +320,7 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V013.UI.ViewModels
 
         partial void OnPlanTypeSearchTextChanged(string value) => ApplyPlanTypeSearch();
 
-        /// <summary>Narrows the popover's checkbox list by DisplayName — does NOT touch the main grid.</summary>
+        /// <summary>Narrows the popover's checkbox list by DisplayName â€” does NOT touch the main grid.</summary>
         private void ApplyPlanTypeSearch()
         {
             PlanTypeOptions.Clear();
@@ -413,7 +413,7 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V013.UI.ViewModels
 
         partial void OnRoofTypeSearchTextChanged(string value) => ApplyRoofTypeSearch();
 
-        /// <summary>Narrows the popover's checkbox list by DisplayName — does NOT touch Grid 2.</summary>
+        /// <summary>Narrows the popover's checkbox list by DisplayName â€” does NOT touch Grid 2.</summary>
         private void ApplyRoofTypeSearch()
         {
             RoofTypeOptions.Clear();
@@ -476,19 +476,19 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V013.UI.ViewModels
                 _allRoofTypeOptions.Where(t => t.IsChecked).Select(t => t.RawTypeName));
 
             Log(LogLevel.Info,
-                $"Scan · {selectedViews.Count} view(s), {selectedLinks.Count} link(s) selected · " +
+                $"Scan Â· {selectedViews.Count} view(s), {selectedLinks.Count} link(s) selected Â· " +
                 $"{rawRoofCount} roof(s) found, {_allRoofTypeOptions.Count} distinct type(s), " +
-                $"{allowedRoofTypeNames.Count} ticked · buffer {BoundaryBufferMm:F0}mm.");
+                $"{allowedRoofTypeNames.Count} ticked Â· buffer {BoundaryBufferMm:F0}mm.");
 
             if (rawRoofCount == 0)
-                Log(LogLevel.Warning, "No roofs found in the selected plan view(s) — check the view's crop region/view range, or select a different view.");
+                Log(LogLevel.Warning, "No roofs found in the selected plan view(s) â€” check the view's crop region/view range, or select a different view.");
             else if (allowedRoofTypeNames.Count == 0)
-                Log(LogLevel.Warning, "All roof types are unticked in the Roof type filter — nothing will anchor the boundary buffer.");
+                Log(LogLevel.Warning, "All roof types are unticked in the Roof type filter â€” nothing will anchor the boundary buffer.");
 
             // BUGFIX: CollectElementTypes() always returns brand-new ElementTypeRow
             // instances, which default IsSelected to false. Rebuilding this list on
             // every rescan (view/link/roof-type toggle) was therefore silently
-            // un-checking every Grid 2 row — which in turn made RebuildMappings()
+            // un-checking every Grid 2 row â€” which in turn made RebuildMappings()
             // below see zero selected types and wipe Grid 3 back to empty, discarding
             // any drafting-view picks the user had already made. Fix: carry forward
             // each row's prior IsSelected by the same (SourceLabel, Bic, TypeName)
@@ -512,20 +512,20 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V013.UI.ViewModels
             var qualifyingRoofCount = _allElementTypeRows
                 .Where(r => r.Bic == BuiltInCategory.OST_Roofs).Sum(r => r.Count);
             if (rawRoofCount > 0 && allowedRoofTypeNames.Count > 0 && qualifyingRoofCount == 0)
-                Log(LogLevel.Warning, "Roof Type filter excluded every roof found — Grid 2 will be empty.");
+                Log(LogLevel.Warning, "Roof Type filter excluded every roof found â€” Grid 2 will be empty.");
 
             foreach (var linkRow in selectedLinks)
             {
                 var linkRows = _allElementTypeRows.Where(r => r.SourceLabel == linkRow.Name).ToList();
                 if (linkRows.Count == 0)
                 {
-                    Log(LogLevel.Info, $"Link '{linkRow.Name}' · 0 items collected (nothing within {BoundaryBufferMm:F0}mm of a qualifying roof).");
+                    Log(LogLevel.Info, $"Link '{linkRow.Name}' Â· 0 items collected (nothing within {BoundaryBufferMm:F0}mm of a qualifying roof).");
                     continue;
                 }
                 var byCategory = string.Join(", ", linkRows
                     .GroupBy(r => r.Category)
                     .Select(g => $"{g.Sum(r => r.Count)} {g.Key}"));
-                Log(LogLevel.Info, $"Link '{linkRow.Name}' · {byCategory}.");
+                Log(LogLevel.Info, $"Link '{linkRow.Name}' Â· {byCategory}.");
             }
 
             ApplyElementTypeFilter();
@@ -535,7 +535,7 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V013.UI.ViewModels
             OnPropertyChanged(nameof(PlanViewSelectionSummary));
         }
 
-        /// <summary>Narrows Grid 2's visible rows by ElementTypeFilter — does NOT touch selection state.</summary>
+        /// <summary>Narrows Grid 2's visible rows by ElementTypeFilter â€” does NOT touch selection state.</summary>
         private void ApplyElementTypeFilter()
         {
             ElementTypes.Clear();
@@ -571,18 +571,18 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V013.UI.ViewModels
         /// Grid 3 = one row per SELECTED Grid 2 type (across the FULL set, not just
         /// currently filtered/visible rows). Existing drafting-view picks are
         /// preserved across rebuilds by matching on (SourceLabel, Bic, TypeName),
-        /// via _sessionPickMemory — so a rebuild never re-opens a row the user
+        /// via _sessionPickMemory â€” so a rebuild never re-opens a row the user
         /// already mapped, and a pick survives its row being dropped (Grid 2
         /// untick / rescan) and restores when the type returns.
         ///
         /// V006 (confirmed, Rafi): auto-match removed entirely. A type never seen
-        /// this session simply starts BLANK — the user must map it manually in the
+        /// this session simply starts BLANK â€” the user must map it manually in the
         /// Grid 3 ComboBox. Nothing is guessed from Category/TypeName any more.
         /// </summary>
         private void RebuildMappings()
         {
             // Fold the outgoing rows' current picks into session memory FIRST, so
-            // the newest user picks win, then rebuild against the memory — not
+            // the newest user picks win, then rebuild against the memory â€” not
             // against only the rows that happened to survive the last rebuild.
             foreach (var m in _allCategoryMappingRows)
                 _sessionPickMemory[(m.SourceLabel, m.Bic, m.TypeName)] = m.MappedDraftingView;
@@ -592,7 +592,7 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V013.UI.ViewModels
             _allCategoryMappingRows = _allElementTypeRows.Where(t => t.IsSelected).Select(t =>
             {
                 // Type mapped before this session (even if its row was dropped in
-                // between) -> restore exactly what it last had. Otherwise blank —
+                // between) -> restore exactly what it last had. Otherwise blank â€”
                 // no auto-match; the user maps it manually.
                 _sessionPickMemory.TryGetValue((t.SourceLabel, t.Bic, t.TypeName), out var assigned);
 
@@ -606,7 +606,7 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V013.UI.ViewModels
             RecomputeMappedCount();
         }
 
-        /// <summary>Narrows Grid 3's visible rows by CategoryMappingFilter — does NOT touch selection state.</summary>
+        /// <summary>Narrows Grid 3's visible rows by CategoryMappingFilter â€” does NOT touch selection state.</summary>
         private void ApplyCategoryMappingFilter()
         {
             CategoryMappings.Clear();
@@ -645,7 +645,7 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V013.UI.ViewModels
         private void RecomputeMappedCount()
             => MappedCount = _allCategoryMappingRows.Count(m => m.IsSelected && m.MappedDraftingView != null);
 
-        // ── Log commands (Copy Selected is in code-behind, per convention) ──
+        // â”€â”€ Log commands (Copy Selected is in code-behind, per convention) â”€â”€
         [RelayCommand]
         private void CopyAllLogs()
             => System.Windows.Clipboard.SetText(string.Join(Environment.NewLine, LogEntries.Select(e => e.ToString())));
@@ -666,36 +666,36 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V013.UI.ViewModels
         [RelayCommand]
         private void ClearLogs() => LogEntries.Clear();
 
-        // ── Run / Cancel / Close ──────────────────────────────────────
+        // â”€â”€ Run / Cancel / Close â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [RelayCommand(CanExecute = nameof(CanRun))]
         private void Run()
         {
             var selectedTypes = _allElementTypeRows.Where(t => t.IsSelected).ToList();
-            if (selectedTypes.Count == 0) { Log(LogLevel.Warning, "No elements selected — nothing to run."); return; }
+            if (selectedTypes.Count == 0) { Log(LogLevel.Warning, "No elements selected â€” nothing to run."); return; }
 
             // V006 (confirmed, Rafi): Run no longer blocks when some selected types
             // are unmapped. The engine already skips-and-logs per item independently
             // (RefSectionHeadEngine.Run), so a type left unmapped simply skips while
-            // every mapped type still places — matching "place 1 mapped, place 2
+            // every mapped type still places â€” matching "place 1 mapped, place 2
             // mapped, and so on" rather than an all-or-nothing gate. We still warn
             // up front so the user knows how many types will be skipped this run.
             var unmappedCount = _allCategoryMappingRows.Count(m => m.IsSelected && m.MappedDraftingView == null);
             if (unmappedCount > 0)
-                Log(LogLevel.Warning, $"{unmappedCount} selected type(s) have no drafting view mapped — those will be skipped.");
+                Log(LogLevel.Warning, $"{unmappedCount} selected type(s) have no drafting view mapped â€” those will be skipped.");
 
             if (!double.TryParse(TailLengthMmText, out var parsedTailMm) || parsedTailMm <= 0)
-                Log(LogLevel.Warning, $"Tail length \"{TailLengthMmText}\" is invalid — using default {DefaultTailLengthMm:F0} mm.");
+                Log(LogLevel.Warning, $"Tail length \"{TailLengthMmText}\" is invalid â€” using default {DefaultTailLengthMm:F0} mm.");
             if (!double.TryParse(BoundaryBufferMmText, out var parsedBufferMm) || parsedBufferMm <= 0)
-                Log(LogLevel.Warning, $"Boundary buffer \"{BoundaryBufferMmText}\" is invalid — using default {DefaultBoundaryBufferMm:F0} mm.");
+                Log(LogLevel.Warning, $"Boundary buffer \"{BoundaryBufferMmText}\" is invalid â€” using default {DefaultBoundaryBufferMm:F0} mm.");
 
             Log(LogLevel.Info,
-                $"Run · {selectedTypes.Count} type(s) selected, {selectedTypes.Sum(t => t.Count)} element(s) total, " +
+                $"Run Â· {selectedTypes.Count} type(s) selected, {selectedTypes.Sum(t => t.Count)} element(s) total, " +
                 $"section type '{SelectedSectionType?.Name ?? "(none)"}', tail {TailLengthMm:F0}mm.");
 
             _cancelRequested = false;
             IsRunning = true;
             PlacedCount = 0; SkippedCount = 0; ProgressPercent = 0;
-            ProgressStatusText = "Starting…";
+            ProgressStatusText = "Startingâ€¦";
 
             _eventHandler.PendingRequest = new PlaceSectionsEventHandler.RequestArgs
             {
@@ -716,7 +716,7 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V013.UI.ViewModels
         [RelayCommand]
         private void Close() => CloseRequested?.Invoke();
 
-        // ── Engine callbacks (API thread -> marshal to UI thread) ──────
+        // â”€â”€ Engine callbacks (API thread -> marshal to UI thread) â”€â”€â”€â”€â”€â”€
         private void OnEngineLog(LogEntry entry)
             => _uiDispatcher.BeginInvoke(new Action(() =>
             {
@@ -727,7 +727,7 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V013.UI.ViewModels
         private void OnEngineProgress(int current, int total)
             => _uiDispatcher.BeginInvoke(new Action(() =>
             {
-                ProgressStatusText = $"Processing… {current} of {total}";
+                ProgressStatusText = $"Processingâ€¦ {current} of {total}";
                 ProgressPercent = total == 0 ? 0 : (double)current / total * 100;
                 ProgressPercentText = $"{ProgressPercent:F0}%";
             }));
@@ -739,7 +739,7 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V013.UI.ViewModels
                 SkippedCount = summary.SkippedCount;
                 IsRunning = false;
                 ProgressStatusText =
-                    $"Completed — {summary.PlacedCount} placed | {summary.SkippedCount} skipped | {summary.FailedCount} failed";
+                    $"Completed â€” {summary.PlacedCount} placed | {summary.SkippedCount} skipped | {summary.FailedCount} failed";
             }));
 
         private void OnRunFaulted(Exception ex)
@@ -754,7 +754,7 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V013.UI.ViewModels
 
         private void Log(LogLevel level, string message) => LogEntries.Add(new LogEntry(level, message));
 
-        // ── Cleanup ───────────────────────────────────────────────────
+        // â”€â”€ Cleanup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public void Dispose()
         {
             if (_disposed) return;
@@ -776,3 +776,4 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V013.UI.ViewModels
         }
     }
 }
+

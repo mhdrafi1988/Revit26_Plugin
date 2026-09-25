@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -69,7 +69,7 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V004
             _activeLevel = planView.GenLevel;
 
             // NOTE (fix #10): Revit's API is not thread-safe outside the API execution
-            // context, so this can't be pushed onto a background Task — genuine async
+            // context, so this can't be pushed onto a background Task â€” genuine async
             // loading isn't available here. IsLoading at least gives the user a visible
             // "working" state instead of the window silently freezing during the scan.
             IsLoading = true;
@@ -234,7 +234,7 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V004
         private void CopyFloorSummary()
         {
             if (!HasFloorSummary) return;
-            Clipboard.SetText(FloorSummaryText);
+            System.Windows.Clipboard.SetText(FloorSummaryText);
             ShowToast("Floor summary copied to clipboard");
         }
 
@@ -242,7 +242,7 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V004
         private void CopyRoofSummary()
         {
             if (!HasRoofSummary) return;
-            Clipboard.SetText(RoofSummaryText);
+            System.Windows.Clipboard.SetText(RoofSummaryText);
             ShowToast("Roof summary copied to clipboard");
         }
 
@@ -251,7 +251,7 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V004
         {
             var sb = new StringBuilder();
             foreach (var l in Logs) sb.AppendLine(l.ToString());
-            Clipboard.SetText(sb.ToString());
+            System.Windows.Clipboard.SetText(sb.ToString());
             ShowToast("Logs copied to clipboard");
         }
 
@@ -295,6 +295,7 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V004
         }
 
         // Copy Selected is handled in code-behind (DataGrid/list selection is a UI concern),
-        // per the suite convention — see FloorsFromLinkedRoomsWindow.xaml.cs.
+        // per the suite convention â€” see FloorsFromLinkedRoomsWindow.xaml.cs.
     }
 }
+

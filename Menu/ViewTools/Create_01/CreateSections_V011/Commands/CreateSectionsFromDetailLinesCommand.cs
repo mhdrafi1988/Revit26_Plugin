@@ -1,4 +1,4 @@
-using Autodesk.Revit.Attributes;
+﻿using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
@@ -16,7 +16,7 @@ namespace Revit26_Plugin.CreateSections.V011.Commands
     /// - Dialog is shown modeless (Show()) instead of modal (ShowDialog()),
     ///   per suite convention. WindowInteropHelper sets the owner handle
     ///   from commandData.Application.MainWindowHandle (never
-    ///   Application.Current.MainWindow, which is unreliable in Revit's
+    ///   System.Windows.Application.Current.MainWindow, which is unreliable in Revit's
     ///   host process).
     /// - "Create" now raises a real, cached ExternalEvent
     ///   (SectionCreationExternalEvent) instead of calling the orchestrator
@@ -65,7 +65,7 @@ namespace Revit26_Plugin.CreateSections.V011.Commands
             var dialog = new SectionFromLineDialog(uidoc, commandData.Application);
             var vm = dialog.ViewModel;
 
-            // Modeless owner wiring — required so the dialog stays above
+            // Modeless owner wiring â€” required so the dialog stays above
             // Revit's main window without blocking it.
             new WindowInteropHelper(dialog).Owner = commandData.Application.MainWindowHandle;
 
@@ -77,7 +77,7 @@ namespace Revit26_Plugin.CreateSections.V011.Commands
             };
 
             // V009: preview scan handler for the "Sections To Create" grid.
-            // Separate ExternalEvent from Create's — read-only scan vs.
+            // Separate ExternalEvent from Create's â€” read-only scan vs.
             // write/commit are distinct Revit-side actions.
             var previewScanHandler = new SectionPreviewScanHandler(uidoc, plan, vm);
 
@@ -86,7 +86,7 @@ namespace Revit26_Plugin.CreateSections.V011.Commands
                 previewScanHandler.Raise(refs);
             };
 
-            dialog.Show(); // modeless — stays open, Revit remains usable
+            dialog.Show(); // modeless â€” stays open, Revit remains usable
 
             // V009: populate the grid once automatically on open, using the
             // same refs already picked above, so the user sees a preview
@@ -97,3 +97,4 @@ namespace Revit26_Plugin.CreateSections.V011.Commands
         }
     }
 }
+

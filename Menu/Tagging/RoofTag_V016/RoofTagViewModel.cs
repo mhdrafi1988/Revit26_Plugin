@@ -1,4 +1,4 @@
-using Autodesk.Revit.DB;
+﻿using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -104,7 +104,7 @@ namespace Revit26_Plugin.RoofTag.V016
         private bool _clusterFilterEnabled = true;
         private double _clusterRadius = 600.0;
 
-        /// <summary>Rule 1 — when true, only one tag is placed per cluster of same-elevation points.</summary>
+        /// <summary>Rule 1 â€” when true, only one tag is placed per cluster of same-elevation points.</summary>
         public bool ClusterFilterEnabled
         {
             get => _clusterFilterEnabled;
@@ -128,7 +128,7 @@ namespace Revit26_Plugin.RoofTag.V016
         private double _interiorLoopSpacing = 500.0;
         private double _interiorLoopBoundaryTolerance = 50.0;
 
-        /// <summary>Rule 2 — interior loops. When true, each interior loop is reduced
+        /// <summary>Rule 2 â€” interior loops. When true, each interior loop is reduced
         /// to its top 4 highest points (or fewer), collapsing to a single point if
         /// they aren't spaced far enough apart. Runs before Rule 1.</summary>
         public bool InteriorLoopReductionEnabled
@@ -144,7 +144,7 @@ namespace Revit26_Plugin.RoofTag.V016
             set => SetProperty(ref _interiorLoopSpacing, value);
         }
 
-        /// <summary>Rule 2 — max horizontal distance from a point to an interior
+        /// <summary>Rule 2 â€” max horizontal distance from a point to an interior
         /// loop's boundary curve for that point to count as belonging to it, in mm.</summary>
         public double InteriorLoopBoundaryTolerance
         {
@@ -156,7 +156,7 @@ namespace Revit26_Plugin.RoofTag.V016
         private double _exteriorLoopSpacing = 500.0;
         private double _exteriorLoopBoundaryTolerance = 50.0;
 
-        /// <summary>Rule 3 — exterior (outer boundary) loop. Same mechanism as Rule 2,
+        /// <summary>Rule 3 â€” exterior (outer boundary) loop. Same mechanism as Rule 2,
         /// but scoped to only the roof's outer boundary loop, with its own settings.
         /// Runs independently of Rule 2, after it.</summary>
         public bool ExteriorLoopReductionEnabled
@@ -172,7 +172,7 @@ namespace Revit26_Plugin.RoofTag.V016
             set => SetProperty(ref _exteriorLoopSpacing, value);
         }
 
-        /// <summary>Rule 3 — max horizontal distance from a point to the outer
+        /// <summary>Rule 3 â€” max horizontal distance from a point to the outer
         /// boundary curve for that point to count as belonging to it, in mm.</summary>
         public double ExteriorLoopBoundaryTolerance
         {
@@ -217,7 +217,7 @@ namespace Revit26_Plugin.RoofTag.V016
             if (LogEntries.Count == 0) return;
             var text = string.Join(System.Environment.NewLine,
                 LogEntries.Select(e => e.ToString()));
-            Clipboard.SetText(text);
+            System.Windows.Clipboard.SetText(text);
         }
 
         private void LoadTagTypes()
@@ -262,3 +262,4 @@ namespace Revit26_Plugin.RoofTag.V016
         public override string ToString() => Name;
     }
 }
+

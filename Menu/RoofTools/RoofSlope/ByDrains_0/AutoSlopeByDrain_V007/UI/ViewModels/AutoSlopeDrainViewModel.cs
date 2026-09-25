@@ -1,4 +1,4 @@
-// File: AutoSlopeDrainViewModel.cs
+﻿// File: AutoSlopeDrainViewModel.cs
 // Location: UI/ViewModels/
 // Base: AutoSlopeByDrain V004's AutoSlopeDrainViewModel (Select All/None/
 // Invert, size filter + DataGrid sorting via ICollectionView, Run wiring
@@ -10,21 +10,21 @@
 //     instead of the hand-rolled INotifyPropertyChanged + plain
 //     RelayCommand pattern both V004 and ByPoint V018 actually used. This
 //     is an intentional deviation from both prior tools' pattern, flagged
-//     explicitly per Rafi's request — requires a confirmed
+//     explicitly per Rafi's request â€” requires a confirmed
 //     CommunityToolkit.Mvvm PackageReference in the .csproj (Rafi is
 //     wiring the .csproj himself; not included here).
 //   ADDED   ThresholdMeters (Max Path Distance) input, distinct from
-//     ConnectionThresholdMeters (Max Edge Distance) — ported from ByPoint.
+//     ConnectionThresholdMeters (Max Edge Distance) â€” ported from ByPoint.
 //   ADDED   InsertCurveIntersectionPoints toggle (off by default).
 //   ADDED   VerifyElevationsAfterCommit toggle (OFF by default).
 //   CHANGED export: Excel-only (ExportToExcel replaces ExportToCsv),
 //     single exported file path instead of Detailed+Summary pair.
-//   ADDED   settings persistence via SettingsService — loads on
+//   ADDED   settings persistence via SettingsService â€” loads on
 //     construction, saves after a successful Run and can be called on
 //     window close from the code-behind.
 //   ADDED   CanRun / RunDisabledReason surfaced so the View can show an
 //     inline hint ("Select at least one drain to run") when the Run
-//     button is disabled specifically because 0 drains are selected —
+//     button is disabled specifically because 0 drains are selected â€”
 //     confirmed UX decision, not a silent disable with no explanation.
 //   ADDED   TotalDetectedCount / SelectedCount / ArcsCalculated metric
 //     bindings for the new UI metric cards.
@@ -51,7 +51,7 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels
 {
     public partial class AutoSlopeDrainViewModel : ObservableObject
     {
-        // Must be public (not private) — [ObservableProperty] generates a public
+        // Must be public (not private) â€” [ObservableProperty] generates a public
         // State property, and a public property cannot expose a less-accessible
         // type. The enum is still only meant for internal use within this
         // ViewModel; nothing outside binds to it directly.
@@ -69,7 +69,7 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels
         private bool IsRunning => State == RunState.Running;
         private bool IsComplete => State == RunState.Done;
 
-        /// <summary>NEW. Done OR Cancelled — used only to gate display of real numbers; NOT used for Run-button re-enablement (see IsComplete), so cancelling never permanently locks the Run button.</summary>
+        /// <summary>NEW. Done OR Cancelled â€” used only to gate display of real numbers; NOT used for Run-button re-enablement (see IsComplete), so cancelling never permanently locks the Run button.</summary>
         private bool IsFinished => State == RunState.Done || State == RunState.Cancelled;
 
         public string StatusMessage => State switch
@@ -80,7 +80,7 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels
             _ => "Ready"
         };
 
-        // ── Roof / drains ─────────────────────────────────────────────────────
+        // â”€â”€ Roof / drains â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public UIDocument UIDoc { get; }
         public UIApplication App { get; }
         private readonly RoofData _roofData;
@@ -108,13 +108,13 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels
 
         /// <summary>
         /// NEW (V005). True only when the Run button is disabled specifically
-        /// because 0 drains are selected — the View shows an inline hint in
+        /// because 0 drains are selected â€” the View shows an inline hint in
         /// this case rather than a silent disable with no explanation, per
         /// Rafi's confirmed UX decision.
         /// </summary>
         public bool ShowNoDrainsSelectedHint => !IsRunning && !IsComplete && SelectedDrainsCount == 0;
 
-        // ── Slope inputs ──────────────────────────────────────────────────────
+        // â”€â”€ Slope inputs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public List<string> SlopeOptions { get; } = new List<string> { "1.0", "1.5", "2.0", "2.5", "3.0" };
 
         [ObservableProperty]
@@ -138,7 +138,7 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels
         [ObservableProperty]
         private bool verifyElevationsAfterCommit = false;
 
-        // ── Circle Markers — ported from AutoSlopeByPoint ────────────────────
+        // â”€â”€ Circle Markers â€” ported from AutoSlopeByPoint â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         /// <summary>Style/config for circles placed on selected drain openings.</summary>
         public CircleMarkerGroup DrainMarkerGroup { get; } = new CircleMarkerGroup
         {
@@ -161,18 +161,18 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels
         /// <summary>
         /// Project's existing Line Style options (OST_Lines subcategories),
         /// populated in the constructor via FilteredElementCollector. The tool
-        /// never creates new line styles — user picks from what already exists.
+        /// never creates new line styles â€” user picks from what already exists.
         /// </summary>
         public ObservableCollection<LineStyleOption> LineStyleOptions { get; } = new ObservableCollection<LineStyleOption>();
 
-        // ── Export ────────────────────────────────────────────────────────────
+        // â”€â”€ Export â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [ObservableProperty]
         private string exportFolderPath;
 
-        // ── Log ───────────────────────────────────────────────────────────────
+        // â”€â”€ Log â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public ObservableCollection<LogEntry> LogEntries { get; } = new ObservableCollection<LogEntry>();
 
-        // ── Results / metrics ─────────────────────────────────────────────────
+        // â”€â”€ Results / metrics â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(LongestPathDisplay))]
         private double longestPath_m;
@@ -186,7 +186,7 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels
         [ObservableProperty]
         private int runDuration_sec;
 
-        // ── Progress / Cancel — NEW, per Rafi's confirmed decisions ────────────
+        // â”€â”€ Progress / Cancel â€” NEW, per Rafi's confirmed decisions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [ObservableProperty]
         private bool isProgressVisible;
 
@@ -208,8 +208,8 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels
         {
             if (_runCts == null || _runCts.IsCancellationRequested) return;
             _runCts.Cancel();
-            ProgressPhaseText = "Cancelling…";
-            AddLog(new LogEntry(LogLevel.Warning, "Cancel requested — the run rolls back (nothing has been written to the model yet) and stops."));
+            ProgressPhaseText = "Cancellingâ€¦";
+            AddLog(new LogEntry(LogLevel.Warning, "Cancel requested â€” the run rolls back (nothing has been written to the model yet) and stops."));
         }
 
         [ObservableProperty]
@@ -237,14 +237,14 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels
 
         private AutoSlopeDrainResult _lastResult;
 
-        // ── Constructor ───────────────────────────────────────────────────────
+        // â”€â”€ Constructor â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public AutoSlopeDrainViewModel(UIDocument uidoc, UIApplication app, RoofData roofData)
         {
             UIDoc = uidoc;
             App = app;
             _roofData = roofData;
 
-            RoofSubtitle = $"Revit 2026 · Roof: {roofData.Roof.Name} (Id {roofData.Roof.Id.Value})";
+            RoofSubtitle = $"Revit 2026 Â· Roof: {roofData.Roof.Name} (Id {roofData.Roof.Id.Value})";
 
             var detectionService = new DrainDetectionService();
 
@@ -260,7 +260,7 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels
             FilteredDrainsView = CollectionViewSource.GetDefaultView(AllDrains);
             FilteredDrainsView.Filter = FilterDrainItem;
 
-            // ── Grouped/sorted drain grid ────────────────────────────────────
+            // â”€â”€ Grouped/sorted drain grid â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             // Groups by ShapeGroup (Circle / Rectangle / Other), group order fixed
             // via ShapeGroupOrder (not detection order), and within each group
             // sorted by opening size (bounding-box area) ascending.
@@ -272,7 +272,7 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels
 
             LoadLineStyleOptions();
 
-            // ── NEW (V005): load persisted settings, falling back to AppConstants
+            // â”€â”€ NEW (V005): load persisted settings, falling back to AppConstants
             // defaults for anything not yet saved (first run, or a fresh machine).
             var settings = SettingsService.Load(msg => AddLog(new LogEntry(LogLevel.Warning, msg)));
 
@@ -304,10 +304,10 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels
             AutoSlopeDrainEventManager.Init();
         }
 
-        // ── LoadLineStyleOptions ─────────────────────────────────────────────
+        // â”€â”€ LoadLineStyleOptions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         /// <summary>
         /// Populates LineStyleOptions from the project's existing OST_Lines
-        /// subcategories (GraphicsStyle elements) — ported from AutoSlopeByPoint.
+        /// subcategories (GraphicsStyle elements) â€” ported from AutoSlopeByPoint.
         /// The tool never creates new line styles.
         /// </summary>
         private void LoadLineStyleOptions()
@@ -377,7 +377,7 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels
             RadiusMm = group.RadiusMm
         };
 
-        // ── Filtering ───────────────────────────────────────────────────────────
+        // â”€â”€ Filtering â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         private void OnDrainPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName != nameof(DrainItem.IsSelected)) return;
@@ -424,7 +424,7 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels
             RunAutoSlopeCommand.NotifyCanExecuteChanged();
         }
 
-        /// <summary>Checks every visible drain in one shape group ("Circle"/"Rectangle"/"Other") — bound to each DataGrid group header's "All" button.</summary>
+        /// <summary>Checks every visible drain in one shape group ("Circle"/"Rectangle"/"Other") â€” bound to each DataGrid group header's "All" button.</summary>
         [RelayCommand]
         private void SelectAllInGroup(object groupName)
         {
@@ -436,7 +436,7 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels
             RunAutoSlopeCommand.NotifyCanExecuteChanged();
         }
 
-        /// <summary>Unchecks every visible drain in one shape group — bound to each DataGrid group header's "None" button.</summary>
+        /// <summary>Unchecks every visible drain in one shape group â€” bound to each DataGrid group header's "None" button.</summary>
         [RelayCommand]
         private void SelectNoneInGroup(object groupName)
         {
@@ -454,7 +454,7 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels
             OnPropertyChanged(nameof(ShowNoDrainsSelectedHint));
         }
 
-        // ── Run ───────────────────────────────────────────────────────────────
+        // â”€â”€ Run â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         private bool CanRunAutoSlope() => !IsRunning && !IsComplete && AllDrains.Any(d => d.IsSelected);
 
         /// <summary>Raised after RunAutoSlope completes or bails out early (true =
@@ -493,14 +493,14 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels
             }
 
             // UPDATED (V005, second round): pass the checked DrainItem objects
-            // directly, per Rafi's confirmed decision — no more lightweight
+            // directly, per Rafi's confirmed decision â€” no more lightweight
             // signatures. The Engine reuses these exact objects (including their
             // LoopCurves) rather than re-detecting and position-matching.
             var selectedDrainItems = AllDrains.Where(d => d.IsSelected).ToList();
 
             if (selectedDrainItems.Count == 0)
             {
-                // Defensive backstop — CanRunAutoSlope already prevents this in
+                // Defensive backstop â€” CanRunAutoSlope already prevents this in
                 // normal use via the disabled Run button + inline hint.
                 AddLog(new LogEntry(LogLevel.Warning, "No drains selected for slope application."));
                 RunCompleted?.Invoke(false);
@@ -511,12 +511,12 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels
             LogEntries.Clear();
 
             // NEW: fresh CancellationTokenSource per Run click. The bar starts
-            // indeterminate ("Starting…") since nothing has reported yet.
+            // indeterminate ("Startingâ€¦") since nothing has reported yet.
             _runCts = new CancellationTokenSource();
             IsProgressVisible = true;
             ProgressPercent = 0;
             ProgressIsIndeterminate = true;
-            ProgressPhaseText = "Starting…";
+            ProgressPhaseText = "Startingâ€¦";
 
             AddLog(new LogEntry(LogLevel.Info, "Starting AutoSlope By Drain..."));
 
@@ -551,7 +551,7 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels
                 },
                 CancelToken = _runCts.Token,
                 // NEW: called synchronously on the SAME thread as this run
-                // (Revit's main thread), never via BeginInvoke — updates the
+                // (Revit's main thread), never via BeginInvoke â€” updates the
                 // properties and then immediately forces WPF to repaint + process a
                 // queued Cancel click.
                 Progress = info =>
@@ -572,7 +572,7 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels
                 },
                 OnCompleted = result =>
                 {
-                    Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                     {
                         IsProgressVisible = false;
                         _runCts = null;
@@ -663,7 +663,7 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels
         {
             if (LogEntries.Count == 0) return;
             string text = string.Join(Environment.NewLine, LogEntries.Select(e => e.ToString()));
-            Clipboard.SetText(text);
+            System.Windows.Clipboard.SetText(text);
         }
 
         /// <summary>
@@ -692,10 +692,10 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels
             });
         }
 
-        // ── AddLog (thread-safe) ──────────────────────────────────────────────
+        // â”€â”€ AddLog (thread-safe) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         private void AddLog(LogEntry entry)
         {
-            var dispatcher = Application.Current.Dispatcher;
+            var dispatcher = System.Windows.Application.Current.Dispatcher;
             if (dispatcher.CheckAccess())
                 LogEntries.Add(entry);
             else

@@ -1,15 +1,15 @@
-// =======================================================
+﻿// =======================================================
 // File: RoofDetailLineIntersectViewModel.cs
 // Location: UI/ViewModels/
 // Changes vs V008:
 //   MOVED all geometry/placement logic out to
 //   Core/Engine/RoofDetailLineIntersectEngine.cs (see that file's
-//   header) — this suite's vertical-slice convention keeps Core/Engine
+//   header) â€” this suite's vertical-slice convention keeps Core/Engine
 //   logic out of UI/ViewModels.
 //   The private inner IExternalEventHandler class + directly-held
 //   Document/FootPrintRoof/List<DetailLine> fields are replaced by the
 //   standard Payload/Handler/EventManager pattern used by every other
-//   tool — RoofId/DetailLineIds (ElementIds) are carried across the
+//   tool â€” RoofId/DetailLineIds (ElementIds) are carried across the
 //   boundary and re-resolved inside the Handler, rather than holding
 //   live Element references across multiple Run clicks.
 //   [RelayCommand] attributes replace the hand-wired
@@ -17,7 +17,7 @@
 //   ObservableObject-based, just not using the attributes).
 // Changes vs V011:
 //   Added IncludeLineToLineIntersections (default true) + its result
-//   counter LineToLineIntersectionsFound — new option to also place
+//   counter LineToLineIntersectionsFound â€” new option to also place
 //   shape points where selected detail lines cross each other, not
 //   just where they cross the roof boundary.
 // =======================================================
@@ -50,7 +50,7 @@ namespace Revit26_Plugin.RoofDetailLineIntersect.V012.UI.ViewModels
         [ObservableProperty] private int    pointsPlaced;
         [ObservableProperty] private int    skippedCount;
 
-        /// <summary>New in V012 — also place points where selected detail lines cross each other.</summary>
+        /// <summary>New in V012 â€” also place points where selected detail lines cross each other.</summary>
         [ObservableProperty] private bool   includeLineToLineIntersections = true;
 
         [ObservableProperty]
@@ -73,7 +73,7 @@ namespace Revit26_Plugin.RoofDetailLineIntersect.V012.UI.ViewModels
             RoofDetailLineIntersectEventManager.Init();
         }
 
-        // ── Trigger ExternalEvent ─────────────────────────────────────────────
+        // â”€â”€ Trigger ExternalEvent â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [RelayCommand(CanExecute = nameof(CanRun))]
         private void Run()
         {
@@ -92,7 +92,7 @@ namespace Revit26_Plugin.RoofDetailLineIntersect.V012.UI.ViewModels
                 Log                            = AddLog,
                 OnCompleted                    = result =>
                 {
-                    Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                     {
                         IsBusy = false;
 
@@ -123,7 +123,7 @@ namespace Revit26_Plugin.RoofDetailLineIntersect.V012.UI.ViewModels
 
         private bool CanRun() => !IsBusy;
 
-        // ── Log & Copy ────────────────────────────────────────────────────────
+        // â”€â”€ Log & Copy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         [RelayCommand]
         private void CopyLog()
         {
@@ -131,14 +131,14 @@ namespace Revit26_Plugin.RoofDetailLineIntersect.V012.UI.ViewModels
             var sb = new StringBuilder();
             foreach (var entry in LogEntries)
                 sb.AppendLine(entry.ToString());
-            Clipboard.SetText(sb.ToString());
+            System.Windows.Clipboard.SetText(sb.ToString());
         }
 
         private void AddLog(LogLevel level, string message) => AddLog(new LogEntry(level, message));
 
         private void AddLog(LogEntry entry)
         {
-            var dispatcher = Application.Current.Dispatcher;
+            var dispatcher = System.Windows.Application.Current.Dispatcher;
             if (dispatcher.CheckAccess())
                 LogEntries.Add(entry);
             else
@@ -146,3 +146,4 @@ namespace Revit26_Plugin.RoofDetailLineIntersect.V012.UI.ViewModels
         }
     }
 }
+

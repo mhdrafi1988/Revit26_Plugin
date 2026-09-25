@@ -1,4 +1,4 @@
-using Autodesk.Revit.DB;
+﻿using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using System;
 using System.Collections.Generic;
@@ -18,7 +18,7 @@ namespace Revit26_Plugin.CreateSections.V011.Services
     ///
     /// V008 changes from V07:
     /// - Runs from IExternalEventHandler.Execute() (see SectionCreationExternalEvent),
-    ///   not directly off the VM's CreateRequested event on the UI thread —
+    ///   not directly off the VM's CreateRequested event on the UI thread â€”
     ///   this is what makes the live log actually live and Cancel actually work.
     /// - Increments VM metric counters (Selected/Created/Skipped/Failed/Renamed)
     ///   as each line resolves, for the metric cards.
@@ -30,7 +30,7 @@ namespace Revit26_Plugin.CreateSections.V011.Services
     ///
     /// V009 changes from V008:
     /// - Start() now takes the full IList&lt;Reference&gt; PLUS reads
-    ///   _vm.PreviewRows to determine which lines are actually included —
+    ///   _vm.PreviewRows to determine which lines are actually included â€”
     ///   per confirmed spec, the "Sections To Create" grid's checked rows
     ///   are the source of truth for Create, not the raw PickObjects
     ///   selection. Unchecked/filtered-out lines are silently excluded
@@ -41,9 +41,9 @@ namespace Revit26_Plugin.CreateSections.V011.Services
     /// V010 fix (metrics/log dialog):
     /// - The whole per-line loop runs synchronously inside one
     ///   IExternalEventHandler.Execute() call, so WPF never got a chance
-    ///   to repaint metric card bindings mid-loop — only the live log
+    ///   to repaint metric card bindings mid-loop â€” only the live log
     ///   appeared "live", because LiveLogService explicitly pushes each
-    ///   entry via Application.Current.Dispatcher.Invoke. Metric writes
+    ///   entry via System.Windows.Application.Current.Dispatcher.Invoke. Metric writes
     ///   now go through the same UpdateUi(...) dispatch so cards update
     ///   per line, not just at the end.
     /// - ExportLog() no longer opens OpenFolderDialog automatically. It
@@ -60,7 +60,7 @@ namespace Revit26_Plugin.CreateSections.V011.Services
             "Revit26_Plugin", "CreateSectionsFromDetailLines", "Logs");
 
         /// <summary>Marshals a VM mutation onto the UI thread so bound controls (metric cards) repaint immediately.</summary>
-        private static void UpdateUi(Action action) => Application.Current.Dispatcher.Invoke(action);
+        private static void UpdateUi(Action action) => System.Windows.Application.Current.Dispatcher.Invoke(action);
 
         private readonly Document _doc;
         private readonly ViewPlan _plan;
@@ -101,7 +101,7 @@ namespace Revit26_Plugin.CreateSections.V011.Services
 
             if (included.Count == 0)
             {
-                _log.Warn("No sections checked in the preview grid — nothing to create.");
+                _log.Warn("No sections checked in the preview grid â€” nothing to create.");
                 return;
             }
 
@@ -195,7 +195,7 @@ namespace Revit26_Plugin.CreateSections.V011.Services
                 }
 
                 if (host == null)
-                    _log.Warn($"Line {dl.Id.Value}: no qualifying host found — using threshold fallback ({options.SearchThresholdMm}mm).");
+                    _log.Warn($"Line {dl.Id.Value}: no qualifying host found â€” using threshold fallback ({options.SearchThresholdMm}mm).");
 
                 using Transaction tx =
                     new(_doc, "Create Section");
@@ -255,12 +255,12 @@ namespace Revit26_Plugin.CreateSections.V011.Services
         }
 
         /// <summary>
-        /// V010 fix: auto-saves the log on completion silently — no dialog.
+        /// V010 fix: auto-saves the log on completion silently â€” no dialog.
         /// Uses _vm.LogSaveFolder if the user already picked one via the
         /// Browse button (persisted to settings.json); otherwise falls back
         /// to DefaultLogFolder. Assumption: falling back silently (rather
         /// than skipping export) matches the suite's "auto-save log on
-        /// completion" convention — flag if a skip-until-Browse behavior
+        /// completion" convention â€” flag if a skip-until-Browse behavior
         /// is preferred instead.
         /// </summary>
         private void ExportLog()
@@ -282,3 +282,4 @@ namespace Revit26_Plugin.CreateSections.V011.Services
         }
     }
 }
+

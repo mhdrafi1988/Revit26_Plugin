@@ -1,4 +1,4 @@
-using Autodesk.Revit.UI;
+﻿using Autodesk.Revit.UI;
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -200,7 +200,7 @@ namespace Revit26_Plugin.WSFL.V011.ViewModels
 
         private void RefreshData()
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            System.Windows.Application.Current.Dispatcher.Invoke(() =>
             {
                 AddLog(new LogEntry(LogLevel.Info, "Refreshing UI data..."));
                 Items.Clear();
@@ -298,7 +298,7 @@ namespace Revit26_Plugin.WSFL.V011.ViewModels
             {
                 _service.CreateAndAssign(_doc, toProcess, this);
                 AddLog(new LogEntry(LogLevel.Info,
-                    $"Done — created and assigned {toProcess.Count} workset(s)."));
+                    $"Done â€” created and assigned {toProcess.Count} workset(s)."));
             }
             catch (Exception ex)
             {
@@ -380,7 +380,7 @@ namespace Revit26_Plugin.WSFL.V011.ViewModels
 
         public void AddLog(LogEntry entry)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            System.Windows.Application.Current.Dispatcher.Invoke(() =>
             {
                 Log.Insert(0, entry);
             }, DispatcherPriority.Background);
