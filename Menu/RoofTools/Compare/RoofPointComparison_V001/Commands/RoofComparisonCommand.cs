@@ -10,7 +10,7 @@ using Revit26_Plugin.Utilities;
 namespace Revit26_Plugin.RoofPointComparison.V001.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    [Regeneration(RegenerationOption.NotNeeded)]
+    [Regeneration(RegenerationOption.Manual)]
     public class RoofComparisonCommand : IExternalCommand
     {
         public Result Execute(ExternalCommandData data, ref string msg, ElementSet elems)

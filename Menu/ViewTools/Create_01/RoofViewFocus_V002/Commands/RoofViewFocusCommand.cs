@@ -18,7 +18,7 @@ namespace Revit26_Plugin.RoofViewFocus.V002.Commands
     /// pre-selection (one or more roofs), then opens the modeless window.
     /// </summary>
     [Transaction(TransactionMode.Manual)]
-    [Regeneration(RegenerationOption.NotNeeded)]
+    [Regeneration(RegenerationOption.Manual)]
     public class RoofViewFocusCommand : IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)

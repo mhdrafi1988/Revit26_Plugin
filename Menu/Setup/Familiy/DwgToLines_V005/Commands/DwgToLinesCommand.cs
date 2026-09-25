@@ -18,7 +18,7 @@ namespace Revit26_Plugin.DwgToLines.V005.Commands
     /// Enforces Family Editor context and launches the UI.
     /// </summary>
     [Transaction(TransactionMode.Manual)]
-    [Regeneration(RegenerationOption.NotNeeded)]
+    [Regeneration(RegenerationOption.Manual)]
     public class DwgToLinesCommand : IExternalCommand
     {
         public Result Execute(

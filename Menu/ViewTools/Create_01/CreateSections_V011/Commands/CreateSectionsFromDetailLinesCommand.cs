@@ -29,7 +29,7 @@ namespace Revit26_Plugin.CreateSections.V011.Commands
     ///   RefreshPreviewRequested fires (grid toolbar's Refresh button).
     /// </summary>
     [Transaction(TransactionMode.Manual)]
-    [Regeneration(RegenerationOption.NotNeeded)]
+    [Regeneration(RegenerationOption.Manual)]
     public class CreateSectionsFromDetailLines : IExternalCommand
     {
         public Result Execute(

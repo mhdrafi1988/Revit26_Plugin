@@ -28,7 +28,7 @@ namespace Revit26_Plugin.AutoSlopeByPointRidge.V001.Commands
 
 {
     [Transaction(TransactionMode.Manual)]
-    [Regeneration(RegenerationOption.NotNeeded)]
+    [Regeneration(RegenerationOption.Manual)]
     public class AutoSlopeCommand : IExternalCommand
     {
         public Result Execute(ExternalCommandData data, ref string msg, ElementSet elems)

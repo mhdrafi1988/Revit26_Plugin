@@ -9,7 +9,7 @@ using Revit26_Plugin.Utilities;
 namespace Revit26_Plugin.CalloutCOP.V019.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    [Regeneration(RegenerationOption.NotNeeded)]
+    [Regeneration(RegenerationOption.Manual)]
     public class CalloutCOPCommand : IExternalCommand
     {
         public Result Execute(

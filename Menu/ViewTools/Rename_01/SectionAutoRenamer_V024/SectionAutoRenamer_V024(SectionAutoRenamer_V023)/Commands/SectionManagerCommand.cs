@@ -10,7 +10,7 @@ using Revit26_Plugin.Utilities;
 namespace Revit26_Plugin.SectionAutoRenamer.V024.Commands;
 
 [Transaction(TransactionMode.Manual)]
-[Regeneration(RegenerationOption.NotNeeded)]
+[Regeneration(RegenerationOption.Manual)]
 public class OpenSectionManagerCommand : IExternalCommand
 {
     public Result Execute(ExternalCommandData c, ref string m, ElementSet e)

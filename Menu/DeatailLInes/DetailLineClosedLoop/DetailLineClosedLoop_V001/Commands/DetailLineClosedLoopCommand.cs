@@ -10,7 +10,7 @@ using Revit26_Plugin.Utilities;
 namespace Revit26_Plugin.DetailLineClosedLoop.V001.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    [Regeneration(RegenerationOption.NotNeeded)]
+    [Regeneration(RegenerationOption.Manual)]
     public class DetailLineClosedLoopCommand : IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)

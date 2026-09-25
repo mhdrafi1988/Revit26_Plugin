@@ -25,7 +25,7 @@ using Revit26_Plugin.Utilities;
 namespace Revit26_Plugin.CreaserAdv.V010.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    [Regeneration(RegenerationOption.NotNeeded)]
+    [Regeneration(RegenerationOption.Manual)]
     public class CreaserAdvCommand : IExternalCommand
     {
         public Result Execute(

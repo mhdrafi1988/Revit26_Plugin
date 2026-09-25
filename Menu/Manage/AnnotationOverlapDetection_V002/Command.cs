@@ -8,7 +8,7 @@ using Revit26_Plugin.Utilities;
 namespace Revit26_Plugin.AnnotationOverlapDetection.V002
 {
     [Transaction(TransactionMode.ReadOnly)]
-    [Regeneration(RegenerationOption.NotNeeded)]
+    [Regeneration(RegenerationOption.Manual)]
     public class Command : IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)

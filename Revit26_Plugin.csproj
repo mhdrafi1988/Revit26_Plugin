@@ -5,15 +5,8 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<PackageId>SloperPro</PackageId>
+		<PackageId />
 		<AssemblyName>Revit26_Plugin</AssemblyName>
-		<Product>SloperPro</Product>
-		<Company>MuhammedRafi</Company>
-		<Description>SloperPro — Revit productivity tools for roof slope, sections, sheets, worksets, and detail lines.</Description>
-		<Version>1.0.0</Version>
-		<AssemblyVersion>1.0.0.0</AssemblyVersion>
-		<FileVersion>1.0.0.0</FileVersion>
-		<Copyright>Copyright © 2026 MuhammedRafi</Copyright>
 		<BaseOutputPath></BaseOutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

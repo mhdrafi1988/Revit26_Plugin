@@ -9,7 +9,7 @@ using Revit26_Plugin.Utilities;
 namespace BatchDwgFamilyLinker.Command
 {
     [Transaction(TransactionMode.Manual)]
-    [Regeneration(RegenerationOption.NotNeeded)]
+    [Regeneration(RegenerationOption.Manual)]
     public class BatchLinkDwgCommand : IExternalCommand
     {
         public Result Execute(

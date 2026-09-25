@@ -9,7 +9,7 @@ using Revit26_Plugin.Utilities;
 namespace Revit26_Plugin.BubbleAutoRenumber.V006.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    [Regeneration(RegenerationOption.NotNeeded)]
+    [Regeneration(RegenerationOption.Manual)]
     public class SectionAutoRenumberCommand : IExternalCommand
     {
         // Single window instance — prevents opening duplicates

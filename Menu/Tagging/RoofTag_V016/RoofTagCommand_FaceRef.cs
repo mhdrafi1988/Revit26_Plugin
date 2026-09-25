@@ -11,7 +11,7 @@ using Revit26_Plugin.Utilities;
 namespace Revit26_Plugin.RoofTag.V016
 {
     [Transaction(TransactionMode.Manual)]
-    [Regeneration(RegenerationOption.NotNeeded)]
+    [Regeneration(RegenerationOption.Manual)]
     public class RoofTagCommand : IExternalCommand
     {
         private const double PointDedupTolFt = 10.0 / 304.8;
