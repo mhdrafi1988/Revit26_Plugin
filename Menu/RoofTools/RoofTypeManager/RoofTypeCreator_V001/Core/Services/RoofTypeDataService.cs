@@ -28,6 +28,29 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.Core.Services
                 string typeMark = rt.get_Parameter(BuiltInParameter.ALL_MODEL_TYPE_MARK)?.AsString() ?? "";
                 string function = rt.get_Parameter(BuiltInParameter.FUNCTION_PARAM)?.AsValueString() ?? "Exterior";
 
+                var layers = new List<LayerData>();
+                if (cs != null)
+                {
+                    int varIdx = cs.VariableLayerIndex;
+                    for (int li = 0; li < cs.LayerCount; li++)
+                    {
+                        var layer = cs.GetLayer(li);
+                        string mat = layer.MaterialId != ElementId.InvalidElementId
+                            ? (doc.GetElement(layer.MaterialId) as Material)?.Name ?? ""
+                            : "";
+                        double thick = Math.Round(
+                            UnitUtils.ConvertFromInternalUnits(layer.Width, UnitTypeId.Millimeters), 1);
+                        layers.Add(new LayerData
+                        {
+                            MaterialName  = mat,
+                            ThicknessMm   = thick,
+                            LayerFunction = layer.Function.ToString(),
+                            Priority      = layer.Priority,
+                            IsVariable    = li == varIdx
+                        });
+                    }
+                }
+
                 items.Add(new RoofTypeItem
                 {
                     TypeId           = rt.Id,
@@ -36,6 +59,7 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.Core.Services
                     Function         = function,
                     LayerCount       = layerCount,
                     TotalThicknessMm = thicknessMm,
+                    Layers           = layers,
                     IsSelected       = false
                 });
             }

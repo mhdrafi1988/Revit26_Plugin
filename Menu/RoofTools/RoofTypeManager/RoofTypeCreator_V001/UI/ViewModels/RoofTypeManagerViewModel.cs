@@ -52,6 +52,8 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.UI.ViewModels
         [NotifyCanExecuteChangedFor(nameof(ImportCommand))]
         private int newImportCount;
 
+        [ObservableProperty] private int dupImportCount;
+
         // ── Header checkbox for export grid ─────────────────────
         [ObservableProperty] private bool allExportItemsSelected;
         partial void OnAllExportItemsSelectedChanged(bool value)
@@ -61,10 +63,11 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.UI.ViewModels
         }
 
         // ── Completion summary ───────────────────────────────────
-        [ObservableProperty] private int importedCount;
-        [ObservableProperty] private int duplicateCount;
-        [ObservableProperty] private int failedCount;
-        [ObservableProperty] private string lastRunTime = "";
+        [ObservableProperty] private int    importedCount;
+        [ObservableProperty] private int    renamedCount;
+        [ObservableProperty] private int    failedCount;
+        [ObservableProperty] private string lastRunTime    = "";
+        [ObservableProperty] private string lastExportPath = "";   // non-empty → show Open button
 
         // ── Ctor ────────────────────────────────────────────────
         public RoofTypeManagerViewModel(UIApplication uiApp)
@@ -78,6 +81,7 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.UI.ViewModels
                 OnExportDone    = path     => _dispatcher.Invoke(() => ApplyExportDone(path)),
                 OnPreviewLoaded = items    => _dispatcher.Invoke(() => ApplyPreview(items)),
                 OnImportDone    = result   => _dispatcher.Invoke(() => ApplyImportDone(result)),
+                OnTemplateDone  = path     => _dispatcher.Invoke(() => IsBusy = false),
                 OnLog           = (lv, msg)=> _dispatcher.Invoke(() => AppendLog(lv, msg))
             };
 
@@ -151,7 +155,28 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.UI.ViewModels
             _handler.ItemsToImport = ImportPreviewItems.ToList();
             RaiseRequest(RoofTypeRequest.ImportNew);
         }
-        private bool CanImport() => !IsBusy && NewImportCount > 0;
+        private bool CanImport() => !IsBusy && ImportPreviewItems.Count > 0;
+
+        [RelayCommand]
+        private void DownloadTemplate()
+        {
+            var dlg = new SaveFileDialog
+            {
+                Filter   = "Excel Files (*.xlsx)|*.xlsx",
+                FileName = "RoofType_Import_Template.xlsx",
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
+            };
+            if (dlg.ShowDialog() != true) return;
+            _handler.TemplateFilePath = dlg.FileName;
+            RaiseRequest(RoofTypeRequest.DownloadTemplate);
+        }
+
+        [RelayCommand]
+        private void OpenExportFile()
+        {
+            if (!string.IsNullOrEmpty(LastExportPath) && File.Exists(LastExportPath))
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(LastExportPath) { UseShellExecute = true });
+        }
 
         [RelayCommand]
         private void CopyAllLogs()
@@ -220,7 +245,11 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.UI.ViewModels
 
         private void ApplyExportDone(string path)
         {
-            if (path != null) LastExportDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
+            if (path != null)
+            {
+                LastExportDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
+                LastExportPath = path;
+            }
             IsBusy = false;
         }
 
@@ -229,18 +258,20 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.UI.ViewModels
             ImportPreviewItems.Clear();
             foreach (var item in items) ImportPreviewItems.Add(item);
             NewImportCount = items.Count(i => i.Status == ImportStatus.New);
+            DupImportCount = items.Count(i => i.Status == ImportStatus.Dup);
+            ImportCommand.NotifyCanExecuteChanged();
             IsBusy = false;
         }
 
         private void ApplyImportDone(ImportResult result)
         {
-            ImportedCount   = result.Created;
-            DuplicateCount  = result.Duplicates;
-            FailedCount     = result.Failed;
-            LastRunTime     = $"Last run: {DateTime.Now:HH:mm:ss}";
+            ImportedCount = result.Created;
+            RenamedCount  = result.Renamed;
+            FailedCount   = result.Failed;
+            LastRunTime   = $"Last run: {DateTime.Now:HH:mm:ss}";
             IsBusy = false;
 
-            if (result.Created > 0) RaiseRequest(RoofTypeRequest.LoadTypes);
+            if (result.Created > 0 || result.Renamed > 0) RaiseRequest(RoofTypeRequest.LoadTypes);
         }
 
         // ── IDisposable ──────────────────────────────────────────

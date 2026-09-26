@@ -6,6 +6,7 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.Infrastructure.ExternalEvents
         LoadTypes,
         ExportSelected,
         PreviewImport,
-        ImportNew
+        ImportNew,
+        DownloadTemplate
     }
 }
