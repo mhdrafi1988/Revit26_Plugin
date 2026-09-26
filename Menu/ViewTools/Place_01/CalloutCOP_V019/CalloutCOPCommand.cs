@@ -3,6 +3,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using System;
 using System.Windows.Interop;
+using Revit26_Plugin.CalloutCOP.V019.Helpers;
 using Revit26_Plugin.CalloutCOP.V019.Views;
 using Revit26_Plugin.Utilities;
 
@@ -32,7 +33,7 @@ namespace Revit26_Plugin.CalloutCOP.V019.Commands
                 Logger.Error("CalloutCOPCommand", ex);
                 message = ex.Message;
 
-                var dlg = new TaskDialog("Callout COP V018")
+                var dlg = new TaskDialog(CalloutCOPInfo.DisplayName)
                 {
                     MainInstruction = "Could not open the tool",
                     MainContent = ex.Message,
