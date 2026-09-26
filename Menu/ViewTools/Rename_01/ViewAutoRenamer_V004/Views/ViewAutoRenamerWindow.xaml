@@ -153,9 +153,10 @@
 
                     <TextBlock Text="Search" Style="{StaticResource FieldLabel}"
                                VerticalAlignment="Center" Margin="0,0,5,0"/>
-                    <TextBox Width="120" Margin="0,0,12,0"
+                    <TextBox Width="140" Margin="0,0,12,0"
                              Style="{StaticResource StyledTextInput}"
-                             Text="{Binding SheetSearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                             Tag="View name…"
+                             Text="{Binding ViewNameSearchText, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <Border Width="0.5" Height="18" Background="{StaticResource BrushCardBorder}" Margin="0,0,12,0"/>
 
@@ -172,10 +173,10 @@
                               VerticalAlignment="Center"/>
                 </WrapPanel>
 
-                <!-- ═══ POPOVER — View Type (grouped, expandable) + Sheet ═══ -->
+                <!-- ═══ POPOVER — anchored to top-left of DataGrid ═══ -->
                 <Popup IsOpen="{Binding IsFilterPopoverOpen}"
-                       PlacementTarget="{Binding ElementName=FilterBarBorder}"
-                       Placement="Bottom" HorizontalOffset="12" VerticalOffset="4"
+                       PlacementTarget="{Binding ElementName=ViewsGridControl}"
+                       Placement="Relative" HorizontalOffset="12" VerticalOffset="8"
                        StaysOpen="False" AllowsTransparency="True" Width="340">
                     <Border Background="White" BorderBrush="{StaticResource BrushCardBorder}" BorderThickness="1"
                             CornerRadius="8">
@@ -200,6 +201,16 @@
                             <!-- Popover body -->
                             <ScrollViewer MaxHeight="420" VerticalScrollBarVisibility="Auto">
                                 <StackPanel Margin="0,8">
+
+                                    <!-- View Name search -->
+                                    <TextBlock Text="VIEW NAME" FontSize="11" FontWeight="Bold"
+                                               Foreground="{StaticResource BrushTextSecondary}"
+                                               Margin="14,4,14,4"/>
+                                    <TextBox Margin="14,2,14,10" Style="{StaticResource StyledTextInput}"
+                                             Text="{Binding ViewNameSearchText, UpdateSourceTrigger=PropertyChanged}"
+                                             Tag="Filter by name…"/>
+
+                                    <Border Height="1" Background="{StaticResource BrushCardBorder}" Margin="14,0,14,8"/>
 
                                     <!-- View Type — grouped categories with expand -->
                                     <TextBlock Text="VIEW TYPE" FontSize="11" FontWeight="Bold"
