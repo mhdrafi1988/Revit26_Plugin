@@ -189,12 +189,9 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.Infrastructure.ExternalEvents
                 layers.Add(new CompoundStructureLayer(thick, func, mat?.Id ?? ElementId.InvalidElementId));
             }
 
-            // CompoundStructure requires exactly one Structure layer
             if (layers.Count > 0 && !hasStructure)
-            {
-                var first = layers[0];
-                layers[0] = new CompoundStructureLayer(first.Width, MaterialFunctionAssignment.Structure, first.MaterialId);
-            }
+                throw new InvalidOperationException(
+                    "No layer with Function=Structure found. Revit requires at least one Structure layer.");
 
             return layers;
         }
