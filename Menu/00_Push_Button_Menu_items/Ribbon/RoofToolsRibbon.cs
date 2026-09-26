@@ -8,20 +8,9 @@ namespace Revit26_Plugin.Menu.Ribbon
     {
         public static void Build(UIControlledApplication app, string tabName, string assemblyPath)
         {
-            // Combined launcher — the Ridge By Point variant that used to sit
-            // here lives in the By Point pulldown below.
-            RibbonPanel combinedPanel = app.CreateRibbonPanel(tabName, "Combined Roof Tools");
-            RibbonLayoutHelper.AddStackedButtons(combinedPanel, new List<RibbonItemData>
-            {
-                new PushButtonData("Btn_CombinedRoofTools_V001", "Combined Roof Tools", assemblyPath, "Revit26_Plugin.CombinedRoofTools.V001.Commands.CombinedRoofToolsCommand")
-                {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.CombinedTools_16.png"),
-                    ToolTip = RibbonLayoutHelper.VersionTip("Combined Roof Tools", "V001",
-                        "Inner Loop Divider, Inner Loops And Perpendicular, Outer Curve Divider, " +
-                        "Auto Slope By Drain, and Creaser Adv — combined in one window with one shared roof pick. " +
-                        "Opens on Auto Slope By Drain; use Run All to run every tool in order with one click.")
-                },
-            });
+            // Utilities — three single-item panels merged into one 3-item stack
+            // to save ribbon space: Combined Roof Tools, Ridge Lines, Type Manager.
+            RibbonPanel utilitiesPanel = app.CreateRibbonPanel(tabName, "Utilities");
 
             // Slope — By Point (3 coexisting implementations) and By Drain (2)
             // each collected under one pulldown button. V028 and V007 are the
@@ -103,11 +92,7 @@ namespace Revit26_Plugin.Menu.Ribbon
                 },
             });
 
-            // Line & Point — By Points and Multi Shapes collected under one
-            // pulldown per request; the higher-version build (V68) keeps the
-            // icon; both versions show icon and text in the dropdown.
-            RibbonPanel linePointPanel = app.CreateRibbonPanel(tabName, "Line & Point");
-
+            // Ridge Lines pulldown — merged into Utilities panel below.
             var ridgeLinesMultiShape = new PushButtonData("Btn_RoofRidgeLines_V68", "Ridge By Openings V068", assemblyPath, "Revit26_Plugin.RoofRidgeLines.V068.Commands.RoofRidgeCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.RidgeLinesMultiShape_16.png"),
@@ -119,9 +104,6 @@ namespace Revit26_Plugin.Menu.Ribbon
                 ToolTip = RibbonLayoutHelper.VersionTip("Ridge By Points", "V057")
             };
             var ridgeLinesPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofRidgeLines", "Ridge Lines", ridgeLinesMultiShape);
-
-            var linePointItems = RibbonLayoutHelper.AddStackedButtons(linePointPanel, new List<RibbonItemData> { ridgeLinesPulldownData });
-            RibbonLayoutHelper.WirePulldownButton(linePointItems, "Pulldown_RoofRidgeLines", ridgeLinesMultiShape, ridgeLinesByPoints);
 
             // Slope Liner + Tag + Create — three single-tool panels merged into
             // one 3-item stack (Revit's stacked-item limit is exactly 3 per column).
@@ -145,10 +127,18 @@ namespace Revit26_Plugin.Menu.Ribbon
                 },
             });
 
-            // Type Manager
-            RibbonPanel typeManagerPanel = app.CreateRibbonPanel(tabName, "Type Manager");
-            RibbonLayoutHelper.AddStackedButtons(typeManagerPanel, new List<RibbonItemData>
+            // Utilities panel: Combined Roof Tools + Ridge Lines + Type Manager (3-item stack)
+            var utilitiesItems = RibbonLayoutHelper.AddStackedButtons(utilitiesPanel, new List<RibbonItemData>
             {
+                new PushButtonData("Btn_CombinedRoofTools_V001", "Combined Roof Tools", assemblyPath, "Revit26_Plugin.CombinedRoofTools.V001.Commands.CombinedRoofToolsCommand")
+                {
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.CombinedTools_16.png"),
+                    ToolTip = RibbonLayoutHelper.VersionTip("Combined Roof Tools", "V001",
+                        "Inner Loop Divider, Inner Loops And Perpendicular, Outer Curve Divider, " +
+                        "Auto Slope By Drain, and Creaser Adv — combined in one window with one shared roof pick. " +
+                        "Opens on Auto Slope By Drain; use Run All to run every tool in order with one click.")
+                },
+                ridgeLinesPulldownData,
                 new PushButtonData("Btn_RoofTypeManager_V001", "Roof Type Manager", assemblyPath, "Revit26_Plugin.RoofTypeCreator.V001.Commands.RoofTypeManagerCommand")
                 {
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.CreateRoofromLInes_16.png"),
@@ -157,6 +147,7 @@ namespace Revit26_Plugin.Menu.Ribbon
                         "and re-import them into the model. Modeless — stays open while you work.")
                 },
             });
+            RibbonLayoutHelper.WirePulldownButton(utilitiesItems, "Pulldown_RoofRidgeLines", ridgeLinesMultiShape, ridgeLinesByPoints);
 
             // Compare
             RibbonPanel comparePanel = app.CreateRibbonPanel(tabName, "Compare");
