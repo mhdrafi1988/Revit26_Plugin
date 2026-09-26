@@ -1,0 +1,211 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Autodesk.Revit.DB;
+using Autodesk.Revit.UI;
+using Revit26_Plugin.RoofTypeCreator.V001.Core.Models;
+using Revit26_Plugin.RoofTypeCreator.V001.Core.Services;
+
+namespace Revit26_Plugin.RoofTypeCreator.V001.Infrastructure.ExternalEvents
+{
+    public class RoofTypeExternalEventHandler : IExternalEventHandler
+    {
+        // ── Request and payloads set before Raise() ──────────────
+        public RoofTypeRequest    PendingRequest  { get; set; } = RoofTypeRequest.None;
+        public List<RoofTypeItem> ItemsToExport   { get; set; }
+        public string             ExportFilePath  { get; set; }
+        public string             ImportFilePath  { get; set; }
+        public List<ImportPreviewItem> ItemsToImport { get; set; }
+
+        // ── Callbacks invoked from Execute() ─────────────────────
+        public Action<List<RoofTypeItem>>   OnTypesLoaded   { get; set; }
+        public Action<string>               OnExportDone    { get; set; }
+        public Action<List<ImportPreviewItem>> OnPreviewLoaded { get; set; }
+        public Action<ImportResult>         OnImportDone    { get; set; }
+        public Action<string, string>       OnLog           { get; set; } // level, message
+
+        public void Execute(UIApplication app)
+        {
+            var doc = app.ActiveUIDocument?.Document;
+            if (doc == null) return;
+
+            switch (PendingRequest)
+            {
+                case RoofTypeRequest.LoadTypes:     ExecuteLoad(doc);          break;
+                case RoofTypeRequest.ExportSelected: ExecuteExport(doc);       break;
+                case RoofTypeRequest.PreviewImport:  ExecutePreview(doc);      break;
+                case RoofTypeRequest.ImportNew:      ExecuteImport(doc);       break;
+            }
+
+            PendingRequest = RoofTypeRequest.None;
+        }
+
+        public string GetName() => "Roof Type Manager";
+
+        // ── Handlers ─────────────────────────────────────────────
+
+        private void ExecuteLoad(Document doc)
+        {
+            try
+            {
+                Log("Info", "Loading roof types from model…");
+                var items = RoofTypeDataService.LoadFromDocument(doc);
+                OnTypesLoaded?.Invoke(items);
+                Log("Success", $"{items.Count} roof types loaded.");
+            }
+            catch (Exception ex) { Log("Error", $"Load failed: {ex.Message}"); }
+        }
+
+        private void ExecuteExport(Document doc)
+        {
+            try
+            {
+                if (ItemsToExport == null || ItemsToExport.Count == 0)
+                {
+                    Log("Warning", "No types selected for export.");
+                    OnExportDone?.Invoke(null);
+                    return;
+                }
+                Log("Info", $"Exporting {ItemsToExport.Count} roof types to {Path.GetFileName(ExportFilePath)}…");
+                RoofTypeExportService.Export(ItemsToExport, ExportFilePath, doc);
+                Log("Success", $"Exported {ItemsToExport.Count} types → {Path.GetFileName(ExportFilePath)}");
+                OnExportDone?.Invoke(ExportFilePath);
+            }
+            catch (Exception ex)
+            {
+                Log("Error", $"Export failed: {ex.Message}");
+                OnExportDone?.Invoke(null);
+            }
+        }
+
+        private void ExecutePreview(Document doc)
+        {
+            try
+            {
+                Log("Info", $"Loading import preview: {Path.GetFileName(ImportFilePath)}…");
+                var existing = RoofTypeDataService.GetExistingTypeNames(doc);
+                var items    = RoofTypeImportService.LoadPreview(ImportFilePath, existing);
+                OnPreviewLoaded?.Invoke(items);
+                int newCount = items.Count(i => i.Status == ImportStatus.New);
+                int dupCount = items.Count(i => i.Status == ImportStatus.Dup);
+                Log("Info", $"{items.Count} types previewed — {newCount} new, {dupCount} dup.");
+            }
+            catch (Exception ex)
+            {
+                Log("Error", $"Preview failed: {ex.Message}");
+                OnPreviewLoaded?.Invoke(new List<ImportPreviewItem>());
+            }
+        }
+
+        private void ExecuteImport(Document doc)
+        {
+            var result = new ImportResult();
+            try
+            {
+                var newItems = ItemsToImport?.Where(i => i.Status == ImportStatus.New).ToList();
+                if (newItems == null || newItems.Count == 0)
+                {
+                    Log("Warning", "No new types to import.");
+                    OnImportDone?.Invoke(result);
+                    return;
+                }
+
+                var templateType = new FilteredElementCollector(doc)
+                    .OfClass(typeof(RoofType))
+                    .Cast<RoofType>()
+                    .FirstOrDefault();
+
+                if (templateType == null)
+                {
+                    Log("Error", "No existing roof type found to use as a duplication template.");
+                    OnImportDone?.Invoke(result);
+                    return;
+                }
+
+                result.Duplicates = ItemsToImport.Count(i => i.Status == ImportStatus.Dup);
+
+                using (var tx = new Transaction(doc, "Import Roof Types"))
+                {
+                    tx.Start();
+                    foreach (var item in newItems)
+                    {
+                        try
+                        {
+                            var newType = templateType.Duplicate(item.TypeName) as RoofType;
+                            if (newType == null) { result.Failed++; continue; }
+
+                            if (item.Layers != null && item.Layers.Count > 0)
+                            {
+                                var layers = BuildLayers(doc, item.Layers);
+                                if (layers != null && layers.Count > 0)
+                                {
+                                    var cs = CompoundStructure.CreateSimpleCompoundStructure(layers);
+                                    if (cs != null) newType.SetCompoundStructure(cs);
+                                }
+                            }
+
+                            result.Created++;
+                            Log("Success", $"Created: {item.TypeName}");
+                        }
+                        catch (Exception ex)
+                        {
+                            result.Failed++;
+                            Log("Warning", $"Failed '{item.TypeName}': {ex.Message}");
+                        }
+                    }
+                    tx.Commit();
+                }
+
+                Log("Info", $"{result.Created} created | {result.Duplicates} dup | {result.Failed} failed");
+            }
+            catch (Exception ex) { Log("Error", $"Import failed: {ex.Message}"); }
+
+            OnImportDone?.Invoke(result);
+        }
+
+        private List<CompoundStructureLayer> BuildLayers(Document doc, List<LayerData> layerData)
+        {
+            var layers = new List<CompoundStructureLayer>();
+            bool hasStructure = false;
+
+            foreach (var ld in layerData)
+            {
+                double thick = ld.ThicknessMm > 0
+                    ? UnitUtils.ConvertToInternalUnits(ld.ThicknessMm, UnitTypeId.Millimeters)
+                    : UnitUtils.ConvertToInternalUnits(1.0, UnitTypeId.Millimeters);
+
+                var mat = new FilteredElementCollector(doc)
+                    .OfClass(typeof(Material))
+                    .Cast<Material>()
+                    .FirstOrDefault(m => string.Equals(m.Name, ld.MaterialName, StringComparison.OrdinalIgnoreCase));
+
+                var func = MaterialFunctionAssignment.Structure;
+                if (!string.IsNullOrEmpty(ld.LayerFunction) &&
+                    Enum.TryParse<MaterialFunctionAssignment>(ld.LayerFunction, out var parsed))
+                    func = parsed;
+
+                if (func == MaterialFunctionAssignment.Structure) hasStructure = true;
+                layers.Add(new CompoundStructureLayer(thick, func, mat?.Id ?? ElementId.InvalidElementId));
+            }
+
+            // CompoundStructure requires exactly one Structure layer
+            if (layers.Count > 0 && !hasStructure)
+            {
+                var first = layers[0];
+                layers[0] = new CompoundStructureLayer(first.Width, MaterialFunctionAssignment.Structure, first.MaterialId);
+            }
+
+            return layers;
+        }
+
+        private void Log(string level, string msg) => OnLog?.Invoke(level, msg);
+    }
+
+    public class ImportResult
+    {
+        public int Created    { get; set; }
+        public int Duplicates { get; set; }
+        public int Failed     { get; set; }
+    }
+}
