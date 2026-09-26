@@ -137,11 +137,19 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.Infrastructure.ExternalEvents
 
                             if (item.Layers != null && item.Layers.Count > 0)
                             {
-                                var layers = BuildLayers(doc, item.Layers);
+                                var (layers, varIdx) = BuildLayers(doc, item.Layers);
                                 if (layers != null && layers.Count > 0)
                                 {
                                     var cs = CompoundStructure.CreateSimpleCompoundStructure(layers);
-                                    if (cs != null) newType.SetCompoundStructure(cs);
+                                    if (cs != null)
+                                    {
+                                        if (varIdx >= 0) cs.SetVariableLayerIndex(varIdx);
+                                        if (Enum.TryParse<OpeningWrappingCondition>(item.WrapsAtInserts, out var ow))
+                                            cs.OpeningWrapping = ow;
+                                        if (Enum.TryParse<EndCapCondition>(item.WrapsAtEnds, out var ew))
+                                            cs.EndWrapping = ew;
+                                        newType.SetCompoundStructure(cs);
+                                    }
                                 }
                             }
 
@@ -164,13 +172,16 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.Infrastructure.ExternalEvents
             OnImportDone?.Invoke(result);
         }
 
-        private List<CompoundStructureLayer> BuildLayers(Document doc, List<LayerData> layerData)
+        private (List<CompoundStructureLayer> layers, int variableLayerIndex) BuildLayers(Document doc, List<LayerData> layerData)
         {
             var layers = new List<CompoundStructureLayer>();
             bool hasStructure = false;
+            int varIdx = -1;
 
-            foreach (var ld in layerData)
+            for (int i = 0; i < layerData.Count; i++)
             {
+                var ld = layerData[i];
+
                 double thick = ld.ThicknessMm > 0
                     ? UnitUtils.ConvertToInternalUnits(ld.ThicknessMm, UnitTypeId.Millimeters)
                     : UnitUtils.ConvertToInternalUnits(1.0, UnitTypeId.Millimeters);
@@ -186,14 +197,18 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.Infrastructure.ExternalEvents
                     func = parsed;
 
                 if (func == MaterialFunctionAssignment.Structure) hasStructure = true;
-                layers.Add(new CompoundStructureLayer(thick, func, mat?.Id ?? ElementId.InvalidElementId));
+                if (ld.IsVariable) varIdx = i;
+
+                var layer = new CompoundStructureLayer(thick, func, mat?.Id ?? ElementId.InvalidElementId);
+                layer.Priority = ld.Priority > 0 ? ld.Priority : 1;
+                layers.Add(layer);
             }
 
             if (layers.Count > 0 && !hasStructure)
                 throw new InvalidOperationException(
                     "No layer with Function=Structure found. Revit requires at least one Structure layer.");
 
-            return layers;
+            return (layers, varIdx);
         }
 
         private void Log(string level, string msg) => OnLog?.Invoke(level, msg);

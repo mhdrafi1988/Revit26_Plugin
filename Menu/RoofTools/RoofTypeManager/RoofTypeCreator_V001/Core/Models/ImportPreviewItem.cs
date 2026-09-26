@@ -10,6 +10,8 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.Core.Models
         public double           TotalThicknessMm { get; set; }
         public ImportStatus     Status           { get; set; }
         public List<LayerData>  Layers           { get; set; } = new List<LayerData>();
+        public string           WrapsAtInserts   { get; set; } = "NoInsertWrap";
+        public string           WrapsAtEnds      { get; set; } = "NoWrap";
     }
 
     public enum ImportStatus { New, Dup }
@@ -19,5 +21,7 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.Core.Models
         public string MaterialName  { get; set; }
         public double ThicknessMm   { get; set; }
         public string LayerFunction { get; set; }
+        public int    Priority      { get; set; } = 1;
+        public bool   IsVariable    { get; set; }
     }
 }
