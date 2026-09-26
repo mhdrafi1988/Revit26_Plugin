@@ -145,6 +145,19 @@ namespace Revit26_Plugin.Menu.Ribbon
                 },
             });
 
+            // Type Manager
+            RibbonPanel typeManagerPanel = app.CreateRibbonPanel(tabName, "Type Manager");
+            RibbonLayoutHelper.AddStackedButtons(typeManagerPanel, new List<RibbonItemData>
+            {
+                new PushButtonData("Btn_RoofTypeManager_V001", "Roof Type Manager", assemblyPath, "Revit26_Plugin.RoofTypeCreator.V001.Commands.RoofTypeManagerCommand")
+                {
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.CreateRoofromLInes_16.png"),
+                    ToolTip = RibbonLayoutHelper.VersionTip("Roof Type Manager", "V001",
+                        "Export roof type definitions to Excel (type mark, function, compound-structure layers) " +
+                        "and re-import them into the model. Modeless — stays open while you work.")
+                },
+            });
+
             // Compare
             RibbonPanel comparePanel = app.CreateRibbonPanel(tabName, "Compare");
 
