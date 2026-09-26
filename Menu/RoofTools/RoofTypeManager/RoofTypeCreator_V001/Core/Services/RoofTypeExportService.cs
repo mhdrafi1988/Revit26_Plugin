@@ -61,7 +61,7 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.Core.Services
 
                             ws.Cell(row, col++).Value = mat;
                             ws.Cell(row, col++).Value = thick;
-                            ws.Cell(row, col++).Value = layer.LayerFunction.ToString();
+                            ws.Cell(row, col++).Value = layer.Function.ToString();
                         }
                     }
 

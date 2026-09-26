@@ -10,7 +10,7 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.Core.Services
         {
             var result = new List<ImportPreviewItem>();
 
-            using (var wb = XLWorkbook.OpenReadOnly(filePath))
+            using (var wb = new XLWorkbook(filePath))
             {
                 foreach (var ws in wb.Worksheets)
                 {
