@@ -23,11 +23,15 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.Core.Services
                 ws.Cell(1, col++).Value = "Function";
                 ws.Cell(1, col++).Value = "Layer Count";
                 ws.Cell(1, col++).Value = "Total Thickness (mm)";
+                ws.Cell(1, col++).Value = "Wraps At Inserts";
+                ws.Cell(1, col++).Value = "Wraps At Ends";
                 for (int li = 1; li <= MaxLayers; li++)
                 {
                     ws.Cell(1, col++).Value = $"Layer {li} — Material";
                     ws.Cell(1, col++).Value = $"Layer {li} — Thickness (mm)";
                     ws.Cell(1, col++).Value = $"Layer {li} — Function";
+                    ws.Cell(1, col++).Value = $"Layer {li} — Priority";
+                    ws.Cell(1, col++).Value = $"Layer {li} — Variable";
                 }
 
                 var hdr = ws.Row(1);
@@ -50,6 +54,10 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.Core.Services
                     var cs = rt?.GetCompoundStructure();
                     if (cs != null)
                     {
+                        ws.Cell(row, col++).Value = cs.OpeningWrapping.ToString();
+                        ws.Cell(row, col++).Value = cs.EndWrapping.ToString();
+
+                        int varIdx = cs.VariableLayerIndex;
                         for (int li = 0; li < Math.Min(cs.LayerCount, MaxLayers); li++)
                         {
                             var layer  = cs.GetLayer(li);
@@ -62,7 +70,13 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.Core.Services
                             ws.Cell(row, col++).Value = mat;
                             ws.Cell(row, col++).Value = thick;
                             ws.Cell(row, col++).Value = layer.Function.ToString();
+                            ws.Cell(row, col++).Value = layer.Priority;
+                            ws.Cell(row, col++).Value = (li == varIdx) ? "Yes" : "No";
                         }
+                    }
+                    else
+                    {
+                        col += 2; // skip wraps columns when no compound structure
                     }
 
                     if (row % 2 == 0)
