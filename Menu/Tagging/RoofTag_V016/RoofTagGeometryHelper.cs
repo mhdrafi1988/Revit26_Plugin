@@ -2,17 +2,25 @@ using Autodesk.Revit.DB;
 
 namespace Revit26_Plugin.RoofTag.V016.Helpers
 {
+    /// <summary>Which roof face a spot elevation tag reads from.</summary>
+    public enum RoofTagElevationFace
+    {
+        Top,
+        Bottom
+    }
+
     internal static partial class RoofTagGeometryHelper
     {
         /// <summary>
-        /// Projects <paramref name="inputPoint"/> onto the nearest upward-facing
-        /// face of the roof solid and returns its Reference.
-        /// This is equivalent to a manual mouse click on the roof surface.
-        /// Returns false if no suitable face is found.
+        /// Projects <paramref name="inputPoint"/> onto the nearest face of the roof
+        /// solid facing the requested <paramref name="elevationFace"/> direction and
+        /// returns its Reference. This is equivalent to a manual mouse click on the
+        /// roof surface. Returns false if no suitable face is found.
         /// </summary>
         public static bool GetTaggingReferenceOnRoof(
             Element   roof,
             XYZ       inputPoint,
+            RoofTagElevationFace elevationFace,
             out Reference faceReference,
             out XYZ       projectedPoint)
         {
@@ -51,7 +59,14 @@ namespace Revit26_Plugin.RoofTag.V016.Helpers
                     try   { normal = face.ComputeNormal(uv); }
                     catch { continue; }
 
-                    if (normal.Z < 0.2) continue;
+                    if (elevationFace == RoofTagElevationFace.Top)
+                    {
+                        if (normal.Z < 0.2) continue;
+                    }
+                    else
+                    {
+                        if (normal.Z > -0.2) continue;
+                    }
 
                     double dist = inputPoint.DistanceTo(p);
                     if (dist >= minDistance) continue;
