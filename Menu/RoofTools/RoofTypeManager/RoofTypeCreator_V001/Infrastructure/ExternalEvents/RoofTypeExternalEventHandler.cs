@@ -16,14 +16,16 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.Infrastructure.ExternalEvents
         public List<RoofTypeItem> ItemsToExport   { get; set; }
         public string             ExportFilePath  { get; set; }
         public string             ImportFilePath  { get; set; }
-        public List<ImportPreviewItem> ItemsToImport { get; set; }
+        public List<ImportPreviewItem> ItemsToImport    { get; set; }
+        public string                  TemplateFilePath { get; set; }
 
         // ── Callbacks invoked from Execute() ─────────────────────
-        public Action<List<RoofTypeItem>>   OnTypesLoaded   { get; set; }
-        public Action<string>               OnExportDone    { get; set; }
-        public Action<List<ImportPreviewItem>> OnPreviewLoaded { get; set; }
-        public Action<ImportResult>         OnImportDone    { get; set; }
-        public Action<string, string>       OnLog           { get; set; } // level, message
+        public Action<List<RoofTypeItem>>      OnTypesLoaded      { get; set; }
+        public Action<string>                  OnExportDone       { get; set; }
+        public Action<List<ImportPreviewItem>> OnPreviewLoaded    { get; set; }
+        public Action<ImportResult>            OnImportDone       { get; set; }
+        public Action<string>                  OnTemplateDone     { get; set; }
+        public Action<string, string>          OnLog              { get; set; }
 
         public void Execute(UIApplication app)
         {
@@ -32,10 +34,11 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.Infrastructure.ExternalEvents
 
             switch (PendingRequest)
             {
-                case RoofTypeRequest.LoadTypes:     ExecuteLoad(doc);          break;
-                case RoofTypeRequest.ExportSelected: ExecuteExport(doc);       break;
-                case RoofTypeRequest.PreviewImport:  ExecutePreview(doc);      break;
-                case RoofTypeRequest.ImportNew:      ExecuteImport(doc);       break;
+                case RoofTypeRequest.LoadTypes:        ExecuteLoad(doc);             break;
+                case RoofTypeRequest.ExportSelected:   ExecuteExport(doc);           break;
+                case RoofTypeRequest.PreviewImport:    ExecutePreview(doc);          break;
+                case RoofTypeRequest.ImportNew:        ExecuteImport(doc);           break;
+                case RoofTypeRequest.DownloadTemplate: ExecuteDownloadTemplate();    break;
             }
 
             PendingRequest = RoofTypeRequest.None;
@@ -103,10 +106,10 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.Infrastructure.ExternalEvents
             var result = new ImportResult();
             try
             {
-                var newItems = ItemsToImport?.Where(i => i.Status == ImportStatus.New).ToList();
-                if (newItems == null || newItems.Count == 0)
+                var allItems = ItemsToImport ?? new List<ImportPreviewItem>();
+                if (allItems.Count == 0)
                 {
-                    Log("Warning", "No new types to import.");
+                    Log("Warning", "No types to import.");
                     OnImportDone?.Invoke(result);
                     return;
                 }
@@ -123,17 +126,35 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.Infrastructure.ExternalEvents
                     return;
                 }
 
-                result.Duplicates = ItemsToImport.Count(i => i.Status == ImportStatus.Dup);
+                // Build set of all existing names so we can find unique suffixes for Dup items
+                var existingNames = new HashSet<string>(
+                    new FilteredElementCollector(doc)
+                        .OfClass(typeof(RoofType))
+                        .Cast<RoofType>()
+                        .Select(t => t.Name),
+                    StringComparer.OrdinalIgnoreCase);
 
                 using (var tx = new Transaction(doc, "Import Roof Types"))
                 {
                     tx.Start();
-                    foreach (var item in newItems)
+                    foreach (var item in allItems)
                     {
+                        // Resolve name: New → use as-is; Dup/Renamed → find unique suffix
+                        string targetName = item.TypeName;
+                        if (item.Status == ImportStatus.Dup || item.Status == ImportStatus.Renamed)
+                        {
+                            int suffix = 2;
+                            while (existingNames.Contains($"{item.TypeName} ({suffix})")) suffix++;
+                            targetName = $"{item.TypeName} ({suffix})";
+                            result.Renamed++;
+                            Log("Info", $"Renamed '{item.TypeName}' → '{targetName}'");
+                        }
+
                         try
                         {
-                            var newType = templateType.Duplicate(item.TypeName) as RoofType;
+                            var newType = templateType.Duplicate(targetName) as RoofType;
                             if (newType == null) { result.Failed++; continue; }
+                            existingNames.Add(targetName);
 
                             if (item.Layers != null && item.Layers.Count > 0)
                             {
@@ -165,11 +186,27 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.Infrastructure.ExternalEvents
                     tx.Commit();
                 }
 
-                Log("Info", $"{result.Created} created | {result.Duplicates} dup | {result.Failed} failed");
+                Log("Info", $"{result.Created} created | {result.Renamed} renamed | {result.Failed} failed");
             }
             catch (Exception ex) { Log("Error", $"Import failed: {ex.Message}"); }
 
             OnImportDone?.Invoke(result);
+        }
+
+        private void ExecuteDownloadTemplate()
+        {
+            try
+            {
+                Log("Info", $"Saving template → {Path.GetFileName(TemplateFilePath)}…");
+                RoofTypeExportService.ExportBlankTemplate(TemplateFilePath);
+                Log("Success", $"Template saved → {Path.GetFileName(TemplateFilePath)}");
+                OnTemplateDone?.Invoke(TemplateFilePath);
+            }
+            catch (Exception ex)
+            {
+                Log("Error", $"Template download failed: {ex.Message}");
+                OnTemplateDone?.Invoke(null);
+            }
         }
 
         private (List<CompoundStructureLayer> layers, int variableLayerIndex) BuildLayers(Document doc, List<LayerData> layerData)
@@ -217,7 +254,7 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.Infrastructure.ExternalEvents
     public class ImportResult
     {
         public int Created    { get; set; }
-        public int Duplicates { get; set; }
+        public int Renamed    { get; set; }
         public int Failed     { get; set; }
     }
 }

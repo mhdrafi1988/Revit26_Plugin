@@ -7,8 +7,8 @@
         xmlns:models="clr-namespace:Revit26_Plugin.RoofTypeCreator.V001.Core.Models"
         mc:Ignorable="d"
         Title="Roof Type Manager  ·  V001"
-        Height="840" Width="980"
-        MinHeight="640" MinWidth="820"
+        Height="900" Width="1020"
+        MinHeight="680" MinWidth="860"
         WindowStartupLocation="CenterOwner"
         Loaded="Window_Loaded">
 
@@ -21,18 +21,48 @@
             <converters:BoolToVisibilityConverter   x:Key="BoolToVisibilityConverter"/>
             <converters:InverseBoolConverter        x:Key="InverseBoolConverter"/>
 
-            <!-- Status pill for ImportStatus enum -->
+            <!-- Status pill style -->
             <Style x:Key="StatusPillBorder" TargetType="Border">
                 <Setter Property="CornerRadius" Value="8"/>
                 <Setter Property="Padding"      Value="7,2"/>
                 <Setter Property="HorizontalAlignment" Value="Center"/>
                 <Setter Property="VerticalAlignment"   Value="Center"/>
             </Style>
+
+            <!-- Layer sub-row header text -->
+            <Style x:Key="LayerHeaderText" TargetType="TextBlock">
+                <Setter Property="FontSize"     Value="10"/>
+                <Setter Property="FontWeight"   Value="SemiBold"/>
+                <Setter Property="Foreground"   Value="#888"/>
+                <Setter Property="Margin"       Value="0,0,0,2"/>
+            </Style>
+
+            <!-- Layer cell value text -->
+            <Style x:Key="LayerValueText" TargetType="TextBlock">
+                <Setter Property="FontSize"   Value="11"/>
+                <Setter Property="Foreground" Value="#DDD"/>
+            </Style>
+
+            <!-- Expand toggle button -->
+            <Style x:Key="ExpandToggle" TargetType="Button">
+                <Setter Property="Background"   Value="Transparent"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Cursor"       Value="Hand"/>
+                <Setter Property="Padding"      Value="4,0"/>
+                <Setter Property="FontSize"     Value="11"/>
+                <Setter Property="Foreground"   Value="{StaticResource BrushTextSecondary}"/>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Foreground" Value="{StaticResource BrushAppleBlueLight}"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
         </ResourceDictionary>
     </Window.Resources>
 
     <Grid Background="{StaticResource BrushSystemBackground}">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
@@ -57,8 +87,17 @@
             </Grid>
         </Border>
 
+        <!-- ══ Progress bar (busy indicator) ═════════════════ -->
+        <ProgressBar Grid.Row="1"
+                     Height="3"
+                     IsIndeterminate="True"
+                     Foreground="{StaticResource BrushAppleBlueLight}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
         <!-- ══ Scrollable Content ════════════════════════════= -->
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="12,10,12,10">
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Padding="12,10,12,10">
             <StackPanel>
 
                 <!-- ─── 1. Metrics Card ────────────────────────── -->
@@ -76,19 +115,15 @@
 
                             <Border Grid.Column="0" Style="{StaticResource MetricCard}">
                                 <StackPanel HorizontalAlignment="Center">
-                                    <TextBlock Text="TOTAL ROOF TYPES" Style="{StaticResource MetricLabel}"
-                                               HorizontalAlignment="Center"/>
-                                    <TextBlock Text="{Binding TotalRoofTypes}" Style="{StaticResource MetricNumberAccent}"
-                                               HorizontalAlignment="Center"/>
-                                    <TextBlock Text="in current model" Style="{StaticResource MetricUnit}"
-                                               HorizontalAlignment="Center"/>
+                                    <TextBlock Text="TOTAL ROOF TYPES" Style="{StaticResource MetricLabel}" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding TotalRoofTypes}" Style="{StaticResource MetricNumberAccent}" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="in current model" Style="{StaticResource MetricUnit}" HorizontalAlignment="Center"/>
                                 </StackPanel>
                             </Border>
 
                             <Border Grid.Column="2" Style="{StaticResource MetricCard}">
                                 <StackPanel HorizontalAlignment="Center">
-                                    <TextBlock Text="LAST EXPORT" Style="{StaticResource MetricLabel}"
-                                               HorizontalAlignment="Center"/>
+                                    <TextBlock Text="LAST EXPORT" Style="{StaticResource MetricLabel}" HorizontalAlignment="Center"/>
                                     <TextBlock Text="{Binding LastExportDate}" Style="{StaticResource MetricNumber}"
                                                FontSize="16" HorizontalAlignment="Center"/>
                                 </StackPanel>
@@ -96,11 +131,9 @@
 
                             <Border Grid.Column="4" Style="{StaticResource MetricCard}">
                                 <StackPanel HorizontalAlignment="Center">
-                                    <TextBlock Text="LAST IMPORT FILE" Style="{StaticResource MetricLabel}"
-                                               HorizontalAlignment="Center"/>
+                                    <TextBlock Text="LAST IMPORT FILE" Style="{StaticResource MetricLabel}" HorizontalAlignment="Center"/>
                                     <TextBlock Text="{Binding LastImportFile}" Style="{StaticResource MetricValue}"
-                                               FontSize="13" TextWrapping="Wrap" HorizontalAlignment="Center"
-                                               TextAlignment="Center"/>
+                                               FontSize="13" TextWrapping="Wrap" HorizontalAlignment="Center" TextAlignment="Center"/>
                                 </StackPanel>
                             </Border>
                         </Grid>
@@ -137,12 +170,12 @@
                                 <TextBox Style="{StaticResource StyledTextInput}" Width="180"
                                          Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"
                                          MaxLength="60" Margin="0,0,6,0"/>
-                                <Button Content="Select All"    Style="{StaticResource SmallSecondaryButton}"
-                                        Command="{Binding SelectAllCommand}"    Margin="0,0,4,0"/>
-                                <Button Content="Clear"         Style="{StaticResource SmallSecondaryButton}"
+                                <Button Content="Select All"  Style="{StaticResource SmallSecondaryButton}"
+                                        Command="{Binding SelectAllCommand}" Margin="0,0,4,0"/>
+                                <Button Content="Clear"       Style="{StaticResource SmallSecondaryButton}"
                                         Command="{Binding ClearSelectionCommand}" Margin="0,0,4,0"/>
                                 <Border Width="1" Background="{StaticResource BrushSeparatorThin}" Margin="4,3"/>
-                                <Button Content="↺  Refresh"   Style="{StaticResource SmallSecondaryButton}"
+                                <Button Content="↺  Refresh" Style="{StaticResource SmallSecondaryButton}"
                                         Command="{Binding RefreshCommand}"/>
                             </StackPanel>
 
@@ -155,8 +188,9 @@
                             </TextBlock>
                         </Grid>
 
-                        <!-- Export DataGrid -->
-                        <DataGrid Margin="12,0,12,0"
+                        <!-- Export DataGrid with expandable rows -->
+                        <DataGrid x:Name="ExportGrid"
+                                  Margin="12,0,12,0"
                                   ItemsSource="{Binding FilteredRoofTypes}"
                                   Style="{StaticResource StandardDataGrid}"
                                   ColumnHeaderStyle="{StaticResource StandardDataGridColumnHeader}"
@@ -167,8 +201,107 @@
                                   CanUserSortColumns="True"
                                   EnableRowVirtualization="True"
                                   VirtualizingPanel.VirtualizationMode="Recycling"
-                                  MinHeight="140" MaxHeight="280">
+                                  RowDetailsVisibilityMode="Collapsed"
+                                  MinHeight="140" MaxHeight="300">
+
+                            <!-- Row details: layer stack -->
+                            <DataGrid.RowDetailsTemplate>
+                                <DataTemplate DataType="models:RoofTypeItem">
+                                    <Border Background="#0D1E30" Padding="40,8,12,10" BorderThickness="0,1,0,0"
+                                            BorderBrush="#1D3A5C">
+                                        <StackPanel>
+                                            <!-- Column headers -->
+                                            <Grid Margin="0,0,0,4">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="180"/>
+                                                    <ColumnDefinition Width="90"/>
+                                                    <ColumnDefinition Width="120"/>
+                                                    <ColumnDefinition Width="70"/>
+                                                    <ColumnDefinition Width="70"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="MATERIAL"  Style="{StaticResource LayerHeaderText}"/>
+                                                <TextBlock Grid.Column="1" Text="THICK (mm)" Style="{StaticResource LayerHeaderText}"/>
+                                                <TextBlock Grid.Column="2" Text="FUNCTION"  Style="{StaticResource LayerHeaderText}"/>
+                                                <TextBlock Grid.Column="3" Text="PRIORITY"  Style="{StaticResource LayerHeaderText}"/>
+                                                <TextBlock Grid.Column="4" Text="VARIABLE"  Style="{StaticResource LayerHeaderText}"/>
+                                            </Grid>
+                                            <!-- Layer rows -->
+                                            <ItemsControl ItemsSource="{Binding Layers}">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate DataType="models:LayerData">
+                                                        <Grid Margin="0,1">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="180"/>
+                                                                <ColumnDefinition Width="90"/>
+                                                                <ColumnDefinition Width="120"/>
+                                                                <ColumnDefinition Width="70"/>
+                                                                <ColumnDefinition Width="70"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding MaterialName}"  Style="{StaticResource LayerValueText}"/>
+                                                            <TextBlock Grid.Column="1" Text="{Binding ThicknessMm, StringFormat=F1}" Style="{StaticResource LayerValueText}"/>
+                                                            <TextBlock Grid.Column="2" Text="{Binding LayerFunction}" Style="{StaticResource LayerValueText}"/>
+                                                            <TextBlock Grid.Column="3" Text="{Binding Priority}"      Style="{StaticResource LayerValueText}"/>
+                                                            <TextBlock Grid.Column="4" Style="{StaticResource LayerValueText}">
+                                                                <TextBlock.Text>
+                                                                    <Binding Path="IsVariable">
+                                                                        <Binding.Converter>
+                                                                            <converters:InverseBoolConverter/>
+                                                                        </Binding.Converter>
+                                                                    </Binding>
+                                                                </TextBlock.Text>
+                                                                <TextBlock.Style>
+                                                                    <Style TargetType="TextBlock" BasedOn="{StaticResource LayerValueText}">
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding IsVariable}" Value="True">
+                                                                                <Setter Property="Text"       Value="Yes"/>
+                                                                                <Setter Property="Foreground" Value="#4CAF50"/>
+                                                                            </DataTrigger>
+                                                                            <DataTrigger Binding="{Binding IsVariable}" Value="False">
+                                                                                <Setter Property="Text"       Value="No"/>
+                                                                                <Setter Property="Foreground" Value="#888"/>
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </TextBlock.Style>
+                                                            </TextBlock>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </DataGrid.RowDetailsTemplate>
+
                             <DataGrid.Columns>
+                                <!-- Expand toggle -->
+                                <DataGridTemplateColumn Width="30" CanUserSort="False" CanUserResize="False">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate DataType="models:RoofTypeItem">
+                                            <Button Style="{StaticResource ExpandToggle}"
+                                                    Click="ExpandRow_Click"
+                                                    ToolTip="Show / hide layers">
+                                                <Button.Content>
+                                                    <TextBlock>
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsExpanded}" Value="True">
+                                                                        <Setter Property="Text" Value="▾"/>
+                                                                    </DataTrigger>
+                                                                    <DataTrigger Binding="{Binding IsExpanded}" Value="False">
+                                                                        <Setter Property="Text" Value="▸"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </Button.Content>
+                                            </Button>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
                                 <!-- Checkbox -->
                                 <DataGridTemplateColumn Width="34" CanUserSort="False" CanUserResize="False">
                                     <DataGridTemplateColumn.Header>
@@ -184,76 +317,38 @@
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
 
-                                <!-- Type Name -->
-                                <DataGridTextColumn Header="Type Name" Binding="{Binding TypeName}"
-                                                    Width="2*" MinWidth="130" IsReadOnly="True"
-                                                    SortMemberPath="TypeName"/>
-
-                                <!-- Type Mark -->
-                                <DataGridTextColumn Header="Type Mark" Binding="{Binding TypeMark}"
-                                                    Width="80" MinWidth="60" IsReadOnly="True"
-                                                    SortMemberPath="TypeMark"/>
-
-                                <!-- Function -->
-                                <DataGridTextColumn Header="Function" Binding="{Binding Function}"
-                                                    Width="90" MinWidth="70" IsReadOnly="True"
-                                                    SortMemberPath="Function"/>
-
-                                <!-- Layer Count — right-aligned -->
-                                <DataGridTextColumn Header="Layer Count" Binding="{Binding LayerCount}"
-                                                    Width="80" MinWidth="60" IsReadOnly="True"
-                                                    SortMemberPath="LayerCount">
-                                    <DataGridTextColumn.HeaderStyle>
-                                        <Style TargetType="DataGridColumnHeader"
-                                               BasedOn="{StaticResource StandardDataGridColumnHeader}">
-                                            <Setter Property="HorizontalContentAlignment" Value="Right"/>
-                                        </Style>
-                                    </DataGridTextColumn.HeaderStyle>
-                                    <DataGridTextColumn.ElementStyle>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="TextAlignment" Value="Right"/>
-                                            <Setter Property="Padding"       Value="0,0,6,0"/>
-                                        </Style>
-                                    </DataGridTextColumn.ElementStyle>
+                                <DataGridTextColumn Header="Type Name"     Binding="{Binding TypeName}"            Width="2*" MinWidth="130" IsReadOnly="True" SortMemberPath="TypeName"/>
+                                <DataGridTextColumn Header="Type Mark"     Binding="{Binding TypeMark}"            Width="80"  MinWidth="60"  IsReadOnly="True" SortMemberPath="TypeMark"/>
+                                <DataGridTextColumn Header="Function"      Binding="{Binding Function}"            Width="90"  MinWidth="70"  IsReadOnly="True" SortMemberPath="Function"/>
+                                <DataGridTextColumn Header="Layer Count"   Binding="{Binding LayerCount}"          Width="80"  MinWidth="60"  IsReadOnly="True" SortMemberPath="LayerCount">
+                                    <DataGridTextColumn.ElementStyle><Style TargetType="TextBlock"><Setter Property="TextAlignment" Value="Right"/><Setter Property="Padding" Value="0,0,6,0"/></Style></DataGridTextColumn.ElementStyle>
                                 </DataGridTextColumn>
-
-                                <!-- Total Thickness — right-aligned -->
-                                <DataGridTextColumn Header="Thickness (mm)"
-                                                    Binding="{Binding TotalThicknessMm, StringFormat=F1}"
-                                                    Width="100" MinWidth="80" IsReadOnly="True"
-                                                    SortMemberPath="TotalThicknessMm">
-                                    <DataGridTextColumn.HeaderStyle>
-                                        <Style TargetType="DataGridColumnHeader"
-                                               BasedOn="{StaticResource StandardDataGridColumnHeader}">
-                                            <Setter Property="HorizontalContentAlignment" Value="Right"/>
-                                        </Style>
-                                    </DataGridTextColumn.HeaderStyle>
-                                    <DataGridTextColumn.ElementStyle>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="TextAlignment" Value="Right"/>
-                                            <Setter Property="Padding"       Value="0,0,6,0"/>
-                                        </Style>
-                                    </DataGridTextColumn.ElementStyle>
+                                <DataGridTextColumn Header="Thickness (mm)" Binding="{Binding TotalThicknessMm, StringFormat=F1}" Width="100" MinWidth="80" IsReadOnly="True" SortMemberPath="TotalThicknessMm">
+                                    <DataGridTextColumn.ElementStyle><Style TargetType="TextBlock"><Setter Property="TextAlignment" Value="Right"/><Setter Property="Padding" Value="0,0,6,0"/></Style></DataGridTextColumn.ElementStyle>
                                 </DataGridTextColumn>
                             </DataGrid.Columns>
                         </DataGrid>
 
-                        <!-- File path + Export button -->
+                        <!-- File path + Export button + Open button -->
                         <Grid Margin="12,8,12,12">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBox Grid.Column="0"
-                                     Style="{StaticResource BoxedTextInput}"
-                                     Text="{Binding ExportFilePath}"
-                                     IsReadOnly="True" Margin="0,0,6,0"/>
-                            <Button  Grid.Column="1"
-                                     Content="Browse…" Style="{StaticResource OutlineButton}"
+                            <TextBox Grid.Column="0" Style="{StaticResource BoxedTextInput}"
+                                     Text="{Binding ExportFilePath}" IsReadOnly="True" Margin="0,0,6,0"/>
+                            <Button  Grid.Column="1" Content="Browse…" Style="{StaticResource OutlineButton}"
                                      Command="{Binding BrowseExportCommand}" Margin="0,0,6,0"/>
-                            <Button  Grid.Column="2"
-                                     Style="{StaticResource AccentButton}"
+                            <!-- Open in Excel — visible only after a successful export -->
+                            <Button  Grid.Column="2" Content="📂  Open in Excel"
+                                     Style="{StaticResource SmallSecondaryButton}"
+                                     Command="{Binding OpenExportFileCommand}"
+                                     Margin="0,0,6,0"
+                                     Visibility="{Binding LastExportPath, Converter={StaticResource BoolToVisibilityConverter}}"
+                                     ToolTip="{Binding LastExportPath}"/>
+                            <Button  Grid.Column="3" Style="{StaticResource AccentButton}"
                                      Command="{Binding ExportSelectedCommand}">
                                 <TextBlock>
                                     <Run Text="Export Selected ("/>
@@ -268,7 +363,19 @@
                 <!-- ─── 3. Import Card ─────────────────────────── -->
                 <Border Style="{StaticResource ContentCard}">
                     <StackPanel>
-                        <TextBlock Text="Import Roof Types" Style="{StaticResource SectionTitle}"/>
+                        <!-- Section header with Download Template button -->
+                        <Grid Margin="12,10,12,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Import Roof Types" Style="{StaticResource SectionTitle}" Margin="0"/>
+                            <Button Grid.Column="1"
+                                    Content="⬇  Download Blank Template"
+                                    Style="{StaticResource SmallSecondaryButton}"
+                                    Command="{Binding DownloadTemplateCommand}"
+                                    ToolTip="Save a pre-formatted Excel template to use as a starting point"/>
+                        </Grid>
 
                         <!-- File picker -->
                         <Grid Margin="12,0,12,8">
@@ -276,17 +383,15 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBox Grid.Column="0"
-                                     Style="{StaticResource BoxedTextInput}"
-                                     Text="{Binding ImportFilePath}"
-                                     IsReadOnly="True" Margin="0,0,6,0"/>
-                            <Button  Grid.Column="1"
-                                     Content="Browse…" Style="{StaticResource OutlineButton}"
+                            <TextBox Grid.Column="0" Style="{StaticResource BoxedTextInput}"
+                                     Text="{Binding ImportFilePath}" IsReadOnly="True" Margin="0,0,6,0"/>
+                            <Button  Grid.Column="1" Content="Browse…" Style="{StaticResource OutlineButton}"
                                      Command="{Binding BrowseImportCommand}"/>
                         </Grid>
 
-                        <!-- Preview DataGrid -->
-                        <DataGrid Margin="12,0,12,0"
+                        <!-- Preview DataGrid with expandable rows -->
+                        <DataGrid x:Name="ImportGrid"
+                                  Margin="12,0,12,0"
                                   ItemsSource="{Binding ImportPreviewItems}"
                                   Style="{StaticResource StandardDataGrid}"
                                   ColumnHeaderStyle="{StaticResource StandardDataGridColumnHeader}"
@@ -298,54 +403,113 @@
                                   IsReadOnly="True"
                                   EnableRowVirtualization="True"
                                   VirtualizingPanel.VirtualizationMode="Recycling"
-                                  MinHeight="80" MaxHeight="200">
+                                  RowDetailsVisibilityMode="Collapsed"
+                                  MinHeight="80" MaxHeight="220">
+
+                            <!-- Row details: layer stack -->
+                            <DataGrid.RowDetailsTemplate>
+                                <DataTemplate DataType="models:ImportPreviewItem">
+                                    <Border Background="#0D1E30" Padding="40,8,12,10" BorderThickness="0,1,0,0"
+                                            BorderBrush="#1D3A5C">
+                                        <StackPanel>
+                                            <Grid Margin="0,0,0,4">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="180"/>
+                                                    <ColumnDefinition Width="90"/>
+                                                    <ColumnDefinition Width="120"/>
+                                                    <ColumnDefinition Width="70"/>
+                                                    <ColumnDefinition Width="70"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="MATERIAL"   Style="{StaticResource LayerHeaderText}"/>
+                                                <TextBlock Grid.Column="1" Text="THICK (mm)" Style="{StaticResource LayerHeaderText}"/>
+                                                <TextBlock Grid.Column="2" Text="FUNCTION"   Style="{StaticResource LayerHeaderText}"/>
+                                                <TextBlock Grid.Column="3" Text="PRIORITY"   Style="{StaticResource LayerHeaderText}"/>
+                                                <TextBlock Grid.Column="4" Text="VARIABLE"   Style="{StaticResource LayerHeaderText}"/>
+                                            </Grid>
+                                            <ItemsControl ItemsSource="{Binding Layers}">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate DataType="models:LayerData">
+                                                        <Grid Margin="0,1">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="180"/>
+                                                                <ColumnDefinition Width="90"/>
+                                                                <ColumnDefinition Width="120"/>
+                                                                <ColumnDefinition Width="70"/>
+                                                                <ColumnDefinition Width="70"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding MaterialName}"  Style="{StaticResource LayerValueText}"/>
+                                                            <TextBlock Grid.Column="1" Text="{Binding ThicknessMm, StringFormat=F1}" Style="{StaticResource LayerValueText}"/>
+                                                            <TextBlock Grid.Column="2" Text="{Binding LayerFunction}" Style="{StaticResource LayerValueText}"/>
+                                                            <TextBlock Grid.Column="3" Text="{Binding Priority}"      Style="{StaticResource LayerValueText}"/>
+                                                            <TextBlock Grid.Column="4" Style="{StaticResource LayerValueText}">
+                                                                <TextBlock.Style>
+                                                                    <Style TargetType="TextBlock" BasedOn="{StaticResource LayerValueText}">
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding IsVariable}" Value="True">
+                                                                                <Setter Property="Text"       Value="Yes"/>
+                                                                                <Setter Property="Foreground" Value="#4CAF50"/>
+                                                                            </DataTrigger>
+                                                                            <DataTrigger Binding="{Binding IsVariable}" Value="False">
+                                                                                <Setter Property="Text"       Value="No"/>
+                                                                                <Setter Property="Foreground" Value="#888"/>
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </TextBlock.Style>
+                                                            </TextBlock>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </DataGrid.RowDetailsTemplate>
+
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="Sheet Name" Binding="{Binding SheetName}"
-                                                    Width="100" MinWidth="80" SortMemberPath="SheetName"/>
-                                <DataGridTextColumn Header="Type Name" Binding="{Binding TypeName}"
-                                                    Width="2*" MinWidth="130" SortMemberPath="TypeName"/>
-                                <DataGridTextColumn Header="Layer Count" Binding="{Binding LayerCount}"
-                                                    Width="80" MinWidth="60" SortMemberPath="LayerCount">
-                                    <DataGridTextColumn.HeaderStyle>
-                                        <Style TargetType="DataGridColumnHeader"
-                                               BasedOn="{StaticResource StandardDataGridColumnHeader}">
-                                            <Setter Property="HorizontalContentAlignment" Value="Right"/>
-                                        </Style>
-                                    </DataGridTextColumn.HeaderStyle>
-                                    <DataGridTextColumn.ElementStyle>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="TextAlignment" Value="Right"/>
-                                            <Setter Property="Padding"       Value="0,0,6,0"/>
-                                        </Style>
-                                    </DataGridTextColumn.ElementStyle>
+                                <!-- Expand toggle -->
+                                <DataGridTemplateColumn Width="30" CanUserSort="False" CanUserResize="False">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate DataType="models:ImportPreviewItem">
+                                            <Button Style="{StaticResource ExpandToggle}"
+                                                    Click="ExpandImportRow_Click"
+                                                    ToolTip="Show / hide layers">
+                                                <Button.Content>
+                                                    <TextBlock>
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsExpanded}" Value="True">
+                                                                        <Setter Property="Text" Value="▾"/>
+                                                                    </DataTrigger>
+                                                                    <DataTrigger Binding="{Binding IsExpanded}" Value="False">
+                                                                        <Setter Property="Text" Value="▸"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </Button.Content>
+                                            </Button>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTextColumn Header="Sheet"         Binding="{Binding SheetName}"       Width="90"  MinWidth="70"  SortMemberPath="SheetName"/>
+                                <DataGridTextColumn Header="Type Name"     Binding="{Binding TypeName}"        Width="2*"  MinWidth="130" SortMemberPath="TypeName"/>
+                                <DataGridTextColumn Header="Layer Count"   Binding="{Binding LayerCount}"      Width="80"  MinWidth="60"  SortMemberPath="LayerCount">
+                                    <DataGridTextColumn.ElementStyle><Style TargetType="TextBlock"><Setter Property="TextAlignment" Value="Right"/><Setter Property="Padding" Value="0,0,6,0"/></Style></DataGridTextColumn.ElementStyle>
                                 </DataGridTextColumn>
-                                <DataGridTextColumn Header="Thickness (mm)"
-                                                    Binding="{Binding TotalThicknessMm, StringFormat=F1}"
-                                                    Width="100" MinWidth="80" SortMemberPath="TotalThicknessMm">
-                                    <DataGridTextColumn.HeaderStyle>
-                                        <Style TargetType="DataGridColumnHeader"
-                                               BasedOn="{StaticResource StandardDataGridColumnHeader}">
-                                            <Setter Property="HorizontalContentAlignment" Value="Right"/>
-                                        </Style>
-                                    </DataGridTextColumn.HeaderStyle>
-                                    <DataGridTextColumn.ElementStyle>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="TextAlignment" Value="Right"/>
-                                            <Setter Property="Padding"       Value="0,0,6,0"/>
-                                        </Style>
-                                    </DataGridTextColumn.ElementStyle>
+                                <DataGridTextColumn Header="Thickness (mm)" Binding="{Binding TotalThicknessMm, StringFormat=F1}" Width="100" MinWidth="80" SortMemberPath="TotalThicknessMm">
+                                    <DataGridTextColumn.ElementStyle><Style TargetType="TextBlock"><Setter Property="TextAlignment" Value="Right"/><Setter Property="Padding" Value="0,0,6,0"/></Style></DataGridTextColumn.ElementStyle>
                                 </DataGridTextColumn>
 
                                 <!-- Status pill -->
-                                <DataGridTemplateColumn Header="Status" Width="80" MinWidth="60"
-                                                        CanUserSort="False">
+                                <DataGridTemplateColumn Header="Status" Width="90" MinWidth="70" CanUserSort="False">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate DataType="models:ImportPreviewItem">
-                                            <Border x:Name="PillBorder"
-                                                    Style="{StaticResource StatusPillBorder}">
-                                                <TextBlock x:Name="PillText"
-                                                           FontSize="10" FontWeight="Bold"
-                                                           HorizontalAlignment="Center"/>
+                                            <Border x:Name="PillBorder" Style="{StaticResource StatusPillBorder}">
+                                                <TextBlock x:Name="PillText" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center"/>
                                             </Border>
                                             <DataTemplate.Triggers>
                                                 <DataTrigger Binding="{Binding Status}" Value="New">
@@ -356,7 +520,12 @@
                                                 <DataTrigger Binding="{Binding Status}" Value="Dup">
                                                     <Setter TargetName="PillBorder" Property="Background" Value="#FFF3E0"/>
                                                     <Setter TargetName="PillText"   Property="Foreground" Value="#E65100"/>
-                                                    <Setter TargetName="PillText"   Property="Text"       Value="DUP"/>
+                                                    <Setter TargetName="PillText"   Property="Text"       Value="DUP → RENAME"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Status}" Value="Renamed">
+                                                    <Setter TargetName="PillBorder" Property="Background" Value="#F3E5F5"/>
+                                                    <Setter TargetName="PillText"   Property="Foreground" Value="#7B1FA2"/>
+                                                    <Setter TargetName="PillText"   Property="Text"       Value="RENAMED"/>
                                                 </DataTrigger>
                                             </DataTemplate.Triggers>
                                         </DataTemplate>
@@ -374,17 +543,19 @@
                             <TextBlock Grid.Column="0" VerticalAlignment="Center"
                                        Style="{StaticResource HintText}" Margin="0">
                                 <Run Text="{Binding ImportPreviewItems.Count, Mode=OneWay}"/>
-                                <Run Text=" types previewed ·  "/>
+                                <Run Text=" types previewed  ·  "/>
                                 <Run Text="{Binding NewImportCount, Mode=OneWay}"/>
-                                <Run Text=" new"/>
+                                <Run Text=" new  ·  "/>
+                                <Run Text="{Binding DupImportCount, Mode=OneWay}"/>
+                                <Run Text=" will be auto-renamed"/>
                             </TextBlock>
                             <Button Grid.Column="1"
                                     Style="{StaticResource PrimaryButton}"
                                     Command="{Binding ImportCommand}">
                                 <TextBlock>
-                                    <Run Text="Import ("/>
-                                    <Run Text="{Binding NewImportCount, Mode=OneWay}"/>
-                                    <Run Text=" New)"/>
+                                    <Run Text="Import All ("/>
+                                    <Run Text="{Binding ImportPreviewItems.Count, Mode=OneWay}"/>
+                                    <Run Text=")"/>
                                 </TextBlock>
                             </Button>
                         </Grid>
@@ -435,9 +606,9 @@
                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                             <ListBox.ItemContainerStyle>
                                 <Style TargetType="ListBoxItem">
-                                    <Setter Property="Padding"          Value="0,1"/>
-                                    <Setter Property="Background"       Value="Transparent"/>
-                                    <Setter Property="BorderThickness"  Value="0"/>
+                                    <Setter Property="Padding"         Value="0,1"/>
+                                    <Setter Property="Background"      Value="Transparent"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
                                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                                     <Style.Triggers>
                                         <Trigger Property="IsSelected" Value="True">
@@ -478,15 +649,13 @@
                                              Foreground="{StaticResource BrushLogSuccess}"/>
                                         <Run Text=" created" Foreground="{StaticResource BrushLogTextDim}"/>
                                     </TextBlock>
-                                    <TextBlock Text="  |  " Foreground="{StaticResource BrushLogTextDim}"
-                                               FontSize="12" VerticalAlignment="Center"/>
+                                    <TextBlock Text="  |  " Foreground="{StaticResource BrushLogTextDim}" FontSize="12" VerticalAlignment="Center"/>
                                     <TextBlock FontSize="12" FontWeight="Bold" VerticalAlignment="Center">
-                                        <Run Text="{Binding DuplicateCount, Mode=OneWay}"
-                                             Foreground="{StaticResource BrushLogWarning}"/>
-                                        <Run Text=" dup" Foreground="{StaticResource BrushLogTextDim}"/>
+                                        <Run Text="{Binding RenamedCount, Mode=OneWay}"
+                                             Foreground="#CE93D8"/>
+                                        <Run Text=" renamed" Foreground="{StaticResource BrushLogTextDim}"/>
                                     </TextBlock>
-                                    <TextBlock Text="  |  " Foreground="{StaticResource BrushLogTextDim}"
-                                               FontSize="12" VerticalAlignment="Center"/>
+                                    <TextBlock Text="  |  " Foreground="{StaticResource BrushLogTextDim}" FontSize="12" VerticalAlignment="Center"/>
                                     <TextBlock FontSize="12" FontWeight="Bold" VerticalAlignment="Center">
                                         <Run Text="{Binding FailedCount, Mode=OneWay}"
                                              Foreground="{StaticResource BrushLogError}"/>
