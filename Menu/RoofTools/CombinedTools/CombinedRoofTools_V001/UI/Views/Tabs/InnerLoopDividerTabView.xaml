@@ -130,6 +130,21 @@ externally when this UserControl is placed into a TabItem.
 
         <!-- ─── TOOLBAR ─────────────────────────────────────────────────── -->
         <Grid Grid.Row="2" Margin="0,0,0,8">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <TextBlock Text="Filter by size" Style="{StaticResource FieldLabel}"
+                           VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <TextBlock Text="Diameter (mm)" Style="{StaticResource HintText}"
+                           VerticalAlignment="Center" Margin="0,0,6,0"/>
+                <ComboBox Style="{StaticResource StandardComboBox}" Width="130" Height="28"
+                          ItemsSource="{Binding DiameterOptions}"
+                          SelectedItem="{Binding SelectedDiameterFilter, Mode=TwoWay}"
+                          Margin="0,0,14,0"/>
+                <TextBlock Text="Radius (mm)" Style="{StaticResource HintText}"
+                           VerticalAlignment="Center" Margin="0,0,6,0"/>
+                <ComboBox Style="{StaticResource StandardComboBox}" Width="130" Height="28"
+                          ItemsSource="{Binding RadiusOptions}"
+                          SelectedItem="{Binding SelectedRadiusFilter, Mode=TwoWay}"/>
+            </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Content="Select all"
                         Style="{StaticResource SmallSecondaryButton}"
@@ -183,6 +198,8 @@ externally when this UserControl is placed into a TabItem.
                       CanUserAddRows="False"
                       CanUserDeleteRows="False"
                       SelectionMode="Single"
+                      CanUserSortColumns="True"
+                      Sorting="LoopsGrid_Sorting"
                       Style="{StaticResource StandardDataGrid}"
                       ColumnHeaderStyle="{StaticResource StandardDataGridColumnHeader}"
                       CellStyle="{StaticResource StandardDataGridCell}"
@@ -206,9 +223,17 @@ externally when this UserControl is placed into a TabItem.
                     <DataGridTextColumn Header="Shape"
                                         Binding="{Binding LoopShapeType}"
                                         IsReadOnly="True" Width="100"/>
+                    <DataGridTextColumn Header="Diameter (mm)"
+                                        Binding="{Binding DiameterText}"
+                                        SortMemberPath="DiameterMm"
+                                        IsReadOnly="True" Width="120"/>
+                    <DataGridTextColumn Header="Radius (mm)"
+                                        Binding="{Binding RadiusText}"
+                                        SortMemberPath="RadiusMm"
+                                        IsReadOnly="True" Width="110"/>
                     <DataGridTextColumn Header="Perimeter (mm)"
                                         Binding="{Binding PerimeterMm, StringFormat={}{0:N0}}"
-                                        IsReadOnly="True" Width="130"/>
+                                        IsReadOnly="True" Width="120"/>
                     <DataGridCheckBoxColumn Header="Selected"
                                             Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}"
                                             Width="80"/>
