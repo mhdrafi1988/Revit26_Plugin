@@ -139,31 +139,28 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.V010.UI.ViewModels
         }
 
         /// <summary>
-        /// NEW (V010). Refines DrainItem's constructor default (ALL circles start
-        /// checked) down to just the smallest ones: a circle stays checked only if
-        /// its diameter is within 2mm of this roof's smallest circle diameter —
-        /// per Rafi's confirmed decision, computed PER ROOF, not across the whole
-        /// batch. Non-circle shapes are untouched (they already start unchecked).
+        /// Selects circles whose diameter falls in [90 mm, 110 mm]; deselects all
+        /// other circles. Non-circle shapes are untouched (they start unchecked).
         /// Returns null if this roof has no circle drains at all.
         /// </summary>
         private string ApplyDefaultCircleSelection()
         {
-            const double toleranceMm = 2.0;
+            const double minMm = 90.0;
+            const double maxMm = 110.0;
 
             var circles = AllDrains.Where(d => d.ShapeGroup == "Circle" && d.Diameter.HasValue).ToList();
             if (circles.Count == 0) return null;
 
-            double smallestDiameterMm = circles.Min(d => d.Diameter.Value);
             int keptCount = 0;
 
             foreach (var circle in circles)
             {
-                bool keep = circle.Diameter.Value <= smallestDiameterMm + toleranceMm;
+                bool keep = circle.Diameter.Value >= minMm && circle.Diameter.Value <= maxMm;
                 circle.IsSelected = keep;
                 if (keep) keptCount++;
             }
 
-            return $"Default selection: {keptCount} circle(s) at ⌀{smallestDiameterMm:F0} mm " +
+            return $"Default selection: {keptCount} circle(s) with ⌀ 90–110 mm " +
                    $"(of {circles.Count} circle(s) detected)";
         }
 
