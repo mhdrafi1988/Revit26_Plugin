@@ -52,7 +52,7 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.Core.Services
                     {
                         for (int li = 0; li < Math.Min(cs.LayerCount, MaxLayers); li++)
                         {
-                            var layer  = cs.GetLayer(li);
+                            var layer  = cs.GetLayers()[li];
                             string mat = layer.MaterialId != ElementId.InvalidElementId
                                 ? (doc.GetElement(layer.MaterialId) as Material)?.Name ?? ""
                                 : "";

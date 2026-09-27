@@ -11,10 +11,7 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V004
         {
             InitializeComponent();
 
-            Closing += (s, e) =>
-            {
-                if (DataContext is MainViewModel vm) vm.SaveSettings("window closed");
-            };
+            // settings auto-save on property change — no explicit save needed on close
         }
 
         private void CopySelected_Click(object sender, RoutedEventArgs e)
