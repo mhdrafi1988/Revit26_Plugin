@@ -425,7 +425,7 @@ namespace Revit26_Plugin.RoofRidgeLines.V068.ViewModels
 
             var runStart = DateTime.Now;
             Log($"[START]  {runStart:HH:mm:ss}");
-            Log($"[INPUT]  Roof: {_selectedRoof?.Name}  Id={_selectedRoof?.Id}");
+            Log($"[INPUT]  {RoofDescription}");  // cached — the roof may have been deleted since it was picked
             Log($"[INPUT]  Proximity distance: {ProximityDistanceMm} mm");
             Log($"[INPUT]  Validation tolerance: {ValidationToleranceMm} mm");
 
