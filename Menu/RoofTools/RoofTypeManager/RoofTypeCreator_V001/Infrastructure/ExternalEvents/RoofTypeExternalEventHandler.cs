@@ -14,6 +14,7 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.Infrastructure.ExternalEvents
         // ── Request and payloads set before Raise() ──────────────
         public RoofTypeRequest    PendingRequest  { get; set; } = RoofTypeRequest.None;
         public List<RoofTypeItem> ItemsToExport   { get; set; }
+        public List<RoofTypeItem> LoadedItems     { get; set; }   // all types currently in model
         public string             ExportFilePath  { get; set; }
         public string             ImportFilePath  { get; set; }
         public List<ImportPreviewItem> ItemsToImport    { get; set; }
@@ -38,7 +39,7 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.Infrastructure.ExternalEvents
                 case RoofTypeRequest.ExportSelected:   ExecuteExport(doc);           break;
                 case RoofTypeRequest.PreviewImport:    ExecutePreview(doc);          break;
                 case RoofTypeRequest.ImportNew:        ExecuteImport(doc);           break;
-                case RoofTypeRequest.DownloadTemplate: ExecuteDownloadTemplate();    break;
+                case RoofTypeRequest.DownloadTemplate: ExecuteDownloadTemplate(doc); break;
             }
 
             PendingRequest = RoofTypeRequest.None;
@@ -193,13 +194,26 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.Infrastructure.ExternalEvents
             OnImportDone?.Invoke(result);
         }
 
-        private void ExecuteDownloadTemplate()
+        private void ExecuteDownloadTemplate(Document doc)
         {
             try
             {
                 Log("Info", $"Saving template → {Path.GetFileName(TemplateFilePath)}…");
-                RoofTypeExportService.ExportBlankTemplate(TemplateFilePath);
-                Log("Success", $"Template saved → {Path.GetFileName(TemplateFilePath)}");
+
+                var items = LoadedItems;
+                if (items != null && items.Count > 0)
+                {
+                    // Pre-fill with actual model layer data
+                    RoofTypeExportService.Export(items, TemplateFilePath, doc);
+                    Log("Success", $"Template saved with {items.Count} types → {Path.GetFileName(TemplateFilePath)}");
+                }
+                else
+                {
+                    // Fallback: blank example template when no types loaded yet
+                    RoofTypeExportService.ExportBlankTemplate(TemplateFilePath);
+                    Log("Success", $"Blank template saved → {Path.GetFileName(TemplateFilePath)}");
+                }
+
                 OnTemplateDone?.Invoke(TemplateFilePath);
             }
             catch (Exception ex)

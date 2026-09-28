@@ -238,7 +238,8 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.UI.ViewModels
         {
             AllRoofTypes.Clear();
             foreach (var item in items) AllRoofTypes.Add(item);
-            TotalRoofTypes = items.Count;
+            TotalRoofTypes           = items.Count;
+            _handler.LoadedItems     = items;
             RebuildFilter();
             IsBusy = false;
         }

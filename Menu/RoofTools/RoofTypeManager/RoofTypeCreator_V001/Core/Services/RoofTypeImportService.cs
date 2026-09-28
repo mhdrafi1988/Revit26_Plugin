@@ -6,61 +6,107 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.Core.Services
 {
     public static class RoofTypeImportService
     {
-        public static List<ImportPreviewItem> LoadPreview(string filePath, System.Collections.Generic.HashSet<string> existingNames)
+        // Col layout (1-indexed):
+        // 1  Type Name        (blank = continuation of previous type)
+        // 2  Type Mark
+        // 3  Function
+        // 4  Total Thickness (mm)
+        // 5  Wraps At Inserts
+        // 6  Wraps At Ends
+        // 7  Layer #
+        // 8  Material
+        // 9  Thickness (mm)
+        // 10 Layer Function
+        // 11 Priority
+        // 12 Variable
+
+        public static List<ImportPreviewItem> LoadPreview(
+            string filePath,
+            System.Collections.Generic.HashSet<string> existingNames)
         {
-            var result = new List<ImportPreviewItem>();
+            var result  = new List<ImportPreviewItem>();
+            ImportPreviewItem current = null;
 
             using (var wb = new XLWorkbook(filePath))
             {
                 foreach (var ws in wb.Worksheets)
                 {
-                    // Only sheets with our header format
                     if (ws.Cell(1, 1).GetString() != "Type Name") continue;
 
                     int lastRow = ws.LastRowUsed()?.RowNumber() ?? 1;
+
                     for (int r = 2; r <= lastRow; r++)
                     {
                         string typeName = ws.Cell(r, 1).GetString();
-                        if (string.IsNullOrWhiteSpace(typeName)) continue;
 
-                        string function       = ws.Cell(r, 3).GetString();
-                        int    layerCount     = ws.Cell(r, 4).GetValue<int>();
-                        double thickness      = ws.Cell(r, 5).GetValue<double>();
-                        string wrapsAtInserts = ws.Cell(r, 6).GetString();
-                        string wrapsAtEnds    = ws.Cell(r, 7).GetString();
-
-                        var layers = new List<LayerData>();
-                        for (int li = 0; li < layerCount && li < 10; li++)
+                        // New type block when Type Name cell is non-empty
+                        if (!string.IsNullOrWhiteSpace(typeName))
                         {
-                            int baseCol = 8 + li * 5;
-                            string varCell = ws.Cell(r, baseCol + 4).GetString();
-                            layers.Add(new LayerData
+                            // Finalise the previous item
+                            if (current != null)
+                                FinaliseItem(current);
+
+                            current = new ImportPreviewItem
                             {
-                                MaterialName  = ws.Cell(r, baseCol).GetString(),
-                                ThicknessMm   = ws.Cell(r, baseCol + 1).GetValue<double>(),
-                                LayerFunction = ws.Cell(r, baseCol + 2).GetString(),
-                                Priority      = ws.Cell(r, baseCol + 3).GetValue<int>() is int p && p > 0 ? p : 1,
-                                IsVariable    = varCell.Equals("Yes", System.StringComparison.OrdinalIgnoreCase)
-                                             || varCell == "1" || varCell.Equals("True", System.StringComparison.OrdinalIgnoreCase)
-                            });
+                                SheetName        = ws.Name,
+                                TypeName         = typeName,
+                                TotalThicknessMm = ws.Cell(r, 4).GetValue<double>(),
+                                WrapsAtInserts   = NullCoalesce(ws.Cell(r, 5).GetString(), "NoInsertWrap"),
+                                WrapsAtEnds      = NullCoalesce(ws.Cell(r, 6).GetString(), "NoWrap"),
+                                Status           = existingNames.Contains(typeName)
+                                                   ? ImportStatus.Dup : ImportStatus.New,
+                                Layers           = new System.Collections.Generic.List<LayerData>()
+                            };
+                            result.Add(current);
                         }
 
-                        result.Add(new ImportPreviewItem
+                        // Skip orphan layer rows (no type started yet)
+                        if (current == null) continue;
+
+                        string mat      = ws.Cell(r, 8).GetString();
+                        string layerFunc = ws.Cell(r, 10).GetString();
+
+                        // Skip blank layer rows
+                        if (string.IsNullOrWhiteSpace(mat) && string.IsNullOrWhiteSpace(layerFunc))
+                            continue;
+
+                        string varCell = ws.Cell(r, 12).GetString();
+                        int    pri     = ws.Cell(r, 11).GetValue<int>();
+
+                        current.Layers.Add(new LayerData
                         {
-                            SheetName        = ws.Name,
-                            TypeName         = typeName,
-                            LayerCount       = layerCount,
-                            TotalThicknessMm = thickness,
-                            WrapsAtInserts   = string.IsNullOrWhiteSpace(wrapsAtInserts) ? "NoInsertWrap" : wrapsAtInserts,
-                            WrapsAtEnds      = string.IsNullOrWhiteSpace(wrapsAtEnds)    ? "NoWrap"       : wrapsAtEnds,
-                            Status           = existingNames.Contains(typeName) ? ImportStatus.Dup : ImportStatus.New,
-                            Layers           = layers
+                            MaterialName  = mat,
+                            ThicknessMm   = ws.Cell(r, 9).GetValue<double>(),
+                            LayerFunction = layerFunc,
+                            Priority      = pri > 0 ? pri : 1,
+                            IsVariable    = varCell.Equals("Yes",  System.StringComparison.OrdinalIgnoreCase)
+                                         || varCell == "1"
+                                         || varCell.Equals("True", System.StringComparison.OrdinalIgnoreCase)
                         });
                     }
+
+                    // Finalise the last item on this sheet
+                    if (current != null)
+                        FinaliseItem(current);
+                    current = null;
                 }
             }
 
             return result;
         }
+
+        private static void FinaliseItem(ImportPreviewItem item)
+        {
+            item.LayerCount = item.Layers.Count;
+            if (item.TotalThicknessMm == 0)
+            {
+                double sum = 0;
+                foreach (var l in item.Layers) sum += l.ThicknessMm;
+                item.TotalThicknessMm = sum;
+            }
+        }
+
+        private static string NullCoalesce(string value, string fallback)
+            => string.IsNullOrWhiteSpace(value) ? fallback : value;
     }
 }
