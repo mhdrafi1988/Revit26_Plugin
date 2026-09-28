@@ -48,6 +48,8 @@ public partial class ViewTypeFilterGroup : ObservableObject
     [ObservableProperty] private bool isExpanded = true;
     [ObservableProperty] private bool isChecked;
 
+    private bool _settingRows;
+
     public ViewTypeFilterGroup(ViewTypeGroup group, string label, IEnumerable<ViewTypeFilterRow> rows)
     {
         Group = group;
@@ -58,7 +60,7 @@ public partial class ViewTypeFilterGroup : ObservableObject
         foreach (var r in Rows)
             r.PropertyChanged += (_, e) =>
             {
-                if (e.PropertyName == nameof(ViewTypeFilterRow.IsChecked))
+                if (e.PropertyName == nameof(ViewTypeFilterRow.IsChecked) && !_settingRows)
                     IsChecked = Rows.All(x => x.IsChecked);
             };
     }
@@ -66,8 +68,12 @@ public partial class ViewTypeFilterGroup : ObservableObject
     /// <summary>Sets every child row's IsChecked without re-triggering group-level recompute storms.</summary>
     public void SetAllRows(bool value)
     {
+        _settingRows = true;
         foreach (var r in Rows) r.IsChecked = value;
+        _settingRows = false;
     }
+
+    partial void OnIsCheckedChanged(bool value) => SetAllRows(value);
 }
 
 public partial class ViewsListViewModel : ObservableObject
@@ -86,6 +92,7 @@ public partial class ViewsListViewModel : ObservableObject
     // ── Filter bar / popover state ──────────────────────────────────────────
     [ObservableProperty] private string selectedSheetFilter = "All";
     [ObservableProperty] private string sheetSearchText     = "";
+    [ObservableProperty] private string viewNameSearchText  = "";
     [ObservableProperty] private bool   isFilterPopoverOpen;
     [ObservableProperty] private bool   showPlacedOnSheet = true;
     [ObservableProperty] private bool   showNotPlaced     = true;
@@ -257,6 +264,14 @@ public partial class ViewsListViewModel : ObservableObject
     {
         if (obj is not ViewItemViewModel v) return false;
 
+        // ── View name search ──
+        if (!string.IsNullOrWhiteSpace(ViewNameSearchText))
+        {
+            bool nameMatch = v.OriginalName.Contains(ViewNameSearchText, StringComparison.OrdinalIgnoreCase)
+                          || (v.EditableName ?? "").Contains(ViewNameSearchText, StringComparison.OrdinalIgnoreCase);
+            if (!nameMatch) return false;
+        }
+
         // ── View Type popover checklist ──
         var row = ViewTypeFilterGroups.SelectMany(g => g.Rows).FirstOrDefault(r => r.ViewType == v.ViewType);
         if (row != null && !row.IsChecked) return false;
@@ -272,7 +287,7 @@ public partial class ViewsListViewModel : ObservableObject
             if (!anySheetMatches) return false;
         }
 
-        // ── Sheet ComboBox (legacy single-select, kept alongside popover) ──
+        // ── Sheet ComboBox (single-select, alongside popover) ──
         bool sheetComboPasses = SelectedSheetFilter switch
         {
             "All"  => true,
@@ -301,10 +316,11 @@ public partial class ViewsListViewModel : ObservableObject
         return true;
     }
 
-    partial void OnSelectedSheetFilterChanged(string value) => ViewsGrid.Refresh();
-    partial void OnSheetSearchTextChanged(string value)     => ViewsGrid.Refresh();
-    partial void OnShowPlacedOnSheetChanged(bool value)     { ViewsGrid.Refresh(); RecalculateActiveFilterCount(); }
-    partial void OnShowNotPlacedChanged(bool value)         { ViewsGrid.Refresh(); RecalculateActiveFilterCount(); }
+    partial void OnSelectedSheetFilterChanged(string value)  { ViewsGrid.Refresh(); RecalculateActiveFilterCount(); }
+    partial void OnSheetSearchTextChanged(string value)      { ViewsGrid.Refresh(); RecalculateActiveFilterCount(); }
+    partial void OnViewNameSearchTextChanged(string value)   { ViewsGrid.Refresh(); RecalculateActiveFilterCount(); }
+    partial void OnShowPlacedOnSheetChanged(bool value)      { ViewsGrid.Refresh(); RecalculateActiveFilterCount(); }
+    partial void OnShowNotPlacedChanged(bool value)          { ViewsGrid.Refresh(); RecalculateActiveFilterCount(); }
     partial void OnActiveQuickFilterChanged(QuickFilterMode value) => ViewsGrid.Refresh();
 
     private void RecalculateActiveFilterCount()
@@ -314,6 +330,8 @@ public partial class ViewsListViewModel : ObservableObject
         if (allRows.Count > 0 && allRows.Any(r => !r.IsChecked)) count++;
         if (!ShowPlacedOnSheet || !ShowNotPlaced) count++;
         if (!string.IsNullOrWhiteSpace(SheetSearchText)) count++;
+        if (SelectedSheetFilter != "All") count++;
+        if (!string.IsNullOrWhiteSpace(ViewNameSearchText)) count++;
         ActiveFilterCount = count;
         OnPropertyChanged(nameof(HasActiveFilters));
     }
@@ -335,9 +353,10 @@ public partial class ViewsListViewModel : ObservableObject
     {
         foreach (var g in ViewTypeFilterGroups)
             g.SetAllRows(true);
-        ShowPlacedOnSheet = true;
-        ShowNotPlaced     = true;
-        SheetSearchText   = "";
+        ShowPlacedOnSheet  = true;
+        ShowNotPlaced      = true;
+        SheetSearchText    = "";
+        ViewNameSearchText = "";
         RecalculateActiveFilterCount();
         ViewsGrid.Refresh();
     }
