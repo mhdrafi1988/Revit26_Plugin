@@ -16,12 +16,12 @@ namespace Revit26_Plugin.Menu.Ribbon
             // Edge Around is down to its current version (V005); it stays in a
             // pulldown so a future version can be added beside it. Edge Element
             // keeps V002 and V001.
-            var edgeAroundV005 = new PushButtonData("Btn_RoofEdgeAroundSections_V005", "Edge Around V005", assemblyPath, "Revit26_Plugin.RoofEdgeAroundSections.V005.RoofEdgeAroundSectionsCommand")
+            var edgeAroundV005 = new PushButtonData("Btn_RoofEdgeAroundSections_V005", "Section Around Edges", assemblyPath, "Revit26_Plugin.RoofEdgeAroundSections.V005.RoofEdgeAroundSectionsCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofEdgeAroundSections_V005_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Roof Edge Around Sections", "V005")
             };
-            var edgeAroundPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofEdgeAroundSections", "Edge Around", edgeAroundV005);
+            var edgeAroundPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofEdgeAroundSections", "Section Around Edges", edgeAroundV005);
 
             var edgeElementV002 = new PushButtonData("Btn_RoofEdgeElementSections_V002", "Edge Element V002", assemblyPath, "Revit26_Plugin.RoofEdgeElementSections.V002.RoofEdgeElementSectionsCommand")
             {
@@ -91,7 +91,7 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             RibbonPanel renamePanel = app.CreateRibbonPanel(tabName, "View Rename");
 
-            var autoRenamerV004 = new PushButtonData("Btn_ViewAutoRenamer_V004", "View Renamer V004", assemblyPath, "Revit26_Plugin.ViewAutoRenamer.V004.Commands.OpenViewAutoRenamerCommand")
+            var autoRenamerV004 = new PushButtonData("Btn_ViewAutoRenamer_V004", "View Renamer", assemblyPath, "Revit26_Plugin.ViewAutoRenamer.V004.Commands.OpenViewAutoRenamerCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.ViewAutoRenamer_V004_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("View Auto Renamer", "V004")
