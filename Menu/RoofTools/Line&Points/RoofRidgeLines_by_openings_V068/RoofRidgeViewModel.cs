@@ -24,6 +24,12 @@ namespace Revit26_Plugin.RoofRidgeLines.V068.ViewModels
         private readonly UIDocument _uiDoc;
         private readonly Document _doc;
 
+        /// <summary>
+        /// Routes Revit API work into API context — the window is modeless, so command
+        /// handlers here run outside it and cannot start transactions directly.
+        /// </summary>
+        private readonly RevitApiDispatcher _revitApi;
+
         /// <summary>Names of available projection line styles, for the "Detail line style" ComboBox.</summary>
         public ObservableCollection<string> LineStyleOptions { get; }
             = new ObservableCollection<string>();
@@ -77,10 +83,11 @@ namespace Revit26_Plugin.RoofRidgeLines.V068.ViewModels
             }
         }
 
-        public RoofRidgeViewModel(UIDocument uiDoc, RoofBase roof = null)
+        public RoofRidgeViewModel(UIDocument uiDoc, RevitApiDispatcher revitApi, RoofBase roof = null)
         {
             _uiDoc = uiDoc ?? throw new ArgumentNullException(nameof(uiDoc));
             _doc = uiDoc.Document;
+            _revitApi = revitApi ?? throw new ArgumentNullException(nameof(revitApi));
             _groupingSvc = new DrainGroupingService();
             _voronoiSvc = new VoronoiComputationService();
             _boundarySvc = new RoofBoundaryService();
@@ -246,28 +253,33 @@ namespace Revit26_Plugin.RoofRidgeLines.V068.ViewModels
         // â”€â”€ Commands â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         [RelayCommand]
-        private void SelectRoof()
+        private async Task SelectRoof()
         {
             try
             {
                 _ownerWindow?.Hide();
                 StatusMessage = "Click on a Roof element in the viewâ€¦";
-                var ref_ = _uiDoc.Selection.PickObject(
-                    ObjectType.Element,
-                    new RoofSelectionFilter(),
-                    "Select a Roof");
 
-                _selectedRoof = _doc.GetElement(ref_) as RoofBase;
-                if (_selectedRoof == null)
+                // PickObject needs API context — run it through the ExternalEvent.
+                await RunInRevitAsync(() =>
                 {
-                    RoofDescription = "Selection failed â€” please retry";
-                    StatusMessage = "Roof selection cancelled or invalid.";
-                    return;
-                }
-                RoofDescription = $"Roof: {_selectedRoof.Name}  (Id {_selectedRoof.Id})";
+                    var ref_ = _uiDoc.Selection.PickObject(
+                        ObjectType.Element,
+                        new RoofSelectionFilter(),
+                        "Select a Roof");
 
-                // Autoâ€‘load openings for the newly selected roof
-                LoadOpeningsForCurrentRoof();
+                    _selectedRoof = _doc.GetElement(ref_) as RoofBase;
+                    if (_selectedRoof == null)
+                    {
+                        RoofDescription = "Selection failed â€” please retry";
+                        StatusMessage = "Roof selection cancelled or invalid.";
+                        return;
+                    }
+                    RoofDescription = $"Roof: {_selectedRoof.Name}  (Id {_selectedRoof.Id})";
+
+                    // Autoâ€‘load openings for the newly selected roof
+                    LoadOpeningsForCurrentRoof();
+                });
             }
             catch (Autodesk.Revit.Exceptions.OperationCanceledException)
             {
@@ -420,10 +432,23 @@ namespace Revit26_Plugin.RoofRidgeLines.V068.ViewModels
             try
             {
                 // â”€â”€ Step 1: Extract boundary and inner loops â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-                // These call Revit API and must run on the UI thread.
+                // These call Revit API and must run in API context (via the ExternalEvent).
                 UpdateProgress("Extracting roof boundaryâ€¦");
                 Log("[STEP 1] Extracting roof boundaryâ€¦");
-                List<XYZ> boundary = _boundarySvc.ExtractBoundary(_selectedRoof);
+                List<XYZ> boundary = null;
+                List<List<XYZ>> innerLoops = null;
+                await RunInRevitAsync(() =>
+                {
+                    // The window is modeless, so the roof may have been deleted since it was picked.
+                    if (!_selectedRoof.IsValidObject)
+                    {
+                        _selectedRoof = null;
+                        RoofDescription = "No roof selected";
+                        throw new InvalidOperationException("The selected roof no longer exists. Select a roof again.");
+                    }
+                    boundary = _boundarySvc.ExtractBoundary(_selectedRoof);
+                    innerLoops = _innerLoopSvc.ExtractInnerLoops(_selectedRoof);
+                });
 
                 // Store boundary + centroid for AddPoint fallback
                 var result = new VoronoiRidgeResult();
@@ -442,7 +467,7 @@ namespace Revit26_Plugin.RoofRidgeLines.V068.ViewModels
 
                 UpdateProgress("Detecting inner loopsâ€¦");
                 Log("[STEP 2] Detecting inner loopsâ€¦");
-                result.InnerLoops = _innerLoopSvc.ExtractInnerLoops(_selectedRoof);
+                result.InnerLoops = innerLoops;
                 Log($"  Inner loops found: {result.InnerLoops.Count}");
 
                 // â”€â”€ Get user selection â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -544,9 +569,13 @@ namespace Revit26_Plugin.RoofRidgeLines.V068.ViewModels
                     Log($"  [TX-02] Points â€” Calculated: {_creationSvc.TotalCalculated}  Added: {TotalAddedPoints}  Failed: {TotalFailedPoints}");
                 };
 
-                ElementId selectedLineStyleId = RidgeCreationService.GetLineStyleIdByName(_doc, SelectedLineStyleName);
+                // Transactions TX-01..03 — must run in API context via the ExternalEvent.
+                await RunInRevitAsync(() =>
+                {
+                    ElementId selectedLineStyleId = RidgeCreationService.GetLineStyleIdByName(_doc, SelectedLineStyleName);
 
-                _creationSvc.CreateAll(_doc, _uiDoc.ActiveView, _selectedRoof, _lastResult, AddDetailLines, AddShapePoints, selectedLineStyleId);
+                    _creationSvc.CreateAll(_doc, _uiDoc.ActiveView, _selectedRoof, _lastResult, AddDetailLines, AddShapePoints, selectedLineStyleId);
+                });
 
                 Log($"  Detail lines created: {_lastResult.CreatedDetailLineIds.Count}");
 
@@ -732,6 +761,21 @@ namespace Revit26_Plugin.RoofRidgeLines.V068.ViewModels
             else
                 System.Windows.Application.Current?.Dispatcher?.Invoke(Append);
         }
+
+        /// <summary>
+        /// Runs <paramref name="work"/> inside Revit's API context (via the ExternalEvent)
+        /// and completes when it has run. Fails fast if the tool's document was closed or
+        /// is no longer the active one, since PickObject / ActiveView depend on it.
+        /// </summary>
+        private Task RunInRevitAsync(Action work) => _revitApi.InvokeAsync(app =>
+        {
+            if (!_doc.IsValidObject)
+                throw new InvalidOperationException("The document this tool was opened on has been closed.");
+            var activeDoc = app.ActiveUIDocument?.Document;
+            if (activeDoc == null || !activeDoc.Equals(_doc))
+                throw new InvalidOperationException($"Switch back to '{_doc.Title}' — this tool is working on that document.");
+            work();
+        });
 
         private static void Dispatch(Action action)
             => System.Windows.Application.Current?.Dispatcher?.Invoke(action);
