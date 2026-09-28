@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using Revit26_Plugin.RoofTypeCreator.V001.Core.Models;
 using Revit26_Plugin.RoofTypeCreator.V001.UI.ViewModels;
@@ -43,6 +44,28 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.UI.Views
         {
             Vm?.Dispose();
             base.OnClosed(e);
+        }
+
+        private void ExpandRow_Click(object sender, RoutedEventArgs e)
+        {
+            if ((sender as Button)?.DataContext is RoofTypeItem item)
+            {
+                item.IsExpanded = !item.IsExpanded;
+                var row = ExportGrid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
+                if (row != null)
+                    row.DetailsVisibility = item.IsExpanded ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
+        private void ExpandImportRow_Click(object sender, RoutedEventArgs e)
+        {
+            if ((sender as Button)?.DataContext is ImportPreviewItem item)
+            {
+                item.IsExpanded = !item.IsExpanded;
+                var row = ImportGrid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
+                if (row != null)
+                    row.DetailsVisibility = item.IsExpanded ? Visibility.Visible : Visibility.Collapsed;
+            }
         }
 
         private void CopySelectedBtn_Click(object sender, RoutedEventArgs e)
