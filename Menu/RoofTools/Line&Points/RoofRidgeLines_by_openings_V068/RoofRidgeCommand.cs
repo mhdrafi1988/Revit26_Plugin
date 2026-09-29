@@ -3,6 +3,7 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
+using Revit26_Plugin.RoofRidgeLines.V068.Services;
 using Revit26_Plugin.RoofRidgeLines.V068.ViewModels;
 using Revit26_Plugin.RoofRidgeLines.V068.Views;
 using Revit26_Plugin.Utilities;
@@ -46,9 +47,14 @@ namespace Revit26_Plugin.RoofRidgeLines.V068.Commands
 
                 // 2. Launch UI – pass the selected roof.
                 // The ViewModel will auto-load openings upon construction.
-                var viewModel = new RoofRidgeViewModel(uiDoc, selectedRoof);
+                // The window is modeless, so every later Revit API call (transactions,
+                // PickObject) is routed through the dispatcher's ExternalEvent, which
+                // must be created here while still in API context.
+                var dispatcher = new RevitApiDispatcher();
+                var viewModel = new RoofRidgeViewModel(uiDoc, dispatcher, selectedRoof);
                 var view = new RoofRidgeView(viewModel);
                 viewModel.SetOwnerWindow(view);
+                view.Closed += (_, __) => dispatcher.Dispose();
                 view.Show();
 
                 return Result.Succeeded;

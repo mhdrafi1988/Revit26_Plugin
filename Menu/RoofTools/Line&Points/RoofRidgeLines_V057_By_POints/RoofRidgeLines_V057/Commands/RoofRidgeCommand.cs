@@ -69,9 +69,14 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.Commands
                 }
 
                 // 3. Launch UI
-                var viewModel = new RoofRidgeViewModel(uiDoc, selectedRoof, drainPoints);
+                // The window is modeless, so every later Revit API call (transactions,
+                // PickObject/PickObjects) is routed through the dispatcher's ExternalEvent,
+                // which must be created here while still in API context.
+                var dispatcher = new RevitApiDispatcher();
+                var viewModel = new RoofRidgeViewModel(uiDoc, dispatcher, selectedRoof, drainPoints);
                 var view = new RoofRidgeView(viewModel);
                 viewModel.SetOwnerWindow(view);
+                view.Closed += (_, __) => dispatcher.Dispose();
                 view.Show();
 
                 return Result.Succeeded;
