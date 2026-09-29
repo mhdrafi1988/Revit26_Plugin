@@ -10,6 +10,7 @@ using CommunityToolkit.Mvvm.Input;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
+using Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.ExternalEvents;
 using Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.Models;
 using Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.Services;
 
@@ -28,6 +29,10 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.ViewModels
         private readonly RidgeCreationService _creationSvc;
         private readonly InnerLoopService _innerLoopSvc;
         private readonly InnerLoopIntersectionService _innerLoopIntersectionSvc;
+
+        // The window is modeless, so every Revit API call that picks or writes
+        // must be marshalled into an API context through this ExternalEvent.
+        private readonly RevitApiInvoker _revitApi;
 
         // â”€â”€ Internal state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         private RoofBase _selectedRoof;
@@ -66,9 +71,15 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.ViewModels
             _creationSvc = new RidgeCreationService();
             _innerLoopSvc = new InnerLoopService();
             _innerLoopIntersectionSvc = new InnerLoopIntersectionService();
+            _revitApi = new RevitApiInvoker(); // ctor runs inside the command's Execute (API context)
         }
 
-        public void SetOwnerWindow(Window window) => _ownerWindow = window;
+        public void SetOwnerWindow(Window window)
+        {
+            _ownerWindow = window;
+            if (window != null)
+                window.Closed += (_, _) => _revitApi.Dispose();
+        }
 
         // â”€â”€ Standard observable properties â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
@@ -144,18 +155,23 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.ViewModels
         // â”€â”€ Commands â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         [RelayCommand]
-        private void SelectRoof()
+        private async Task SelectRoof()
         {
             try
             {
                 _ownerWindow?.Hide();
                 StatusMessage = "Click on a Roof element in the viewâ€¦";
-                var ref_ = _uiDoc.Selection.PickObject(
-                    ObjectType.Element,
-                    new RoofSelectionFilter(),
-                    "Select a Roof");
+                RoofBase picked = null;
+                await _revitApi.InvokeAsync(_ =>
+                {
+                    var ref_ = _uiDoc.Selection.PickObject(
+                        ObjectType.Element,
+                        new RoofSelectionFilter(),
+                        "Select a Roof");
+                    picked = _doc.GetElement(ref_) as RoofBase;
+                });
 
-                _selectedRoof = _doc.GetElement(ref_) as RoofBase;
+                _selectedRoof = picked;
                 if (_selectedRoof == null)
                 {
                     RoofDescription = "Selection failed â€” please retry";
@@ -180,7 +196,7 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.ViewModels
         }
 
         [RelayCommand]
-        private void SelectDrains()
+        private async Task SelectDrains()
         {
             if (_selectedRoof == null)
             {
@@ -190,7 +206,9 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.ViewModels
             try
             {
                 _ownerWindow?.Hide();
-                var newDrains = DrainPointPicker.PickDrainPoints(_uiDoc, _selectedRoof);
+                List<XYZ> newDrains = null;
+                await _revitApi.InvokeAsync(_ =>
+                    newDrains = DrainPointPicker.PickDrainPoints(_uiDoc, _selectedRoof));
                 _selectedDrainLocations = newDrains;
                 DrainCount = _selectedDrainLocations.Count;
                 StatusMessage = $"{DrainCount} drain point(s) selected.";
@@ -318,14 +336,19 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.ViewModels
 
                 // â”€â”€ Step 2: Boundary + inner-loop extraction â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                 // These call into the Revit API (get_Geometry, GetDependentElements,
-                // GetElement) and therefore MUST run on the UI/API thread. They run
-                // here, before Task.Run, rather than inside it.
+                // GetElement) and therefore MUST run in the Revit API context, via
+                // the ExternalEvent, before Task.Run rather than inside it.
                 var result = new VoronoiRidgeResult();
                 result.DrainGroups = drainGroups;
 
                 UpdateProgress("Extracting roof boundaryâ€¦");
                 Log("[STEP 2] Extracting roof boundaryâ€¦");
-                List<XYZ> boundary = _boundarySvc.ExtractBoundary(_selectedRoof);
+                List<XYZ> boundary = null;
+                await _revitApi.InvokeAsync(_ =>
+                {
+                    boundary = _boundarySvc.ExtractBoundary(_selectedRoof);
+                    result.InnerLoops = _innerLoopSvc.ExtractInnerLoops(_selectedRoof);
+                });
 
                 // Store boundary + centroid for AddPoint fallback in RidgeCreationService
                 result.BoundaryPolygon = boundary;
@@ -343,7 +366,6 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.ViewModels
 
                 UpdateProgress("Detecting inner loopsâ€¦");
                 Log("[STEP 2a] Detecting inner loopsâ€¦");
-                result.InnerLoops = _innerLoopSvc.ExtractInnerLoops(_selectedRoof);
                 Log($"  Inner loops found: {result.InnerLoops.Count}");
 
                 // â”€â”€ Steps 3â€“5: pure geometry/math â€” no Revit API calls, safe to run
@@ -423,8 +445,12 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.ViewModels
                     Log($"  [TX-3] Last Reset: {LastResetStatus}");
                 };
 
-                _creationSvc.CreateAll(_doc, _uiDoc.ActiveView, _selectedRoof, _lastResult,
-                    AddDetailLines, AddShapePoints);
+                // Transactions are only allowed in the Revit API context — raise the
+                // ExternalEvent and wait for Revit to run CreateAll there.
+                bool addDetailLines = AddDetailLines, addShapePoints = AddShapePoints;
+                await _revitApi.InvokeAsync(_ =>
+                    _creationSvc.CreateAll(_doc, _uiDoc.ActiveView, _selectedRoof, _lastResult,
+                        addDetailLines, addShapePoints));
 
                 DetailLinesAddedCount = _creationSvc.DetailLinesAdded;
                 Log($"  Detail lines created: {DetailLinesAddedCount}");
