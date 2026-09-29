@@ -241,14 +241,7 @@
                                                             <TextBlock Grid.Column="1" Text="{Binding ThicknessMm, StringFormat=F1}" Style="{StaticResource LayerValueText}"/>
                                                             <TextBlock Grid.Column="2" Text="{Binding LayerFunction}" Style="{StaticResource LayerValueText}"/>
                                                             <TextBlock Grid.Column="3" Text="{Binding Priority}"      Style="{StaticResource LayerValueText}"/>
-                                                            <TextBlock Grid.Column="4" Style="{StaticResource LayerValueText}">
-                                                                <TextBlock.Text>
-                                                                    <Binding Path="IsVariable">
-                                                                        <Binding.Converter>
-                                                                            <converters:InverseBoolConverter/>
-                                                                        </Binding.Converter>
-                                                                    </Binding>
-                                                                </TextBlock.Text>
+                                                            <TextBlock Grid.Column="4">
                                                                 <TextBlock.Style>
                                                                     <Style TargetType="TextBlock" BasedOn="{StaticResource LayerValueText}">
                                                                         <Style.Triggers>
@@ -441,7 +434,7 @@
                                                             <TextBlock Grid.Column="1" Text="{Binding ThicknessMm, StringFormat=F1}" Style="{StaticResource LayerValueText}"/>
                                                             <TextBlock Grid.Column="2" Text="{Binding LayerFunction}" Style="{StaticResource LayerValueText}"/>
                                                             <TextBlock Grid.Column="3" Text="{Binding Priority}"      Style="{StaticResource LayerValueText}"/>
-                                                            <TextBlock Grid.Column="4" Style="{StaticResource LayerValueText}">
+                                                            <TextBlock Grid.Column="4">
                                                                 <TextBlock.Style>
                                                                     <Style TargetType="TextBlock" BasedOn="{StaticResource LayerValueText}">
                                                                         <Style.Triggers>

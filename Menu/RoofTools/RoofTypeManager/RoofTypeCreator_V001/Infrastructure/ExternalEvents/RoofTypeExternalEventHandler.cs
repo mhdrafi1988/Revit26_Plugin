@@ -165,11 +165,16 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.Infrastructure.ExternalEvents
                                     var cs = CompoundStructure.CreateSimpleCompoundStructure(layers);
                                     if (cs != null)
                                     {
-                                        if (varIdx >= 0) cs.SetVariableLayerIndex(varIdx);
+                                        if (varIdx >= 0) cs.VariableLayerIndex = varIdx;
                                         if (Enum.TryParse<OpeningWrappingCondition>(item.WrapsAtInserts, out var ow))
                                             cs.OpeningWrapping = ow;
                                         if (Enum.TryParse<EndCapCondition>(item.WrapsAtEnds, out var ew))
-                                            cs.EndWrapping = ew;
+                                            cs.EndCap = ew;
+                                        for (int li = 0; li < cs.LayerCount && li < item.Layers.Count; li++)
+                                        {
+                                            int pr = item.Layers[li].Priority;
+                                            if (pr > 0) cs.SetLayerPriority(li, pr);
+                                        }
                                         newType.SetCompoundStructure(cs);
                                     }
                                 }
@@ -251,7 +256,6 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.Infrastructure.ExternalEvents
                 if (ld.IsVariable) varIdx = i;
 
                 var layer = new CompoundStructureLayer(thick, func, mat?.Id ?? ElementId.InvalidElementId);
-                layer.Priority = ld.Priority > 0 ? ld.Priority : 1;
                 layers.Add(layer);
             }
 

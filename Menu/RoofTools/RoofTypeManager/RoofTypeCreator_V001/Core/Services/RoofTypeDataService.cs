@@ -34,7 +34,7 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.Core.Services
                     int varIdx = cs.VariableLayerIndex;
                     for (int li = 0; li < cs.LayerCount; li++)
                     {
-                        var layer = cs.GetLayer(li);
+                        var layer = cs.GetLayers()[li];
                         string mat = layer.MaterialId != ElementId.InvalidElementId
                             ? (doc.GetElement(layer.MaterialId) as Material)?.Name ?? ""
                             : "";
@@ -45,7 +45,7 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.Core.Services
                             MaterialName  = mat,
                             ThicknessMm   = thick,
                             LayerFunction = layer.Function.ToString(),
-                            Priority      = layer.Priority,
+                            Priority      = cs.GetLayerPriority(li),
                             IsVariable    = li == varIdx
                         });
                     }

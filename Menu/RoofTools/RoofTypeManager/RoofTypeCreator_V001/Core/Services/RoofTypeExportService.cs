@@ -63,7 +63,7 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.Core.Services
                     if (cs != null)
                     {
                         wrapsInserts = cs.OpeningWrapping.ToString();
-                        wrapsEnds    = cs.EndWrapping.ToString();
+                        wrapsEnds    = cs.EndCap.ToString();
                         int varIdx   = cs.VariableLayerIndex;
 
                         for (int li = 0; li < cs.LayerCount; li++)
@@ -74,7 +74,7 @@ namespace Revit26_Plugin.RoofTypeCreator.V001.Core.Services
                                 : "";
                             double thick = Math.Round(
                                 UnitUtils.ConvertFromInternalUnits(layer.Width, UnitTypeId.Millimeters), 1);
-                            layers.Add((mat, thick, layer.Function.ToString(), layer.Priority, li == varIdx));
+                            layers.Add((mat, thick, layer.Function.ToString(), cs.GetLayerPriority(li), li == varIdx));
                         }
                     }
 
