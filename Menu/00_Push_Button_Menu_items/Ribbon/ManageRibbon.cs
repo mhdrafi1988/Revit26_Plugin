@@ -51,6 +51,12 @@ namespace Revit26_Plugin.Menu.Ribbon
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.WorksetRename_16.png"),
                     ToolTip = RibbonLayoutHelper.VersionTip("Workset Renamer (From Excel)", "FX03")
                 },
+                new PushButtonData("Btn_ScheduleExportImport_V001", "Schedule Export/Import", assemblyPath, "Revit26_Plugin.ScheduleExportImport.V001.Commands.ScheduleExportImportCommand")
+                {
+                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Manage.ScheduleExportImport_16.png"),
+                    ToolTip = RibbonLayoutHelper.VersionTip("Schedule Export / Import", "V001",
+                        "Export any schedule (with Element ID + all visible fields) to Excel, edit values, then import back by Element ID.")
+                },
             });
         }
     }
