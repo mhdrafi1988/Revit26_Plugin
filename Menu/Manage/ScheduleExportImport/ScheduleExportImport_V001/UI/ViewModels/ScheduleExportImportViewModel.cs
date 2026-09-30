@@ -1,5 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows.Data;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -23,6 +25,24 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.UI.ViewModels
 
         public ObservableCollection<ScheduleViewInfo> Schedules { get; } = new ObservableCollection<ScheduleViewInfo>();
         public ObservableCollection<LogEntry> LogEntries { get; } = new ObservableCollection<LogEntry>();
+        public ICollectionView SchedulesView { get; }
+
+        [ObservableProperty]
+        private string searchText = string.Empty;
+
+        partial void OnSearchTextChanged(string value) => SchedulesView.Refresh();
+
+        [RelayCommand]
+        private void ClearSearch() => SearchText = string.Empty;
+
+        private bool MatchesSearch(object item)
+        {
+            if (string.IsNullOrWhiteSpace(SearchText)) return true;
+            var s = (ScheduleViewInfo)item;
+            var t = SearchText.Trim();
+            return (s.Name?.IndexOf(t, StringComparison.OrdinalIgnoreCase) >= 0)
+                || (s.CategoryName?.IndexOf(t, StringComparison.OrdinalIgnoreCase) >= 0);
+        }
 
         [ObservableProperty]
         private ScheduleViewInfo selectedSchedule;
@@ -41,6 +61,8 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.UI.ViewModels
             _doc = doc;
             _handler = handler;
             _externalEvent = externalEvent;
+            SchedulesView = CollectionViewSource.GetDefaultView(Schedules);
+            SchedulesView.Filter = MatchesSearch;
             _handler.RequestCompleted += OnRequestCompleted;
 
             LoadSchedules();

@@ -62,12 +62,30 @@
                 <Grid Margin="10,8">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Row="0" Text="Schedules in Document" FontWeight="SemiBold" FontSize="12"
                                Foreground="{StaticResource BrushTextPrimary}" Margin="0,0,0,6"/>
-                    <DataGrid Grid.Row="1"
-                              ItemsSource="{Binding Schedules}"
+                    <Grid Grid.Row="1" Margin="0,0,0,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="🔍 Search:" VerticalAlignment="Center"
+                                   FontSize="12" Foreground="{StaticResource BrushTextSecondary}" Margin="0,0,8,0"/>
+                        <TextBox Grid.Column="1" x:Name="SearchBox"
+                                 Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 FontSize="12" Padding="6,4" VerticalContentAlignment="Center"
+                                 BorderBrush="{StaticResource BrushSeparatorThin}" BorderThickness="1"
+                                 ToolTip="Filter by schedule name or category"/>
+                        <Button Grid.Column="2" Content="✕" Margin="6,0,0,0"
+                                Style="{StaticResource SmallSecondaryButton}"
+                                Command="{Binding ClearSearchCommand}" ToolTip="Clear search"/>
+                    </Grid>
+                    <DataGrid Grid.Row="2"
+                              ItemsSource="{Binding SchedulesView}"
                               SelectedItem="{Binding SelectedSchedule, Mode=TwoWay}"
                               AutoGenerateColumns="False"
                               CanUserAddRows="False"
