@@ -133,15 +133,21 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.Core.Services
         /// <summary>
         /// Reads the first worksheet back. Row 1 is the header; rows keyed on "Element ID".
         /// </summary>
-        public static (List<string> Headers, List<ScheduleRow> Rows) Import(string filePath)
+        public static ExcelImportFile Import(string filePath)
         {
             using var wb = new XLWorkbook(filePath);
-            var ws = wb.Worksheets.First(s => !s.Name.Equals(InfoSheetName, StringComparison.OrdinalIgnoreCase));
+            var file = new ExcelImportFile { FilePath = filePath };
+
+            if (wb.Worksheets.TryGetWorksheet(InfoSheetName, out var infoSheet))
+                file.ScheduleName = infoSheet.Cell(3, 2).GetString().Trim();
+
+            var ws = wb.Worksheets.FirstOrDefault(s => !s.Name.Equals(InfoSheetName, StringComparison.OrdinalIgnoreCase))
+                     ?? throw new InvalidDataException("The workbook has no data sheet.");
 
             var lastRowUsed = ws.LastRowUsed();
             var lastColUsed = ws.LastColumnUsed();
             if (lastRowUsed == null || lastColUsed == null)
-                return (new List<string>(), new List<ScheduleRow>());
+                return file;
 
             int lastRow = lastRowUsed.RowNumber();
             int lastCol = lastColUsed.ColumnNumber();
@@ -163,7 +169,7 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.Core.Services
                 .Select(kv => kv.Key)
                 .ToList();
 
-            var result = new List<ScheduleRow>();
+            file.Headers = dataHeaders;
             for (int r = 2; r <= lastRow; r++)
             {
                 var idText = ws.Cell(r, idCol).GetString().Trim();
@@ -172,10 +178,10 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.Core.Services
                 var row = new ScheduleRow { ElementId = elementId };
                 foreach (var h in dataHeaders)
                     row.Values[h] = ws.Cell(r, columnIndexByHeader[h]).GetString().Trim();
-                result.Add(row);
+                file.Rows.Add(row);
             }
 
-            return (dataHeaders, result);
+            return file;
         }
 
         private static string SanitizeSheetName(string name)

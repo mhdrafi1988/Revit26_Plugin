@@ -9,6 +9,8 @@ using Revit26_Plugin.ScheduleExportImport.V001.UI.Views;
 
 namespace Revit26_Plugin.ScheduleExportImport.V001.Commands
 {
+    // Import is two-step (Analyze → preview → Apply) and writes only ticked, changed,
+    // instance-parameter values; per Rafi's confirmed decision (2026-09-30).
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]
     public class ScheduleExportImportCommand : IExternalCommand
@@ -18,13 +20,12 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.Commands
             try
             {
                 var uiApp = commandData.Application;
-                var uiDoc = uiApp.ActiveUIDocument;
-                var doc = uiDoc.Document;
+                var doc = uiApp.ActiveUIDocument.Document;
 
                 var handler = new ScheduleImportEventHandler(doc);
                 var externalEvent = ExternalEvent.Create(handler);
 
-                var viewModel = new ScheduleExportImportViewModel(doc, handler, externalEvent);
+                var viewModel = new ScheduleExportImportViewModel(handler, externalEvent);
                 var view = new ScheduleExportImportWindow(viewModel);
                 new WindowInteropHelper(view).Owner = uiApp.MainWindowHandle;
                 view.Show();
@@ -38,7 +39,7 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.Commands
             catch (Exception ex)
             {
                 message = ex.Message;
-                TaskDialog.Show("Schedule Export/Import", $"Error opening tool:\n{ex.Message}");
+                TaskDialog.Show("Schedule Export/Import", $"Could not open the tool:\n{ex.Message}");
                 return Result.Failed;
             }
         }

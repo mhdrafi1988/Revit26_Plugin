@@ -4,6 +4,7 @@ using System.Linq;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.ScheduleExportImport.V001.Core.Models;
+using Revit26_Plugin.ScheduleExportImport.V001.Core.Services;
 
 namespace Revit26_Plugin.ScheduleExportImport.V001.Infrastructure.ExternalEvents
 {
@@ -11,14 +12,13 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.Infrastructure.ExternalEvents
     {
         LoadSchedules,
         ExportSchedule,
-        ImportSchedule
+        AnalyzeImport,
+        ApplyChanges
     }
 
     /// <summary>
-    /// Handles all Revit-API work for this tool:
-    ///   LoadSchedules  — collects all schedule views in the document
-    ///   ExportSchedule — reads fields + rows from a ViewSchedule, delivers data to ViewModel
-    ///   ImportSchedule — writes edited parameter values back to elements via a Transaction
+    /// All Revit-API work for this tool. AnalyzeImport is read-only (no transaction) and
+    /// builds the preview; ApplyChanges writes only the rows the user left ticked.
     /// </summary>
     public class ScheduleImportEventHandler : IExternalEventHandler
     {
@@ -26,20 +26,18 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.Infrastructure.ExternalEvents
 
         public ScheduleImportRequest Request { get; set; }
 
-        // ---- ExportSchedule inputs ----
+        // ---- Inputs ----
         public ElementId TargetScheduleId { get; set; }
+        public ExcelImportFile ImportFile { get; set; }
+        public List<ImportChange> ChangesToApply { get; set; } = new List<ImportChange>();
 
-        // ---- ImportSchedule inputs ----
-        public List<ScheduleRow> RowsToImport { get; set; } = new List<ScheduleRow>();
-        public List<string> WritableHeaders { get; set; } = new List<string>();
-
-        // ---- Outputs (read by ViewModel after RequestCompleted fires) ----
+        // ---- Outputs ----
         public List<ScheduleViewInfo> LoadedSchedules { get; private set; } = new List<ScheduleViewInfo>();
         public List<string> ExportedHeaders { get; private set; } = new List<string>();
         public List<ScheduleRow> ExportedRows { get; private set; } = new List<ScheduleRow>();
-        public List<ScheduleFieldInfo> ExportedFields { get; private set; } = new List<ScheduleFieldInfo>();
         public HashSet<string> EditableHeaders { get; private set; } = new HashSet<string>();
-        public ImportResult LastImportResult { get; private set; } = new ImportResult();
+        public ImportAnalysis Analysis { get; private set; } = new ImportAnalysis();
+        public int AppliedElementCount { get; private set; }
         public string ErrorMessage { get; private set; } = string.Empty;
         public bool LastRunSucceeded { get; private set; }
 
@@ -57,15 +55,10 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.Infrastructure.ExternalEvents
             {
                 switch (Request)
                 {
-                    case ScheduleImportRequest.LoadSchedules:
-                        ExecuteLoadSchedules();
-                        break;
-                    case ScheduleImportRequest.ExportSchedule:
-                        ExecuteExportSchedule();
-                        break;
-                    case ScheduleImportRequest.ImportSchedule:
-                        ExecuteImportSchedule();
-                        break;
+                    case ScheduleImportRequest.LoadSchedules: ExecuteLoadSchedules(); break;
+                    case ScheduleImportRequest.ExportSchedule: ExecuteExportSchedule(); break;
+                    case ScheduleImportRequest.AnalyzeImport: ExecuteAnalyzeImport(); break;
+                    case ScheduleImportRequest.ApplyChanges: ExecuteApplyChanges(); break;
                 }
                 LastRunSucceeded = true;
             }
@@ -85,195 +78,254 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.Infrastructure.ExternalEvents
         // ── Load all schedule views ────────────────────────────────────────────
         private void ExecuteLoadSchedules()
         {
-            var schedules = new FilteredElementCollector(_doc)
+            LoadedSchedules = new FilteredElementCollector(_doc)
                 .OfClass(typeof(ViewSchedule))
                 .Cast<ViewSchedule>()
                 .Where(vs => !vs.IsTemplate && !vs.IsTitleblockRevisionSchedule)
                 .OrderBy(vs => vs.Name)
-                .ToList();
-
-            LoadedSchedules = schedules.Select(vs =>
-            {
-                var tableDef = vs.Definition;
-                int fieldCount = tableDef.GetFieldCount();
-                int rowCount = 0;
-                try { rowCount = vs.GetTableData().GetSectionData(SectionType.Body).NumberOfRows; }
-                catch { }
-
-                return new ScheduleViewInfo
+                .Select(vs =>
                 {
-                    ViewId = vs.Id,
-                    Name = vs.Name,
-                    CategoryName = vs.Definition.CategoryId != ElementId.InvalidElementId
-                        ? Category.GetCategory(_doc, vs.Definition.CategoryId)?.Name ?? "Unknown"
-                        : "Multi-Category",
-                    RowCount = Math.Max(0, rowCount - 1), // subtract header row
-                    FieldCount = fieldCount
-                };
-            }).ToList();
+                    var def = vs.Definition;
+                    int visibleFields = Enumerable.Range(0, def.GetFieldCount()).Count(i => !def.GetField(i).IsHidden);
+                    int rowCount = 0;
+                    try { rowCount = new FilteredElementCollector(_doc, vs.Id).WhereElementIsNotElementType().GetElementCount(); }
+                    catch { }
+
+                    return new ScheduleViewInfo
+                    {
+                        ViewId = vs.Id,
+                        Name = vs.Name,
+                        CategoryName = def.CategoryId != ElementId.InvalidElementId
+                            ? Category.GetCategory(_doc, def.CategoryId)?.Name ?? "Unknown"
+                            : "Multi-Category",
+                        RowCount = rowCount,
+                        FieldCount = visibleFields
+                    };
+                })
+                .ToList();
         }
 
-        // ── Read schedule data into rows ──────────────────────────────────────
+        // ── Export ─────────────────────────────────────────────────────────────
         private void ExecuteExportSchedule()
         {
-            var schedule = _doc.GetElement(TargetScheduleId) as ViewSchedule;
-            if (schedule == null)
-                throw new InvalidOperationException("Schedule view not found in document.");
+            var schedule = GetSchedule();
+            var def = schedule.Definition;
 
-            var tableDef = schedule.Definition;
-            int fieldCount = tableDef.GetFieldCount();
-
-            var fields = new List<ScheduleFieldInfo>();
             var headers = new List<string>();
-
-            for (int i = 0; i < fieldCount; i++)
+            var calculated = new HashSet<string>();
+            for (int i = 0; i < def.GetFieldCount(); i++)
             {
-                var field = tableDef.GetField(i);
+                var field = def.GetField(i);
                 if (field.IsHidden) continue;
 
                 // Parameter name, not ColumnHeading: import matches Excel headers back to
                 // parameters by name, so a renamed heading ("W" for "Width") would never match.
                 var header = field.GetName();
-
-                // Make header unique if duplicated
-                var uniqueHeader = header;
+                var unique = header;
                 int dup = 1;
-                while (headers.Contains(uniqueHeader))
-                    uniqueHeader = $"{header} ({dup++})";
+                while (headers.Contains(unique))
+                    unique = $"{header} ({dup++})";
+                headers.Add(unique);
 
-                headers.Add(uniqueHeader);
-                fields.Add(new ScheduleFieldInfo
-                {
-                    Header = uniqueHeader,
-                    FieldId = field.FieldId,
-                    StorageType = StorageType.String, // actual type resolved per-element at import time
-                    IsReadOnly = IsFieldReadOnly(field)
-                });
+                if (field.IsCalculatedField || field.FieldType == ScheduleFieldType.Formula)
+                    calculated.Add(unique);
             }
 
-            // Collect elements that appear in this schedule using FilteredElementCollector
-            // with the schedule's own filter — same set Revit shows in the schedule view.
-            var scheduleElements = new FilteredElementCollector(_doc, schedule.Id)
-                .WhereElementIsNotElementType()
-                .ToList();
-
-            // Build a lookup: ElementId → row values, reading params directly from the element.
-            // For the cell text we use schedule.GetCellText but we need the row index per element.
-            // The safest approach for Revit 2026 is to read parameter values directly from elements.
             var rows = new List<ScheduleRow>();
             var editable = new HashSet<string>();
 
-            foreach (var elem in scheduleElements)
+            foreach (var elem in CollectScheduleElements(schedule))
             {
                 var row = new ScheduleRow { ElementId = elem.Id.Value };
-
-                foreach (var fi in fields)
+                foreach (var header in headers)
                 {
-                    string cellValue = string.Empty;
+                    string value = string.Empty;
                     try
                     {
-                        var param = elem.LookupParameter(fi.Header);
-                        if (param != null && !param.IsReadOnly && !fi.IsReadOnly)
-                            editable.Add(fi.Header);
-                        if (param == null)
-                        {
-                            var typeId = elem.GetTypeId();
-                            if (typeId != ElementId.InvalidElementId)
-                                param = _doc.GetElement(typeId)?.LookupParameter(fi.Header);
-                        }
+                        var param = elem.LookupParameter(header);
+                        if (param != null && !param.IsReadOnly && !calculated.Contains(header))
+                            editable.Add(header);
+                        param ??= GetTypeParameter(elem, header);
                         if (param != null)
-                            cellValue = GetParameterDisplayValue(param);
+                            value = GetParameterDisplayValue(param);
                     }
                     catch { }
-                    row.Values[fi.Header] = cellValue;
+                    row.Values[header] = value;
                 }
                 rows.Add(row);
             }
 
             ExportedHeaders = headers;
             ExportedRows = rows;
-            ExportedFields = fields;
             EditableHeaders = editable;
         }
 
-        // ── Write edited rows back to elements ────────────────────────────────
-        private void ExecuteImportSchedule()
+        // ── Analyze (read-only) ────────────────────────────────────────────────
+        private void ExecuteAnalyzeImport()
         {
-            var result = new ImportResult();
-            var notFoundIds = new List<long>();
+            var file = ImportFile ?? throw new InvalidOperationException("No import file was loaded.");
+            var analysis = new ImportAnalysis { RowsInFile = file.Rows.Count };
 
-            using var txGroup = new TransactionGroup(_doc, "Schedule Import V001");
-            txGroup.Start();
+            var dedup = ImportRowValidator.Deduplicate(file.Rows);
+            analysis.DuplicateRowsMerged = dedup.MergedDuplicateRows;
+            analysis.Items.AddRange(dedup.Conflicts);
 
-            foreach (var row in RowsToImport)
+            foreach (var row in dedup.UniqueRows)
             {
-                var elementId = new ElementId(row.ElementId);
-                var elem = _doc.GetElement(elementId);
+                var elem = _doc.GetElement(new ElementId(row.ElementId));
                 if (elem == null)
                 {
-                    result.ElementsNotFound++;
-                    notFoundIds.Add(row.ElementId);
+                    analysis.Items.Add(new ImportChange
+                    {
+                        ElementId = row.ElementId,
+                        Status = ImportChangeStatus.NotFound,
+                        Message = "No element with this ID in the model (deleted, or file from another model)."
+                    });
                     continue;
                 }
 
-                bool anyWritten = false;
-                using var tx = new Transaction(_doc, $"Update element {row.ElementId}");
+                analysis.ElementsMatched++;
+                foreach (var header in file.Headers)
+                {
+                    if (!row.Values.TryGetValue(header, out var newValue)) continue;
+
+                    var param = elem.LookupParameter(header);
+                    if (param == null)
+                    {
+                        var typeParam = GetTypeParameter(elem, header);
+                        if (typeParam != null && !SameValue(GetParameterDisplayValue(typeParam), newValue))
+                            analysis.Items.Add(NewItem(row.ElementId, header, typeParam, newValue, ImportChangeStatus.TypeParameter,
+                                "Type parameter — edit the type instead; changing it here would affect every instance."));
+                        continue;
+                    }
+
+                    var oldValue = GetParameterDisplayValue(param);
+                    if (SameValue(oldValue, newValue))
+                    {
+                        analysis.UnchangedValues++;
+                        continue;
+                    }
+
+                    analysis.Items.Add(param.IsReadOnly
+                        ? NewItem(row.ElementId, header, param, newValue, ImportChangeStatus.ReadOnly, "Read-only in Revit — cannot be changed.")
+                        : NewItem(row.ElementId, header, param, newValue, ImportChangeStatus.Change, string.Empty));
+                }
+            }
+
+            // Elements the schedule shows today that the file doesn't mention at all.
+            if (TargetScheduleId != null && _doc.GetElement(TargetScheduleId) is ViewSchedule schedule)
+            {
+                var inFile = new HashSet<long>(file.Rows.Select(r => r.ElementId));
+                foreach (var elem in CollectScheduleElements(schedule).Where(e => !inFile.Contains(e.Id.Value)))
+                {
+                    analysis.Items.Add(new ImportChange
+                    {
+                        ElementId = elem.Id.Value,
+                        Status = ImportChangeStatus.MissingFromFile,
+                        Message = "In the schedule but not in the file (added after export, or row deleted). Left unchanged."
+                    });
+                }
+            }
+
+            Analysis = analysis;
+        }
+
+        // ── Apply ticked changes ──────────────────────────────────────────────
+        private void ExecuteApplyChanges()
+        {
+            AppliedElementCount = 0;
+
+            // One TransactionGroup, assimilated → a single "Schedule Import" entry in Revit's Undo.
+            using var group = new TransactionGroup(_doc, "Schedule Import V001");
+            group.Start();
+
+            foreach (var byElement in ChangesToApply.GroupBy(c => c.ElementId))
+            {
+                var elem = _doc.GetElement(new ElementId(byElement.Key));
+                if (elem == null)
+                {
+                    foreach (var c in byElement) MarkFailed(c, "Element no longer exists.");
+                    continue;
+                }
+
+                using var tx = new Transaction(_doc, $"Import element {byElement.Key}");
                 tx.Start();
+                bool anyApplied = false;
                 try
                 {
-                    foreach (var header in WritableHeaders)
+                    foreach (var change in byElement)
                     {
-                        if (!row.Values.TryGetValue(header, out var newValue)) continue;
-
-                        // Instance parameters only: writing a type parameter would silently
-                        // change every instance of that type, not just this row.
-                        var param = elem.LookupParameter(header);
+                        var param = elem.LookupParameter(change.ParameterName);
                         if (param == null || param.IsReadOnly)
                         {
-                            result.ParametersSkipped++;
+                            MarkFailed(change, "Parameter missing or read-only.");
                             continue;
                         }
-
-                        if (string.Equals(GetParameterDisplayValue(param).Trim(), newValue.Trim(), StringComparison.Ordinal))
-                            continue;
-
                         try
                         {
-                            if (WriteParameter(param, newValue))
+                            if (WriteParameter(param, change.NewValue))
                             {
-                                result.ParametersWritten++;
-                                anyWritten = true;
+                                change.Status = ImportChangeStatus.Applied;
+                                change.Message = string.Empty;
+                                anyApplied = true;
                             }
                             else
                             {
-                                result.ParametersSkipped++;
+                                MarkFailed(change, $"Revit rejected the value \"{change.NewValue}\" (check units/format).");
                             }
                         }
-                        catch
+                        catch (Exception ex)
                         {
-                            result.ParametersSkipped++;
+                            MarkFailed(change, ex.Message);
                         }
                     }
                     tx.Commit();
-                    if (anyWritten) result.ElementsUpdated++;
+                    if (anyApplied) AppliedElementCount++;
                 }
                 catch (Exception ex)
                 {
                     tx.RollBack();
-                    result.Errors++;
-                    if (result.Errors == 1)
-                        result.ErrorDetail = $"Element {row.ElementId}: {ex.Message}";
+                    foreach (var c in byElement.Where(c => c.Status == ImportChangeStatus.Applied))
+                        MarkFailed(c, $"Rolled back: {ex.Message}");
                 }
             }
 
-            txGroup.Assimilate();
-
-            if (notFoundIds.Count > 0 && string.IsNullOrEmpty(result.ErrorDetail))
-                result.ErrorDetail = $"Elements not found: {string.Join(", ", notFoundIds.Take(5))}" +
-                    (notFoundIds.Count > 5 ? $"... (+{notFoundIds.Count - 5} more)" : "");
-
-            LastImportResult = result;
+            group.Assimilate();
         }
+
+        // ── Helpers ────────────────────────────────────────────────────────────
+        private ViewSchedule GetSchedule()
+            => _doc.GetElement(TargetScheduleId) as ViewSchedule
+               ?? throw new InvalidOperationException("Schedule view not found in document.");
+
+        private List<Element> CollectScheduleElements(ViewSchedule schedule)
+            => new FilteredElementCollector(_doc, schedule.Id).WhereElementIsNotElementType().ToList();
+
+        private Parameter GetTypeParameter(Element elem, string name)
+        {
+            var typeId = elem.GetTypeId();
+            return typeId == ElementId.InvalidElementId ? null : _doc.GetElement(typeId)?.LookupParameter(name);
+        }
+
+        private static ImportChange NewItem(long id, string header, Parameter param, string newValue, ImportChangeStatus status, string message)
+            => new ImportChange
+            {
+                ElementId = id,
+                ParameterName = header,
+                OldValue = GetParameterDisplayValue(param),
+                NewValue = newValue,
+                Status = status,
+                Message = message
+            };
+
+        private static void MarkFailed(ImportChange change, string message)
+        {
+            change.Status = ImportChangeStatus.Failed;
+            change.Message = message;
+        }
+
+        private static bool SameValue(string a, string b)
+            => string.Equals((a ?? string.Empty).Trim(), (b ?? string.Empty).Trim(), StringComparison.Ordinal);
 
         private static bool WriteParameter(Parameter param, string value)
         {
@@ -295,8 +347,7 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.Infrastructure.ExternalEvents
                 case StorageType.Double:
                     // Export wrote display units (e.g. "3000" mm); SetValueString parses them
                     // back through the project's units. Set(double) would treat them as feet.
-                    if (string.IsNullOrWhiteSpace(value)) return false;
-                    return param.SetValueString(value);
+                    return !string.IsNullOrWhiteSpace(value) && param.SetValueString(value);
 
                 default:
                     return false;
@@ -307,15 +358,7 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.Infrastructure.ExternalEvents
         {
             if (param.StorageType == StorageType.None) return string.Empty;
             if (param.StorageType == StorageType.String) return param.AsString() ?? string.Empty;
-            // Use AsValueString for numbers/element ids so units are shown the same way
-            // the schedule would display them.
             return param.AsValueString() ?? string.Empty;
-        }
-
-        private static bool IsFieldReadOnly(ScheduleField field)
-        {
-            // Formula fields and certain built-in fields are read-only
-            return field.IsCalculatedField || field.FieldType == ScheduleFieldType.Formula;
         }
     }
 }
