@@ -1,0 +1,226 @@
+<Window x:Class="Revit26_Plugin.ScheduleExportImport.V001.UI.Views.ScheduleExportImportWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
+        Title="Schedule Export / Import — V001"
+        Width="780" Height="620"
+        MinWidth="620" MinHeight="480"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource BrushSystemSecondaryBackground}"
+        FontFamily="{DynamicResource SystemFont}">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Revit26_Plugin;component/Shared/SharedStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <converters:BoolToVisibilityConverter         x:Key="BoolToVisibilityConverter"/>
+            <converters:InverseBoolToVisibilityConverter  x:Key="InverseBoolToVisibilityConverter"/>
+            <converters:InverseBoolConverter              x:Key="InverseBoolConverter"/>
+            <converters:LogLevelToColorConverter          x:Key="LogLevelToColorConverter"/>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>   <!-- Header identity card -->
+            <RowDefinition Height="*"/>      <!-- Main content -->
+            <RowDefinition Height="130"/>    <!-- Log panel -->
+            <RowDefinition Height="Auto"/>   <!-- Status bar -->
+        </Grid.RowDefinitions>
+
+        <!-- ══ Header ══════════════════════════════════════════════════════════ -->
+        <Border Grid.Row="0" Style="{StaticResource AppIdentityCard}" Margin="0,0,0,8">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Schedule Export / Import" Style="{StaticResource AppName}"/>
+                    <TextBlock Text="Pick a schedule, export to Excel, edit any writable fields, then import back by Element ID."
+                               Style="{StaticResource AppSubtitle}"/>
+                </StackPanel>
+                <Button Grid.Column="1" Content="↻ Refresh" VerticalAlignment="Center"
+                        Style="{StaticResource SmallSecondaryButton}"
+                        Command="{Binding RefreshSchedulesCommand}"
+                        IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}"
+                        ToolTip="Reload the schedule list from the document"/>
+            </Grid>
+        </Border>
+
+        <!-- ══ Main split: schedule list  +  action panel ══════════════════════ -->
+        <Grid Grid.Row="1" Margin="0,0,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="220"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Schedule list -->
+            <Border Grid.Column="0" Style="{StaticResource ContentCard}">
+                <Grid Margin="10,8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Text="Schedules in Document" FontWeight="SemiBold" FontSize="12"
+                               Foreground="{StaticResource BrushTextPrimary}" Margin="0,0,0,6"/>
+                    <DataGrid Grid.Row="1"
+                              ItemsSource="{Binding Schedules}"
+                              SelectedItem="{Binding SelectedSchedule, Mode=TwoWay}"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              CanUserReorderColumns="False"
+                              CanUserResizeRows="False"
+                              SelectionMode="Single"
+                              SelectionUnit="FullRow"
+                              GridLinesVisibility="Horizontal"
+                              HorizontalGridLinesBrush="{StaticResource BrushSeparatorThin}"
+                              AlternationCount="2"
+                              RowStyle="{StaticResource DataGridRowStyle}"
+                              CellStyle="{StaticResource DataGridCellStyle}"
+                              ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
+                              Background="{StaticResource BrushSystemBackground}"
+                              BorderThickness="0"
+                              RowHeight="26"
+                              IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Schedule Name" Binding="{Binding Name, Mode=OneWay}"
+                                                Width="*" IsReadOnly="True">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="FontSize" Value="11"/>
+                                        <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Category" Binding="{Binding CategoryName, Mode=OneWay}"
+                                                Width="120" IsReadOnly="True">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="FontSize" Value="11"/>
+                                        <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Rows / Fields" Binding="{Binding RowCountDisplay, Mode=OneWay}"
+                                                Width="100" IsReadOnly="True">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="FontSize" Value="10"/>
+                                        <Setter Property="Foreground" Value="{StaticResource BrushTextTertiary}"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+
+            <!-- Action panel -->
+            <Border Grid.Column="2" Style="{StaticResource ContentCard}">
+                <StackPanel Margin="12,10">
+                    <TextBlock Text="Actions" FontWeight="SemiBold" FontSize="12"
+                               Foreground="{StaticResource BrushTextPrimary}" Margin="0,0,0,12"/>
+
+                    <!-- Selected schedule info -->
+                    <Border Background="{StaticResource BrushSystemSecondaryBackground}"
+                            CornerRadius="5" Padding="8,6" Margin="0,0,0,12"
+                            Visibility="{Binding SelectedSchedule, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <StackPanel>
+                            <TextBlock Text="Selected:" FontSize="10" Foreground="{StaticResource BrushTextSecondary}"/>
+                            <TextBlock Text="{Binding SelectedSchedule.Name}" FontSize="11" FontWeight="SemiBold"
+                                       Foreground="{StaticResource BrushTextPrimary}" TextWrapping="Wrap"/>
+                            <TextBlock Text="{Binding SelectedSchedule.RowCountDisplay}" FontSize="10"
+                                       Foreground="{StaticResource BrushTextTertiary}" Margin="0,2,0,0}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- No selection placeholder -->
+                    <TextBlock Text="← Select a schedule from the list"
+                               FontSize="10" Foreground="{StaticResource BrushTextTertiary}"
+                               TextWrapping="Wrap" Margin="0,0,0,12"
+                               Visibility="{Binding SelectedSchedule, Converter={StaticResource InverseBoolToVisibilityConverter}}"/>
+
+                    <Separator Margin="0,0,0,12" Background="{StaticResource BrushSeparatorThin}"/>
+
+                    <!-- Export -->
+                    <TextBlock Text="1. Export" FontSize="11" FontWeight="SemiBold"
+                               Foreground="{StaticResource BrushTextPrimary}" Margin="0,0,0,4"/>
+                    <TextBlock Text="Exports Element ID + all visible fields to an .xlsx file."
+                               FontSize="10" Foreground="{StaticResource BrushTextSecondary}"
+                               TextWrapping="Wrap" Margin="0,0,0,6"/>
+                    <Button Content="Export to Excel..."
+                            Style="{StaticResource SecondaryButton}"
+                            Command="{Binding ExportScheduleCommand}"
+                            HorizontalAlignment="Stretch"
+                            IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}"/>
+
+                    <!-- Last exported file -->
+                    <TextBlock Margin="0,4,0,0" FontSize="9" TextWrapping="Wrap"
+                               Foreground="{StaticResource BrushAppleBlue}"
+                               Visibility="{Binding LastExportedFile, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <Run Text="Last: "/>
+                        <Run Text="{Binding LastExportedFile, Mode=OneWay, StringFormat='\{0\}'}"/>
+                    </TextBlock>
+
+                    <Separator Margin="0,12,0,12" Background="{StaticResource BrushSeparatorThin}"/>
+
+                    <!-- Import -->
+                    <TextBlock Text="2. Import" FontSize="11" FontWeight="SemiBold"
+                               Foreground="{StaticResource BrushTextPrimary}" Margin="0,0,0,4"/>
+                    <TextBlock Text="Reads an edited .xlsx and writes changes back via Element ID. Read-only parameters are skipped automatically."
+                               FontSize="10" Foreground="{StaticResource BrushTextSecondary}"
+                               TextWrapping="Wrap" Margin="0,0,0,6"/>
+                    <Button Content="Import from Excel..."
+                            Style="{StaticResource PrimaryButton}"
+                            Command="{Binding ImportScheduleCommand}"
+                            HorizontalAlignment="Stretch"
+                            IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}"/>
+
+                    <!-- Busy indicator -->
+                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0"
+                                Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <TextBlock Text="⏳ Working..." FontSize="11"
+                                   Foreground="{StaticResource BrushTextSecondary}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- ══ Log panel (always-dark) ═════════════════════════════════════════ -->
+        <Border Grid.Row="2" Margin="0,0,0,6" CornerRadius="6"
+                Background="{StaticResource BrushLogBackground}">
+            <Grid Margin="8,6">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Text="Log" FontSize="10" FontWeight="SemiBold"
+                           Foreground="{StaticResource BrushLogText}" Margin="0,0,0,4" Opacity="0.7"/>
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
+                              x:Name="LogScrollViewer">
+                    <ItemsControl ItemsSource="{Binding LogEntries}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock FontFamily="Consolas" FontSize="10"
+                                           Foreground="{Binding Level, Converter={StaticResource LogLevelToColorConverter}}"
+                                           Text="{Binding .}"
+                                           Margin="0,1"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+
+        <!-- ══ Status bar ══════════════════════════════════════════════════════ -->
+        <TextBlock Grid.Row="3" Text="{Binding StatusMessage}"
+                   Style="{StaticResource StatusText}" Margin="2,0,0,2"/>
+    </Grid>
+</Window>
