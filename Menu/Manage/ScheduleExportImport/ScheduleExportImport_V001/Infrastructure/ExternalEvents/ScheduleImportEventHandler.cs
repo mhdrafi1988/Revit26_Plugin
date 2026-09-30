@@ -38,6 +38,7 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.Infrastructure.ExternalEvents
         public List<string> ExportedHeaders { get; private set; } = new List<string>();
         public List<ScheduleRow> ExportedRows { get; private set; } = new List<ScheduleRow>();
         public List<ScheduleFieldInfo> ExportedFields { get; private set; } = new List<ScheduleFieldInfo>();
+        public HashSet<string> EditableHeaders { get; private set; } = new HashSet<string>();
         public ImportResult LastImportResult { get; private set; } = new ImportResult();
         public string ErrorMessage { get; private set; } = string.Empty;
         public bool LastRunSucceeded { get; private set; }
@@ -130,9 +131,9 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.Infrastructure.ExternalEvents
                 var field = tableDef.GetField(i);
                 if (field.IsHidden) continue;
 
-                var header = field.ColumnHeading;
-                if (string.IsNullOrWhiteSpace(header))
-                    header = field.GetName();
+                // Parameter name, not ColumnHeading: import matches Excel headers back to
+                // parameters by name, so a renamed heading ("W" for "Width") would never match.
+                var header = field.GetName();
 
                 // Make header unique if duplicated
                 var uniqueHeader = header;
@@ -160,6 +161,7 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.Infrastructure.ExternalEvents
             // For the cell text we use schedule.GetCellText but we need the row index per element.
             // The safest approach for Revit 2026 is to read parameter values directly from elements.
             var rows = new List<ScheduleRow>();
+            var editable = new HashSet<string>();
 
             foreach (var elem in scheduleElements)
             {
@@ -170,8 +172,15 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.Infrastructure.ExternalEvents
                     string cellValue = string.Empty;
                     try
                     {
-                        // Try to find the parameter by name on the element
-                        var param = FindParameterByName(elem, fi.Header);
+                        var param = elem.LookupParameter(fi.Header);
+                        if (param != null && !param.IsReadOnly && !fi.IsReadOnly)
+                            editable.Add(fi.Header);
+                        if (param == null)
+                        {
+                            var typeId = elem.GetTypeId();
+                            if (typeId != ElementId.InvalidElementId)
+                                param = _doc.GetElement(typeId)?.LookupParameter(fi.Header);
+                        }
                         if (param != null)
                             cellValue = GetParameterDisplayValue(param);
                     }
@@ -184,6 +193,7 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.Infrastructure.ExternalEvents
             ExportedHeaders = headers;
             ExportedRows = rows;
             ExportedFields = fields;
+            EditableHeaders = editable;
         }
 
         // ── Write edited rows back to elements ────────────────────────────────
@@ -197,7 +207,7 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.Infrastructure.ExternalEvents
 
             foreach (var row in RowsToImport)
             {
-                var elementId = new ElementId((int)row.ElementId);
+                var elementId = new ElementId(row.ElementId);
                 var elem = _doc.GetElement(elementId);
                 if (elem == null)
                 {
@@ -215,18 +225,29 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.Infrastructure.ExternalEvents
                     {
                         if (!row.Values.TryGetValue(header, out var newValue)) continue;
 
-                        var param = FindParameterByName(elem, header);
+                        // Instance parameters only: writing a type parameter would silently
+                        // change every instance of that type, not just this row.
+                        var param = elem.LookupParameter(header);
                         if (param == null || param.IsReadOnly)
                         {
                             result.ParametersSkipped++;
                             continue;
                         }
 
+                        if (string.Equals(GetParameterDisplayValue(param).Trim(), newValue.Trim(), StringComparison.Ordinal))
+                            continue;
+
                         try
                         {
-                            WriteParameter(param, newValue);
-                            result.ParametersWritten++;
-                            anyWritten = true;
+                            if (WriteParameter(param, newValue))
+                            {
+                                result.ParametersWritten++;
+                                anyWritten = true;
+                            }
+                            else
+                            {
+                                result.ParametersSkipped++;
+                            }
                         }
                         catch
                         {
@@ -245,10 +266,7 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.Infrastructure.ExternalEvents
                 }
             }
 
-            if (result.Errors == 0)
-                txGroup.Assimilate();
-            else
-                txGroup.Assimilate(); // keep partial successes
+            txGroup.Assimilate();
 
             if (notFoundIds.Count > 0 && string.IsNullOrEmpty(result.ErrorDetail))
                 result.ErrorDetail = $"Elements not found: {string.Join(", ", notFoundIds.Take(5))}" +
@@ -257,40 +275,31 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.Infrastructure.ExternalEvents
             LastImportResult = result;
         }
 
-        private static Parameter FindParameterByName(Element elem, string name)
+        private static bool WriteParameter(Parameter param, string value)
         {
-            // Try by name match; prefer instance params
-            foreach (Parameter p in elem.Parameters)
-            {
-                if (string.Equals(p.Definition.Name, name, StringComparison.OrdinalIgnoreCase))
-                    return p;
-            }
-            return null;
-        }
-
-        private static void WriteParameter(Parameter param, string value)
-        {
-            if (string.IsNullOrWhiteSpace(value))
-                return;
-
             switch (param.StorageType)
             {
                 case StorageType.String:
-                    param.Set(value);
-                    break;
+                    return param.Set(value ?? string.Empty);
+
                 case StorageType.Integer:
-                    if (int.TryParse(value, out int intVal))
-                        param.Set(intVal);
-                    break;
+                    if (param.Definition.GetDataType() == SpecTypeId.Boolean.YesNo)
+                    {
+                        var v = value.Trim();
+                        if (v.Equals("Yes", StringComparison.OrdinalIgnoreCase) || v == "1") return param.Set(1);
+                        if (v.Equals("No", StringComparison.OrdinalIgnoreCase) || v == "0") return param.Set(0);
+                        return false;
+                    }
+                    return int.TryParse(value, out int intVal) ? param.Set(intVal) : param.SetValueString(value);
+
                 case StorageType.Double:
-                    if (double.TryParse(value, System.Globalization.NumberStyles.Any,
-                        System.Globalization.CultureInfo.InvariantCulture, out double dblVal))
-                        param.Set(dblVal);
-                    break;
-                case StorageType.ElementId:
-                    if (int.TryParse(value, out int idVal))
-                        param.Set(new ElementId(idVal));
-                    break;
+                    // Export wrote display units (e.g. "3000" mm); SetValueString parses them
+                    // back through the project's units. Set(double) would treat them as feet.
+                    if (string.IsNullOrWhiteSpace(value)) return false;
+                    return param.SetValueString(value);
+
+                default:
+                    return false;
             }
         }
 

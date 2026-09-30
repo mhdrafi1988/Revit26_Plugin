@@ -22,6 +22,8 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.UI.ViewModels
         private readonly Document _doc;
         private readonly ScheduleImportEventHandler _handler;
         private readonly ExternalEvent _externalEvent;
+        // Application.Current is null inside Revit, so capture the window's dispatcher instead.
+        private readonly System.Windows.Threading.Dispatcher _dispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher;
 
         public ObservableCollection<ScheduleViewInfo> Schedules { get; } = new ObservableCollection<ScheduleViewInfo>();
         public ObservableCollection<LogEntry> LogEntries { get; } = new ObservableCollection<LogEntry>();
@@ -112,7 +114,7 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.UI.ViewModels
             void Callback()
             {
                 _handler.RequestCompleted -= Callback;
-                Application.Current?.Dispatcher.Invoke(() =>
+                _dispatcher.Invoke(() =>
                 {
                     IsBusy = false;
                     if (!_handler.LastRunSucceeded)
@@ -124,7 +126,7 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.UI.ViewModels
 
                     try
                     {
-                        ScheduleExcelService.Export(targetPath, SelectedSchedule.Name, _handler.ExportedHeaders, _handler.ExportedRows);
+                        ScheduleExcelService.Export(targetPath, SelectedSchedule.Name, _handler.ExportedHeaders, _handler.ExportedRows, _handler.EditableHeaders);
                         LastExportedFile = targetPath;
                         AddLog(LogLevel.Success, $"Exported {_handler.ExportedRows.Count} rows, {_handler.ExportedHeaders.Count} fields → {Path.GetFileName(targetPath)}");
                         StatusMessage = $"Exported {_handler.ExportedRows.Count} rows to {Path.GetFileName(targetPath)}";
@@ -197,7 +199,7 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.UI.ViewModels
             void Callback()
             {
                 _handler.RequestCompleted -= Callback;
-                Application.Current?.Dispatcher.Invoke(() =>
+                _dispatcher.Invoke(() =>
                 {
                     IsBusy = false;
                     if (!_handler.LastRunSucceeded)
@@ -237,7 +239,7 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.UI.ViewModels
         // ── Handler callback (LoadSchedules + catch-all) ───────────────────────
         private void OnRequestCompleted()
         {
-            Application.Current?.Dispatcher.Invoke(() =>
+            _dispatcher.Invoke(() =>
             {
                 IsBusy = false;
                 if (_handler.Request != ScheduleImportRequest.LoadSchedules) return;
@@ -263,7 +265,7 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.UI.ViewModels
         private void AddLog(LogLevel level, string message)
         {
             var entry = new LogEntry(level, message);
-            Application.Current?.Dispatcher.Invoke(() => LogEntries.Add(entry));
+            _dispatcher.Invoke(() => LogEntries.Add(entry));
         }
 
         private static string SanitizeFileName(string name)
