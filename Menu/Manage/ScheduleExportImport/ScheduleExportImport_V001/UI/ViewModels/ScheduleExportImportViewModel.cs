@@ -178,6 +178,8 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.UI.ViewModels
             AddLog(LogLevel.Info, $"Editable columns ({editable.Count}): {Preview(editable)}");
             if (readOnly > 0)
                 AddLog(LogLevel.Info, $"Read-only columns ({readOnly}): {Preview(headers.Where(h => !editable.Contains(h)))}");
+            foreach (var note in _handler.ExportNotes)
+                AddLog(LogLevel.Warning, note);
             var exportSize = FileSizeLabel(_pendingExportPath);
             AddLog(LogLevel.Success, $"Exported {rows.Count} row(s) × {headers.Count} field(s) → {Path.GetFileName(_pendingExportPath)}  ({exportSize})");
             AddLog(LogLevel.Info, $"Folder: {Path.GetDirectoryName(_pendingExportPath)}");
