@@ -1,4 +1,4 @@
-using Autodesk.Revit.UI;
+﻿using Autodesk.Revit.UI;
 using Revit26_Plugin.Resources.Icons;
 using System.Collections.Generic;
 
@@ -17,25 +17,13 @@ namespace Revit26_Plugin.Menu.Ribbon
                     "Bulk-assign shared parameters from a shared parameter file to categories, Instance or Type bound, via a guided step-by-step flow.")
             };
 
-            // Schedule Export/Import — every working version in one dropdown, newest first.
-            // V001 is left out: its export can never complete (log-scroll bug fixed in V002).
+            // Schedule Export/Import — newest version only, in a dropdown so a
+            // future version can be added beside it.
             var scheduleExportImportV004 = new PushButtonData("Btn_ScheduleExportImport_V004", "Schedule Export/Import V004", assemblyPath, "Revit26_Plugin.ScheduleExportImport.V004.Commands.ScheduleExportImportCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Manage.ScheduleExportImport_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Schedule Export / Import", "V004",
                     "Export / Import buttons in a row under the metric cards; schedule list full width. Everything from V003.")
-            };
-            var scheduleExportImportV003 = new PushButtonData("Btn_ScheduleExportImport_V003", "Schedule Export/Import V003", assemblyPath, "Revit26_Plugin.ScheduleExportImport.V003.Commands.ScheduleExportImportCommand")
-            {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Manage.ScheduleExportImport_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("Schedule Export / Import", "V003",
-                    "Errors always shown, import picks the schedule from the file, explains 'nothing to import', Base Level by name.")
-            };
-            var scheduleExportImportV002 = new PushButtonData("Btn_ScheduleExportImport_V002", "Schedule Export/Import V002", assemblyPath, "Revit26_Plugin.ScheduleExportImport.V002.Commands.ScheduleExportImportCommand")
-            {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Manage.ScheduleExportImport_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("Schedule Export / Import", "V002",
-                    "Export to Excel and import back by Element ID; works with the workbook still open in Excel.")
             };
             var scheduleExportImportPulldownData = RibbonLayoutHelper.CreatePulldownButtonData(
                 "Pulldown_ScheduleExportImport", "Schedule Export/Import", scheduleExportImportV004);
@@ -72,7 +60,7 @@ new PushButtonData("Btn_WorksetRenamer_V003", "Workset Renamer", assemblyPath, "
                 scheduleExportImportPulldownData,
             });
             RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_ScheduleExportImport",
-                scheduleExportImportV004, scheduleExportImportV003, scheduleExportImportV002);
+                scheduleExportImportV004);
         }
     }
 }

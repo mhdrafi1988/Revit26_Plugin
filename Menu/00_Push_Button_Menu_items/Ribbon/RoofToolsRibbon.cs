@@ -1,4 +1,4 @@
-using Autodesk.Revit.UI;
+﻿using Autodesk.Revit.UI;
 using Revit26_Plugin.Resources.Icons;
 using System.Collections.Generic;
 
@@ -157,11 +157,6 @@ namespace Revit26_Plugin.Menu.Ribbon
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.ElevationSync_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Roof Point Elevation Sync", "V003")
             };
-            var elevationSyncV002 = new PushButtonData("Btn_RoofPointElevationSync_V002", "Elevation Sync V002", assemblyPath, "Revit26_Plugin.RoofPointElevationSync.V002.Command")
-            {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.ElevationSync_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("Roof Point Elevation Sync", "V002")
-            };
             var elevationSyncPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofPointElevationSync", "Elevation Sync", elevationSyncV003);
 
             var compareItems = RibbonLayoutHelper.AddStackedButtons(comparePanel, new List<RibbonItemData>
@@ -173,7 +168,7 @@ namespace Revit26_Plugin.Menu.Ribbon
                 },
                 elevationSyncPulldownData,
             });
-            RibbonLayoutHelper.WirePulldownButton(compareItems, "Pulldown_RoofPointElevationSync", elevationSyncV003, elevationSyncV002);
+            RibbonLayoutHelper.WirePulldownButton(compareItems, "Pulldown_RoofPointElevationSync", elevationSyncV003);
         }
     }
 }

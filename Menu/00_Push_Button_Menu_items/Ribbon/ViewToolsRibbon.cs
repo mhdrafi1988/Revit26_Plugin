@@ -1,4 +1,4 @@
-using Autodesk.Revit.UI;
+﻿using Autodesk.Revit.UI;
 using Revit26_Plugin.Resources.Icons;
 using System.Collections.Generic;
 
@@ -13,9 +13,8 @@ namespace Revit26_Plugin.Menu.Ribbon
             // Coexisting implementations of the same tool are collected under
             // one pulldown button — no default click, the list always shows.
             // The newest version of each tool supplies the pulldown's own icon.
-            // Edge Around is down to its current version (V005); it stays in a
-            // pulldown so a future version can be added beside it. Edge Element
-            // keeps V002 and V001.
+            // Only the newest version of each tool is kept; each stays in a
+            // pulldown so a future version can be added beside it.
             var edgeAroundV005 = new PushButtonData("Btn_RoofEdgeAroundSections_V005", "Section Around Edges", assemblyPath, "Revit26_Plugin.RoofEdgeAroundSections.V005.RoofEdgeAroundSectionsCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofEdgeAroundSections_V005_16.png"),
@@ -28,22 +27,12 @@ namespace Revit26_Plugin.Menu.Ribbon
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofEdgeElementSections_V002_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Roof Edge Element Sections", "V002")
             };
-            var edgeElementV001 = new PushButtonData("Btn_RoofEdgeElementSections_V001", "Edge Element V001", assemblyPath, "Revit26_Plugin.RoofEdgeElementSections.V001.RoofEdgeElementSectionsCommand")
-            {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofEdgeElementSections_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("Roof Edge Element Sections", "V001")
-            };
             var edgeElementPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofEdgeElementSections", "Edge Element", edgeElementV002);
 
             var roofViewFocusV002 = new PushButtonData("Btn_RoofViewFocus_V002", "Roof View Focus V002", assemblyPath, "Revit26_Plugin.RoofViewFocus.V002.Commands.RoofViewFocusCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofViewFocus_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Roof View Focus", "V002", "Crops the active plan view to the selected roofs.")
-            };
-            var roofViewFocusV001 = new PushButtonData("Btn_RoofViewFocus_V001", "Roof View Focus V001", assemblyPath, "Revit26_Plugin.RoofViewFocus.V001.Commands.RoofViewFocusCommand")
-            {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofViewFocus_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("Roof View Focus", "V001", "Crops the active plan view to the selected roofs.")
             };
             var roofViewFocusPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofViewFocus", "Roof View Focus", roofViewFocusV002);
 
@@ -61,8 +50,8 @@ namespace Revit26_Plugin.Menu.Ribbon
                 roofViewFocusPulldownData,
             });
             RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeAroundSections", edgeAroundV005);
-            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeElementSections", edgeElementV002, edgeElementV001);
-            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofViewFocus", roofViewFocusV002, roofViewFocusV001);
+            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeElementSections", edgeElementV002);
+            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofViewFocus", roofViewFocusV002);
 
             RibbonPanel placePanel = app.CreateRibbonPanel(tabName, "View Place");
             RibbonLayoutHelper.AddStackedButtons(placePanel, new List<RibbonItemData>
