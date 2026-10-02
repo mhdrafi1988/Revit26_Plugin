@@ -46,10 +46,10 @@ new PushButtonData("Btn_WorksetRenamer_V003", "Workset Renamer", assemblyPath, "
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.WorksetRename_16.png"),
                     ToolTip = RibbonLayoutHelper.VersionTip("Workset Renamer (From Excel)", "FX03")
                 },
-                new PushButtonData("Btn_ScheduleExportImport_V002", "Schedule Export/Import", assemblyPath, "Revit26_Plugin.ScheduleExportImport.V002.Commands.ScheduleExportImportCommand")
+                new PushButtonData("Btn_ScheduleExportImport_V003", "Schedule Export/Import", assemblyPath, "Revit26_Plugin.ScheduleExportImport.V003.Commands.ScheduleExportImportCommand")
                 {
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Manage.ScheduleExportImport_16.png"),
-                    ToolTip = RibbonLayoutHelper.VersionTip("Schedule Export / Import", "V002",
+                    ToolTip = RibbonLayoutHelper.VersionTip("Schedule Export / Import", "V003",
                         "Export any schedule (with Element ID + all visible fields) to Excel, edit values, then import back by Element ID.")
                 },
             });
