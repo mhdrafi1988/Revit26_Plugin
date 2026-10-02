@@ -114,8 +114,7 @@
                                  VerticalAlignment="Center" Margin="0,0,8,0"/>
                         <StackPanel>
                             <TextBlock Text="TOTAL LINKS" FontSize="9" FontWeight="SemiBold"
-                                       Foreground="{StaticResource BrushTextSecondary}"
-                                       CharacterSpacing="50"/>
+                                       Foreground="{StaticResource BrushTextSecondary}"/>
                             <TextBlock Text="{Binding TotalLinksCount}"
                                        FontSize="20" FontWeight="Bold"
                                        Foreground="{StaticResource BrushTextPrimary}"
@@ -137,8 +136,7 @@
                                  VerticalAlignment="Center" Margin="0,0,8,0"/>
                         <StackPanel>
                             <TextBlock Text="ASSIGNED" FontSize="9" FontWeight="SemiBold"
-                                       Foreground="{StaticResource BrushSuccess}"
-                                       CharacterSpacing="50"/>
+                                       Foreground="{StaticResource BrushSuccess}"/>
                             <TextBlock Text="{Binding Grid1Count}"
                                        FontSize="20" FontWeight="Bold"
                                        Foreground="{StaticResource BrushSuccess}"
@@ -160,8 +158,7 @@
                                  VerticalAlignment="Center" Margin="0,0,8,0"/>
                         <StackPanel>
                             <TextBlock Text="NEEDS WORKSET" FontSize="9" FontWeight="SemiBold"
-                                       Foreground="{StaticResource BrushAppleBlue}"
-                                       CharacterSpacing="50"/>
+                                       Foreground="{StaticResource BrushAppleBlue}"/>
                             <TextBlock Text="{Binding Grid2Count}"
                                        FontSize="20" FontWeight="Bold"
                                        Foreground="{StaticResource BrushAppleBlue}"
@@ -182,8 +179,7 @@
                                  VerticalAlignment="Center" Margin="0,0,8,0"/>
                         <StackPanel>
                             <TextBlock Text="NO INSTANCES" FontSize="9" FontWeight="SemiBold"
-                                       Foreground="{StaticResource BrushWarning}"
-                                       CharacterSpacing="50"/>
+                                       Foreground="{StaticResource BrushWarning}"/>
                             <TextBlock Text="{Binding Grid3Count}"
                                        FontSize="20" FontWeight="Bold"
                                        Foreground="{StaticResource BrushWarning}"
