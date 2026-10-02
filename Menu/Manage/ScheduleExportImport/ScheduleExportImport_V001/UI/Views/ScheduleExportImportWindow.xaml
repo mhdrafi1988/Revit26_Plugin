@@ -140,6 +140,16 @@
                               BorderThickness="0" RowHeight="26"
                               IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}">
                         <DataGrid.Columns>
+                            <!-- Tick box mirrors the row selection; SelectionMode=Single keeps it to one schedule -->
+                            <DataGridTemplateColumn Header="✔" Width="34" CanUserResize="False" CanUserSort="False">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center" Focusable="False"
+                                                  ToolTip="Tick to select this schedule for export / import"
+                                                  IsChecked="{Binding IsSelected, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=DataGridRow}}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                             <DataGridTextColumn Header="Schedule Name" Binding="{Binding Name, Mode=OneWay}" Width="*" ElementStyle="{StaticResource GridText}"/>
                             <DataGridTextColumn Header="Category" Binding="{Binding CategoryName, Mode=OneWay}" Width="130" ElementStyle="{StaticResource GridText}"/>
                             <DataGridTextColumn Header="Rows / Fields" Binding="{Binding RowCountDisplay, Mode=OneWay}" Width="115" ElementStyle="{StaticResource GridText}"/>
@@ -151,14 +161,14 @@
             <Border Grid.Column="2" Style="{StaticResource ContentCard}">
                 <StackPanel Margin="12,10">
                     <TextBlock Text="Selected schedule" FontSize="10" Foreground="{StaticResource BrushTextSecondary}"/>
-                    <TextBlock Text="{Binding SelectedSchedule.Name, FallbackValue='← Pick one from the list', TargetNullValue='← Pick one from the list'}"
+                    <TextBlock Text="{Binding SelectedSchedule.Name, FallbackValue='← Tick one schedule in the list', TargetNullValue='← Tick one schedule in the list'}"
                                FontSize="12" FontWeight="SemiBold" TextWrapping="Wrap"
                                Foreground="{StaticResource BrushTextPrimary}" Margin="0,2,0,12"/>
 
                     <TextBlock Text="1 · Export" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource BrushTextPrimary}"/>
-                    <TextBlock Text="Element ID + visible fields to .xlsx. Green = editable, grey = locked."
+                    <TextBlock Text="Saves the ticked schedule (Element ID + visible fields) as an .xlsx. Green = editable, grey = locked."
                                FontSize="10" Foreground="{StaticResource BrushTextSecondary}" TextWrapping="Wrap" Margin="0,2,0,6"/>
-                    <Button Content="Export to Excel…" Style="{StaticResource SecondaryButton}"
+                    <Button Content="Export &amp; Save to Excel…" Style="{StaticResource SecondaryButton}"
                             Command="{Binding ExportScheduleCommand}" HorizontalAlignment="Stretch"/>
                     <TextBlock Text="{Binding LastExportedFile}" FontSize="9" TextWrapping="Wrap"
                                Foreground="{StaticResource BrushAppleBlue}" Margin="0,4,0,0"/>
