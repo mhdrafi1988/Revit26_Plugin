@@ -94,6 +94,8 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
         public IRelayCommand CreateGrid2Command  { get; }
         public IRelayCommand CreateGrid3Command  { get; }
         public IRelayCommand ResyncCommand        { get; }
+        public IRelayCommand ResyncGrid2Command   { get; }
+        public IRelayCommand ResyncGrid3Command   { get; }
         public IRelayCommand CloseCommand         { get; }
         public IRelayCommand SelectAllCommand     { get; }
         public IRelayCommand SelectNoneCommand    { get; }
@@ -120,6 +122,12 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
             CreateGrid2Command   = new RelayCommand(ExecuteCreateGrid2,    CanCreateGrid2);
             CreateGrid3Command   = new RelayCommand(ExecuteCreateGrid3,    CanCreateGrid3);
             ResyncCommand        = new RelayCommand(ExecuteResync,         CanResync);
+            ResyncGrid2Command   = new RelayCommand(
+                () => ExecuteResyncFor(WorksetGridCategory.NeedsWorkset, "Grid 2"),
+                () => CanResyncGrid(WorksetGridCategory.NeedsWorkset));
+            ResyncGrid3Command   = new RelayCommand(
+                () => ExecuteResyncFor(WorksetGridCategory.NoInstances, "Grid 3"),
+                () => CanResyncGrid(WorksetGridCategory.NoInstances));
             CloseCommand         = new RelayCommand(() => RequestClose?.Invoke());
             SelectAllCommand     = new RelayCommand(() => SetGrid2Selection(true));
             SelectNoneCommand    = new RelayCommand(() => SetGrid2Selection(false));
@@ -398,6 +406,26 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
             RunInRevit(toProcess, "Resync complete.", "Resync error");
         }
 
+        private bool CanResyncGrid(WorksetGridCategory category) =>
+            IsResyncEnabled && Items.Any(i => i.IsSelected && i.GridCategory == category);
+
+        private void ExecuteResyncFor(WorksetGridCategory category, string label)
+        {
+            var toProcess = Items
+                .Where(i => i.IsSelected && i.GridCategory == category)
+                .Select(i => (i.ProposedWorksetName, i.LinkName, CreateNew: !i.IsExistingWorkset))
+                .ToList();
+
+            if (!toProcess.Any())
+            {
+                AddLog(new LogEntry(LogLevel.Warning, $"No {label} links selected for resync."));
+                return;
+            }
+
+            AddLog(new LogEntry(LogLevel.Info, $"Resyncing {toProcess.Count} workset(s) from {label}..."));
+            RunInRevit(toProcess, $"Resync complete for {label}.", "Resync error");
+        }
+
         private bool CanCreateGrid2() =>
             IsCreateEnabled && !HasPatternError &&
             Items.Any(i => i.IsSelected && i.GridCategory == WorksetGridCategory.NeedsWorkset);
@@ -489,6 +517,8 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
             CreateGrid2Command.NotifyCanExecuteChanged();
             CreateGrid3Command.NotifyCanExecuteChanged();
             ResyncCommand.NotifyCanExecuteChanged();
+            ResyncGrid2Command.NotifyCanExecuteChanged();
+            ResyncGrid3Command.NotifyCanExecuteChanged();
         }
 
         public void AddLog(LogEntry entry)
