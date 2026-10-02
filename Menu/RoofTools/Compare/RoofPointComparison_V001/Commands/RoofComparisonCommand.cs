@@ -6,6 +6,7 @@ using Autodesk.Revit.UI.Selection;
 using Revit26_Plugin.RoofPointComparison.V001.Infrastructure.Helpers;
 using Revit26_Plugin.RoofPointComparison.V001.UI.Views;
 using Revit26_Plugin.Utilities;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.RoofPointComparison.V001.Commands
 {
@@ -14,6 +15,9 @@ namespace Revit26_Plugin.RoofPointComparison.V001.Commands
     public class RoofComparisonCommand : IExternalCommand
     {
         public Result Execute(ExternalCommandData data, ref string msg, ElementSet elems)
+            => ToolGuard.RunCommand(GetType(), data, ref msg, elems, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData data, ref string msg, ElementSet elems)
         {
             UIDocument uidoc = data.Application.ActiveUIDocument;
             Document doc = uidoc.Document;

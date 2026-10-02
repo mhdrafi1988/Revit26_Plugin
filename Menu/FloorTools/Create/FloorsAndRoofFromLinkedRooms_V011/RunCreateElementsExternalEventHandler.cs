@@ -4,6 +4,7 @@ using System.Windows.Threading;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011
 {
@@ -31,6 +32,9 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011
         public int UnmappedSkippedCount { get; set; }
 
         public void Execute(UIApplication app)
+            => ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             var doc = app.ActiveUIDocument.Document;
             var request = PendingRequest;

@@ -4,6 +4,7 @@ using Autodesk.Revit.UI;
 using Revit26_Plugin.AutomatedSectionPlacer.V001.ViewModels;
 using Revit26_Plugin.AutomatedSectionPlacer.V001.Views;
 using Revit26_Plugin.Utilities;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.AutomatedSectionPlacer.V001
 {
@@ -19,6 +20,9 @@ namespace Revit26_Plugin.AutomatedSectionPlacer.V001
     public class AutomatedSectionPlacerCommand : IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+            => ToolGuard.RunCommand(GetType(), commandData, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             try
             {

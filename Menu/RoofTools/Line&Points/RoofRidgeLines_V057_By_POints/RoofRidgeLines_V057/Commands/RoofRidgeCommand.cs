@@ -7,6 +7,7 @@ using Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.Services;
 using Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.ViewModels;
 using Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.Views;
 using Revit26_Plugin.Utilities;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.Commands
 {
@@ -15,6 +16,9 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.Commands
     public class RoofRidgeCommand : IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+            => ToolGuard.RunCommand(GetType(), commandData, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             try
             {

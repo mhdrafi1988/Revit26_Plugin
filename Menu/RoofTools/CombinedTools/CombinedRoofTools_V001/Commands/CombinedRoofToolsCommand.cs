@@ -18,6 +18,7 @@ using Revit26_Plugin.CombinedRoofTools.V001.UI.Views;
 using System;
 using System.Windows.Interop;
 using Revit26_Plugin.Utilities;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.CombinedRoofTools.V001.Commands
 {
@@ -26,6 +27,9 @@ namespace Revit26_Plugin.CombinedRoofTools.V001.Commands
     public class CombinedRoofToolsCommand : IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+            => ToolGuard.RunCommand(GetType(), commandData, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             UIApplication uiApp = commandData.Application;
             UIDocument uidoc = uiApp.ActiveUIDocument;

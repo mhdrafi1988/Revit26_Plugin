@@ -6,6 +6,7 @@ using Revit26_Plugin.RoofEdgeVertexReducer.V007.Infrastructure.ExternalEvents;
 using Revit26_Plugin.RoofEdgeVertexReducer.V007.UI.ViewModels;
 using Revit26_Plugin.RoofEdgeVertexReducer.V007.UI.Views;
 using Revit26_Plugin.Utilities;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.RoofEdgeVertexReducer.V007.Commands
 {
@@ -16,6 +17,9 @@ namespace Revit26_Plugin.RoofEdgeVertexReducer.V007.Commands
         private static MainWindow _window;
 
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+            => ToolGuard.RunCommand(GetType(), commandData, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             try
             {

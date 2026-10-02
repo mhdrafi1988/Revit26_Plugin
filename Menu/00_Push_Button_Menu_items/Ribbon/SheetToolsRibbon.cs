@@ -1,5 +1,6 @@
 ﻿using Autodesk.Revit.UI;
 using Revit26_Plugin.Resources.Icons;
+using Revit26_Plugin.Shared.Services;
 using System.Collections.Generic;
 
 namespace Revit26_Plugin.Menu.Ribbon
@@ -13,12 +14,12 @@ namespace Revit26_Plugin.Menu.Ribbon
             var scopeBoxV004 = new PushButtonData("Btn_PlanFromScopeBox.V004", "Scope Box", assemblyPath, "Revit26_Plugin.PlanFromScopeBox.V004.Commands.PlanFromScopeBoxCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.PlanFromScopeBox_V004_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("Plan From Scope Box", "V004")
+                ToolTip = ToolCatalog.PlanFromScopeBox.Tip()
             };
             var sheetPlacerV222 = new PushButtonData("Btn_SmartViewToSheetPlacer.V222", "Sheet Placer", assemblyPath, "Revit26_Plugin.SmartViewToSheetPlacer.V222.SmartViewToSheetPlacerCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SmartViewToSheetPlacer_V222_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("Smart View To Sheet Placer", "V222")
+                ToolTip = ToolCatalog.SmartViewToSheetPlacer.Tip()
             };
             // Automated Section Placer V001: new standalone tool (not a new
             // SmartViewToSheetPlacer version) — detects section views visible
@@ -30,8 +31,7 @@ namespace Revit26_Plugin.Menu.Ribbon
                 // TODO: swap for a dedicated icon — temporarily reusing the
                 // Sheet Placer icon so the button isn't blank.
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SmartViewToSheetPlacer_V222_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("Automated Section Placer", "V001",
-                    "Detects section views visible on the active Plan View and places them onto new or existing sheets")
+                ToolTip = ToolCatalog.AutomatedSectionPlacer.Tip("Detects section views visible on the active Plan View and places them onto new or existing sheets")
             };
 
             RibbonLayoutHelper.AddStackedButtons(createPanel, new List<RibbonItemData> { scopeBoxV004, sheetPlacerV222, autoSectionPlacerV001 });
@@ -41,8 +41,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             var rearrangeV026 = new PushButtonData("Btn_SheetAutoRearrange.V026", "Rearrange", assemblyPath, "Revit26_Plugin.SheetAutoRearrange.V026.Commands.SheetAutoRearrangeCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SheetAutoRearrange_V026_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("Sheet Auto Rearrange", "V026",
-                    "Adds Priority Groups (rank ViewTypes so e.g. all Sections place before any Drafting Views)")
+                ToolTip = ToolCatalog.SheetAutoRearrange.Tip("Adds Priority Groups (rank ViewTypes so e.g. all Sections place before any Drafting Views)")
             };
             RibbonLayoutHelper.AddStackedButtons(placePanel, new List<RibbonItemData> { rearrangeV026 });
         }

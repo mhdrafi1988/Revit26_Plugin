@@ -8,6 +8,7 @@ using Revit26_Plugin.AutoSlopeByDrain.V007.Core.Engine;
 using Revit26_Plugin.AutoSlopeByDrain.V007.Core.Models;
 using Revit26_Plugin.Shared.Models;
 using System;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.AutoSlopeByDrain.V007.Infrastructure.ExternalEvents
 {
@@ -21,6 +22,9 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Infrastructure.ExternalEvents
         public static AutoSlopeDrainPayload Payload;
 
         public void Execute(UIApplication app)
+            => ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             if (Payload == null) return;
 

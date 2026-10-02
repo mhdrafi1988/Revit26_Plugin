@@ -1,5 +1,6 @@
 ﻿using Autodesk.Revit.UI;
 using Revit26_Plugin.Resources.Icons;
+using Revit26_Plugin.Shared.Services;
 using System.Collections.Generic;
 
 namespace Revit26_Plugin.Menu.Ribbon
@@ -13,8 +14,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             var linesVA007 = new PushButtonData("Btn_ DeatailLInes VA007", "From Links", assemblyPath, "Revit26_Plugin.LinkedDetailLineGenerator.VA007.Commands.OpenLinkedDetailLineGeneratorCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.Linematch32_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("Detail Lines From Links", "VA007",
-                    "Create Detail Lines From Linked Files, clipped to a pre-selected Floor/Roof boundary")
+                ToolTip = ToolCatalog.LinkedDetailLineGenerator.Tip("Create Detail Lines From Linked Files, clipped to a pre-selected Floor/Roof boundary")
             };
             RibbonLayoutHelper.AddStackedButtons(createPanel, new List<RibbonItemData> { linesVA007 });
 
@@ -24,7 +24,7 @@ namespace Revit26_Plugin.Menu.Ribbon
                 new PushButtonData("Btn_DetailLineClosedLoop_V001", "Detail Line Closed Loop", assemblyPath, "Revit26_Plugin.DetailLineClosedLoop.V001.Commands.DetailLineClosedLoopCommand")
                 {
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.ClosedLoop_16.png"),
-                    ToolTip = RibbonLayoutHelper.VersionTip("Detail Line Closed Loop", "V001")
+                    ToolTip = ToolCatalog.DetailLineClosedLoop.Tip()
                 },
             });
         }
