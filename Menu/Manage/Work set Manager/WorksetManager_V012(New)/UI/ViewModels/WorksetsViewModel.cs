@@ -33,6 +33,8 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
         private readonly UIDocument _uidoc;
         private readonly WorksetService _service;
         private readonly Document _doc;
+        private readonly WorksetActionHandler _handler = new();
+        private readonly ExternalEvent _externalEvent;
 
         // Captured on the UI thread at construction time. Do NOT use
         // System.Windows.Application.Current.Dispatcher here â€” Revit doesn't
@@ -110,6 +112,7 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
             _doc        = _uidoc.Document;
             _dispatcher = Dispatcher.CurrentDispatcher;
             _service    = new WorksetService(AddLog);
+            _externalEvent = ExternalEvent.Create(_handler);
 
             RecreateFilteredViews();
 
@@ -353,25 +356,44 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
                 return;
             }
 
+            RunInRevit(toProcess,
+                $"Done — created and assigned {toProcess.Count} workset(s).", "Error");
+        }
+
+        private void RunInRevit(
+            System.Collections.Generic.List<(string, string, bool)> toProcess,
+            string doneMessage, string errorPrefix)
+        {
             IsCreateEnabled = false;
             IsResyncEnabled = false;
             RefreshCommandStates();
 
-            try
+            _handler.Queue(_ =>
             {
-                _service.CreateAndAssign(_doc, toProcess, this);
-                AddLog(new LogEntry(LogLevel.Info,
-                    $"Done â€” created and assigned {toProcess.Count} workset(s)."));
-            }
-            catch (Exception ex)
+                try
+                {
+                    _service.CreateAndAssign(_doc, toProcess, this);
+                    AddLog(new LogEntry(LogLevel.Info, doneMessage));
+                }
+                catch (Exception ex)
+                {
+                    AddLog(new LogEntry(LogLevel.Error, $"{errorPrefix}: {ex.Message}"));
+                }
+                finally
+                {
+                    IsCreateEnabled = !HasPatternError;
+                    IsResyncEnabled = true;
+                    RefreshData();
+                    RefreshCommandStates();
+                }
+            });
+
+            ExternalEventRequest request = _externalEvent.Raise();
+            if (request != ExternalEventRequest.Accepted)
             {
-                AddLog(new LogEntry(LogLevel.Error, $"Error: {ex.Message}"));
-            }
-            finally
-            {
-                IsCreateEnabled = true;
+                AddLog(new LogEntry(LogLevel.Error, $"Revit rejected the request ({request}). Try again."));
+                IsCreateEnabled = !HasPatternError;
                 IsResyncEnabled = true;
-                RefreshData();
                 RefreshCommandStates();
             }
         }
@@ -397,28 +419,8 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
                 return;
             }
 
-            IsCreateEnabled = false;
-            IsResyncEnabled = false;
-            RefreshCommandStates();
-
             AddLog(new LogEntry(LogLevel.Info, $"Resyncing {toProcess.Count} workset(s)..."));
-
-            try
-            {
-                _service.CreateAndAssign(_doc, toProcess, this);
-                AddLog(new LogEntry(LogLevel.Info, "Resync complete."));
-            }
-            catch (Exception ex)
-            {
-                AddLog(new LogEntry(LogLevel.Error, $"Resync error: {ex.Message}"));
-            }
-            finally
-            {
-                IsCreateEnabled = true;
-                IsResyncEnabled = true;
-                RefreshData();
-                RefreshCommandStates();
-            }
+            RunInRevit(toProcess, "Resync complete.", "Resync error");
         }
 
         private bool CanCreateGrid2() =>
@@ -445,27 +447,8 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
                 return;
             }
 
-            IsCreateEnabled = false;
-            IsResyncEnabled = false;
-            RefreshCommandStates();
-
-            try
-            {
-                _service.CreateAndAssign(_doc, toProcess, this);
-                AddLog(new LogEntry(LogLevel.Info,
-                    $"Done — created and assigned {toProcess.Count} workset(s) from {label}."));
-            }
-            catch (Exception ex)
-            {
-                AddLog(new LogEntry(LogLevel.Error, $"Error: {ex.Message}"));
-            }
-            finally
-            {
-                IsCreateEnabled = true;
-                IsResyncEnabled = true;
-                RefreshData();
-                RefreshCommandStates();
-            }
+            RunInRevit(toProcess,
+                $"Done — created and assigned {toProcess.Count} workset(s) from {label}.", "Error");
         }
 
         private void ExecuteCopyLog()
