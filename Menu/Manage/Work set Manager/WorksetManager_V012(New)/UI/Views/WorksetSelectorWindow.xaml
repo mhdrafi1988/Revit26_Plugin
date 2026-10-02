@@ -398,6 +398,14 @@
                                         Style="{StaticResource SecondaryButton}"
                                         Command="{Binding SelectNoneCommand}"
                                         Margin="0,0,6,0"/>
+                                <Button Style="{StaticResource OutlineButton}"
+                                        Command="{Binding ResyncGrid2Command}"
+                                        Margin="0,0,6,0"
+                                        ToolTip="Re-assign the checked links in this grid to their matching worksets">
+                                    <TextBlock>
+                                        <Run Text="Resync ("/><Run Text="{Binding Grid2SelectedCount, Mode=OneWay}"/><Run Text=")"/>
+                                    </TextBlock>
+                                </Button>
                                 <Button Style="{StaticResource PrimaryButton}"
                                         Command="{Binding CreateGrid2Command}"
                                         ToolTip="Create worksets for the checked links in this grid">
@@ -550,6 +558,14 @@
                                         Style="{StaticResource SecondaryButton}"
                                         Command="{Binding SelectNoneG3Command}"
                                         Margin="0,0,6,0"/>
+                                <Button Style="{StaticResource OutlineButton}"
+                                        Command="{Binding ResyncGrid3Command}"
+                                        Margin="0,0,6,0"
+                                        ToolTip="Re-assign the checked links in this grid to their matching worksets">
+                                    <TextBlock>
+                                        <Run Text="Resync ("/><Run Text="{Binding Grid3SelectedCount, Mode=OneWay}"/><Run Text=")"/>
+                                    </TextBlock>
+                                </Button>
                                 <Button Style="{StaticResource PrimaryButton}"
                                         Command="{Binding CreateGrid3Command}"
                                         ToolTip="Create worksets for the checked links in this grid">
