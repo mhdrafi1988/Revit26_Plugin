@@ -38,14 +38,6 @@
 
             <Style x:Key="CurrentWorksetCell" TargetType="TextBlock" BasedOn="{StaticResource CellText}"/>
 
-            <!-- Inline search bar style used in each section -->
-            <Style x:Key="SectionSearchBox" TargetType="TextBox" BasedOn="{StaticResource StyledTextInput}">
-                <Setter Property="FontFamily"   Value="Consolas, Courier New"/>
-                <Setter Property="FontSize"     Value="10"/>
-                <Setter Property="BorderThickness" Value="0"/>
-                <Setter Property="Background"   Value="Transparent"/>
-                <Setter Property="Padding"      Value="4,3"/>
-            </Style>
         </ResourceDictionary>
     </Window.Resources>
 
@@ -289,7 +281,12 @@
                                        Foreground="{StaticResource BrushTextSecondary}"
                                        VerticalAlignment="Center" Margin="0,0,6,0"/>
                             <TextBox Grid.Column="1"
-                                     Style="{StaticResource SectionSearchBox}"
+                                     Style="{StaticResource StyledTextInput}"
+                                     FontFamily="Consolas, Courier New"
+                                     FontSize="10"
+                                     BorderThickness="0"
+                                     Background="Transparent"
+                                     Padding="4,2"
                                      Text="{Binding SearchText1, UpdateSourceTrigger=PropertyChanged}"
                                      ToolTip="Filter by link name"/>
                         </Grid>
@@ -425,7 +422,12 @@
                                        Foreground="{StaticResource BrushTextSecondary}"
                                        VerticalAlignment="Center" Margin="0,0,6,0"/>
                             <TextBox Grid.Column="1"
-                                     Style="{StaticResource SectionSearchBox}"
+                                     Style="{StaticResource StyledTextInput}"
+                                     FontFamily="Consolas, Courier New"
+                                     FontSize="10"
+                                     BorderThickness="0"
+                                     Background="Transparent"
+                                     Padding="4,2"
                                      Text="{Binding SearchText2, UpdateSourceTrigger=PropertyChanged}"
                                      ToolTip="Filter by link name"/>
                         </Grid>
@@ -570,7 +572,12 @@
                                        Foreground="{StaticResource BrushTextSecondary}"
                                        VerticalAlignment="Center" Margin="0,0,6,0"/>
                             <TextBox Grid.Column="1"
-                                     Style="{StaticResource SectionSearchBox}"
+                                     Style="{StaticResource StyledTextInput}"
+                                     FontFamily="Consolas, Courier New"
+                                     FontSize="10"
+                                     BorderThickness="0"
+                                     Background="Transparent"
+                                     Padding="4,2"
                                      Text="{Binding SearchText3, UpdateSourceTrigger=PropertyChanged}"
                                      ToolTip="Filter by link name"/>
                         </Grid>
