@@ -260,31 +260,30 @@
                     </StackPanel>
                 </Border>
 
-                <!-- Log panel -->
-                <Border Background="{StaticResource BrushLogBg}" CornerRadius="10" Margin="0,0,0,8">
-                    <StackPanel>
-                        <Border Background="{StaticResource BrushLogTitleBar}" CornerRadius="10,10,0,0" Padding="12,8">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="Processing Log" FontSize="11.5" FontWeight="SemiBold"
-                                           Foreground="{StaticResource BrushTextOnDark}"/>
-                                <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                    <Button Content="Copy All" Style="{StaticResource DarkGhostButton}"
-                                            Command="{Binding CopyAllLogsCommand}" Margin="0,0,4,0"/>
-                                    <Button Content="Copy Selected" Style="{StaticResource DarkGhostButton}"
-                                            Click="CopySelectedLogsButton_Click"/>
-                                </StackPanel>
-                            </Grid>
-                        </Border>
-
+                <!-- Log panel — collapsible, collapsed by default -->
+                <Expander Margin="0,0,0,8" IsExpanded="False" Background="{StaticResource BrushLogBg}">
+                    <Expander.Header>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Processing Log" FontSize="11.5" FontWeight="SemiBold"
+                                       Foreground="{StaticResource BrushTextOnDark}"/>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <Button Content="Copy All" Style="{StaticResource DarkGhostButton}"
+                                        Command="{Binding CopyAllLogsCommand}" Margin="0,0,4,0"/>
+                                <Button Content="Copy Selected" Style="{StaticResource DarkGhostButton}"
+                                        Click="CopySelectedLogsButton_Click"/>
+                            </StackPanel>
+                        </Grid>
+                    </Expander.Header>
+                    <Border Background="{StaticResource BrushLogBg}" CornerRadius="0,0,10,10">
                         <ListBox x:Name="LogListBox"
                                  ItemsSource="{Binding LogEntries}"
                                  SelectionMode="Extended"
                                  Background="Transparent" BorderThickness="0"
-                                 Height="190" Padding="8,4"
+                                 MaxHeight="190" Padding="8,4"
                                  ScrollViewer.VerticalScrollBarVisibility="Auto">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
@@ -303,8 +302,8 @@
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
-                    </StackPanel>
-                </Border>
+                    </Border>
+                </Expander>
 
                 <!-- Status bar -->
                 <Grid Margin="0,0,0,14">

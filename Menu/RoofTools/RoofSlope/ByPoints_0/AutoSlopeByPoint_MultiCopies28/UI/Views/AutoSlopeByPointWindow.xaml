@@ -340,7 +340,6 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="8"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
             <!-- Row 0: LIVE metrics — recalculated as checkboxes/combos change, before Run -->
@@ -628,36 +627,30 @@
                 </StackPanel>
             </Border>
 
-            <!-- Log Header (moved from left pane) -->
-            <Border Grid.Row="10" Background="{StaticResource BrushLogBg}" CornerRadius="6,6,0,0" Padding="10,8">
-                <DockPanel>
-                    <TextBlock Text="Processing log"
-                               Style="{StaticResource FieldLabel}"
-                               Foreground="{StaticResource BrushLogTextDim}"
-                               VerticalAlignment="Center"/>
-                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                        <Button Content="Copy selected"
-                                Style="{StaticResource DarkGhostButton}"
-                                Click="CopySelectedLogs_Click"
-                                Width="100" Margin="0,0,6,0"/>
-                        <Button Content="Copy all"
-                                Style="{StaticResource DarkGhostButton}"
-                                Click="CopyAllLogs_Click"
-                                Width="70" Margin="0,0,6,0"/>
-                        <Button Content="Clear"
-                                Command="{Binding ClearLogCommand}"
-                                Width="70" Height="28"/>
-                    </StackPanel>
-                </DockPanel>
-            </Border>
-
-            <!--
-                Log Panel — ListBox (multi-select) bound to LogEntries (ObservableCollection<LogEntry>).
-                Each entry's foreground is driven by LogLevelToColorConverter (from Shared.Models).
-                ListBox (rather than ItemsControl) so rows can be selected for "Copy selected".
-                Fills remaining right-panel height (star row).
-            -->
-            <Border Grid.Row="11" Background="{StaticResource BrushLogBg}" CornerRadius="0,0,10,10">
+            <!-- Log panel — collapsible, collapsed by default -->
+            <Expander Grid.Row="10" Grid.ColumnSpan="2" Margin="0,0,0,0" IsExpanded="False" Background="{StaticResource BrushLogBg}">
+                <Expander.Header>
+                    <DockPanel>
+                        <TextBlock Text="Processing log"
+                                   Style="{StaticResource FieldLabel}"
+                                   Foreground="{StaticResource BrushLogTextDim}"
+                                   VerticalAlignment="Center"/>
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                            <Button Content="Copy selected"
+                                    Style="{StaticResource DarkGhostButton}"
+                                    Click="CopySelectedLogs_Click"
+                                    Width="100" Margin="0,0,6,0"/>
+                            <Button Content="Copy all"
+                                    Style="{StaticResource DarkGhostButton}"
+                                    Click="CopyAllLogs_Click"
+                                    Width="70" Margin="0,0,6,0"/>
+                            <Button Content="Clear"
+                                    Command="{Binding ClearLogCommand}"
+                                    Width="70" Height="28"/>
+                        </StackPanel>
+                    </DockPanel>
+                </Expander.Header>
+                <Border Background="{StaticResource BrushLogBg}" CornerRadius="0,0,10,10" MinHeight="80">
                 <ListBox x:Name="LogListBox"
                          ItemsSource="{Binding LogEntries}"
                          SelectionMode="Extended"
@@ -697,7 +690,8 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-            </Border>
+                </Border>
+            </Expander>
         </Grid>
     </Grid>
 </Window>

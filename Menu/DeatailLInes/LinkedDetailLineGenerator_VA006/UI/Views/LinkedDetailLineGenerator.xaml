@@ -714,23 +714,23 @@
                     </StackPanel>
                 </Border>
 
-                <!-- ── LOG PANEL ── -->
-                <Border Background="{StaticResource BrushLogBg}" CornerRadius="10" Margin="0,4,0,0">
-                    <StackPanel>
-                        <Border Background="{StaticResource BrushLogTitleBar}" Padding="14,8" CornerRadius="10,10,0,0">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="Processing Log" FontSize="11.5" FontWeight="SemiBold" Foreground="{StaticResource BrushLogText}" VerticalAlignment="Center"/>
-                                <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                    <Button Content="Copy All" Style="{StaticResource DarkGhostButton}" Margin="4,0,0,0"/>
-                                    <Button Content="Copy Selected" Style="{StaticResource DarkGhostButton}" Margin="4,0,0,0"/>
-                                    <Button Content="Clear" Style="{StaticResource DarkGhostButton}" Margin="4,0,0,0" Command="{Binding ClearLogCommand}"/>
-                                </StackPanel>
-                            </Grid>
-                        </Border>
+                <!-- ── LOG PANEL — collapsible, collapsed by default ── -->
+                <Expander Margin="0,4,0,0" IsExpanded="False" Background="{StaticResource BrushLogBg}">
+                    <Expander.Header>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Processing Log" FontSize="11.5" FontWeight="SemiBold" Foreground="{StaticResource BrushLogText}" VerticalAlignment="Center"/>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <Button Content="Copy All" Style="{StaticResource DarkGhostButton}" Margin="4,0,0,0"/>
+                                <Button Content="Copy Selected" Style="{StaticResource DarkGhostButton}" Margin="4,0,0,0"/>
+                                <Button Content="Clear" Style="{StaticResource DarkGhostButton}" Margin="4,0,0,0" Command="{Binding ClearLogCommand}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Expander.Header>
+                    <Border Background="{StaticResource BrushLogBg}" CornerRadius="0,0,10,10">
                         <ItemsControl ItemsSource="{Binding LogEntries}" Margin="14,8,14,8" MaxHeight="120">
                             <ItemsControl.Template>
                                 <ControlTemplate TargetType="ItemsControl">
@@ -752,8 +752,8 @@
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
-                    </StackPanel>
-                </Border>
+                    </Border>
+                </Expander>
 
             </StackPanel>
         </ScrollViewer>

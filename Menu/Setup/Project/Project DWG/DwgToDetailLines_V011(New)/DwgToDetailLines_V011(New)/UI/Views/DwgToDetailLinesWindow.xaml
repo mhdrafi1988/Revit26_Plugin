@@ -275,36 +275,28 @@ Changes vs V010 (per approved mockup):
                     IsEnabled="{Binding IsRunning, Converter={StaticResource InverseBoolConverter}}"/>
         </StackPanel>
 
-        <!-- ── Activity log ── -->
-        <Border Grid.Row="18" Background="{StaticResource BrushLogBg}" CornerRadius="8">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-
-                <Border Grid.Row="0" Background="{StaticResource BrushLogTitleBar}"
-                        CornerRadius="8,8,0,0" Padding="12,7">
-                    <Grid>
-                        <TextBlock Text="Activity log"
-                                   Foreground="{StaticResource BrushLogText}"
-                                   FontSize="11.5" VerticalAlignment="Center"/>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                            <Button Content="Export" Style="{StaticResource DarkGhostButton}"
-                                    Command="{Binding ExportLogCommand}" Margin="0,0,6,0"
-                                    ToolTip="Save the log to a .txt file"/>
-                            <Button Content="Copy Selected" Style="{StaticResource DarkGhostButton}"
-                                    Command="{Binding CopySelectedLogCommand}" Margin="0,0,6,0"
-                                    ToolTip="Copy the selected log lines"/>
-                            <Button Content="Copy All" Style="{StaticResource DarkGhostButton}"
-                                    Command="{Binding CopyAllLogCommand}"
-                                    ToolTip="Copy the whole log to the clipboard"/>
-                        </StackPanel>
-                    </Grid>
-                </Border>
-
-                <ListBox Grid.Row="1"
-                         x:Name="LogList"
+        <!-- ── Activity log — collapsible, collapsed by default ── -->
+        <Expander Grid.Row="18" IsExpanded="False" Background="{StaticResource BrushLogBg}">
+            <Expander.Header>
+                <Grid>
+                    <TextBlock Text="Activity log"
+                               Foreground="{StaticResource BrushLogText}"
+                               FontSize="11.5" VerticalAlignment="Center"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="Export" Style="{StaticResource DarkGhostButton}"
+                                Command="{Binding ExportLogCommand}" Margin="0,0,6,0"
+                                ToolTip="Save the log to a .txt file"/>
+                        <Button Content="Copy Selected" Style="{StaticResource DarkGhostButton}"
+                                Command="{Binding CopySelectedLogCommand}" Margin="0,0,6,0"
+                                ToolTip="Copy the selected log lines"/>
+                        <Button Content="Copy All" Style="{StaticResource DarkGhostButton}"
+                                Command="{Binding CopyAllLogCommand}"
+                                ToolTip="Copy the whole log to the clipboard"/>
+                    </StackPanel>
+                </Grid>
+            </Expander.Header>
+            <Border Background="{StaticResource BrushLogBg}" CornerRadius="0,0,8,8" MinHeight="80">
+                <ListBox x:Name="LogList"
                          ItemsSource="{Binding LogEntries}"
                          SelectionMode="Extended"
                          SelectionChanged="LogList_SelectionChanged"
@@ -314,7 +306,8 @@ Changes vs V010 (per approved mockup):
                          VirtualizingPanel.VirtualizationMode="Recycling"
                          ScrollViewer.HorizontalScrollBarVisibility="Auto"
                          ScrollViewer.VerticalScrollBarVisibility="Auto"
-                         Padding="12,8">
+                         Padding="12,8"
+                         MaxHeight="200">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
                             <Setter Property="Padding" Value="0,1"/>
@@ -335,8 +328,8 @@ Changes vs V010 (per approved mockup):
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-            </Grid>
-        </Border>
+            </Border>
+        </Expander>
 
     </Grid>
 </Window>

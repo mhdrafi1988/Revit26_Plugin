@@ -42,10 +42,9 @@ Changes vs V002:
             <RowDefinition Height="Auto"/>   <!-- 5 edges toolbar -->
             <RowDefinition Height="*" MinHeight="150"/> <!-- 6 edges grid -->
             <RowDefinition Height="8"/>      <!-- 7 -->
-            <RowDefinition Height="Auto"/>   <!-- 8 log title -->
-            <RowDefinition Height="130"/>    <!-- 9 log panel -->
-            <RowDefinition Height="12"/>     <!-- 10 -->
-            <RowDefinition Height="Auto"/>   <!-- 11 close -->
+            <RowDefinition Height="Auto"/>   <!-- 8 log (collapsible) -->
+            <RowDefinition Height="12"/>     <!-- 9 -->
+            <RowDefinition Height="Auto"/>   <!-- 10 close -->
         </Grid.RowDefinitions>
 
         <!-- ── Header bar ── -->
@@ -196,29 +195,33 @@ Changes vs V002:
             </DataGrid.Columns>
         </DataGrid>
 
-        <!-- ── Log ── -->
-        <TextBlock Grid.Row="8" Text="ACTIVITY LOG" Style="{StaticResource SectionTitle}"/>
-        <Border Grid.Row="9" Background="{StaticResource BrushLogBg}" CornerRadius="8">
-            <ScrollViewer x:Name="LogScroll" VerticalScrollBarVisibility="Auto" Padding="10,8">
-                <ItemsControl ItemsSource="{Binding LogEntries}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal" Margin="0,1">
-                                <TextBlock Text="{Binding Time, StringFormat=HH:mm:ss}"
-                                           Foreground="{StaticResource BrushLogTextDim}"
-                                           FontFamily="Consolas" FontSize="11.5" Margin="0,0,10,0"/>
-                                <TextBlock Text="{Binding Message}"
-                                           Foreground="{Binding Level, Converter={StaticResource LogLevelToColor}}"
-                                           FontFamily="Consolas" FontSize="11.5" TextWrapping="Wrap"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
-        </Border>
+        <!-- ── Log — collapsible, collapsed by default ── -->
+        <Expander Grid.Row="8" Margin="0,0,0,0" IsExpanded="False" Background="{StaticResource BrushLogBg}">
+            <Expander.Header>
+                <TextBlock Text="Activity Log" Style="{StaticResource SectionTitle}" VerticalAlignment="Center"/>
+            </Expander.Header>
+            <Border Background="{StaticResource BrushLogBg}" CornerRadius="0,0,8,8" MaxHeight="130">
+                <ScrollViewer x:Name="LogScroll" VerticalScrollBarVisibility="Auto" Padding="10,8">
+                    <ItemsControl ItemsSource="{Binding LogEntries}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Margin="0,1">
+                                    <TextBlock Text="{Binding Time, StringFormat=HH:mm:ss}"
+                                               Foreground="{StaticResource BrushLogTextDim}"
+                                               FontFamily="Consolas" FontSize="11.5" Margin="0,0,10,0"/>
+                                    <TextBlock Text="{Binding Message}"
+                                               Foreground="{Binding Level, Converter={StaticResource LogLevelToColor}}"
+                                               FontFamily="Consolas" FontSize="11.5" TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Border>
+        </Expander>
 
         <!-- ── Close ── -->
-        <StackPanel Grid.Row="11" Orientation="Horizontal" HorizontalAlignment="Right">
+        <StackPanel Grid.Row="10" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="Close" Style="{StaticResource OutlineButton}" Width="90" IsCancel="True" Click="Close_Click"/>
         </StackPanel>
     </Grid>

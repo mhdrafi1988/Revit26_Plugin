@@ -405,7 +405,6 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="6"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
             <!-- Row 0: all 8 metrics in ONE 4x2 grid (was two separate 4-col rows) -->
@@ -552,73 +551,74 @@
                 </DataGrid.Columns>
             </DataGrid>
 
-            <!-- Row 6: Log header -->
-            <Border Grid.Row="6" Background="{StaticResource BrushLogBg}" CornerRadius="6,6,0,0" Padding="9,6">
-                <DockPanel>
-                    <TextBlock Text="Processing log"
-                               Style="{StaticResource FieldLabel}"
-                               Foreground="{StaticResource BrushLogTextDim}"
-                               FontSize="10.5"
-                               VerticalAlignment="Center"/>
-                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                        <Button Content="Copy selected"
-                                Style="{StaticResource DarkGhostButton}"
-                                Click="CopySelectedLogs_Click"
-                                Width="88" Margin="0,0,5,0"/>
-                        <Button Content="Copy all"
-                                Command="{Binding CopyAllLogsCommand}"
-                                Style="{StaticResource DarkGhostButton}"
-                                Width="60" Margin="0,0,5,0"/>
-                        <Button Content="Clear"
-                                Command="{Binding ClearLogCommand}"
-                                Style="{StaticResource DarkGhostButton}"
-                                Width="60"/>
-                    </StackPanel>
-                </DockPanel>
-            </Border>
-
-            <!-- Row 7: Log body — ListBox (multi-select) bound to LogEntries -->
-            <Border Grid.Row="7" Background="{StaticResource BrushLogBg}">
-                <ListBox x:Name="LogListBox"
-                         ItemsSource="{Binding LogEntries}"
-                         SelectionMode="Extended"
-                         Background="Transparent"
-                         BorderThickness="0"
-                         ScrollViewer.VerticalScrollBarVisibility="Auto"
-                         FontFamily="Consolas"
-                         FontSize="9.5">
-                    <ListBox.ItemContainerStyle>
-                        <Style TargetType="ListBoxItem">
-                            <Setter Property="Padding" Value="3,1"/>
-                            <Setter Property="Background" Value="Transparent"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="ListBoxItem">
-                                        <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
-                                            <ContentPresenter/>
-                                        </Border>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsSelected" Value="True">
-                                                <Setter Property="Background" Value="{StaticResource BrushLogTitleBar}"/>
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </ListBox.ItemContainerStyle>
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Foreground="{Binding Level, Converter={StaticResource LogLevelToColor}}"
-                                       TextWrapping="Wrap">
-                                <Run Text="{Binding Time, Mode=OneWay, StringFormat=[HH:mm:ss]}"/>
-                                <Run Text=" "/>
-                                <Run Text="{Binding Message, Mode=OneWay}"/>
-                            </TextBlock>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </Border>
+            <!-- Log panel — collapsible, collapsed by default -->
+            <Expander Grid.Row="6" Margin="0,0,0,0" IsExpanded="False" Background="{StaticResource BrushLogBg}">
+                <Expander.Header>
+                    <DockPanel>
+                        <TextBlock Text="Processing log"
+                                   Style="{StaticResource FieldLabel}"
+                                   Foreground="{StaticResource BrushLogTextDim}"
+                                   FontSize="10.5"
+                                   VerticalAlignment="Center"/>
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                            <Button Content="Copy selected"
+                                    Style="{StaticResource DarkGhostButton}"
+                                    Click="CopySelectedLogs_Click"
+                                    Width="88" Margin="0,0,5,0"/>
+                            <Button Content="Copy all"
+                                    Command="{Binding CopyAllLogsCommand}"
+                                    Style="{StaticResource DarkGhostButton}"
+                                    Width="60" Margin="0,0,5,0"/>
+                            <Button Content="Clear"
+                                    Command="{Binding ClearLogCommand}"
+                                    Style="{StaticResource DarkGhostButton}"
+                                    Width="60"/>
+                        </StackPanel>
+                    </DockPanel>
+                </Expander.Header>
+                <Border Background="{StaticResource BrushLogBg}" MinHeight="80">
+                    <ListBox x:Name="LogListBox"
+                             ItemsSource="{Binding LogEntries}"
+                             SelectionMode="Extended"
+                             Background="Transparent"
+                             BorderThickness="0"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto"
+                             FontFamily="Consolas"
+                             FontSize="9.5"
+                             MaxHeight="200">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Padding" Value="3,1"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListBoxItem">
+                                            <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                                                <ContentPresenter/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsSelected" Value="True">
+                                                    <Setter Property="Background" Value="{StaticResource BrushLogTitleBar}"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Foreground="{Binding Level, Converter={StaticResource LogLevelToColor}}"
+                                           TextWrapping="Wrap">
+                                    <Run Text="{Binding Time, Mode=OneWay, StringFormat=[HH:mm:ss]}"/>
+                                    <Run Text=" "/>
+                                    <Run Text="{Binding Message, Mode=OneWay}"/>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Border>
+            </Expander>
         </Grid>
     </Grid>
 </UserControl>
