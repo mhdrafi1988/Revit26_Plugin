@@ -292,12 +292,42 @@ mockup applies to this tool too):
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
+                <!-- Collapsed by default; user expands via the header toggle.
+                     Bottom corners round off while collapsed. -->
                 <Border Grid.Row="0" Background="{StaticResource BrushLogTitleBar}"
-                        CornerRadius="8,8,0,0" Padding="12,7">
+                        Padding="12,7">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="8"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsChecked, ElementName=LogToggle}" Value="True">
+                                    <Setter Property="CornerRadius" Value="8,8,0,0"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
                     <Grid>
-                        <TextBlock Text="Activity log"
-                                   Foreground="{StaticResource BrushLogText}"
-                                   FontSize="11.5" VerticalAlignment="Center"/>
+                        <ToggleButton x:Name="LogToggle" IsChecked="False"
+                                      HorizontalAlignment="Left" VerticalAlignment="Center"
+                                      Cursor="Hand" ToolTip="Show / hide activity log">
+                            <ToggleButton.Template>
+                                <ControlTemplate TargetType="ToggleButton">
+                                    <StackPanel Orientation="Horizontal" Background="Transparent">
+                                        <TextBlock x:Name="Chevron" Text="&#x25B8;"
+                                                   Foreground="{StaticResource BrushLogText}"
+                                                   FontSize="11.5" Width="14" VerticalAlignment="Center"/>
+                                        <TextBlock Text="Activity log"
+                                                   Foreground="{StaticResource BrushLogText}"
+                                                   FontSize="11.5" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsChecked" Value="True">
+                                            <Setter TargetName="Chevron" Property="Text" Value="&#x25BE;"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </ToggleButton.Template>
+                        </ToggleButton>
                         <Button Content="Clear"
                                 Style="{StaticResource DarkGhostButton}"
                                 Command="{Binding ClearLogCommand}"
@@ -305,7 +335,8 @@ mockup applies to this tool too):
                     </Grid>
                 </Border>
 
-                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="12,8">
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="12,8"
+                              Visibility="{Binding IsChecked, ElementName=LogToggle, Converter={StaticResource BoolToVisibility}}">
                     <ItemsControl ItemsSource="{Binding Log}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
