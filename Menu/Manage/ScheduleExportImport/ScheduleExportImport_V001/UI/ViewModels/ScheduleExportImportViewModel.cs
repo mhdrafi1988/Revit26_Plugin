@@ -178,7 +178,9 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.UI.ViewModels
             AddLog(LogLevel.Info, $"Editable columns ({editable.Count}): {Preview(editable)}");
             if (readOnly > 0)
                 AddLog(LogLevel.Info, $"Read-only columns ({readOnly}): {Preview(headers.Where(h => !editable.Contains(h)))}");
-            AddLog(LogLevel.Success, $"Exported {rows.Count} row(s) × {headers.Count} field(s) → {_pendingExportPath}");
+            var exportSize = FileSizeLabel(_pendingExportPath);
+            AddLog(LogLevel.Success, $"Exported {rows.Count} row(s) × {headers.Count} field(s) → {Path.GetFileName(_pendingExportPath)}  ({exportSize})");
+            AddLog(LogLevel.Info, $"Folder: {Path.GetDirectoryName(_pendingExportPath)}");
 
             SummaryTitle = $"Last export — {SelectedSchedule.Name}";
             SetCards(SummaryCards,
@@ -342,7 +344,9 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.UI.ViewModels
             try
             {
                 LastReportPath = ImportReportService.Write(_importFile.FilePath, _previewScheduleName, _analysis, PreviewRows.Select(r => r.Model));
-                AddLog(LogLevel.Info, $"Import report saved → {LastReportPath}");
+                var reportSize = FileSizeLabel(LastReportPath);
+                AddLog(LogLevel.Info, $"Import report saved → {Path.GetFileName(LastReportPath)}  ({reportSize})");
+                AddLog(LogLevel.Info, $"Folder: {Path.GetDirectoryName(LastReportPath)}");
             }
             catch (Exception ex)
             {
@@ -627,6 +631,18 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.UI.ViewModels
             foreach (var ch in Path.GetInvalidFileNameChars())
                 name = name.Replace(ch, '_');
             return name;
+        }
+
+        private static string FileSizeLabel(string path)
+        {
+            try
+            {
+                long bytes = new FileInfo(path).Length;
+                if (bytes >= 1_048_576) return $"{bytes / 1_048_576.0:F1} MB";
+                if (bytes >= 1_024) return $"{bytes / 1_024.0:F1} KB";
+                return $"{bytes} B";
+            }
+            catch { return "?"; }
         }
     }
 }
