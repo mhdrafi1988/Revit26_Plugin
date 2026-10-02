@@ -135,7 +135,13 @@ namespace Revit26_Plugin.ScheduleExportImport.V002.Core.Services
         /// </summary>
         public static ExcelImportFile Import(string filePath)
         {
-            using var wb = new XLWorkbook(filePath);
+            // Excel keeps the workbook locked while it is open, and Export opens it in Excel.
+            // Read through a share-friendly stream so "edit, save, import" works without closing Excel.
+            using var buffer = new MemoryStream();
+            using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
+                fs.CopyTo(buffer);
+            buffer.Position = 0;
+            using var wb = new XLWorkbook(buffer);
             var file = new ExcelImportFile { FilePath = filePath };
 
             if (wb.Worksheets.TryGetWorksheet(InfoSheetName, out var infoSheet))

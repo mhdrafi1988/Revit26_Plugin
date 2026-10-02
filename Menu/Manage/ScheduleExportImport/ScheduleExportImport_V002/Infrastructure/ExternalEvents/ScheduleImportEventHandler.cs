@@ -574,7 +574,15 @@ namespace Revit26_Plugin.ScheduleExportImport.V002.Infrastructure.ExternalEvents
                             MarkFailed(change, ex.Message);
                         }
                     }
-                    tx.Commit();
+                    // Revit can roll a commit back without throwing (e.g. element borrowed by
+                    // another user in a workshared model) — don't report those as applied.
+                    var status = tx.Commit();
+                    if (status != TransactionStatus.Committed)
+                    {
+                        foreach (var c in byElement.Where(c => c.Status == ImportChangeStatus.Applied))
+                            MarkFailed(c, $"Revit did not commit the change ({status}). The element may be borrowed by another user.");
+                        continue;
+                    }
                     if (anyApplied) AppliedElementCount++;
                 }
                 catch (Exception ex)
