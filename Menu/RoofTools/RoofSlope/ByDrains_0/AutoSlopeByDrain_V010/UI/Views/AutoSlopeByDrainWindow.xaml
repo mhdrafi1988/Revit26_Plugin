@@ -76,6 +76,64 @@
                 <Setter Property="BorderThickness" Value="0"/>
             </Style>
 
+            <!-- Collapsible card section (Circle Markers): the whole header row is
+                 the toggle, with a chevron on the right; body is hidden until
+                 expanded. Lives inside a ContentCard Border so it keeps the card
+                 look when closed. -->
+            <Style x:Key="CardExpander" TargetType="Expander">
+                <Setter Property="IsExpanded" Value="False"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Expander">
+                            <DockPanel LastChildFill="True">
+                                <ToggleButton DockPanel.Dock="Top"
+                                              IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                              Background="Transparent" BorderThickness="0"
+                                              Padding="10,7" Cursor="Hand"
+                                              HorizontalContentAlignment="Stretch">
+                                    <ToggleButton.Template>
+                                        <ControlTemplate TargetType="ToggleButton">
+                                            <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                                                <ContentPresenter/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </ToggleButton.Template>
+                                    <DockPanel LastChildFill="True">
+                                        <TextBlock x:Name="Chevron" DockPanel.Dock="Right" Text="▾"
+                                                   Foreground="{StaticResource BrushTextSecondary}"
+                                                   FontSize="11" VerticalAlignment="Center" Margin="6,0,0,0"/>
+                                        <ContentPresenter ContentSource="Header" RecognizesAccessKey="False"/>
+                                    </DockPanel>
+                                </ToggleButton>
+                                <StackPanel x:Name="BodyHost" Visibility="Collapsed">
+                                    <Border Style="{StaticResource SeparatorLine}" Margin="10,0,10,4"/>
+                                    <ContentPresenter/>
+                                </StackPanel>
+                            </DockPanel>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsExpanded" Value="True">
+                                    <Setter TargetName="BodyHost" Property="Visibility" Value="Visible"/>
+                                    <Setter TargetName="Chevron" Property="Text" Value="▴"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Small pill shown in a collapsed section header for each enabled marker group. -->
+            <Style x:Key="SummaryChip" TargetType="Border">
+                <Setter Property="Background" Value="{StaticResource BrushSystemTertiaryBackground}"/>
+                <Setter Property="CornerRadius" Value="6"/>
+                <Setter Property="Padding" Value="5,0"/>
+                <Setter Property="Margin" Value="4,0,0,0"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+            </Style>
+            <Style x:Key="SummaryChipText" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="9.5"/>
+                <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}"/>
+            </Style>
+
             <!-- Group header style for the Detected Drains grid (Circle/Rectangle/Other) —
                  shows the group name + count and a per-group All/None pair. -->
             <!-- Expander wrapping ItemsPresenter — the actual grouped rows render
@@ -254,12 +312,52 @@
                     </StackPanel>
                 </Border>
 
-                <!-- Circle Markers Section — Drain / Highest Point, ported from AutoSlopeByPoint -->
+                <!-- Circle Markers Section — Drain / Highest Point / Allowed Offset, ported
+                     from AutoSlopeByPoint. Collapsed by default; the header shows a chip
+                     for each enabled group (or "Off") so the state is visible while closed. -->
                 <Border Style="{StaticResource ContentCard}">
+                    <Expander Style="{StaticResource CardExpander}">
+                        <Expander.Header>
+                            <WrapPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="Circle Markers" Style="{StaticResource SectionTitle}" Margin="0"
+                                           VerticalAlignment="Center"
+                                           ToolTip="Placed in the active plan view when Run completes. Skipped with a warning if the active view is not a plan view."/>
+                                <Border Style="{StaticResource SummaryChip}"
+                                        Visibility="{Binding DrainMarkerGroup.IsEnabled, Converter={StaticResource BoolToVisibility}}">
+                                    <TextBlock Text="Drains" Style="{StaticResource SummaryChipText}"/>
+                                </Border>
+                                <Border Style="{StaticResource SummaryChip}"
+                                        Visibility="{Binding HighestPointMarkerGroup.IsEnabled, Converter={StaticResource BoolToVisibility}}">
+                                    <TextBlock Text="Highest Pt" Style="{StaticResource SummaryChipText}"/>
+                                </Border>
+                                <Border Style="{StaticResource SummaryChip}"
+                                        Visibility="{Binding AllowedOffsetMarkerGroup.IsEnabled, Converter={StaticResource BoolToVisibility}}">
+                                    <TextBlock Style="{StaticResource SummaryChipText}">
+                                        <Run Text="Offset ≥"/>
+                                        <Run Text="{Binding AllowedOffsetThresholdMm, Mode=OneWay, StringFormat={}{0:0.#}}"/>
+                                    </TextBlock>
+                                </Border>
+                                <TextBlock Text="Off" Margin="6,0,0,0" FontSize="9.5" VerticalAlignment="Center"
+                                           Foreground="{StaticResource BrushTextSecondary}">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding DrainMarkerGroup.IsEnabled}" Value="False"/>
+                                                        <Condition Binding="{Binding HighestPointMarkerGroup.IsEnabled}" Value="False"/>
+                                                        <Condition Binding="{Binding AllowedOffsetMarkerGroup.IsEnabled}" Value="False"/>
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </MultiDataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </WrapPanel>
+                        </Expander.Header>
                     <StackPanel>
-                        <TextBlock Text="Circle Markers" Style="{StaticResource SectionTitle}" Margin="10,7,10,3"
-                                   ToolTip="Placed in the active plan view when Run completes. Skipped with a warning if the active view is not a plan view."/>
-
                         <!-- Group 1: Drain -->
                         <StackPanel Orientation="Horizontal" Margin="10,0,10,0" VerticalAlignment="Center">
                             <CheckBox IsChecked="{Binding DrainMarkerGroup.IsEnabled}" VerticalAlignment="Center"/>
@@ -393,6 +491,7 @@
                             </StackPanel>
                         </Grid>
                     </StackPanel>
+                    </Expander>
                 </Border>
 
                 <!-- Export Section -->
