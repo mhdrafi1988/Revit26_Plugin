@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Specialized;
 using System.Windows;
+using System.Windows.Threading;
 using Revit26_Plugin.ScheduleExportImport.V002.UI.ViewModels;
 
 namespace Revit26_Plugin.ScheduleExportImport.V002.UI.Views
@@ -23,8 +24,15 @@ namespace Revit26_Plugin.ScheduleExportImport.V002.UI.Views
 
         private void LogEntries_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e.Action == NotifyCollectionChangedAction.Add && LogList.Items.Count > 0)
-                LogList.ScrollIntoView(LogList.Items[LogList.Items.Count - 1]);
+            if (e.Action != NotifyCollectionChangedAction.Add) return;
+            // This handler runs before the ListBox has seen the Add. Scrolling now forces a
+            // layout pass on a stale generator ("ItemsControl is inconsistent with its items
+            // source"), which aborts the caller and breaks every later redraw of the log.
+            Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+            {
+                if (LogList.Items.Count > 0)
+                    LogList.ScrollIntoView(LogList.Items[LogList.Items.Count - 1]);
+            }));
         }
 
         private void ShowPreview()
