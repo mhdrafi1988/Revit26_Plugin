@@ -51,8 +51,7 @@ namespace Revit26_Plugin.WorksetManager.V012.Commands
             // WindowStartupLocation="CenterOwner" / z-order against Revit.
             new WindowInteropHelper(window).Owner = commandData.Application.MainWindowHandle;
 
-            // Modal: CreateAndAssign opens Transactions directly from button handlers, which is only legal inside the API context.
-            window.ShowDialog();
+            window.Show();
             return Result.Succeeded;
         }
     }
