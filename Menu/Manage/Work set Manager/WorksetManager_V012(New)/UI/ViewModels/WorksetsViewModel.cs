@@ -335,10 +335,9 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
 
         private bool CanResync() =>
             IsResyncEnabled &&
-            Items.Any(i => i.IsSelected &&
+            Items.Any(i => i.IsSelected && i.IsExistingWorkset &&
                            (i.GridCategory == WorksetGridCategory.NeedsWorkset ||
-                            i.GridCategory == WorksetGridCategory.NoInstances ||
-                            i.GridCategory == WorksetGridCategory.AlreadyAssigned));
+                            i.GridCategory == WorksetGridCategory.NoInstances));
 
         // â”€â”€ Command executions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
@@ -381,48 +380,36 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
             }
         }
 
-        private void ExecuteResync()
-        {
-            // Resync scope: Grid 2 & Grid 3 selected items only.
-            // Grid 1 items are already correctly assigned â€” don't touch them.
-            var toProcess = Items
-                .Where(i => i.IsSelected &&
-                            (i.GridCategory == WorksetGridCategory.NeedsWorkset ||
-                             i.GridCategory == WorksetGridCategory.NoInstances))
-                .Select(i => (
-                    i.ProposedWorksetName,
-                    i.LinkName,
-                    CreateNew: !i.IsExistingWorkset
-                ))
-                .ToList();
-
-            if (!toProcess.Any())
-            {
-                AddLog(new LogEntry(LogLevel.Warning, "Nothing to resync."));
-                return;
-            }
-
-            AddLog(new LogEntry(LogLevel.Info, $"Resyncing {toProcess.Count} workset(s)..."));
-            RunInRevit(toProcess, "Resync complete.", "Resync error");
-        }
+        private void ExecuteResync() =>
+            ResyncExisting(i => i.GridCategory == WorksetGridCategory.NeedsWorkset ||
+                                i.GridCategory == WorksetGridCategory.NoInstances, "Grid 2 & 3");
 
         private bool CanResyncGrid(WorksetGridCategory category) =>
-            IsResyncEnabled && Items.Any(i => i.IsSelected && i.GridCategory == category);
+            IsResyncEnabled && Items.Any(i => i.IsSelected && i.IsExistingWorkset && i.GridCategory == category);
 
-        private void ExecuteResyncFor(WorksetGridCategory category, string label)
+        private void ExecuteResyncFor(WorksetGridCategory category, string label) =>
+            ResyncExisting(i => i.GridCategory == category, label);
+
+        // Resync never creates worksets — it only reassigns links to worksets that already exist.
+        private void ResyncExisting(Func<WorksetItem, bool> scope, string label)
         {
-            var toProcess = Items
-                .Where(i => i.IsSelected && i.GridCategory == category)
-                .Select(i => (i.ProposedWorksetName, i.LinkName, CreateNew: !i.IsExistingWorkset))
+            var selected = Items.Where(i => i.IsSelected && scope(i)).ToList();
+            var toProcess = selected
+                .Where(i => i.IsExistingWorkset)
+                .Select(i => (i.ProposedWorksetName, i.LinkName, false))
                 .ToList();
+
+            foreach (var skipped in selected.Where(i => !i.IsExistingWorkset))
+                AddLog(new LogEntry(LogLevel.Warning,
+                    $"Skipped '{skipped.LinkName}' — workset '{skipped.ProposedWorksetName}' does not exist (use Create)."));
 
             if (!toProcess.Any())
             {
-                AddLog(new LogEntry(LogLevel.Warning, $"No {label} links selected for resync."));
+                AddLog(new LogEntry(LogLevel.Warning, $"Nothing to resync in {label} — no checked link has an existing workset."));
                 return;
             }
 
-            AddLog(new LogEntry(LogLevel.Info, $"Resyncing {toProcess.Count} workset(s) from {label}..."));
+            AddLog(new LogEntry(LogLevel.Info, $"Resyncing {toProcess.Count} link(s) from {label}..."));
             RunInRevit(toProcess, $"Resync complete for {label}.", "Resync error");
         }
 
