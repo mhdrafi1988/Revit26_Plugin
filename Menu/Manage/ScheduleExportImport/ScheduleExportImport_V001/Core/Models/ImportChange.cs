@@ -17,6 +17,7 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.Core.Models
     public class ImportChange
     {
         public long ElementId { get; set; }
+        public string ElementName { get; set; } = string.Empty;
         public string ParameterName { get; set; } = "—";
         public string OldValue { get; set; } = string.Empty;
         public string NewValue { get; set; } = string.Empty;

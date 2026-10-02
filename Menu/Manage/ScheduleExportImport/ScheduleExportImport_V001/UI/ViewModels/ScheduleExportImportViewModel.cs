@@ -401,7 +401,7 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.UI.ViewModels
 
             var t = PreviewSearchText.Trim();
             return r.ElementId.ToString().Contains(t)
-                || Contains(r.ParameterName, t) || Contains(r.OldValue, t) || Contains(r.NewValue, t) || Contains(r.Message, t);
+                || Contains(r.ElementName, t) || Contains(r.ParameterName, t) || Contains(r.OldValue, t) || Contains(r.NewValue, t) || Contains(r.Message, t);
         }
 
         [RelayCommand]
