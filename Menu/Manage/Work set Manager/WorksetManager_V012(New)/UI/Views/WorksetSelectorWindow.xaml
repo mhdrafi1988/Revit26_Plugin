@@ -1,12 +1,3 @@
-<!--
-=======================================================
-File: WorksetSelectorWindow.xaml
-Location: UI/Views/
-Changes vs V011: header badge/title text updated from the stale "V010"
-label to V012; everything else (grid layout, SharedStyles theme, log
-panel) was already spec-compliant and is carried forward unchanged.
-=======================================================
--->
 <Window
     x:Class="Revit26_Plugin.WorksetManager.V012.UI.Views.WorksetSelectorWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -17,9 +8,9 @@ panel) was already spec-compliant and is carried forward unchanged.
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Title="Workset Manager — V012"
-    Height="820"
+    Height="860"
     Width="1060"
-    MinHeight="640"
+    MinHeight="680"
     MinWidth="860"
     WindowStartupLocation="CenterOwner"
     ResizeMode="CanResize">
@@ -30,11 +21,9 @@ panel) was already spec-compliant and is carried forward unchanged.
                 <ResourceDictionary Source="pack://application:,,,/Revit26_Plugin;component/Shared/SharedStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
-            <!-- Converters — registered here only, per shared convention -->
             <converters:BoolToVisibilityConverter   x:Key="BoolToVisibilityConverter"/>
             <converters:LogLevelToColorConverter    x:Key="LogLevelToColorConverter"/>
 
-            <!-- Window-specific DataGrid cell styles (not general theme, so kept local) -->
             <Style x:Key="CellText" TargetType="TextBlock">
                 <Setter Property="VerticalAlignment" Value="Center"/>
                 <Setter Property="Padding"           Value="8,0"/>
@@ -47,22 +36,32 @@ panel) was already spec-compliant and is carried forward unchanged.
                 <Setter Property="FontSize"   Value="10"/>
             </Style>
 
-            <Style x:Key="CurrentWorksetCell" TargetType="TextBlock" BasedOn="{StaticResource CellText}">
+            <Style x:Key="CurrentWorksetCell" TargetType="TextBlock" BasedOn="{StaticResource CellText}"/>
+
+            <!-- Inline search bar style used in each section -->
+            <Style x:Key="SectionSearchBox" TargetType="TextBox" BasedOn="{StaticResource StyledTextInput}">
+                <Setter Property="FontFamily"   Value="Consolas, Courier New"/>
+                <Setter Property="FontSize"     Value="10"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Background"   Value="Transparent"/>
+                <Setter Property="Padding"      Value="4,3"/>
             </Style>
         </ResourceDictionary>
     </Window.Resources>
 
     <Grid Background="{StaticResource BrushSystemSecondaryBackground}">
         <Grid.RowDefinitions>
-            <!-- Row 0: Navy header — title, version badge, subtitle -->
+            <!-- Row 0: Navy header -->
             <RowDefinition Height="Auto"/>
-            <!-- Row 1: Pattern toolbar -->
+            <!-- Row 1: Metrics strip -->
             <RowDefinition Height="Auto"/>
-            <!-- Row 2: Three section grids -->
+            <!-- Row 2: Pattern toolbar -->
+            <RowDefinition Height="Auto"/>
+            <!-- Row 3: Three section grids -->
             <RowDefinition Height="*"/>
-            <!-- Row 3: Live log -->
-            <RowDefinition Height="110"/>
-            <!-- Row 4: Footer buttons -->
+            <!-- Row 4: Live log (collapsible) -->
+            <RowDefinition Height="Auto"/>
+            <!-- Row 5: Footer buttons -->
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
@@ -89,8 +88,114 @@ panel) was already spec-compliant and is carried forward unchanged.
             </Grid>
         </Border>
 
-        <!-- ══ ROW 1 — Pattern toolbar ══════════════════════════════════════ -->
-        <Border Grid.Row="1" Style="{StaticResource SectionCard}" Margin="12,10,12,0">
+        <!-- ══ ROW 1 — Metrics strip ════════════════════════════════════════ -->
+        <Border Grid.Row="1"
+                Background="{StaticResource BrushSystemBackground}"
+                BorderBrush="{StaticResource BrushSeparatorThin}"
+                BorderThickness="0,0,0,1"
+                Padding="12,8">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Total Links -->
+                <Border Grid.Column="0"
+                        BorderBrush="{StaticResource BrushSeparatorThin}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="12,7"
+                        Margin="0,0,6,0">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Ellipse Width="7" Height="7" Fill="{StaticResource BrushTextSecondary}"
+                                 VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <StackPanel>
+                            <TextBlock Text="TOTAL LINKS" FontSize="9" FontWeight="SemiBold"
+                                       Foreground="{StaticResource BrushTextSecondary}"
+                                       CharacterSpacing="50"/>
+                            <TextBlock Text="{Binding TotalLinksCount}"
+                                       FontSize="20" FontWeight="Bold"
+                                       Foreground="{StaticResource BrushTextPrimary}"
+                                       FontFamily="Consolas"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Assigned -->
+                <Border Grid.Column="1"
+                        BorderBrush="{StaticResource BrushSuccess}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Background="#0A34C759"
+                        Padding="12,7"
+                        Margin="0,0,6,0">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Ellipse Width="7" Height="7" Fill="{StaticResource BrushSuccess}"
+                                 VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <StackPanel>
+                            <TextBlock Text="ASSIGNED" FontSize="9" FontWeight="SemiBold"
+                                       Foreground="{StaticResource BrushSuccess}"
+                                       CharacterSpacing="50"/>
+                            <TextBlock Text="{Binding Grid1Count}"
+                                       FontSize="20" FontWeight="Bold"
+                                       Foreground="{StaticResource BrushSuccess}"
+                                       FontFamily="Consolas"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Needs Workset -->
+                <Border Grid.Column="2"
+                        BorderBrush="{StaticResource BrushAppleBlue}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Background="#0A3A82F7"
+                        Padding="12,7"
+                        Margin="0,0,6,0">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Ellipse Width="7" Height="7" Fill="{StaticResource BrushAppleBlue}"
+                                 VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <StackPanel>
+                            <TextBlock Text="NEEDS WORKSET" FontSize="9" FontWeight="SemiBold"
+                                       Foreground="{StaticResource BrushAppleBlue}"
+                                       CharacterSpacing="50"/>
+                            <TextBlock Text="{Binding Grid2Count}"
+                                       FontSize="20" FontWeight="Bold"
+                                       Foreground="{StaticResource BrushAppleBlue}"
+                                       FontFamily="Consolas"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- No Instances -->
+                <Border Grid.Column="3"
+                        BorderBrush="{StaticResource BrushWarning}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Background="#0AFF9F0A"
+                        Padding="12,7">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Ellipse Width="7" Height="7" Fill="{StaticResource BrushWarning}"
+                                 VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <StackPanel>
+                            <TextBlock Text="NO INSTANCES" FontSize="9" FontWeight="SemiBold"
+                                       Foreground="{StaticResource BrushWarning}"
+                                       CharacterSpacing="50"/>
+                            <TextBlock Text="{Binding Grid3Count}"
+                                       FontSize="20" FontWeight="Bold"
+                                       Foreground="{StaticResource BrushWarning}"
+                                       FontFamily="Consolas"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- ══ ROW 2 — Pattern toolbar ══════════════════════════════════════ -->
+        <Border Grid.Row="2" Style="{StaticResource SectionCard}" Margin="12,10,12,0">
             <Grid Margin="12,8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -131,8 +236,8 @@ panel) was already spec-compliant and is carried forward unchanged.
             </Grid>
         </Border>
 
-        <!-- ══ ROW 2 — Three section grids ══════════════════════════════════ -->
-        <Grid Grid.Row="2" Margin="12,8,12,0">
+        <!-- ══ ROW 3 — Three section grids ══════════════════════════════════ -->
+        <Grid Grid.Row="3" Margin="12,8,12,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
@@ -144,9 +249,11 @@ panel) was already spec-compliant and is carried forward unchanged.
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
+                    <!-- Section header -->
                     <Border Grid.Row="0"
                             Background="{StaticResource BrushSystemSecondaryBackground}"
                             CornerRadius="10,10,0,0"
@@ -171,11 +278,32 @@ panel) was already spec-compliant and is carried forward unchanged.
                         </StackPanel>
                     </Border>
 
-                    <Border Grid.Row="0" Height="0.5"
+                    <!-- Per-section search -->
+                    <Border Grid.Row="1"
+                            Background="{StaticResource BrushSystemBackground}"
+                            BorderBrush="{StaticResource BrushSeparatorThin}"
+                            BorderThickness="0,1,0,1"
+                            Padding="10,4">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="⌕" FontSize="12"
+                                       Foreground="{StaticResource BrushTextSecondary}"
+                                       VerticalAlignment="Center" Margin="0,0,6,0"/>
+                            <TextBox Grid.Column="1"
+                                     Style="{StaticResource SectionSearchBox}"
+                                     Text="{Binding SearchText1, UpdateSourceTrigger=PropertyChanged}"
+                                     ToolTip="Filter by link name"/>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Row="1" Height="0.5"
                             Background="{StaticResource BrushSeparatorThin}"
                             VerticalAlignment="Bottom"/>
 
-                    <DataGrid Grid.Row="1"
+                    <DataGrid Grid.Row="2"
                               ItemsSource="{Binding Grid1AssignedItems}"
                               Style="{StaticResource StandardDataGrid}"
                               ColumnHeaderStyle="{StaticResource StandardDataGridColumnHeader}"
@@ -197,8 +325,7 @@ panel) was already spec-compliant and is carried forward unchanged.
                             <DataGridTemplateColumn Header="Linked file" Width="*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding LinkName}"
-                                                   Style="{StaticResource MonoCell}"/>
+                                        <TextBlock Text="{Binding LinkName}" Style="{StaticResource MonoCell}"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -240,9 +367,11 @@ panel) was already spec-compliant and is carried forward unchanged.
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
+                    <!-- Section header -->
                     <Border Grid.Row="0"
                             Background="{StaticResource BrushSystemSecondaryBackground}"
                             CornerRadius="10,10,0,0"
@@ -274,16 +403,43 @@ panel) was already spec-compliant and is carried forward unchanged.
                                         Margin="0,0,6,0"/>
                                 <Button Content="Select none"
                                         Style="{StaticResource SecondaryButton}"
-                                        Command="{Binding SelectNoneCommand}"/>
+                                        Command="{Binding SelectNoneCommand}"
+                                        Margin="0,0,6,0"/>
+                                <Button Content="Create selected"
+                                        Style="{StaticResource PrimaryButton}"
+                                        Command="{Binding CreateGrid2Command}"
+                                        IsEnabled="{Binding IsCreateEnabled}"
+                                        ToolTip="Create worksets for selected Grid 2 links"/>
                             </StackPanel>
                         </Grid>
                     </Border>
 
-                    <Border Grid.Row="0" Height="0.5"
+                    <!-- Per-section search -->
+                    <Border Grid.Row="1"
+                            Background="{StaticResource BrushSystemBackground}"
+                            BorderBrush="{StaticResource BrushSeparatorThin}"
+                            BorderThickness="0,1,0,1"
+                            Padding="10,4">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="⌕" FontSize="12"
+                                       Foreground="{StaticResource BrushTextSecondary}"
+                                       VerticalAlignment="Center" Margin="0,0,6,0"/>
+                            <TextBox Grid.Column="1"
+                                     Style="{StaticResource SectionSearchBox}"
+                                     Text="{Binding SearchText2, UpdateSourceTrigger=PropertyChanged}"
+                                     ToolTip="Filter by link name"/>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Row="1" Height="0.5"
                             Background="{StaticResource BrushSeparatorThin}"
                             VerticalAlignment="Bottom"/>
 
-                    <DataGrid Grid.Row="1"
+                    <DataGrid Grid.Row="2"
                               ItemsSource="{Binding Grid2ActionableItems}"
                               Style="{StaticResource StandardDataGrid}"
                               ColumnHeaderStyle="{StaticResource StandardDataGridColumnHeader}"
@@ -314,8 +470,7 @@ panel) was already spec-compliant and is carried forward unchanged.
                             <DataGridTemplateColumn Header="Linked file" Width="*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding LinkName}"
-                                                   Style="{StaticResource MonoCell}"/>
+                                        <TextBlock Text="{Binding LinkName}" Style="{StaticResource MonoCell}"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -352,9 +507,11 @@ panel) was already spec-compliant and is carried forward unchanged.
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
+                    <!-- Section header -->
                     <Border Grid.Row="0"
                             Background="{StaticResource BrushSystemSecondaryBackground}"
                             CornerRadius="10,10,0,0"
@@ -391,16 +548,43 @@ panel) was already spec-compliant and is carried forward unchanged.
                                         Margin="0,0,6,0"/>
                                 <Button Content="Select none"
                                         Style="{StaticResource SecondaryButton}"
-                                        Command="{Binding SelectNoneG3Command}"/>
+                                        Command="{Binding SelectNoneG3Command}"
+                                        Margin="0,0,6,0"/>
+                                <Button Content="Create selected"
+                                        Style="{StaticResource PrimaryButton}"
+                                        Command="{Binding CreateGrid3Command}"
+                                        IsEnabled="{Binding IsCreateEnabled}"
+                                        ToolTip="Create worksets for selected Grid 3 links"/>
                             </StackPanel>
                         </Grid>
                     </Border>
 
-                    <Border Grid.Row="0" Height="0.5"
+                    <!-- Per-section search -->
+                    <Border Grid.Row="1"
+                            Background="{StaticResource BrushSystemBackground}"
+                            BorderBrush="{StaticResource BrushSeparatorThin}"
+                            BorderThickness="0,1,0,1"
+                            Padding="10,4">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="⌕" FontSize="12"
+                                       Foreground="{StaticResource BrushTextSecondary}"
+                                       VerticalAlignment="Center" Margin="0,0,6,0"/>
+                            <TextBox Grid.Column="1"
+                                     Style="{StaticResource SectionSearchBox}"
+                                     Text="{Binding SearchText3, UpdateSourceTrigger=PropertyChanged}"
+                                     ToolTip="Filter by link name"/>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Row="1" Height="0.5"
                             Background="{StaticResource BrushSeparatorThin}"
                             VerticalAlignment="Bottom"/>
 
-                    <DataGrid Grid.Row="1"
+                    <DataGrid Grid.Row="2"
                               ItemsSource="{Binding Grid3NoInstanceItems}"
                               Style="{StaticResource StandardDataGrid}"
                               ColumnHeaderStyle="{StaticResource StandardDataGridColumnHeader}"
@@ -467,8 +651,8 @@ panel) was already spec-compliant and is carried forward unchanged.
             </Border>
         </Grid>
 
-        <!-- ══ ROW 3 — Live log ══════════════════════════════════════════════ -->
-        <Border Grid.Row="3"
+        <!-- ══ ROW 4 — Live log (collapsed by default) ══════════════════════ -->
+        <Border Grid.Row="4"
                 Background="{StaticResource BrushLogBg}"
                 CornerRadius="10"
                 Margin="12,8,12,0"
@@ -476,21 +660,35 @@ panel) was already spec-compliant and is carried forward unchanged.
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <!-- Title bar with Copy All / Copy Selected / Clear -->
+                <!-- Log title bar — click toggles content -->
                 <Border Grid.Row="0"
                         Background="{StaticResource BrushLogTitleBar}"
                         CornerRadius="10,10,0,0"
-                        Padding="10,4">
+                        Padding="10,4"
+                        Cursor="Hand">
+                    <Border.InputBindings>
+                        <MouseBinding MouseAction="LeftClick" Command="{Binding ToggleLogCommand}"/>
+                    </Border.InputBindings>
                     <Grid>
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
                         <TextBlock Grid.Column="0"
+                                   Text="{Binding LogChevron}"
+                                   FontFamily="Consolas"
+                                   FontSize="10"
+                                   Foreground="{StaticResource BrushLogTextDim}"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,6,0"/>
+
+                        <TextBlock Grid.Column="1"
                                    Text="LIVE LOG"
                                    FontFamily="Consolas"
                                    FontSize="9"
@@ -498,7 +696,7 @@ panel) was already spec-compliant and is carried forward unchanged.
                                    Foreground="{StaticResource BrushLogTextDim}"
                                    VerticalAlignment="Center"/>
 
-                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <StackPanel Grid.Column="3" Orientation="Horizontal">
                             <Button Content="Copy all"
                                     Style="{StaticResource DarkGhostButton}"
                                     Command="{Binding CopyLogCommand}"
@@ -517,7 +715,7 @@ panel) was already spec-compliant and is carried forward unchanged.
                     </Grid>
                 </Border>
 
-                <!-- Log entries — level color wired via LogLevelToColorConverter -->
+                <!-- Log entries — hidden when collapsed -->
                 <ListBox Grid.Row="1"
                          x:Name="LogListBox"
                          ItemsSource="{Binding Log}"
@@ -526,7 +724,9 @@ panel) was already spec-compliant and is carried forward unchanged.
                          SelectionMode="Extended"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          ScrollViewer.VerticalScrollBarVisibility="Auto"
-                         Padding="0">
+                         Height="90"
+                         Padding="0"
+                         Visibility="{Binding IsLogExpanded, Converter={StaticResource BoolToVisibilityConverter}}">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
                             <Setter Property="Padding"    Value="0"/>
@@ -580,8 +780,8 @@ panel) was already spec-compliant and is carried forward unchanged.
             </Grid>
         </Border>
 
-        <!-- ══ ROW 4 — Footer ═══════════════════════════════════════════════ -->
-        <Border Grid.Row="4"
+        <!-- ══ ROW 5 — Footer ═══════════════════════════════════════════════ -->
+        <Border Grid.Row="5"
                 Background="{StaticResource BrushSystemBackground}"
                 BorderBrush="{StaticResource BrushSeparatorThin}"
                 BorderThickness="0,1,0,0"
@@ -613,7 +813,7 @@ panel) was already spec-compliant and is carried forward unchanged.
                             Command="{Binding CreateCommand}"
                             IsEnabled="{Binding IsCreateEnabled}"
                             Margin="0,0,8,0"
-                            ToolTip="Create worksets for selected Grid 2 &amp; Grid 3 links and assign instances"/>
+                            ToolTip="Create worksets for all selected Grid 2 &amp; Grid 3 links"/>
                     <Button Content="Close"
                             Style="{StaticResource OutlineButton}"
                             Command="{Binding CloseCommand}"/>

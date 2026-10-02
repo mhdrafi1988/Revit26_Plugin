@@ -36,12 +36,7 @@ namespace Revit26_Plugin.Menu.Ribbon
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.WorksetManager_16.png"),
                     ToolTip = RibbonLayoutHelper.VersionTip("Workset Manager", "V012")
                 },
-                new PushButtonData("Btn_WorksetManager_11", "Worksets From Links", assemblyPath, "Revit26_Plugin.WSFL.V011.Commands.CreateWorksetsFromLinkedFiles")
-                {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.WorksetsFromLinks_16.png"),
-                    ToolTip = RibbonLayoutHelper.VersionTip("Create Worksets From Linked Files", "V011")
-                },
-                new PushButtonData("Btn_WorksetRenamer_V003", "Workset Renamer", assemblyPath, "Revit26_Plugin.WorksetRenamer.V003.Command")
+new PushButtonData("Btn_WorksetRenamer_V003", "Workset Renamer", assemblyPath, "Revit26_Plugin.WorksetRenamer.V003.Command")
                 {
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.WorksetRename_16.png"),
                     ToolTip = RibbonLayoutHelper.VersionTip("Workset Renamer", "V003")

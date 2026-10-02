@@ -76,19 +76,29 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
         [ObservableProperty] private int    grid1Count;
         [ObservableProperty] private int    grid2Count;
         [ObservableProperty] private int    grid3Count;
+        [ObservableProperty] private int    totalLinksCount;
         [ObservableProperty] private int    totalSelectedCount;
+        [ObservableProperty] private string searchText1          = string.Empty;
+        [ObservableProperty] private string searchText2          = string.Empty;
+        [ObservableProperty] private string searchText3          = string.Empty;
+        [ObservableProperty] private bool   isLogExpanded        = false;
+
+        public string LogChevron => IsLogExpanded ? "▾" : "▸";
 
         // â”€â”€ Commands â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-        public IRelayCommand CreateCommand       { get; }
-        public IRelayCommand ResyncCommand       { get; }
-        public IRelayCommand CloseCommand        { get; }
-        public IRelayCommand SelectAllCommand    { get; }
-        public IRelayCommand SelectNoneCommand   { get; }
-        public IRelayCommand SelectAllG3Command  { get; }
-        public IRelayCommand SelectNoneG3Command { get; }
-        public IRelayCommand CopyLogCommand      { get; }
-        public IRelayCommand ClearLogCommand     { get; }
+        public IRelayCommand CreateCommand        { get; }
+        public IRelayCommand CreateGrid2Command  { get; }
+        public IRelayCommand CreateGrid3Command  { get; }
+        public IRelayCommand ResyncCommand        { get; }
+        public IRelayCommand CloseCommand         { get; }
+        public IRelayCommand SelectAllCommand     { get; }
+        public IRelayCommand SelectNoneCommand    { get; }
+        public IRelayCommand SelectAllG3Command   { get; }
+        public IRelayCommand SelectNoneG3Command  { get; }
+        public IRelayCommand CopyLogCommand       { get; }
+        public IRelayCommand ClearLogCommand      { get; }
+        public IRelayCommand ToggleLogCommand     { get; }
 
         public event Action RequestClose;
 
@@ -103,15 +113,22 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
 
             RecreateFilteredViews();
 
-            CreateCommand       = new RelayCommand(ExecuteCreate,        CanCreate);
-            ResyncCommand       = new RelayCommand(ExecuteResync,        CanResync);
-            CloseCommand        = new RelayCommand(() => RequestClose?.Invoke());
-            SelectAllCommand    = new RelayCommand(() => SetGrid2Selection(true));
-            SelectNoneCommand   = new RelayCommand(() => SetGrid2Selection(false));
-            SelectAllG3Command  = new RelayCommand(() => SetGrid3Selection(true));
-            SelectNoneG3Command = new RelayCommand(() => SetGrid3Selection(false));
-            CopyLogCommand      = new RelayCommand(ExecuteCopyLog);
-            ClearLogCommand     = new RelayCommand(() => Log.Clear());
+            CreateCommand        = new RelayCommand(ExecuteCreate,         CanCreate);
+            CreateGrid2Command   = new RelayCommand(ExecuteCreateGrid2,    CanCreateGrid2);
+            CreateGrid3Command   = new RelayCommand(ExecuteCreateGrid3,    CanCreateGrid3);
+            ResyncCommand        = new RelayCommand(ExecuteResync,         CanResync);
+            CloseCommand         = new RelayCommand(() => RequestClose?.Invoke());
+            SelectAllCommand     = new RelayCommand(() => SetGrid2Selection(true));
+            SelectNoneCommand    = new RelayCommand(() => SetGrid2Selection(false));
+            SelectAllG3Command   = new RelayCommand(() => SetGrid3Selection(true));
+            SelectNoneG3Command  = new RelayCommand(() => SetGrid3Selection(false));
+            CopyLogCommand       = new RelayCommand(ExecuteCopyLog);
+            ClearLogCommand      = new RelayCommand(() => Log.Clear());
+            ToggleLogCommand     = new RelayCommand(() =>
+            {
+                IsLogExpanded = !IsLogExpanded;
+                OnPropertyChanged(nameof(LogChevron));
+            });
 
             Items.CollectionChanged += (s, e) =>
             {
@@ -138,17 +155,28 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
 
         private void RecreateFilteredViews()
         {
-            Grid1AssignedItems  = CreateFilteredView(i => i.GridCategory == WorksetGridCategory.AlreadyAssigned);
-            Grid2ActionableItems = CreateFilteredView(i => i.GridCategory == WorksetGridCategory.NeedsWorkset);
-            Grid3NoInstanceItems = CreateFilteredView(i => i.GridCategory == WorksetGridCategory.NoInstances);
+            Grid1AssignedItems   = CreateFilteredView(i => i.GridCategory == WorksetGridCategory.AlreadyAssigned,  1);
+            Grid2ActionableItems = CreateFilteredView(i => i.GridCategory == WorksetGridCategory.NeedsWorkset,     2);
+            Grid3NoInstanceItems = CreateFilteredView(i => i.GridCategory == WorksetGridCategory.NoInstances,      3);
         }
 
-        private ICollectionView CreateFilteredView(Predicate<WorksetItem> filter)
+        private ICollectionView CreateFilteredView(Predicate<WorksetItem> categoryFilter, int grid)
         {
             var cvs = new CollectionViewSource { Source = Items };
-            cvs.Filter += (s, e) => e.Accepted = filter((WorksetItem)e.Item);
+            cvs.Filter += (s, e) =>
+            {
+                var item = (WorksetItem)e.Item;
+                if (!categoryFilter(item)) { e.Accepted = false; return; }
+                string q = grid == 1 ? SearchText1 : grid == 2 ? SearchText2 : SearchText3;
+                e.Accepted = string.IsNullOrWhiteSpace(q) ||
+                             item.LinkName.IndexOf(q, StringComparison.OrdinalIgnoreCase) >= 0;
+            };
             return cvs.View;
         }
+
+        partial void OnSearchText1Changed(string value) => Grid1AssignedItems?.Refresh();
+        partial void OnSearchText2Changed(string value) => Grid2ActionableItems?.Refresh();
+        partial void OnSearchText3Changed(string value) => Grid3NoInstanceItems?.Refresh();
 
         // â”€â”€ Data loading â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
@@ -393,6 +421,53 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
             }
         }
 
+        private bool CanCreateGrid2() =>
+            IsCreateEnabled && !HasPatternError &&
+            Items.Any(i => i.IsSelected && i.GridCategory == WorksetGridCategory.NeedsWorkset);
+
+        private bool CanCreateGrid3() =>
+            IsCreateEnabled && !HasPatternError &&
+            Items.Any(i => i.IsSelected && i.GridCategory == WorksetGridCategory.NoInstances);
+
+        private void ExecuteCreateGrid2() => ExecuteCreateFor(WorksetGridCategory.NeedsWorkset, "Grid 2");
+        private void ExecuteCreateGrid3() => ExecuteCreateFor(WorksetGridCategory.NoInstances,  "Grid 3");
+
+        private void ExecuteCreateFor(WorksetGridCategory category, string label)
+        {
+            var toProcess = Items
+                .Where(i => i.IsSelected && i.GridCategory == category)
+                .Select(i => (i.ProposedWorksetName, i.LinkName, CreateNew: !i.IsExistingWorkset))
+                .ToList();
+
+            if (!toProcess.Any())
+            {
+                AddLog(new LogEntry(LogLevel.Warning, $"No {label} links selected for creation."));
+                return;
+            }
+
+            IsCreateEnabled = false;
+            IsResyncEnabled = false;
+            RefreshCommandStates();
+
+            try
+            {
+                _service.CreateAndAssign(_doc, toProcess, this);
+                AddLog(new LogEntry(LogLevel.Info,
+                    $"Done — created and assigned {toProcess.Count} workset(s) from {label}."));
+            }
+            catch (Exception ex)
+            {
+                AddLog(new LogEntry(LogLevel.Error, $"Error: {ex.Message}"));
+            }
+            finally
+            {
+                IsCreateEnabled = true;
+                IsResyncEnabled = true;
+                RefreshData();
+                RefreshCommandStates();
+            }
+        }
+
         private void ExecuteCopyLog()
         {
             if (!Log.Any()) return;
@@ -444,6 +519,7 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
             Grid1Count = Items.Count(i => i.GridCategory == WorksetGridCategory.AlreadyAssigned);
             Grid2Count = Items.Count(i => i.GridCategory == WorksetGridCategory.NeedsWorkset);
             Grid3Count = Items.Count(i => i.GridCategory == WorksetGridCategory.NoInstances);
+            TotalLinksCount    = Grid1Count + Grid2Count + Grid3Count;
             TotalSelectedCount = Items.Count(i => i.IsSelected &&
                                                   (i.GridCategory == WorksetGridCategory.NeedsWorkset ||
                                                    i.GridCategory == WorksetGridCategory.NoInstances));
@@ -453,6 +529,8 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
         {
             RefreshCounts();
             CreateCommand.NotifyCanExecuteChanged();
+            CreateGrid2Command.NotifyCanExecuteChanged();
+            CreateGrid3Command.NotifyCanExecuteChanged();
             ResyncCommand.NotifyCanExecuteChanged();
         }
 
