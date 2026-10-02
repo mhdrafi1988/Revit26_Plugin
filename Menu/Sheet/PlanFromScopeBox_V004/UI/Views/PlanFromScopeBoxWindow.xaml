@@ -362,38 +362,33 @@
                     </StackPanel>
                 </Border>
 
-                <!-- Activity log (dark) -->
-                <Border Grid.Row="3" CornerRadius="10" Background="{StaticResource BrushLogBg}" Margin="0,0,0,0">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-
-                        <Border Grid.Row="0" Background="{StaticResource BrushLogTitleBar}" CornerRadius="10,10,0,0" Padding="12,8">
-                            <Grid>
-                                <TextBlock Text="ACTIVITY LOG" Foreground="{StaticResource BrushLogText}"
-                                           FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <Button Content="Copy All" Style="{StaticResource DarkGhostButton}"
-                                            Command="{Binding CopyAllLogsCommand}"/>
-                                    <Button Content="Copy Sel" Style="{StaticResource DarkGhostButton}" Margin="5,0,0,0"
-                                            Command="{Binding CopySelectedLogsCommand}"/>
-                                    <Button Content="Export" Style="{StaticResource DarkGhostButton}" Margin="5,0,0,0"
-                                            Command="{Binding ExportLogsCommand}"/>
-                                    <Button Content="Clear" Style="{StaticResource DarkGhostButton}" Margin="5,0,0,0"
-                                            Command="{Binding ClearLogsCommand}"/>
-                                </StackPanel>
-                            </Grid>
-                        </Border>
-
-                        <ListBox Grid.Row="1" x:Name="LogList"
+                <!-- Activity log — collapsible, collapsed by default -->
+                <Expander Grid.Row="3" Margin="0,0,0,0" IsExpanded="False" Background="{StaticResource BrushLogBg}">
+                    <Expander.Header>
+                        <Grid>
+                            <TextBlock Text="ACTIVITY LOG" Foreground="{StaticResource BrushLogText}"
+                                       FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button Content="Copy All" Style="{StaticResource DarkGhostButton}"
+                                        Command="{Binding CopyAllLogsCommand}"/>
+                                <Button Content="Copy Sel" Style="{StaticResource DarkGhostButton}" Margin="5,0,0,0"
+                                        Command="{Binding CopySelectedLogsCommand}"/>
+                                <Button Content="Export" Style="{StaticResource DarkGhostButton}" Margin="5,0,0,0"
+                                        Command="{Binding ExportLogsCommand}"/>
+                                <Button Content="Clear" Style="{StaticResource DarkGhostButton}" Margin="5,0,0,0"
+                                        Command="{Binding ClearLogsCommand}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Expander.Header>
+                    <Border Background="{StaticResource BrushLogBg}" CornerRadius="0,0,10,10" MinHeight="80">
+                        <ListBox x:Name="LogList"
                                  ItemsSource="{Binding LogEntries}"
                                  SelectionMode="Extended"
                                  SelectionChanged="LogList_SelectionChanged"
                                  Background="Transparent" BorderThickness="0"
                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                 ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                 MaxHeight="200">
                             <ListBox.ItemContainerStyle>
                                 <Style TargetType="ListBoxItem">
                                     <Setter Property="Background" Value="Transparent"/>
@@ -422,8 +417,8 @@
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
-                    </Grid>
-                </Border>
+                    </Border>
+                </Expander>
             </Grid>
         </Grid>
 
