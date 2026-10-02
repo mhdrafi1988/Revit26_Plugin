@@ -226,6 +226,8 @@
                                             CellTemplate="{StaticResource StatusPillTemplate}"/>
                     <DataGridTextColumn Header="Element ID" Binding="{Binding ElementId, Mode=OneWay}" Width="90"
                                         IsReadOnly="True" ElementStyle="{StaticResource CellText}"/>
+                    <DataGridTextColumn Header="Name" Binding="{Binding ElementName, Mode=OneWay}" Width="160"
+                                        IsReadOnly="True" ElementStyle="{StaticResource CellText}"/>
                     <DataGridTextColumn Header="Parameter" Binding="{Binding ParameterName, Mode=OneWay}" Width="150"
                                         IsReadOnly="True" ElementStyle="{StaticResource CellText}"/>
                     <DataGridTextColumn Header="Current value" Binding="{Binding OldValue, Mode=OneWay}" Width="*"

@@ -168,7 +168,12 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.Infrastructure.ExternalEvents
 
             var dedup = ImportRowValidator.Deduplicate(file.Rows);
             analysis.DuplicateRowsMerged = dedup.MergedDuplicateRows;
-            analysis.Items.AddRange(dedup.Conflicts);
+            foreach (var conflict in dedup.Conflicts)
+            {
+                var e = _doc.GetElement(new ElementId(conflict.ElementId));
+                if (e != null) conflict.ElementName = GetElementName(e);
+                analysis.Items.Add(conflict);
+            }
 
             foreach (var row in dedup.UniqueRows)
             {
@@ -178,12 +183,14 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.Infrastructure.ExternalEvents
                     analysis.Items.Add(new ImportChange
                     {
                         ElementId = row.ElementId,
+                        ElementName = "—",
                         Status = ImportChangeStatus.NotFound,
                         Message = "No element with this ID in the model (deleted, or file from another model)."
                     });
                     continue;
                 }
 
+                var elemName = GetElementName(elem);
                 analysis.ElementsMatched++;
                 foreach (var header in file.Headers)
                 {
@@ -194,7 +201,7 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.Infrastructure.ExternalEvents
                     {
                         var typeParam = GetTypeParameter(elem, header);
                         if (typeParam != null && !SameValue(GetParameterDisplayValue(typeParam), newValue))
-                            analysis.Items.Add(NewItem(row.ElementId, header, typeParam, newValue, ImportChangeStatus.TypeParameter,
+                            analysis.Items.Add(NewItem(row.ElementId, elemName, header, typeParam, newValue, ImportChangeStatus.TypeParameter,
                                 "Type parameter — edit the type instead; changing it here would affect every instance."));
                         continue;
                     }
@@ -207,8 +214,8 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.Infrastructure.ExternalEvents
                     }
 
                     analysis.Items.Add(param.IsReadOnly
-                        ? NewItem(row.ElementId, header, param, newValue, ImportChangeStatus.ReadOnly, "Read-only in Revit — cannot be changed.")
-                        : NewItem(row.ElementId, header, param, newValue, ImportChangeStatus.Change, string.Empty));
+                        ? NewItem(row.ElementId, elemName, header, param, newValue, ImportChangeStatus.ReadOnly, "Read-only in Revit — cannot be changed.")
+                        : NewItem(row.ElementId, elemName, header, param, newValue, ImportChangeStatus.Change, string.Empty));
                 }
             }
 
@@ -221,6 +228,7 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.Infrastructure.ExternalEvents
                     analysis.Items.Add(new ImportChange
                     {
                         ElementId = elem.Id.Value,
+                        ElementName = GetElementName(elem),
                         Status = ImportChangeStatus.MissingFromFile,
                         Message = "In the schedule but not in the file (added after export, or row deleted). Left unchanged."
                     });
@@ -307,16 +315,23 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.Infrastructure.ExternalEvents
             return typeId == ElementId.InvalidElementId ? null : _doc.GetElement(typeId)?.LookupParameter(name);
         }
 
-        private static ImportChange NewItem(long id, string header, Parameter param, string newValue, ImportChangeStatus status, string message)
+        private static ImportChange NewItem(long id, string elementName, string header, Parameter param, string newValue, ImportChangeStatus status, string message)
             => new ImportChange
             {
                 ElementId = id,
+                ElementName = elementName,
                 ParameterName = header,
                 OldValue = GetParameterDisplayValue(param),
                 NewValue = newValue,
                 Status = status,
                 Message = message
             };
+
+        private static string GetElementName(Element elem)
+        {
+            try { return elem.Name ?? string.Empty; }
+            catch { return string.Empty; }
+        }
 
         private static void MarkFailed(ImportChange change, string message)
         {

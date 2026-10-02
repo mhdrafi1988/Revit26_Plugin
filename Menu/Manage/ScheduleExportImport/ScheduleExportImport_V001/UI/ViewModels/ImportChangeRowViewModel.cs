@@ -17,6 +17,7 @@ namespace Revit26_Plugin.ScheduleExportImport.V001.UI.ViewModels
         private bool isSelected;
 
         public long ElementId => Model.ElementId;
+        public string ElementName => Model.ElementName;
         public string ParameterName => Model.ParameterName;
         public string OldValue => Model.OldValue;
         public string NewValue => Model.NewValue;
