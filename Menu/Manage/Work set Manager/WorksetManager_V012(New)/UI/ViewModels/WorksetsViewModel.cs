@@ -80,6 +80,8 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
         [ObservableProperty] private int    grid3Count;
         [ObservableProperty] private int    totalLinksCount;
         [ObservableProperty] private int    totalSelectedCount;
+        [ObservableProperty] private int    grid2SelectedCount;
+        [ObservableProperty] private int    grid3SelectedCount;
         [ObservableProperty] private string searchText1          = string.Empty;
         [ObservableProperty] private string searchText2          = string.Empty;
         [ObservableProperty] private string searchText3          = string.Empty;
@@ -89,7 +91,6 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
 
         // â”€â”€ Commands â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-        public IRelayCommand CreateCommand        { get; }
         public IRelayCommand CreateGrid2Command  { get; }
         public IRelayCommand CreateGrid3Command  { get; }
         public IRelayCommand ResyncCommand        { get; }
@@ -116,7 +117,6 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
 
             RecreateFilteredViews();
 
-            CreateCommand        = new RelayCommand(ExecuteCreate,         CanCreate);
             CreateGrid2Command   = new RelayCommand(ExecuteCreateGrid2,    CanCreateGrid2);
             CreateGrid3Command   = new RelayCommand(ExecuteCreateGrid3,    CanCreateGrid3);
             ResyncCommand        = new RelayCommand(ExecuteResync,         CanResync);
@@ -325,13 +325,6 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
 
         // â”€â”€ Command guards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-        private bool CanCreate() =>
-            IsCreateEnabled &&
-            !HasPatternError &&
-            Items.Any(i => i.IsSelected &&
-                           (i.GridCategory == WorksetGridCategory.NeedsWorkset ||
-                            i.GridCategory == WorksetGridCategory.NoInstances));
-
         private bool CanResync() =>
             IsResyncEnabled &&
             Items.Any(i => i.IsSelected &&
@@ -341,24 +334,6 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
 
         // â”€â”€ Command executions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-        private void ExecuteCreate()
-        {
-            var toProcess = Items
-                .Where(i => i.IsSelected &&
-                            (i.GridCategory == WorksetGridCategory.NeedsWorkset ||
-                             i.GridCategory == WorksetGridCategory.NoInstances))
-                .Select(i => (i.ProposedWorksetName, i.LinkName, CreateNew: !i.IsExistingWorkset))
-                .ToList();
-
-            if (!toProcess.Any())
-            {
-                AddLog(new LogEntry(LogLevel.Warning, "No links selected for creation."));
-                return;
-            }
-
-            RunInRevit(toProcess,
-                $"Done — created and assigned {toProcess.Count} workset(s).", "Error");
-        }
 
         private void RunInRevit(
             System.Collections.Generic.List<(string, string, bool)> toProcess,
@@ -503,15 +478,14 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
             Grid2Count = Items.Count(i => i.GridCategory == WorksetGridCategory.NeedsWorkset);
             Grid3Count = Items.Count(i => i.GridCategory == WorksetGridCategory.NoInstances);
             TotalLinksCount    = Grid1Count + Grid2Count + Grid3Count;
-            TotalSelectedCount = Items.Count(i => i.IsSelected &&
-                                                  (i.GridCategory == WorksetGridCategory.NeedsWorkset ||
-                                                   i.GridCategory == WorksetGridCategory.NoInstances));
+            Grid2SelectedCount = Items.Count(i => i.IsSelected && i.GridCategory == WorksetGridCategory.NeedsWorkset);
+            Grid3SelectedCount = Items.Count(i => i.IsSelected && i.GridCategory == WorksetGridCategory.NoInstances);
+            TotalSelectedCount = Grid2SelectedCount + Grid3SelectedCount;
         }
 
         private void RefreshCommandStates()
         {
             RefreshCounts();
-            CreateCommand.NotifyCanExecuteChanged();
             CreateGrid2Command.NotifyCanExecuteChanged();
             CreateGrid3Command.NotifyCanExecuteChanged();
             ResyncCommand.NotifyCanExecuteChanged();

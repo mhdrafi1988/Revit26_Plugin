@@ -398,11 +398,13 @@
                                         Style="{StaticResource SecondaryButton}"
                                         Command="{Binding SelectNoneCommand}"
                                         Margin="0,0,6,0"/>
-                                <Button Content="Create selected"
-                                        Style="{StaticResource PrimaryButton}"
+                                <Button Style="{StaticResource PrimaryButton}"
                                         Command="{Binding CreateGrid2Command}"
-                                        IsEnabled="{Binding IsCreateEnabled}"
-                                        ToolTip="Create worksets for selected Grid 2 links"/>
+                                        ToolTip="Create worksets for the checked links in this grid">
+                                    <TextBlock>
+                                        <Run Text="Create selected ("/><Run Text="{Binding Grid2SelectedCount, Mode=OneWay}"/><Run Text=")"/>
+                                    </TextBlock>
+                                </Button>
                             </StackPanel>
                         </Grid>
                     </Border>
@@ -548,11 +550,13 @@
                                         Style="{StaticResource SecondaryButton}"
                                         Command="{Binding SelectNoneG3Command}"
                                         Margin="0,0,6,0"/>
-                                <Button Content="Create selected"
-                                        Style="{StaticResource PrimaryButton}"
+                                <Button Style="{StaticResource PrimaryButton}"
                                         Command="{Binding CreateGrid3Command}"
-                                        IsEnabled="{Binding IsCreateEnabled}"
-                                        ToolTip="Create worksets for selected Grid 3 links"/>
+                                        ToolTip="Create worksets for the checked links in this grid">
+                                    <TextBlock>
+                                        <Run Text="Create selected ("/><Run Text="{Binding Grid3SelectedCount, Mode=OneWay}"/><Run Text=")"/>
+                                    </TextBlock>
+                                </Button>
                             </StackPanel>
                         </Grid>
                     </Border>
@@ -811,12 +815,6 @@
                             IsEnabled="{Binding IsResyncEnabled}"
                             Margin="0,0,8,0"
                             ToolTip="Re-assign selected links to their matching worksets"/>
-                    <Button Content="Create worksets"
-                            Style="{StaticResource PrimaryButton}"
-                            Command="{Binding CreateCommand}"
-                            IsEnabled="{Binding IsCreateEnabled}"
-                            Margin="0,0,8,0"
-                            ToolTip="Create worksets for all selected Grid 2 &amp; Grid 3 links"/>
                     <Button Content="Close"
                             Style="{StaticResource OutlineButton}"
                             Command="{Binding CloseCommand}"/>
