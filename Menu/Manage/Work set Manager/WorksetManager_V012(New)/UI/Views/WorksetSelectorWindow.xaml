@@ -403,7 +403,7 @@
                                         Margin="0,0,6,0"
                                         ToolTip="Re-assign the checked links in this grid to their matching worksets">
                                     <TextBlock>
-                                        <Run Text="Resync ("/><Run Text="{Binding Grid2SelectedCount, Mode=OneWay}"/><Run Text=")"/>
+                                        <Run Text="Resync ("/><Run Text="{Binding Grid2ResyncableCount, Mode=OneWay}"/><Run Text=")"/>
                                     </TextBlock>
                                 </Button>
                                 <Button Style="{StaticResource PrimaryButton}"
@@ -563,7 +563,7 @@
                                         Margin="0,0,6,0"
                                         ToolTip="Re-assign the checked links in this grid to their matching worksets">
                                     <TextBlock>
-                                        <Run Text="Resync ("/><Run Text="{Binding Grid3SelectedCount, Mode=OneWay}"/><Run Text=")"/>
+                                        <Run Text="Resync ("/><Run Text="{Binding Grid3ResyncableCount, Mode=OneWay}"/><Run Text=")"/>
                                     </TextBlock>
                                 </Button>
                                 <Button Style="{StaticResource PrimaryButton}"
