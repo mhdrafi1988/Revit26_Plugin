@@ -144,7 +144,10 @@
                             <DataGridTemplateColumn Header="✔" Width="34" CanUserResize="False" CanUserSort="False">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
+                                        <!-- Not hit-testable: the click selects the row (which ticks this box);
+                                             letting the box also toggle undid the selection on the same click -->
                                         <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center" Focusable="False"
+                                                  IsHitTestVisible="False"
                                                   ToolTip="Tick to select this schedule for export / import"
                                                   IsChecked="{Binding IsSelected, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=DataGridRow}}"/>
                                     </DataTemplate>
