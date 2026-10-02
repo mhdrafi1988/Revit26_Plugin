@@ -82,6 +82,8 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
         [ObservableProperty] private int    totalSelectedCount;
         [ObservableProperty] private int    grid2SelectedCount;
         [ObservableProperty] private int    grid3SelectedCount;
+        [ObservableProperty] private int    grid2ResyncableCount;
+        [ObservableProperty] private int    grid3ResyncableCount;
         [ObservableProperty] private string searchText1          = string.Empty;
         [ObservableProperty] private string searchText2          = string.Empty;
         [ObservableProperty] private string searchText3          = string.Empty;
@@ -496,6 +498,8 @@ namespace Revit26_Plugin.WorksetManager.V012.UI.ViewModels
             Grid2SelectedCount = Items.Count(i => i.IsSelected && i.GridCategory == WorksetGridCategory.NeedsWorkset);
             Grid3SelectedCount = Items.Count(i => i.IsSelected && i.GridCategory == WorksetGridCategory.NoInstances);
             TotalSelectedCount = Grid2SelectedCount + Grid3SelectedCount;
+            Grid2ResyncableCount = Items.Count(i => i.IsSelected && i.IsExistingWorkset && i.GridCategory == WorksetGridCategory.NeedsWorkset);
+            Grid3ResyncableCount = Items.Count(i => i.IsSelected && i.IsExistingWorkset && i.GridCategory == WorksetGridCategory.NoInstances);
         }
 
         private void RefreshCommandStates()
