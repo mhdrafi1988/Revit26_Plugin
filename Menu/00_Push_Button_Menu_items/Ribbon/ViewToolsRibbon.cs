@@ -10,48 +10,32 @@ namespace Revit26_Plugin.Menu.Ribbon
         {
             RibbonPanel createPanel = app.CreateRibbonPanel(tabName, "View Create");
 
-            // Coexisting implementations of the same tool are collected under
-            // one pulldown button — no default click, the list always shows.
-            // The newest version of each tool supplies the pulldown's own icon.
-            // Only the newest version of each tool is kept; each stays in a
-            // pulldown so a future version can be added beside it.
             var edgeAroundV005 = new PushButtonData("Btn_RoofEdgeAroundSections_V005", "Section Around Edges", assemblyPath, "Revit26_Plugin.RoofEdgeAroundSections.V005.RoofEdgeAroundSectionsCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofEdgeAroundSections_V005_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Roof Edge Around Sections", "V005")
             };
-            var edgeAroundPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofEdgeAroundSections", "Section Around Edges", edgeAroundV005);
-
-            var edgeElementV002 = new PushButtonData("Btn_RoofEdgeElementSections_V002", "Edge Element V002", assemblyPath, "Revit26_Plugin.RoofEdgeElementSections.V002.RoofEdgeElementSectionsCommand")
+            var edgeElementV002 = new PushButtonData("Btn_RoofEdgeElementSections_V002", "Edge Element", assemblyPath, "Revit26_Plugin.RoofEdgeElementSections.V002.RoofEdgeElementSectionsCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofEdgeElementSections_V002_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Roof Edge Element Sections", "V002")
             };
-            var edgeElementPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofEdgeElementSections", "Edge Element", edgeElementV002);
-
-            var roofViewFocusV002 = new PushButtonData("Btn_RoofViewFocus_V002", "Roof View Focus V002", assemblyPath, "Revit26_Plugin.RoofViewFocus.V002.Commands.RoofViewFocusCommand")
+            var roofViewFocusV002 = new PushButtonData("Btn_RoofViewFocus_V002", "Roof View Focus", assemblyPath, "Revit26_Plugin.RoofViewFocus.V002.Commands.RoofViewFocusCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofViewFocus_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Roof View Focus", "V002", "Crops the active plan view to the selected roofs.")
             };
-            var roofViewFocusPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofViewFocus", "Roof View Focus", roofViewFocusV002);
-
-            // Pulldown buttons, unlike split buttons, are fine in a 4-item
-            // stack — so this is one call instead of a stack-of-2 + stack-of-2.
-            var createItems = RibbonLayoutHelper.AddStackedButtons(createPanel, new List<RibbonItemData>
+            RibbonLayoutHelper.AddStackedButtons(createPanel, new List<RibbonItemData>
             {
                 new PushButtonData("Btn_ Sections From Detail Lines V11", "Sections From Lines", assemblyPath, "Revit26_Plugin.CreateSections.V011.Commands.CreateSectionsFromDetailLines")
                 {
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.SectionsFromDetailLines_16.png"),
                     ToolTip = RibbonLayoutHelper.VersionTip("Create Sections From Detail Lines", "V011")
                 },
-                edgeAroundPulldownData,
-                edgeElementPulldownData,
-                roofViewFocusPulldownData,
+                edgeAroundV005,
+                edgeElementV002,
+                roofViewFocusV002,
             });
-            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeAroundSections", edgeAroundV005);
-            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeElementSections", edgeElementV002);
-            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofViewFocus", roofViewFocusV002);
 
             RibbonPanel placePanel = app.CreateRibbonPanel(tabName, "View Place");
             RibbonLayoutHelper.AddStackedButtons(placePanel, new List<RibbonItemData>
@@ -85,9 +69,7 @@ namespace Revit26_Plugin.Menu.Ribbon
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.ViewAutoRenamer_V004_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("View Auto Renamer", "V004")
             };
-            var autoRenamerPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_ViewAutoRenamer", "Auto Renamer", autoRenamerV004);
-
-            var renameItems = RibbonLayoutHelper.AddStackedButtons(renamePanel, new List<RibbonItemData>
+            RibbonLayoutHelper.AddStackedButtons(renamePanel, new List<RibbonItemData>
             {
                 new PushButtonData("Btn_BubbleAutoRenumber_V006", "Bubble Renumber", assemblyPath, "Revit26_Plugin.BubbleAutoRenumber.V006.Commands.SectionAutoRenumberCommand")
                 {
@@ -99,9 +81,8 @@ namespace Revit26_Plugin.Menu.Ribbon
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.SectionAutoRenamer_16.png"),
                     ToolTip = RibbonLayoutHelper.VersionTip("Section Auto Renamer", "V024")
                 },
-                autoRenamerPulldownData,
+                autoRenamerV004,
             });
-            RibbonLayoutHelper.WirePulldownButton(renameItems, "Pulldown_ViewAutoRenamer", autoRenamerV004);
         }
     }
 }

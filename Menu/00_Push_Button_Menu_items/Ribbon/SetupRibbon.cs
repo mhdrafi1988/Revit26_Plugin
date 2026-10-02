@@ -31,20 +31,12 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             RibbonPanel projectPanel = app.CreateRibbonPanel(tabName, "Project Tools");
 
-            // Only the newest version is kept; it stays in a pulldown so a
-            // future version can be added beside it.
-            var dwgLinesV011 = new PushButtonData("Btn_DwgToDetailLines_V011", "Detail Lines V011", assemblyPath, "Revit26_Plugin.DwgToDetailLines.V011.Commands.DwgToDetailLinesCommand")
+            var dwgLinesV011 = new PushButtonData("Btn_DwgToDetailLines_V011", "DWG To Detail Lines", assemblyPath, "Revit26_Plugin.DwgToDetailLines.V011.Commands.DwgToDetailLinesCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToDetailLines_V011_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("DWG To Detail Lines", "V011")
             };
-            var dwgLinesPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DwgToDetailLines", "Detail Lines", dwgLinesV011);
-
-            var projectItems = RibbonLayoutHelper.AddStackedButtons(projectPanel, new List<RibbonItemData>
-            {
-                dwgLinesPulldownData,
-            });
-            RibbonLayoutHelper.WirePulldownButton(projectItems, "Pulldown_DwgToDetailLines", dwgLinesV011);
+            RibbonLayoutHelper.AddStackedButtons(projectPanel, new List<RibbonItemData> { dwgLinesV011 });
         }
     }
 }

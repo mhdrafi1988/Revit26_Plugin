@@ -19,7 +19,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             // whose source still exists are listed here.
             RibbonPanel slopePanel = app.CreateRibbonPanel(tabName, "Roof Slope");
 
-            var byPointV028 = new PushButtonData("Btn_AutoSlopeByPoint_028", "By Point V028", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.V028.Commands.AutoSlopeCommand")
+            var byPointV028 = new PushButtonData("Btn_AutoSlopeByPoint_028", "By Point", assemblyPath, "Revit26_Plugin.AutoSlopeByPoint.V028.Commands.AutoSlopeCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.by_point_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Auto Slope By Point", "V028")
@@ -38,12 +38,12 @@ namespace Revit26_Plugin.Menu.Ribbon
             };
             var byPointPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_AutoSlopeByPoint", "By Point", byPointV028);
 
-            var byDrainV007 = new PushButtonData("Btn_AutoSlopeByDrain_V007", "By Drain V007", assemblyPath, "Revit26_Plugin.AutoSlopeByDrain.V007.Commands.AutoSlopeByDrain")
+            var byDrainV007 = new PushButtonData("Btn_AutoSlopeByDrain_V007", "By Drain", assemblyPath, "Revit26_Plugin.AutoSlopeByDrain.V007.Commands.AutoSlopeByDrain")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.by_drain_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Auto Slope By Drain", "V007")
             };
-            var byDrainV010 = new PushButtonData("Btn_AutoSlopeByDrain_V010", "By Drain V010", assemblyPath, "Revit26_Plugin.MultiRoofSlopeByDrain.V010.Commands.AutoSlopeByDrain")
+            var byDrainV010 = new PushButtonData("Btn_AutoSlopeByDrain_V010", "By Drain Multi-Roof", assemblyPath, "Revit26_Plugin.MultiRoofSlopeByDrain.V010.Commands.AutoSlopeByDrain")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.AutoSlopeByDrain_MultiRoof_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Auto Slope By Drain (Multi-Roof)", "V010",
@@ -93,12 +93,12 @@ namespace Revit26_Plugin.Menu.Ribbon
             });
 
             // Ridge Lines pulldown — merged into Utilities panel below.
-            var ridgeLinesMultiShape = new PushButtonData("Btn_RoofRidgeLines_V68", "Ridge By Openings V068", assemblyPath, "Revit26_Plugin.RoofRidgeLines.V068.Commands.RoofRidgeCommand")
+            var ridgeLinesMultiShape = new PushButtonData("Btn_RoofRidgeLines_V68", "Ridge By Openings", assemblyPath, "Revit26_Plugin.RoofRidgeLines.V068.Commands.RoofRidgeCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.RidgeLinesMultiShape_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Ridge By Openings", "V068")
             };
-            var ridgeLinesByPoints = new PushButtonData("Btn_RoofRidgeLines_V57", "Ridge By Points V057", assemblyPath, "Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.Commands.RoofRidgeCommand")
+            var ridgeLinesByPoints = new PushButtonData("Btn_RoofRidgeLines_V57", "Ridge By Points", assemblyPath, "Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V057.Commands.RoofRidgeCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.RidgeLinesByPoints_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Ridge By Points", "V057")
@@ -152,23 +152,20 @@ namespace Revit26_Plugin.Menu.Ribbon
             // Compare
             RibbonPanel comparePanel = app.CreateRibbonPanel(tabName, "Compare");
 
-            var elevationSyncV003 = new PushButtonData("Btn_RoofPointElevationSync_V003", "Elevation Sync V003", assemblyPath, "Revit26_Plugin.RoofPointElevationSync.V003.Command")
+            var elevationSyncV003 = new PushButtonData("Btn_RoofPointElevationSync_V003", "Elevation Sync", assemblyPath, "Revit26_Plugin.RoofPointElevationSync.V003.Command")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.ElevationSync_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Roof Point Elevation Sync", "V003")
             };
-            var elevationSyncPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofPointElevationSync", "Elevation Sync", elevationSyncV003);
-
-            var compareItems = RibbonLayoutHelper.AddStackedButtons(comparePanel, new List<RibbonItemData>
+            RibbonLayoutHelper.AddStackedButtons(comparePanel, new List<RibbonItemData>
             {
                 new PushButtonData("Btn_RoofPointComparison_V001", "Comparison", assemblyPath, "Revit26_Plugin.RoofPointComparison.V001.Commands.RoofComparisonCommand")
                 {
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.PointComparison_16.png"),
                     ToolTip = RibbonLayoutHelper.VersionTip("Roof Point Comparison", "V001")
                 },
-                elevationSyncPulldownData,
+                elevationSyncV003,
             });
-            RibbonLayoutHelper.WirePulldownButton(compareItems, "Pulldown_RoofPointElevationSync", elevationSyncV003);
         }
     }
 }

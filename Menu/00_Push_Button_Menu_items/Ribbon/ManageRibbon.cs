@@ -17,18 +17,13 @@ namespace Revit26_Plugin.Menu.Ribbon
                     "Bulk-assign shared parameters from a shared parameter file to categories, Instance or Type bound, via a guided step-by-step flow.")
             };
 
-            // Schedule Export/Import — newest version only, in a dropdown so a
-            // future version can be added beside it.
-            var scheduleExportImportV004 = new PushButtonData("Btn_ScheduleExportImport_V004", "Schedule Export/Import V004", assemblyPath, "Revit26_Plugin.ScheduleExportImport.V004.Commands.ScheduleExportImportCommand")
+            var scheduleExportImportV004 = new PushButtonData("Btn_ScheduleExportImport_V004", "Schedule Export/Import", assemblyPath, "Revit26_Plugin.ScheduleExportImport.V004.Commands.ScheduleExportImportCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Manage.ScheduleExportImport_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Schedule Export / Import", "V004",
                     "Export / Import buttons in a row under the metric cards; schedule list full width. Everything from V003.")
             };
-            var scheduleExportImportPulldownData = RibbonLayoutHelper.CreatePulldownButtonData(
-                "Pulldown_ScheduleExportImport", "Schedule Export/Import", scheduleExportImportV004);
-
-            var manageItems = RibbonLayoutHelper.AddStackedButtons(panel, new List<RibbonItemData>
+            RibbonLayoutHelper.AddStackedButtons(panel, new List<RibbonItemData>
             {
                 new PushButtonData("Btn_AnnotationOverlapDetection_V002", "Overlap Detection", assemblyPath, "Revit26_Plugin.AnnotationOverlapDetection.V002.Command")
                 {
@@ -57,10 +52,8 @@ new PushButtonData("Btn_WorksetRenamer_V003", "Workset Renamer", assemblyPath, "
                     Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.WorksetRename_16.png"),
                     ToolTip = RibbonLayoutHelper.VersionTip("Workset Renamer (From Excel)", "FX03")
                 },
-                scheduleExportImportPulldownData,
+                scheduleExportImportV004,
             });
-            RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_ScheduleExportImport",
-                scheduleExportImportV004);
         }
     }
 }
