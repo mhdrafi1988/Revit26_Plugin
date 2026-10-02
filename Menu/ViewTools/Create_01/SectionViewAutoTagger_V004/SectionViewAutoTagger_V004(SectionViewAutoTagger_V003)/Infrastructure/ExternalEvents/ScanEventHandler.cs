@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.SectionViewAutoTagger.V004
 {
@@ -51,6 +52,9 @@ namespace Revit26_Plugin.SectionViewAutoTagger.V004
         public bool IsPending { get; private set; }
 
         public void Execute(UIApplication app)
+            => ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             IsPending = true;
             var doc = app.ActiveUIDocument?.Document;

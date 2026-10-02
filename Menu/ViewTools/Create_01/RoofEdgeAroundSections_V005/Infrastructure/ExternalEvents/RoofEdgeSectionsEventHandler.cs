@@ -5,6 +5,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.Shared.Models;
 
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.RoofEdgeAroundSections.V005
 {
@@ -47,6 +48,9 @@ namespace Revit26_Plugin.RoofEdgeAroundSections.V005
         public Action<RunResult, System.Collections.ObjectModel.ObservableCollection<LogEntry>> OnRunComplete { get; set; }
 
         public void Execute(UIApplication app)
+            => ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             Document doc = app.ActiveUIDocument.Document;
             var log = new System.Collections.ObjectModel.ObservableCollection<LogEntry>();

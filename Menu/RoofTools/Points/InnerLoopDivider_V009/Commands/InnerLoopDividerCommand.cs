@@ -31,6 +31,7 @@ using System;
 using System.Linq;
 using System.Windows.Interop;
 using Revit26_Plugin.Utilities;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.InnerLoopDivider.V009.Commands
 {
@@ -46,6 +47,9 @@ namespace Revit26_Plugin.InnerLoopDivider.V009.Commands
     public class InnerLoopDividerCommand : IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+            => ToolGuard.RunCommand(GetType(), commandData, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             UIDocument uidoc = commandData.Application.ActiveUIDocument;
             Document doc = uidoc.Document;

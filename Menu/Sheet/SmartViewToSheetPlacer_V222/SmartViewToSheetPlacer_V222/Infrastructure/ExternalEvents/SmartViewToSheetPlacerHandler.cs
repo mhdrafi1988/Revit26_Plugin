@@ -6,6 +6,7 @@ using Autodesk.Revit.UI;
 using Revit26_Plugin.Shared.Models;
 using Revit26_Plugin.SmartViewToSheetPlacer.V222.Models;
 using Revit26_Plugin.SmartViewToSheetPlacer.V222.Services;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.SmartViewToSheetPlacer.V222.Infrastructure.ExternalEvents
 {
@@ -103,6 +104,9 @@ namespace Revit26_Plugin.SmartViewToSheetPlacer.V222.Infrastructure.ExternalEven
         }
 
         public void Execute(UIApplication app)
+            => ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             try
             {

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.ViewAutoRenamer.V004.Services;
 
@@ -15,6 +16,9 @@ public class RenameViewsHandler : IExternalEventHandler
     public ViewsListViewModel      Vm      { get; set; } = null!;
 
     public void Execute(UIApplication app)
+        => ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+    private void ExecuteUnguarded(UIApplication app)
     {
         var doc = app.ActiveUIDocument.Document;
 

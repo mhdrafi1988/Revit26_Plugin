@@ -21,6 +21,7 @@ using Revit26_Plugin.CreaserAdv.V010.Views;
 using System;
 using System.Windows.Interop;
 using Revit26_Plugin.Utilities;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.CreaserAdv.V010.Commands
 {
@@ -28,10 +29,10 @@ namespace Revit26_Plugin.CreaserAdv.V010.Commands
     [Regeneration(RegenerationOption.Manual)]
     public class CreaserAdvCommand : IExternalCommand
     {
-        public Result Execute(
-            ExternalCommandData commandData,
-            ref string          message,
-            ElementSet          elements)
+        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+            => ToolGuard.RunCommand(GetType(), commandData, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             try
             {

@@ -7,6 +7,7 @@ using Revit26_Plugin.Shared.Models;
 using System.Collections.Generic;
 using System.Linq;
 using Revit26_Plugin.Utilities;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.RoofTag.V016
 {
@@ -16,10 +17,10 @@ namespace Revit26_Plugin.RoofTag.V016
     {
         private const double PointDedupTolFt = 10.0 / 304.8;
 
-        public Result Execute(
-            ExternalCommandData commandData,
-            ref string          message,
-            ElementSet          elements)
+        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+            => ToolGuard.RunCommand(GetType(), commandData, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             try
             {

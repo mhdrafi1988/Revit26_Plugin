@@ -9,6 +9,7 @@ using Revit26_Plugin.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.APUS.V322.ExternalEvents
 {
@@ -37,6 +38,9 @@ namespace Revit26_Plugin.APUS.V322.ExternalEvents
         public List<SectionItemViewModel> SectionsToPlace { get; set; }
 
         public void Execute(UIApplication app)
+            => ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             var uidoc = app.ActiveUIDocument;
             var doc = uidoc?.Document;

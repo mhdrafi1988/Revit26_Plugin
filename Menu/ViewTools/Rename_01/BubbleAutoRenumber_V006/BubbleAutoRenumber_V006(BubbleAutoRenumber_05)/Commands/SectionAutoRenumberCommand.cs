@@ -5,6 +5,7 @@ using Revit26_Plugin.BubbleAutoRenumber.V006.Handlers;
 using Revit26_Plugin.BubbleAutoRenumber.V006.Views;
 using System;
 using Revit26_Plugin.Utilities;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.BubbleAutoRenumber.V006.Commands
 {
@@ -16,6 +17,9 @@ namespace Revit26_Plugin.BubbleAutoRenumber.V006.Commands
         private static SectionAutoRenumberWindow? _window;
 
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+            => ToolGuard.RunCommand(GetType(), commandData, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             try
             {

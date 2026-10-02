@@ -2,6 +2,7 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.Utilities;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.SectionViewAutoTagger.V004
 {
@@ -10,6 +11,9 @@ namespace Revit26_Plugin.SectionViewAutoTagger.V004
     public class SectionViewAutoTaggerCommand : IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+            => ToolGuard.RunCommand(GetType(), commandData, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             try
             {

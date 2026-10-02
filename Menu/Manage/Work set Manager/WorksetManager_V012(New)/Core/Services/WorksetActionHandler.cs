@@ -1,5 +1,6 @@
 using Autodesk.Revit.UI;
 using System;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.WorksetManager.V012.Core.Services
 {
@@ -10,6 +11,9 @@ namespace Revit26_Plugin.WorksetManager.V012.Core.Services
         public void Queue(Action<UIApplication> action) => _pending = action;
 
         public void Execute(UIApplication app)
+            => ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             var action = _pending;
             _pending = null;

@@ -6,6 +6,7 @@
 
 | SloperPro | Revit |
 |---|---|
+| 2.0.0 | 2026 |
 | 1.0.0 | 2026 |
 
 ## Features
@@ -55,6 +56,12 @@
 3. Open Revit. A **SloperPro** tab appears in the ribbon.
 
 ## Version History
+
+See [CHANGELOG.md](CHANGELOG.md) for the full history and per-tool versions.
+
+### 2.0.0 — 2026-10-02
+- One button per tool; superseded tool versions removed
+- Every tool now reports errors instead of failing silently, and shows its version in the window title
 
 ### 1.0.0 — 2026
 - Initial public release on Autodesk App Store

@@ -5,6 +5,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.ScheduleExportImport.V004.Core.Models;
 using Revit26_Plugin.ScheduleExportImport.V004.Core.Services;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.ScheduleExportImport.V004.Infrastructure.ExternalEvents
 {
@@ -51,6 +52,9 @@ namespace Revit26_Plugin.ScheduleExportImport.V004.Infrastructure.ExternalEvents
         }
 
         public void Execute(UIApplication app)
+            => ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             ErrorMessage = string.Empty;
             try

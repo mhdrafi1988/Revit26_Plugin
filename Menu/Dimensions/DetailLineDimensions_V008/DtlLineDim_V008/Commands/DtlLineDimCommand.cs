@@ -4,6 +4,7 @@ using System.Windows.Interop;
 using Revit26_Plugin.DtlLineDim.V008.UI.ViewModels;
 using Revit26_Plugin.DtlLineDim.V008.UI.Views;
 using Revit26_Plugin.Utilities;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.DtlLineDim.V008.Commands
 {
@@ -11,10 +12,10 @@ namespace Revit26_Plugin.DtlLineDim.V008.Commands
     [Regeneration(RegenerationOption.Manual)]
     public class DtlLineDimCommand : IExternalCommand
     {
-        public Result Execute(
-            ExternalCommandData commandData,
-            ref string message,
-            Autodesk.Revit.DB.ElementSet elements)
+        public Result Execute(ExternalCommandData commandData, ref string message, Autodesk.Revit.DB.ElementSet elements)
+            => ToolGuard.RunCommand(GetType(), commandData, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData commandData, ref string message, Autodesk.Revit.DB.ElementSet elements)
         {
             try
             {

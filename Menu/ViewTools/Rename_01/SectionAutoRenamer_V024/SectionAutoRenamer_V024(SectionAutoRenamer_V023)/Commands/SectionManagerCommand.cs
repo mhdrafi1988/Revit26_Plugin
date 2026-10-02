@@ -6,6 +6,7 @@ using Revit26_Plugin.SectionAutoRenamer.V024.ViewModels;
 using Revit26_Plugin.SectionAutoRenamer.V024.Views;
 using System.Linq;
 using Revit26_Plugin.Utilities;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.SectionAutoRenamer.V024.Commands;
 
@@ -14,6 +15,9 @@ namespace Revit26_Plugin.SectionAutoRenamer.V024.Commands;
 public class OpenSectionManagerCommand : IExternalCommand
 {
     public Result Execute(ExternalCommandData c, ref string m, ElementSet e)
+        => ToolGuard.RunCommand(GetType(), c, ref m, e, ExecuteUnguarded);
+
+    private Result ExecuteUnguarded(ExternalCommandData c, ref string m, ElementSet e)
     {
         try
         {

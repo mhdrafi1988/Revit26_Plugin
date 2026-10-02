@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Autodesk.Revit.UI;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.RoofRidgeLines.V068.Services
 {
@@ -48,6 +49,9 @@ namespace Revit26_Plugin.RoofRidgeLines.V068.Services
         }
 
         public void Execute(UIApplication app)
+            => ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             while (_queue.TryDequeue(out var item))
             {

@@ -7,6 +7,7 @@ using Autodesk.Revit.UI;
 using Revit26_Plugin.LinkedDetailLineGenerator.VA007.Core.Engine;
 using Revit26_Plugin.LinkedDetailLineGenerator.VA007.Core.Models;
 using Revit26_Plugin.LinkedDetailLineGenerator.VA007.Core.Services;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.Infrastructure.ExternalEvents
 {
@@ -37,6 +38,9 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA007.Infrastructure.External
         public Action<ProcessingResult>? OnComplete { get; set; }
 
         public void Execute(UIApplication app)
+            => ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             var request = PendingRequest;
             PendingRequest = null;
