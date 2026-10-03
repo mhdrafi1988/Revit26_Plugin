@@ -13,6 +13,7 @@ namespace Revit26_Plugin.RoofTag.V016
 
         private void OnOK(object sender, RoutedEventArgs e)
         {
+            ((RoofTagViewModel)DataContext).SaveSettings();
             DialogResult = true;
             Close();
         }
