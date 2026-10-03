@@ -37,6 +37,18 @@ namespace Revit26_Plugin.InnerLoopDivider.V009.Core.Models
         /// <summary>Raw shape classification: Circular / Rectangle / Other.</summary>
         public string LoopShapeType { get; set; }
 
+        /// <summary>Radius in millimetres; null when the loop is not circular.</summary>
+        public double? RadiusMm { get; set; }
+
+        /// <summary>Diameter in millimetres; null when the loop is not circular.</summary>
+        public double? DiameterMm => RadiusMm * 2;
+
+        /// <summary>Radius as shown in the grid and size filter ("—" when not circular).</summary>
+        public string RadiusText => RadiusMm.HasValue ? $"{RadiusMm.Value:0.#}" : "—";
+
+        /// <summary>Diameter as shown in the grid and size filter ("—" when not circular).</summary>
+        public string DiameterText => DiameterMm.HasValue ? $"{DiameterMm.Value:0.#}" : "—";
+
         /// <summary>User-facing group for hierarchical UI grouping.</summary>
         public string ShapeCategory => LoopShapeType switch
         {
