@@ -19,6 +19,12 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             // Schedule Export/Import — every working version in one dropdown, newest first.
             // V001 is left out: its export can never complete (log-scroll bug fixed in V002).
+            var scheduleExportImportV005 = new PushButtonData("Btn_ScheduleExportImport_V005", "Schedule Export/Import V005", assemblyPath, "Revit26_Plugin.ScheduleExportImport.V005.Commands.ScheduleExportImportCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Manage.ScheduleExportImport_16.png"),
+                ToolTip = RibbonLayoutHelper.VersionTip("Schedule Export / Import", "V005",
+                    "Flags values changed in Revit since export, checks element ownership, compares numbers by value, Excel dropdowns, type-parameter edits, hidden fields, remembers the folder.")
+            };
             var scheduleExportImportV004 = new PushButtonData("Btn_ScheduleExportImport_V004", "Schedule Export/Import V004", assemblyPath, "Revit26_Plugin.ScheduleExportImport.V004.Commands.ScheduleExportImportCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Manage.ScheduleExportImport_16.png"),
@@ -38,7 +44,7 @@ namespace Revit26_Plugin.Menu.Ribbon
                     "Export to Excel and import back by Element ID; works with the workbook still open in Excel.")
             };
             var scheduleExportImportPulldownData = RibbonLayoutHelper.CreatePulldownButtonData(
-                "Pulldown_ScheduleExportImport", "Schedule Export/Import", scheduleExportImportV004);
+                "Pulldown_ScheduleExportImport", "Schedule Export/Import", scheduleExportImportV005);
 
             var manageItems = RibbonLayoutHelper.AddStackedButtons(panel, new List<RibbonItemData>
             {
@@ -72,7 +78,7 @@ new PushButtonData("Btn_WorksetRenamer_V003", "Workset Renamer", assemblyPath, "
                 scheduleExportImportPulldownData,
             });
             RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_ScheduleExportImport",
-                scheduleExportImportV004, scheduleExportImportV003, scheduleExportImportV002);
+                scheduleExportImportV005, scheduleExportImportV004, scheduleExportImportV003, scheduleExportImportV002);
         }
     }
 }
