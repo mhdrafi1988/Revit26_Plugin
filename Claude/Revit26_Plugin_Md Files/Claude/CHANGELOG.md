@@ -59,6 +59,11 @@ period rather than trusting a reconstruction here.
   Activity Log (moved from footer) in the body. ViewModel gains
   `IsRunning` / `Progress` / `SummaryText` (not yet set). Ribbon pulldown:
   V002, V003 (V001 removed from the ribbon; folder kept).
+- RoofDetailLineIntersect V014 on the shell: Selection, Options and Run Log
+  (moved from footer) in the body; the middle's own ScrollViewer removed.
+  Binds to the existing `IsBusy`; ViewModel gains `Progress` /
+  `SummaryText` (not yet set). Ribbon pulldown: V013, V014 (V012 removed
+  from the ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 
