@@ -33,6 +33,11 @@ period rather than trusting a reconstruction here.
   change.
 - Ribbon: Section Renamer pulldown is now V025, V026 (V024 removed from the
   ribbon; folder kept).
+- DetailLineClosedLoop V003 on the shell: Selection/Options left (own
+  ScrollViewer removed), Created Lines grid right, Processing Log moved
+  from footer into the body. Shell binds to the existing `IsBusy` /
+  `RunSummary`; ViewModel gains `Progress` only. Ribbon pulldown: V002,
+  V003 (V001 removed from the ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 

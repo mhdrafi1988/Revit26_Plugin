@@ -41,21 +41,22 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             RibbonPanel processPanel = app.CreateRibbonPanel(tabName, "Detail Line Process");
 
-            var closedLoopV001 = new PushButtonData("Btn_DetailLineClosedLoop_V001", "Closed Loop V001", assemblyPath, "Revit26_Plugin.DetailLineClosedLoop.V001.Commands.DetailLineClosedLoopCommand")
-            {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.ClosedLoop_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("Detail Line Closed Loop", "V001")
-            };
             var closedLoopV002 = new PushButtonData("Btn_DetailLineClosedLoop_V002", "Closed Loop V002", assemblyPath, "Revit26_Plugin.DetailLineClosedLoop.V002.Commands.DetailLineClosedLoopCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.ClosedLoop_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Detail Line Closed Loop", "V002",
                     "UI Standard layout: two-column middle with a full-height Created Lines grid, footer log, Run → Close.")
             };
-            var closedLoopPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DetailLineClosedLoop", "Detail Line Closed Loop", closedLoopV001);
+            var closedLoopV003 = new PushButtonData("Btn_DetailLineClosedLoop_V003", "Closed Loop V003", assemblyPath, "Revit26_Plugin.DetailLineClosedLoop.V003.Commands.DetailLineClosedLoopCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.ClosedLoop_16.png"),
+                ToolTip = RibbonLayoutHelper.VersionTip("Detail Line Closed Loop", "V003",
+                    "V002 on the shared ToolWindowShell (log in body, capped grid).")
+            };
+            var closedLoopPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DetailLineClosedLoop", "Detail Line Closed Loop", closedLoopV002);
 
             var processItems = RibbonLayoutHelper.AddStackedButtons(processPanel, new List<RibbonItemData> { closedLoopPulldownData });
-            RibbonLayoutHelper.WirePulldownButton(processItems, "Pulldown_DetailLineClosedLoop", closedLoopV001, closedLoopV002);
+            RibbonLayoutHelper.WirePulldownButton(processItems, "Pulldown_DetailLineClosedLoop", closedLoopV002, closedLoopV003);
         }
     }
 }

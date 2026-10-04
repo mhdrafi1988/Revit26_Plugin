@@ -1,0 +1,340 @@
+<!--
+=======================================================
+File: DetailLineClosedLoopWindow.xaml
+Changes vs V002 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
+  - Window content is a shared ToolWindowShell:
+      HEADER  title bar + V003, metric cards
+      BODY    left: Selection + Options (own ScrollViewer removed);
+              right: Created Lines grid; below: Processing Log (moved
+              here from the footer)
+      FOOTER  status strip (IsBusy / Progress / RunSummary), Run → Close
+  - Created Lines grid and log: ShellBehaviors.MaxHeightRatio +
+    ForwardMouseWheel.
+  - No behaviour change — every binding/command/handler is the V002 one.
+=======================================================
+-->
+<Window x:Class="Revit26_Plugin.DetailLineClosedLoop.V003.UI.Views.DetailLineClosedLoopWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
+        xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
+        Title="Detail Line Closed Loop — V003"
+        Height="720" Width="980"
+        MinHeight="720" MinWidth="980"
+        WindowStartupLocation="CenterOwner">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Revit26_Plugin;component/Shared/SharedStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <converters:LogLevelToColorConverter x:Key="LogLevelToColorConverter"/>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <shell:ToolWindowShell Title="Detail Line Closed Loop"
+                           Subtitle="Trim, merge &amp; close a detail-line boundary"
+                           Version="V003"
+                           IsRunning="{Binding IsBusy}"
+                           Progress="{Binding Progress}"
+                           SummaryText="{Binding RunSummary}">
+
+        <!-- ═══ HEADER ═══════════════════════════════════════════ -->
+        <shell:ToolWindowShell.HeaderContent>
+            <Grid Margin="0,0,0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="6"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="6"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="6"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="6"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Style="{StaticResource MetricCard}">
+                    <StackPanel HorizontalAlignment="Center">
+                        <TextBlock Text="In Loop" Style="{StaticResource MetricLabel}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding InLoopCount}" Style="{StaticResource MetricNumber}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="curves" Style="{StaticResource MetricUnit}" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="2" Style="{StaticResource MetricCard}">
+                    <StackPanel HorizontalAlignment="Center">
+                        <TextBlock Text="Merged" Style="{StaticResource MetricLabel}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding MergedCount}" Style="{StaticResource MetricNumberWarning}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="segments" Style="{StaticResource MetricUnit}" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="4" Style="{StaticResource MetricCard}">
+                    <StackPanel HorizontalAlignment="Center">
+                        <TextBlock Text="Removed" Style="{StaticResource MetricLabel}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding RemovedCount}" Style="{StaticResource MetricNumberWarning}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="engulfed" Style="{StaticResource MetricUnit}" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="6" Style="{StaticResource MetricCard}">
+                    <StackPanel HorizontalAlignment="Center">
+                        <TextBlock Text="Gaps Closed" Style="{StaticResource MetricLabel}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding GapsClosedCount}" Style="{StaticResource MetricNumberSuccess}" HorizontalAlignment="Center"/>
+                        <TextBlock Text=" " Style="{StaticResource MetricUnit}" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="8" Style="{StaticResource MetricCard}">
+                    <StackPanel HorizontalAlignment="Center">
+                        <TextBlock Text="Failed" Style="{StaticResource MetricLabel}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding FailedCount}" Style="{StaticResource MetricNumberDanger}" HorizontalAlignment="Center"/>
+                        <TextBlock Text=" " Style="{StaticResource MetricUnit}" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </shell:ToolWindowShell.HeaderContent>
+
+        <!-- ═══ BODY ═════════════════════════════════════════════ -->
+        <shell:ToolWindowShell.BodyContent>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="440"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Left: Selection + Options -->
+                <StackPanel Grid.Column="0">
+                    <!-- Selection card -->
+                    <Border Style="{StaticResource SectionCard}">
+                        <StackPanel>
+                            <TextBlock Text="Selection" Style="{StaticResource SectionTitle}"/>
+                            <StackPanel Orientation="Horizontal" Margin="12,4,12,4">
+                                <Button Content="Select Detail Lines" Style="{StaticResource AccentButton}"
+                                        Command="{Binding SelectLinesCommand}"/>
+                                <Border Style="{StaticResource BadgePill}" Margin="10,0,0,0">
+                                    <TextBlock Style="{StaticResource BadgeText}">
+                                        <Run Text="{Binding SelectedCount, Mode=OneWay}"/>
+                                        <Run Text=" lines selected"/>
+                                    </TextBlock>
+                                </Border>
+                            </StackPanel>
+                            <TextBlock Style="{StaticResource HintText}" Margin="12,0,12,10"
+                                       Text="Pick detail lines/arcs in the active view. Only the active view's sketch plane is used — Model Lines are not supported by this tool."/>
+                        </StackPanel>
+                    </Border>
+                    <!-- Options card -->
+                    <Border Style="{StaticResource SectionCard}">
+                        <StackPanel>
+                            <TextBlock Text="Options" Style="{StaticResource SectionTitle}"/>
+
+                            <StackPanel Orientation="Horizontal" Style="{StaticResource AppleToggleRow}">
+                                <ToggleButton Style="{StaticResource AppleToggleButton}" IsChecked="{Binding SnapEndpoints}"/>
+                                <TextBlock Text="Snap Endpoints" FontSize="13" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <TextBlock Style="{StaticResource HintText}" Margin="12,-4,12,6"
+                                       Text="When on, nearby endpoints (within Revit's short curve tolerance) snap together before trim/extend."/>
+
+                            <Border Style="{StaticResource SeparatorLine}"/>
+
+                            <Grid Margin="12,8,12,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Max Gap to Auto-Close" Style="{StaticResource FieldLabel}" VerticalAlignment="Center"/>
+                                <Grid Grid.Column="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Style="{StaticResource BoxedTextInput}" Width="80"
+                                             Text="{Binding GapToleranceText, UpdateSourceTrigger=PropertyChanged}"
+                                             MaxLength="10" HorizontalContentAlignment="Right"/>
+                                    <TextBlock Grid.Column="1" Text="mm" Style="{StaticResource UnitLabel}"/>
+                                </Grid>
+                            </Grid>
+                            <TextBlock Style="{StaticResource HintText}" Margin="12,4,12,10"
+                                       Text="Gaps larger than this remain open and the loop will fail validation instead of being silently bridged."/>
+
+                            <Border Style="{StaticResource SeparatorLine}"/>
+
+                            <StackPanel Orientation="Horizontal" Style="{StaticResource AppleToggleRow}">
+                                <ToggleButton Style="{StaticResource AppleToggleButton}" IsChecked="{Binding GroupNewLines}"/>
+                                <TextBlock Text="Group New Lines" FontSize="13" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <TextBlock Style="{StaticResource HintText}" Margin="12,-4,12,6"
+                                       Text="When on, the newly-drawn loop segments are assigned to a Group after creation."/>
+
+                            <Grid Margin="12,8,12,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Group Name" Style="{StaticResource FieldLabel}" VerticalAlignment="Center"/>
+                                <TextBox Grid.Column="1" Style="{StaticResource BoxedTextInput}" Width="170"
+                                         Text="{Binding GroupName, UpdateSourceTrigger=PropertyChanged}"
+                                         MaxLength="25" IsEnabled="{Binding GroupNewLines}"/>
+                            </Grid>
+                            <TextBlock Style="{StaticResource HintText}" Margin="12,4,12,10"
+                                       Text="Duplicate names get an incremental numeric suffix automatically (e.g. &quot;ClosedLoop Group 2&quot;)."/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Created Lines grid -->
+                <Border Grid.Column="2" Style="{StaticResource SectionCard}" Margin="0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="Created Lines" Style="{StaticResource SectionTitle}"/>
+                        <TextBlock Grid.Row="1" Style="{StaticResource HintText}" Margin="12,0,12,6"
+                                   Text="Segments drawn by the most recent run, pre-selected for deletion. Uncheck any you want to keep."/>
+
+                        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="12,0,12,6">
+                            <TextBox Width="150" Style="{StaticResource StyledTextInput}"
+                                     Text="{Binding CreatedLinesFilterText, UpdateSourceTrigger=PropertyChanged}"
+                                     MaxLength="25" Margin="0,0,6,0"/>
+                            <Button Content="Select All" Style="{StaticResource SmallSecondaryButton}" Margin="0,0,6,0"
+                                    Command="{Binding SelectAllCreatedLinesCommand}"/>
+                            <Button Content="Clear" Style="{StaticResource SmallSecondaryButton}" Margin="0,0,6,0"
+                                    Command="{Binding ClearCreatedLinesSelectionCommand}"/>
+                            <Button Content="Refresh" Style="{StaticResource SmallSecondaryButton}"
+                                    Command="{Binding RefreshCreatedLinesCommand}"/>
+                        </StackPanel>
+
+                        <DataGrid Grid.Row="3" Margin="12,0,12,0" MinHeight="200"
+                                  shell:ShellBehaviors.MaxHeightRatio="0.45"
+                                  shell:ShellBehaviors.ForwardMouseWheel="True"
+                                  ItemsSource="{Binding FilteredCreatedLines}"
+                                  Style="{StaticResource StandardDataGrid}"
+                                  ColumnHeaderStyle="{StaticResource StandardDataGridColumnHeader}"
+                                  CellStyle="{StaticResource StandardDataGridCell}"
+                                  RowStyle="{StaticResource StandardDataGridRow}"
+                                  AutoGenerateColumns="False"
+                                  EnableRowVirtualization="True"
+                                  VirtualizingPanel.VirtualizationMode="Recycling"
+                                  CanUserAddRows="False" CanUserDeleteRows="False"
+                                  HeadersVisibility="Column">
+                            <DataGrid.Columns>
+                                <DataGridTemplateColumn Width="28" CanUserSort="False">
+                                    <DataGridTemplateColumn.Header>
+                                        <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                  IsChecked="{Binding AllCreatedLinesChecked, Mode=TwoWay}"
+                                                  ToolTip="Check/uncheck all"/>
+                                    </DataGridTemplateColumn.Header>
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                      IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}"
+                                                      PreviewMouseLeftButtonDown="CreatedLinesRowCheckBox_PreviewMouseLeftButtonDown"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTextColumn Header="#" Width="34" Binding="{Binding Index}" IsReadOnly="True"/>
+                                <DataGridTextColumn Header="Type" Width="1*" Binding="{Binding TypeName}" IsReadOnly="True"/>
+                                <DataGridTextColumn Header="Length (mm)" Width="1.3*" Binding="{Binding LengthMm, StringFormat=F1}" IsReadOnly="True">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="TextAlignment" Value="Right"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="Element Id" Width="1.3*" Binding="{Binding Id.Value}" IsReadOnly="True"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <Grid Grid.Row="4" Margin="12,8,12,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Style="{StaticResource HintText}" Margin="0">
+                                <Run Text="{Binding CreatedLines.Count, Mode=OneWay}"/>
+                                <Run Text=" line(s) ·"/>
+                                <Run Text="{Binding CreatedLinesSelectedCount, Mode=OneWay}"/>
+                                <Run Text=" selected"/>
+                            </TextBlock>
+                            <Button Grid.Column="1" Style="{StaticResource DangerButton}"
+                                    Content="{Binding CreatedLinesSelectedCount, StringFormat='Delete Selected ({0})'}"
+                                    Command="{Binding DeleteSelectedLinesCommand}"/>
+                        </Grid>
+                    </Grid>
+                </Border>
+
+                <!-- Processing Log (moved from footer) -->
+                <Border Grid.Row="1" Grid.ColumnSpan="3" Margin="0,8,0,0" Background="{StaticResource BrushLogBg}" CornerRadius="8" Padding="10,8">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Processing Log" FontSize="11.5" FontWeight="SemiBold" Foreground="{StaticResource BrushLogText}" VerticalAlignment="Center"/>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <Button Content="Copy All" Style="{StaticResource DarkGhostButton}"
+                                        Command="{Binding CopyAllLogsCommand}"/>
+                                <Button Content="Copy Selected" Style="{StaticResource DarkGhostButton}" Margin="6,0,0,0"
+                                        Click="CopySelectedLogsButton_Click"/>
+                            </StackPanel>
+                        </Grid>
+                        <Grid Grid.Row="1">
+                            <ListBox x:Name="LogListBox"
+                                     ItemsSource="{Binding LogEntries}"
+                                     SelectionMode="Extended"
+                                     Background="Transparent" BorderThickness="0"
+                                     MinHeight="110" Padding="0"
+                                     shell:ShellBehaviors.MaxHeightRatio="0.2"
+                                     shell:ShellBehaviors.ForwardMouseWheel="True"
+                                     ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding Time, StringFormat='{}{0:HH:mm:ss}'}"
+                                                       Foreground="{StaticResource BrushLogTextDim}"
+                                                       FontFamily="Consolas" FontSize="11" Margin="0,0,8,0"/>
+                                            <TextBlock Text="{Binding Level}"
+                                                       Foreground="{Binding Level, Converter={StaticResource LogLevelToColorConverter}}"
+                                                       FontFamily="Consolas" FontSize="11" FontWeight="SemiBold"
+                                                       Width="58" Margin="0,0,8,0"/>
+                                            <TextBlock Text="{Binding Message}"
+                                                       Foreground="{StaticResource BrushLogText}"
+                                                       FontFamily="Consolas" FontSize="11" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Grid>
+                    </Grid>
+                </Border>
+            </Grid>
+        </shell:ToolWindowShell.BodyContent>
+
+        <!-- ═══ FOOTER ═══════════════════════════════════════════ -->
+        <shell:ToolWindowShell.FooterContent>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Run" Style="{StaticResource PrimaryButton}" Margin="0,0,8,0"
+                        Command="{Binding RunCommand}"/>
+                <Button Content="Close" Style="{StaticResource SecondaryButton}"
+                        Click="CloseButton_Click"/>
+            </StackPanel>
+        </shell:ToolWindowShell.FooterContent>
+    </shell:ToolWindowShell>
+</Window>

@@ -91,9 +91,12 @@ Rules:
   `Color` + `Brush…` token (or a style) to `Shared/SharedStyles.xaml`.
   Metric tiles use `MetricTile[Info|Danger|Success|Warning]` with the
   matching `MetricTileLabel…` / `MetricTileNumber…` text styles.
-- ViewModels expose `IsRunning`, `Progress`, `SummaryText` (add if
-  missing; don't otherwise change ViewModel logic, Revit API code or
-  transactions during a shell migration).
+- The shell's `IsRunning` / `Progress` / `SummaryText` bind to the
+  ViewModel. If it already has an equivalent (e.g. `IsBusy`,
+  `RunSummary`), bind to that; only add what's missing, as a plain
+  observable property (per Rafi's decision, 2026-10-04). Don't otherwise
+  change ViewModel logic, Revit API code or transactions during a shell
+  migration.
 - A migration is a normal version bump: new `_V0xx` folder + namespace.
 
 Reference implementation: SectionAutoRenamer V026.
