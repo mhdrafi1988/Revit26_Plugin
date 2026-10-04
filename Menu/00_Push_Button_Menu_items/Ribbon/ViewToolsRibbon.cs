@@ -31,10 +31,10 @@ namespace Revit26_Plugin.Menu.Ribbon
             var sectionsFromLinesV013 = Btn(assemblyPath, "Btn_SectionsFromDetailLines_V013", "Sections From Lines V013", "Revit26_Plugin.CreateSections.V013.Commands.CreateSectionsFromDetailLines",
                 "SectionsFromDetailLines_16.png", "Create Sections From Detail Lines", "V013", "V012" + OnShell);
 
-            var edgeAroundV005 = Btn(assemblyPath, "Btn_RoofEdgeAroundSections_V005", "Section Around Edges V005", "Revit26_Plugin.RoofEdgeAroundSections.V005.RoofEdgeAroundSectionsCommand",
-                "RoofEdgeAroundSections_V005_16.png", "Roof Edge Around Sections", "V005");
             var edgeAroundV006 = Btn(assemblyPath, "Btn_RoofEdgeAroundSections_V006", "Section Around Edges V006", "Revit26_Plugin.RoofEdgeAroundSections.V006.RoofEdgeAroundSectionsCommand",
                 "RoofEdgeAroundSections_V005_16.png", "Roof Edge Around Sections", "V006", "V005" + Rebuilt);
+            var edgeAroundV007 = Btn(assemblyPath, "Btn_RoofEdgeAroundSections_V007", "Section Around Edges V007", "Revit26_Plugin.RoofEdgeAroundSections.V007.RoofEdgeAroundSectionsCommand",
+                "RoofEdgeAroundSections_V005_16.png", "Roof Edge Around Sections", "V007", "V006" + OnShell);
 
             var edgeElementV002 = Btn(assemblyPath, "Btn_RoofEdgeElementSections_V002", "Edge Element V002", "Revit26_Plugin.RoofEdgeElementSections.V002.RoofEdgeElementSectionsCommand",
                 "RoofEdgeElementSections_V002_16.png", "Roof Edge Element Sections", "V002");
@@ -55,12 +55,12 @@ namespace Revit26_Plugin.Menu.Ribbon
             var createItems = RibbonLayoutHelper.AddStackedButtons(createPanel, new List<RibbonItemData>
             {
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_SectionsFromDetailLines", "Sections From Lines", sectionsFromLinesV012),
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofEdgeAroundSections", "Section Around Edges", edgeAroundV005),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofEdgeAroundSections", "Section Around Edges", edgeAroundV006),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofEdgeElementSections", "Edge Element", edgeElementV002),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofViewFocus", "Roof View Focus", roofViewFocusV002),
             });
             RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_SectionsFromDetailLines", sectionsFromLinesV012, sectionsFromLinesV013);
-            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeAroundSections", edgeAroundV005, edgeAroundV006);
+            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeAroundSections", edgeAroundV006, edgeAroundV007);
             RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeElementSections", edgeElementV002, edgeElementV003, edgeElementV001);
             RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofViewFocus", roofViewFocusV002, roofViewFocusV003, roofViewFocusV004);
 

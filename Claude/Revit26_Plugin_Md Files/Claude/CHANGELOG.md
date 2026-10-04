@@ -232,6 +232,14 @@ period rather than trusting a reconstruction here.
   (indeterminate) + Create / Close. ViewModel gains `Progress` /
   `SummaryText` (not yet set). Ribbon pulldown: V012, V013 (V011 removed
   from the ribbon; folder kept).
+- SharedStyles: `BrushBadgeOnDark` (#33FFFFFF, from RoofEdgeAroundSections
+  V006's naming chips).
+- RoofEdgeAroundSections V007 on the shell. Header: metric cards. Body:
+  parameters + naming (own ScrollViewer removed), Planned Sections grid
+  (capped), log (moved from the footer). Footer: status strip on `IsBusy`
+  (indeterminate) / `LastRunSummary` + Run / Close. ViewModel gains
+  `Progress`. Ribbon pulldown: V006, V007 (V005 removed from the ribbon;
+  folder kept).
 
 ## 2026-10-04 — Dimensions
 

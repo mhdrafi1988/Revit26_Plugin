@@ -139,6 +139,7 @@
     <Color x:Key="SoftSuccessBackground">#E4F5EC</Color>
     <Color x:Key="SoftWarningBackground">#FDF1E1</Color>
     <Color x:Key="SoftDangerBackground">#FBE8E7</Color>
+    <Color x:Key="BadgeOnDark">#33FFFFFF</Color>  <!-- translucent white badge on navy chips (RoofEdgeAroundSections) -->
 
     <!-- ═══════════════════════════════════════════════════════════
          SOLID COLOR BRUSHES
@@ -240,6 +241,7 @@
     <SolidColorBrush x:Key="BrushSoftSuccessBackground"        Color="{StaticResource SoftSuccessBackground}"/>
     <SolidColorBrush x:Key="BrushSoftWarningBackground"        Color="{StaticResource SoftWarningBackground}"/>
     <SolidColorBrush x:Key="BrushSoftDangerBackground"         Color="{StaticResource SoftDangerBackground}"/>
+    <SolidColorBrush x:Key="BrushBadgeOnDark"             Color="{StaticResource BadgeOnDark}"/>
 
 
     <!-- ═══════════════════════════════════════════════════════════
