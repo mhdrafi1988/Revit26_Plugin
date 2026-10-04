@@ -100,6 +100,15 @@ namespace Revit26_Plugin.Shared.Controls
             set => SetValue(ProgressProperty, value);
         }
 
+        /// <summary>True → the progress bar animates instead of showing Progress (for tools with no percentage).</summary>
+        public static readonly DependencyProperty IsIndeterminateProperty =
+            DependencyProperty.Register(nameof(IsIndeterminate), typeof(bool), typeof(ToolWindowShell));
+        public bool IsIndeterminate
+        {
+            get => (bool)GetValue(IsIndeterminateProperty);
+            set => SetValue(IsIndeterminateProperty, value);
+        }
+
         public static readonly DependencyProperty SummaryTextProperty =
             DependencyProperty.Register(nameof(SummaryText), typeof(string), typeof(ToolWindowShell));
         public string SummaryText

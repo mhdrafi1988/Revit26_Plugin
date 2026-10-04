@@ -94,7 +94,9 @@ Rules:
 - The shell's `IsRunning` / `Progress` / `SummaryText` bind to the
   ViewModel. If it already has an equivalent (e.g. `IsBusy`,
   `RunSummary`), bind to that; only add what's missing, as a plain
-  observable property (per Rafi's decision, 2026-10-04). Don't otherwise
+  observable property (per Rafi's decision, 2026-10-04). A tool that never
+  reports a percentage sets `IsIndeterminate="True"` on the shell so the
+  bar animates while running. Don't otherwise
   change ViewModel logic, Revit API code or transactions during a shell
   migration.
 - A migration is a normal version bump: new `_V0xx` folder + namespace.

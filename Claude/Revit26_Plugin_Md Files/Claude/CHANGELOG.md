@@ -84,6 +84,13 @@ period rather than trusting a reconstruction here.
   the body; the middle's own ScrollViewer removed. Binds to `IsBusy` /
   `StatusMessage`; ViewModel gains `Progress`. Ribbon pulldown: V002, V003
   (V001 removed from the ribbon; folder kept).
+- Shell: new `IsIndeterminate` option — the status-strip bar animates for
+  tools that only have a busy flag, no percentage.
+- AnnotationOverlapDetection V004 on the shell: type list and results grid
+  in the body (both capped; type list's fixed MaxHeight=150 replaced); the
+  old footer busy bar is now the shell's indeterminate bar on `IsLoading`.
+  No log in this tool. ViewModel gains `Progress` / `SummaryText`. Ribbon
+  pulldown: V003, V004 (V002 removed from the ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 

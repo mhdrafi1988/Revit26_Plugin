@@ -81,6 +81,7 @@ A template (not a UserControl) so tool content can use x:Name freely.
                                    VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
                         <ProgressBar Grid.Column="1" Height="6" Minimum="0" Maximum="100"
                                      Value="{TemplateBinding Progress}"
+                                     IsIndeterminate="{TemplateBinding IsIndeterminate}"
                                      Foreground="{StaticResource BrushAppleBlue}"
                                      Background="{StaticResource BrushSeparatorThin}"
                                      BorderThickness="0" VerticalAlignment="Center"
