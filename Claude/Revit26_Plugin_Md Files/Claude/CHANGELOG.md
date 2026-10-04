@@ -189,6 +189,13 @@ period rather than trusting a reconstruction here.
   style; footer status line is now the status strip (`StatusMessage`). No
   log in this tool. ViewModel gains `IsRunning` / `Progress`. Ribbon
   pulldown: FX04, FX05 (FX03 removed from the ribbon; folder kept).
+- ParaManager V005 on the shell: metrics bar + step indicator in the
+  header; current step (outer ScrollViewer and the parameter list's own
+  ScrollViewer removed) and the docked, collapsible Activity Log in the
+  body; footer status line is now the status strip (`SummaryLine`,
+  indeterminate on `IsRunning`). Queue grid capped. ViewModel gains
+  `Progress`. Ribbon pulldown: V004, V005 (V003 removed from the ribbon,
+  with its now-unused tooltip const; folder kept).
 
 ## 2026-10-04 — Dimensions
 
