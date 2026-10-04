@@ -267,6 +267,15 @@ period rather than trusting a reconstruction here.
   group-header colours → existing SharedStyles brushes. ViewModel gains
   `Progress`. Ribbon pulldown: V002, V003 (V001 removed from the ribbon;
   folder kept).
+- RoofEdgeElementSections V004 on the shell. Header: selection summary.
+  Body: roofs / linked elements / parameters / naming (own ScrollViewer
+  removed; Expander defaults unchanged), Planned Sections grid, log
+  (moved from the footer); both grids capped. Footer: status strip on
+  `IsBusy` (indeterminate) / `LastRunSummary` + Run / Close. Category
+  filter popup keeps its ScrollViewer. Inline `#14283F` shadow →
+  `NavyDark`, `#33FFFFFF` → `BrushBadgeOnDark`. ViewModel gains
+  `Progress`. Ribbon pulldown: V002, V003, V004 (V001 removed from the
+  ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 

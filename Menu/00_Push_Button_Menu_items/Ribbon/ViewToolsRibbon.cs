@@ -40,8 +40,8 @@ namespace Revit26_Plugin.Menu.Ribbon
                 "RoofEdgeElementSections_V002_16.png", "Roof Edge Element Sections", "V002");
             var edgeElementV003 = Btn(assemblyPath, "Btn_RoofEdgeElementSections_V003", "Edge Element V003", "Revit26_Plugin.RoofEdgeElementSections.V003.RoofEdgeElementSectionsCommand",
                 "RoofEdgeElementSections_V002_16.png", "Roof Edge Element Sections", "V003", "V002" + Rebuilt);
-            var edgeElementV001 = Btn(assemblyPath, "Btn_RoofEdgeElementSections_V001", "Edge Element V001", "Revit26_Plugin.RoofEdgeElementSections.V001.RoofEdgeElementSectionsCommand",
-                "RoofEdgeElementSections_16.png", "Roof Edge Element Sections", "V001");
+            var edgeElementV004 = Btn(assemblyPath, "Btn_RoofEdgeElementSections_V004", "Edge Element V004", "Revit26_Plugin.RoofEdgeElementSections.V004.RoofEdgeElementSectionsCommand",
+                "RoofEdgeElementSections_V002_16.png", "Roof Edge Element Sections", "V004", "V003" + OnShell);
 
             var roofViewFocusV002 = Btn(assemblyPath, "Btn_RoofViewFocus_V002", "Roof View Focus V002", "Revit26_Plugin.RoofViewFocus.V002.Commands.RoofViewFocusCommand",
                 "RoofViewFocus_16.png", "Roof View Focus", "V002", "Crops the active plan view to the selected roofs.");
@@ -61,7 +61,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             });
             RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_SectionsFromDetailLines", sectionsFromLinesV012, sectionsFromLinesV013);
             RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeAroundSections", edgeAroundV006, edgeAroundV007);
-            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeElementSections", edgeElementV002, edgeElementV003, edgeElementV001);
+            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeElementSections", edgeElementV002, edgeElementV003, edgeElementV004);
             RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofViewFocus", roofViewFocusV002, roofViewFocusV003, roofViewFocusV004);
 
             RibbonPanel placePanel = app.CreateRibbonPanel(tabName, "View Place");
