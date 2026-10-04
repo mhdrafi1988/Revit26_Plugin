@@ -204,6 +204,16 @@ period rather than trusting a reconstruction here.
   default, unchanged) in the body. ViewModel gains `IsRunning` /
   `Progress` / `SummaryText` (not yet set). Ribbon pulldown: V013, V014
   (V012 removed from the ribbon; folder kept).
+- SharedStyles: `BrushAction{Export,Import,Text}`, `BrushPill*` status-pill
+  colours and `BrushBannerWarning*` (from ScheduleExportImport V006's
+  inline colours).
+- ScheduleExportImport V007 on the shell — both windows. Main: Refresh +
+  summary cards in the header; actions, schedule list and Log (moved from
+  footer) in the body; status strip on `IsBusy` / `StatusMessage`. Import
+  Preview: warning banner + cards in the header; chips, search and preview
+  grid in the body; same status strip. Grids and log capped. ViewModel
+  gains `Progress`. Ribbon pulldown: V005, V006, V007, V004, V003 (V002
+  removed from the ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 

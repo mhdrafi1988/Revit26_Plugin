@@ -55,10 +55,13 @@ namespace Revit26_Plugin.Menu.Ribbon
                 "SetupTools.WorksetRename_16.png", "Workset Renamer (Excel)", "FX05", "FX04 on the shared ToolWindowShell (capped group grids, shared group colours).");
 
             // Schedule Export/Import — every working version in one dropdown: the current
-            // version (V005) first, its rebuild (V006) second, then the older versions.
-            // V001 is left out: its export can never complete (log-scroll bug fixed in V002).
+            // version (V005) first, its rebuild (V006) second, the ToolWindowShell version
+            // (V007) third, then the older versions. V001 is left out: its export can never
+            // complete (log-scroll bug fixed in V002); V002 was dropped when V007 was added.
             var scheduleExportImportV006 = Btn(assemblyPath, "Btn_ScheduleExportImport_V006", "Schedule Export/Import V006", "Revit26_Plugin.ScheduleExportImport.V006.Commands.ScheduleExportImportCommand",
                 "Manage.ScheduleExportImport_16.png", "Schedule Export / Import", "V006", "V005" + Rebuilt);
+            var scheduleExportImportV007 = Btn(assemblyPath, "Btn_ScheduleExportImport_V007", "Schedule Export/Import V007", "Revit26_Plugin.ScheduleExportImport.V007.Commands.ScheduleExportImportCommand",
+                "Manage.ScheduleExportImport_16.png", "Schedule Export / Import", "V007", "V006 on the shared ToolWindowShell (log in body, capped grids).");
             var scheduleExportImportV005 = Btn(assemblyPath, "Btn_ScheduleExportImport_V005", "Schedule Export/Import V005", "Revit26_Plugin.ScheduleExportImport.V005.Commands.ScheduleExportImportCommand",
                 "Manage.ScheduleExportImport_16.png", "Schedule Export / Import", "V005",
                 "Flags values changed in Revit since export, checks element ownership, compares numbers by value, Excel dropdowns, type-parameter edits, hidden fields, remembers the folder.");
@@ -68,9 +71,6 @@ namespace Revit26_Plugin.Menu.Ribbon
             var scheduleExportImportV003 = Btn(assemblyPath, "Btn_ScheduleExportImport_V003", "Schedule Export/Import V003", "Revit26_Plugin.ScheduleExportImport.V003.Commands.ScheduleExportImportCommand",
                 "Manage.ScheduleExportImport_16.png", "Schedule Export / Import", "V003",
                 "Errors always shown, import picks the schedule from the file, explains 'nothing to import', Base Level by name.");
-            var scheduleExportImportV002 = Btn(assemblyPath, "Btn_ScheduleExportImport_V002", "Schedule Export/Import V002", "Revit26_Plugin.ScheduleExportImport.V002.Commands.ScheduleExportImportCommand",
-                "Manage.ScheduleExportImport_16.png", "Schedule Export / Import", "V002",
-                "Export to Excel and import back by Element ID; works with the workbook still open in Excel.");
 
             var manageItems = RibbonLayoutHelper.AddStackedButtons(panel, new List<RibbonItemData>
             {
@@ -89,7 +89,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_WorksetRenamer", worksetRenamerV004, worksetRenamerV005);
             RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_WorksetRenamerFx", worksetRenamerFx04, worksetRenamerFx05);
             RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_ScheduleExportImport",
-                scheduleExportImportV005, scheduleExportImportV006, scheduleExportImportV004, scheduleExportImportV003, scheduleExportImportV002);
+                scheduleExportImportV005, scheduleExportImportV006, scheduleExportImportV007, scheduleExportImportV004, scheduleExportImportV003);
         }
     }
 }

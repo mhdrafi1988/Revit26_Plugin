@@ -106,6 +106,25 @@
     <Color x:Key="TintInfo">#0A3A82F7</Color>
     <Color x:Key="TintWarning">#0AFF9F0A</Color>
 
+    <!-- Action buttons / status pills / warning banner (v3.1, from ScheduleExportImport) -->
+    <Color x:Key="ActionExport">#1E7E34</Color>
+    <Color x:Key="ActionImport">#C0392B</Color>
+    <Color x:Key="ActionText">#FFFFFF</Color>
+    <Color x:Key="PillNeutralBackground">#EEF1F5</Color>
+    <Color x:Key="PillNeutralText">#4B5563</Color>
+    <Color x:Key="PillInfoBackground">#E3ECFB</Color>
+    <Color x:Key="PillInfoText">#1D4ED8</Color>
+    <Color x:Key="PillSuccessBackground">#DCF3E3</Color>
+    <Color x:Key="PillSuccessText">#15803D</Color>
+    <Color x:Key="PillDangerText">#B91C1C</Color>
+    <Color x:Key="PillMutedBackground">#E5E7EB</Color>
+    <Color x:Key="PillMutedText">#374151</Color>
+    <Color x:Key="PillTypeBackground">#EDE7FB</Color>
+    <Color x:Key="PillTypeText">#6D28D9</Color>
+    <Color x:Key="BannerWarningBackground">#FFF6E0</Color>
+    <Color x:Key="BannerWarningBorder">#E8B84A</Color>
+    <Color x:Key="BannerWarningText">#7A4F00</Color>
+
     <!-- ═══════════════════════════════════════════════════════════
          SOLID COLOR BRUSHES
     ═══════════════════════════════════════════════════════════ -->
@@ -178,6 +197,23 @@
     <SolidColorBrush x:Key="BrushTintSuccess"               Color="{StaticResource TintSuccess}"/>
     <SolidColorBrush x:Key="BrushTintInfo"                  Color="{StaticResource TintInfo}"/>
     <SolidColorBrush x:Key="BrushTintWarning"               Color="{StaticResource TintWarning}"/>
+    <SolidColorBrush x:Key="BrushActionExport"                   Color="{StaticResource ActionExport}"/>
+    <SolidColorBrush x:Key="BrushActionImport"                   Color="{StaticResource ActionImport}"/>
+    <SolidColorBrush x:Key="BrushActionText"                     Color="{StaticResource ActionText}"/>
+    <SolidColorBrush x:Key="BrushPillNeutralBackground"          Color="{StaticResource PillNeutralBackground}"/>
+    <SolidColorBrush x:Key="BrushPillNeutralText"                Color="{StaticResource PillNeutralText}"/>
+    <SolidColorBrush x:Key="BrushPillInfoBackground"             Color="{StaticResource PillInfoBackground}"/>
+    <SolidColorBrush x:Key="BrushPillInfoText"                   Color="{StaticResource PillInfoText}"/>
+    <SolidColorBrush x:Key="BrushPillSuccessBackground"          Color="{StaticResource PillSuccessBackground}"/>
+    <SolidColorBrush x:Key="BrushPillSuccessText"                Color="{StaticResource PillSuccessText}"/>
+    <SolidColorBrush x:Key="BrushPillDangerText"                 Color="{StaticResource PillDangerText}"/>
+    <SolidColorBrush x:Key="BrushPillMutedBackground"            Color="{StaticResource PillMutedBackground}"/>
+    <SolidColorBrush x:Key="BrushPillMutedText"                  Color="{StaticResource PillMutedText}"/>
+    <SolidColorBrush x:Key="BrushPillTypeBackground"             Color="{StaticResource PillTypeBackground}"/>
+    <SolidColorBrush x:Key="BrushPillTypeText"                   Color="{StaticResource PillTypeText}"/>
+    <SolidColorBrush x:Key="BrushBannerWarningBackground"        Color="{StaticResource BannerWarningBackground}"/>
+    <SolidColorBrush x:Key="BrushBannerWarningBorder"            Color="{StaticResource BannerWarningBorder}"/>
+    <SolidColorBrush x:Key="BrushBannerWarningText"              Color="{StaticResource BannerWarningText}"/>
 
 
     <!-- ═══════════════════════════════════════════════════════════
