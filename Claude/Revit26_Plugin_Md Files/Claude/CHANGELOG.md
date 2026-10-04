@@ -79,6 +79,11 @@ period rather than trusting a reconstruction here.
   footer summary is now the status strip. Binds to `IsBusy` /
   `SummaryText`; ViewModel gains `Progress`. Ribbon pulldown: V003, V004,
   V005 (V002 removed from the ribbon; folder kept).
+- RoofPointComparison V003 on the shell: both metrics rows in the header;
+  tolerances, marker settings and Processing Log (moved from footer) in
+  the body; the middle's own ScrollViewer removed. Binds to `IsBusy` /
+  `StatusMessage`; ViewModel gains `Progress`. Ribbon pulldown: V002, V003
+  (V001 removed from the ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 

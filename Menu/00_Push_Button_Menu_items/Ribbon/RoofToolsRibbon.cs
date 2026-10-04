@@ -175,10 +175,10 @@ namespace Revit26_Plugin.Menu.Ribbon
             // Compare
             RibbonPanel comparePanel = app.CreateRibbonPanel(tabName, "Compare");
 
-            var comparisonV001 = Btn(assemblyPath, "Btn_RoofPointComparison_V001", "Comparison V001", "Revit26_Plugin.RoofPointComparison.V001.Commands.RoofComparisonCommand",
-                "PointComparison_16.png", "Roof Point Comparison", "V001");
             var comparisonV002 = Btn(assemblyPath, "Btn_RoofPointComparison_V002", "Comparison V002", "Revit26_Plugin.RoofPointComparison.V002.Commands.RoofComparisonCommand",
                 "PointComparison_16.png", "Roof Point Comparison", "V002", "V001 with the standard three-zone window layout.");
+            var comparisonV003 = Btn(assemblyPath, "Btn_RoofPointComparison_V003", "Comparison V003", "Revit26_Plugin.RoofPointComparison.V003.Commands.RoofComparisonCommand",
+                "PointComparison_16.png", "Roof Point Comparison", "V003", "V002 on the shared ToolWindowShell (log in body).");
 
             var elevationSyncV003 = Btn(assemblyPath, "Btn_RoofPointElevationSync_V003", "Elevation Sync V003", "Revit26_Plugin.RoofPointElevationSync.V003.Command",
                 "ElevationSync_16.png", "Roof Point Elevation Sync", "V003");
@@ -190,10 +190,10 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             var compareItems = RibbonLayoutHelper.AddStackedButtons(comparePanel, new List<RibbonItemData>
             {
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofPointComparison", "Comparison", comparisonV001),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofPointComparison", "Comparison", comparisonV002),
                 elevationSyncPulldownData,
             });
-            RibbonLayoutHelper.WirePulldownButton(compareItems, "Pulldown_RoofPointComparison", comparisonV001, comparisonV002);
+            RibbonLayoutHelper.WirePulldownButton(compareItems, "Pulldown_RoofPointComparison", comparisonV002, comparisonV003);
             RibbonLayoutHelper.WirePulldownButton(compareItems, "Pulldown_RoofPointElevationSync", elevationSyncV003, elevationSyncV004, elevationSyncV005);
         }
     }
