@@ -85,10 +85,10 @@ namespace Revit26_Plugin.Menu.Ribbon
                 "VertexReducer_16.png", "Roof Edge Vertex Reducer", "V008", "V007 with the standard three-zone window layout.");
             var vertexReducerV009 = Btn(assemblyPath, "Btn_VertexReducer_V009", "Vertex Reducer V009", "Revit26_Plugin.RoofEdgeVertexReducer.V009.Commands.RoofEdgeVertexReducerCommand",
                 "VertexReducer_16.png", "Roof Edge Vertex Reducer", "V009", "V008 on the shared ToolWindowShell (log in body, capped grid).");
-            var multiPointsV001 = Btn(assemblyPath, "Btn_MultiplePoints_V001", "Multi Points V001", "Revit26_Plugin.MultiplePoints.V001.Commands.MultiplePointsCommand",
-                "MultiplePoints_16.png", "Multiple Points (1/2–1/4)", "V001");
             var multiPointsV002 = Btn(assemblyPath, "Btn_MultiplePoints_V002", "Multi Points V002", "Revit26_Plugin.MultiplePoints.V002.Commands.MultiplePointsCommand",
                 "MultiplePoints_16.png", "Multiple Points (1/2–1/4)", "V002", "V001 with the standard three-zone window layout.");
+            var multiPointsV003 = Btn(assemblyPath, "Btn_MultiplePoints_V003", "Multi Points V003", "Revit26_Plugin.MultiplePoints.V003.Commands.MultiplePointsCommand",
+                "MultiplePoints_16.png", "Multiple Points (1/2–1/4)", "V003", "V002 on the shared ToolWindowShell (log in body, capped grid).");
 
             var shapePointsItems = RibbonLayoutHelper.AddStackedButtons(shapePointsPanel, new List<RibbonItemData>
             {
@@ -97,14 +97,14 @@ namespace Revit26_Plugin.Menu.Ribbon
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofDetailLineIntersect", "Line Intersect", lineIntersectV012),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_InnerLoopsAndPerpendicular", "Loops + Perp.", loopsPerpV005),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_VertexReducer", "Vertex Reducer", vertexReducerV008),
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_MultiplePoints", "Multi Points", multiPointsV001),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_MultiplePoints", "Multi Points", multiPointsV002),
             });
             RibbonLayoutHelper.WirePulldownButton(shapePointsItems, "Pulldown_InnerLoopDivider", innerLoopsV009, innerLoopsV010);
             RibbonLayoutHelper.WirePulldownButton(shapePointsItems, "Pulldown_OuterCurveDivider", outerCurveV005, outerCurveV006);
             RibbonLayoutHelper.WirePulldownButton(shapePointsItems, "Pulldown_RoofDetailLineIntersect", lineIntersectV012, lineIntersectV013);
             RibbonLayoutHelper.WirePulldownButton(shapePointsItems, "Pulldown_InnerLoopsAndPerpendicular", loopsPerpV005, loopsPerpV006);
             RibbonLayoutHelper.WirePulldownButton(shapePointsItems, "Pulldown_VertexReducer", vertexReducerV008, vertexReducerV009);
-            RibbonLayoutHelper.WirePulldownButton(shapePointsItems, "Pulldown_MultiplePoints", multiPointsV001, multiPointsV002);
+            RibbonLayoutHelper.WirePulldownButton(shapePointsItems, "Pulldown_MultiplePoints", multiPointsV002, multiPointsV003);
 
             // Ridge Lines pulldown — merged into Utilities panel below.
             var ridgeLinesMultiShape = Btn(assemblyPath, "Btn_RoofRidgeLines_V68", "Ridge By Openings V068", "Revit26_Plugin.RoofRidgeLines.V068.Commands.RoofRidgeCommand",

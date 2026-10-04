@@ -55,6 +55,10 @@ period rather than trusting a reconstruction here.
   the old footer summary line is now the shell status strip
   (`SummaryText`). ViewModel gains `IsRunning` / `Progress`. Ribbon
   pulldown: V008, V009 (V007 removed from the ribbon; folder kept).
+- MultiplePoints V003 on the shell: Points To Add settings, edges grid and
+  Activity Log (moved from footer) in the body. ViewModel gains
+  `IsRunning` / `Progress` / `SummaryText` (not yet set). Ribbon pulldown:
+  V002, V003 (V001 removed from the ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 
