@@ -50,6 +50,11 @@ period rather than trusting a reconstruction here.
   gains `IsRunning` / `Progress` / `SummaryText` (not yet set, so the
   status strip stays empty). Ribbon pulldown: V005, V006 (V004 removed
   from the ribbon; folder kept).
+- VertexReducer (RoofEdgeVertexReducer) V009 on the shell: Selection,
+  Settings, Preview Results grid and Log (moved from footer) in the body;
+  the old footer summary line is now the shell status strip
+  (`SummaryText`). ViewModel gains `IsRunning` / `Progress`. Ribbon
+  pulldown: V008, V009 (V007 removed from the ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 
