@@ -276,6 +276,17 @@ period rather than trusting a reconstruction here.
   `NavyDark`, `#33FFFFFF` → `BrushBadgeOnDark`. ViewModel gains
   `Progress`. Ribbon pulldown: V002, V003, V004 (V001 removed from the
   ribbon; folder kept).
+- SharedStyles: `BrushPill{Taggable,NotTaggable}Background` (from
+  SectionViewAutoTagger V005's category pills).
+- SectionViewAutoTagger V006 on the shell (folder
+  `SectionViewAutoTagger_V006/SectionViewAutoTagger_V006`). Header:
+  metric cards. Body: sheet / views / categories / worklist (left) and
+  settings (right) — column ScrollViewers and the category list's
+  ScrollViewer + 200 px cap removed — then the log (moved from the
+  footer, capped). Section Views popover keeps its ScrollViewer. Footer:
+  status strip on `IsRunning` (indeterminate) / `SummaryLine` + saved
+  log path + Run / Close. ViewModel gains `Progress`. Ribbon pulldown:
+  V005, V006 (V004 removed from the ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 
