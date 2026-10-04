@@ -328,6 +328,17 @@ period rather than trusting a reconstruction here.
   status line and "Working…" text) + Create / Close. ViewModel gains
   `Progress`; `Version` = "V006". Ribbon pulldown: V004, V005, V006 (V003
   removed from the ribbon; folder kept).
+- SharedStyles: `BrushStageCompleteBackground`, `BrushSheetNoFitBackground`
+  (from SmartViewToSheetPlacer V223's inline tints).
+- SmartViewToSheetPlacer V224 on the shell (folder
+  `SmartViewToSheetPlacer_V224/SmartViewToSheetPlacer_V224`). Header:
+  pinned placement metrics. Body: accordion stages 1–5 (state
+  unchanged; the body ScrollViewer is now the shell's), then the
+  placement-progress card (its own bar dropped) and the activity log
+  (both moved from the footer). Every grid's fixed MaxHeight → ratio cap.
+  Footer: status strip bound to existing `IsBusy` / `ProgressPercent` /
+  `ProgressDetailText` + Export Logs / Close. No ViewModel change. Ribbon
+  pulldown: V222, V223, V224 (V221 removed from the ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 
