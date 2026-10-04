@@ -110,6 +110,12 @@ period rather than trusting a reconstruction here.
   from footer) in the body. Indeterminate status strip on `IsRunning`;
   ViewModel gains `Progress` / `SummaryText`. Ribbon pulldown: V011, V012,
   V013 (V002 removed from the ribbon; folder kept).
+- RoofViewFocus V004 on the shell: Target, Crop Margins and Log (moved
+  from footer) in the body; the middle's ScrollViewer and the Roofs list's
+  own ScrollViewer removed. The green summary line under the log is now
+  the status strip (`SummaryText`), indeterminate on `IsBusy`. ViewModel
+  gains `Progress`; tool title constant bumped to V004. Ribbon pulldown:
+  V002, V003, V004 (V001 removed from the ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 

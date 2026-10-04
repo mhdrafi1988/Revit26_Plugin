@@ -47,8 +47,8 @@ namespace Revit26_Plugin.Menu.Ribbon
                 "RoofViewFocus_16.png", "Roof View Focus", "V002", "Crops the active plan view to the selected roofs.");
             var roofViewFocusV003 = Btn(assemblyPath, "Btn_RoofViewFocus_V003", "Roof View Focus V003", "Revit26_Plugin.RoofViewFocus.V003.Commands.RoofViewFocusCommand",
                 "RoofViewFocus_16.png", "Roof View Focus", "V003", "V002" + Rebuilt);
-            var roofViewFocusV001 = Btn(assemblyPath, "Btn_RoofViewFocus_V001", "Roof View Focus V001", "Revit26_Plugin.RoofViewFocus.V001.Commands.RoofViewFocusCommand",
-                "RoofViewFocus_16.png", "Roof View Focus", "V001", "Crops the active plan view to the selected roofs.");
+            var roofViewFocusV004 = Btn(assemblyPath, "Btn_RoofViewFocus_V004", "Roof View Focus V004", "Revit26_Plugin.RoofViewFocus.V004.Commands.RoofViewFocusCommand",
+                "RoofViewFocus_16.png", "Roof View Focus", "V004", "V003" + OnShell);
 
             // Pulldown buttons, unlike split buttons, are fine in a 4-item
             // stack — so this is one call instead of a stack-of-2 + stack-of-2.
@@ -62,7 +62,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_SectionsFromDetailLines", sectionsFromLinesV011, sectionsFromLinesV012);
             RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeAroundSections", edgeAroundV005, edgeAroundV006);
             RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeElementSections", edgeElementV002, edgeElementV003, edgeElementV001);
-            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofViewFocus", roofViewFocusV002, roofViewFocusV003, roofViewFocusV001);
+            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofViewFocus", roofViewFocusV002, roofViewFocusV003, roofViewFocusV004);
 
             RibbonPanel placePanel = app.CreateRibbonPanel(tabName, "View Place");
 
