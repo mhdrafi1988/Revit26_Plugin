@@ -30,6 +30,68 @@ period rather than trusting a reconstruction here.
 - Ribbon: every Setup button is now a pulldown — current version first,
   the UI-standard version second.
 
+## 2026-10-04 — Sheet Tools
+
+- Sheet Tools: every live tool bumped one version as a layout-only rebuild per
+  `Revit_Plugin_UI_Standard.md` (fixed title bar + version + metrics card,
+  scrolling middle, fixed footer with an always-visible log + Copy All /
+  Copy Selected, Primary → Close). No behaviour changes.
+  New versions: PlanFromScopeBox V005, SmartViewToSheetPlacer V223,
+  AutomatedSectionPlacer V002, SheetAutoRearrange V027.
+- Smart Placer / Auto Section Placer: the per-stage Activity Logs (stages 4
+  and 5), Export Logs and Cancel buttons moved into one fixed footer; stage
+  navigation (Next / Back / Place / Open) stays in the accordion stages.
+- Ribbon: every Sheet button is now a pulldown — current version first,
+  the UI-standard version second (Auto Section Placer became a pulldown).
+
+## 2026-10-04 — Manage
+
+- Manage: every live tool bumped one version as a layout-only rebuild per
+  `Revit_Plugin_UI_Standard.md` (fixed title bar + version + metrics card,
+  scrolling middle, fixed footer with log + Copy All / Copy Selected where
+  the tool has a log, Primary → Close). No behaviour changes.
+  New versions: AnnotationOverlapDetection V003 (now on SharedStyles),
+  ParaManager V004, WorksetsElementsBrowser WSEB003, WorksetManager V013,
+  WorksetRenamer V004 / FX04, ScheduleExportImport V006.
+- Ribbon: every Manage button is now a pulldown — current version first,
+  the rebuild second.
+
+## 2026-10-04 — View Tools
+
+- View Tools: every live tool bumped one version as a layout-only rebuild
+  per `Revit_Plugin_UI_Standard.md` — three-zone window (fixed title bar +
+  version + metrics card, scrolling middle, fixed footer with an
+  always-visible log + Copy All / Copy Selected and Primary → Close).
+  No behaviour changes; every binding/command is the previous version's.
+  New versions: CreateSections V012, RoofEdgeAroundSections V006,
+  RoofEdgeElementSections V003, RoofViewFocus V003, APUS V323,
+  CalloutCOP V020, RefSectionHeadPlacer V014, SectionViewAutoTagger V005,
+  BubbleAutoRenumber V007, SectionAutoRenamer V025, ViewAutoRenamer V005.
+- Ribbon: every View Tools button is now a pulldown — current version
+  first, the rebuild second.
+- Shared: `Shared/Services/LogClipboardService.cs` (same file as the Roof
+  Tools PR) for Copy All / Copy Selected from window code-behind.
+
+## 2026-10-04
+
+- Roof Tools (incl. Roof Tag): every live tool bumped one version as a
+  layout-only rebuild per `Revit_Plugin_UI_Standard.md` — three-zone
+  window (fixed title bar + version + metrics card, scrolling middle,
+  fixed footer with an always-visible log + Copy All / Copy Selected and
+  Primary → Close buttons). No behaviour changes; every binding/command is
+  the previous version's. New versions: AutoSlopeByPoint V029, Ridge V002,
+  MultiCopies29, AutoSlopeByDrain V011, InnerLoopDivider V010,
+  OuterCurveDivider V005, RoofDetailLineIntersect V013,
+  InnerLoopsAndPerpendicular V006, VertexReducer V008, MultiplePoints V002,
+  RoofRidgeLines V069 / V058, CreaserAdv V011, RoofTag V017,
+  RoofFromDetailLines V008, CombinedRoofTools V002, RoofTypeCreator V002,
+  RoofPointComparison V002, RoofPointElevationSync V004.
+- Ribbon: every Roof Tools button is now a pulldown — current version
+  first, the rebuild second. Existing multi-version pulldowns get each
+  rebuild right after the version it was copied from.
+- Shared: added `Shared/Services/LogClipboardService.cs` (Copy All / Copy
+  Selected for any log ListBox, used from window code-behind).
+
 ## 2026-09-20
 
 - Added baseline documentation set: `CLAUDE.md`, `Claude/ARCHITECTURE.md`,
