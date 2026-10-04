@@ -145,6 +145,12 @@ period rather than trusting a reconstruction here.
   Log (moved from footer) in the body; both grids capped. ViewModel gains
   `IsRunning` / `Progress` / `SummaryText` (not yet set). Ribbon pulldown:
   V006, V007 (V005 removed from the ribbon; folder kept).
+- RoofFromDetailLines V009 on the shell: settings and ID outputs (own
+  ScrollViewer removed), Roof Loops Preview expander (open on launch,
+  unchanged) and Log (moved from footer) in the body; footer summary line
+  is now the status strip (indeterminate on `IsBusy`). ViewModel gains
+  `Progress`. Ribbon pulldown: V008, V009 (V007 removed from the ribbon;
+  folder kept).
 
 ## 2026-10-04 — Dimensions
 
