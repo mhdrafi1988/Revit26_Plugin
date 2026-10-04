@@ -101,6 +101,11 @@
     <Color x:Key="GroupDangerAccent">#B23B3B</Color>
     <Color x:Key="GroupDangerBackground">#FBDADA</Color>
 
+    <!-- Faint status tints for outlined metric tiles (v3.1, from WorksetManager) -->
+    <Color x:Key="TintSuccess">#0A34C759</Color>
+    <Color x:Key="TintInfo">#0A3A82F7</Color>
+    <Color x:Key="TintWarning">#0AFF9F0A</Color>
+
     <!-- ═══════════════════════════════════════════════════════════
          SOLID COLOR BRUSHES
     ═══════════════════════════════════════════════════════════ -->
@@ -170,6 +175,9 @@
     <SolidColorBrush x:Key="BrushGroupNeutralText"               Color="{StaticResource GroupNeutralText}"/>
     <SolidColorBrush x:Key="BrushGroupDangerAccent"              Color="{StaticResource GroupDangerAccent}"/>
     <SolidColorBrush x:Key="BrushGroupDangerBackground"          Color="{StaticResource GroupDangerBackground}"/>
+    <SolidColorBrush x:Key="BrushTintSuccess"               Color="{StaticResource TintSuccess}"/>
+    <SolidColorBrush x:Key="BrushTintInfo"                  Color="{StaticResource TintInfo}"/>
+    <SolidColorBrush x:Key="BrushTintWarning"               Color="{StaticResource TintWarning}"/>
 
 
     <!-- ═══════════════════════════════════════════════════════════

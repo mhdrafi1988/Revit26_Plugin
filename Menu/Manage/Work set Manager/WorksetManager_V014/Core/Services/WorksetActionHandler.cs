@@ -1,0 +1,21 @@
+using Autodesk.Revit.UI;
+using System;
+
+namespace Revit26_Plugin.WorksetManager.V014.Core.Services
+{
+    public sealed class WorksetActionHandler : IExternalEventHandler
+    {
+        private Action<UIApplication> _pending;
+
+        public void Queue(Action<UIApplication> action) => _pending = action;
+
+        public void Execute(UIApplication app)
+        {
+            var action = _pending;
+            _pending = null;
+            action?.Invoke(app);
+        }
+
+        public string GetName() => "Workset Manager V012";
+    }
+}

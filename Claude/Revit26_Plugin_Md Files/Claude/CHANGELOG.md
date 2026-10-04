@@ -196,6 +196,14 @@ period rather than trusting a reconstruction here.
   indeterminate on `IsRunning`). Queue grid capped. ViewModel gains
   `Progress`. Ribbon pulldown: V004, V005 (V003 removed from the ribbon,
   with its now-unused tooltip const; folder kept).
+- SharedStyles: `BrushTint{Success,Info,Warning}` faint tile tints (from
+  WorksetManager V013's inline colours).
+- WorksetManager V014 on the shell: metrics strip in the header; pattern
+  toolbar, the three section grids (each capped — they now size to content
+  instead of splitting the window height) and the Live Log (collapsed by
+  default, unchanged) in the body. ViewModel gains `IsRunning` /
+  `Progress` / `SummaryText` (not yet set). Ribbon pulldown: V013, V014
+  (V012 removed from the ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 
