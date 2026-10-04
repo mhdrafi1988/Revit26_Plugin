@@ -287,6 +287,13 @@ period rather than trusting a reconstruction here.
   status strip on `IsRunning` (indeterminate) / `SummaryLine` + saved
   log path + Run / Close. ViewModel gains `Progress`. Ribbon pulldown:
   V005, V006 (V004 removed from the ribbon; folder kept).
+- APUS V324 on the shell. Header: metric cards. Body: sections list
+  (grid capped) / layout settings (own ScrollViewer removed), then the log
+  (moved from the footer). Footer: status strip bound to existing
+  `ShowProgress` / `Progress.Percentage` / `StatusMessage` (replaces the
+  footer progress bar; current-operation line kept) + Place / Cancel /
+  Close. No ViewModel change. Ribbon pulldown: V323, V324 (V322 removed
+  from the ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 
