@@ -248,6 +248,16 @@ period rather than trusting a reconstruction here.
   its inline `#000000` (DropShadowEffect default is black). ViewModel
   gains `IsRunning` / `Progress` / `SummaryText` (not yet set). Ribbon
   pulldown: V005, V006 (V004 removed from the ribbon; folder kept).
+- LinkedDetailLineGenerator VA009 on the shell. Header: boundary line +
+  "Settings loaded" (was the title-bar subtitle) and metrics. Body: scope
+  toggle, sections 1 / 2a / 2b / 2c (Expanders keep their ViewModel-bound
+  state; their three MaxHeight-260 ScrollViewers removed), 3. Mapping,
+  scope line, Processing Log (moved from the footer, outside the locked
+  form). Footer: status strip on `IsRunning` (indeterminate) + Ready
+  indicator, Clear / Create / Reset / Close. ViewModel gains `Progress` /
+  `SummaryText` (not yet set); `GeneratorVersion` = "VA009". Ribbon
+  pulldown: VA007, VA008, VA009, VA006 (VA003 removed from the ribbon;
+  folder kept).
 
 ## 2026-10-04 — Dimensions
 
