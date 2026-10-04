@@ -18,6 +18,19 @@ period rather than trusting a reconstruction here.
 
 ---
 
+## 2026-10-04 — Floor Tools
+
+- Floor Tools: both live tools bumped one version as a layout-only rebuild
+  per `Revit_Plugin_UI_Standard.md` (fixed title bar + version + metrics
+  card, scrolling middle, fixed footer with progress, summaries, an
+  always-visible log + Copy All / Copy Selected, Create Floors / Create
+  Roof → Close). No behaviour changes.
+  New versions: FloorsAndRoofFromLinkedRooms V012,
+  FloorsAndRoofFromLinkedRoomsViaPlanView V005 (now a fixed 900 × 760 window
+  with a full-height room list; was 420 wide, SizeToContent).
+- Ribbon: the From Rooms pulldown lists each approach's previous version
+  first and its UI-standard version second.
+
 ## 2026-09-20
 
 - Added baseline documentation set: `CLAUDE.md`, `Claude/ARCHITECTURE.md`,
