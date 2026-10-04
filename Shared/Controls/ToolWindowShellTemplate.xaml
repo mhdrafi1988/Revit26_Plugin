@@ -42,8 +42,8 @@ A template (not a UserControl) so tool content can use x:Name freely.
                         </Grid.ColumnDefinitions>
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock Text="{TemplateBinding Title}" Style="{StaticResource HeaderTitle}"/>
-                            <TextBlock Text="{TemplateBinding Subtitle}" Style="{StaticResource HeaderSubtitle}"
-                                       TextWrapping="Wrap"/>
+                            <TextBlock x:Name="PART_Subtitle" Text="{TemplateBinding Subtitle}"
+                                       Style="{StaticResource HeaderSubtitle}" TextWrapping="Wrap"/>
                         </StackPanel>
                         <Border Grid.Column="1" Background="{StaticResource BrushNavyLight}" CornerRadius="10"
                                 Padding="8,3" Margin="10,0,0,0" VerticalAlignment="Center">
@@ -90,5 +90,14 @@ A template (not a UserControl) so tool content can use x:Name freely.
                 </StackPanel>
             </Border>
         </Grid>
+        <ControlTemplate.Triggers>
+            <!-- No subtitle → no empty line under the title -->
+            <Trigger Property="Subtitle" Value="{x:Null}">
+                <Setter TargetName="PART_Subtitle" Property="Visibility" Value="Collapsed"/>
+            </Trigger>
+            <Trigger Property="Subtitle" Value="">
+                <Setter TargetName="PART_Subtitle" Property="Visibility" Value="Collapsed"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
     </ControlTemplate>
 </ResourceDictionary>

@@ -38,6 +38,12 @@ period rather than trusting a reconstruction here.
   from footer into the body. Shell binds to the existing `IsBusy` /
   `RunSummary`; ViewModel gains `Progress` only. Ribbon pulldown: V002,
   V003 (V001 removed from the ribbon; folder kept).
+- DetailLineDimensions (DtlLineDim) V010 on the shell: Selection,
+  Dimension Settings and Activity Log (moved from footer) in the body; the
+  middle's own ScrollViewer removed. Binds to `IsBusy` / `RunSummary`;
+  ViewModel gains `Progress` only. Ribbon pulldown: V009, V010 (V008
+  removed from the ribbon; folder kept).
+- Shell: an empty `Subtitle` now collapses instead of leaving a blank line.
 
 ## 2026-10-04 — Dimensions
 

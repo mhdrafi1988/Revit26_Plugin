@@ -1,0 +1,221 @@
+<!--
+=======================================================
+File: DtlLineDimWindow.xaml
+Changes vs V009 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
+  - Window content is a shared ToolWindowShell:
+      HEADER  title bar + V010, metrics card, view warning
+      BODY    Selection, Dimension Settings, Activity Log (moved here
+              from the footer); the middle's own ScrollViewer removed
+      FOOTER  status strip (IsBusy / Progress / RunSummary),
+              Export Log left, Generate Dimensions → Close right
+  - Log: ShellBehaviors.MaxHeightRatio + ForwardMouseWheel.
+  - No behaviour change — every binding/command is the V009 one.
+=======================================================
+-->
+<Window x:Class="Revit26_Plugin.DtlLineDim.V010.UI.Views.DtlLineDimWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
+        xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
+        Title="Detail Line Dimension — V010"
+        Height="680" Width="560"
+        MinHeight="680" MinWidth="560"
+        WindowStartupLocation="CenterOwner">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Revit26_Plugin;component/Shared/SharedStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <converters:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter"/>
+            <converters:LogLevelToColorConverter         x:Key="LogLevelToColorConverter"/>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <shell:ToolWindowShell Title="Detail Line Dimension"
+                           Version="V010"
+                           IsRunning="{Binding IsBusy}"
+                           Progress="{Binding Progress}"
+                           SummaryText="{Binding RunSummary}">
+
+        <!-- ═══ HEADER ═══════════════════════════════════════════ -->
+        <shell:ToolWindowShell.HeaderContent>
+            <StackPanel>
+                <UniformGrid Columns="3" Margin="0,0,0,0">
+                    <Border Style="{StaticResource MetricCard}" Margin="0,0,4,0" Padding="10,8">
+                        <StackPanel>
+                            <TextBlock Text="Detail Item Types" Style="{StaticResource MetricLabel}"/>
+                            <TextBlock Text="{Binding DetailItemTypes.Count}" Style="{StaticResource MetricNumber}" FontSize="18"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource MetricCard}" Margin="4,0,4,0" Padding="10,8">
+                        <StackPanel>
+                            <TextBlock Text="Dimension Types" Style="{StaticResource MetricLabel}"/>
+                            <TextBlock Text="{Binding DimensionTypes.Count}" Style="{StaticResource MetricNumber}" FontSize="18"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource MetricCard}" Margin="4,0,0,0" Padding="10,8">
+                        <StackPanel>
+                            <TextBlock Text="Log Entries" Style="{StaticResource MetricLabel}"/>
+                            <TextBlock Text="{Binding LogEntries.Count}" Style="{StaticResource MetricNumberAccent}" FontSize="18"/>
+                        </StackPanel>
+                    </Border>
+                </UniformGrid>
+                <!-- View validation warning -->
+                <Border Background="{StaticResource BrushInputBackground}" BorderBrush="{StaticResource BrushWarning}" BorderThickness="1"
+                        CornerRadius="8" Padding="10,8" Margin="0,10,0,8"
+                        Visibility="{Binding IsViewValid, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                    <TextBlock Text="{Binding ViewValidationMessage, StringFormat='⚠ {0}'}"
+                               FontSize="11.5" Foreground="{StaticResource BrushWarning}" TextWrapping="Wrap"/>
+                </Border>
+            </StackPanel>
+        </shell:ToolWindowShell.HeaderContent>
+
+        <!-- ═══ BODY ═════════════════════════════════════════════ -->
+        <shell:ToolWindowShell.BodyContent>
+            <StackPanel>
+                <!-- Selection card -->
+                <Border Style="{StaticResource SectionCard}">
+                    <StackPanel>
+                        <TextBlock Text="Selection" Style="{StaticResource SectionTitle}"/>
+
+                        <StackPanel Style="{StaticResource FieldRow}">
+                            <TextBlock Text="Detail Item Type" Style="{StaticResource FieldLabel}"/>
+                            <ComboBox Style="{StaticResource StandardComboBox}"
+                                      ItemsSource="{Binding DetailItemTypes}"
+                                      SelectedItem="{Binding SelectedDetailItemType}"
+                                      DisplayMemberPath="Name"/>
+                        </StackPanel>
+
+                        <StackPanel Style="{StaticResource FieldRow}" Margin="12,4,12,10">
+                            <TextBlock Text="Dimension Type" Style="{StaticResource FieldLabel}"/>
+                            <ComboBox Style="{StaticResource StandardComboBox}"
+                                      ItemsSource="{Binding DimensionTypes}"
+                                      SelectedItem="{Binding SelectedDimensionType}"
+                                      DisplayMemberPath="Name"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+                <!-- Settings card -->
+                <Border Style="{StaticResource SectionCard}">
+                    <StackPanel>
+                        <TextBlock Text="Dimension Settings" Style="{StaticResource SectionTitle}"/>
+
+                        <Grid Margin="12,4,12,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Tick Size" Style="{StaticResource FieldLabel}"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Style="{StaticResource BoxedTextInput}"
+                                             Text="{Binding TickSizeText, UpdateSourceTrigger=PropertyChanged}"
+                                             MaxLength="10" FontSize="10"
+                                             Padding="4,2"
+                                             HorizontalContentAlignment="Right"/>
+                                    <TextBlock Grid.Column="1" Text="mm" Style="{StaticResource UnitLabel}"/>
+                                </Grid>
+                                <TextBlock Text="Default 50mm — blank/invalid falls back automatically."
+                                           Style="{StaticResource HintText}"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Offset" Style="{StaticResource FieldLabel}"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Style="{StaticResource BoxedTextInput}"
+                                             Text="{Binding OffsetText, UpdateSourceTrigger=PropertyChanged}"
+                                             MaxLength="10" FontSize="10"
+                                             Padding="4,2"
+                                             HorizontalContentAlignment="Right"/>
+                                    <TextBlock Grid.Column="1" Text="mm" Style="{StaticResource UnitLabel}"/>
+                                </Grid>
+                                <TextBlock Text="Default 300mm — blank/invalid falls back automatically."
+                                           Style="{StaticResource HintText}"/>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Activity Log (moved from footer) -->
+                <Border Background="{StaticResource BrushLogBg}" CornerRadius="8" Padding="10,8" Margin="0,8,0,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Activity Log" FontSize="11.5" FontWeight="SemiBold" Foreground="{StaticResource BrushLogText}" VerticalAlignment="Center"/>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <Button Content="Copy All" Style="{StaticResource DarkGhostButton}"
+                                        Command="{Binding CopyAllLogsCommand}"/>
+                                <Button Content="Copy Selected" Style="{StaticResource DarkGhostButton}" Margin="6,0,0,0"
+                                        Click="CopySelectedLog_Click"/>
+                                <Button Content="Clear" Style="{StaticResource DarkGhostButton}" Margin="6,0,0,0"
+                                        Command="{Binding ClearLogsCommand}"/>
+                            </StackPanel>
+                        </Grid>
+                        <ListBox Grid.Row="1" x:Name="LogListBox"
+                                 ItemsSource="{Binding LogEntries}"
+                                 Background="Transparent" BorderThickness="0"
+                                 MinHeight="110" SelectionMode="Extended"
+                                 shell:ShellBehaviors.MaxHeightRatio="0.2"
+                                 shell:ShellBehaviors.ForwardMouseWheel="True"
+                                 ScrollViewer.VerticalScrollBarVisibility="Auto">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Time, StringFormat='{}{0:HH:mm:ss}'}"
+                                                   Foreground="{StaticResource BrushLogTextDim}"
+                                                   FontFamily="Consolas" FontSize="11" Margin="0,0,8,0"/>
+                                        <TextBlock Text="{Binding Level}"
+                                                   Foreground="{Binding Level, Converter={StaticResource LogLevelToColorConverter}}"
+                                                   FontFamily="Consolas" FontSize="11" FontWeight="SemiBold"
+                                                   Width="58" Margin="0,0,8,0"/>
+                                        <TextBlock Text="{Binding Message}"
+                                                   Foreground="{StaticResource BrushLogText}"
+                                                   FontFamily="Consolas" FontSize="11" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
+                </Border>
+            </StackPanel>
+        </shell:ToolWindowShell.BodyContent>
+
+        <!-- ═══ FOOTER ═══════════════════════════════════════════ -->
+        <shell:ToolWindowShell.FooterContent>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Content="Export Log (.txt)" Style="{StaticResource OutlineButton}"
+                        Command="{Binding ExportLogsCommand}"/>
+                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <Button Content="Generate Dimensions" Style="{StaticResource PrimaryButton}" Margin="0,0,8,0"
+                            Command="{Binding GenerateDimensionsCommand}"/>
+                    <Button Content="Close" Style="{StaticResource SecondaryButton}"
+                            Click="CloseButton_Click"/>
+                </StackPanel>
+            </Grid>
+        </shell:ToolWindowShell.FooterContent>
+    </shell:ToolWindowShell>
+</Window>
