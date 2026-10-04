@@ -64,10 +64,10 @@ namespace Revit26_Plugin.Menu.Ribbon
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToDetailLines_V011_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("DWG To Detail Lines", "V012", "UI Standard layout: metrics on top, full-height layer grid, always-visible footer log, Convert DWG → Close.")
             };
-            var dwgLinesV002 = new PushButtonData("Btn_DwgToDetailLines_V002", "Detail Lines V002", assemblyPath, "Revit26_Plugin.DwgToDetailLines.V002.Commands.LaunchCommand")
+            var dwgLinesV013 = new PushButtonData("Btn_DwgToDetailLines_V013", "Detail Lines V013", assemblyPath, "Revit26_Plugin.DwgToDetailLines.V013.Commands.DwgToDetailLinesCommand")
             {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToDetailLines_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("DWG To Detail Lines", "V002")
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToDetailLines_V011_16.png"),
+                ToolTip = RibbonLayoutHelper.VersionTip("DWG To Detail Lines", "V013", "V012 on the shared ToolWindowShell (log in body, capped grid).")
             };
             var dwgLinesPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DwgToDetailLines", "Detail Lines", dwgLinesV011);
 
@@ -75,7 +75,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             {
                 dwgLinesPulldownData,
             });
-            RibbonLayoutHelper.WirePulldownButton(projectItems, "Pulldown_DwgToDetailLines", dwgLinesV011, dwgLinesV012, dwgLinesV002);
+            RibbonLayoutHelper.WirePulldownButton(projectItems, "Pulldown_DwgToDetailLines", dwgLinesV011, dwgLinesV012, dwgLinesV013);
         }
     }
 }

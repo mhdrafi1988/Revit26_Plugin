@@ -105,6 +105,11 @@ period rather than trusting a reconstruction here.
   ScrollViewer removed. ViewModel gains `IsRunning` / `Progress` /
   `SummaryText` (not yet set). Ribbon pulldown: V006, V007 (V005 removed
   from the ribbon; folder kept).
+- DwgToDetailLines V013 on the shell: context banner in the header; options
+  (own ScrollViewer removed), Layers & Hatches grid and Activity Log (moved
+  from footer) in the body. Indeterminate status strip on `IsRunning`;
+  ViewModel gains `Progress` / `SummaryText`. Ribbon pulldown: V011, V012,
+  V013 (V002 removed from the ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 
