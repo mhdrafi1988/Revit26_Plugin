@@ -96,6 +96,10 @@ period rather than trusting a reconstruction here.
   indeterminate on `IsBusy`. No log in this tool; View3DPickerWindow
   unchanged. ViewModel gains `Progress`. Ribbon pulldown: WSEB003, WSEB004
   (WSEB002 removed from the ribbon; folder kept).
+- BubbleAutoRenumber V008 on the shell: sheet + options, sections grid and
+  Log (moved from footer) in the body; grid and log TextBox capped.
+  ViewModel gains `IsRunning` / `Progress` / `SummaryText` (not yet set).
+  Ribbon pulldown: V007, V008 (V006 removed from the ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 
