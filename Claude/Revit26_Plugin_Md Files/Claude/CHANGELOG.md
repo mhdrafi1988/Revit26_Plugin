@@ -168,6 +168,13 @@ period rather than trusting a reconstruction here.
   strip on the existing progress properties — no ViewModel changes.
   Ribbon By Drain pulldown: V007, V011, V012 (V010 removed from the
   ribbon; folder kept).
+- FloorsAndRoofFromLinkedRoomsViaPlanView V006 on the shell: inputs (own
+  ScrollViewer removed), room list (capped), floor/roof summaries, toast
+  and Activity Log (all moved from footer) in the body. Footer progress
+  bar + text replaced by the shell status strip: `IsBusy`, `ProgressText`
+  and a new read-only `Progress` (Processed ÷ Total). Ribbon From Rooms
+  pulldown: V011, V012, ViaPlanView V005, V006 (ViaPlanView V004 removed
+  from the ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 
