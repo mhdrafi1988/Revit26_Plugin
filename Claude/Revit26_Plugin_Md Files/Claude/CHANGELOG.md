@@ -175,6 +175,11 @@ period rather than trusting a reconstruction here.
   and a new read-only `Progress` (Processed ÷ Total). Ribbon From Rooms
   pulldown: V011, V012, ViaPlanView V005, V006 (ViaPlanView V004 removed
   from the ribbon; folder kept).
+- WorksetRenamer V005 on the shell: toolbar card, selection row and
+  worksets grid (capped) in the body; footer status line is now the status
+  strip (`StatusMessage`). No log in this tool. ViewModel gains `IsRunning`
+  / `Progress`. Ribbon pulldown: V004, V005 (V003 removed from the ribbon;
+  folder kept).
 
 ## 2026-10-04 — Dimensions
 

@@ -46,10 +46,10 @@ namespace Revit26_Plugin.Menu.Ribbon
             var worksetManagerV013 = Btn(assemblyPath, "Btn_WorksetManager_V013", "Workset Manager V013", "Revit26_Plugin.WorksetManager.V013.Commands.WorksetManagerCommand",
                 "SetupTools.WorksetManager_16.png", "Workset Manager", "V013", "V012" + Rebuilt);
 
-            var worksetRenamerV003 = Btn(assemblyPath, "Btn_WorksetRenamer_V003", "Workset Renamer V003", "Revit26_Plugin.WorksetRenamer.V003.Command",
-                "SetupTools.WorksetRename_16.png", "Workset Renamer", "V003");
             var worksetRenamerV004 = Btn(assemblyPath, "Btn_WorksetRenamer_V004", "Workset Renamer V004", "Revit26_Plugin.WorksetRenamer.V004.Command",
                 "SetupTools.WorksetRename_16.png", "Workset Renamer", "V004", "V003" + Rebuilt);
+            var worksetRenamerV005 = Btn(assemblyPath, "Btn_WorksetRenamer_V005", "Workset Renamer V005", "Revit26_Plugin.WorksetRenamer.V005.Command",
+                "SetupTools.WorksetRename_16.png", "Workset Renamer", "V005", "V004 on the shared ToolWindowShell (capped grid).");
 
             var worksetRenamerFx03 = Btn(assemblyPath, "Btn_WorksetRenamer_FX03", "Workset Renamer (Excel) FX03", "Revit26_Plugin.WorksetRenamer.FX03.Command",
                 "SetupTools.WorksetRename_16.png", "Workset Renamer (From Excel)", "FX03");
@@ -80,7 +80,7 @@ namespace Revit26_Plugin.Menu.Ribbon
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_ParaManager", "ParaManager", paraManagerV003),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_WorksetsElementsBrowser", "Worksets & Elements", wsebV003),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_WorksetManager", "Workset Manager", worksetManagerV012),
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_WorksetRenamer", "Workset Renamer", worksetRenamerV003),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_WorksetRenamer", "Workset Renamer", worksetRenamerV004),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_WorksetRenamerFx", "Workset Renamer (Excel)", worksetRenamerFx03),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_ScheduleExportImport", "Schedule Export/Import", scheduleExportImportV005),
             });
@@ -88,7 +88,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_ParaManager", paraManagerV003, paraManagerV004);
             RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_WorksetsElementsBrowser", wsebV003, wsebV004);
             RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_WorksetManager", worksetManagerV012, worksetManagerV013);
-            RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_WorksetRenamer", worksetRenamerV003, worksetRenamerV004);
+            RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_WorksetRenamer", worksetRenamerV004, worksetRenamerV005);
             RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_WorksetRenamerFx", worksetRenamerFx03, worksetRenamerFx04);
             RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_ScheduleExportImport",
                 scheduleExportImportV005, scheduleExportImportV006, scheduleExportImportV004, scheduleExportImportV003, scheduleExportImportV002);
