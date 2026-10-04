@@ -326,14 +326,16 @@ Changes vs V057 (layout only, per Revit_Plugin_UI_Standard.md):
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="Pipeline Log" Foreground="{StaticResource BrushLogText}"
-                                   FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <ToggleButton x:Name="LogToggle" Style="{StaticResource LogHeaderToggle}" VerticalAlignment="Center" ToolTip="Show / hide the log">
+                            <TextBlock Text="Pipeline Log" Foreground="{StaticResource BrushLogText}"
+                                       FontSize="11.5" FontWeight="SemiBold"/>
+                        </ToggleButton>
                         <StackPanel Grid.Column="1" Orientation="Horizontal">
                             <Button Content="Copy All" Style="{StaticResource DarkGhostButton}" Command="{Binding CopyLogCommand}" Margin="0,0,6,0"/>
                             <Button Content="Copy Selected" Style="{StaticResource DarkGhostButton}" Click="CopySelectedLog_Click"/>
                         </StackPanel>
                     </Grid>
-                    <TextBox x:Name="PipelineLogBox" Grid.Row="1" Height="120" Text="{Binding PipelineLogText, Mode=OneWay}"
+                    <TextBox Visibility="{Binding IsChecked, ElementName=LogToggle, Converter={StaticResource LogToggleVisibility}}" x:Name="PipelineLogBox" Grid.Row="1" Height="120" Text="{Binding PipelineLogText, Mode=OneWay}"
                              IsReadOnly="True" AcceptsReturn="True"
                              TextWrapping="NoWrap"
                              FontFamily="Consolas, Courier New" FontSize="11"
@@ -367,7 +369,7 @@ Changes vs V057 (layout only, per Revit_Plugin_UI_Standard.md):
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
                     <Button Content="▶  Generate Ridges"
                             Command="{Binding RunCommand}"
-                            Style="{StaticResource PrimaryButton}"
+                            Style="{StaticResource RunButton}"
                             Margin="0,0,8,0"
                             IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBool}}"/>
                     <Button Content="Close" Style="{StaticResource OutlineButton}" Click="CloseButton_Click"/>

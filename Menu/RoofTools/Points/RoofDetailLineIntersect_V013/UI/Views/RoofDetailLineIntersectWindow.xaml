@@ -207,14 +207,16 @@ Changes vs V012 (layout only, per Revit_Plugin_UI_Standard.md):
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="Run Log" Foreground="{StaticResource BrushLogText}"
-                                   FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <ToggleButton x:Name="LogToggle" Style="{StaticResource LogHeaderToggle}" VerticalAlignment="Center" ToolTip="Show / hide the log">
+                            <TextBlock Text="Run Log" Foreground="{StaticResource BrushLogText}"
+                                       FontSize="11.5" FontWeight="SemiBold"/>
+                        </ToggleButton>
                         <StackPanel Grid.Column="1" Orientation="Horizontal">
                             <Button Content="Copy All" Style="{StaticResource DarkGhostButton}" Command="{Binding CopyLogCommand}"/>
                             <Button Content="Copy Selected" Style="{StaticResource DarkGhostButton}" Click="CopySelectedLog_Click" Margin="6,0,0,0"/>
                         </StackPanel>
                     </Grid>
-                    <ListBox Grid.Row="1" x:Name="LogList" ItemsSource="{Binding LogEntries}" Height="150"
+                    <ListBox Visibility="{Binding IsChecked, ElementName=LogToggle, Converter={StaticResource LogToggleVisibility}}" Grid.Row="1" x:Name="LogList" ItemsSource="{Binding LogEntries}" Height="150"
                              Background="Transparent" BorderThickness="0" SelectionMode="Extended"
                              ScrollViewer.VerticalScrollBarVisibility="Auto"
                              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
@@ -249,7 +251,7 @@ Changes vs V012 (layout only, per Revit_Plugin_UI_Standard.md):
                     Padding="12,8">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Content="▶  Run"
-                            Style="{StaticResource PrimaryButton}"
+                            Style="{StaticResource RunButton}"
                             Command="{Binding RunCommand}"
                             Width="90"
                             Margin="0,0,8,0"/>

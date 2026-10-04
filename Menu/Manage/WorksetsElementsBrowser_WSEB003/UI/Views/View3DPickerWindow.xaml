@@ -53,7 +53,7 @@
 
         <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,14,0,0">
             <Button Content="No" Width="80" Margin="0,0,8,0" Style="{StaticResource SecondaryButton}" Click="No_Click" IsCancel="True"/>
-            <Button Content="Open View" Width="100" Style="{StaticResource PrimaryButton}" Click="OpenView_Click" IsDefault="True"/>
+            <Button Content="Open View" Width="100" Style="{StaticResource RunButton}" Click="OpenView_Click" IsDefault="True"/>
         </StackPanel>
     </Grid>
 </Window>

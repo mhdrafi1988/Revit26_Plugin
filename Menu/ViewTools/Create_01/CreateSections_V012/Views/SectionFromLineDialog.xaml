@@ -562,8 +562,10 @@ Changes vs V011 (layout only, per Revit_Plugin_UI_Standard.md):
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock x:Name="LogChevron" Text="▼" Foreground="{StaticResource BrushLogTextDim}"
                                            FontSize="10" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                                <TextBlock Text="Live Log" FontSize="11.5" FontWeight="SemiBold"
-                                           Foreground="{StaticResource BrushLogText}" VerticalAlignment="Center"/>
+                                <ToggleButton x:Name="LogToggle" Style="{StaticResource LogHeaderToggle}" VerticalAlignment="Center" ToolTip="Show / hide the log">
+                                    <TextBlock Text="Live Log" FontSize="11.5" FontWeight="SemiBold"
+                                               Foreground="{StaticResource BrushLogText}"/>
+                                </ToggleButton>
                             </StackPanel>
                             <StackPanel Grid.Column="1" Orientation="Horizontal">
                                 <Button Content="Copy All" Style="{StaticResource DarkGhostButton}" Margin="0,0,6,0"
@@ -576,7 +578,7 @@ Changes vs V011 (layout only, per Revit_Plugin_UI_Standard.md):
                         </Grid>
                     </Border>
 
-                    <ListBox x:Name="LogListBox"
+                    <ListBox Visibility="{Binding IsChecked, ElementName=LogToggle, Converter={StaticResource LogToggleVisibility}}" x:Name="LogListBox"
                              Grid.Row="1"
                              Height="110"
                              Background="Transparent"
@@ -600,7 +602,7 @@ Changes vs V011 (layout only, per Revit_Plugin_UI_Standard.md):
                         Margin="0,0,8,0"
                         Command="{Binding CreateCommand}">
                     <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+                        <Style TargetType="Button" BasedOn="{StaticResource RunButton}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding IsRunning}" Value="True">
                                     <Setter Property="Content" Value="Create (Running…)"/>

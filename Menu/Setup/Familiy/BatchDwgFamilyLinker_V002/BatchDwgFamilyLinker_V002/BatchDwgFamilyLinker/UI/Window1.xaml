@@ -133,14 +133,16 @@ Changes vs the unversioned "_WOrking" build (layout only, per Revit_Plugin_UI_St
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="Live Processing Log" Foreground="{StaticResource BrushLogText}"
-                                       FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            <ToggleButton x:Name="LogToggle" Style="{StaticResource LogHeaderToggle}" VerticalAlignment="Center" ToolTip="Show / hide the log">
+                                <TextBlock Text="Live Processing Log" Foreground="{StaticResource BrushLogText}"
+                                           FontSize="11.5" FontWeight="SemiBold"/>
+                            </ToggleButton>
                             <StackPanel Grid.Column="1" Orientation="Horizontal">
                                 <Button Content="Copy All" Style="{StaticResource DarkGhostButton}" Click="CopyAllLog_Click"/>
                                 <Button Content="Copy Selected" Style="{StaticResource DarkGhostButton}" Click="CopySelectedLog_Click" Margin="6,0,0,0"/>
                             </StackPanel>
                         </Grid>
-                        <TextBox Grid.Row="1" x:Name="LiveLogBox" Text="{Binding LiveLog}" Height="120"
+                        <TextBox Visibility="{Binding IsChecked, ElementName=LogToggle, Converter={StaticResource LogToggleVisibility}}" Grid.Row="1" x:Name="LiveLogBox" Text="{Binding LiveLog}" Height="120"
                                  IsReadOnly="True" AcceptsReturn="True"
                                  Background="Transparent" BorderThickness="0"
                                  Foreground="{StaticResource BrushLogText}"
@@ -155,7 +157,7 @@ Changes vs the unversioned "_WOrking" build (layout only, per Revit_Plugin_UI_St
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
-                        <Button Content="Start Batch" Style="{StaticResource PrimaryButton}" Margin="0,0,8,0"
+                        <Button Content="Start Batch" Style="{StaticResource RunButton}" Margin="0,0,8,0"
                                 Command="{Binding StartBatchCommand}" IsEnabled="{Binding CanStart}"/>
                         <Button Content="Close" Style="{StaticResource SecondaryButton}" Command="{Binding CloseCommand}"/>
                     </StackPanel>

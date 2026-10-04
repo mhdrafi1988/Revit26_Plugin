@@ -283,10 +283,12 @@ Changes vs V005 (layout only, per Revit_Plugin_UI_Standard.md):
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock VerticalAlignment="Center" FontSize="10.5" FontWeight="SemiBold" Foreground="{StaticResource BrushLogText}">
-                                <Run Text="Log"/>
-                                <Run Text="{Binding LogEntries.Count, Mode=OneWay}" Foreground="{StaticResource BrushLogTextDim}"/>
-                            </TextBlock>
+                            <ToggleButton x:Name="LogToggle" Style="{StaticResource LogHeaderToggle}" VerticalAlignment="Center" ToolTip="Show / hide the log">
+                                <TextBlock FontSize="10.5" FontWeight="SemiBold" Foreground="{StaticResource BrushLogText}">
+                                    <Run Text="Log"/>
+                                    <Run Text="{Binding LogEntries.Count, Mode=OneWay}" Foreground="{StaticResource BrushLogTextDim}"/>
+                                </TextBlock>
+                            </ToggleButton>
                             <StackPanel Grid.Column="1" Orientation="Horizontal">
                                 <Button Content="Copy All" Style="{StaticResource DarkGhostButton}" Command="{Binding CopyLogCommand}" Margin="0,0,4,0" ToolTip="Copy the whole log to the clipboard"/>
                                 <Button Content="Copy Selected" Style="{StaticResource DarkGhostButton}" Click="CopySelectedLog_Click" Margin="0,0,4,0" ToolTip="Copy the selected log lines"/>
@@ -295,7 +297,7 @@ Changes vs V005 (layout only, per Revit_Plugin_UI_Standard.md):
                             </StackPanel>
                         </Grid>
                     </Border>
-                    <ListBox x:Name="LogList" Grid.Row="1" ItemsSource="{Binding LogEntries}" Height="120" SelectionMode="Extended"
+                    <ListBox Visibility="{Binding IsChecked, ElementName=LogToggle, Converter={StaticResource LogToggleVisibility}}" x:Name="LogList" Grid.Row="1" ItemsSource="{Binding LogEntries}" Height="120" SelectionMode="Extended"
                              Background="Transparent" BorderThickness="0" Padding="6,4"
                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                              VirtualizingPanel.IsVirtualizing="True">

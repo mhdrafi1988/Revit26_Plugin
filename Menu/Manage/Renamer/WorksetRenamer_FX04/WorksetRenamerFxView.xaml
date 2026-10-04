@@ -461,7 +461,7 @@ Changes vs FX03 (layout only, per Revit_Plugin_UI_Standard.md):
                         Command="{Binding ClearAllCommand}"/>
                 <StackPanel Grid.Column="3" Orientation="Horizontal">
                     <Button Content="Update ▶"
-                            Style="{StaticResource PrimaryButton}"
+                            Style="{StaticResource RunButton}"
                             Command="{Binding UpdateCommand}"
                             MinWidth="100" Margin="0,0,8,0"/>
                     <Button Content="Close" Style="{StaticResource OutlineButton}" Width="90" Height="38" Click="CloseButton_Click"/>

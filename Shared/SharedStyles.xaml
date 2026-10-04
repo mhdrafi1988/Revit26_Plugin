@@ -559,6 +559,42 @@
         </Setter>
     </Style>
 
+    <!-- Run / main action — red. Used for each tool's main footer action
+         (Run, Create, Place, Generate…). Same shape as PrimaryButton. -->
+    <Style x:Key="RunButton" TargetType="Button" BasedOn="{StaticResource DangerButton}"/>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         COLLAPSIBLE LOG — header toggle + list visibility
+         Log panels start collapsed: the header (title + Copy buttons)
+         stays visible; clicking the title shows / hides the log lines.
+         Usage: <ToggleButton x:Name="LogToggle" Style="{StaticResource LogHeaderToggle}">title</ToggleButton>
+                <ListBox Visibility="{Binding IsChecked, ElementName=LogToggle,
+                         Converter={StaticResource LogToggleVisibility}}" …/>
+    ═══════════════════════════════════════════════════════════ -->
+    <BooleanToVisibilityConverter x:Key="LogToggleVisibility"/>
+    <Style x:Key="LogHeaderToggle" TargetType="ToggleButton">
+        <Setter Property="IsChecked" Value="False"/>
+        <Setter Property="Foreground" Value="{StaticResource BrushLogText}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <StackPanel Orientation="Horizontal" Background="Transparent">
+                        <TextBlock x:Name="Chevron" Text="▸" FontSize="11" Margin="0,0,6,0"
+                                   VerticalAlignment="Center" Foreground="{TemplateBinding Foreground}"/>
+                        <ContentPresenter VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Chevron" Property="Text" Value="▾"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- ═══════════════════════════════════════════════════════════
          STATUS / CHIP
     ═══════════════════════════════════════════════════════════ -->
