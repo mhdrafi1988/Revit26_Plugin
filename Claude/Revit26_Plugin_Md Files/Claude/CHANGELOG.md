@@ -161,6 +161,13 @@ period rather than trusting a reconstruction here.
   ViewModel changes. Ribbon By Point pulldown: V029, V030, Ridge V002,
   Ridge V003, MultiCopies29, MultiCopies30 (V028, Ridge V001 and
   MultiCopies28 removed from the ribbon; folders kept).
+- AutoSlopeByDrain (Multi-Roof) V012 on the shell: settings column (own
+  ScrollViewer removed; Circle Markers expander unchanged), per-roof drain
+  tabs (drain-group expanders unchanged) and Processing Log (moved from
+  footer) in the body. Footer progress strip replaced by the shell status
+  strip on the existing progress properties — no ViewModel changes.
+  Ribbon By Drain pulldown: V007, V011, V012 (V010 removed from the
+  ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 

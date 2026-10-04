@@ -50,15 +50,13 @@ namespace Revit26_Plugin.Menu.Ribbon
                 "by_drain_16.png", "Auto Slope By Drain", "V007");
             var byDrainV011 = Btn(assemblyPath, "Btn_AutoSlopeByDrain_V011", "By Drain V011", "Revit26_Plugin.MultiRoofSlopeByDrain.V011.Commands.AutoSlopeByDrain",
                 "AutoSlopeByDrain_MultiRoof_16.png", "Auto Slope By Drain (Multi-Roof)", "V011", "V010 with the standard three-zone window layout.");
-            var byDrainV010 = Btn(assemblyPath, "Btn_AutoSlopeByDrain_V010", "By Drain V010", "Revit26_Plugin.MultiRoofSlopeByDrain.V010.Commands.AutoSlopeByDrain",
-                "AutoSlopeByDrain_MultiRoof_16.png", "Auto Slope By Drain (Multi-Roof)", "V010",
-                "Adds Start/End/Duration timing, a live progress bar with Cancel, " +
-                "Circle-group-only default expansion in the drain grid, and smallest-circle default selection.");
+            var byDrainV012 = Btn(assemblyPath, "Btn_AutoSlopeByDrain_V012", "By Drain V012", "Revit26_Plugin.MultiRoofSlopeByDrain.V012.Commands.AutoSlopeByDrain",
+                "AutoSlopeByDrain_MultiRoof_16.png", "Auto Slope By Drain (Multi-Roof)", "V012", "V011 on the shared ToolWindowShell (log in body, capped drains grid).");
             var byDrainPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_AutoSlopeByDrain", "By Drain", byDrainV007);
 
             var slopeItems = RibbonLayoutHelper.AddStackedButtons(slopePanel, new List<RibbonItemData> { byPointPulldownData, byDrainPulldownData });
             RibbonLayoutHelper.WirePulldownButton(slopeItems, "Pulldown_AutoSlopeByPoint", byPointV029, byPointV030, byPointRidgeV002, byPointRidgeV003, byPointMultiCopies29, byPointMultiCopies30);
-            RibbonLayoutHelper.WirePulldownButton(slopeItems, "Pulldown_AutoSlopeByDrain", byDrainV007, byDrainV011, byDrainV010);
+            RibbonLayoutHelper.WirePulldownButton(slopeItems, "Pulldown_AutoSlopeByDrain", byDrainV007, byDrainV011, byDrainV012);
 
             // Shape Points — one pulldown per tool (current version, then its rebuild)
             RibbonPanel shapePointsPanel = app.CreateRibbonPanel(tabName, "Shape Points");
