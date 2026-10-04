@@ -10,6 +10,7 @@ namespace Revit26_Plugin.Menu.Ribbon
         // UI-standard rebuild (Revit_Plugin_UI_Standard.md layout) second.
         private const string Icons = "Revit26_Plugin.Resources.Icons.ViewTools.";
         private const string Rebuilt = " with the standard three-zone window layout.";
+        private const string OnShell = " on the shared ToolWindowShell (log in body, capped grids).";
 
         private static PushButtonData Btn(string assemblyPath, string name, string text, string commandClass,
                                           string icon, string tool, string version, string detail = null)
@@ -100,10 +101,10 @@ namespace Revit26_Plugin.Menu.Ribbon
                 "BubbleAutoRenumber_16.png", "Bubble Auto Renumber", "V006");
             var bubbleV007 = Btn(assemblyPath, "Btn_BubbleAutoRenumber_V007", "Bubble Renumber V007", "Revit26_Plugin.BubbleAutoRenumber.V007.Commands.SectionAutoRenumberCommand",
                 "BubbleAutoRenumber_16.png", "Bubble Auto Renumber", "V007", "V006" + Rebuilt);
-            var sectionRenamerV024 = Btn(assemblyPath, "Btn_SectionAutoRenamer_V024", "Section Renamer V024", "Revit26_Plugin.SectionAutoRenamer.V024.Commands.OpenSectionManagerCommand",
-                "SectionAutoRenamer_16.png", "Section Auto Renamer", "V024");
             var sectionRenamerV025 = Btn(assemblyPath, "Btn_SectionAutoRenamer_V025", "Section Renamer V025", "Revit26_Plugin.SectionAutoRenamer.V025.Commands.OpenSectionManagerCommand",
                 "SectionAutoRenamer_16.png", "Section Auto Renamer", "V025", "V024" + Rebuilt);
+            var sectionRenamerV026 = Btn(assemblyPath, "Btn_SectionAutoRenamer_V026", "Section Renamer V026", "Revit26_Plugin.SectionAutoRenamer.V026.Commands.OpenSectionManagerCommand",
+                "SectionAutoRenamer_16.png", "Section Auto Renamer", "V026", "V025" + OnShell);
             var autoRenamerV004 = Btn(assemblyPath, "Btn_ViewAutoRenamer_V004", "View Renamer V004", "Revit26_Plugin.ViewAutoRenamer.V004.Commands.OpenViewAutoRenamerCommand",
                 "ViewAutoRenamer_V004_16.png", "View Auto Renamer", "V004");
             var autoRenamerV005 = Btn(assemblyPath, "Btn_ViewAutoRenamer_V005", "View Renamer V005", "Revit26_Plugin.ViewAutoRenamer.V005.Commands.OpenViewAutoRenamerCommand",
@@ -112,11 +113,11 @@ namespace Revit26_Plugin.Menu.Ribbon
             var renameItems = RibbonLayoutHelper.AddStackedButtons(renamePanel, new List<RibbonItemData>
             {
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_BubbleAutoRenumber", "Bubble Renumber", bubbleV006),
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_SectionAutoRenamer", "Section Renamer", sectionRenamerV024),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_SectionAutoRenamer", "Section Renamer", sectionRenamerV025),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_ViewAutoRenamer", "Auto Renamer", autoRenamerV004),
             });
             RibbonLayoutHelper.WirePulldownButton(renameItems, "Pulldown_BubbleAutoRenumber", bubbleV006, bubbleV007);
-            RibbonLayoutHelper.WirePulldownButton(renameItems, "Pulldown_SectionAutoRenamer", sectionRenamerV024, sectionRenamerV025);
+            RibbonLayoutHelper.WirePulldownButton(renameItems, "Pulldown_SectionAutoRenamer", sectionRenamerV025, sectionRenamerV026);
             RibbonLayoutHelper.WirePulldownButton(renameItems, "Pulldown_ViewAutoRenamer", autoRenamerV004, autoRenamerV005);
         }
     }

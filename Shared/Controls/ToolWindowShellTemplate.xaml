@@ -1,0 +1,94 @@
+<!--
+=======================================================
+File: ToolWindowShellTemplate.xaml  (CLAUDE.md v1.1 — ToolWindowShell)
+Control template for Shared/Controls/ToolWindowShell. Three zones:
+  HEADER  navy title bar (Title / Subtitle / Version badge) + optional
+          HeaderContent (status badges, metric tiles). Never scrolls.
+  BODY    BodyContent inside PART_BodyScroll — the window's ONE
+          ScrollViewer. DataGrids and logs cap their height with
+          ShellBehaviors.MaxHeightRatio and pass the wheel back with
+          ShellBehaviors.ForwardMouseWheel.
+  FOOTER  status strip (SummaryText + ProgressBar while IsRunning) and
+          FooterContent (secondary actions left, Primary → Close right).
+          Never scrolls.
+A template (not a UserControl) so tool content can use x:Name freely.
+=======================================================
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:Revit26_Plugin.Shared.Controls">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/Revit26_Plugin;component/Shared/SharedStyles.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
+    <BooleanToVisibilityConverter x:Key="ShellBoolToVisibility"/>
+
+    <ControlTemplate x:Key="ToolWindowShellTemplate" TargetType="{x:Type local:ToolWindowShell}">
+        <Grid Background="{StaticResource BrushSystemBackground}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>  <!-- HEADER -->
+                <RowDefinition Height="*"/>     <!-- BODY   -->
+                <RowDefinition Height="Auto"/>  <!-- FOOTER -->
+            </Grid.RowDefinitions>
+
+            <!-- ═══ HEADER ═════════════════════════════════════ -->
+            <StackPanel Grid.Row="0">
+                <Border Style="{StaticResource HeaderBar}" CornerRadius="0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="{TemplateBinding Title}" Style="{StaticResource HeaderTitle}"/>
+                            <TextBlock Text="{TemplateBinding Subtitle}" Style="{StaticResource HeaderSubtitle}"
+                                       TextWrapping="Wrap"/>
+                        </StackPanel>
+                        <Border Grid.Column="1" Background="{StaticResource BrushNavyLight}" CornerRadius="10"
+                                Padding="8,3" Margin="10,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Text="{TemplateBinding Version}" FontSize="11" FontWeight="SemiBold"
+                                       Foreground="{StaticResource BrushTextOnDark}"/>
+                        </Border>
+                    </Grid>
+                </Border>
+                <ContentPresenter Content="{TemplateBinding HeaderContent}" Margin="12,8,12,0"/>
+            </StackPanel>
+
+            <!-- ═══ BODY (the only ScrollViewer) ═══════════════ -->
+            <ScrollViewer Grid.Row="1" x:Name="PART_BodyScroll"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled"
+                          CanContentScroll="False"
+                          Padding="12,8,12,8">
+                <ContentPresenter Content="{TemplateBinding BodyContent}"/>
+            </ScrollViewer>
+
+            <!-- ═══ FOOTER ═════════════════════════════════════ -->
+            <Border Grid.Row="2"
+                    Background="{StaticResource BrushSystemBackground}"
+                    BorderBrush="{StaticResource BrushCardBorder}"
+                    BorderThickness="0,1,0,0"
+                    Padding="12,7">
+                <StackPanel>
+                    <Grid Margin="0,0,0,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="220"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{TemplateBinding SummaryText}"
+                                   Style="{StaticResource HintText}"
+                                   VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                        <ProgressBar Grid.Column="1" Height="6" Minimum="0" Maximum="100"
+                                     Value="{TemplateBinding Progress}"
+                                     Foreground="{StaticResource BrushAppleBlue}"
+                                     Background="{StaticResource BrushSeparatorThin}"
+                                     BorderThickness="0" VerticalAlignment="Center"
+                                     Visibility="{Binding IsRunning, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource ShellBoolToVisibility}}"/>
+                    </Grid>
+                    <ContentPresenter Content="{TemplateBinding FooterContent}"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </ControlTemplate>
+</ResourceDictionary>

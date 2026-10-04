@@ -1,3 +1,4 @@
+using System;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -6,17 +7,33 @@ namespace Revit26_Plugin.Shared.Controls
     /// <summary>
     /// Standard three-zone tool window layout (CLAUDE.md v1.1).
     /// Header / Body / Footer slots plus the shared status strip
-    /// (SummaryText, Progress 0–100, IsRunning).
+    /// (SummaryText, Progress 0–100, IsRunning). Template lives in
+    /// ToolWindowShellTemplate.xaml.
     /// </summary>
-    public partial class ToolWindowShell : UserControl
+    public class ToolWindowShell : Control
     {
+        private static readonly Lazy<ControlTemplate> ShellTemplate = new(() =>
+        {
+            var dictionary = new ResourceDictionary
+            {
+                Source = new Uri("pack://application:,,,/Revit26_Plugin;component/Shared/Controls/ToolWindowShellTemplate.xaml")
+            };
+            return (ControlTemplate)dictionary["ToolWindowShellTemplate"];
+        });
+
         public ToolWindowShell()
         {
-            InitializeComponent();
+            Template = ShellTemplate.Value;
         }
 
         /// <summary>The shell's body ScrollViewer — the one ScrollViewer a tool window has.</summary>
-        public ScrollViewer BodyScrollViewer => PART_BodyScroll;
+        public ScrollViewer BodyScrollViewer { get; private set; }
+
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            BodyScrollViewer = GetTemplateChild("PART_BodyScroll") as ScrollViewer;
+        }
 
         public static readonly DependencyProperty TitleProperty =
             DependencyProperty.Register(nameof(Title), typeof(string), typeof(ToolWindowShell));

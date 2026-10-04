@@ -18,6 +18,22 @@ period rather than trusting a reconstruction here.
 
 ---
 
+
+## 2026-10-04 — ToolWindowShell (CLAUDE.md v1.1)
+
+- Shared: new `Shared/Controls/ToolWindowShell` (header / body / footer;
+  the body is the window's only ScrollViewer; footer status strip bound to
+  `IsRunning` / `Progress` / `SummaryText`) and `ShellBehaviors`
+  (`MaxHeightRatio`, `ForwardMouseWheel`). SharedStyles 3.1 adds `Tile*`
+  brushes and `MetricTile*` styles.
+- SectionAutoRenamer V026 — first tool on the shell (reference
+  implementation): log moved from footer into the body, grid and log
+  height-capped, V024's tinted metric tiles restored via named brushes.
+  ViewModel gains `IsRunning` / `Progress` / `SummaryText`; no behaviour
+  change.
+- Ribbon: Section Renamer pulldown is now V025, V026 (V024 removed from the
+  ribbon; folder kept).
+
 ## 2026-10-04 — Dimensions
 
 - Dimensions: DtlLineDim bumped to V009 as a layout-only rebuild per

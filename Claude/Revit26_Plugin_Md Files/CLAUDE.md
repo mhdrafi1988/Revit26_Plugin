@@ -70,7 +70,9 @@ never wired up and can't have a PushButton added until unzipped.
 
 Every tool window's content is a `Shared/Controls/ToolWindowShell`
 (`xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"`) with three
-zones:
+zones (it's a templated `Control`, template in
+`ToolWindowShellTemplate.xaml` — not a UserControl, so `x:Name` inside
+tool content still works):
 
 - **Header** — `Title`, `Subtitle`, `Version` (navy bar, built in) plus
   `HeaderContent`: status badges and metric tiles. Never scrolls.
