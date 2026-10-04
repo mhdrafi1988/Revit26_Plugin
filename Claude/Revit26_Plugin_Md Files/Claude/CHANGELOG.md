@@ -18,6 +18,16 @@ period rather than trusting a reconstruction here.
 
 ---
 
+## 2026-10-04 — Dimensions
+
+- Dimensions: DtlLineDim bumped to V009 as a layout-only rebuild per
+  `Revit_Plugin_UI_Standard.md` (fixed title bar + version + metrics card,
+  scrolling middle, fixed footer with an always-visible log + Copy All /
+  Copy Selected, Export Log on the left, Generate Dimensions → Close).
+  No behaviour changes.
+- Ribbon: the Detail Lines dimension button is now a pulldown — V008 first,
+  V009 second.
+
 ## 2026-10-04 — Floor Tools
 
 - Floor Tools: both live tools bumped one version as a layout-only rebuild
