@@ -151,6 +151,16 @@ period rather than trusting a reconstruction here.
   is now the status strip (indeterminate on `IsBusy`). ViewModel gains
   `Progress`. Ribbon pulldown: V008, V009 (V007 removed from the ribbon;
   folder kept).
+- AutoSlope By Point V030, By Point (Ridge) V003 and By Point Multi Copies
+  MultiCopies30 on the shell (same layout): both metrics rows in the
+  header; inputs (Circle Markers expander closed by default, unchanged)
+  and curve/export column with their own ScrollViewers removed; Processing
+  Log moved from footer into the body. The footer progress strip is now
+  the shell status strip, bound to the existing `IsProgressVisible` /
+  `ProgressPercent` / `ProgressIsIndeterminate` / `ProgressPhaseText` — no
+  ViewModel changes. Ribbon By Point pulldown: V029, V030, Ridge V002,
+  Ridge V003, MultiCopies29, MultiCopies30 (V028, Ridge V001 and
+  MultiCopies28 removed from the ribbon; folders kept).
 
 ## 2026-10-04 — Dimensions
 

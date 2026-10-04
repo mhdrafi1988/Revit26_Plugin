@@ -32,21 +32,19 @@ namespace Revit26_Plugin.Menu.Ribbon
             // Only versions whose source still exists are listed here.
             RibbonPanel slopePanel = app.CreateRibbonPanel(tabName, "Roof Slope");
 
-            var byPointV028 = Btn(assemblyPath, "Btn_AutoSlopeByPoint_028", "By Point V028", "Revit26_Plugin.AutoSlopeByPoint.V028.Commands.AutoSlopeCommand",
-                "by_point_16.png", "Auto Slope By Point", "V028");
             var byPointV029 = Btn(assemblyPath, "Btn_AutoSlopeByPoint_029", "By Point V029", "Revit26_Plugin.AutoSlopeByPoint.V029.Commands.AutoSlopeCommand",
                 "by_point_16.png", "Auto Slope By Point", "V029", "V028 with the standard three-zone window layout.");
-            var byPointRidge = Btn(assemblyPath, "Btn_AutoSlopeByPointRidge_001", "By Point Ridge", "Revit26_Plugin.AutoSlopeByPointRidge.V001.Commands.AutoSlopeCommand",
-                "AutoSlopeByPoint_Ridge_16.png", "Auto Slope By Point (Ridge)", "V001",
-                "V028 plus ridge handling: drains are grouped, ridge points are found on the basin boundaries " +
-                "between drain groups, and each ridge point is raised so water leaves it to every surrounding drain at the given slope.");
+            var byPointV030 = Btn(assemblyPath, "Btn_AutoSlopeByPoint_030", "By Point V030", "Revit26_Plugin.AutoSlopeByPoint.V030.Commands.AutoSlopeCommand",
+                "by_point_16.png", "Auto Slope By Point", "V030", "V029 on the shared ToolWindowShell (log in body).");
             var byPointRidgeV002 = Btn(assemblyPath, "Btn_AutoSlopeByPointRidge_002", "By Point Ridge V002", "Revit26_Plugin.AutoSlopeByPointRidge.V002.Commands.AutoSlopeCommand",
                 "AutoSlopeByPoint_Ridge_16.png", "Auto Slope By Point (Ridge)", "V002", "Ridge V001 with the standard three-zone window layout.");
-            var byPointMultiCopies = Btn(assemblyPath, "Btn_AutoSlopeByPoint_MultiCopies28", "By Point Multi Copies", "Revit26_Plugin.AutoSlopeByPoint.MultiCopies28.Commands.AutoSlopeCommand",
-                "by_point_16.png", "Auto Slope By Point (Multi Copies)", "MultiCopies28 (V028 base)");
+            var byPointRidgeV003 = Btn(assemblyPath, "Btn_AutoSlopeByPointRidge_003", "By Point Ridge V003", "Revit26_Plugin.AutoSlopeByPointRidge.V003.Commands.AutoSlopeCommand",
+                "AutoSlopeByPoint_Ridge_16.png", "Auto Slope By Point (Ridge)", "V003", "Ridge V002 on the shared ToolWindowShell (log in body).");
             var byPointMultiCopies29 = Btn(assemblyPath, "Btn_AutoSlopeByPoint_MultiCopies29", "By Point Multi Copies 29", "Revit26_Plugin.AutoSlopeByPoint.MultiCopies29.Commands.AutoSlopeCommand",
                 "by_point_16.png", "Auto Slope By Point (Multi Copies)", "MultiCopies29", "MultiCopies28 with the standard three-zone window layout.");
-            var byPointPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_AutoSlopeByPoint", "By Point", byPointV028);
+            var byPointMultiCopies30 = Btn(assemblyPath, "Btn_AutoSlopeByPoint_MultiCopies30", "By Point Multi Copies 30", "Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.Commands.AutoSlopeCommand",
+                "by_point_16.png", "Auto Slope By Point (Multi Copies)", "MultiCopies30", "MultiCopies29 on the shared ToolWindowShell (log in body).");
+            var byPointPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_AutoSlopeByPoint", "By Point", byPointV029);
 
             var byDrainV007 = Btn(assemblyPath, "Btn_AutoSlopeByDrain_V007", "By Drain V007", "Revit26_Plugin.AutoSlopeByDrain.V007.Commands.AutoSlopeByDrain",
                 "by_drain_16.png", "Auto Slope By Drain", "V007");
@@ -59,7 +57,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             var byDrainPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_AutoSlopeByDrain", "By Drain", byDrainV007);
 
             var slopeItems = RibbonLayoutHelper.AddStackedButtons(slopePanel, new List<RibbonItemData> { byPointPulldownData, byDrainPulldownData });
-            RibbonLayoutHelper.WirePulldownButton(slopeItems, "Pulldown_AutoSlopeByPoint", byPointV028, byPointV029, byPointRidge, byPointRidgeV002, byPointMultiCopies, byPointMultiCopies29);
+            RibbonLayoutHelper.WirePulldownButton(slopeItems, "Pulldown_AutoSlopeByPoint", byPointV029, byPointV030, byPointRidgeV002, byPointRidgeV003, byPointMultiCopies29, byPointMultiCopies30);
             RibbonLayoutHelper.WirePulldownButton(slopeItems, "Pulldown_AutoSlopeByDrain", byDrainV007, byDrainV011, byDrainV010);
 
             // Shape Points — one pulldown per tool (current version, then its rebuild)
