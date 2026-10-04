@@ -303,6 +303,14 @@ period rather than trusting a reconstruction here.
   Close. Drafting-view combo popup keeps its ScrollViewer. ViewModel gains
   `Progress`. Ribbon pulldown: V020, V021 (V019 removed from the ribbon;
   folder kept).
+- RefSectionHeadPlacer V015 on the shell. Header: metric cards. Body:
+  setup (left) / element data + mapping (right) — both panel
+  ScrollViewers removed; the four grids' fixed MaxHeights become
+  MaxHeightRatio caps — then the activity log (moved from the footer).
+  Footer: status strip bound to existing `IsRunning` / `ProgressPercent`
+  / `ProgressStatusText` (replaces the footer progress block) + Cancel /
+  Run / Close. No ViewModel change. Ribbon pulldown: V014, V015 (V013
+  removed from the ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 
