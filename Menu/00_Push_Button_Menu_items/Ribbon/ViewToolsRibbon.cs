@@ -70,10 +70,10 @@ namespace Revit26_Plugin.Menu.Ribbon
                 "AutoPlaceSections_16.png", "Auto Place Sections", "V323", "V322" + Rebuilt);
             var placeSectionsV324 = Btn(assemblyPath, "Btn_AutoPlaceSectionsCommand_V324", "Place Sections V324", "Revit26_Plugin.APUS.V324.Commands.AutoPlaceSectionsCommand",
                 "AutoPlaceSections_16.png", "Auto Place Sections", "V324", "V323" + OnShell);
-            var calloutV019 = Btn(assemblyPath, "Btn_CalloutToSectionViewPlacement_V019", "Callout To Section V019", "Revit26_Plugin.CalloutCOP.V019.Commands.CalloutCOPCommand",
-                "CalloutToSection_16.png", "Callout To Section View Placement", "V019");
             var calloutV020 = Btn(assemblyPath, "Btn_CalloutToSectionViewPlacement_V020", "Callout To Section V020", "Revit26_Plugin.CalloutCOP.V020.Commands.CalloutCOPCommand",
                 "CalloutToSection_16.png", "Callout To Section View Placement", "V020", "V019" + Rebuilt);
+            var calloutV021 = Btn(assemblyPath, "Btn_CalloutToSectionViewPlacement_V021", "Callout To Section V021", "Revit26_Plugin.CalloutCOP.V021.Commands.CalloutCOPCommand",
+                "CalloutToSection_16.png", "Callout To Section View Placement", "V021", "V020" + OnShell);
             var headPlacerV013 = Btn(assemblyPath, "Btn_RefSectionHeadPlacerCommand V013", "Section Head Placer V013", "Revit26_Plugin.RefSectionHeadPlacer.V013.Commands.RefSectionHeadPlacerCommand",
                 "RefSectionHeadPlacer_16.png", "Reference Section Head Placer", "V013");
             var headPlacerV014 = Btn(assemblyPath, "Btn_RefSectionHeadPlacerCommand_V014", "Section Head Placer V014", "Revit26_Plugin.RefSectionHeadPlacer.V014.Commands.RefSectionHeadPlacerCommand",
@@ -86,12 +86,12 @@ namespace Revit26_Plugin.Menu.Ribbon
             var placeItems = RibbonLayoutHelper.AddStackedButtons(placePanel, new List<RibbonItemData>
             {
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_AutoPlaceSections", "Place Sections", placeSectionsV323),
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_CalloutToSection", "Callout To Section", calloutV019),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_CalloutToSection", "Callout To Section", calloutV020),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RefSectionHeadPlacer", "Section Head Placer", headPlacerV013),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_SectionViewAutoTagger", "Section View Tagger", taggerV005),
             });
             RibbonLayoutHelper.WirePulldownButton(placeItems, "Pulldown_AutoPlaceSections", placeSectionsV323, placeSectionsV324);
-            RibbonLayoutHelper.WirePulldownButton(placeItems, "Pulldown_CalloutToSection", calloutV019, calloutV020);
+            RibbonLayoutHelper.WirePulldownButton(placeItems, "Pulldown_CalloutToSection", calloutV020, calloutV021);
             RibbonLayoutHelper.WirePulldownButton(placeItems, "Pulldown_RefSectionHeadPlacer", headPlacerV013, headPlacerV014);
             RibbonLayoutHelper.WirePulldownButton(placeItems, "Pulldown_SectionViewAutoTagger", taggerV005, taggerV006);
 

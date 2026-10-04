@@ -294,6 +294,15 @@ period rather than trusting a reconstruction here.
   footer progress bar; current-operation line kept) + Place / Cancel /
   Close. No ViewModel change. Ribbon pulldown: V323, V324 (V322 removed
   from the ribbon; folder kept).
+- SharedStyles: `BrushPillPlaced{Background,Text}` (from CalloutCOP V020's
+  placed pill).
+- CalloutCOP V021 on the shell. Header: summary metric cards. Body:
+  configuration card + view grid (capped), log (moved from the footer).
+  Footer: status strip on `IsRunning` (indeterminate) / `ProgressText`
+  (replaces the footer progress line) + run-disabled reason, Place /
+  Close. Drafting-view combo popup keeps its ScrollViewer. ViewModel gains
+  `Progress`. Ribbon pulldown: V020, V021 (V019 removed from the ribbon;
+  folder kept).
 
 ## 2026-10-04 — Dimensions
 

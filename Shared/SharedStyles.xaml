@@ -142,6 +142,8 @@
     <Color x:Key="BadgeOnDark">#33FFFFFF</Color>  <!-- translucent white badge on navy chips (RoofEdgeAroundSections) -->
     <Color x:Key="PillTaggableBackground">#E7F5EE</Color>      <!-- SectionViewAutoTagger category pills -->
     <Color x:Key="PillNotTaggableBackground">#FBEAE9</Color>
+    <Color x:Key="PillPlacedBackground">#EAF6F0</Color>        <!-- CalloutCOP placed pill -->
+    <Color x:Key="PillPlacedText">#1F6B45</Color>
 
     <!-- ═══════════════════════════════════════════════════════════
          SOLID COLOR BRUSHES
@@ -246,6 +248,8 @@
     <SolidColorBrush x:Key="BrushBadgeOnDark"             Color="{StaticResource BadgeOnDark}"/>
     <SolidColorBrush x:Key="BrushPillTaggableBackground"    Color="{StaticResource PillTaggableBackground}"/>
     <SolidColorBrush x:Key="BrushPillNotTaggableBackground" Color="{StaticResource PillNotTaggableBackground}"/>
+    <SolidColorBrush x:Key="BrushPillPlacedBackground"      Color="{StaticResource PillPlacedBackground}"/>
+    <SolidColorBrush x:Key="BrushPillPlacedText"            Color="{StaticResource PillPlacedText}"/>
 
 
     <!-- ═══════════════════════════════════════════════════════════
