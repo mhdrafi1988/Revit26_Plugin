@@ -152,6 +152,7 @@
     <Color x:Key="BannerNoteBackground">#FFF8E6</Color>
     <Color x:Key="BannerNoteBorder">#E8D08A</Color>
     <Color x:Key="BannerNoteText">#6B5416</Color>
+    <Color x:Key="TextOnAccent">#FFFFFF</Color>               <!-- pure white text on navy / blue / coloured badges and buttons -->
 
     <!-- ═══════════════════════════════════════════════════════════
          SOLID COLOR BRUSHES
@@ -266,6 +267,7 @@
     <SolidColorBrush x:Key="BrushBannerNoteBackground"         Color="{StaticResource BannerNoteBackground}"/>
     <SolidColorBrush x:Key="BrushBannerNoteBorder"             Color="{StaticResource BannerNoteBorder}"/>
     <SolidColorBrush x:Key="BrushBannerNoteText"               Color="{StaticResource BannerNoteText}"/>
+    <SolidColorBrush x:Key="BrushTextOnAccent"            Color="{StaticResource TextOnAccent}"/>
 
 
     <!-- ═══════════════════════════════════════════════════════════

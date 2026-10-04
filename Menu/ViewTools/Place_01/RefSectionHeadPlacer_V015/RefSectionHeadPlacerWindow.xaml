@@ -103,11 +103,11 @@ Changes vs V014 (layout only):
                             <Style.Triggers>
                                 <Trigger Property="IsHighlighted" Value="True">
                                     <Setter Property="Background" Value="{StaticResource BrushAppleBlue}"/>
-                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="Foreground" Value="{StaticResource BrushTextOnAccent}"/>
                                 </Trigger>
                                 <Trigger Property="IsSelected" Value="True">
                                     <Setter Property="Background" Value="{StaticResource BrushAppleBlueLight}"/>
-                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="Foreground" Value="{StaticResource BrushTextOnAccent}"/>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>

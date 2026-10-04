@@ -52,7 +52,7 @@ Changes vs V005 (layout only):
                 <Setter Property="BorderBrush" Value="{StaticResource BrushSeparator}"/>
                 <Setter Property="BorderThickness" Value="1"/>
                 <Setter Property="CornerRadius" Value="8"/>
-                <Setter Property="Background" Value="White"/>
+                <Setter Property="Background" Value="{StaticResource BrushCardBackground}"/>
                 <Setter Property="Padding" Value="8,6"/>
                 <Setter Property="Cursor" Value="Hand"/>
                 <Setter Property="MinHeight" Value="34"/>
@@ -160,7 +160,7 @@ Changes vs V005 (layout only):
                                                Width="{Binding ActualWidth, ElementName=SectionViewPopoverToggle}"
                                                IsOpen="{Binding IsChecked, ElementName=SectionViewPopoverToggle, Mode=TwoWay}"
                                                local:SectionViewMultiSelectBehavior.IsEnabled="True">
-                                            <Border Background="White" BorderBrush="{StaticResource BrushCardBorder}"
+                                            <Border Background="{StaticResource BrushCardBackground}" BorderBrush="{StaticResource BrushCardBorder}"
                                                     BorderThickness="1" CornerRadius="10" Padding="8">
                                                 <Border.Effect>
                                                     <DropShadowEffect ShadowDepth="2" BlurRadius="10" Opacity="0.2"/>

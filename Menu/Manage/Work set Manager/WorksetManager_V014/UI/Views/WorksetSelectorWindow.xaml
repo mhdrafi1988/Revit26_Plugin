@@ -247,7 +247,7 @@ Changes vs V013 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                             Background="{StaticResource BrushSuccess}"
                                             Margin="8,0,0,0">
                                         <TextBlock Text="{Binding Grid1Count}"
-                                                   FontSize="10" FontWeight="SemiBold" Foreground="White"/>
+                                                   FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource BrushTextOnAccent}"/>
                                     </Border>
                                     <TextBlock Text="Exact match confirmed — read only"
                                                Style="{StaticResource HintText}"
@@ -336,7 +336,7 @@ Changes vs V013 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                                         HorizontalAlignment="Left"
                                                         Margin="8,0">
                                                     <TextBlock Text="Assigned"
-                                                               FontSize="10" FontWeight="SemiBold" Foreground="White"/>
+                                                               FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource BrushTextOnAccent}"/>
                                                 </Border>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
@@ -376,7 +376,7 @@ Changes vs V013 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                                 Background="{StaticResource BrushAppleBlue}"
                                                 Margin="8,0,0,0">
                                             <TextBlock Text="{Binding Grid2Count}"
-                                                       FontSize="10" FontWeight="SemiBold" Foreground="White"/>
+                                                       FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource BrushTextOnAccent}"/>
                                         </Border>
                                     </StackPanel>
 
@@ -531,7 +531,7 @@ Changes vs V013 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                                 Background="{StaticResource BrushWarning}"
                                                 Margin="8,0,0,0">
                                             <TextBlock Text="{Binding Grid3Count}"
-                                                       FontSize="10" FontWeight="SemiBold" Foreground="White"/>
+                                                       FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource BrushTextOnAccent}"/>
                                         </Border>
                                         <TextBlock Text="Workset will be created; assignment happens when link is loaded"
                                                    Style="{StaticResource HintText}"

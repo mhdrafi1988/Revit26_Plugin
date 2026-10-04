@@ -78,28 +78,28 @@ Changes vs V004 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
 
                         <Border Grid.Column="0" Background="{StaticResource BrushNavyLight}" CornerRadius="6" Padding="10,8" Margin="0,0,6,0">
                             <StackPanel>
-                                <TextBlock Text="{Binding MetricParamsFileCount}" FontSize="18" FontWeight="Bold" Foreground="White"/>
+                                <TextBlock Text="{Binding MetricParamsFileCount}" FontSize="18" FontWeight="Bold" Foreground="{StaticResource BrushTextOnAccent}"/>
                                 <TextBlock Text="Param File Loaded" FontSize="10.5" Foreground="{StaticResource BrushAppleBlueLight}"/>
                             </StackPanel>
                         </Border>
 
                         <Border Grid.Column="1" Background="{StaticResource BrushNavyLight}" CornerRadius="6" Padding="10,8" Margin="6,0">
                             <StackPanel>
-                                <TextBlock Text="{Binding MetricCategoriesSelected}" FontSize="18" FontWeight="Bold" Foreground="White"/>
+                                <TextBlock Text="{Binding MetricCategoriesSelected}" FontSize="18" FontWeight="Bold" Foreground="{StaticResource BrushTextOnAccent}"/>
                                 <TextBlock Text="Categories Selected" FontSize="10.5" Foreground="{StaticResource BrushAppleBlueLight}"/>
                             </StackPanel>
                         </Border>
 
                         <Border Grid.Column="2" Background="{StaticResource BrushNavyLight}" CornerRadius="6" Padding="10,8" Margin="6,0">
                             <StackPanel>
-                                <TextBlock Text="{Binding MetricParametersSelected}" FontSize="18" FontWeight="Bold" Foreground="White"/>
+                                <TextBlock Text="{Binding MetricParametersSelected}" FontSize="18" FontWeight="Bold" Foreground="{StaticResource BrushTextOnAccent}"/>
                                 <TextBlock Text="Parameters Selected" FontSize="10.5" Foreground="{StaticResource BrushAppleBlueLight}"/>
                             </StackPanel>
                         </Border>
 
                         <Border Grid.Column="3" Background="{StaticResource BrushNavyLight}" CornerRadius="6" Padding="10,8" Margin="6,0,0,0">
                             <StackPanel>
-                                <TextBlock Text="{Binding MetricAssignedThisSession}" FontSize="18" FontWeight="Bold" Foreground="White"/>
+                                <TextBlock Text="{Binding MetricAssignedThisSession}" FontSize="18" FontWeight="Bold" Foreground="{StaticResource BrushTextOnAccent}"/>
                                 <TextBlock Text="Assigned This Session" FontSize="10.5" Foreground="{StaticResource BrushAppleBlueLight}"/>
                             </StackPanel>
                         </Border>
@@ -131,7 +131,7 @@ Changes vs V004 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                             </Style.Triggers>
                                         </Style>
                                     </Border.Style>
-                                    <TextBlock Text="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11" FontWeight="Bold" Foreground="White"/>
+                                    <TextBlock Text="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11" FontWeight="Bold" Foreground="{StaticResource BrushTextOnAccent}"/>
                                 </Border>
                                 <TextBlock Text="Source" Style="{StaticResource StepLabel}" Margin="6,0,0,0" Foreground="{StaticResource BrushTextOnDark}"/>
                             </StackPanel>
@@ -158,7 +158,7 @@ Changes vs V004 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                             </Style.Triggers>
                                         </Style>
                                     </Border.Style>
-                                    <TextBlock Text="2" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11" FontWeight="Bold" Foreground="White"/>
+                                    <TextBlock Text="2" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11" FontWeight="Bold" Foreground="{StaticResource BrushTextOnAccent}"/>
                                 </Border>
                                 <TextBlock Text="Scope" Style="{StaticResource StepLabel}" Margin="6,0,0,0" Foreground="{StaticResource BrushTextOnDark}"/>
                             </StackPanel>
@@ -182,7 +182,7 @@ Changes vs V004 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                             </Style.Triggers>
                                         </Style>
                                     </Border.Style>
-                                    <TextBlock Text="3" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11" FontWeight="Bold" Foreground="White"/>
+                                    <TextBlock Text="3" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11" FontWeight="Bold" Foreground="{StaticResource BrushTextOnAccent}"/>
                                 </Border>
                                 <TextBlock Text="Parameters" Style="{StaticResource StepLabel}" Margin="6,0,0,0" Foreground="{StaticResource BrushTextOnDark}"/>
                             </StackPanel>
@@ -203,7 +203,7 @@ Changes vs V004 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                             </Style.Triggers>
                                         </Style>
                                     </Border.Style>
-                                    <TextBlock Text="4" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11" FontWeight="Bold" Foreground="White"/>
+                                    <TextBlock Text="4" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11" FontWeight="Bold" Foreground="{StaticResource BrushTextOnAccent}"/>
                                 </Border>
                                 <TextBlock Text="Review &amp; Run" Style="{StaticResource StepLabel}" Margin="6,0,0,0" Foreground="{StaticResource BrushTextOnDark}"/>
                             </StackPanel>
@@ -306,9 +306,9 @@ Changes vs V004 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                             <Border Background="{StaticResource BrushNavyPrimary}" CornerRadius="10"
                                                     Padding="8,3" Margin="0,0,6,6">
                                                 <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Text="{Binding Name}" Foreground="White" FontSize="11"/>
+                                                    <TextBlock Text="{Binding Name}" Foreground="{StaticResource BrushTextOnAccent}" FontSize="11"/>
                                                     <Button Content="✕" Margin="6,0,0,0" Background="Transparent"
-                                                            BorderThickness="0" Foreground="White" Cursor="Hand"
+                                                            BorderThickness="0" Foreground="{StaticResource BrushTextOnAccent}" Cursor="Hand"
                                                             FontSize="9"
                                                             Command="{Binding DataContext.RemoveCategoryCommand,
                                                                       RelativeSource={RelativeSource AncestorType=Window}}"

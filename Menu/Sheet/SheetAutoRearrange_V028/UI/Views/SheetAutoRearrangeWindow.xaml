@@ -80,7 +80,7 @@ Changes vs V027 (layout only):
                  Binding, just not inside Style.Triggers), using
                  StrategySelectedBrushConverter. -->
             <Style x:Key="StrategySegmentButton" TargetType="Button">
-                <Setter Property="Background" Value="White"/>
+                <Setter Property="Background" Value="{StaticResource BrushCardBackground}"/>
                 <Setter Property="BorderBrush" Value="{StaticResource BrushCardBorder}"/>
                 <Setter Property="BorderThickness" Value="1.5"/>
                 <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}"/>

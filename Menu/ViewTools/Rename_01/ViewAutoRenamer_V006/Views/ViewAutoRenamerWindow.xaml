@@ -155,7 +155,7 @@ Changes vs V005 (layout only):
                                         <Border Margin="6,0,0,0" CornerRadius="8" Background="{StaticResource BrushSystemAccent}"
                                                 Padding="6,0" VerticalAlignment="Center"
                                                 Visibility="{Binding HasActiveFilters, Converter={StaticResource BoolToVisibilityConverter}}">
-                                            <TextBlock Text="{Binding ActiveFilterCount}" FontSize="9.5" FontWeight="Bold" Foreground="White"/>
+                                            <TextBlock Text="{Binding ActiveFilterCount}" FontSize="9.5" FontWeight="Bold" Foreground="{StaticResource BrushTextOnAccent}"/>
                                         </Border>
                                     </StackPanel>
                                 </Button>
@@ -197,7 +197,7 @@ Changes vs V005 (layout only):
                                    PlacementTarget="{Binding ElementName=ViewsGridControl}"
                                    Placement="Relative" HorizontalOffset="12" VerticalOffset="8"
                                    StaysOpen="False" AllowsTransparency="True" Width="340">
-                                <Border Background="White" BorderBrush="{StaticResource BrushCardBorder}" BorderThickness="1"
+                                <Border Background="{StaticResource BrushCardBackground}" BorderBrush="{StaticResource BrushCardBorder}" BorderThickness="1"
                                         CornerRadius="8">
                                     <Border.Effect>
                                         <DropShadowEffect Opacity="0.18" BlurRadius="24" ShadowDepth="4"/>

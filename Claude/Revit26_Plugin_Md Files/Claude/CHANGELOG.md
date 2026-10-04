@@ -358,6 +358,11 @@ period rather than trusting a reconstruction here.
   `IsBusy` (indeterminate) + Export Log, Run / Close. ViewModel gains
   `Progress` / `SummaryText` (not yet set). Ribbon pulldown: V026, V027,
   V028, V025 (V024 removed from the ribbon; folder kept).
+- Named colours (per Rafi, 2026-10-04): every `White` in the migrated
+  windows now uses SharedStyles — text/fills on accent backgrounds →
+  new `BrushTextOnAccent` (#FFFFFF), white panel backgrounds →
+  `BrushCardBackground` (#FFFFFF). 34 uses in 11 windows; no visual
+  change. `Transparent` left as is.
 
 ## 2026-10-04 — Dimensions
 

@@ -102,7 +102,7 @@ Changes vs V002 (layout only):
             <Style x:Key="StageNumberText" TargetType="TextBlock">
                 <Setter Property="FontSize" Value="12"/>
                 <Setter Property="FontWeight" Value="SemiBold"/>
-                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="Foreground" Value="{StaticResource BrushTextOnAccent}"/>
                 <Setter Property="HorizontalAlignment" Value="Center"/>
                 <Setter Property="VerticalAlignment" Value="Center"/>
             </Style>
@@ -503,7 +503,7 @@ Changes vs V002 (layout only):
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding PlacementFilter}" Value="All">
                                                                 <Setter Property="Background" Value="{StaticResource BrushNavyPrimary}"/>
-                                                                <Setter Property="Foreground" Value="White"/>
+                                                                <Setter Property="Foreground" Value="{StaticResource BrushTextOnAccent}"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -516,7 +516,7 @@ Changes vs V002 (layout only):
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding PlacementFilter}" Value="Placed">
                                                                 <Setter Property="Background" Value="{StaticResource BrushNavyPrimary}"/>
-                                                                <Setter Property="Foreground" Value="White"/>
+                                                                <Setter Property="Foreground" Value="{StaticResource BrushTextOnAccent}"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -529,7 +529,7 @@ Changes vs V002 (layout only):
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding PlacementFilter}" Value="NotPlaced">
                                                                 <Setter Property="Background" Value="{StaticResource BrushNavyPrimary}"/>
-                                                                <Setter Property="Foreground" Value="White"/>
+                                                                <Setter Property="Foreground" Value="{StaticResource BrushTextOnAccent}"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -1000,7 +1000,7 @@ Changes vs V002 (layout only):
                                                 BorderBrush="{StaticResource BrushSeparator}" BorderThickness="1"
                                                 CornerRadius="8" Padding="20" HorizontalAlignment="Center">
                                             <Border Width="{Binding PreviewSheetWidthPx}" Height="{Binding PreviewSheetHeightPx}"
-                                                    Background="White" BorderBrush="{StaticResource BrushTextTertiary}" BorderThickness="1.5">
+                                                    Background="{StaticResource BrushCardBackground}" BorderBrush="{StaticResource BrushTextTertiary}" BorderThickness="1.5">
                                                 <Canvas>
                                                     <!-- Usable-area outline (post-margin) -->
                                                     <Border Canvas.Left="{Binding PreviewUsableLeftPx}" Canvas.Top="{Binding PreviewUsableTopPx}"

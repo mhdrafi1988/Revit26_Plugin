@@ -170,7 +170,7 @@ Changes vs V323 (layout only):
                                     CornerRadius="5" Margin="0,0,0,6" Padding="1">
                                 <UniformGrid Columns="3">
                                     <Button x:Name="FilterAllButton" Content="All" Height="22" FontSize="10"
-                                            Background="{StaticResource BrushNavyPrimary}" Foreground="White"
+                                            Background="{StaticResource BrushNavyPrimary}" Foreground="{StaticResource BrushTextOnAccent}"
                                             BorderThickness="0" Click="FilterAll_Click"/>
                                     <Button x:Name="FilterPlacedButton" Content="Placed" Height="22" FontSize="10"
                                             Background="Transparent" Foreground="{StaticResource BrushTextPrimary}"
