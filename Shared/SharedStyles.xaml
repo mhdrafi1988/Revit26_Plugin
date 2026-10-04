@@ -125,6 +125,16 @@
     <Color x:Key="BannerWarningBorder">#E8B84A</Color>
     <Color x:Key="BannerWarningText">#7A4F00</Color>
 
+    <!-- Import status pills + dark row-detail text (v3.1, from RoofTypeCreator) -->
+    <Color x:Key="PillNewBackground">#E3F2FD</Color>
+    <Color x:Key="PillNewText">#1565C0</Color>
+    <Color x:Key="PillDupBackground">#FFF3E0</Color>
+    <Color x:Key="PillDupText">#E65100</Color>
+    <Color x:Key="PillRenamedBackground">#F3E5F5</Color>
+    <Color x:Key="PillRenamedText">#7B1FA2</Color>
+    <Color x:Key="DetailMutedText">#888888</Color>
+    <Color x:Key="DetailValueText">#DDDDDD</Color>
+
     <!-- ═══════════════════════════════════════════════════════════
          SOLID COLOR BRUSHES
     ═══════════════════════════════════════════════════════════ -->
@@ -214,6 +224,14 @@
     <SolidColorBrush x:Key="BrushBannerWarningBackground"        Color="{StaticResource BannerWarningBackground}"/>
     <SolidColorBrush x:Key="BrushBannerWarningBorder"            Color="{StaticResource BannerWarningBorder}"/>
     <SolidColorBrush x:Key="BrushBannerWarningText"              Color="{StaticResource BannerWarningText}"/>
+    <SolidColorBrush x:Key="BrushPillNewBackground"            Color="{StaticResource PillNewBackground}"/>
+    <SolidColorBrush x:Key="BrushPillNewText"                  Color="{StaticResource PillNewText}"/>
+    <SolidColorBrush x:Key="BrushPillDupBackground"            Color="{StaticResource PillDupBackground}"/>
+    <SolidColorBrush x:Key="BrushPillDupText"                  Color="{StaticResource PillDupText}"/>
+    <SolidColorBrush x:Key="BrushPillRenamedBackground"        Color="{StaticResource PillRenamedBackground}"/>
+    <SolidColorBrush x:Key="BrushPillRenamedText"              Color="{StaticResource PillRenamedText}"/>
+    <SolidColorBrush x:Key="BrushDetailMutedText"              Color="{StaticResource DetailMutedText}"/>
+    <SolidColorBrush x:Key="BrushDetailValueText"              Color="{StaticResource DetailValueText}"/>
 
 
     <!-- ═══════════════════════════════════════════════════════════

@@ -214,6 +214,15 @@ period rather than trusting a reconstruction here.
   grid in the body; same status strip. Grids and log capped. ViewModel
   gains `Progress`. Ribbon pulldown: V005, V006, V007, V004, V003 (V002
   removed from the ribbon; folder kept).
+- SharedStyles: `BrushPill{New,Dup,Renamed}{Background,Text}` and
+  `BrushDetail{Muted,Value}Text` (from RoofTypeCreator V002's inline
+  colours).
+- RoofTypeCreator V003 on the shell. Header: metric cards. Body: Export /
+  Import tabs (both grids capped), Operation Log (moved from the footer)
+  with its completion bar. Footer: status strip on `IsBusy`
+  (indeterminate) + Close. ViewModel gains `Progress` / `SummaryText`
+  (not yet set). Ribbon pulldown: V002, V003 (V001 removed from the
+  ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 

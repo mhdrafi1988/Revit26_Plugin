@@ -153,20 +153,20 @@ namespace Revit26_Plugin.Menu.Ribbon
             const string typeManagerDetail =
                 "Export roof type definitions to Excel (type mark, function, compound-structure layers) " +
                 "and re-import them into the model. Modeless — stays open while you work.";
-            var typeManagerV001 = Btn(assemblyPath, "Btn_RoofTypeManager_V001", "Roof Type Manager V001", "Revit26_Plugin.RoofTypeCreator.V001.Commands.RoofTypeManagerCommand",
-                "CreateRoofromLInes_16.png", "Roof Type Manager", "V001", typeManagerDetail);
             var typeManagerV002 = Btn(assemblyPath, "Btn_RoofTypeManager_V002", "Roof Type Manager V002", "Revit26_Plugin.RoofTypeCreator.V002.Commands.RoofTypeManagerCommand",
-                "CreateRoofromLInes_16.png", "Roof Type Manager", "V002", "V001 with the standard three-zone window layout.");
+                "CreateRoofromLInes_16.png", "Roof Type Manager", "V002", typeManagerDetail + " Standard three-zone window layout.");
+            var typeManagerV003 = Btn(assemblyPath, "Btn_RoofTypeManager_V003", "Roof Type Manager V003", "Revit26_Plugin.RoofTypeCreator.V003.Commands.RoofTypeManagerCommand",
+                "CreateRoofromLInes_16.png", "Roof Type Manager", "V003", "V002 on the shared ToolWindowShell (log in body, capped grids).");
 
             var utilitiesItems = RibbonLayoutHelper.AddStackedButtons(utilitiesPanel, new List<RibbonItemData>
             {
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_CombinedRoofTools", "Combined Roof Tools", combinedV001),
                 ridgeLinesPulldownData,
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofTypeManager", "Roof Type Manager", typeManagerV001),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofTypeManager", "Roof Type Manager", typeManagerV002),
             });
             RibbonLayoutHelper.WirePulldownButton(utilitiesItems, "Pulldown_CombinedRoofTools", combinedV001, combinedV002);
             RibbonLayoutHelper.WirePulldownButton(utilitiesItems, "Pulldown_RoofRidgeLines", ridgeLinesMultiShapeV069, ridgeLinesMultiShapeV070, ridgeLinesByPointsV058, ridgeLinesByPointsV059);
-            RibbonLayoutHelper.WirePulldownButton(utilitiesItems, "Pulldown_RoofTypeManager", typeManagerV001, typeManagerV002);
+            RibbonLayoutHelper.WirePulldownButton(utilitiesItems, "Pulldown_RoofTypeManager", typeManagerV002, typeManagerV003);
 
             // Compare
             RibbonPanel comparePanel = app.CreateRibbonPanel(tabName, "Compare");
