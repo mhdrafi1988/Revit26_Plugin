@@ -339,6 +339,14 @@ period rather than trusting a reconstruction here.
   Footer: status strip bound to existing `IsBusy` / `ProgressPercent` /
   `ProgressDetailText` + Export Logs / Close. No ViewModel change. Ribbon
   pulldown: V222, V223, V224 (V221 removed from the ribbon; folder kept).
+- AutomatedSectionPlacer V003 on the shell (folder
+  `AutomatedSectionPlacer_V003/AutomatedSectionPlacer_V003`) — same
+  mapping as SmartViewToSheetPlacer V224: header pinned metrics; body
+  accordion stages, progress card (own bar dropped) and activity log
+  (moved from the footer); grids ratio-capped; footer status strip on
+  `IsBusy` / `ProgressPercent` / `ProgressDetailText` + Export Logs /
+  Close. No ViewModel change. Ribbon pulldown: V002, V003 (V001 removed
+  from the ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 

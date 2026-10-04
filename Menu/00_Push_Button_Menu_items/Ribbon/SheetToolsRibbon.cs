@@ -50,23 +50,22 @@ namespace Revit26_Plugin.Menu.Ribbon
             // version) — detects section views visible on the active Plan View and
             // runs them through the same packing/placement pipeline.
             // TODO: swap for a dedicated icon — temporarily reusing the Sheet Placer icon.
-            var autoSectionPlacerV001 = new PushButtonData("Btn_AutomatedSectionPlacer_V001", "Auto Section Placer V001", assemblyPath, "Revit26_Plugin.AutomatedSectionPlacer.V001.AutomatedSectionPlacerCommand")
-            {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SmartViewToSheetPlacer_V222_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("Automated Section Placer", "V001",
-                    "Detects section views visible on the active Plan View and places them onto new or existing sheets")
-            };
             var autoSectionPlacerV002 = new PushButtonData("Btn_AutomatedSectionPlacer_V002", "Auto Section Placer V002", assemblyPath, "Revit26_Plugin.AutomatedSectionPlacer.V002.AutomatedSectionPlacerCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SmartViewToSheetPlacer_V222_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Automated Section Placer", "V002", "UI Standard layout: fixed footer with the Activity Log (Copy All / Copy Selected), Export Logs and Close.")
             };
-            var autoSectionPlacerPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_AutomatedSectionPlacer", "Auto Section Placer", autoSectionPlacerV001);
+            var autoSectionPlacerV003 = new PushButtonData("Btn_AutomatedSectionPlacer_V003", "Auto Section Placer V003", assemblyPath, "Revit26_Plugin.AutomatedSectionPlacer.V003.AutomatedSectionPlacerCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SmartViewToSheetPlacer_V222_16.png"),
+                ToolTip = RibbonLayoutHelper.VersionTip("Automated Section Placer", "V003", "V002 on the shared ToolWindowShell (progress and log in body, capped grids).")
+            };
+            var autoSectionPlacerPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_AutomatedSectionPlacer", "Auto Section Placer", autoSectionPlacerV002);
 
             var sheetCreateItems = RibbonLayoutHelper.AddStackedButtons(createPanel, new List<RibbonItemData> { scopeBoxPulldownData, sheetPlacerPulldownData, autoSectionPlacerPulldownData });
             RibbonLayoutHelper.WirePulldownButton(sheetCreateItems, "Pulldown_PlanFromScopeBox", scopeBoxV004, scopeBoxV005, scopeBoxV006);
             RibbonLayoutHelper.WirePulldownButton(sheetCreateItems, "Pulldown_SmartViewToSheetPlacer", sheetPlacerV222, sheetPlacerV223, sheetPlacerV224);
-            RibbonLayoutHelper.WirePulldownButton(sheetCreateItems, "Pulldown_AutomatedSectionPlacer", autoSectionPlacerV001, autoSectionPlacerV002);
+            RibbonLayoutHelper.WirePulldownButton(sheetCreateItems, "Pulldown_AutomatedSectionPlacer", autoSectionPlacerV002, autoSectionPlacerV003);
 
             RibbonPanel placePanel = app.CreateRibbonPanel(tabName, "Sheet Place");
 
