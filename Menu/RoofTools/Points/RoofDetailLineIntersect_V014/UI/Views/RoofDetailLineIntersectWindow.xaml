@@ -41,6 +41,7 @@ Changes vs V013 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                            Subtitle="Curves · Endpoints · Shape Points · Line×Line"
                            Version="V014"
                            IsRunning="{Binding IsBusy}"
+                           IsIndeterminate="True"
                            Progress="{Binding Progress}"
                            SummaryText="{Binding SummaryText}">
 

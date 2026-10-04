@@ -116,6 +116,10 @@ period rather than trusting a reconstruction here.
   the status strip (`SummaryText`), indeterminate on `IsBusy`. ViewModel
   gains `Progress`; tool title constant bumped to V004. Ribbon pulldown:
   V002, V003, V004 (V001 removed from the ribbon; folder kept).
+- Earlier migrations whose busy flag has no percentage (DetailLineClosedLoop
+  V003, DtlLineDim V010, RoofDetailLineIntersect V014, CreaserAdv V012,
+  CompareRoofs V005, RoofPointComparison V003) now set
+  `IsIndeterminate="True"` so the status-strip bar animates while running.
 
 ## 2026-10-04 — Dimensions
 

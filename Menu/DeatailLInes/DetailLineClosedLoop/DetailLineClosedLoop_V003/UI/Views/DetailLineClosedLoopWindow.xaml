@@ -37,6 +37,7 @@ Changes vs V002 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                            Subtitle="Trim, merge &amp; close a detail-line boundary"
                            Version="V003"
                            IsRunning="{Binding IsBusy}"
+                           IsIndeterminate="True"
                            Progress="{Binding Progress}"
                            SummaryText="{Binding RunSummary}">
 

@@ -36,6 +36,7 @@ Changes vs V009 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
     <shell:ToolWindowShell Title="Detail Line Dimension"
                            Version="V010"
                            IsRunning="{Binding IsBusy}"
+                           IsIndeterminate="True"
                            Progress="{Binding Progress}"
                            SummaryText="{Binding RunSummary}">
 

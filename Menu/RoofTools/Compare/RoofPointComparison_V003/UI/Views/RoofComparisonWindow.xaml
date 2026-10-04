@@ -46,6 +46,7 @@ Changes vs V002 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                            Subtitle="Shape-point position and elevation comparison between Roof A and Roof B"
                            Version="V003"
                            IsRunning="{Binding IsBusy}"
+                           IsIndeterminate="True"
                            Progress="{Binding Progress}"
                            SummaryText="{Binding StatusMessage}">
 
