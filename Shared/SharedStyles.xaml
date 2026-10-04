@@ -144,6 +144,7 @@
     <Color x:Key="PillNotTaggableBackground">#FBEAE9</Color>
     <Color x:Key="PillPlacedBackground">#EAF6F0</Color>        <!-- CalloutCOP placed pill -->
     <Color x:Key="PillPlacedText">#1F6B45</Color>
+    <Color x:Key="RowUnmappedBackground">#FBEAEA</Color>       <!-- FloorsAndRoofFromLinkedRooms unmapped level cell -->
 
     <!-- ═══════════════════════════════════════════════════════════
          SOLID COLOR BRUSHES
@@ -250,6 +251,7 @@
     <SolidColorBrush x:Key="BrushPillNotTaggableBackground" Color="{StaticResource PillNotTaggableBackground}"/>
     <SolidColorBrush x:Key="BrushPillPlacedBackground"      Color="{StaticResource PillPlacedBackground}"/>
     <SolidColorBrush x:Key="BrushPillPlacedText"            Color="{StaticResource PillPlacedText}"/>
+    <SolidColorBrush x:Key="BrushRowUnmappedBackground"     Color="{StaticResource RowUnmappedBackground}"/>
 
 
     <!-- ═══════════════════════════════════════════════════════════

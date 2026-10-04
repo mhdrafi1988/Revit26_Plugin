@@ -311,6 +311,16 @@ period rather than trusting a reconstruction here.
   / `ProgressStatusText` (replaces the footer progress block) + Cancel /
   Run / Close. No ViewModel change. Ribbon pulldown: V014, V015 (V013
   removed from the ribbon; folder kept).
+- SharedStyles: `BrushRowUnmappedBackground` (from
+  FloorsAndRoofFromLinkedRooms V012's unmapped-level cell).
+- FloorsAndRoofFromLinkedRooms V013 on the shell. Header: metrics card.
+  Body: room grid (capped) / options pane (own ScrollViewer removed),
+  floor/roof summaries + toast and activity log (both moved from the
+  footer). Footer: status strip on `IsBusy` / computed `Progress` /
+  `ProgressText` (replaces the footer progress bar) + Cancel Run, Create
+  Floors / Create Roof / Close. ViewModel gains computed `Progress`.
+  Ribbon pulldown: V012, V013, PlanView V005, PlanView V006 (V011 removed
+  from the ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 
