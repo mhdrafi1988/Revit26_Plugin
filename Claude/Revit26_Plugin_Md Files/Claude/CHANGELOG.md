@@ -223,6 +223,15 @@ period rather than trusting a reconstruction here.
   (indeterminate) + Close. ViewModel gains `Progress` / `SummaryText`
   (not yet set). Ribbon pulldown: V002, V003 (V001 removed from the
   ribbon; folder kept).
+- SharedStyles: `BrushSoft{Success,Warning,Danger}Background` (from
+  CreateSections V012's status pills).
+- CreateSections V013 on the shell. Header: metric cards. Body: settings
+  (left pane's own ScrollViewer removed; View Crop still collapsed) /
+  Sections To Create grid (capped), then the Live Log (moved from the
+  footer; still open). Footer: status strip on `IsRunning`
+  (indeterminate) + Create / Close. ViewModel gains `Progress` /
+  `SummaryText` (not yet set). Ribbon pulldown: V012, V013 (V011 removed
+  from the ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 

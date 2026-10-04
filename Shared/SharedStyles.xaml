@@ -135,6 +135,11 @@
     <Color x:Key="DetailMutedText">#888888</Color>
     <Color x:Key="DetailValueText">#DDDDDD</Color>
 
+    <!-- Soft status-pill backgrounds (v3.1, from CreateSections) -->
+    <Color x:Key="SoftSuccessBackground">#E4F5EC</Color>
+    <Color x:Key="SoftWarningBackground">#FDF1E1</Color>
+    <Color x:Key="SoftDangerBackground">#FBE8E7</Color>
+
     <!-- ═══════════════════════════════════════════════════════════
          SOLID COLOR BRUSHES
     ═══════════════════════════════════════════════════════════ -->
@@ -232,6 +237,9 @@
     <SolidColorBrush x:Key="BrushPillRenamedText"              Color="{StaticResource PillRenamedText}"/>
     <SolidColorBrush x:Key="BrushDetailMutedText"              Color="{StaticResource DetailMutedText}"/>
     <SolidColorBrush x:Key="BrushDetailValueText"              Color="{StaticResource DetailValueText}"/>
+    <SolidColorBrush x:Key="BrushSoftSuccessBackground"        Color="{StaticResource SoftSuccessBackground}"/>
+    <SolidColorBrush x:Key="BrushSoftWarningBackground"        Color="{StaticResource SoftWarningBackground}"/>
+    <SolidColorBrush x:Key="BrushSoftDangerBackground"         Color="{StaticResource SoftDangerBackground}"/>
 
 
     <!-- ═══════════════════════════════════════════════════════════
