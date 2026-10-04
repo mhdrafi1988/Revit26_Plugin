@@ -147,6 +147,11 @@
     <Color x:Key="RowUnmappedBackground">#FBEAEA</Color>       <!-- FloorsAndRoofFromLinkedRooms unmapped level cell -->
     <Color x:Key="StageCompleteBackground">#E4F3EA</Color>     <!-- SmartViewToSheetPlacer stage badge / no-fit sheet -->
     <Color x:Key="SheetNoFitBackground">#FDEBEA</Color>
+    <Color x:Key="BannerInfoBackground">#EAF1FC</Color>        <!-- SheetAutoRearrange info / note banners -->
+    <Color x:Key="BannerInfoBorder">#B9CFF2</Color>
+    <Color x:Key="BannerNoteBackground">#FFF8E6</Color>
+    <Color x:Key="BannerNoteBorder">#E8D08A</Color>
+    <Color x:Key="BannerNoteText">#6B5416</Color>
 
     <!-- ═══════════════════════════════════════════════════════════
          SOLID COLOR BRUSHES
@@ -256,6 +261,11 @@
     <SolidColorBrush x:Key="BrushRowUnmappedBackground"     Color="{StaticResource RowUnmappedBackground}"/>
     <SolidColorBrush x:Key="BrushStageCompleteBackground"   Color="{StaticResource StageCompleteBackground}"/>
     <SolidColorBrush x:Key="BrushSheetNoFitBackground"      Color="{StaticResource SheetNoFitBackground}"/>
+    <SolidColorBrush x:Key="BrushBannerInfoBackground"         Color="{StaticResource BannerInfoBackground}"/>
+    <SolidColorBrush x:Key="BrushBannerInfoBorder"             Color="{StaticResource BannerInfoBorder}"/>
+    <SolidColorBrush x:Key="BrushBannerNoteBackground"         Color="{StaticResource BannerNoteBackground}"/>
+    <SolidColorBrush x:Key="BrushBannerNoteBorder"             Color="{StaticResource BannerNoteBorder}"/>
+    <SolidColorBrush x:Key="BrushBannerNoteText"               Color="{StaticResource BannerNoteText}"/>
 
 
     <!-- ═══════════════════════════════════════════════════════════

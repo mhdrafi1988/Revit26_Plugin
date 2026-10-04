@@ -347,6 +347,17 @@ period rather than trusting a reconstruction here.
   `IsBusy` / `ProgressPercent` / `ProgressDetailText` + Export Logs /
   Close. No ViewModel change. Ribbon pulldown: V002, V003 (V001 removed
   from the ribbon; folder kept).
+- SharedStyles: `BrushBannerInfo{Background,Border}`,
+  `BrushBannerNote{Background,Border,Text}` (from SheetAutoRearrange
+  V027's banners).
+- SheetAutoRearrange V028 on the shell. Header: active-sheet chip (moved
+  from the title bar, now a `BadgePill`) + metric cards. Body: views grid
+  (capped) / settings expanders (ViewModel-bound state unchanged; column
+  ScrollViewer removed; priority-groups list capped), then the activity
+  log and saved-log path (moved from the footer). Footer: status strip on
+  `IsBusy` (indeterminate) + Export Log, Run / Close. ViewModel gains
+  `Progress` / `SummaryText` (not yet set). Ribbon pulldown: V026, V027,
+  V028, V025 (V024 removed from the ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 
