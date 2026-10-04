@@ -6,113 +6,118 @@ namespace Revit26_Plugin.Menu.Ribbon
 {
     public static class ViewToolsRibbon
     {
+        // Every View Tools button is a pulldown: the current version first, the
+        // UI-standard rebuild (Revit_Plugin_UI_Standard.md layout) second.
+        private const string Icons = "Revit26_Plugin.Resources.Icons.ViewTools.";
+        private const string Rebuilt = " with the standard three-zone window layout.";
+
+        private static PushButtonData Btn(string assemblyPath, string name, string text, string commandClass,
+                                          string icon, string tool, string version, string detail = null)
+        {
+            return new PushButtonData(name, text, assemblyPath, commandClass)
+            {
+                Image = ImageUtils.Load(Icons + icon),
+                ToolTip = RibbonLayoutHelper.VersionTip(tool, version, detail)
+            };
+        }
+
         public static void Build(UIControlledApplication app, string tabName, string assemblyPath)
         {
             RibbonPanel createPanel = app.CreateRibbonPanel(tabName, "View Create");
 
-            // Coexisting implementations of the same tool are collected under
-            // one pulldown button — no default click, the list always shows.
-            // The newest version of each tool supplies the pulldown's own icon.
-            // Edge Around is down to its current version (V005); it stays in a
-            // pulldown so a future version can be added beside it. Edge Element
-            // keeps V002 and V001.
-            var edgeAroundV005 = new PushButtonData("Btn_RoofEdgeAroundSections_V005", "Section Around Edges", assemblyPath, "Revit26_Plugin.RoofEdgeAroundSections.V005.RoofEdgeAroundSectionsCommand")
-            {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofEdgeAroundSections_V005_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("Roof Edge Around Sections", "V005")
-            };
-            var edgeAroundPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofEdgeAroundSections", "Section Around Edges", edgeAroundV005);
+            var sectionsFromLinesV011 = Btn(assemblyPath, "Btn_ Sections From Detail Lines V11", "Sections From Lines V011", "Revit26_Plugin.CreateSections.V011.Commands.CreateSectionsFromDetailLines",
+                "SectionsFromDetailLines_16.png", "Create Sections From Detail Lines", "V011");
+            var sectionsFromLinesV012 = Btn(assemblyPath, "Btn_SectionsFromDetailLines_V012", "Sections From Lines V012", "Revit26_Plugin.CreateSections.V012.Commands.CreateSectionsFromDetailLines",
+                "SectionsFromDetailLines_16.png", "Create Sections From Detail Lines", "V012", "V011" + Rebuilt);
 
-            var edgeElementV002 = new PushButtonData("Btn_RoofEdgeElementSections_V002", "Edge Element V002", assemblyPath, "Revit26_Plugin.RoofEdgeElementSections.V002.RoofEdgeElementSectionsCommand")
-            {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofEdgeElementSections_V002_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("Roof Edge Element Sections", "V002")
-            };
-            var edgeElementV001 = new PushButtonData("Btn_RoofEdgeElementSections_V001", "Edge Element V001", assemblyPath, "Revit26_Plugin.RoofEdgeElementSections.V001.RoofEdgeElementSectionsCommand")
-            {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofEdgeElementSections_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("Roof Edge Element Sections", "V001")
-            };
-            var edgeElementPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofEdgeElementSections", "Edge Element", edgeElementV002);
+            var edgeAroundV005 = Btn(assemblyPath, "Btn_RoofEdgeAroundSections_V005", "Section Around Edges V005", "Revit26_Plugin.RoofEdgeAroundSections.V005.RoofEdgeAroundSectionsCommand",
+                "RoofEdgeAroundSections_V005_16.png", "Roof Edge Around Sections", "V005");
+            var edgeAroundV006 = Btn(assemblyPath, "Btn_RoofEdgeAroundSections_V006", "Section Around Edges V006", "Revit26_Plugin.RoofEdgeAroundSections.V006.RoofEdgeAroundSectionsCommand",
+                "RoofEdgeAroundSections_V005_16.png", "Roof Edge Around Sections", "V006", "V005" + Rebuilt);
 
-            var roofViewFocusV002 = new PushButtonData("Btn_RoofViewFocus_V002", "Roof View Focus V002", assemblyPath, "Revit26_Plugin.RoofViewFocus.V002.Commands.RoofViewFocusCommand")
-            {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofViewFocus_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("Roof View Focus", "V002", "Crops the active plan view to the selected roofs.")
-            };
-            var roofViewFocusV001 = new PushButtonData("Btn_RoofViewFocus_V001", "Roof View Focus V001", assemblyPath, "Revit26_Plugin.RoofViewFocus.V001.Commands.RoofViewFocusCommand")
-            {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RoofViewFocus_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("Roof View Focus", "V001", "Crops the active plan view to the selected roofs.")
-            };
-            var roofViewFocusPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofViewFocus", "Roof View Focus", roofViewFocusV002);
+            var edgeElementV002 = Btn(assemblyPath, "Btn_RoofEdgeElementSections_V002", "Edge Element V002", "Revit26_Plugin.RoofEdgeElementSections.V002.RoofEdgeElementSectionsCommand",
+                "RoofEdgeElementSections_V002_16.png", "Roof Edge Element Sections", "V002");
+            var edgeElementV003 = Btn(assemblyPath, "Btn_RoofEdgeElementSections_V003", "Edge Element V003", "Revit26_Plugin.RoofEdgeElementSections.V003.RoofEdgeElementSectionsCommand",
+                "RoofEdgeElementSections_V002_16.png", "Roof Edge Element Sections", "V003", "V002" + Rebuilt);
+            var edgeElementV001 = Btn(assemblyPath, "Btn_RoofEdgeElementSections_V001", "Edge Element V001", "Revit26_Plugin.RoofEdgeElementSections.V001.RoofEdgeElementSectionsCommand",
+                "RoofEdgeElementSections_16.png", "Roof Edge Element Sections", "V001");
+
+            var roofViewFocusV002 = Btn(assemblyPath, "Btn_RoofViewFocus_V002", "Roof View Focus V002", "Revit26_Plugin.RoofViewFocus.V002.Commands.RoofViewFocusCommand",
+                "RoofViewFocus_16.png", "Roof View Focus", "V002", "Crops the active plan view to the selected roofs.");
+            var roofViewFocusV003 = Btn(assemblyPath, "Btn_RoofViewFocus_V003", "Roof View Focus V003", "Revit26_Plugin.RoofViewFocus.V003.Commands.RoofViewFocusCommand",
+                "RoofViewFocus_16.png", "Roof View Focus", "V003", "V002" + Rebuilt);
+            var roofViewFocusV001 = Btn(assemblyPath, "Btn_RoofViewFocus_V001", "Roof View Focus V001", "Revit26_Plugin.RoofViewFocus.V001.Commands.RoofViewFocusCommand",
+                "RoofViewFocus_16.png", "Roof View Focus", "V001", "Crops the active plan view to the selected roofs.");
 
             // Pulldown buttons, unlike split buttons, are fine in a 4-item
             // stack — so this is one call instead of a stack-of-2 + stack-of-2.
             var createItems = RibbonLayoutHelper.AddStackedButtons(createPanel, new List<RibbonItemData>
             {
-                new PushButtonData("Btn_ Sections From Detail Lines V11", "Sections From Lines", assemblyPath, "Revit26_Plugin.CreateSections.V011.Commands.CreateSectionsFromDetailLines")
-                {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.SectionsFromDetailLines_16.png"),
-                    ToolTip = RibbonLayoutHelper.VersionTip("Create Sections From Detail Lines", "V011")
-                },
-                edgeAroundPulldownData,
-                edgeElementPulldownData,
-                roofViewFocusPulldownData,
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_SectionsFromDetailLines", "Sections From Lines", sectionsFromLinesV011),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofEdgeAroundSections", "Section Around Edges", edgeAroundV005),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofEdgeElementSections", "Edge Element", edgeElementV002),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofViewFocus", "Roof View Focus", roofViewFocusV002),
             });
-            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeAroundSections", edgeAroundV005);
-            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeElementSections", edgeElementV002, edgeElementV001);
-            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofViewFocus", roofViewFocusV002, roofViewFocusV001);
+            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_SectionsFromDetailLines", sectionsFromLinesV011, sectionsFromLinesV012);
+            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeAroundSections", edgeAroundV005, edgeAroundV006);
+            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeElementSections", edgeElementV002, edgeElementV003, edgeElementV001);
+            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofViewFocus", roofViewFocusV002, roofViewFocusV003, roofViewFocusV001);
 
             RibbonPanel placePanel = app.CreateRibbonPanel(tabName, "View Place");
-            RibbonLayoutHelper.AddStackedButtons(placePanel, new List<RibbonItemData>
+
+            var placeSectionsV322 = Btn(assemblyPath, "Btn_AutoPlaceSectionsCommand_V322_01", "Place Sections V322", "Revit26_Plugin.APUS.V322.Commands.AutoPlaceSectionsCommand",
+                "AutoPlaceSections_16.png", "Auto Place Sections", "V322");
+            var placeSectionsV323 = Btn(assemblyPath, "Btn_AutoPlaceSectionsCommand_V323", "Place Sections V323", "Revit26_Plugin.APUS.V323.Commands.AutoPlaceSectionsCommand",
+                "AutoPlaceSections_16.png", "Auto Place Sections", "V323", "V322" + Rebuilt);
+            var calloutV019 = Btn(assemblyPath, "Btn_CalloutToSectionViewPlacement_V019", "Callout To Section V019", "Revit26_Plugin.CalloutCOP.V019.Commands.CalloutCOPCommand",
+                "CalloutToSection_16.png", "Callout To Section View Placement", "V019");
+            var calloutV020 = Btn(assemblyPath, "Btn_CalloutToSectionViewPlacement_V020", "Callout To Section V020", "Revit26_Plugin.CalloutCOP.V020.Commands.CalloutCOPCommand",
+                "CalloutToSection_16.png", "Callout To Section View Placement", "V020", "V019" + Rebuilt);
+            var headPlacerV013 = Btn(assemblyPath, "Btn_RefSectionHeadPlacerCommand V013", "Section Head Placer V013", "Revit26_Plugin.RefSectionHeadPlacer.V013.Commands.RefSectionHeadPlacerCommand",
+                "RefSectionHeadPlacer_16.png", "Reference Section Head Placer", "V013");
+            var headPlacerV014 = Btn(assemblyPath, "Btn_RefSectionHeadPlacerCommand_V014", "Section Head Placer V014", "Revit26_Plugin.RefSectionHeadPlacer.V014.Commands.RefSectionHeadPlacerCommand",
+                "RefSectionHeadPlacer_16.png", "Reference Section Head Placer", "V014", "V013" + Rebuilt);
+            var taggerV004 = Btn(assemblyPath, "Btn_SectionViewAutoTagger.V004", "Section View Tagger V004", "Revit26_Plugin.SectionViewAutoTagger.V004.SectionViewAutoTaggerCommand",
+                "SectionAutoTagger_16.png", "Section View Auto Tagger", "V004");
+            var taggerV005 = Btn(assemblyPath, "Btn_SectionViewAutoTagger.V005", "Section View Tagger V005", "Revit26_Plugin.SectionViewAutoTagger.V005.SectionViewAutoTaggerCommand",
+                "SectionAutoTagger_16.png", "Section View Auto Tagger", "V005", "V004" + Rebuilt);
+
+            var placeItems = RibbonLayoutHelper.AddStackedButtons(placePanel, new List<RibbonItemData>
             {
-                new PushButtonData("Btn_AutoPlaceSectionsCommand_V322_01", "Place Sections", assemblyPath, "Revit26_Plugin.APUS.V322.Commands.AutoPlaceSectionsCommand")
-                {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.AutoPlaceSections_16.png"),
-                    ToolTip = RibbonLayoutHelper.VersionTip("Auto Place Sections", "V322")
-                },
-                new PushButtonData("Btn_CalloutToSectionViewPlacement_V019", "Callout To Section", assemblyPath, "Revit26_Plugin.CalloutCOP.V019.Commands.CalloutCOPCommand")
-                {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.CalloutToSection_16.png"),
-                    ToolTip = RibbonLayoutHelper.VersionTip("Callout To Section View Placement", "V019")
-                },
-                new PushButtonData("Btn_RefSectionHeadPlacerCommand V013", "Section Head Placer", assemblyPath, "Revit26_Plugin.RefSectionHeadPlacer.V013.Commands.RefSectionHeadPlacerCommand")
-                {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.RefSectionHeadPlacer_16.png"),
-                    ToolTip = RibbonLayoutHelper.VersionTip("Reference Section Head Placer", "V013")
-                },
-                new PushButtonData("Btn_SectionViewAutoTagger.V004", "Section View Tagger", assemblyPath, "Revit26_Plugin.SectionViewAutoTagger.V004.SectionViewAutoTaggerCommand")
-                {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.SectionAutoTagger_16.png"),
-                    ToolTip = RibbonLayoutHelper.VersionTip("Section View Auto Tagger", "V004")
-                },
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_AutoPlaceSections", "Place Sections", placeSectionsV322),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_CalloutToSection", "Callout To Section", calloutV019),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RefSectionHeadPlacer", "Section Head Placer", headPlacerV013),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_SectionViewAutoTagger", "Section View Tagger", taggerV004),
             });
+            RibbonLayoutHelper.WirePulldownButton(placeItems, "Pulldown_AutoPlaceSections", placeSectionsV322, placeSectionsV323);
+            RibbonLayoutHelper.WirePulldownButton(placeItems, "Pulldown_CalloutToSection", calloutV019, calloutV020);
+            RibbonLayoutHelper.WirePulldownButton(placeItems, "Pulldown_RefSectionHeadPlacer", headPlacerV013, headPlacerV014);
+            RibbonLayoutHelper.WirePulldownButton(placeItems, "Pulldown_SectionViewAutoTagger", taggerV004, taggerV005);
 
             RibbonPanel renamePanel = app.CreateRibbonPanel(tabName, "View Rename");
 
-            var autoRenamerV004 = new PushButtonData("Btn_ViewAutoRenamer_V004", "View Renamer", assemblyPath, "Revit26_Plugin.ViewAutoRenamer.V004.Commands.OpenViewAutoRenamerCommand")
-            {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.ViewAutoRenamer_V004_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("View Auto Renamer", "V004")
-            };
-            var autoRenamerPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_ViewAutoRenamer", "Auto Renamer", autoRenamerV004);
+            var bubbleV006 = Btn(assemblyPath, "Btn_BubbleAutoRenumber_V006", "Bubble Renumber V006", "Revit26_Plugin.BubbleAutoRenumber.V006.Commands.SectionAutoRenumberCommand",
+                "BubbleAutoRenumber_16.png", "Bubble Auto Renumber", "V006");
+            var bubbleV007 = Btn(assemblyPath, "Btn_BubbleAutoRenumber_V007", "Bubble Renumber V007", "Revit26_Plugin.BubbleAutoRenumber.V007.Commands.SectionAutoRenumberCommand",
+                "BubbleAutoRenumber_16.png", "Bubble Auto Renumber", "V007", "V006" + Rebuilt);
+            var sectionRenamerV024 = Btn(assemblyPath, "Btn_SectionAutoRenamer_V024", "Section Renamer V024", "Revit26_Plugin.SectionAutoRenamer.V024.Commands.OpenSectionManagerCommand",
+                "SectionAutoRenamer_16.png", "Section Auto Renamer", "V024");
+            var sectionRenamerV025 = Btn(assemblyPath, "Btn_SectionAutoRenamer_V025", "Section Renamer V025", "Revit26_Plugin.SectionAutoRenamer.V025.Commands.OpenSectionManagerCommand",
+                "SectionAutoRenamer_16.png", "Section Auto Renamer", "V025", "V024" + Rebuilt);
+            var autoRenamerV004 = Btn(assemblyPath, "Btn_ViewAutoRenamer_V004", "View Renamer V004", "Revit26_Plugin.ViewAutoRenamer.V004.Commands.OpenViewAutoRenamerCommand",
+                "ViewAutoRenamer_V004_16.png", "View Auto Renamer", "V004");
+            var autoRenamerV005 = Btn(assemblyPath, "Btn_ViewAutoRenamer_V005", "View Renamer V005", "Revit26_Plugin.ViewAutoRenamer.V005.Commands.OpenViewAutoRenamerCommand",
+                "ViewAutoRenamer_V004_16.png", "View Auto Renamer", "V005", "V004" + Rebuilt);
 
             var renameItems = RibbonLayoutHelper.AddStackedButtons(renamePanel, new List<RibbonItemData>
             {
-                new PushButtonData("Btn_BubbleAutoRenumber_V006", "Bubble Renumber", assemblyPath, "Revit26_Plugin.BubbleAutoRenumber.V006.Commands.SectionAutoRenumberCommand")
-                {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.BubbleAutoRenumber_16.png"),
-                    ToolTip = RibbonLayoutHelper.VersionTip("Bubble Auto Renumber", "V006")
-                },
-                new PushButtonData("Btn_SectionAutoRenamer_V024", "Section Renamer", assemblyPath, "Revit26_Plugin.SectionAutoRenamer.V024.Commands.OpenSectionManagerCommand")
-                {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.ViewTools.SectionAutoRenamer_16.png"),
-                    ToolTip = RibbonLayoutHelper.VersionTip("Section Auto Renamer", "V024")
-                },
-                autoRenamerPulldownData,
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_BubbleAutoRenumber", "Bubble Renumber", bubbleV006),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_SectionAutoRenamer", "Section Renamer", sectionRenamerV024),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_ViewAutoRenamer", "Auto Renamer", autoRenamerV004),
             });
-            RibbonLayoutHelper.WirePulldownButton(renameItems, "Pulldown_ViewAutoRenamer", autoRenamerV004);
+            RibbonLayoutHelper.WirePulldownButton(renameItems, "Pulldown_BubbleAutoRenumber", bubbleV006, bubbleV007);
+            RibbonLayoutHelper.WirePulldownButton(renameItems, "Pulldown_SectionAutoRenamer", sectionRenamerV024, sectionRenamerV025);
+            RibbonLayoutHelper.WirePulldownButton(renameItems, "Pulldown_ViewAutoRenamer", autoRenamerV004, autoRenamerV005);
         }
     }
 }

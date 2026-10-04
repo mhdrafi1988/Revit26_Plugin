@@ -18,6 +18,22 @@ period rather than trusting a reconstruction here.
 
 ---
 
+## 2026-10-04 — View Tools
+
+- View Tools: every live tool bumped one version as a layout-only rebuild
+  per `Revit_Plugin_UI_Standard.md` — three-zone window (fixed title bar +
+  version + metrics card, scrolling middle, fixed footer with an
+  always-visible log + Copy All / Copy Selected and Primary → Close).
+  No behaviour changes; every binding/command is the previous version's.
+  New versions: CreateSections V012, RoofEdgeAroundSections V006,
+  RoofEdgeElementSections V003, RoofViewFocus V003, APUS V323,
+  CalloutCOP V020, RefSectionHeadPlacer V014, SectionViewAutoTagger V005,
+  BubbleAutoRenumber V007, SectionAutoRenamer V025, ViewAutoRenamer V005.
+- Ribbon: every View Tools button is now a pulldown — current version
+  first, the rebuild second.
+- Shared: `Shared/Services/LogClipboardService.cs` (same file as the Roof
+  Tools PR) for Copy All / Copy Selected from window code-behind.
+
 ## 2026-09-20
 
 - Added baseline documentation set: `CLAUDE.md`, `Claude/ARCHITECTURE.md`,
