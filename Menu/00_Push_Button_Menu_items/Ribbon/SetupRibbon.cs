@@ -30,17 +30,17 @@ namespace Revit26_Plugin.Menu.Ribbon
             };
             var batchLinkPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_BatchLinkDwg", "Batch Link DWG", batchLinkWorking);
 
-            var dwgToLinesV005 = new PushButtonData("Btn_DwgToLines_V005", "DWG To Lines V005", assemblyPath, "Revit26_Plugin.DwgToLines.V005.Commands.DwgToLinesCommand")
-            {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToLines_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("DWG To Lines", "V005")
-            };
             var dwgToLinesV006 = new PushButtonData("Btn_DwgToLines_V006", "DWG To Lines V006", assemblyPath, "Revit26_Plugin.DwgToLines.V006.Commands.DwgToLinesCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToLines_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("DWG To Lines", "V006", "UI Standard layout: metrics card, always-visible footer log, Convert DWG → Close.")
             };
-            var dwgToLinesPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DwgToLines", "DWG To Lines", dwgToLinesV005);
+            var dwgToLinesV007 = new PushButtonData("Btn_DwgToLines_V007", "DWG To Lines V007", assemblyPath, "Revit26_Plugin.DwgToLines.V007.Commands.DwgToLinesCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToLines_16.png"),
+                ToolTip = RibbonLayoutHelper.VersionTip("DWG To Lines", "V007", "V006 on the shared ToolWindowShell (log in body).")
+            };
+            var dwgToLinesPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DwgToLines", "DWG To Lines", dwgToLinesV006);
 
             var familyItems = RibbonLayoutHelper.AddStackedButtons(familyPanel, new List<RibbonItemData>
             {
@@ -48,7 +48,7 @@ namespace Revit26_Plugin.Menu.Ribbon
                 dwgToLinesPulldownData,
             });
             RibbonLayoutHelper.WirePulldownButton(familyItems, "Pulldown_BatchLinkDwg", batchLinkWorking, batchLinkV002);
-            RibbonLayoutHelper.WirePulldownButton(familyItems, "Pulldown_DwgToLines", dwgToLinesV005, dwgToLinesV006);
+            RibbonLayoutHelper.WirePulldownButton(familyItems, "Pulldown_DwgToLines", dwgToLinesV006, dwgToLinesV007);
 
             RibbonPanel projectPanel = app.CreateRibbonPanel(tabName, "Project Tools");
 

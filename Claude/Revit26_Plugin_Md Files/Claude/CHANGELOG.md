@@ -100,6 +100,11 @@ period rather than trusting a reconstruction here.
   Log (moved from footer) in the body; grid and log TextBox capped.
   ViewModel gains `IsRunning` / `Progress` / `SummaryText` (not yet set).
   Ribbon pulldown: V007, V008 (V006 removed from the ribbon; folder kept).
+- DwgToLines V007 on the shell: CAD picker, placement/spline options and
+  Activity Log (moved from footer) in the body; the middle's own
+  ScrollViewer removed. ViewModel gains `IsRunning` / `Progress` /
+  `SummaryText` (not yet set). Ribbon pulldown: V006, V007 (V005 removed
+  from the ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 
