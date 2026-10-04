@@ -89,6 +89,7 @@ Rules:
   e.g. `0.45` grid / `0.25` log) and `shell:ShellBehaviors.ForwardMouseWheel="True"`.
 - No inline colours (`#RRGGBB`, named colours) in window XAML — add a
   `Color` + `Brush…` token (or a style) to `Shared/SharedStyles.xaml`.
+  `Transparent` is the one exception and stays inline (Rafi, 2026-10-04).
   Metric tiles use `MetricTile[Info|Danger|Success|Warning]` with the
   matching `MetricTileLabel…` / `MetricTileNumber…` text styles.
 - The shell's `IsRunning` / `Progress` / `SummaryText` bind to the
