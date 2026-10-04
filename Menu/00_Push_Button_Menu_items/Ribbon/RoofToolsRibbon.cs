@@ -107,15 +107,15 @@ namespace Revit26_Plugin.Menu.Ribbon
             RibbonLayoutHelper.WirePulldownButton(shapePointsItems, "Pulldown_MultiplePoints", multiPointsV002, multiPointsV003);
 
             // Ridge Lines pulldown — merged into Utilities panel below.
-            var ridgeLinesMultiShape = Btn(assemblyPath, "Btn_RoofRidgeLines_V68", "Ridge By Openings V068", "Revit26_Plugin.RoofRidgeLines.V068.Commands.RoofRidgeCommand",
-                "RidgeLinesMultiShape_16.png", "Ridge By Openings", "V068");
             var ridgeLinesMultiShapeV069 = Btn(assemblyPath, "Btn_RoofRidgeLines_V69", "Ridge By Openings V069", "Revit26_Plugin.RoofRidgeLines.V069.Commands.RoofRidgeCommand",
                 "RidgeLinesMultiShape_16.png", "Ridge By Openings", "V069", "V068 with the standard three-zone window layout.");
+            var ridgeLinesMultiShapeV070 = Btn(assemblyPath, "Btn_RoofRidgeLines_V70", "Ridge By Openings V070", "Revit26_Plugin.RoofRidgeLines.V070.Commands.RoofRidgeCommand",
+                "RidgeLinesMultiShape_16.png", "Ridge By Openings", "V070", "V069 on the shared ToolWindowShell (log in body, capped grid).");
             var ridgeLinesByPointsV058 = Btn(assemblyPath, "Btn_RoofRidgeLines_V58", "Ridge By Points V058", "Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V058.Commands.RoofRidgeCommand",
                 "RidgeLinesByPoints_16.png", "Ridge By Points", "V058", "V057 with the standard three-zone window layout.");
             var ridgeLinesByPointsV059 = Btn(assemblyPath, "Btn_RoofRidgeLines_V59", "Ridge By Points V059", "Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V059.Commands.RoofRidgeCommand",
                 "RidgeLinesByPoints_16.png", "Ridge By Points", "V059", "V058 on the shared ToolWindowShell (log in body, capped grid).");
-            var ridgeLinesPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofRidgeLines", "Ridge Lines", ridgeLinesMultiShape);
+            var ridgeLinesPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofRidgeLines", "Ridge Lines", ridgeLinesMultiShapeV069);
 
             // Slope Liner + Tag + Create — three single-tool panels merged into
             // one 3-item stack (Revit's stacked-item limit is exactly 3 per column).
@@ -169,7 +169,7 @@ namespace Revit26_Plugin.Menu.Ribbon
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofTypeManager", "Roof Type Manager", typeManagerV001),
             });
             RibbonLayoutHelper.WirePulldownButton(utilitiesItems, "Pulldown_CombinedRoofTools", combinedV001, combinedV002);
-            RibbonLayoutHelper.WirePulldownButton(utilitiesItems, "Pulldown_RoofRidgeLines", ridgeLinesMultiShape, ridgeLinesMultiShapeV069, ridgeLinesByPointsV058, ridgeLinesByPointsV059);
+            RibbonLayoutHelper.WirePulldownButton(utilitiesItems, "Pulldown_RoofRidgeLines", ridgeLinesMultiShapeV069, ridgeLinesMultiShapeV070, ridgeLinesByPointsV058, ridgeLinesByPointsV059);
             RibbonLayoutHelper.WirePulldownButton(utilitiesItems, "Pulldown_RoofTypeManager", typeManagerV001, typeManagerV002);
 
             // Compare

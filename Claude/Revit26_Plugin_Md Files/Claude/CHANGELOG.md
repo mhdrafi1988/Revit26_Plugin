@@ -128,6 +128,12 @@ period rather than trusting a reconstruction here.
   status line + small progress bar replaced by the shell status strip
   (indeterminate on `IsBusy`, `StatusMessage`). ViewModel gains
   `Progress`. Ribbon: V057 replaced by V059 in the Ridge Lines pulldown.
+- RoofRidgeLines (By Openings) V070 on the shell: inputs and drainage
+  seeds (both own ScrollViewers removed; Circles expander open,
+  Rectangles / Others closed, unchanged), validation grid and Pipeline
+  Log (moved from footer) in the body; row tints use the shared row
+  brushes. ViewModel gains `Progress`; version labels bumped to V070.
+  Ribbon: V068 replaced by V070 in the Ridge Lines pulldown.
 
 ## 2026-10-04 — Dimensions
 
