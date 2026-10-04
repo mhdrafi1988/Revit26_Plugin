@@ -65,10 +65,10 @@ namespace Revit26_Plugin.Menu.Ribbon
             // Shape Points — one pulldown per tool (current version, then its rebuild)
             RibbonPanel shapePointsPanel = app.CreateRibbonPanel(tabName, "Shape Points");
 
-            var innerLoopsV009 = Btn(assemblyPath, "Btn_InnerLoopDivider_V009", "Inner Loops V009", "Revit26_Plugin.InnerLoopDivider.V009.Commands.InnerLoopDividerCommand",
-                "InnerLoopDivider_16.png", "Divide Inner Loops", "V009");
             var innerLoopsV010 = Btn(assemblyPath, "Btn_InnerLoopDivider_V010", "Inner Loops V010", "Revit26_Plugin.InnerLoopDivider.V010.Commands.InnerLoopDividerCommand",
                 "InnerLoopDivider_16.png", "Divide Inner Loops", "V010", "V009 with the standard three-zone window layout.");
+            var innerLoopsV011 = Btn(assemblyPath, "Btn_InnerLoopDivider_V011", "Inner Loops V011", "Revit26_Plugin.InnerLoopDivider.V011.Commands.InnerLoopDividerCommand",
+                "InnerLoopDivider_16.png", "Divide Inner Loops", "V011", "V010 on the shared ToolWindowShell (log in body, capped grid).");
             var outerCurveV005 = Btn(assemblyPath, "Btn_OuterCurveDivider_V005", "Outer Curve V005", "Revit26_Plugin.OuterCurveDivider.V005.Commands.CurveDividerCommand",
                 "OuterCurveDivider_16.png", "Outer Curve Divider", "V005", "V004 with the standard three-zone window layout.");
             var outerCurveV006 = Btn(assemblyPath, "Btn_OuterCurveDivider_V006", "Outer Curve V006", "Revit26_Plugin.OuterCurveDivider.V006.Commands.CurveDividerCommand",
@@ -92,14 +92,14 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             var shapePointsItems = RibbonLayoutHelper.AddStackedButtons(shapePointsPanel, new List<RibbonItemData>
             {
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_InnerLoopDivider", "Inner Loops", innerLoopsV009),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_InnerLoopDivider", "Inner Loops", innerLoopsV010),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_OuterCurveDivider", "Outer Curve", outerCurveV005),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofDetailLineIntersect", "Line Intersect", lineIntersectV013),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_InnerLoopsAndPerpendicular", "Loops + Perp.", loopsPerpV005),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_VertexReducer", "Vertex Reducer", vertexReducerV008),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_MultiplePoints", "Multi Points", multiPointsV002),
             });
-            RibbonLayoutHelper.WirePulldownButton(shapePointsItems, "Pulldown_InnerLoopDivider", innerLoopsV009, innerLoopsV010);
+            RibbonLayoutHelper.WirePulldownButton(shapePointsItems, "Pulldown_InnerLoopDivider", innerLoopsV010, innerLoopsV011);
             RibbonLayoutHelper.WirePulldownButton(shapePointsItems, "Pulldown_OuterCurveDivider", outerCurveV005, outerCurveV006);
             RibbonLayoutHelper.WirePulldownButton(shapePointsItems, "Pulldown_RoofDetailLineIntersect", lineIntersectV013, lineIntersectV014);
             RibbonLayoutHelper.WirePulldownButton(shapePointsItems, "Pulldown_InnerLoopsAndPerpendicular", loopsPerpV005, loopsPerpV006);

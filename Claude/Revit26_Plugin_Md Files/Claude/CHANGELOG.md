@@ -134,6 +134,12 @@ period rather than trusting a reconstruction here.
   Log (moved from footer) in the body; row tints use the shared row
   brushes. ViewModel gains `Progress`; version labels bumped to V070.
   Ribbon: V068 replaced by V070 in the Ridge Lines pulldown.
+- InnerLoopDivider V011 on the shell: division control, toolbar, grouped
+  loops grid (group expanders unchanged: Circular open, others closed) and
+  Activity Log (moved from footer) in the body. Group-header inline colours
+  replaced with existing SharedStyles brushes. ViewModel gains `IsRunning`
+  / `Progress` / `SummaryText` (not yet set). Ribbon pulldown: V010, V011
+  (V009 removed from the ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 
