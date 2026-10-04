@@ -120,6 +120,14 @@ period rather than trusting a reconstruction here.
   V003, DtlLineDim V010, RoofDetailLineIntersect V014, CreaserAdv V012,
   CompareRoofs V005, RoofPointComparison V003) now set
   `IsIndeterminate="True"` so the status-strip bar animates while running.
+- SharedStyles: `BrushRowSuccessBackground` / `BrushRowDangerBackground`
+  (pass/fail row tints for result grids), replacing inline `#F5FFF8` /
+  `#FFF5F5`.
+- RoofRidgeLines (By Points) V059 on the shell: selection, settings,
+  validation grid and Pipeline Log (moved from footer) in the body; footer
+  status line + small progress bar replaced by the shell status strip
+  (indeterminate on `IsBusy`, `StatusMessage`). ViewModel gains
+  `Progress`. Ribbon: V057 replaced by V059 in the Ridge Lines pulldown.
 
 ## 2026-10-04 — Dimensions
 

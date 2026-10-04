@@ -82,6 +82,10 @@
     <Color x:Key="TileWarningBorder">#EF9F27</Color>
     <Color x:Key="TileWarningText">#633806</Color>
 
+    <!-- Pass / fail row tints for result grids (v3.1) -->
+    <Color x:Key="RowSuccessBackground">#F5FFF8</Color>
+    <Color x:Key="RowDangerBackground">#FFF5F5</Color>
+
     <!-- ═══════════════════════════════════════════════════════════
          SOLID COLOR BRUSHES
     ═══════════════════════════════════════════════════════════ -->
@@ -137,6 +141,8 @@
     <SolidColorBrush x:Key="BrushTileWarningBackground"     Color="{StaticResource TileWarningBackground}"/>
     <SolidColorBrush x:Key="BrushTileWarningBorder"         Color="{StaticResource TileWarningBorder}"/>
     <SolidColorBrush x:Key="BrushTileWarningText"           Color="{StaticResource TileWarningText}"/>
+    <SolidColorBrush x:Key="BrushRowSuccessBackground"      Color="{StaticResource RowSuccessBackground}"/>
+    <SolidColorBrush x:Key="BrushRowDangerBackground"       Color="{StaticResource RowDangerBackground}"/>
 
 
     <!-- ═══════════════════════════════════════════════════════════
