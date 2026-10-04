@@ -36,12 +36,10 @@ namespace Revit26_Plugin.Menu.Ribbon
             var paraManagerV004 = Btn(assemblyPath, "Btn_ParaManager_V004", "ParaManager V004", "Revit26_Plugin.ParaManager.V004.ParaManagerCommand",
                 "Manage.ParaManager_16.png", "ParaManager", "V004", "V003" + Rebuilt);
 
-            const string wsebDetail =
-                "Browse worksets, categories and types in one checkbox tree; isolate or select checked elements in a chosen 3D view.";
-            var wsebV002 = Btn(assemblyPath, "Btn_WorksetsElementsBrowser_WSEB002", "Worksets & Elements WSEB002", "Revit26_Plugin.WorksetsElementsBrowser.WSEB002.Commands.WorksetsElementsBrowserCommand",
-                "Manage.WorksetsElementsBrowser_16.png", "Worksets & Elements Browser", "WSEB002", wsebDetail);
             var wsebV003 = Btn(assemblyPath, "Btn_WorksetsElementsBrowser_WSEB003", "Worksets & Elements WSEB003", "Revit26_Plugin.WorksetsElementsBrowser.WSEB003.Commands.WorksetsElementsBrowserCommand",
                 "Manage.WorksetsElementsBrowser_16.png", "Worksets & Elements Browser", "WSEB003", "WSEB002" + Rebuilt);
+            var wsebV004 = Btn(assemblyPath, "Btn_WorksetsElementsBrowser_WSEB004", "Worksets & Elements WSEB004", "Revit26_Plugin.WorksetsElementsBrowser.WSEB004.Commands.WorksetsElementsBrowserCommand",
+                "Manage.WorksetsElementsBrowser_16.png", "Worksets & Elements Browser", "WSEB004", "WSEB003 on the shared ToolWindowShell (capped tree).");
 
             var worksetManagerV012 = Btn(assemblyPath, "Btn_WorksetManager_V012_New", "Workset Manager V012", "Revit26_Plugin.WorksetManager.V012.Commands.WorksetManagerCommand",
                 "SetupTools.WorksetManager_16.png", "Workset Manager", "V012");
@@ -80,7 +78,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             {
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_AnnotationOverlapDetection", "Overlap Detection", overlapV003),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_ParaManager", "ParaManager", paraManagerV003),
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_WorksetsElementsBrowser", "Worksets & Elements", wsebV002),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_WorksetsElementsBrowser", "Worksets & Elements", wsebV003),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_WorksetManager", "Workset Manager", worksetManagerV012),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_WorksetRenamer", "Workset Renamer", worksetRenamerV003),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_WorksetRenamerFx", "Workset Renamer (Excel)", worksetRenamerFx03),
@@ -88,7 +86,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             });
             RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_AnnotationOverlapDetection", overlapV003, overlapV004);
             RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_ParaManager", paraManagerV003, paraManagerV004);
-            RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_WorksetsElementsBrowser", wsebV002, wsebV003);
+            RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_WorksetsElementsBrowser", wsebV003, wsebV004);
             RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_WorksetManager", worksetManagerV012, worksetManagerV013);
             RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_WorksetRenamer", worksetRenamerV003, worksetRenamerV004);
             RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_WorksetRenamerFx", worksetRenamerFx03, worksetRenamerFx04);

@@ -91,6 +91,11 @@ period rather than trusting a reconstruction here.
   old footer busy bar is now the shell's indeterminate bar on `IsLoading`.
   No log in this tool. ViewModel gains `Progress` / `SummaryText`. Ribbon
   pulldown: V003, V004 (V002 removed from the ribbon; folder kept).
+- WorksetsElementsBrowser WSEB004 on the shell: toolbar and workset tree
+  (capped) in the body; busy overlay kept over the shell; status strip is
+  indeterminate on `IsBusy`. No log in this tool; View3DPickerWindow
+  unchanged. ViewModel gains `Progress`. Ribbon pulldown: WSEB003, WSEB004
+  (WSEB002 removed from the ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 
