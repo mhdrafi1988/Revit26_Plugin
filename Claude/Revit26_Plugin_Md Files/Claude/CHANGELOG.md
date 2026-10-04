@@ -44,6 +44,12 @@ period rather than trusting a reconstruction here.
   ViewModel gains `Progress` only. Ribbon pulldown: V009, V010 (V008
   removed from the ribbon; folder kept).
 - Shell: an empty `Subtitle` now collapses instead of leaving a blank line.
+- OuterCurveDivider V006 on the shell: type-rules grid, edges grid and
+  Activity Log (moved from footer) in the body; both grids and the log use
+  MaxHeightRatio (type grid's fixed MaxHeight=160 replaced). ViewModel
+  gains `IsRunning` / `Progress` / `SummaryText` (not yet set, so the
+  status strip stays empty). Ribbon pulldown: V005, V006 (V004 removed
+  from the ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 
