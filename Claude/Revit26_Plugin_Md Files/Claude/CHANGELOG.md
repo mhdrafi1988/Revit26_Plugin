@@ -140,6 +140,11 @@ period rather than trusting a reconstruction here.
   replaced with existing SharedStyles brushes. ViewModel gains `IsRunning`
   / `Progress` / `SummaryText` (not yet set). Ribbon pulldown: V010, V011
   (V009 removed from the ribbon; folder kept).
+- InnerLoopsAndPerpendicular V007 on the shell: toolbar, shapes grid (group
+  expanders unchanged), tolerance, perpendicular-points grid and Activity
+  Log (moved from footer) in the body; both grids capped. ViewModel gains
+  `IsRunning` / `Progress` / `SummaryText` (not yet set). Ribbon pulldown:
+  V006, V007 (V005 removed from the ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 

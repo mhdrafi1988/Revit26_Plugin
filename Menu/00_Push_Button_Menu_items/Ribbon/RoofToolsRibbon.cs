@@ -77,10 +77,10 @@ namespace Revit26_Plugin.Menu.Ribbon
                 "DetailLineIntersect_16.png", "Roof Detail Line Intersect", "V013", "V012 with the standard three-zone window layout.");
             var lineIntersectV014 = Btn(assemblyPath, "Btn_RoofDetailLineIntersect_V014", "Line Intersect V014", "Revit26_Plugin.RoofDetailLineIntersect.V014.Commands.RoofDetailLineIntersectCommand",
                 "DetailLineIntersect_16.png", "Roof Detail Line Intersect", "V014", "V013 on the shared ToolWindowShell (log in body).");
-            var loopsPerpV005 = Btn(assemblyPath, "Btn_InnerLoopsAndPerpendicular_V005", "Loops + Perp. V005", "Revit26_Plugin.InnerLoopsAndPerpendicular.V005.Commands.InnerLoopsAndPerpendicularCommand",
-                "InnerLoopsPerpendicular_16.png", "Inner Loops And Perpendicular", "V005");
             var loopsPerpV006 = Btn(assemblyPath, "Btn_InnerLoopsAndPerpendicular_V006", "Loops + Perp. V006", "Revit26_Plugin.InnerLoopsAndPerpendicular.V006.Commands.InnerLoopsAndPerpendicularCommand",
                 "InnerLoopsPerpendicular_16.png", "Inner Loops And Perpendicular", "V006", "V005 with the standard three-zone window layout.");
+            var loopsPerpV007 = Btn(assemblyPath, "Btn_InnerLoopsAndPerpendicular_V007", "Loops + Perp. V007", "Revit26_Plugin.InnerLoopsAndPerpendicular.V007.Commands.InnerLoopsAndPerpendicularCommand",
+                "InnerLoopsPerpendicular_16.png", "Inner Loops And Perpendicular", "V007", "V006 on the shared ToolWindowShell (log in body, capped grids).");
             var vertexReducerV008 = Btn(assemblyPath, "Btn_VertexReducer_V008", "Vertex Reducer V008", "Revit26_Plugin.RoofEdgeVertexReducer.V008.Commands.RoofEdgeVertexReducerCommand",
                 "VertexReducer_16.png", "Roof Edge Vertex Reducer", "V008", "V007 with the standard three-zone window layout.");
             var vertexReducerV009 = Btn(assemblyPath, "Btn_VertexReducer_V009", "Vertex Reducer V009", "Revit26_Plugin.RoofEdgeVertexReducer.V009.Commands.RoofEdgeVertexReducerCommand",
@@ -95,14 +95,14 @@ namespace Revit26_Plugin.Menu.Ribbon
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_InnerLoopDivider", "Inner Loops", innerLoopsV010),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_OuterCurveDivider", "Outer Curve", outerCurveV005),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofDetailLineIntersect", "Line Intersect", lineIntersectV013),
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_InnerLoopsAndPerpendicular", "Loops + Perp.", loopsPerpV005),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_InnerLoopsAndPerpendicular", "Loops + Perp.", loopsPerpV006),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_VertexReducer", "Vertex Reducer", vertexReducerV008),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_MultiplePoints", "Multi Points", multiPointsV002),
             });
             RibbonLayoutHelper.WirePulldownButton(shapePointsItems, "Pulldown_InnerLoopDivider", innerLoopsV010, innerLoopsV011);
             RibbonLayoutHelper.WirePulldownButton(shapePointsItems, "Pulldown_OuterCurveDivider", outerCurveV005, outerCurveV006);
             RibbonLayoutHelper.WirePulldownButton(shapePointsItems, "Pulldown_RoofDetailLineIntersect", lineIntersectV013, lineIntersectV014);
-            RibbonLayoutHelper.WirePulldownButton(shapePointsItems, "Pulldown_InnerLoopsAndPerpendicular", loopsPerpV005, loopsPerpV006);
+            RibbonLayoutHelper.WirePulldownButton(shapePointsItems, "Pulldown_InnerLoopsAndPerpendicular", loopsPerpV006, loopsPerpV007);
             RibbonLayoutHelper.WirePulldownButton(shapePointsItems, "Pulldown_VertexReducer", vertexReducerV008, vertexReducerV009);
             RibbonLayoutHelper.WirePulldownButton(shapePointsItems, "Pulldown_MultiplePoints", multiPointsV002, multiPointsV003);
 
