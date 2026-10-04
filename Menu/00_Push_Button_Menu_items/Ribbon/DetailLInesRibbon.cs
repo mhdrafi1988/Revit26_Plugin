@@ -11,7 +11,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             RibbonPanel createPanel = app.CreateRibbonPanel(tabName, "Detail Line Create");
 
             // Coexisting versions share one pulldown: previous version first, the
-            // UI Standard version second, the ToolWindowShell version (VA009) third.
+            // UI Standard version second, the ToolWindowShell version (VA009) third, refactored VA010 fourth.
             var linesVA007 = new PushButtonData("Btn_ DeatailLInes VA007", "From Links VA007", assemblyPath, "Revit26_Plugin.LinkedDetailLineGenerator.VA007.Commands.OpenLinkedDetailLineGeneratorCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.Linematch32_16.png"),
@@ -35,10 +35,16 @@ namespace Revit26_Plugin.Menu.Ribbon
                 ToolTip = RibbonLayoutHelper.VersionTip("Detail Lines From Links", "VA009",
                     "VA008 on the shared ToolWindowShell (log in body, element-selection lists scroll with the body).")
             };
-            var linesPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DetailLinesFromLinks", "From Links", linesVA007);
+            var linesVA010 = new PushButtonData("Btn_ DeatailLInes VA010", "From Links VA010", assemblyPath, "Revit26_Plugin.LinkedDetailLineGenerator.VA010.Commands.OpenLinkedDetailLineGeneratorCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.Linematch32_16.png"),
+                ToolTip = RibbonLayoutHelper.VersionTip("Detail Lines From Links", "VA010",
+                    "VA009 + ToolViewModelBase (Options 1/2/3): base log/shell, 3-way partial split, TreeVisibilityFilter service.")
+            };
+            var linesPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DetailLinesFromLinks", "From Links", linesVA010);
 
             var createItems = RibbonLayoutHelper.AddStackedButtons(createPanel, new List<RibbonItemData> { linesPulldownData });
-            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_DetailLinesFromLinks", linesVA007, linesVA008, linesVA009, linesVA006);
+            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_DetailLinesFromLinks", linesVA010, linesVA007, linesVA008, linesVA009, linesVA006);
 
             RibbonPanel processPanel = app.CreateRibbonPanel(tabName, "Detail Line Process");
 
