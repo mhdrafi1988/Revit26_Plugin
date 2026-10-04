@@ -180,6 +180,15 @@ period rather than trusting a reconstruction here.
   strip (`StatusMessage`). No log in this tool. ViewModel gains `IsRunning`
   / `Progress`. Ribbon pulldown: V004, V005 (V003 removed from the ribbon;
   folder kept).
+- SharedStyles: result-group palette `BrushGroup{Ok,Warning,New,Neutral,
+  Danger}{Accent,Background,Text}` (from WorksetRenamer FX04's inline
+  colours).
+- WorksetRenamer FX05 on the shell: export/import cards, filter bar and the
+  five grouped result expanders (own ScrollViewer removed; OK open, others
+  closed — unchanged) in the body; group grids capped via the shared grid
+  style; footer status line is now the status strip (`StatusMessage`). No
+  log in this tool. ViewModel gains `IsRunning` / `Progress`. Ribbon
+  pulldown: FX04, FX05 (FX03 removed from the ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 

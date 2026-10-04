@@ -86,6 +86,21 @@
     <Color x:Key="RowSuccessBackground">#F5FFF8</Color>
     <Color x:Key="RowDangerBackground">#FFF5F5</Color>
 
+    <!-- Result-group palette (v3.1) — accent bar / count-pill background /
+         text, used by grouped result lists (WorksetRenamer FX). -->
+    <Color x:Key="GroupOkAccent">#1E7E1E</Color>
+    <Color x:Key="GroupOkBackground">#DCF3DC</Color>
+    <Color x:Key="GroupWarningAccent">#C98A00</Color>
+    <Color x:Key="GroupWarningBackground">#FFF0CC</Color>
+    <Color x:Key="GroupWarningText">#A06A00</Color>
+    <Color x:Key="GroupNewAccent">#1E7A52</Color>
+    <Color x:Key="GroupNewBackground">#DCF3EA</Color>
+    <Color x:Key="GroupNeutralAccent">#999999</Color>
+    <Color x:Key="GroupNeutralBackground">#EEEEEE</Color>
+    <Color x:Key="GroupNeutralText">#777777</Color>
+    <Color x:Key="GroupDangerAccent">#B23B3B</Color>
+    <Color x:Key="GroupDangerBackground">#FBDADA</Color>
+
     <!-- ═══════════════════════════════════════════════════════════
          SOLID COLOR BRUSHES
     ═══════════════════════════════════════════════════════════ -->
@@ -143,6 +158,18 @@
     <SolidColorBrush x:Key="BrushTileWarningText"           Color="{StaticResource TileWarningText}"/>
     <SolidColorBrush x:Key="BrushRowSuccessBackground"      Color="{StaticResource RowSuccessBackground}"/>
     <SolidColorBrush x:Key="BrushRowDangerBackground"       Color="{StaticResource RowDangerBackground}"/>
+    <SolidColorBrush x:Key="BrushGroupOkAccent"                  Color="{StaticResource GroupOkAccent}"/>
+    <SolidColorBrush x:Key="BrushGroupOkBackground"              Color="{StaticResource GroupOkBackground}"/>
+    <SolidColorBrush x:Key="BrushGroupWarningAccent"             Color="{StaticResource GroupWarningAccent}"/>
+    <SolidColorBrush x:Key="BrushGroupWarningBackground"         Color="{StaticResource GroupWarningBackground}"/>
+    <SolidColorBrush x:Key="BrushGroupWarningText"               Color="{StaticResource GroupWarningText}"/>
+    <SolidColorBrush x:Key="BrushGroupNewAccent"                 Color="{StaticResource GroupNewAccent}"/>
+    <SolidColorBrush x:Key="BrushGroupNewBackground"             Color="{StaticResource GroupNewBackground}"/>
+    <SolidColorBrush x:Key="BrushGroupNeutralAccent"             Color="{StaticResource GroupNeutralAccent}"/>
+    <SolidColorBrush x:Key="BrushGroupNeutralBackground"         Color="{StaticResource GroupNeutralBackground}"/>
+    <SolidColorBrush x:Key="BrushGroupNeutralText"               Color="{StaticResource GroupNeutralText}"/>
+    <SolidColorBrush x:Key="BrushGroupDangerAccent"              Color="{StaticResource GroupDangerAccent}"/>
+    <SolidColorBrush x:Key="BrushGroupDangerBackground"          Color="{StaticResource GroupDangerBackground}"/>
 
 
     <!-- ═══════════════════════════════════════════════════════════
