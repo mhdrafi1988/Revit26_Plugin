@@ -125,10 +125,10 @@ namespace Revit26_Plugin.Menu.Ribbon
                 "CreaserAdv_16.png", "Creaser Adv", "V011", "V010 with the standard three-zone window layout.");
             var creaserV012 = Btn(assemblyPath, "Btn_CreaserAdvCommand_V012", "Creaser Adv V012", "Revit26_Plugin.CreaserAdv.V012.Commands.CreaserAdvCommand",
                 "CreaserAdv_16.png", "Creaser Adv", "V012", "V011 on the shared ToolWindowShell (log in body).");
-            var roofTagV016 = Btn(assemblyPath, "Btn_RoofTagCommand_V016", "Roof Tag V016", "Revit26_Plugin.RoofTag.V016.RoofTagCommand",
-                "RoofTag_16.png", "Roof Tag", "V016");
             var roofTagV017 = Btn(assemblyPath, "Btn_RoofTagCommand_V017", "Roof Tag V017", "Revit26_Plugin.RoofTag.V017.RoofTagCommand",
                 "RoofTag_16.png", "Roof Tag", "V017", "V016 with the standard three-zone window layout.");
+            var roofTagV018 = Btn(assemblyPath, "Btn_RoofTagCommand_V018", "Roof Tag V018", "Revit26_Plugin.RoofTag.V018.RoofTagCommand",
+                "RoofTag_16.png", "Roof Tag", "V018", "V017 on the shared ToolWindowShell (log in body).");
             var roofFromLinesV007 = Btn(assemblyPath, "Btn_RoofFromDetailLines.V007", "Roof From Detail Lines V007", "Revit26_Plugin.RoofFromDetailLines.V007.Command",
                 "CreateRoofromLInes_16.png", "Roof From Detail Lines", "V007");
             var roofFromLinesV008 = Btn(assemblyPath, "Btn_RoofFromDetailLines.V008", "Roof From Detail Lines V008", "Revit26_Plugin.RoofFromDetailLines.V008.Command",
@@ -137,11 +137,11 @@ namespace Revit26_Plugin.Menu.Ribbon
             var roofToolsItems = RibbonLayoutHelper.AddStackedButtons(roofToolsPanel, new List<RibbonItemData>
             {
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_CreaserAdv", "Creaser Adv", creaserV011),
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofTag", "Roof Tag", roofTagV016),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofTag", "Roof Tag", roofTagV017),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofFromDetailLines", "Roof From Detail Lines", roofFromLinesV007),
             });
             RibbonLayoutHelper.WirePulldownButton(roofToolsItems, "Pulldown_CreaserAdv", creaserV011, creaserV012);
-            RibbonLayoutHelper.WirePulldownButton(roofToolsItems, "Pulldown_RoofTag", roofTagV016, roofTagV017);
+            RibbonLayoutHelper.WirePulldownButton(roofToolsItems, "Pulldown_RoofTag", roofTagV017, roofTagV018);
             RibbonLayoutHelper.WirePulldownButton(roofToolsItems, "Pulldown_RoofFromDetailLines", roofFromLinesV007, roofFromLinesV008);
 
             // Utilities panel: Combined Roof Tools + Ridge Lines + Type Manager (3-item stack)

@@ -69,6 +69,11 @@ period rather than trusting a reconstruction here.
   Binds to the existing `IsRunning`; ViewModel gains `Progress` /
   `SummaryText` (not yet set). Ribbon pulldown: V011, V012 (V010 removed
   from the ribbon; folder kept).
+- RoofTag V018 on the shell: warning banner, settings cards and Log (moved
+  from footer) in the body; the middle's own ScrollViewer removed. Still a
+  modal OK / Cancel dialog. ViewModel gains `IsRunning` / `Progress` /
+  `SummaryText` (not yet set). Ribbon pulldown: V017, V018 (V016 removed
+  from the ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 
