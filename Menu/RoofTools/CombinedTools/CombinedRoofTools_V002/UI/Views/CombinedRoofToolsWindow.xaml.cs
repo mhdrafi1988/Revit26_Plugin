@@ -1,0 +1,33 @@
+using Autodesk.Revit.UI;
+using Revit26_Plugin.CombinedRoofTools.V002.UI.ViewModels;
+using System.ComponentModel;
+using System.Windows;
+
+namespace Revit26_Plugin.CombinedRoofTools.V002.UI.Views
+{
+    public partial class CombinedRoofToolsWindow : Window
+    {
+        public CombinedRoofToolsWindow()
+        {
+            InitializeComponent();
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e) => Close();
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            if (DataContext is CombinedRoofToolsViewModel vm)
+            {
+                if (vm.IsRunningAll)
+                {
+                    TaskDialog.Show("Combined Roof Tools", "Run All is still in progress. Please wait for it to finish before closing.");
+                    e.Cancel = true;
+                    return;
+                }
+
+                vm.SaveOnClose();
+            }
+            base.OnClosing(e);
+        }
+    }
+}
