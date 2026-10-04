@@ -18,6 +18,20 @@ period rather than trusting a reconstruction here.
 
 ---
 
+## 2026-10-04 — Sheet Tools
+
+- Sheet Tools: every live tool bumped one version as a layout-only rebuild per
+  `Revit_Plugin_UI_Standard.md` (fixed title bar + version + metrics card,
+  scrolling middle, fixed footer with an always-visible log + Copy All /
+  Copy Selected, Primary → Close). No behaviour changes.
+  New versions: PlanFromScopeBox V005, SmartViewToSheetPlacer V223,
+  AutomatedSectionPlacer V002, SheetAutoRearrange V027.
+- Smart Placer / Auto Section Placer: the per-stage Activity Logs (stages 4
+  and 5), Export Logs and Cancel buttons moved into one fixed footer; stage
+  navigation (Next / Back / Place / Open) stays in the accordion stages.
+- Ribbon: every Sheet button is now a pulldown — current version first,
+  the UI-standard version second (Auto Section Placer became a pulldown).
+
 ## 2026-10-04 — Manage
 
 - Manage: every live tool bumped one version as a layout-only rebuild per
