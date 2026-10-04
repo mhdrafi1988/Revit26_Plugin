@@ -1,0 +1,351 @@
+<!--
+=======================================================
+File: WorksetRenamerView.xaml
+Changes vs V003 (layout only, per Revit_Plugin_UI_Standard.md):
+  - Three-zone layout: fixed top (navy title bar + version, metrics
+    card), middle (filter / find-replace / prefix-suffix card, selection
+    row, worksets grid that fills and scrolls itself), fixed footer
+    (status line, Revert left, Apply → Close right).
+  - Adds a Close button; MinWidth/MinHeight = default size.
+  - This tool has no log in its ViewModel, so the footer carries the
+    status line instead (no behaviour change).
+=======================================================
+-->
+<Window x:Class="Revit26_Plugin.WorksetRenamer.V004.Views.WorksetRenamerView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:Revit26_Plugin.WorksetRenamer.V004.ViewModels"
+        Title="Workset Renamer — V004"
+        Width="860" Height="680"
+        MinWidth="860" MinHeight="680"
+        ResizeMode="CanResizeWithGrip"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource BrushSystemSecondaryBackground}"
+        FontFamily="{DynamicResource SystemFont}">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Revit26_Plugin;component/Shared/SharedStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <!-- Local bool-to-brush: green when true, grey when false -->
+            <vm:BoolToIndicatorBrushConverter x:Key="BoolToIndicator"/>
+            <!-- RenameStatus enum → SolidColorBrush (Pending/Renamed/Unchanged/Error) -->
+            <vm:RenameStatusToBrushConverter x:Key="RenameStatusConverter"/>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>  <!-- Fixed top -->
+            <RowDefinition Height="*"/>     <!-- Middle -->
+            <RowDefinition Height="Auto"/>  <!-- Fixed footer -->
+        </Grid.RowDefinitions>
+
+        <!-- ═══ FIXED TOP ═══════════════════════════════════════ -->
+        <StackPanel Grid.Row="0">
+            <Border Style="{StaticResource HeaderBar}" CornerRadius="0" Margin="0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="Workset Renamer" Style="{StaticResource HeaderTitle}"/>
+                        <TextBlock Text="Bulk rename worksets — Open and Editable columns are read-only status indicators" Style="{StaticResource HeaderSubtitle}" TextWrapping="Wrap"/>
+                    </StackPanel>
+                    <Border Grid.Column="1" Background="{StaticResource BrushNavyLight}" CornerRadius="10" Padding="8,3" Margin="10,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="V004" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource BrushTextOnDark}"/>
+                    </Border>
+                </Grid>
+            </Border>
+            <UniformGrid Columns="2" Margin="12,10,12,8">
+                <Border Style="{StaticResource MetricCard}" Margin="0,0,4,0" Padding="10,8">
+                    <StackPanel>
+                        <TextBlock Text="Worksets" Style="{StaticResource MetricLabel}"/>
+                        <TextBlock Text="{Binding Rows.Count}" Style="{StaticResource MetricNumber}" FontSize="18"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource MetricCard}" Margin="4,0,0,0" Padding="10,8">
+                    <StackPanel>
+                        <TextBlock Text="Shown" Style="{StaticResource MetricLabel}"/>
+                        <TextBlock Text="{Binding FilteredRows.Count}" Style="{StaticResource MetricNumberAccent}" FontSize="18"/>
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+        </StackPanel>
+
+        <!-- ═══ MIDDLE ══════════════════════════════════════════ -->
+        <Grid Grid.Row="1" Margin="12,0,12,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*" MinHeight="160"/>
+            </Grid.RowDefinitions>
+
+            <!-- ══ Toolbar card ════════════════════════════════════════ -->
+            <Border Grid.Row="0" Style="{StaticResource ContentCard}" Margin="0,0,0,8">
+                <StackPanel>
+
+                    <!-- Filter -->
+                    <Grid Margin="10,8,10,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Filter"
+                                   Style="{StaticResource FieldLabel}"
+                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBox Grid.Column="1"
+                                 Style="{StaticResource StyledTextInput}"
+                                 Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
+
+                    <Border Style="{StaticResource SeparatorLine}"/>
+
+                    <!-- Find & Replace -->
+                    <Grid Margin="10,6,10,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Find"
+                                   Style="{StaticResource FieldLabel}"
+                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBox Grid.Column="1"
+                                 Style="{StaticResource StyledTextInput}"
+                                 Text="{Binding FindText, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,0,10,0"/>
+                        <TextBlock Grid.Column="2" Text="Replace"
+                                   Style="{StaticResource FieldLabel}"
+                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBox Grid.Column="3"
+                                 Style="{StaticResource StyledTextInput}"
+                                 Text="{Binding ReplaceText, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,0,10,0"/>
+                        <Button Grid.Column="4" Content="Apply F&amp;R"
+                                Style="{StaticResource SmallSecondaryButton}"
+                                Command="{Binding ApplyFindReplaceCommand}"/>
+                    </Grid>
+
+                    <Border Style="{StaticResource SeparatorLine}"/>
+
+                    <!-- Prefix / Suffix -->
+                    <Grid Margin="10,6,10,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" Text="Prefix"
+                                   Style="{StaticResource FieldLabel}"
+                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBox Grid.Column="1"
+                                 Style="{StaticResource StyledTextInput}"
+                                 Text="{Binding Prefix, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,0,6,0"/>
+                        <Button Grid.Column="2" Content="Add"
+                                Style="{StaticResource SmallSecondaryButton}"
+                                Command="{Binding AddPrefixCommand}"
+                                Margin="0,0,4,0"/>
+                        <Button Grid.Column="3" Content="Remove"
+                                Style="{StaticResource SmallSecondaryButton}"
+                                Command="{Binding RemovePrefixCommand}"/>
+
+                        <Border Grid.Column="4" Width="1"
+                                Background="{StaticResource BrushSeparator}"
+                                Margin="0,2" VerticalAlignment="Stretch"/>
+
+                        <TextBlock Grid.Column="5" Text="Suffix"
+                                   Style="{StaticResource FieldLabel}"
+                                   VerticalAlignment="Center" Margin="8,0,8,0"/>
+                        <TextBox Grid.Column="6"
+                                 Style="{StaticResource StyledTextInput}"
+                                 Text="{Binding Suffix, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,0,6,0"/>
+                        <Button Grid.Column="7" Content="Add"
+                                Style="{StaticResource SmallSecondaryButton}"
+                                Command="{Binding AddSuffixCommand}"
+                                Margin="0,0,4,0"/>
+                        <Button Grid.Column="8" Content="Remove"
+                                Style="{StaticResource SmallSecondaryButton}"
+                                Command="{Binding RemoveSuffixCommand}"/>
+                    </Grid>
+
+                </StackPanel>
+            </Border>
+            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,6">
+                <Button Content="Select All" Style="{StaticResource SmallSecondaryButton}" Command="{Binding SelectAllCommand}" Margin="0,0,6,0"/>
+                <Button Content="Select None" Style="{StaticResource SmallSecondaryButton}" Command="{Binding SelectNoneCommand}"/>
+            </StackPanel>
+            <!-- ══ DataGrid ════════════════════════════════════════════ -->
+            <Border Grid.Row="2" Style="{StaticResource ContentCard}">
+                <DataGrid ItemsSource="{Binding FilteredRows}"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          CanUserReorderColumns="False"
+                          CanUserResizeRows="False"
+                          SelectionMode="Extended"
+                          SelectionUnit="FullRow"
+                          GridLinesVisibility="Horizontal"
+                          HorizontalGridLinesBrush="{StaticResource BrushSeparatorThin}"
+                          AlternationCount="2"
+                          RowStyle="{StaticResource DataGridRowStyle}"
+                          CellStyle="{StaticResource DataGridCellStyle}"
+                          ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
+                          Background="{StaticResource BrushSystemBackground}"
+                          BorderThickness="0"
+                          RowHeight="30"
+              VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling">
+
+                    <DataGrid.Columns>
+
+                        <!-- ☑ Select -->
+                        <DataGridTemplateColumn Header="☑" Width="36" CanUserSort="False">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <!-- Current Name (read-only) -->
+                        <DataGridTextColumn Header="Current Name"
+                                            Binding="{Binding CurrentName, Mode=OneWay}"
+                                            Width="*"
+                                            IsReadOnly="True">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}"/>
+                                    <Setter Property="FontSize" Value="11"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
+                        <!-- New Name (editable) -->
+                        <DataGridTextColumn Header="New Name"
+                                            Binding="{Binding NewName, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                            Width="*">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Foreground" Value="{StaticResource BrushAppleBlue}"/>
+                                    <Setter Property="FontSize" Value="11"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                            <DataGridTextColumn.EditingElementStyle>
+                                <Style TargetType="TextBox">
+                                    <Setter Property="FontSize" Value="11"/>
+                                    <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.EditingElementStyle>
+                        </DataGridTextColumn>
+
+                        <!--
+                            Open — read-only indicator.
+                            Green dot = workset is open; grey = closed.
+                            Cannot be changed on a live document via the Revit API.
+                            Open/close is only configurable at model-open time via WorksetConfiguration.
+                        -->
+                        <DataGridTemplateColumn Header="Open ⓘ" Width="60" CanUserSort="False">
+                            <DataGridTemplateColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DataGridColumnHeaderStyle}">
+                                    <Setter Property="ToolTip"
+                                            Value="Read-only. Open/close can only be changed when reopening the model."/>
+                                </Style>
+                            </DataGridTemplateColumn.HeaderStyle>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Ellipse Width="8" Height="8"
+                                             HorizontalAlignment="Center" VerticalAlignment="Center"
+                                             Fill="{Binding IsOpen, Converter={StaticResource BoolToIndicator}}"
+                                             ToolTip="{Binding IsOpen, StringFormat='Open: {0}'}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <!--
+                            Editable — read-only indicator.
+                            Green dot = current user owns/has checked out this workset.
+                            Cannot be changed via WorksetTable on a live document.
+                        -->
+                        <DataGridTemplateColumn Header="Editable ⓘ" Width="76" CanUserSort="False">
+                            <DataGridTemplateColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DataGridColumnHeaderStyle}">
+                                    <Setter Property="ToolTip"
+                                            Value="Read-only. Editability is managed by Revit worksharing checkout."/>
+                                </Style>
+                            </DataGridTemplateColumn.HeaderStyle>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Ellipse Width="8" Height="8"
+                                             HorizontalAlignment="Center" VerticalAlignment="Center"
+                                             Fill="{Binding IsEditable, Converter={StaticResource BoolToIndicator}}"
+                                             ToolTip="{Binding IsEditable, StringFormat='Editable: {0}'}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <!-- Status -->
+                        <DataGridTemplateColumn Header="Status" Width="86" CanUserSort="False">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Ellipse Width="6" Height="6" Margin="0,0,5,0"
+                                                 VerticalAlignment="Center"
+                                                 Fill="{Binding Status, Converter={StaticResource RenameStatusConverter}}"/>
+                                        <TextBlock Text="{Binding Status}"
+                                                   FontSize="10"
+                                                   VerticalAlignment="Center"
+                                                   Foreground="{Binding Status, Converter={StaticResource RenameStatusConverter}}"
+                                                   ToolTip="{Binding ErrorMessage}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+        </Grid>
+
+        <!-- ═══ FIXED FOOTER ════════════════════════════════════ -->
+        <Grid Grid.Row="2" Margin="12,6,12,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Content="Revert"
+                    Style="{StaticResource SecondaryButton}"
+                    Command="{Binding RevertCommand}"/>
+            <TextBlock Grid.Column="1"
+                       Text="{Binding StatusMessage}"
+                       Style="{StaticResource StatusText}"
+                       VerticalAlignment="Center" Margin="12,0" TextTrimming="CharacterEllipsis"/>
+            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <Button Content="Apply"
+                        Style="{StaticResource PrimaryButton}"
+                        Command="{Binding ApplyCommand}"
+                        MinWidth="90" Margin="0,0,8,0"/>
+                <Button Content="Close" Style="{StaticResource OutlineButton}" Width="90" Height="38" Click="CloseButton_Click"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>
