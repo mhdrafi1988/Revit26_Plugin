@@ -321,6 +321,13 @@ period rather than trusting a reconstruction here.
   Floors / Create Roof / Close. ViewModel gains computed `Progress`.
   Ribbon pulldown: V012, V013, PlanView V005, PlanView V006 (V011 removed
   from the ribbon; folder kept).
+- PlanFromScopeBox V006 on the shell. Header: metric cards. Body:
+  scope-box grid (capped) / settings (own ScrollViewer removed), then the
+  activity log (moved from the footer). Footer: status strip on `IsBusy`
+  (indeterminate) / "Level: {ActiveLevelDisplay}" (replaces the level
+  status line and "Working…" text) + Create / Close. ViewModel gains
+  `Progress`; `Version` = "V006". Ribbon pulldown: V004, V005, V006 (V003
+  removed from the ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 

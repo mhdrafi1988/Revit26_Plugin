@@ -22,10 +22,10 @@ namespace Revit26_Plugin.Menu.Ribbon
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.PlanFromScopeBox_V004_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Plan From Scope Box", "V005", "UI Standard layout: fixed header and metrics, footer log with Copy All / Copy Selected, Create → Close.")
             };
-            var scopeBoxV003 = new PushButtonData("Btn_PlanFromScopeBox.V003", "Scope Box V003", assemblyPath, "Revit26_Plugin.PlanFromScopeBox.V003.Commands.PlanFromScopeBoxCommand")
+            var scopeBoxV006 = new PushButtonData("Btn_PlanFromScopeBox.V006", "Scope Box V006", assemblyPath, "Revit26_Plugin.PlanFromScopeBox.V006.Commands.PlanFromScopeBoxCommand")
             {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.PlanFromScopeBox_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("Plan From Scope Box", "V003")
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.PlanFromScopeBox_V004_16.png"),
+                ToolTip = RibbonLayoutHelper.VersionTip("Plan From Scope Box", "V006", "V005 on the shared ToolWindowShell (log in body, capped grid).")
             };
             var scopeBoxPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_PlanFromScopeBox", "Scope Box", scopeBoxV004);
 
@@ -64,7 +64,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             var autoSectionPlacerPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_AutomatedSectionPlacer", "Auto Section Placer", autoSectionPlacerV001);
 
             var sheetCreateItems = RibbonLayoutHelper.AddStackedButtons(createPanel, new List<RibbonItemData> { scopeBoxPulldownData, sheetPlacerPulldownData, autoSectionPlacerPulldownData });
-            RibbonLayoutHelper.WirePulldownButton(sheetCreateItems, "Pulldown_PlanFromScopeBox", scopeBoxV004, scopeBoxV005, scopeBoxV003);
+            RibbonLayoutHelper.WirePulldownButton(sheetCreateItems, "Pulldown_PlanFromScopeBox", scopeBoxV004, scopeBoxV005, scopeBoxV006);
             RibbonLayoutHelper.WirePulldownButton(sheetCreateItems, "Pulldown_SmartViewToSheetPlacer", sheetPlacerV222, sheetPlacerV223, sheetPlacerV221);
             RibbonLayoutHelper.WirePulldownButton(sheetCreateItems, "Pulldown_AutomatedSectionPlacer", autoSectionPlacerV001, autoSectionPlacerV002);
 
