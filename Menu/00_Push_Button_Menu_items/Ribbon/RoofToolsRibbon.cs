@@ -145,10 +145,10 @@ namespace Revit26_Plugin.Menu.Ribbon
                 "Inner Loop Divider, Inner Loops And Perpendicular, Outer Curve Divider, " +
                 "Auto Slope By Drain, and Creaser Adv — combined in one window with one shared roof pick. " +
                 "Opens on Auto Slope By Drain; use Run All to run every tool in order with one click.";
-            var combinedV001 = Btn(assemblyPath, "Btn_CombinedRoofTools_V001", "Combined Roof Tools V001", "Revit26_Plugin.CombinedRoofTools.V001.Commands.CombinedRoofToolsCommand",
-                "CombinedTools_16.png", "Combined Roof Tools", "V001", combinedDetail);
             var combinedV002 = Btn(assemblyPath, "Btn_CombinedRoofTools_V002", "Combined Roof Tools V002", "Revit26_Plugin.CombinedRoofTools.V002.Commands.CombinedRoofToolsCommand",
-                "CombinedTools_16.png", "Combined Roof Tools", "V002", "V001 with the standard three-zone window layout.");
+                "CombinedTools_16.png", "Combined Roof Tools", "V002", combinedDetail + " Standard three-zone window layout.");
+            var combinedV003 = Btn(assemblyPath, "Btn_CombinedRoofTools_V003", "Combined Roof Tools V003", "Revit26_Plugin.CombinedRoofTools.V003.Commands.CombinedRoofToolsCommand",
+                "CombinedTools_16.png", "Combined Roof Tools", "V003", "V002 on the shared ToolWindowShell (tab logs in body, capped grids).");
 
             const string typeManagerDetail =
                 "Export roof type definitions to Excel (type mark, function, compound-structure layers) " +
@@ -160,11 +160,11 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             var utilitiesItems = RibbonLayoutHelper.AddStackedButtons(utilitiesPanel, new List<RibbonItemData>
             {
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_CombinedRoofTools", "Combined Roof Tools", combinedV001),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_CombinedRoofTools", "Combined Roof Tools", combinedV002),
                 ridgeLinesPulldownData,
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofTypeManager", "Roof Type Manager", typeManagerV002),
             });
-            RibbonLayoutHelper.WirePulldownButton(utilitiesItems, "Pulldown_CombinedRoofTools", combinedV001, combinedV002);
+            RibbonLayoutHelper.WirePulldownButton(utilitiesItems, "Pulldown_CombinedRoofTools", combinedV002, combinedV003);
             RibbonLayoutHelper.WirePulldownButton(utilitiesItems, "Pulldown_RoofRidgeLines", ridgeLinesMultiShapeV069, ridgeLinesMultiShapeV070, ridgeLinesByPointsV058, ridgeLinesByPointsV059);
             RibbonLayoutHelper.WirePulldownButton(utilitiesItems, "Pulldown_RoofTypeManager", typeManagerV002, typeManagerV003);
 

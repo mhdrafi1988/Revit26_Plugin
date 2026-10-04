@@ -258,6 +258,15 @@ period rather than trusting a reconstruction here.
   `SummaryText` (not yet set); `GeneratorVersion` = "VA009". Ribbon
   pulldown: VA007, VA008, VA009, VA006 (VA003 removed from the ribbon;
   folder kept).
+- CombinedRoofTools V003 on the shell. Header: Working Roof card + Change
+  Roof. Body: the five tool tabs (each tab's log and actions stay inside
+  its tab, in the body). Footer: status strip on `IsBusy` (indeterminate)
+  / `RunAllStatusMessage` + Run All / Close. Tab views: own
+  ScrollViewers removed (Auto Slope By Drain settings, Creaser Adv
+  settings), every grid and log capped; Inner Loop Divider's inline
+  group-header colours → existing SharedStyles brushes. ViewModel gains
+  `Progress`. Ribbon pulldown: V002, V003 (V001 removed from the ribbon;
+  folder kept).
 
 ## 2026-10-04 — Dimensions
 
