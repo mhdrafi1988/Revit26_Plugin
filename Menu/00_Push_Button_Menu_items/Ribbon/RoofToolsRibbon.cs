@@ -184,8 +184,8 @@ namespace Revit26_Plugin.Menu.Ribbon
                 "ElevationSync_16.png", "Roof Point Elevation Sync", "V003");
             var elevationSyncV004 = Btn(assemblyPath, "Btn_RoofPointElevationSync_V004", "Elevation Sync V004", "Revit26_Plugin.RoofPointElevationSync.V004.Command",
                 "ElevationSync_16.png", "Roof Point Elevation Sync", "V004", "V003 with the standard three-zone window layout.");
-            var elevationSyncV002 = Btn(assemblyPath, "Btn_RoofPointElevationSync_V002", "Elevation Sync V002", "Revit26_Plugin.RoofPointElevationSync.V002.Command",
-                "ElevationSync_16.png", "Roof Point Elevation Sync", "V002");
+            var elevationSyncV005 = Btn(assemblyPath, "Btn_RoofPointElevationSync_V005", "Elevation Sync V005", "Revit26_Plugin.RoofPointElevationSync.V005.Command",
+                "ElevationSync_16.png", "Roof Point Elevation Sync", "V005", "V004 on the shared ToolWindowShell (log in body, capped grid).");
             var elevationSyncPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofPointElevationSync", "Elevation Sync", elevationSyncV003);
 
             var compareItems = RibbonLayoutHelper.AddStackedButtons(comparePanel, new List<RibbonItemData>
@@ -194,7 +194,7 @@ namespace Revit26_Plugin.Menu.Ribbon
                 elevationSyncPulldownData,
             });
             RibbonLayoutHelper.WirePulldownButton(compareItems, "Pulldown_RoofPointComparison", comparisonV001, comparisonV002);
-            RibbonLayoutHelper.WirePulldownButton(compareItems, "Pulldown_RoofPointElevationSync", elevationSyncV003, elevationSyncV004, elevationSyncV002);
+            RibbonLayoutHelper.WirePulldownButton(compareItems, "Pulldown_RoofPointElevationSync", elevationSyncV003, elevationSyncV004, elevationSyncV005);
         }
     }
 }

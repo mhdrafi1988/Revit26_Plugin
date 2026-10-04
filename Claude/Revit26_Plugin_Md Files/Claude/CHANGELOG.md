@@ -74,6 +74,11 @@ period rather than trusting a reconstruction here.
   modal OK / Cancel dialog. ViewModel gains `IsRunning` / `Progress` /
   `SummaryText` (not yet set). Ribbon pulldown: V017, V018 (V016 removed
   from the ribbon; folder kept).
+- CompareRoofs (RoofPointElevationSync) V005 on the shell: selection card,
+  point-mapping grid and Log (moved from footer) in the body; the old
+  footer summary is now the status strip. Binds to `IsBusy` /
+  `SummaryText`; ViewModel gains `Progress`. Ribbon pulldown: V003, V004,
+  V005 (V002 removed from the ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 
