@@ -121,10 +121,10 @@ namespace Revit26_Plugin.Menu.Ribbon
             // one 3-item stack (Revit's stacked-item limit is exactly 3 per column).
             RibbonPanel roofToolsPanel = app.CreateRibbonPanel(tabName, "Roof Tools");
 
-            var creaserV010 = Btn(assemblyPath, "Btn_CreaserAdvCommand_V010_00", "Creaser Adv V010", "Revit26_Plugin.CreaserAdv.V010.Commands.CreaserAdvCommand",
-                "CreaserAdv_16.png", "Creaser Adv", "V010");
             var creaserV011 = Btn(assemblyPath, "Btn_CreaserAdvCommand_V011", "Creaser Adv V011", "Revit26_Plugin.CreaserAdv.V011.Commands.CreaserAdvCommand",
                 "CreaserAdv_16.png", "Creaser Adv", "V011", "V010 with the standard three-zone window layout.");
+            var creaserV012 = Btn(assemblyPath, "Btn_CreaserAdvCommand_V012", "Creaser Adv V012", "Revit26_Plugin.CreaserAdv.V012.Commands.CreaserAdvCommand",
+                "CreaserAdv_16.png", "Creaser Adv", "V012", "V011 on the shared ToolWindowShell (log in body).");
             var roofTagV016 = Btn(assemblyPath, "Btn_RoofTagCommand_V016", "Roof Tag V016", "Revit26_Plugin.RoofTag.V016.RoofTagCommand",
                 "RoofTag_16.png", "Roof Tag", "V016");
             var roofTagV017 = Btn(assemblyPath, "Btn_RoofTagCommand_V017", "Roof Tag V017", "Revit26_Plugin.RoofTag.V017.RoofTagCommand",
@@ -136,11 +136,11 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             var roofToolsItems = RibbonLayoutHelper.AddStackedButtons(roofToolsPanel, new List<RibbonItemData>
             {
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_CreaserAdv", "Creaser Adv", creaserV010),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_CreaserAdv", "Creaser Adv", creaserV011),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofTag", "Roof Tag", roofTagV016),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofFromDetailLines", "Roof From Detail Lines", roofFromLinesV007),
             });
-            RibbonLayoutHelper.WirePulldownButton(roofToolsItems, "Pulldown_CreaserAdv", creaserV010, creaserV011);
+            RibbonLayoutHelper.WirePulldownButton(roofToolsItems, "Pulldown_CreaserAdv", creaserV011, creaserV012);
             RibbonLayoutHelper.WirePulldownButton(roofToolsItems, "Pulldown_RoofTag", roofTagV016, roofTagV017);
             RibbonLayoutHelper.WirePulldownButton(roofToolsItems, "Pulldown_RoofFromDetailLines", roofFromLinesV007, roofFromLinesV008);
 

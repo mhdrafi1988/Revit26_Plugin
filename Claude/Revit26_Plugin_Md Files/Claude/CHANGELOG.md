@@ -64,6 +64,11 @@ period rather than trusting a reconstruction here.
   Binds to the existing `IsBusy`; ViewModel gains `Progress` /
   `SummaryText` (not yet set). Ribbon pulldown: V013, V014 (V012 removed
   from the ribbon; folder kept).
+- CreaserAdv V012 on the shell: detail item, filters, minimum slope and Log
+  (moved from footer) in the body; the middle's own ScrollViewer removed.
+  Binds to the existing `IsRunning`; ViewModel gains `Progress` /
+  `SummaryText` (not yet set). Ribbon pulldown: V011, V012 (V010 removed
+  from the ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 
