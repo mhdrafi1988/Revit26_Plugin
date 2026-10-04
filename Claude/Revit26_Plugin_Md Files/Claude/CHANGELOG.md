@@ -18,6 +18,18 @@ period rather than trusting a reconstruction here.
 
 ---
 
+## 2026-10-04 — Manage
+
+- Manage: every live tool bumped one version as a layout-only rebuild per
+  `Revit_Plugin_UI_Standard.md` (fixed title bar + version + metrics card,
+  scrolling middle, fixed footer with log + Copy All / Copy Selected where
+  the tool has a log, Primary → Close). No behaviour changes.
+  New versions: AnnotationOverlapDetection V003 (now on SharedStyles),
+  ParaManager V004, WorksetsElementsBrowser WSEB003, WorksetManager V013,
+  WorksetRenamer V004 / FX04, ScheduleExportImport V006.
+- Ribbon: every Manage button is now a pulldown — current version first,
+  the rebuild second.
+
 ## 2026-09-20
 
 - Added baseline documentation set: `CLAUDE.md`, `Claude/ARCHITECTURE.md`,
