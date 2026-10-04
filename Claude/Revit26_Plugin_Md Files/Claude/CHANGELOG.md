@@ -240,6 +240,14 @@ period rather than trusting a reconstruction here.
   (indeterminate) / `LastRunSummary` + Run / Close. ViewModel gains
   `Progress`. Ribbon pulldown: V006, V007 (V005 removed from the ribbon;
   folder kept).
+- ViewAutoRenamer V006 on the shell. Header: status badges + metric cards.
+  Body: filter bar + popover, rename panel, toolbar, quick-filter chips,
+  views grid (capped), log (moved from the footer). Footer: status strip
+  + Reset / dry-run badge / Commit / Close. The filter popover keeps its
+  own ScrollViewer (a Popup is a separate window). Popover shadow drops
+  its inline `#000000` (DropShadowEffect default is black). ViewModel
+  gains `IsRunning` / `Progress` / `SummaryText` (not yet set). Ribbon
+  pulldown: V005, V006 (V004 removed from the ribbon; folder kept).
 
 ## 2026-10-04 — Dimensions
 
