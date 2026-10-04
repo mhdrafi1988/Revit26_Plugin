@@ -1,5 +1,7 @@
 # Revit26_Plugin
 
+_CLAUDE.md v1.1 — adds the ToolWindowShell UI standard._
+
 Revit add-in ("SloperPro" ribbon tab, see `App.cs`), single monolithic
 `Revit26_Plugin.csproj` (`net8.0-windows`) with ~60 independent tools under `Menu/`.
 
@@ -63,6 +65,36 @@ never wired up and can't have a PushButton added until unzipped.
   historically missed by some tools, so don't assume it's already done.
 - Settings load via `JsonSerializer.Deserialize` wrapped in try/catch,
   falling back to defaults on failure.
+
+## ToolWindowShell — tool window standard (v1.1)
+
+Every tool window's content is a `Shared/Controls/ToolWindowShell`
+(`xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"`) with three
+zones:
+
+- **Header** — `Title`, `Subtitle`, `Version` (navy bar, built in) plus
+  `HeaderContent`: status badges and metric tiles. Never scrolls.
+- **Body** — `BodyContent`, hosted in the shell's single ScrollViewer.
+  Inputs, expanders, DataGrids **and the log** live here.
+- **Footer** — status strip bound to the ViewModel's `IsRunning`,
+  `Progress` (0–100) and `SummaryText`, then `FooterContent`: secondary
+  actions left, Primary → Close right. Never scrolls.
+
+Rules:
+- No `ScrollViewer` inside tool content — the shell body is the only one.
+- Every DataGrid and log list sets
+  `shell:ShellBehaviors.MaxHeightRatio` (fraction of window height,
+  e.g. `0.45` grid / `0.25` log) and `shell:ShellBehaviors.ForwardMouseWheel="True"`.
+- No inline colours (`#RRGGBB`, named colours) in window XAML — add a
+  `Color` + `Brush…` token (or a style) to `Shared/SharedStyles.xaml`.
+  Metric tiles use `MetricTile[Info|Danger|Success|Warning]` with the
+  matching `MetricTileLabel…` / `MetricTileNumber…` text styles.
+- ViewModels expose `IsRunning`, `Progress`, `SummaryText` (add if
+  missing; don't otherwise change ViewModel logic, Revit API code or
+  transactions during a shell migration).
+- A migration is a normal version bump: new `_V0xx` folder + namespace.
+
+Reference implementation: SectionAutoRenamer V026.
 
 ## Ribbon & icons — read before touching either
 

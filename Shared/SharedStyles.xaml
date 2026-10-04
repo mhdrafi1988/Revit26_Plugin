@@ -5,7 +5,7 @@
 
     <!-- ═══════════════════════════════════════════════════════════
          REVIT PLUGIN SHARED STYLE GUIDE  —  Navy Corporate Theme
-         Version : 3.0
+         Version : 3.1  (adds tinted metric tiles + ToolWindowShell tokens)
          Drop-in compatible with v2.1 key names; adds DataGrid,
          header bar, badge, and button-variant styles for reuse
          across all 10 tools.
@@ -67,6 +67,21 @@
     <Color x:Key="CardBorder">#D7E1ED</Color>
     <Color x:Key="IconTint">#5B7185</Color>
 
+    <!-- Tinted metric tiles (v3.1) — Background / Border / Text per tone.
+         Taken from SectionAutoRenamer V024's inline tile colours. -->
+    <Color x:Key="TileInfoBackground">#E6F1FB</Color>
+    <Color x:Key="TileInfoBorder">#85B7EB</Color>
+    <Color x:Key="TileInfoText">#0C447C</Color>
+    <Color x:Key="TileDangerBackground">#FAECE7</Color>
+    <Color x:Key="TileDangerBorder">#F0997B</Color>
+    <Color x:Key="TileDangerText">#712B13</Color>
+    <Color x:Key="TileSuccessBackground">#EAF3DE</Color>
+    <Color x:Key="TileSuccessBorder">#97C459</Color>
+    <Color x:Key="TileSuccessText">#27500A</Color>
+    <Color x:Key="TileWarningBackground">#FAEEDA</Color>
+    <Color x:Key="TileWarningBorder">#EF9F27</Color>
+    <Color x:Key="TileWarningText">#633806</Color>
+
     <!-- ═══════════════════════════════════════════════════════════
          SOLID COLOR BRUSHES
     ═══════════════════════════════════════════════════════════ -->
@@ -109,6 +124,19 @@
     <SolidColorBrush x:Key="BrushCardBackground"            Color="{StaticResource CardBackground}"/>
     <SolidColorBrush x:Key="BrushCardBorder"                Color="{StaticResource CardBorder}"/>
     <SolidColorBrush x:Key="BrushIconTint"                  Color="{StaticResource IconTint}"/>
+
+    <SolidColorBrush x:Key="BrushTileInfoBackground"        Color="{StaticResource TileInfoBackground}"/>
+    <SolidColorBrush x:Key="BrushTileInfoBorder"            Color="{StaticResource TileInfoBorder}"/>
+    <SolidColorBrush x:Key="BrushTileInfoText"              Color="{StaticResource TileInfoText}"/>
+    <SolidColorBrush x:Key="BrushTileDangerBackground"      Color="{StaticResource TileDangerBackground}"/>
+    <SolidColorBrush x:Key="BrushTileDangerBorder"          Color="{StaticResource TileDangerBorder}"/>
+    <SolidColorBrush x:Key="BrushTileDangerText"            Color="{StaticResource TileDangerText}"/>
+    <SolidColorBrush x:Key="BrushTileSuccessBackground"     Color="{StaticResource TileSuccessBackground}"/>
+    <SolidColorBrush x:Key="BrushTileSuccessBorder"         Color="{StaticResource TileSuccessBorder}"/>
+    <SolidColorBrush x:Key="BrushTileSuccessText"           Color="{StaticResource TileSuccessText}"/>
+    <SolidColorBrush x:Key="BrushTileWarningBackground"     Color="{StaticResource TileWarningBackground}"/>
+    <SolidColorBrush x:Key="BrushTileWarningBorder"         Color="{StaticResource TileWarningBorder}"/>
+    <SolidColorBrush x:Key="BrushTileWarningText"           Color="{StaticResource TileWarningText}"/>
 
 
     <!-- ═══════════════════════════════════════════════════════════
@@ -211,6 +239,74 @@
         <Setter Property="FontSize"   Value="10.5"/>
         <Setter Property="Foreground" Value="{StaticResource BrushTextTertiary}"/>
         <Setter Property="Margin"     Value="0,3,0,0"/>
+    </Style>
+
+    <!-- ─── Tinted metric tiles (v3.1) ───────────────────────────
+         <Border Style="{StaticResource MetricTileInfo}">
+             <StackPanel>
+                 <TextBlock Text="SELECTED" Style="{StaticResource MetricTileLabelInfo}"/>
+                 <TextBlock Text="{Binding X}" Style="{StaticResource MetricTileNumberInfo}"/>
+             </StackPanel>
+         </Border>
+    ─────────────────────────────────────────────────────────── -->
+    <Style x:Key="MetricTile" TargetType="Border">
+        <Setter Property="CornerRadius"    Value="6"/>
+        <Setter Property="BorderThickness" Value="0.5"/>
+        <Setter Property="Padding"         Value="10,6"/>
+        <Setter Property="Background"      Value="{StaticResource BrushSystemBackground}"/>
+        <Setter Property="BorderBrush"     Value="{StaticResource BrushCardBorder}"/>
+    </Style>
+    <Style x:Key="MetricTileInfo" TargetType="Border" BasedOn="{StaticResource MetricTile}">
+        <Setter Property="Background"  Value="{StaticResource BrushTileInfoBackground}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BrushTileInfoBorder}"/>
+    </Style>
+    <Style x:Key="MetricTileDanger" TargetType="Border" BasedOn="{StaticResource MetricTile}">
+        <Setter Property="Background"  Value="{StaticResource BrushTileDangerBackground}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BrushTileDangerBorder}"/>
+    </Style>
+    <Style x:Key="MetricTileSuccess" TargetType="Border" BasedOn="{StaticResource MetricTile}">
+        <Setter Property="Background"  Value="{StaticResource BrushTileSuccessBackground}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BrushTileSuccessBorder}"/>
+    </Style>
+    <Style x:Key="MetricTileWarning" TargetType="Border" BasedOn="{StaticResource MetricTile}">
+        <Setter Property="Background"  Value="{StaticResource BrushTileWarningBackground}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BrushTileWarningBorder}"/>
+    </Style>
+
+    <Style x:Key="MetricTileLabel" TargetType="TextBlock">
+        <Setter Property="FontSize"   Value="9.5"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{StaticResource BrushTextTertiary}"/>
+    </Style>
+    <Style x:Key="MetricTileLabelInfo" TargetType="TextBlock" BasedOn="{StaticResource MetricTileLabel}">
+        <Setter Property="Foreground" Value="{StaticResource BrushTileInfoText}"/>
+    </Style>
+    <Style x:Key="MetricTileLabelDanger" TargetType="TextBlock" BasedOn="{StaticResource MetricTileLabel}">
+        <Setter Property="Foreground" Value="{StaticResource BrushTileDangerText}"/>
+    </Style>
+    <Style x:Key="MetricTileLabelSuccess" TargetType="TextBlock" BasedOn="{StaticResource MetricTileLabel}">
+        <Setter Property="Foreground" Value="{StaticResource BrushTileSuccessText}"/>
+    </Style>
+    <Style x:Key="MetricTileLabelWarning" TargetType="TextBlock" BasedOn="{StaticResource MetricTileLabel}">
+        <Setter Property="Foreground" Value="{StaticResource BrushTileWarningText}"/>
+    </Style>
+
+    <Style x:Key="MetricTileNumber" TargetType="TextBlock">
+        <Setter Property="FontSize"   Value="18"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}"/>
+    </Style>
+    <Style x:Key="MetricTileNumberInfo" TargetType="TextBlock" BasedOn="{StaticResource MetricTileNumber}">
+        <Setter Property="Foreground" Value="{StaticResource BrushTileInfoText}"/>
+    </Style>
+    <Style x:Key="MetricTileNumberDanger" TargetType="TextBlock" BasedOn="{StaticResource MetricTileNumber}">
+        <Setter Property="Foreground" Value="{StaticResource BrushTileDangerText}"/>
+    </Style>
+    <Style x:Key="MetricTileNumberSuccess" TargetType="TextBlock" BasedOn="{StaticResource MetricTileNumber}">
+        <Setter Property="Foreground" Value="{StaticResource BrushTileSuccessText}"/>
+    </Style>
+    <Style x:Key="MetricTileNumberWarning" TargetType="TextBlock" BasedOn="{StaticResource MetricTileNumber}">
+        <Setter Property="Foreground" Value="{StaticResource BrushTileWarningText}"/>
     </Style>
 
     <!-- ═══════════════════════════════════════════════════════════
