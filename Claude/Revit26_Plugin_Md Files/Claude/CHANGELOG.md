@@ -18,6 +18,18 @@ period rather than trusting a reconstruction here.
 
 ---
 
+## 2026-10-04 — Detail Lines
+
+- Detail Lines: every live tool bumped one version as a layout-only rebuild
+  per `Revit_Plugin_UI_Standard.md` (fixed title bar + version + metrics
+  card, scrolling middle, fixed footer with an always-visible log + Copy All
+  / Copy Selected, Primary → Close). No behaviour changes.
+  New versions: LinkedDetailLineGenerator VA008 (log Copy buttons now wired;
+  metadata stamp `GeneratorVersion` = VA008), DetailLineClosedLoop V002
+  (window widened to 980 for a full-height Created Lines grid).
+- Ribbon: every Detail Lines button is now a pulldown — current version
+  first, the UI-standard version second.
+
 ## 2026-09-20
 
 - Added baseline documentation set: `CLAUDE.md`, `Claude/ARCHITECTURE.md`,
