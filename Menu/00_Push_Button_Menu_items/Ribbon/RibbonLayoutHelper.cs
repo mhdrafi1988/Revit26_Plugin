@@ -120,6 +120,15 @@ namespace Revit26_Plugin.Menu.Ribbon
             pulldown.ToolTip = BuildVersionsTip(pulldown.ItemText, versions);
         }
 
+        /// <summary>
+        /// Returns the standard ribbon tooltip: "toolName — version", then an optional detail line.
+        /// </summary>
+        public static string VersionTip(string toolName, string version, string detail = null)
+        {
+            string title = $"{toolName}{TipSeparator}{version}";
+            return string.IsNullOrWhiteSpace(detail) ? title : title + "\n" + detail;
+        }
+
         private static string BuildVersionsTip(string tool, PushButtonData[] versions)
         {
             var sb = new StringBuilder(tool)
