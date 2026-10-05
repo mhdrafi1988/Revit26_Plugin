@@ -1,6 +1,5 @@
-﻿using Autodesk.Revit.UI;
+using Autodesk.Revit.UI;
 using Revit26_Plugin.Resources.Icons;
-using Revit26_Plugin.Shared.Services;
 using System.Collections.Generic;
 
 namespace Revit26_Plugin.Menu.Ribbon
@@ -13,31 +12,70 @@ namespace Revit26_Plugin.Menu.Ribbon
             // panels — running a Family tool in a Project (or vice versa)
             // fails the context check, so the panel title now makes that clear.
             RibbonPanel familyPanel = app.CreateRibbonPanel(tabName, "Family Tools");
-            RibbonLayoutHelper.AddStackedButtons(familyPanel, new List<RibbonItemData>
+
+            // Every tool is a pulldown: previous version first, the UI Standard
+            // version second.
+            // Batch Link DWG's original build has no version number anywhere in
+            // its source (folder "BatchDwgFamilyLinker_WOrking"), so the tip says
+            // so rather than inventing one; the UI Standard rebuild is V002.
+            var batchLinkWorking = new PushButtonData("BatchLinkDwgCommand", "Batch Link DWG (Working)", assemblyPath, "BatchDwgFamilyLinker.Command.BatchLinkDwgCommand")
             {
-                // Batch Link DWG has no version number anywhere in its source
-                // (folder is just "BatchDwgFamilyLinker_WOrking"), so the tip
-                // says so rather than inventing one.
-                new PushButtonData("BatchLinkDwgCommand", "Batch Link DWG", assemblyPath, "BatchDwgFamilyLinker.Command.BatchLinkDwgCommand")
-                {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.Linker_16.png"),
-                    ToolTip = ToolCatalog.BatchDwgFamilyLinker.Tip()
-                },
-                new PushButtonData("Btn_DwgToLines_V005", "DWG To Lines", assemblyPath, "Revit26_Plugin.DwgToLines.V005.Commands.DwgToLinesCommand")
-                {
-                    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToLines_16.png"),
-                    ToolTip = ToolCatalog.DwgToLines.Tip()
-                },
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.Linker_16.png"),
+                ToolTip = RibbonLayoutHelper.VersionTip("Batch Link DWG Family", "Working build")
+            };
+            var batchLinkV002 = new PushButtonData("Btn_BatchLinkDwg_V002", "Batch Link DWG V002", assemblyPath, "BatchDwgFamilyLinker.V002.Command.BatchLinkDwgCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.Linker_16.png"),
+                ToolTip = RibbonLayoutHelper.VersionTip("Batch Link DWG Family", "V002", "UI Standard layout: navy theme, metrics card, footer progress + live log with Copy All / Copy Selected, Start Batch → Close.")
+            };
+            var batchLinkPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_BatchLinkDwg", "Batch Link DWG", batchLinkWorking);
+
+            var dwgToLinesV006 = new PushButtonData("Btn_DwgToLines_V006", "DWG To Lines V006", assemblyPath, "Revit26_Plugin.DwgToLines.V006.Commands.DwgToLinesCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToLines_16.png"),
+                ToolTip = RibbonLayoutHelper.VersionTip("DWG To Lines", "V006", "UI Standard layout: metrics card, always-visible footer log, Convert DWG → Close.")
+            };
+            var dwgToLinesV007 = new PushButtonData("Btn_DwgToLines_V007", "DWG To Lines V007", assemblyPath, "Revit26_Plugin.DwgToLines.V007.Commands.DwgToLinesCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToLines_16.png"),
+                ToolTip = RibbonLayoutHelper.VersionTip("DWG To Lines", "V007", "V006 on the shared ToolWindowShell (log in body).")
+            };
+            var dwgToLinesPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DwgToLines", "DWG To Lines", dwgToLinesV006);
+
+            var familyItems = RibbonLayoutHelper.AddStackedButtons(familyPanel, new List<RibbonItemData>
+            {
+                batchLinkPulldownData,
+                dwgToLinesPulldownData,
             });
+            RibbonLayoutHelper.WirePulldownButton(familyItems, "Pulldown_BatchLinkDwg", batchLinkWorking, batchLinkV002);
+            RibbonLayoutHelper.WirePulldownButton(familyItems, "Pulldown_DwgToLines", dwgToLinesV006, dwgToLinesV007);
 
             RibbonPanel projectPanel = app.CreateRibbonPanel(tabName, "Project Tools");
 
-            var dwgLinesV011 = new PushButtonData("Btn_DwgToDetailLines_V011", "DWG To Detail Lines", assemblyPath, "Revit26_Plugin.DwgToDetailLines.V011.Commands.DwgToDetailLinesCommand")
+            // Two coexisting implementations of the same tool, collected under
+            // one pulldown button — each version is a push button inside the dropdown.
+            var dwgLinesV011 = new PushButtonData("Btn_DwgToDetailLines_V011", "Detail Lines V011", assemblyPath, "Revit26_Plugin.DwgToDetailLines.V011.Commands.DwgToDetailLinesCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToDetailLines_V011_16.png"),
-                ToolTip = ToolCatalog.DwgToDetailLines.Tip()
+                ToolTip = RibbonLayoutHelper.VersionTip("DWG To Detail Lines", "V011")
             };
-            RibbonLayoutHelper.AddStackedButtons(projectPanel, new List<RibbonItemData> { dwgLinesV011 });
+            var dwgLinesV012 = new PushButtonData("Btn_DwgToDetailLines_V012", "Detail Lines V012", assemblyPath, "Revit26_Plugin.DwgToDetailLines.V012.Commands.DwgToDetailLinesCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToDetailLines_V011_16.png"),
+                ToolTip = RibbonLayoutHelper.VersionTip("DWG To Detail Lines", "V012", "UI Standard layout: metrics on top, full-height layer grid, always-visible footer log, Convert DWG → Close.")
+            };
+            var dwgLinesV013 = new PushButtonData("Btn_DwgToDetailLines_V013", "Detail Lines V013", assemblyPath, "Revit26_Plugin.DwgToDetailLines.V013.Commands.DwgToDetailLinesCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToDetailLines_V011_16.png"),
+                ToolTip = RibbonLayoutHelper.VersionTip("DWG To Detail Lines", "V013", "V012 on the shared ToolWindowShell (log in body, capped grid).")
+            };
+            var dwgLinesPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DwgToDetailLines", "Detail Lines", dwgLinesV011);
+
+            var projectItems = RibbonLayoutHelper.AddStackedButtons(projectPanel, new List<RibbonItemData>
+            {
+                dwgLinesPulldownData,
+            });
+            RibbonLayoutHelper.WirePulldownButton(projectItems, "Pulldown_DwgToDetailLines", dwgLinesV011, dwgLinesV012, dwgLinesV013);
         }
     }
 }

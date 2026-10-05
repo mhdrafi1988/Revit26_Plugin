@@ -4,7 +4,7 @@
         xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
         xmlns:vm="clr-namespace:Revit26_Plugin.ScheduleExportImport.V004.UI.ViewModels"
         Title="Schedule Export / Import — V004"
-        Width="860" Height="720"
+        Width="860" Height="760"
         MinWidth="680" MinHeight="560"
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource BrushSystemSecondaryBackground}"
@@ -47,6 +47,42 @@
                 <Setter Property="VerticalAlignment" Value="Center"/>
                 <Setter Property="FontSize" Value="11"/>
                 <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}"/>
+            </Style>
+
+            <!-- Export / Import: identical shape and size, only the fill differs (green = export, red = import) -->
+            <Style x:Key="ActionButtonBase" TargetType="Button">
+                <Setter Property="Height" Value="40"/>
+                <Setter Property="FontSize" Value="13.5"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="Bg" Background="{TemplateBinding Background}" CornerRadius="9" Padding="16,0">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Bg" Property="Opacity" Value="0.88"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="Bg" Property="Opacity" Value="0.75"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="Bg" Property="Background" Value="{StaticResource BrushTextDisabled}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style x:Key="ExportActionButton" TargetType="Button" BasedOn="{StaticResource ActionButtonBase}">
+                <Setter Property="Background" Value="#1E7E34"/>
+            </Style>
+            <Style x:Key="ImportActionButton" TargetType="Button" BasedOn="{StaticResource ActionButtonBase}">
+                <Setter Property="Background" Value="#C0392B"/>
             </Style>
         </ResourceDictionary>
     </Window.Resources>
@@ -93,45 +129,54 @@
             </ItemsControl>
         </StackPanel>
 
-        <!-- ══ Actions: Export / Import directly under the metric cards ══ -->
+        <!-- ══ Actions: Export (green) and Import (red) on their own rows, same size, under the metric cards ══ -->
         <Border Grid.Row="2" Style="{StaticResource ContentCard}" Margin="0,0,0,8">
             <Grid Margin="12,10">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="210"/>
+                    <ColumnDefinition Width="12"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="8"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,12,0">
-                    <TextBlock Text="Selected schedule" FontSize="10" Foreground="{StaticResource BrushTextSecondary}"/>
-                    <TextBlock Text="{Binding SelectedSchedule.Name, FallbackValue='Tick a schedule below to export', TargetNullValue='Tick a schedule below to export'}"
-                               FontSize="13" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
-                               Foreground="{StaticResource BrushTextPrimary}"/>
-                </StackPanel>
-
-                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="⏳ Working…" FontSize="11" VerticalAlignment="Center" Margin="0,0,10,0"
+                <DockPanel Grid.Row="0" Grid.ColumnSpan="3" Margin="0,0,0,8">
+                    <TextBlock DockPanel.Dock="Right" Text="⏳ Working…" FontSize="11" VerticalAlignment="Center"
                                Foreground="{StaticResource BrushTextSecondary}"
                                Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                    <Button Content="Export to Excel…" Style="{StaticResource SecondaryButton}" MinWidth="140" Margin="0,0,6,0"
-                            Command="{Binding ExportScheduleCommand}"
-                            ToolTip="Save the ticked schedule (Element ID + visible fields) as .xlsx. Green columns are editable, grey are locked."/>
-                    <Button Content="Open Exported File" Style="{StaticResource SecondaryButton}" Margin="0,0,6,0"
-                            Command="{Binding OpenExportedFileCommand}"
-                            ToolTip="Open the last exported workbook in Excel"/>
-                    <Button Content="Import from Excel…" Style="{StaticResource PrimaryButton}" MinWidth="150"
-                            Command="{Binding ImportScheduleCommand}"
-                            ToolTip="Save your edits in Excel (it can stay open), then import. The schedule is picked from the file; a preview opens and nothing changes until you click Apply."/>
+                    <TextBlock VerticalAlignment="Center" TextTrimming="CharacterEllipsis">
+                        <Run Text="Selected schedule:  " FontSize="11" Foreground="{StaticResource BrushTextSecondary}"/>
+                        <Run Text="{Binding SelectedSchedule.Name, Mode=OneWay, FallbackValue='tick a schedule below to export', TargetNullValue='tick a schedule below to export'}"
+                             FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource BrushTextPrimary}"/>
+                    </TextBlock>
+                </DockPanel>
+
+                <!-- Row 1 · Export -->
+                <Button Grid.Row="1" Grid.Column="0" Content="Export to Excel…" Style="{StaticResource ExportActionButton}"
+                        Command="{Binding ExportScheduleCommand}"
+                        ToolTip="Save the ticked schedule (Element ID + visible fields) as .xlsx. Green columns are editable, grey are locked."/>
+                <StackPanel Grid.Row="1" Grid.Column="2" VerticalAlignment="Center">
+                    <TextBlock Text="1 · Export the ticked schedule, then edit the green columns in Excel and save."
+                               FontSize="10.5" Foreground="{StaticResource BrushTextSecondary}" TextWrapping="Wrap"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                        <Button Content="Open Exported File" Style="{StaticResource SmallSecondaryButton}" Margin="0,0,8,0"
+                                Command="{Binding OpenExportedFileCommand}" ToolTip="Open the last exported workbook in Excel"/>
+                        <TextBlock Text="{Binding LastExportedFile, Mode=OneWay}" FontSize="10" VerticalAlignment="Center"
+                                   TextTrimming="CharacterEllipsis" Foreground="{StaticResource BrushAppleBlue}"/>
+                    </StackPanel>
                 </StackPanel>
 
-                <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Margin="0,6,0,0" FontSize="10" TextTrimming="CharacterEllipsis"
-                           Foreground="{StaticResource BrushTextSecondary}">
-                    <Run Text="1 · Export, edit the green columns in Excel and save  ·  2 · Import, review the preview, Apply"/>
-                    <Run Text="{Binding LastExportedFile, Mode=OneWay, StringFormat='   ·   Last export: {0}', TargetNullValue=''}" Foreground="{StaticResource BrushAppleBlue}"/>
-                </TextBlock>
+                <!-- Row 2 · Import -->
+                <Button Grid.Row="3" Grid.Column="0" Content="Import from Excel…" Style="{StaticResource ImportActionButton}"
+                        Command="{Binding ImportScheduleCommand}"
+                        ToolTip="Save your edits in Excel (it can stay open), then import. A preview opens and nothing changes until you click Apply."/>
+                <TextBlock Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" TextWrapping="Wrap" FontSize="10.5"
+                           Foreground="{StaticResource BrushTextSecondary}"
+                           Text="2 · Import the saved file. The schedule is picked from the file; review the preview, then Apply."/>
             </Grid>
         </Border>
 

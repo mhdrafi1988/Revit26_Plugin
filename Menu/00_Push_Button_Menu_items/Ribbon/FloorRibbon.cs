@@ -1,6 +1,5 @@
-﻿using Autodesk.Revit.UI;
+using Autodesk.Revit.UI;
 using Revit26_Plugin.Resources.Icons;
-using Revit26_Plugin.Shared.Services;
 using System.Collections.Generic;
 
 namespace Revit26_Plugin.Menu.Ribbon
@@ -12,22 +11,36 @@ namespace Revit26_Plugin.Menu.Ribbon
             RibbonPanel panel = app.CreateRibbonPanel(tabName, "Floor Tools");
 
             // Two approaches to the same job, collected under one pulldown
-            // button per request — the higher-version build (V011) keeps the
-            // icon, the Plan-View variant (V004) sits beside it in the dropdown.
-            var fromRoomsV011 = new PushButtonData("Btn_FloorsAndRoofFromLinkedRooms_V011", "From Rooms", assemblyPath, "Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V011.Command")
+            // button per request — each approach lists its previous version
+            // first and its newer version second; V012 keeps the icon.
+            var fromRoomsV012 = new PushButtonData("Btn_FloorsAndRoofFromLinkedRooms_V012", "From Rooms V012", assemblyPath, "Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V012.Command")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.FloorTools.FloorRoofFromRooms_16.png"),
-                ToolTip = ToolCatalog.FloorsAndRoofFromLinkedRooms.Tip()
+                ToolTip = RibbonLayoutHelper.VersionTip("Floors And Roof From Linked Rooms", "V012",
+                    "UI Standard layout: footer with progress, summaries, always-visible log and Create Floors / Create Roof → Close.")
             };
-            var fromRoomsPlanViewV004 = new PushButtonData("Btn_FloorsAndRoofFromLinkedRoomsViaPlanViewV004", "From Rooms Via Plan View", assemblyPath, "Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V004.Command")
+            var fromRoomsV013 = new PushButtonData("Btn_FloorsAndRoofFromLinkedRooms_V013", "From Rooms V013", assemblyPath, "Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V013.Command")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.FloorTools.FloorRoofFromRooms_16.png"),
+                ToolTip = RibbonLayoutHelper.VersionTip("Floors And Roof From Linked Rooms", "V013",
+                    "V012 on the shared ToolWindowShell (summaries and log in body, capped room grid).")
+            };
+            var fromRoomsPlanViewV005 = new PushButtonData("Btn_FloorsAndRoofFromLinkedRoomsViaPlanViewV005", "Rooms Plan View V005", assemblyPath, "Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V005.Command")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.FloorTools.FloorRoofFromRoomsPlanView_16.png"),
-                ToolTip = ToolCatalog.FloorsAndRoofFromLinkedRoomsViaPlanView.Tip()
+                ToolTip = RibbonLayoutHelper.VersionTip("Floors And Roof From Linked Rooms (Via Plan View)", "V005",
+                    "UI Standard layout: metrics card, full-height room list, footer log and Create Floors / Create Roof → Close.")
             };
-            var fromRoomsPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_FloorsAndRoofFromLinkedRooms", "From Rooms", fromRoomsV011);
+            var fromRoomsPlanViewV006 = new PushButtonData("Btn_FloorsAndRoofFromLinkedRoomsViaPlanViewV006", "Rooms Plan View V006", assemblyPath, "Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V006.Command")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.FloorTools.FloorRoofFromRoomsPlanView_16.png"),
+                ToolTip = RibbonLayoutHelper.VersionTip("Floors And Roof From Linked Rooms (Via Plan View)", "V006",
+                    "V005 on the shared ToolWindowShell (summaries and log in body, capped room list).")
+            };
+            var fromRoomsPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_FloorsAndRoofFromLinkedRooms", "From Rooms", fromRoomsV012);
 
             var items = RibbonLayoutHelper.AddStackedButtons(panel, new List<RibbonItemData> { fromRoomsPulldownData });
-            RibbonLayoutHelper.WirePulldownButton(items, "Pulldown_FloorsAndRoofFromLinkedRooms", fromRoomsV011, fromRoomsPlanViewV004);
+            RibbonLayoutHelper.WirePulldownButton(items, "Pulldown_FloorsAndRoofFromLinkedRooms", fromRoomsV012, fromRoomsV013, fromRoomsPlanViewV005, fromRoomsPlanViewV006);
         }
     }
 }

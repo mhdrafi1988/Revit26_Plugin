@@ -5,7 +5,7 @@
 
     <!-- ═══════════════════════════════════════════════════════════
          REVIT PLUGIN SHARED STYLE GUIDE  —  Navy Corporate Theme
-         Version : 3.0
+         Version : 3.1  (adds tinted metric tiles + ToolWindowShell tokens)
          Drop-in compatible with v2.1 key names; adds DataGrid,
          header bar, badge, and button-variant styles for reuse
          across all 10 tools.
@@ -67,6 +67,93 @@
     <Color x:Key="CardBorder">#D7E1ED</Color>
     <Color x:Key="IconTint">#5B7185</Color>
 
+    <!-- Tinted metric tiles (v3.1) — Background / Border / Text per tone.
+         Taken from SectionAutoRenamer V024's inline tile colours. -->
+    <Color x:Key="TileInfoBackground">#E6F1FB</Color>
+    <Color x:Key="TileInfoBorder">#85B7EB</Color>
+    <Color x:Key="TileInfoText">#0C447C</Color>
+    <Color x:Key="TileDangerBackground">#FAECE7</Color>
+    <Color x:Key="TileDangerBorder">#F0997B</Color>
+    <Color x:Key="TileDangerText">#712B13</Color>
+    <Color x:Key="TileSuccessBackground">#EAF3DE</Color>
+    <Color x:Key="TileSuccessBorder">#97C459</Color>
+    <Color x:Key="TileSuccessText">#27500A</Color>
+    <Color x:Key="TileWarningBackground">#FAEEDA</Color>
+    <Color x:Key="TileWarningBorder">#EF9F27</Color>
+    <Color x:Key="TileWarningText">#633806</Color>
+
+    <!-- Pass / fail row tints for result grids (v3.1) -->
+    <Color x:Key="RowSuccessBackground">#F5FFF8</Color>
+    <Color x:Key="RowDangerBackground">#FFF5F5</Color>
+
+    <!-- Result-group palette (v3.1) — accent bar / count-pill background /
+         text, used by grouped result lists (WorksetRenamer FX). -->
+    <Color x:Key="GroupOkAccent">#1E7E1E</Color>
+    <Color x:Key="GroupOkBackground">#DCF3DC</Color>
+    <Color x:Key="GroupWarningAccent">#C98A00</Color>
+    <Color x:Key="GroupWarningBackground">#FFF0CC</Color>
+    <Color x:Key="GroupWarningText">#A06A00</Color>
+    <Color x:Key="GroupNewAccent">#1E7A52</Color>
+    <Color x:Key="GroupNewBackground">#DCF3EA</Color>
+    <Color x:Key="GroupNeutralAccent">#999999</Color>
+    <Color x:Key="GroupNeutralBackground">#EEEEEE</Color>
+    <Color x:Key="GroupNeutralText">#777777</Color>
+    <Color x:Key="GroupDangerAccent">#B23B3B</Color>
+    <Color x:Key="GroupDangerBackground">#FBDADA</Color>
+
+    <!-- Faint status tints for outlined metric tiles (v3.1, from WorksetManager) -->
+    <Color x:Key="TintSuccess">#0A34C759</Color>
+    <Color x:Key="TintInfo">#0A3A82F7</Color>
+    <Color x:Key="TintWarning">#0AFF9F0A</Color>
+
+    <!-- Action buttons / status pills / warning banner (v3.1, from ScheduleExportImport) -->
+    <Color x:Key="ActionExport">#1E7E34</Color>
+    <Color x:Key="ActionImport">#C0392B</Color>
+    <Color x:Key="ActionText">#FFFFFF</Color>
+    <Color x:Key="PillNeutralBackground">#EEF1F5</Color>
+    <Color x:Key="PillNeutralText">#4B5563</Color>
+    <Color x:Key="PillInfoBackground">#E3ECFB</Color>
+    <Color x:Key="PillInfoText">#1D4ED8</Color>
+    <Color x:Key="PillSuccessBackground">#DCF3E3</Color>
+    <Color x:Key="PillSuccessText">#15803D</Color>
+    <Color x:Key="PillDangerText">#B91C1C</Color>
+    <Color x:Key="PillMutedBackground">#E5E7EB</Color>
+    <Color x:Key="PillMutedText">#374151</Color>
+    <Color x:Key="PillTypeBackground">#EDE7FB</Color>
+    <Color x:Key="PillTypeText">#6D28D9</Color>
+    <Color x:Key="BannerWarningBackground">#FFF6E0</Color>
+    <Color x:Key="BannerWarningBorder">#E8B84A</Color>
+    <Color x:Key="BannerWarningText">#7A4F00</Color>
+
+    <!-- Import status pills + dark row-detail text (v3.1, from RoofTypeCreator) -->
+    <Color x:Key="PillNewBackground">#E3F2FD</Color>
+    <Color x:Key="PillNewText">#1565C0</Color>
+    <Color x:Key="PillDupBackground">#FFF3E0</Color>
+    <Color x:Key="PillDupText">#E65100</Color>
+    <Color x:Key="PillRenamedBackground">#F3E5F5</Color>
+    <Color x:Key="PillRenamedText">#7B1FA2</Color>
+    <Color x:Key="DetailMutedText">#888888</Color>
+    <Color x:Key="DetailValueText">#DDDDDD</Color>
+
+    <!-- Soft status-pill backgrounds (v3.1, from CreateSections) -->
+    <Color x:Key="SoftSuccessBackground">#E4F5EC</Color>
+    <Color x:Key="SoftWarningBackground">#FDF1E1</Color>
+    <Color x:Key="SoftDangerBackground">#FBE8E7</Color>
+    <Color x:Key="BadgeOnDark">#33FFFFFF</Color>  <!-- translucent white badge on navy chips (RoofEdgeAroundSections) -->
+    <Color x:Key="PillTaggableBackground">#E7F5EE</Color>      <!-- SectionViewAutoTagger category pills -->
+    <Color x:Key="PillNotTaggableBackground">#FBEAE9</Color>
+    <Color x:Key="PillPlacedBackground">#EAF6F0</Color>        <!-- CalloutCOP placed pill -->
+    <Color x:Key="PillPlacedText">#1F6B45</Color>
+    <Color x:Key="RowUnmappedBackground">#FBEAEA</Color>       <!-- FloorsAndRoofFromLinkedRooms unmapped level cell -->
+    <Color x:Key="StageCompleteBackground">#E4F3EA</Color>     <!-- SmartViewToSheetPlacer stage badge / no-fit sheet -->
+    <Color x:Key="SheetNoFitBackground">#FDEBEA</Color>
+    <Color x:Key="BannerInfoBackground">#EAF1FC</Color>        <!-- SheetAutoRearrange info / note banners -->
+    <Color x:Key="BannerInfoBorder">#B9CFF2</Color>
+    <Color x:Key="BannerNoteBackground">#FFF8E6</Color>
+    <Color x:Key="BannerNoteBorder">#E8D08A</Color>
+    <Color x:Key="BannerNoteText">#6B5416</Color>
+    <Color x:Key="TextOnAccent">#FFFFFF</Color>               <!-- pure white text on navy / blue / coloured badges and buttons -->
+
     <!-- ═══════════════════════════════════════════════════════════
          SOLID COLOR BRUSHES
     ═══════════════════════════════════════════════════════════ -->
@@ -109,6 +196,78 @@
     <SolidColorBrush x:Key="BrushCardBackground"            Color="{StaticResource CardBackground}"/>
     <SolidColorBrush x:Key="BrushCardBorder"                Color="{StaticResource CardBorder}"/>
     <SolidColorBrush x:Key="BrushIconTint"                  Color="{StaticResource IconTint}"/>
+
+    <SolidColorBrush x:Key="BrushTileInfoBackground"        Color="{StaticResource TileInfoBackground}"/>
+    <SolidColorBrush x:Key="BrushTileInfoBorder"            Color="{StaticResource TileInfoBorder}"/>
+    <SolidColorBrush x:Key="BrushTileInfoText"              Color="{StaticResource TileInfoText}"/>
+    <SolidColorBrush x:Key="BrushTileDangerBackground"      Color="{StaticResource TileDangerBackground}"/>
+    <SolidColorBrush x:Key="BrushTileDangerBorder"          Color="{StaticResource TileDangerBorder}"/>
+    <SolidColorBrush x:Key="BrushTileDangerText"            Color="{StaticResource TileDangerText}"/>
+    <SolidColorBrush x:Key="BrushTileSuccessBackground"     Color="{StaticResource TileSuccessBackground}"/>
+    <SolidColorBrush x:Key="BrushTileSuccessBorder"         Color="{StaticResource TileSuccessBorder}"/>
+    <SolidColorBrush x:Key="BrushTileSuccessText"           Color="{StaticResource TileSuccessText}"/>
+    <SolidColorBrush x:Key="BrushTileWarningBackground"     Color="{StaticResource TileWarningBackground}"/>
+    <SolidColorBrush x:Key="BrushTileWarningBorder"         Color="{StaticResource TileWarningBorder}"/>
+    <SolidColorBrush x:Key="BrushTileWarningText"           Color="{StaticResource TileWarningText}"/>
+    <SolidColorBrush x:Key="BrushRowSuccessBackground"      Color="{StaticResource RowSuccessBackground}"/>
+    <SolidColorBrush x:Key="BrushRowDangerBackground"       Color="{StaticResource RowDangerBackground}"/>
+    <SolidColorBrush x:Key="BrushGroupOkAccent"                  Color="{StaticResource GroupOkAccent}"/>
+    <SolidColorBrush x:Key="BrushGroupOkBackground"              Color="{StaticResource GroupOkBackground}"/>
+    <SolidColorBrush x:Key="BrushGroupWarningAccent"             Color="{StaticResource GroupWarningAccent}"/>
+    <SolidColorBrush x:Key="BrushGroupWarningBackground"         Color="{StaticResource GroupWarningBackground}"/>
+    <SolidColorBrush x:Key="BrushGroupWarningText"               Color="{StaticResource GroupWarningText}"/>
+    <SolidColorBrush x:Key="BrushGroupNewAccent"                 Color="{StaticResource GroupNewAccent}"/>
+    <SolidColorBrush x:Key="BrushGroupNewBackground"             Color="{StaticResource GroupNewBackground}"/>
+    <SolidColorBrush x:Key="BrushGroupNeutralAccent"             Color="{StaticResource GroupNeutralAccent}"/>
+    <SolidColorBrush x:Key="BrushGroupNeutralBackground"         Color="{StaticResource GroupNeutralBackground}"/>
+    <SolidColorBrush x:Key="BrushGroupNeutralText"               Color="{StaticResource GroupNeutralText}"/>
+    <SolidColorBrush x:Key="BrushGroupDangerAccent"              Color="{StaticResource GroupDangerAccent}"/>
+    <SolidColorBrush x:Key="BrushGroupDangerBackground"          Color="{StaticResource GroupDangerBackground}"/>
+    <SolidColorBrush x:Key="BrushTintSuccess"               Color="{StaticResource TintSuccess}"/>
+    <SolidColorBrush x:Key="BrushTintInfo"                  Color="{StaticResource TintInfo}"/>
+    <SolidColorBrush x:Key="BrushTintWarning"               Color="{StaticResource TintWarning}"/>
+    <SolidColorBrush x:Key="BrushActionExport"                   Color="{StaticResource ActionExport}"/>
+    <SolidColorBrush x:Key="BrushActionImport"                   Color="{StaticResource ActionImport}"/>
+    <SolidColorBrush x:Key="BrushActionText"                     Color="{StaticResource ActionText}"/>
+    <SolidColorBrush x:Key="BrushPillNeutralBackground"          Color="{StaticResource PillNeutralBackground}"/>
+    <SolidColorBrush x:Key="BrushPillNeutralText"                Color="{StaticResource PillNeutralText}"/>
+    <SolidColorBrush x:Key="BrushPillInfoBackground"             Color="{StaticResource PillInfoBackground}"/>
+    <SolidColorBrush x:Key="BrushPillInfoText"                   Color="{StaticResource PillInfoText}"/>
+    <SolidColorBrush x:Key="BrushPillSuccessBackground"          Color="{StaticResource PillSuccessBackground}"/>
+    <SolidColorBrush x:Key="BrushPillSuccessText"                Color="{StaticResource PillSuccessText}"/>
+    <SolidColorBrush x:Key="BrushPillDangerText"                 Color="{StaticResource PillDangerText}"/>
+    <SolidColorBrush x:Key="BrushPillMutedBackground"            Color="{StaticResource PillMutedBackground}"/>
+    <SolidColorBrush x:Key="BrushPillMutedText"                  Color="{StaticResource PillMutedText}"/>
+    <SolidColorBrush x:Key="BrushPillTypeBackground"             Color="{StaticResource PillTypeBackground}"/>
+    <SolidColorBrush x:Key="BrushPillTypeText"                   Color="{StaticResource PillTypeText}"/>
+    <SolidColorBrush x:Key="BrushBannerWarningBackground"        Color="{StaticResource BannerWarningBackground}"/>
+    <SolidColorBrush x:Key="BrushBannerWarningBorder"            Color="{StaticResource BannerWarningBorder}"/>
+    <SolidColorBrush x:Key="BrushBannerWarningText"              Color="{StaticResource BannerWarningText}"/>
+    <SolidColorBrush x:Key="BrushPillNewBackground"            Color="{StaticResource PillNewBackground}"/>
+    <SolidColorBrush x:Key="BrushPillNewText"                  Color="{StaticResource PillNewText}"/>
+    <SolidColorBrush x:Key="BrushPillDupBackground"            Color="{StaticResource PillDupBackground}"/>
+    <SolidColorBrush x:Key="BrushPillDupText"                  Color="{StaticResource PillDupText}"/>
+    <SolidColorBrush x:Key="BrushPillRenamedBackground"        Color="{StaticResource PillRenamedBackground}"/>
+    <SolidColorBrush x:Key="BrushPillRenamedText"              Color="{StaticResource PillRenamedText}"/>
+    <SolidColorBrush x:Key="BrushDetailMutedText"              Color="{StaticResource DetailMutedText}"/>
+    <SolidColorBrush x:Key="BrushDetailValueText"              Color="{StaticResource DetailValueText}"/>
+    <SolidColorBrush x:Key="BrushSoftSuccessBackground"        Color="{StaticResource SoftSuccessBackground}"/>
+    <SolidColorBrush x:Key="BrushSoftWarningBackground"        Color="{StaticResource SoftWarningBackground}"/>
+    <SolidColorBrush x:Key="BrushSoftDangerBackground"         Color="{StaticResource SoftDangerBackground}"/>
+    <SolidColorBrush x:Key="BrushBadgeOnDark"             Color="{StaticResource BadgeOnDark}"/>
+    <SolidColorBrush x:Key="BrushPillTaggableBackground"    Color="{StaticResource PillTaggableBackground}"/>
+    <SolidColorBrush x:Key="BrushPillNotTaggableBackground" Color="{StaticResource PillNotTaggableBackground}"/>
+    <SolidColorBrush x:Key="BrushPillPlacedBackground"      Color="{StaticResource PillPlacedBackground}"/>
+    <SolidColorBrush x:Key="BrushPillPlacedText"            Color="{StaticResource PillPlacedText}"/>
+    <SolidColorBrush x:Key="BrushRowUnmappedBackground"     Color="{StaticResource RowUnmappedBackground}"/>
+    <SolidColorBrush x:Key="BrushStageCompleteBackground"   Color="{StaticResource StageCompleteBackground}"/>
+    <SolidColorBrush x:Key="BrushSheetNoFitBackground"      Color="{StaticResource SheetNoFitBackground}"/>
+    <SolidColorBrush x:Key="BrushBannerInfoBackground"         Color="{StaticResource BannerInfoBackground}"/>
+    <SolidColorBrush x:Key="BrushBannerInfoBorder"             Color="{StaticResource BannerInfoBorder}"/>
+    <SolidColorBrush x:Key="BrushBannerNoteBackground"         Color="{StaticResource BannerNoteBackground}"/>
+    <SolidColorBrush x:Key="BrushBannerNoteBorder"             Color="{StaticResource BannerNoteBorder}"/>
+    <SolidColorBrush x:Key="BrushBannerNoteText"               Color="{StaticResource BannerNoteText}"/>
+    <SolidColorBrush x:Key="BrushTextOnAccent"            Color="{StaticResource TextOnAccent}"/>
 
 
     <!-- ═══════════════════════════════════════════════════════════
@@ -211,6 +370,74 @@
         <Setter Property="FontSize"   Value="10.5"/>
         <Setter Property="Foreground" Value="{StaticResource BrushTextTertiary}"/>
         <Setter Property="Margin"     Value="0,3,0,0"/>
+    </Style>
+
+    <!-- ─── Tinted metric tiles (v3.1) ───────────────────────────
+         <Border Style="{StaticResource MetricTileInfo}">
+             <StackPanel>
+                 <TextBlock Text="SELECTED" Style="{StaticResource MetricTileLabelInfo}"/>
+                 <TextBlock Text="{Binding X}" Style="{StaticResource MetricTileNumberInfo}"/>
+             </StackPanel>
+         </Border>
+    ─────────────────────────────────────────────────────────── -->
+    <Style x:Key="MetricTile" TargetType="Border">
+        <Setter Property="CornerRadius"    Value="6"/>
+        <Setter Property="BorderThickness" Value="0.5"/>
+        <Setter Property="Padding"         Value="10,6"/>
+        <Setter Property="Background"      Value="{StaticResource BrushSystemBackground}"/>
+        <Setter Property="BorderBrush"     Value="{StaticResource BrushCardBorder}"/>
+    </Style>
+    <Style x:Key="MetricTileInfo" TargetType="Border" BasedOn="{StaticResource MetricTile}">
+        <Setter Property="Background"  Value="{StaticResource BrushTileInfoBackground}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BrushTileInfoBorder}"/>
+    </Style>
+    <Style x:Key="MetricTileDanger" TargetType="Border" BasedOn="{StaticResource MetricTile}">
+        <Setter Property="Background"  Value="{StaticResource BrushTileDangerBackground}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BrushTileDangerBorder}"/>
+    </Style>
+    <Style x:Key="MetricTileSuccess" TargetType="Border" BasedOn="{StaticResource MetricTile}">
+        <Setter Property="Background"  Value="{StaticResource BrushTileSuccessBackground}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BrushTileSuccessBorder}"/>
+    </Style>
+    <Style x:Key="MetricTileWarning" TargetType="Border" BasedOn="{StaticResource MetricTile}">
+        <Setter Property="Background"  Value="{StaticResource BrushTileWarningBackground}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BrushTileWarningBorder}"/>
+    </Style>
+
+    <Style x:Key="MetricTileLabel" TargetType="TextBlock">
+        <Setter Property="FontSize"   Value="9.5"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{StaticResource BrushTextTertiary}"/>
+    </Style>
+    <Style x:Key="MetricTileLabelInfo" TargetType="TextBlock" BasedOn="{StaticResource MetricTileLabel}">
+        <Setter Property="Foreground" Value="{StaticResource BrushTileInfoText}"/>
+    </Style>
+    <Style x:Key="MetricTileLabelDanger" TargetType="TextBlock" BasedOn="{StaticResource MetricTileLabel}">
+        <Setter Property="Foreground" Value="{StaticResource BrushTileDangerText}"/>
+    </Style>
+    <Style x:Key="MetricTileLabelSuccess" TargetType="TextBlock" BasedOn="{StaticResource MetricTileLabel}">
+        <Setter Property="Foreground" Value="{StaticResource BrushTileSuccessText}"/>
+    </Style>
+    <Style x:Key="MetricTileLabelWarning" TargetType="TextBlock" BasedOn="{StaticResource MetricTileLabel}">
+        <Setter Property="Foreground" Value="{StaticResource BrushTileWarningText}"/>
+    </Style>
+
+    <Style x:Key="MetricTileNumber" TargetType="TextBlock">
+        <Setter Property="FontSize"   Value="18"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}"/>
+    </Style>
+    <Style x:Key="MetricTileNumberInfo" TargetType="TextBlock" BasedOn="{StaticResource MetricTileNumber}">
+        <Setter Property="Foreground" Value="{StaticResource BrushTileInfoText}"/>
+    </Style>
+    <Style x:Key="MetricTileNumberDanger" TargetType="TextBlock" BasedOn="{StaticResource MetricTileNumber}">
+        <Setter Property="Foreground" Value="{StaticResource BrushTileDangerText}"/>
+    </Style>
+    <Style x:Key="MetricTileNumberSuccess" TargetType="TextBlock" BasedOn="{StaticResource MetricTileNumber}">
+        <Setter Property="Foreground" Value="{StaticResource BrushTileSuccessText}"/>
+    </Style>
+    <Style x:Key="MetricTileNumberWarning" TargetType="TextBlock" BasedOn="{StaticResource MetricTileNumber}">
+        <Setter Property="Foreground" Value="{StaticResource BrushTileWarningText}"/>
     </Style>
 
     <!-- ═══════════════════════════════════════════════════════════
@@ -552,6 +779,42 @@
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="Bg" Property="Background" Value="{StaticResource BrushTextDisabled}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Run / main action — red. Used for each tool's main footer action
+         (Run, Create, Place, Generate…). Same shape as PrimaryButton. -->
+    <Style x:Key="RunButton" TargetType="Button" BasedOn="{StaticResource DangerButton}"/>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         COLLAPSIBLE LOG — header toggle + list visibility
+         Log panels start collapsed: the header (title + Copy buttons)
+         stays visible; clicking the title shows / hides the log lines.
+         Usage: <ToggleButton x:Name="LogToggle" Style="{StaticResource LogHeaderToggle}">title</ToggleButton>
+                <ListBox Visibility="{Binding IsChecked, ElementName=LogToggle,
+                         Converter={StaticResource LogToggleVisibility}}" …/>
+    ═══════════════════════════════════════════════════════════ -->
+    <BooleanToVisibilityConverter x:Key="LogToggleVisibility"/>
+    <Style x:Key="LogHeaderToggle" TargetType="ToggleButton">
+        <Setter Property="IsChecked" Value="False"/>
+        <Setter Property="Foreground" Value="{StaticResource BrushLogText}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <StackPanel Orientation="Horizontal" Background="Transparent">
+                        <TextBlock x:Name="Chevron" Text="▸" FontSize="11" Margin="0,0,6,0"
+                                   VerticalAlignment="Center" Foreground="{TemplateBinding Foreground}"/>
+                        <ContentPresenter VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Chevron" Property="Text" Value="▾"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
