@@ -184,7 +184,7 @@ namespace Revit26_Plugin.RoofTag.V016
                 foreach (XYZ pt in points)
                 {
                     RoofTagGeometryHelper.GetTaggingReferenceOnRoof(
-                        roof, pt,
+                        roof, pt, vm.ElevationFace,
                         out Reference faceRef,
                         out XYZ projected);
 
