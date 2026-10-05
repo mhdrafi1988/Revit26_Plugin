@@ -18,6 +18,352 @@ period rather than trusting a reconstruction here.
 
 ---
 
+
+## 2026-10-04 — ToolWindowShell (CLAUDE.md v1.1)
+
+- Shared: new `Shared/Controls/ToolWindowShell` (header / body / footer;
+  the body is the window's only ScrollViewer; footer status strip bound to
+  `IsRunning` / `Progress` / `SummaryText`) and `ShellBehaviors`
+  (`MaxHeightRatio`, `ForwardMouseWheel`). SharedStyles 3.1 adds `Tile*`
+  brushes and `MetricTile*` styles.
+- SectionAutoRenamer V026 — first tool on the shell (reference
+  implementation): log moved from footer into the body, grid and log
+  height-capped, V024's tinted metric tiles restored via named brushes.
+  ViewModel gains `IsRunning` / `Progress` / `SummaryText`; no behaviour
+  change.
+- Ribbon: Section Renamer pulldown is now V025, V026 (V024 removed from the
+  ribbon; folder kept).
+- DetailLineClosedLoop V003 on the shell: Selection/Options left (own
+  ScrollViewer removed), Created Lines grid right, Processing Log moved
+  from footer into the body. Shell binds to the existing `IsBusy` /
+  `RunSummary`; ViewModel gains `Progress` only. Ribbon pulldown: V002,
+  V003 (V001 removed from the ribbon; folder kept).
+- DetailLineDimensions (DtlLineDim) V010 on the shell: Selection,
+  Dimension Settings and Activity Log (moved from footer) in the body; the
+  middle's own ScrollViewer removed. Binds to `IsBusy` / `RunSummary`;
+  ViewModel gains `Progress` only. Ribbon pulldown: V009, V010 (V008
+  removed from the ribbon; folder kept).
+- Shell: an empty `Subtitle` now collapses instead of leaving a blank line.
+- OuterCurveDivider V006 on the shell: type-rules grid, edges grid and
+  Activity Log (moved from footer) in the body; both grids and the log use
+  MaxHeightRatio (type grid's fixed MaxHeight=160 replaced). ViewModel
+  gains `IsRunning` / `Progress` / `SummaryText` (not yet set, so the
+  status strip stays empty). Ribbon pulldown: V005, V006 (V004 removed
+  from the ribbon; folder kept).
+- VertexReducer (RoofEdgeVertexReducer) V009 on the shell: Selection,
+  Settings, Preview Results grid and Log (moved from footer) in the body;
+  the old footer summary line is now the shell status strip
+  (`SummaryText`). ViewModel gains `IsRunning` / `Progress`. Ribbon
+  pulldown: V008, V009 (V007 removed from the ribbon; folder kept).
+- MultiplePoints V003 on the shell: Points To Add settings, edges grid and
+  Activity Log (moved from footer) in the body. ViewModel gains
+  `IsRunning` / `Progress` / `SummaryText` (not yet set). Ribbon pulldown:
+  V002, V003 (V001 removed from the ribbon; folder kept).
+- RoofDetailLineIntersect V014 on the shell: Selection, Options and Run Log
+  (moved from footer) in the body; the middle's own ScrollViewer removed.
+  Binds to the existing `IsBusy`; ViewModel gains `Progress` /
+  `SummaryText` (not yet set). Ribbon pulldown: V013, V014 (V012 removed
+  from the ribbon; folder kept).
+- CreaserAdv V012 on the shell: detail item, filters, minimum slope and Log
+  (moved from footer) in the body; the middle's own ScrollViewer removed.
+  Binds to the existing `IsRunning`; ViewModel gains `Progress` /
+  `SummaryText` (not yet set). Ribbon pulldown: V011, V012 (V010 removed
+  from the ribbon; folder kept).
+- RoofTag V018 on the shell: warning banner, settings cards and Log (moved
+  from footer) in the body; the middle's own ScrollViewer removed. Still a
+  modal OK / Cancel dialog. ViewModel gains `IsRunning` / `Progress` /
+  `SummaryText` (not yet set). Ribbon pulldown: V017, V018 (V016 removed
+  from the ribbon; folder kept).
+- CompareRoofs (RoofPointElevationSync) V005 on the shell: selection card,
+  point-mapping grid and Log (moved from footer) in the body; the old
+  footer summary is now the status strip. Binds to `IsBusy` /
+  `SummaryText`; ViewModel gains `Progress`. Ribbon pulldown: V003, V004,
+  V005 (V002 removed from the ribbon; folder kept).
+- RoofPointComparison V003 on the shell: both metrics rows in the header;
+  tolerances, marker settings and Processing Log (moved from footer) in
+  the body; the middle's own ScrollViewer removed. Binds to `IsBusy` /
+  `StatusMessage`; ViewModel gains `Progress`. Ribbon pulldown: V002, V003
+  (V001 removed from the ribbon; folder kept).
+- Shell: new `IsIndeterminate` option — the status-strip bar animates for
+  tools that only have a busy flag, no percentage.
+- AnnotationOverlapDetection V004 on the shell: type list and results grid
+  in the body (both capped; type list's fixed MaxHeight=150 replaced); the
+  old footer busy bar is now the shell's indeterminate bar on `IsLoading`.
+  No log in this tool. ViewModel gains `Progress` / `SummaryText`. Ribbon
+  pulldown: V003, V004 (V002 removed from the ribbon; folder kept).
+- WorksetsElementsBrowser WSEB004 on the shell: toolbar and workset tree
+  (capped) in the body; busy overlay kept over the shell; status strip is
+  indeterminate on `IsBusy`. No log in this tool; View3DPickerWindow
+  unchanged. ViewModel gains `Progress`. Ribbon pulldown: WSEB003, WSEB004
+  (WSEB002 removed from the ribbon; folder kept).
+- BubbleAutoRenumber V008 on the shell: sheet + options, sections grid and
+  Log (moved from footer) in the body; grid and log TextBox capped.
+  ViewModel gains `IsRunning` / `Progress` / `SummaryText` (not yet set).
+  Ribbon pulldown: V007, V008 (V006 removed from the ribbon; folder kept).
+- DwgToLines V007 on the shell: CAD picker, placement/spline options and
+  Activity Log (moved from footer) in the body; the middle's own
+  ScrollViewer removed. ViewModel gains `IsRunning` / `Progress` /
+  `SummaryText` (not yet set). Ribbon pulldown: V006, V007 (V005 removed
+  from the ribbon; folder kept).
+- DwgToDetailLines V013 on the shell: context banner in the header; options
+  (own ScrollViewer removed), Layers & Hatches grid and Activity Log (moved
+  from footer) in the body. Indeterminate status strip on `IsRunning`;
+  ViewModel gains `Progress` / `SummaryText`. Ribbon pulldown: V011, V012,
+  V013 (V002 removed from the ribbon; folder kept).
+- RoofViewFocus V004 on the shell: Target, Crop Margins and Log (moved
+  from footer) in the body; the middle's ScrollViewer and the Roofs list's
+  own ScrollViewer removed. The green summary line under the log is now
+  the status strip (`SummaryText`), indeterminate on `IsBusy`. ViewModel
+  gains `Progress`; tool title constant bumped to V004. Ribbon pulldown:
+  V002, V003, V004 (V001 removed from the ribbon; folder kept).
+- Earlier migrations whose busy flag has no percentage (DetailLineClosedLoop
+  V003, DtlLineDim V010, RoofDetailLineIntersect V014, CreaserAdv V012,
+  CompareRoofs V005, RoofPointComparison V003) now set
+  `IsIndeterminate="True"` so the status-strip bar animates while running.
+- SharedStyles: `BrushRowSuccessBackground` / `BrushRowDangerBackground`
+  (pass/fail row tints for result grids), replacing inline `#F5FFF8` /
+  `#FFF5F5`.
+- RoofRidgeLines (By Points) V059 on the shell: selection, settings,
+  validation grid and Pipeline Log (moved from footer) in the body; footer
+  status line + small progress bar replaced by the shell status strip
+  (indeterminate on `IsBusy`, `StatusMessage`). ViewModel gains
+  `Progress`. Ribbon: V057 replaced by V059 in the Ridge Lines pulldown.
+- RoofRidgeLines (By Openings) V070 on the shell: inputs and drainage
+  seeds (both own ScrollViewers removed; Circles expander open,
+  Rectangles / Others closed, unchanged), validation grid and Pipeline
+  Log (moved from footer) in the body; row tints use the shared row
+  brushes. ViewModel gains `Progress`; version labels bumped to V070.
+  Ribbon: V068 replaced by V070 in the Ridge Lines pulldown.
+- InnerLoopDivider V011 on the shell: division control, toolbar, grouped
+  loops grid (group expanders unchanged: Circular open, others closed) and
+  Activity Log (moved from footer) in the body. Group-header inline colours
+  replaced with existing SharedStyles brushes. ViewModel gains `IsRunning`
+  / `Progress` / `SummaryText` (not yet set). Ribbon pulldown: V010, V011
+  (V009 removed from the ribbon; folder kept).
+- InnerLoopsAndPerpendicular V007 on the shell: toolbar, shapes grid (group
+  expanders unchanged), tolerance, perpendicular-points grid and Activity
+  Log (moved from footer) in the body; both grids capped. ViewModel gains
+  `IsRunning` / `Progress` / `SummaryText` (not yet set). Ribbon pulldown:
+  V006, V007 (V005 removed from the ribbon; folder kept).
+- RoofFromDetailLines V009 on the shell: settings and ID outputs (own
+  ScrollViewer removed), Roof Loops Preview expander (open on launch,
+  unchanged) and Log (moved from footer) in the body; footer summary line
+  is now the status strip (indeterminate on `IsBusy`). ViewModel gains
+  `Progress`. Ribbon pulldown: V008, V009 (V007 removed from the ribbon;
+  folder kept).
+- AutoSlope By Point V030, By Point (Ridge) V003 and By Point Multi Copies
+  MultiCopies30 on the shell (same layout): both metrics rows in the
+  header; inputs (Circle Markers expander closed by default, unchanged)
+  and curve/export column with their own ScrollViewers removed; Processing
+  Log moved from footer into the body. The footer progress strip is now
+  the shell status strip, bound to the existing `IsProgressVisible` /
+  `ProgressPercent` / `ProgressIsIndeterminate` / `ProgressPhaseText` — no
+  ViewModel changes. Ribbon By Point pulldown: V029, V030, Ridge V002,
+  Ridge V003, MultiCopies29, MultiCopies30 (V028, Ridge V001 and
+  MultiCopies28 removed from the ribbon; folders kept).
+- AutoSlopeByDrain (Multi-Roof) V012 on the shell: settings column (own
+  ScrollViewer removed; Circle Markers expander unchanged), per-roof drain
+  tabs (drain-group expanders unchanged) and Processing Log (moved from
+  footer) in the body. Footer progress strip replaced by the shell status
+  strip on the existing progress properties — no ViewModel changes.
+  Ribbon By Drain pulldown: V007, V011, V012 (V010 removed from the
+  ribbon; folder kept).
+- FloorsAndRoofFromLinkedRoomsViaPlanView V006 on the shell: inputs (own
+  ScrollViewer removed), room list (capped), floor/roof summaries, toast
+  and Activity Log (all moved from footer) in the body. Footer progress
+  bar + text replaced by the shell status strip: `IsBusy`, `ProgressText`
+  and a new read-only `Progress` (Processed ÷ Total). Ribbon From Rooms
+  pulldown: V011, V012, ViaPlanView V005, V006 (ViaPlanView V004 removed
+  from the ribbon; folder kept).
+- WorksetRenamer V005 on the shell: toolbar card, selection row and
+  worksets grid (capped) in the body; footer status line is now the status
+  strip (`StatusMessage`). No log in this tool. ViewModel gains `IsRunning`
+  / `Progress`. Ribbon pulldown: V004, V005 (V003 removed from the ribbon;
+  folder kept).
+- SharedStyles: result-group palette `BrushGroup{Ok,Warning,New,Neutral,
+  Danger}{Accent,Background,Text}` (from WorksetRenamer FX04's inline
+  colours).
+- WorksetRenamer FX05 on the shell: export/import cards, filter bar and the
+  five grouped result expanders (own ScrollViewer removed; OK open, others
+  closed — unchanged) in the body; group grids capped via the shared grid
+  style; footer status line is now the status strip (`StatusMessage`). No
+  log in this tool. ViewModel gains `IsRunning` / `Progress`. Ribbon
+  pulldown: FX04, FX05 (FX03 removed from the ribbon; folder kept).
+- ParaManager V005 on the shell: metrics bar + step indicator in the
+  header; current step (outer ScrollViewer and the parameter list's own
+  ScrollViewer removed) and the docked, collapsible Activity Log in the
+  body; footer status line is now the status strip (`SummaryLine`,
+  indeterminate on `IsRunning`). Queue grid capped. ViewModel gains
+  `Progress`. Ribbon pulldown: V004, V005 (V003 removed from the ribbon,
+  with its now-unused tooltip const; folder kept).
+- SharedStyles: `BrushTint{Success,Info,Warning}` faint tile tints (from
+  WorksetManager V013's inline colours).
+- WorksetManager V014 on the shell: metrics strip in the header; pattern
+  toolbar, the three section grids (each capped — they now size to content
+  instead of splitting the window height) and the Live Log (collapsed by
+  default, unchanged) in the body. ViewModel gains `IsRunning` /
+  `Progress` / `SummaryText` (not yet set). Ribbon pulldown: V013, V014
+  (V012 removed from the ribbon; folder kept).
+- SharedStyles: `BrushAction{Export,Import,Text}`, `BrushPill*` status-pill
+  colours and `BrushBannerWarning*` (from ScheduleExportImport V006's
+  inline colours).
+- ScheduleExportImport V007 on the shell — both windows. Main: Refresh +
+  summary cards in the header; actions, schedule list and Log (moved from
+  footer) in the body; status strip on `IsBusy` / `StatusMessage`. Import
+  Preview: warning banner + cards in the header; chips, search and preview
+  grid in the body; same status strip. Grids and log capped. ViewModel
+  gains `Progress`. Ribbon pulldown: V005, V006, V007, V004, V003 (V002
+  removed from the ribbon; folder kept).
+- SharedStyles: `BrushPill{New,Dup,Renamed}{Background,Text}` and
+  `BrushDetail{Muted,Value}Text` (from RoofTypeCreator V002's inline
+  colours).
+- RoofTypeCreator V003 on the shell. Header: metric cards. Body: Export /
+  Import tabs (both grids capped), Operation Log (moved from the footer)
+  with its completion bar. Footer: status strip on `IsBusy`
+  (indeterminate) + Close. ViewModel gains `Progress` / `SummaryText`
+  (not yet set). Ribbon pulldown: V002, V003 (V001 removed from the
+  ribbon; folder kept).
+- SharedStyles: `BrushSoft{Success,Warning,Danger}Background` (from
+  CreateSections V012's status pills).
+- CreateSections V013 on the shell. Header: metric cards. Body: settings
+  (left pane's own ScrollViewer removed; View Crop still collapsed) /
+  Sections To Create grid (capped), then the Live Log (moved from the
+  footer; still open). Footer: status strip on `IsRunning`
+  (indeterminate) + Create / Close. ViewModel gains `Progress` /
+  `SummaryText` (not yet set). Ribbon pulldown: V012, V013 (V011 removed
+  from the ribbon; folder kept).
+- SharedStyles: `BrushBadgeOnDark` (#33FFFFFF, from RoofEdgeAroundSections
+  V006's naming chips).
+- RoofEdgeAroundSections V007 on the shell. Header: metric cards. Body:
+  parameters + naming (own ScrollViewer removed), Planned Sections grid
+  (capped), log (moved from the footer). Footer: status strip on `IsBusy`
+  (indeterminate) / `LastRunSummary` + Run / Close. ViewModel gains
+  `Progress`. Ribbon pulldown: V006, V007 (V005 removed from the ribbon;
+  folder kept).
+- ViewAutoRenamer V006 on the shell. Header: status badges + metric cards.
+  Body: filter bar + popover, rename panel, toolbar, quick-filter chips,
+  views grid (capped), log (moved from the footer). Footer: status strip
+  + Reset / dry-run badge / Commit / Close. The filter popover keeps its
+  own ScrollViewer (a Popup is a separate window). Popover shadow drops
+  its inline `#000000` (DropShadowEffect default is black). ViewModel
+  gains `IsRunning` / `Progress` / `SummaryText` (not yet set). Ribbon
+  pulldown: V005, V006 (V004 removed from the ribbon; folder kept).
+- LinkedDetailLineGenerator VA009 on the shell. Header: boundary line +
+  "Settings loaded" (was the title-bar subtitle) and metrics. Body: scope
+  toggle, sections 1 / 2a / 2b / 2c (Expanders keep their ViewModel-bound
+  state; their three MaxHeight-260 ScrollViewers removed), 3. Mapping,
+  scope line, Processing Log (moved from the footer, outside the locked
+  form). Footer: status strip on `IsRunning` (indeterminate) + Ready
+  indicator, Clear / Create / Reset / Close. ViewModel gains `Progress` /
+  `SummaryText` (not yet set); `GeneratorVersion` = "VA009". Ribbon
+  pulldown: VA007, VA008, VA009, VA006 (VA003 removed from the ribbon;
+  folder kept).
+- CombinedRoofTools V003 on the shell. Header: Working Roof card + Change
+  Roof. Body: the five tool tabs (each tab's log and actions stay inside
+  its tab, in the body). Footer: status strip on `IsBusy` (indeterminate)
+  / `RunAllStatusMessage` + Run All / Close. Tab views: own
+  ScrollViewers removed (Auto Slope By Drain settings, Creaser Adv
+  settings), every grid and log capped; Inner Loop Divider's inline
+  group-header colours → existing SharedStyles brushes. ViewModel gains
+  `Progress`. Ribbon pulldown: V002, V003 (V001 removed from the ribbon;
+  folder kept).
+- RoofEdgeElementSections V004 on the shell. Header: selection summary.
+  Body: roofs / linked elements / parameters / naming (own ScrollViewer
+  removed; Expander defaults unchanged), Planned Sections grid, log
+  (moved from the footer); both grids capped. Footer: status strip on
+  `IsBusy` (indeterminate) / `LastRunSummary` + Run / Close. Category
+  filter popup keeps its ScrollViewer. Inline `#14283F` shadow →
+  `NavyDark`, `#33FFFFFF` → `BrushBadgeOnDark`. ViewModel gains
+  `Progress`. Ribbon pulldown: V002, V003, V004 (V001 removed from the
+  ribbon; folder kept).
+- SharedStyles: `BrushPill{Taggable,NotTaggable}Background` (from
+  SectionViewAutoTagger V005's category pills).
+- SectionViewAutoTagger V006 on the shell (folder
+  `SectionViewAutoTagger_V006/SectionViewAutoTagger_V006`). Header:
+  metric cards. Body: sheet / views / categories / worklist (left) and
+  settings (right) — column ScrollViewers and the category list's
+  ScrollViewer + 200 px cap removed — then the log (moved from the
+  footer, capped). Section Views popover keeps its ScrollViewer. Footer:
+  status strip on `IsRunning` (indeterminate) / `SummaryLine` + saved
+  log path + Run / Close. ViewModel gains `Progress`. Ribbon pulldown:
+  V005, V006 (V004 removed from the ribbon; folder kept).
+- APUS V324 on the shell. Header: metric cards. Body: sections list
+  (grid capped) / layout settings (own ScrollViewer removed), then the log
+  (moved from the footer). Footer: status strip bound to existing
+  `ShowProgress` / `Progress.Percentage` / `StatusMessage` (replaces the
+  footer progress bar; current-operation line kept) + Place / Cancel /
+  Close. No ViewModel change. Ribbon pulldown: V323, V324 (V322 removed
+  from the ribbon; folder kept).
+- SharedStyles: `BrushPillPlaced{Background,Text}` (from CalloutCOP V020's
+  placed pill).
+- CalloutCOP V021 on the shell. Header: summary metric cards. Body:
+  configuration card + view grid (capped), log (moved from the footer).
+  Footer: status strip on `IsRunning` (indeterminate) / `ProgressText`
+  (replaces the footer progress line) + run-disabled reason, Place /
+  Close. Drafting-view combo popup keeps its ScrollViewer. ViewModel gains
+  `Progress`. Ribbon pulldown: V020, V021 (V019 removed from the ribbon;
+  folder kept).
+- RefSectionHeadPlacer V015 on the shell. Header: metric cards. Body:
+  setup (left) / element data + mapping (right) — both panel
+  ScrollViewers removed; the four grids' fixed MaxHeights become
+  MaxHeightRatio caps — then the activity log (moved from the footer).
+  Footer: status strip bound to existing `IsRunning` / `ProgressPercent`
+  / `ProgressStatusText` (replaces the footer progress block) + Cancel /
+  Run / Close. No ViewModel change. Ribbon pulldown: V014, V015 (V013
+  removed from the ribbon; folder kept).
+- SharedStyles: `BrushRowUnmappedBackground` (from
+  FloorsAndRoofFromLinkedRooms V012's unmapped-level cell).
+- FloorsAndRoofFromLinkedRooms V013 on the shell. Header: metrics card.
+  Body: room grid (capped) / options pane (own ScrollViewer removed),
+  floor/roof summaries + toast and activity log (both moved from the
+  footer). Footer: status strip on `IsBusy` / computed `Progress` /
+  `ProgressText` (replaces the footer progress bar) + Cancel Run, Create
+  Floors / Create Roof / Close. ViewModel gains computed `Progress`.
+  Ribbon pulldown: V012, V013, PlanView V005, PlanView V006 (V011 removed
+  from the ribbon; folder kept).
+- PlanFromScopeBox V006 on the shell. Header: metric cards. Body:
+  scope-box grid (capped) / settings (own ScrollViewer removed), then the
+  activity log (moved from the footer). Footer: status strip on `IsBusy`
+  (indeterminate) / "Level: {ActiveLevelDisplay}" (replaces the level
+  status line and "Working…" text) + Create / Close. ViewModel gains
+  `Progress`; `Version` = "V006". Ribbon pulldown: V004, V005, V006 (V003
+  removed from the ribbon; folder kept).
+- SharedStyles: `BrushStageCompleteBackground`, `BrushSheetNoFitBackground`
+  (from SmartViewToSheetPlacer V223's inline tints).
+- SmartViewToSheetPlacer V224 on the shell (folder
+  `SmartViewToSheetPlacer_V224/SmartViewToSheetPlacer_V224`). Header:
+  pinned placement metrics. Body: accordion stages 1–5 (state
+  unchanged; the body ScrollViewer is now the shell's), then the
+  placement-progress card (its own bar dropped) and the activity log
+  (both moved from the footer). Every grid's fixed MaxHeight → ratio cap.
+  Footer: status strip bound to existing `IsBusy` / `ProgressPercent` /
+  `ProgressDetailText` + Export Logs / Close. No ViewModel change. Ribbon
+  pulldown: V222, V223, V224 (V221 removed from the ribbon; folder kept).
+- AutomatedSectionPlacer V003 on the shell (folder
+  `AutomatedSectionPlacer_V003/AutomatedSectionPlacer_V003`) — same
+  mapping as SmartViewToSheetPlacer V224: header pinned metrics; body
+  accordion stages, progress card (own bar dropped) and activity log
+  (moved from the footer); grids ratio-capped; footer status strip on
+  `IsBusy` / `ProgressPercent` / `ProgressDetailText` + Export Logs /
+  Close. No ViewModel change. Ribbon pulldown: V002, V003 (V001 removed
+  from the ribbon; folder kept).
+- SharedStyles: `BrushBannerInfo{Background,Border}`,
+  `BrushBannerNote{Background,Border,Text}` (from SheetAutoRearrange
+  V027's banners).
+- SheetAutoRearrange V028 on the shell. Header: active-sheet chip (moved
+  from the title bar, now a `BadgePill`) + metric cards. Body: views grid
+  (capped) / settings expanders (ViewModel-bound state unchanged; column
+  ScrollViewer removed; priority-groups list capped), then the activity
+  log and saved-log path (moved from the footer). Footer: status strip on
+  `IsBusy` (indeterminate) + Export Log, Run / Close. ViewModel gains
+  `Progress` / `SummaryText` (not yet set). Ribbon pulldown: V026, V027,
+  V028, V025 (V024 removed from the ribbon; folder kept).
+- Named colours (per Rafi, 2026-10-04): every `White` in the migrated
+  windows now uses SharedStyles — text/fills on accent backgrounds →
+  new `BrushTextOnAccent` (#FFFFFF), white panel backgrounds →
+  `BrushCardBackground` (#FFFFFF). 34 uses in 11 windows; no visual
+  change. `Transparent` left as is.
+
 ## 2026-10-04 — All UI-standard versions: logs collapsed, red Run button
 
 - Every UI-standard tool version from today (Roof, View, Manage, Sheet,

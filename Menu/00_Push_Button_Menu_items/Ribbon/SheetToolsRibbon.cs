@@ -22,10 +22,10 @@ namespace Revit26_Plugin.Menu.Ribbon
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.PlanFromScopeBox_V004_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Plan From Scope Box", "V005", "UI Standard layout: fixed header and metrics, footer log with Copy All / Copy Selected, Create → Close.")
             };
-            var scopeBoxV003 = new PushButtonData("Btn_PlanFromScopeBox.V003", "Scope Box V003", assemblyPath, "Revit26_Plugin.PlanFromScopeBox.V003.Commands.PlanFromScopeBoxCommand")
+            var scopeBoxV006 = new PushButtonData("Btn_PlanFromScopeBox.V006", "Scope Box V006", assemblyPath, "Revit26_Plugin.PlanFromScopeBox.V006.Commands.PlanFromScopeBoxCommand")
             {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.PlanFromScopeBox_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("Plan From Scope Box", "V003")
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.PlanFromScopeBox_V004_16.png"),
+                ToolTip = RibbonLayoutHelper.VersionTip("Plan From Scope Box", "V006", "V005 on the shared ToolWindowShell (log in body, capped grid).")
             };
             var scopeBoxPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_PlanFromScopeBox", "Scope Box", scopeBoxV004);
 
@@ -39,10 +39,10 @@ namespace Revit26_Plugin.Menu.Ribbon
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SmartViewToSheetPlacer_V222_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Smart View To Sheet Placer", "V223", "UI Standard layout: fixed footer with the Activity Log (Copy All / Copy Selected), Export Logs and Close.")
             };
-            var sheetPlacerV221 = new PushButtonData("Btn_SmartViewToSheetPlacer.V221", "Sheet Placer V221", assemblyPath, "Revit26_Plugin.SmartViewToSheetPlacer.V221.SmartViewToSheetPlacerCommand")
+            var sheetPlacerV224 = new PushButtonData("Btn_SmartViewToSheetPlacer.V224", "Sheet Placer V224", assemblyPath, "Revit26_Plugin.SmartViewToSheetPlacer.V224.SmartViewToSheetPlacerCommand")
             {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SmartViewToSheetPlacer_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("Smart View To Sheet Placer", "V221")
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SmartViewToSheetPlacer_V222_16.png"),
+                ToolTip = RibbonLayoutHelper.VersionTip("Smart View To Sheet Placer", "V224", "V223 on the shared ToolWindowShell (progress and log in body, capped grids).")
             };
             var sheetPlacerPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_SmartViewToSheetPlacer", "Sheet Placer", sheetPlacerV222);
 
@@ -50,23 +50,22 @@ namespace Revit26_Plugin.Menu.Ribbon
             // version) — detects section views visible on the active Plan View and
             // runs them through the same packing/placement pipeline.
             // TODO: swap for a dedicated icon — temporarily reusing the Sheet Placer icon.
-            var autoSectionPlacerV001 = new PushButtonData("Btn_AutomatedSectionPlacer_V001", "Auto Section Placer V001", assemblyPath, "Revit26_Plugin.AutomatedSectionPlacer.V001.AutomatedSectionPlacerCommand")
-            {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SmartViewToSheetPlacer_V222_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("Automated Section Placer", "V001",
-                    "Detects section views visible on the active Plan View and places them onto new or existing sheets")
-            };
             var autoSectionPlacerV002 = new PushButtonData("Btn_AutomatedSectionPlacer_V002", "Auto Section Placer V002", assemblyPath, "Revit26_Plugin.AutomatedSectionPlacer.V002.AutomatedSectionPlacerCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SmartViewToSheetPlacer_V222_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Automated Section Placer", "V002", "UI Standard layout: fixed footer with the Activity Log (Copy All / Copy Selected), Export Logs and Close.")
             };
-            var autoSectionPlacerPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_AutomatedSectionPlacer", "Auto Section Placer", autoSectionPlacerV001);
+            var autoSectionPlacerV003 = new PushButtonData("Btn_AutomatedSectionPlacer_V003", "Auto Section Placer V003", assemblyPath, "Revit26_Plugin.AutomatedSectionPlacer.V003.AutomatedSectionPlacerCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SmartViewToSheetPlacer_V222_16.png"),
+                ToolTip = RibbonLayoutHelper.VersionTip("Automated Section Placer", "V003", "V002 on the shared ToolWindowShell (progress and log in body, capped grids).")
+            };
+            var autoSectionPlacerPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_AutomatedSectionPlacer", "Auto Section Placer", autoSectionPlacerV002);
 
             var sheetCreateItems = RibbonLayoutHelper.AddStackedButtons(createPanel, new List<RibbonItemData> { scopeBoxPulldownData, sheetPlacerPulldownData, autoSectionPlacerPulldownData });
-            RibbonLayoutHelper.WirePulldownButton(sheetCreateItems, "Pulldown_PlanFromScopeBox", scopeBoxV004, scopeBoxV005, scopeBoxV003);
-            RibbonLayoutHelper.WirePulldownButton(sheetCreateItems, "Pulldown_SmartViewToSheetPlacer", sheetPlacerV222, sheetPlacerV223, sheetPlacerV221);
-            RibbonLayoutHelper.WirePulldownButton(sheetCreateItems, "Pulldown_AutomatedSectionPlacer", autoSectionPlacerV001, autoSectionPlacerV002);
+            RibbonLayoutHelper.WirePulldownButton(sheetCreateItems, "Pulldown_PlanFromScopeBox", scopeBoxV004, scopeBoxV005, scopeBoxV006);
+            RibbonLayoutHelper.WirePulldownButton(sheetCreateItems, "Pulldown_SmartViewToSheetPlacer", sheetPlacerV222, sheetPlacerV223, sheetPlacerV224);
+            RibbonLayoutHelper.WirePulldownButton(sheetCreateItems, "Pulldown_AutomatedSectionPlacer", autoSectionPlacerV002, autoSectionPlacerV003);
 
             RibbonPanel placePanel = app.CreateRibbonPanel(tabName, "Sheet Place");
 
@@ -81,20 +80,20 @@ namespace Revit26_Plugin.Menu.Ribbon
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SheetAutoRearrange_V026_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Sheet Auto Rearrange", "V027", "UI Standard layout: metrics on top, always-visible log in the footer (Copy All / Copy Selected), Run → Close.")
             };
+            var rearrangeV028 = new PushButtonData("Btn_SheetAutoRearrange.V028", "Rearrange V028", assemblyPath, "Revit26_Plugin.SheetAutoRearrange.V028.Commands.SheetAutoRearrangeCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SheetAutoRearrange_V026_16.png"),
+                ToolTip = RibbonLayoutHelper.VersionTip("Sheet Auto Rearrange", "V028", "V027 on the shared ToolWindowShell (log in body, capped grid).")
+            };
             var rearrangeV025 = new PushButtonData("Btn_SheetAutoRearrange.V025", "Rearrange V025", assemblyPath, "Revit26_Plugin.SheetAutoRearrange.V025.Commands.SheetAutoRearrangeCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SheetAutoRearrange_V025_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Sheet Auto Rearrange", "V025")
             };
-            var rearrangeV024 = new PushButtonData("Btn_SheetAutoRearrange.V024", "Rearrange V024", assemblyPath, "Revit26_Plugin.SheetAutoRearrange.V024.Commands.SheetAutoRearrangeCommand")
-            {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SheetAutoRearrange_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("Sheet Auto Rearrange", "V024")
-            };
             var rearrangePulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_SheetAutoRearrange", "Rearrange", rearrangeV026);
 
             var placeItems = RibbonLayoutHelper.AddStackedButtons(placePanel, new List<RibbonItemData> { rearrangePulldownData });
-            RibbonLayoutHelper.WirePulldownButton(placeItems, "Pulldown_SheetAutoRearrange", rearrangeV026, rearrangeV027, rearrangeV025, rearrangeV024);
+            RibbonLayoutHelper.WirePulldownButton(placeItems, "Pulldown_SheetAutoRearrange", rearrangeV026, rearrangeV027, rearrangeV028, rearrangeV025);
         }
     }
 }

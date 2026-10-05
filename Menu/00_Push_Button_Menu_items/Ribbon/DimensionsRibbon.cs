@@ -10,22 +10,23 @@ namespace Revit26_Plugin.Menu.Ribbon
         {
             RibbonPanel panel = app.CreateRibbonPanel(tabName, "Dimensions");
 
-            // Previous version first, the UI Standard version second.
-            var dtlLineV008 = new PushButtonData("Btn_DtlLine_08", "Detail Lines V008", assemblyPath, "Revit26_Plugin.DtlLineDim.V008.Commands.DtlLineDimCommand")
-            {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Dimensions.AutoDimDetailLine_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("Auto Dim Detail Line", "V008")
-            };
+            // Previous version first, the ToolWindowShell version second.
             var dtlLineV009 = new PushButtonData("Btn_DtlLine_09", "Detail Lines V009", assemblyPath, "Revit26_Plugin.DtlLineDim.V009.Commands.DtlLineDimCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Dimensions.AutoDimDetailLine_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Auto Dim Detail Line", "V009",
                     "UI Standard layout: metrics card, always-visible footer log with Copy All / Copy Selected, Generate Dimensions → Close.")
             };
-            var dtlLinePulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DtlLineDim", "Detail Lines", dtlLineV008);
+            var dtlLineV010 = new PushButtonData("Btn_DtlLine_10", "Detail Lines V010", assemblyPath, "Revit26_Plugin.DtlLineDim.V010.Commands.DtlLineDimCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Dimensions.AutoDimDetailLine_16.png"),
+                ToolTip = RibbonLayoutHelper.VersionTip("Auto Dim Detail Line", "V010",
+                    "V009 on the shared ToolWindowShell (log in body).")
+            };
+            var dtlLinePulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DtlLineDim", "Detail Lines", dtlLineV009);
 
             var items = RibbonLayoutHelper.AddStackedButtons(panel, new List<RibbonItemData> { dtlLinePulldownData });
-            RibbonLayoutHelper.WirePulldownButton(items, "Pulldown_DtlLineDim", dtlLineV008, dtlLineV009);
+            RibbonLayoutHelper.WirePulldownButton(items, "Pulldown_DtlLineDim", dtlLineV009, dtlLineV010);
         }
     }
 }
