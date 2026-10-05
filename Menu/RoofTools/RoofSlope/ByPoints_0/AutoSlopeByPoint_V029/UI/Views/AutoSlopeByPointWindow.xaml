@@ -25,7 +25,7 @@ Changes vs V028 (layout only, per Revit_Plugin_UI_Standard.md):
         MinHeight="800"
         WindowStartupLocation="CenterScreen"
         ResizeMode="CanResizeWithGrip"
-        Background="{StaticResource BrushCardBackground}"
+        Background="White"
         KeyDown="Window_KeyDown">
 
     <Window.Resources>
