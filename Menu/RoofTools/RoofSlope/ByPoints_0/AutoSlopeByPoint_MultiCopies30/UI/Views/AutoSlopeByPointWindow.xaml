@@ -30,7 +30,7 @@ Changes vs MultiCopies29 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
         MinHeight="880"
         WindowStartupLocation="CenterScreen"
         ResizeMode="CanResizeWithGrip"
-        Background="{StaticResource BrushCardBackground}"
+        Background="White"
         KeyDown="Window_KeyDown">
 
     <Window.Resources>

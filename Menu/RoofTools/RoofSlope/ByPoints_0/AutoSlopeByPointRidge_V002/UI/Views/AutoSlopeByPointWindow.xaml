@@ -24,7 +24,7 @@ Changes vs Ridge V001 (layout only, per Revit_Plugin_UI_Standard.md):
         MinHeight="840"
         WindowStartupLocation="CenterScreen"
         ResizeMode="CanResizeWithGrip"
-        Background="{StaticResource BrushCardBackground}"
+        Background="White"
         KeyDown="Window_KeyDown">
 
     <Window.Resources>
