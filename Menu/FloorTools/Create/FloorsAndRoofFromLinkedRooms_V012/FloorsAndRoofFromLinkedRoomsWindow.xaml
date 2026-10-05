@@ -423,8 +423,10 @@ Changes vs V011 (layout only, per Revit_Plugin_UI_Standard.md):
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="Activity Log" Foreground="{StaticResource BrushLogText}"
-                                       FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            <ToggleButton x:Name="LogToggle" Style="{StaticResource LogHeaderToggle}" Grid.Column="0" VerticalAlignment="Center" ToolTip="Show / hide the log">
+                                <TextBlock Text="Activity Log" Foreground="{StaticResource BrushLogText}"
+                                           FontSize="11" FontWeight="SemiBold"/>
+                            </ToggleButton>
                             <StackPanel Grid.Column="1" Orientation="Horizontal">
                                 <Button Content="Copy All" Command="{Binding CopyAllLogsCommand}"
                                         Style="{StaticResource DarkGhostButton}" Margin="0,0,4,0"/>
@@ -437,7 +439,7 @@ Changes vs V011 (layout only, per Revit_Plugin_UI_Standard.md):
                             </StackPanel>
                         </Grid>
 
-                        <ListBox x:Name="LogListBox" ItemsSource="{Binding Logs}" Height="90" Margin="0,6,0,0"
+                        <ListBox Visibility="{Binding IsChecked, ElementName=LogToggle, Converter={StaticResource LogToggleVisibility}}" x:Name="LogListBox" ItemsSource="{Binding Logs}" Height="90" Margin="0,6,0,0"
                                  Background="Transparent" BorderThickness="0"
                                  SelectionMode="Extended"
                                  ScrollViewer.CanContentScroll="True"
@@ -470,7 +472,7 @@ Changes vs V011 (layout only, per Revit_Plugin_UI_Standard.md):
                     </Grid>
                     <StackPanel Grid.Column="2" Orientation="Horizontal">
                         <Button Content="Create Floors" Command="{Binding RunFloorCommand}"
-                                Style="{StaticResource PrimaryButton}" Margin="0,0,8,0"/>
+                                Style="{StaticResource RunButton}" Margin="0,0,8,0"/>
                         <Button Content="Create Roof" Command="{Binding RunRoofCommand}"
                                 Style="{StaticResource AccentButton}" Margin="0,0,8,0"/>
                         <Button Content="Close" Click="Close_Click" Style="{StaticResource SecondaryButton}"/>

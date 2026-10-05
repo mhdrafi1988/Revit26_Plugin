@@ -279,7 +279,9 @@ Changes vs V011 (layout only, per Revit_Plugin_UI_Standard.md):
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="Activity Log" Foreground="{StaticResource BrushLogText}" FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            <ToggleButton x:Name="LogToggle" Style="{StaticResource LogHeaderToggle}" VerticalAlignment="Center" ToolTip="Show / hide the log">
+                                <TextBlock Text="Activity Log" Foreground="{StaticResource BrushLogText}" FontSize="11.5" FontWeight="SemiBold"/>
+                            </ToggleButton>
                             <StackPanel Grid.Column="1" Orientation="Horizontal">
                                 <Button Content="Copy All" Style="{StaticResource DarkGhostButton}"
                                         Command="{Binding CopyAllLogCommand}" ToolTip="Copy the whole log to the clipboard"/>
@@ -289,7 +291,7 @@ Changes vs V011 (layout only, per Revit_Plugin_UI_Standard.md):
                                         Command="{Binding ExportLogCommand}" ToolTip="Save the log to a .txt file"/>
                             </StackPanel>
                         </Grid>
-                        <Grid Grid.Row="1">
+                        <Grid Visibility="{Binding IsChecked, ElementName=LogToggle, Converter={StaticResource LogToggleVisibility}}" Grid.Row="1">
                             <ListBox x:Name="LogList"
                                      ItemsSource="{Binding LogEntries}"
                                      SelectionMode="Extended"
@@ -331,7 +333,7 @@ Changes vs V011 (layout only, per Revit_Plugin_UI_Standard.md):
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
-                        <Button Content="Convert DWG" Style="{StaticResource PrimaryButton}" Width="140" Margin="0,0,8,0"
+                        <Button Content="Convert DWG" Style="{StaticResource RunButton}" Width="140" Margin="0,0,8,0"
                                 Command="{Binding ConvertCommand}"
                                 IsEnabled="{Binding IsRunning, Converter={StaticResource InverseBoolConverter}}"/>
                         <Button Content="Close" Style="{StaticResource SecondaryButton}" Width="90"

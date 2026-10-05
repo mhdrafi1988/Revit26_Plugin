@@ -417,7 +417,7 @@ Changes vs V012 (layout only, per Revit_Plugin_UI_Standard.md):
                                         <Run Text="Resync ("/><Run Text="{Binding Grid2ResyncableCount, Mode=OneWay}"/><Run Text=")"/>
                                     </TextBlock>
                                 </Button>
-                                <Button Style="{StaticResource PrimaryButton}"
+                                <Button Style="{StaticResource RunButton}"
                                         Command="{Binding CreateGrid2Command}"
                                         ToolTip="Create worksets for the checked links in this grid">
                                     <TextBlock>
@@ -577,7 +577,7 @@ Changes vs V012 (layout only, per Revit_Plugin_UI_Standard.md):
                                         <Run Text="Resync ("/><Run Text="{Binding Grid3ResyncableCount, Mode=OneWay}"/><Run Text=")"/>
                                     </TextBlock>
                                 </Button>
-                                <Button Style="{StaticResource PrimaryButton}"
+                                <Button Style="{StaticResource RunButton}"
                                         Command="{Binding CreateGrid3Command}"
                                         ToolTip="Create worksets for the checked links in this grid">
                                     <TextBlock>

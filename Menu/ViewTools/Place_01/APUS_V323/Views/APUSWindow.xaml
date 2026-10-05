@@ -542,8 +542,10 @@ Changes vs V322 (layout only, per Revit_Plugin_UI_Standard.md):
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="Log" Foreground="{StaticResource BrushLogText}"
-                                   FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <ToggleButton x:Name="LogToggle" Style="{StaticResource LogHeaderToggle}" VerticalAlignment="Center" ToolTip="Show / hide the log">
+                            <TextBlock Text="Log" Foreground="{StaticResource BrushLogText}"
+                                       FontSize="11.5" FontWeight="SemiBold"/>
+                        </ToggleButton>
                         <StackPanel Grid.Column="1" Orientation="Horizontal">
                             <Button Content="Copy All" Style="{StaticResource DarkGhostButton}" Margin="0,0,6,0"
                                     Command="{Binding CopyLogsCommand}"/>
@@ -553,7 +555,7 @@ Changes vs V322 (layout only, per Revit_Plugin_UI_Standard.md):
                                     Command="{Binding ClearLogCommand}"/>
                         </StackPanel>
                     </Grid>
-                    <ListBox Grid.Row="1" x:Name="LogListBox" Height="110"
+                    <ListBox Visibility="{Binding IsChecked, ElementName=LogToggle, Converter={StaticResource LogToggleVisibility}}" Grid.Row="1" x:Name="LogListBox" Height="110"
                              ItemsSource="{Binding LogEntries}"
                              Background="Transparent" BorderThickness="0"
                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -571,7 +573,7 @@ Changes vs V322 (layout only, per Revit_Plugin_UI_Standard.md):
             </Border>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="Place Sections" MinWidth="150" Margin="0,0,8,0" Style="{StaticResource PrimaryButton}"
+                <Button Content="Place Sections" MinWidth="150" Margin="0,0,8,0" Style="{StaticResource RunButton}"
                                                 Command="{Binding PlaceCommand}"
                                                 Visibility="{Binding ShowCancelButton, Converter={StaticResource InverseBoolToVisibilityConverter}}"/>
                 <Button Content="Cancel Placement" MinWidth="150" Margin="0,0,8,0" Style="{StaticResource DangerButton}"

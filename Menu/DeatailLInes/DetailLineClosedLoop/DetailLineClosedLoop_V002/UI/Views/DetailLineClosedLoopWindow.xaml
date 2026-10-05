@@ -298,7 +298,9 @@ Changes vs V001 (layout only, per Revit_Plugin_UI_Standard.md):
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="Processing Log" FontSize="11.5" FontWeight="SemiBold" Foreground="{StaticResource BrushLogText}" VerticalAlignment="Center"/>
+                            <ToggleButton x:Name="LogToggle" Style="{StaticResource LogHeaderToggle}" VerticalAlignment="Center" ToolTip="Show / hide the log">
+                                <TextBlock Text="Processing Log" FontSize="11.5" FontWeight="SemiBold" Foreground="{StaticResource BrushLogText}"/>
+                            </ToggleButton>
                             <StackPanel Grid.Column="1" Orientation="Horizontal">
                                 <Button Content="Copy All" Style="{StaticResource DarkGhostButton}"
                                         Command="{Binding CopyAllLogsCommand}"/>
@@ -306,7 +308,7 @@ Changes vs V001 (layout only, per Revit_Plugin_UI_Standard.md):
                                         Click="CopySelectedLogsButton_Click"/>
                             </StackPanel>
                         </Grid>
-                        <Grid Grid.Row="1">
+                        <Grid Visibility="{Binding IsChecked, ElementName=LogToggle, Converter={StaticResource LogToggleVisibility}}" Grid.Row="1">
                             <ListBox x:Name="LogListBox"
                                      ItemsSource="{Binding LogEntries}"
                                      SelectionMode="Extended"
@@ -347,7 +349,7 @@ Changes vs V001 (layout only, per Revit_Plugin_UI_Standard.md):
                                    FontWeight="SemiBold" TextWrapping="Wrap"/>
                     </Grid>
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
-                        <Button Content="Run" Style="{StaticResource PrimaryButton}" Margin="0,0,8,0"
+                        <Button Content="Run" Style="{StaticResource RunButton}" Margin="0,0,8,0"
                                 Command="{Binding RunCommand}"/>
                         <Button Content="Close" Style="{StaticResource SecondaryButton}"
                                 Click="CloseButton_Click"/>

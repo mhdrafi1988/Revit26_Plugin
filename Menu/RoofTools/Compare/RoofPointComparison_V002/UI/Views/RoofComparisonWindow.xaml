@@ -244,15 +244,17 @@ Changes vs V001 (layout only, per Revit_Plugin_UI_Standard.md):
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="Processing Log" Foreground="{StaticResource BrushLogText}"
-                                   FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <ToggleButton x:Name="LogToggle" Style="{StaticResource LogHeaderToggle}" VerticalAlignment="Center" ToolTip="Show / hide the log">
+                            <TextBlock Text="Processing Log" Foreground="{StaticResource BrushLogText}"
+                                       FontSize="11.5" FontWeight="SemiBold"/>
+                        </ToggleButton>
                         <StackPanel Grid.Column="1" Orientation="Horizontal">
                             <Button Content="Copy All" Style="{StaticResource DarkGhostButton}" Click="CopyAllLog_Click"/>
                             <Button Content="Copy Selected" Style="{StaticResource DarkGhostButton}" Click="CopySelectedLog_Click" Margin="6,0,0,0"/>
                             <Button Content="Clear" Style="{StaticResource DarkGhostButton}" Command="{Binding ClearLogCommand}" Margin="6,0,0,0"/>
                         </StackPanel>
                     </Grid>
-                    <ListBox Grid.Row="1" x:Name="LogListBox" ItemsSource="{Binding LogEntries}" Height="110"
+                    <ListBox Visibility="{Binding IsChecked, ElementName=LogToggle, Converter={StaticResource LogToggleVisibility}}" Grid.Row="1" x:Name="LogListBox" ItemsSource="{Binding LogEntries}" Height="110"
                              Background="Transparent" BorderThickness="0" SelectionMode="Extended"
                              ScrollViewer.VerticalScrollBarVisibility="Auto"
                              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
@@ -288,7 +290,7 @@ Changes vs V001 (layout only, per Revit_Plugin_UI_Standard.md):
                     <Button Content="Recalculate" Command="{Binding RecalculateCommand}"
                             Style="{StaticResource OutlineButton}" Height="32" Width="120" Margin="0,0,8,0"/>
                     <Button Content="Place Markers" Command="{Binding PlaceMarkersCommand}"
-                            Style="{StaticResource PrimaryButton}" Height="32" Width="130" Margin="0,0,8,0"/>
+                            Style="{StaticResource RunButton}" Height="32" Width="130" Margin="0,0,8,0"/>
                     <Button Content="Close" Click="CloseButton_Click"
                             Style="{StaticResource OutlineButton}" Height="32" Width="90"/>
                 </StackPanel>

@@ -681,8 +681,10 @@ Changes vs V013 (layout only, per Revit_Plugin_UI_Standard.md):
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="Activity Log" FontSize="11.5" FontWeight="SemiBold"
-                                       Foreground="{StaticResource BrushLogText}" VerticalAlignment="Center"/>
+                            <ToggleButton x:Name="LogToggle" Style="{StaticResource LogHeaderToggle}" VerticalAlignment="Center" ToolTip="Show / hide the log">
+                                <TextBlock Text="Activity Log" FontSize="11.5" FontWeight="SemiBold"
+                                           Foreground="{StaticResource BrushLogText}"/>
+                            </ToggleButton>
                             <StackPanel Grid.Column="1" Orientation="Horizontal">
                                                     <Button Content="Copy All" Style="{StaticResource DarkGhostButton}"
                                                             Command="{Binding CopyAllLogsCommand}" Margin="0,0,4,0"/>
@@ -694,7 +696,7 @@ Changes vs V013 (layout only, per Revit_Plugin_UI_Standard.md):
                                                             Command="{Binding ClearLogsCommand}"/>
                             </StackPanel>
                         </Grid>
-                        <DataGrid Grid.Row="1" x:Name="GridLog" ItemsSource="{Binding LogEntries}"
+                        <DataGrid Visibility="{Binding IsChecked, ElementName=LogToggle, Converter={StaticResource LogToggleVisibility}}" Grid.Row="1" x:Name="GridLog" ItemsSource="{Binding LogEntries}"
                                                               Background="Transparent" BorderThickness="0"
                                                               Height="110" AutoGenerateColumns="False"
                                                               HeadersVisibility="None" GridLinesVisibility="None"
@@ -738,7 +740,7 @@ Changes vs V013 (layout only, per Revit_Plugin_UI_Standard.md):
                             IsEnabled="False"
                             ToolTip="Cancel isn't available yet — the run executes on Revit's own thread, which freezes this window until it finishes."
                             Visibility="{Binding IsRunning, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                    <Button Content="Run" Style="{StaticResource PrimaryButton}"
+                    <Button Content="Run" Style="{StaticResource RunButton}"
                             Command="{Binding RunCommand}" Margin="0,0,8,0"
                             IsEnabled="{Binding IsRunning, Converter={StaticResource InverseBoolConverter}}"/>
                     <Button Content="Close" Style="{StaticResource OutlineButton}"

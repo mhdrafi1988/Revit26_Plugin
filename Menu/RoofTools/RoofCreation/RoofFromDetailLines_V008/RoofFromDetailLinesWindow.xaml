@@ -371,15 +371,17 @@ Changes vs V007 (layout only, per Revit_Plugin_UI_Standard.md):
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="Activity Log" Foreground="{StaticResource BrushLogText}"
-                                   FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <ToggleButton x:Name="LogToggle" Style="{StaticResource LogHeaderToggle}" VerticalAlignment="Center" ToolTip="Show / hide the log">
+                            <TextBlock Text="Activity Log" Foreground="{StaticResource BrushLogText}"
+                                       FontSize="11.5" FontWeight="SemiBold"/>
+                        </ToggleButton>
                         <StackPanel Grid.Column="1" Orientation="Horizontal">
                             <Button Content="Export Logs (.txt)" Style="{StaticResource DarkGhostButton}" Command="{Binding ExportLogsCommand}" Margin="0,0,6,0"/>
                             <Button Content="Copy All" Style="{StaticResource DarkGhostButton}" Command="{Binding CopyAllLogsCommand}"/>
                             <Button Content="Copy Selected" Style="{StaticResource DarkGhostButton}" Click="CopySelectedLogs_Click" Margin="6,0,0,0"/>
                         </StackPanel>
                     </Grid>
-                    <ListBox Grid.Row="1" x:Name="LogListBox" ItemsSource="{Binding Logs}" Height="110"
+                    <ListBox Visibility="{Binding IsChecked, ElementName=LogToggle, Converter={StaticResource LogToggleVisibility}}" Grid.Row="1" x:Name="LogListBox" ItemsSource="{Binding Logs}" Height="110"
                              Background="Transparent" BorderThickness="0" SelectionMode="Extended"
                              ScrollViewer.VerticalScrollBarVisibility="Auto"
                              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
@@ -405,7 +407,7 @@ Changes vs V007 (layout only, per Revit_Plugin_UI_Standard.md):
                                Style="{StaticResource StatusText}" VerticalAlignment="Center"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                         <Button Content="Refresh Preview" Command="{Binding RefreshPreviewCommand}" Style="{StaticResource OutlineButton}" Margin="0,0,7,0"/>
-                        <Button Content="Run" Command="{Binding RunCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,7,0"/>
+                        <Button Content="Run" Command="{Binding RunCommand}" Style="{StaticResource RunButton}" Margin="0,0,7,0"/>
                         <Button Content="Close" Click="CloseButton_Click" Style="{StaticResource OutlineButton}"/>
                     </StackPanel>
                 </Grid>

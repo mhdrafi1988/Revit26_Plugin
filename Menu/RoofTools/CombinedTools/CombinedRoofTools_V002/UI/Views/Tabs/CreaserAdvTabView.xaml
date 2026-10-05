@@ -258,15 +258,17 @@ unchanged from V001.
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="Log" Foreground="{StaticResource BrushLogText}"
-                                   FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <ToggleButton x:Name="LogToggle" Style="{StaticResource LogHeaderToggle}" VerticalAlignment="Center" ToolTip="Show / hide the log">
+                            <TextBlock Text="Log" Foreground="{StaticResource BrushLogText}"
+                                       FontSize="11.5" FontWeight="SemiBold"/>
+                        </ToggleButton>
                         <StackPanel Grid.Column="1" Orientation="Horizontal">
                             <Button Content="Copy All" Style="{StaticResource DarkGhostButton}" Command="{Binding CopyLogCommand}" Margin="0,0,6,0"/>
                             <Button Content="Copy Selected" Style="{StaticResource DarkGhostButton}" Click="CopySelectedLog_Click" Margin="0,0,6,0"/>
                             <Button Content="Clear" Style="{StaticResource DarkGhostButton}" Command="{Binding ClearLogCommand}"/>
                         </StackPanel>
                     </Grid>
-                    <ListBox
+                    <ListBox Visibility="{Binding IsChecked, ElementName=LogToggle, Converter={StaticResource LogToggleVisibility}}"
                         x:Name="LogList"
                         Grid.Row="1"
                         ItemsSource="{Binding LogEntries}"
@@ -285,7 +287,7 @@ unchanged from V001.
                 <Button
                     Content="Run"
                     Width="90"
-                    Style="{StaticResource PrimaryButton}"
+                    Style="{StaticResource RunButton}"
                     Command="{Binding RunCommand}"/>
             </StackPanel>
         </StackPanel>

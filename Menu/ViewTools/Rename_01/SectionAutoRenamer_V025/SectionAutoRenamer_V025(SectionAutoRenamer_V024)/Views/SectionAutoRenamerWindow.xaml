@@ -461,14 +461,16 @@ Changes vs V024 (layout only, per Revit_Plugin_UI_Standard.md):
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="Log" Foreground="{StaticResource BrushLogText}"
-                                   FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <ToggleButton x:Name="LogToggle" Style="{StaticResource LogHeaderToggle}" VerticalAlignment="Center" ToolTip="Show / hide the log">
+                            <TextBlock Text="Log" Foreground="{StaticResource BrushLogText}"
+                                       FontSize="11.5" FontWeight="SemiBold"/>
+                        </ToggleButton>
                         <StackPanel Grid.Column="1" Orientation="Horizontal">
                             <Button Content="Copy All" Style="{StaticResource DarkGhostButton}" Click="CopyAllLog_Click" Margin="0,0,6,0"/>
                             <Button Content="Copy Selected" Style="{StaticResource DarkGhostButton}" Click="CopySelectedLog_Click"/>
                         </StackPanel>
                     </Grid>
-                    <ListBox Grid.Row="1" x:Name="LogList" Height="100" SelectionMode="Extended"
+                    <ListBox Visibility="{Binding IsChecked, ElementName=LogToggle, Converter={StaticResource LogToggleVisibility}}" Grid.Row="1" x:Name="LogList" Height="100" SelectionMode="Extended"
                              ItemsSource="{Binding Logs}"
                              Background="Transparent"
                              BorderThickness="0"
@@ -514,7 +516,7 @@ Changes vs V024 (layout only, per Revit_Plugin_UI_Standard.md):
                             <TextBlock FontSize="11" Foreground="{StaticResource BrushTextPrimary}"
                                        Text="Dry run — no changes will be saved"/>
                         </Border>
-                        <Button Style="{StaticResource PrimaryButton}" Margin="0,0,8,0">
+                        <Button Style="{StaticResource RunButton}" Margin="0,0,8,0">
                                                 <Button.Command>
                                                     <Binding Path="CommitRenameCommand"/>
                                                 </Button.Command>

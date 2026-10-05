@@ -398,14 +398,16 @@ Changes vs V068 (layout only, per Revit_Plugin_UI_Standard.md):
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="Pipeline Log" Foreground="{StaticResource BrushLogText}"
-                                   FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <ToggleButton x:Name="LogToggle" Style="{StaticResource LogHeaderToggle}" VerticalAlignment="Center" ToolTip="Show / hide the log">
+                            <TextBlock Text="Pipeline Log" Foreground="{StaticResource BrushLogText}"
+                                       FontSize="11.5" FontWeight="SemiBold"/>
+                        </ToggleButton>
                         <StackPanel Grid.Column="1" Orientation="Horizontal">
                             <Button Content="Copy All" Style="{StaticResource DarkGhostButton}" Command="{Binding CopyLogCommand}" Margin="0,0,6,0"/>
                             <Button Content="Copy Selected" Style="{StaticResource DarkGhostButton}" Click="CopySelectedLog_Click"/>
                         </StackPanel>
                     </Grid>
-                    <TextBox x:Name="PipelineLogBox" Grid.Row="1" Height="120" Text="{Binding PipelineLogText, Mode=OneWay}"
+                    <TextBox Visibility="{Binding IsChecked, ElementName=LogToggle, Converter={StaticResource LogToggleVisibility}}" x:Name="PipelineLogBox" Grid.Row="1" Height="120" Text="{Binding PipelineLogText, Mode=OneWay}"
                              IsReadOnly="True" AcceptsReturn="True" TextWrapping="NoWrap"
                              FontFamily="Consolas, Monaco, Courier New" FontSize="10.5"
                              Foreground="{StaticResource BrushLogText}" Background="{StaticResource BrushLogBg}"
@@ -429,7 +431,7 @@ Changes vs V068 (layout only, per Revit_Plugin_UI_Standard.md):
                     <ProgressBar IsIndeterminate="True" Height="4" Margin="0,4,0,0" Foreground="{StaticResource BrushNavyPrimary}"/>
                 </StackPanel>
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
-                    <Button Content="Generate Ridges" Command="{Binding RunCommand}" Style="{StaticResource PrimaryButton}" Width="160" Height="36" FontSize="13" Margin="0,0,8,0" IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBool}}"/>
+                    <Button Content="Generate Ridges" Command="{Binding RunCommand}" Style="{StaticResource RunButton}" Width="160" Height="36" FontSize="13" Margin="0,0,8,0" IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBool}}"/>
                     <Button Content="Close" Style="{StaticResource OutlineButton}" Height="36" Width="90" Click="CloseButton_Click"/>
                 </StackPanel>
             </Grid>

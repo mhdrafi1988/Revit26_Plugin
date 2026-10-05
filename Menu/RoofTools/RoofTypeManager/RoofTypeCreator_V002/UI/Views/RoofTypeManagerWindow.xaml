@@ -553,7 +553,7 @@ Changes vs V001 (layout only, per Revit_Plugin_UI_Standard.md):
                             <Run Text=" will be auto-renamed"/>
                         </TextBlock>
                         <Button Grid.Column="1"
-                                Style="{StaticResource PrimaryButton}"
+                                Style="{StaticResource RunButton}"
                                 Command="{Binding ImportCommand}">
                             <TextBlock>
                                 <Run Text="Import All ("/>
@@ -580,9 +580,11 @@ Changes vs V001 (layout only, per Revit_Plugin_UI_Standard.md):
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Operation Log" FontSize="11.5" FontWeight="SemiBold"
-                                           Foreground="{StaticResource BrushTextOnDark}"
-                                           VerticalAlignment="Center"/>
+                                <ToggleButton x:Name="LogToggle" Style="{StaticResource LogHeaderToggle}" VerticalAlignment="Center" ToolTip="Show / hide the log">
+                                    <TextBlock Text="Operation Log" FontSize="11.5" FontWeight="SemiBold"
+                                               Foreground="{StaticResource BrushTextOnDark}"
+                                              />
+                                </ToggleButton>
                                 <Border Style="{StaticResource BadgePill}"
                                         Background="{StaticResource BrushNavyLight}" Margin="8,0,0,0">
                                     <TextBlock Style="{StaticResource BadgeText}"
@@ -603,7 +605,7 @@ Changes vs V001 (layout only, per Revit_Plugin_UI_Standard.md):
                     </Border>
 
                     <!-- Log entries list -->
-                    <ListBox x:Name="LogListBox"
+                    <ListBox Visibility="{Binding IsChecked, ElementName=LogToggle, Converter={StaticResource LogToggleVisibility}}" x:Name="LogListBox"
                              ItemsSource="{Binding LogEntries}"
                              SelectionMode="Extended"
                              Background="Transparent" BorderThickness="0"

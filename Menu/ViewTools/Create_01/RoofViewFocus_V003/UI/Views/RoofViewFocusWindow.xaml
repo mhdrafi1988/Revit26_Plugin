@@ -205,8 +205,10 @@ Changes vs V002 (layout only, per Revit_Plugin_UI_Standard.md):
 
                     <Border Grid.Row="0" Background="{StaticResource BrushLogTitleBar}" CornerRadius="10,10,0,0" Padding="10,6">
                         <DockPanel LastChildFill="False">
-                            <TextBlock DockPanel.Dock="Left" Text="Log" FontSize="12" FontWeight="SemiBold"
-                                       Foreground="{StaticResource BrushLogText}" VerticalAlignment="Center"/>
+                            <ToggleButton x:Name="LogToggle" Style="{StaticResource LogHeaderToggle}" DockPanel.Dock="Left" VerticalAlignment="Center" ToolTip="Show / hide the log">
+                                <TextBlock Text="Log" FontSize="12" FontWeight="SemiBold"
+                                           Foreground="{StaticResource BrushLogText}"/>
+                            </ToggleButton>
                             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
                                 <Button Style="{StaticResource DarkGhostButton}" Margin="6,0,0,0" Content="Copy All"
                                         Command="{Binding CopyAllCommand}"/>
@@ -221,7 +223,7 @@ Changes vs V002 (layout only, per Revit_Plugin_UI_Standard.md):
                         </DockPanel>
                     </Border>
 
-                    <ListBox Grid.Row="1" x:Name="LogList" Height="120" ItemsSource="{Binding Log}"
+                    <ListBox Visibility="{Binding IsChecked, ElementName=LogToggle, Converter={StaticResource LogToggleVisibility}}" Grid.Row="1" x:Name="LogList" Height="120" ItemsSource="{Binding Log}"
                              SelectionMode="Extended" Margin="4"
                              Background="Transparent" BorderThickness="0"
                              FontFamily="Consolas" FontSize="11.5"
@@ -257,7 +259,7 @@ Changes vs V002 (layout only, per Revit_Plugin_UI_Standard.md):
                 <Button Style="{StaticResource OutlineButton}" Content="Reset" Height="38" MinWidth="88"
                         HorizontalAlignment="Left" Command="{Binding ResetCommand}"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Style="{StaticResource PrimaryButton}" Content="Run" MinWidth="96" Margin="0,0,8,0"
+                    <Button Style="{StaticResource RunButton}" Content="Run" MinWidth="96" Margin="0,0,8,0"
                             Command="{Binding RunCommand}"/>
                     <Button Style="{StaticResource OutlineButton}" Content="Close" Height="38" MinWidth="88"
                             IsCancel="True" Click="Close_Click"/>

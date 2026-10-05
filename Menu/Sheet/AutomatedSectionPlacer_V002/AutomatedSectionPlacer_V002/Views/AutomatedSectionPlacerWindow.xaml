@@ -1397,7 +1397,7 @@
                                             Command="{Binding BackToStage3Command}"/>
                                 </StackPanel>
                                 <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                    <Button Style="{StaticResource PrimaryButton}" Command="{Binding PlaceViewsCommand}">
+                                    <Button Style="{StaticResource RunButton}" Command="{Binding PlaceViewsCommand}">
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Text="Placing..." Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}"/>
                                             <TextBlock Text="Place Views" Visibility="{Binding IsBusy, Converter={StaticResource InverseBoolToVisibilityConverter}}"/>
@@ -1597,7 +1597,7 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                    <Button Style="{StaticResource PrimaryButton}" Command="{Binding OpenSelectedCommand}">
+                                    <Button Style="{StaticResource RunButton}" Command="{Binding OpenSelectedCommand}">
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Text="Opening..." Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}"/>
                                             <TextBlock Text="Open Selected" Visibility="{Binding IsBusy, Converter={StaticResource InverseBoolToVisibilityConverter}}"/>
@@ -1660,7 +1660,9 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="Activity Log" Foreground="{StaticResource BrushLogText}" FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            <ToggleButton x:Name="LogToggle" Style="{StaticResource LogHeaderToggle}" VerticalAlignment="Center" ToolTip="Show / hide the log">
+                                <TextBlock Text="Activity Log" Foreground="{StaticResource BrushLogText}" FontSize="11.5" FontWeight="SemiBold"/>
+                            </ToggleButton>
                             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,12,0">
                                     <CheckBox IsChecked="{Binding PromptForFolderOnAutoSave}" VerticalAlignment="Center" Margin="0,0,6,0"/>
                                                                                 <TextBlock Text="Prompt for folder on auto-save" FontSize="11" Foreground="{StaticResource BrushLogTextDim}" VerticalAlignment="Center"/>
@@ -1670,7 +1672,7 @@
                                 <Button Content="Copy Selected" Style="{StaticResource DarkGhostButton}" Click="CopySelectedLog_Click" Margin="6,0,0,0"/>
                             </StackPanel>
                         </Grid>
-                        <ListBox Grid.Row="1" x:Name="LogList" ItemsSource="{Binding Logs}" Height="110"
+                        <ListBox Visibility="{Binding IsChecked, ElementName=LogToggle, Converter={StaticResource LogToggleVisibility}}" Grid.Row="1" x:Name="LogList" ItemsSource="{Binding Logs}" Height="110"
                                  Background="Transparent" BorderThickness="0" SelectionMode="Extended"
                                  ScrollViewer.VerticalScrollBarVisibility="Auto"
                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
