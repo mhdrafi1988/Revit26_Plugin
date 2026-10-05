@@ -7,6 +7,7 @@ using Revit26_Plugin.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.SheetAutoRearrange.V026.Infrastructure.ExternalEvents
 {
@@ -67,6 +68,9 @@ namespace Revit26_Plugin.SheetAutoRearrange.V026.Infrastructure.ExternalEvents
         private readonly RearrangeEngine _engine = new();
 
         public void Execute(UIApplication app)
+            => ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             var doc = app.ActiveUIDocument.Document;
 

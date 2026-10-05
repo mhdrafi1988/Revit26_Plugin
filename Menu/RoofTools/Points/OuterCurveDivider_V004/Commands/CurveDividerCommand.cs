@@ -28,6 +28,7 @@ using Revit26_Plugin.OuterCurveDivider.V004.UI.Views;
 using System;
 using System.Windows.Interop;
 using Revit26_Plugin.Utilities;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.OuterCurveDivider.V004.Commands
 {
@@ -36,6 +37,9 @@ namespace Revit26_Plugin.OuterCurveDivider.V004.Commands
     public class CurveDividerCommand : IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+            => ToolGuard.RunCommand(GetType(), commandData, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             UIApplication uiapp = commandData.Application;
             UIDocument    uidoc = uiapp.ActiveUIDocument;

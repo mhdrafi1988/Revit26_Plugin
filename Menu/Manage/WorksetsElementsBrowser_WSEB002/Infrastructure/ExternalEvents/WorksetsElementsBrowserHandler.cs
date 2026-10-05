@@ -5,6 +5,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.WorksetsElementsBrowser.WSEB002.Core.Models;
 using Revit26_Plugin.WorksetsElementsBrowser.WSEB002.Core.Services;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB002.Infrastructure.ExternalEvents
 {
@@ -53,6 +54,9 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB002.Infrastructure.External
         }
 
         public void Execute(UIApplication app)
+            => ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             WsebDebugLog.Write($"Execute() entered, Request={Request}");
             ErrorMessage = string.Empty;

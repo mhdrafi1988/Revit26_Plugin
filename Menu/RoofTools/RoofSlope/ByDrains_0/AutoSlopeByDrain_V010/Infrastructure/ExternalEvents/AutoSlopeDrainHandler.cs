@@ -25,6 +25,7 @@ using Revit26_Plugin.MultiRoofSlopeByDrain.V010.Infrastructure.Helpers;
 using Revit26_Plugin.Shared.Models;
 using System;
 using System.Collections.Generic;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.MultiRoofSlopeByDrain.V010.Infrastructure.ExternalEvents
 {
@@ -38,6 +39,9 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.V010.Infrastructure.ExternalEvent
         public static AutoSlopeDrainMultiPayload MultiPayload;
 
         public void Execute(UIApplication app)
+            => ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             if (MultiPayload == null) return;
 

@@ -13,6 +13,7 @@ using Revit26_Plugin.InnerLoopDivider.V009.Core.Engine;
 using Revit26_Plugin.InnerLoopDivider.V009.Core.Models;
 using Revit26_Plugin.Shared.Models;
 using System;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.InnerLoopDivider.V009.Infrastructure.ExternalEvents
 {
@@ -26,6 +27,9 @@ namespace Revit26_Plugin.InnerLoopDivider.V009.Infrastructure.ExternalEvents
         public static InnerLoopDividerPayload Payload;
 
         public void Execute(UIApplication app)
+            => ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             if (Payload == null) return;
 

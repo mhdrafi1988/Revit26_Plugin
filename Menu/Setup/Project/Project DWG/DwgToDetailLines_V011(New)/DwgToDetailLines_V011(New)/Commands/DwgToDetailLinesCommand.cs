@@ -10,6 +10,7 @@ using Autodesk.Revit.UI;
 using Revit26_Plugin.DwgToDetailLines.V011.Infrastructure.Helpers;
 using Revit26_Plugin.DwgToDetailLines.V011.UI.Views;
 using Revit26_Plugin.Utilities;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.DwgToDetailLines.V011.Commands
 {
@@ -21,10 +22,10 @@ namespace Revit26_Plugin.DwgToDetailLines.V011.Commands
     [Regeneration(RegenerationOption.Manual)]
     public class DwgToDetailLinesCommand : IExternalCommand
     {
-        public Result Execute(
-            ExternalCommandData commandData,
-            ref string message,
-            ElementSet elements)
+        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+            => ToolGuard.RunCommand(GetType(), commandData, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             try
             {

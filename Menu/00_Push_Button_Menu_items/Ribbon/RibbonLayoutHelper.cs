@@ -106,8 +106,8 @@ namespace Revit26_Plugin.Menu.Ribbon
         /// the first (primary) version should carry an icon on its PushButtonData
         /// — the rest carry their own icons and text in the dropdown.
         /// The pulldown's own tooltip is then set to list every version wired in
-        /// (see <see cref="VersionTip"/> — each entry is the version button's
-        /// tooltip title), so it can never disagree with the dropdown contents.
+        /// (see <see cref="Shared.Services.ToolInfo.Tip"/> — each entry is the
+        /// button's tooltip title), so it can never disagree with the dropdown contents.
         /// </summary>
         public static void WirePulldownButton(IList<RibbonItem> createdItems, string name, params PushButtonData[] versions)
         {
@@ -118,17 +118,6 @@ namespace Revit26_Plugin.Menu.Ribbon
                 pulldown.AddPushButton(version);
 
             pulldown.ToolTip = BuildVersionsTip(pulldown.ItemText, versions);
-        }
-
-        /// <summary>
-        /// Standard tooltip for every tool button: a title line of
-        /// "Tool — Version", then an optional description on the next line.
-        /// Always build tool tooltips through this so the version is never left off.
-        /// </summary>
-        public static string VersionTip(string tool, string version, string detail = null)
-        {
-            string title = tool + TipSeparator + version;
-            return string.IsNullOrWhiteSpace(detail) ? title : title + "\n" + detail;
         }
 
         private static string BuildVersionsTip(string tool, PushButtonData[] versions)

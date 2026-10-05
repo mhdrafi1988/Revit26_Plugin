@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.Menu.Ribbon;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin
 {
@@ -13,6 +14,7 @@ namespace Revit26_Plugin
 
         public Result OnStartup(UIControlledApplication application)
         {
+            ToolGuard.Install();
             EnsureRibbonTabExists(application);
             InitializeRibbonPanels(application);
             return Result.Succeeded;

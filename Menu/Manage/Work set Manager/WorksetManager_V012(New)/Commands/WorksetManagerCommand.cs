@@ -5,6 +5,7 @@ using Revit26_Plugin.WorksetManager.V012.UI.ViewModels;
 using Revit26_Plugin.WorksetManager.V012.UI.Views;
 using System.Windows.Interop;
 using Revit26_Plugin.Utilities;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.WorksetManager.V012.Commands
 {
@@ -13,6 +14,9 @@ namespace Revit26_Plugin.WorksetManager.V012.Commands
     public class WorksetManagerCommand : IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+            => ToolGuard.RunCommand(GetType(), commandData, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             try
             {

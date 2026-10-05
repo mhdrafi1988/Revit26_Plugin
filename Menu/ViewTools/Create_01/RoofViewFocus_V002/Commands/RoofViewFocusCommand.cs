@@ -10,6 +10,7 @@ using Revit26_Plugin.RoofViewFocus.V002.Core.Models;
 using Revit26_Plugin.RoofViewFocus.V002.UI.ViewModels;
 using Revit26_Plugin.RoofViewFocus.V002.UI.Views;
 using Revit26_Plugin.Utilities;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.RoofViewFocus.V002.Commands
 {
@@ -22,6 +23,9 @@ namespace Revit26_Plugin.RoofViewFocus.V002.Commands
     public class RoofViewFocusCommand : IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+            => ToolGuard.RunCommand(GetType(), commandData, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             try
             {

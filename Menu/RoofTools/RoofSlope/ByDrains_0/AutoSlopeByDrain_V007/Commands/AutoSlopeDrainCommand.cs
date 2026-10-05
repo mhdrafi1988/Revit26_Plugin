@@ -22,6 +22,7 @@ using Revit26_Plugin.AutoSlopeByDrain.V007.UI.Views;
 using System.Collections.Generic;
 using System.Windows.Interop;
 using Revit26_Plugin.Utilities;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.AutoSlopeByDrain.V007.Commands
 {
@@ -30,6 +31,9 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Commands
     public class AutoSlopeByDrain : IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+            => ToolGuard.RunCommand(GetType(), commandData, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             try
             {

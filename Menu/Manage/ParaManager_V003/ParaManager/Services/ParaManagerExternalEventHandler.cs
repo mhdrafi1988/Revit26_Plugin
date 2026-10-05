@@ -2,6 +2,7 @@ using Autodesk.Revit.UI;
 using Revit26_Plugin.ParaManager.V003.Models;
 using System;
 using System.Collections.Generic;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.ParaManager.V003.Services
 {
@@ -21,6 +22,9 @@ namespace Revit26_Plugin.ParaManager.V003.Services
         public event Action<List<RowResult>, Exception> Completed;
 
         public void Execute(UIApplication app)
+            => ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             List<RowResult> results = null;
             Exception failure = null;
