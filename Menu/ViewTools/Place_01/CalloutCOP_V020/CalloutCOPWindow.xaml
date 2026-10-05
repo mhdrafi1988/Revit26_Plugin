@@ -682,8 +682,10 @@ Changes vs V019 (layout only, per Revit_Plugin_UI_Standard.md):
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock Grid.Column="0" Text="Log" FontSize="10.5" FontWeight="SemiBold"
-                                       Foreground="{StaticResource BrushLogText}" VerticalAlignment="Center"/>
+                            <ToggleButton x:Name="LogToggle" Style="{StaticResource LogHeaderToggle}" Grid.Column="0" VerticalAlignment="Center" ToolTip="Show / hide the log">
+                                <TextBlock Text="Log" FontSize="10.5" FontWeight="SemiBold"
+                                           Foreground="{StaticResource BrushLogText}"/>
+                            </ToggleButton>
 
                             <StackPanel Grid.Column="1" Orientation="Horizontal">
                                 <Button Content="Copy All"
@@ -699,7 +701,7 @@ Changes vs V019 (layout only, per Revit_Plugin_UI_Standard.md):
                         </Grid>
                     </Border>
 
-                    <ListBox x:Name="LogListBox" Grid.Row="1" Height="120"
+                    <ListBox Visibility="{Binding IsChecked, ElementName=LogToggle, Converter={StaticResource LogToggleVisibility}}" x:Name="LogListBox" Grid.Row="1" Height="120"
                              ItemsSource="{Binding Logs}"
                              SelectionMode="Extended"
                              Background="Transparent" BorderThickness="0"
@@ -748,7 +750,7 @@ Changes vs V019 (layout only, per Revit_Plugin_UI_Standard.md):
                         Width="90" Height="38" DockPanel.Dock="Right" Click="CloseButton_Click"/>
                 <Button Content="Place Reference Callouts"
                         Command="{Binding PlaceCalloutsCommand}"
-                        Style="{StaticResource PrimaryButton}"
+                        Style="{StaticResource RunButton}"
                         Width="220" Margin="0,0,8,0" DockPanel.Dock="Right"/>
             </DockPanel>
         </StackPanel>

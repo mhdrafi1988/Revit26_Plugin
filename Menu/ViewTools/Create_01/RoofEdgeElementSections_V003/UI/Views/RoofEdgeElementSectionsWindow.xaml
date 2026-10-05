@@ -693,8 +693,10 @@ Changes vs V002 (layout only, per Revit_Plugin_UI_Standard.md):
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="{Binding LogEntries.Count, StringFormat='Log ({0} entries)'}" Foreground="{StaticResource BrushLogText}"
-                                   FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <ToggleButton x:Name="LogToggle" Style="{StaticResource LogHeaderToggle}" VerticalAlignment="Center" ToolTip="Show / hide the log">
+                            <TextBlock Text="{Binding LogEntries.Count, StringFormat='Log ({0} entries)'}" Foreground="{StaticResource BrushLogText}"
+                                       FontSize="11.5" FontWeight="SemiBold"/>
+                        </ToggleButton>
                         <StackPanel Grid.Column="1" Orientation="Horizontal">
                             <Button Content="Copy All" Style="{StaticResource DarkGhostButton}" Margin="0,0,6,0"
                                     Command="{Binding CopyAllLogsCommand}"/>
@@ -705,7 +707,7 @@ Changes vs V002 (layout only, per Revit_Plugin_UI_Standard.md):
                                     Command="{Binding ClearLogsCommand}"/>
                         </StackPanel>
                     </Grid>
-                    <ListBox Grid.Row="1" x:Name="LogListBox" Height="110" Background="Transparent" BorderThickness="0"
+                    <ListBox Visibility="{Binding IsChecked, ElementName=LogToggle, Converter={StaticResource LogToggleVisibility}}" Grid.Row="1" x:Name="LogListBox" Height="110" Background="Transparent" BorderThickness="0"
                               ItemsSource="{Binding LogEntries}" SelectionMode="Extended"
                               ScrollViewer.VerticalScrollBarVisibility="Auto">
                         <ListBox.ItemTemplate>
@@ -732,7 +734,7 @@ Changes vs V002 (layout only, per Revit_Plugin_UI_Standard.md):
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <Button Style="{StaticResource PrimaryButton}" Width="130" Margin="0,0,8,0"
+                    <Button Style="{StaticResource RunButton}" Width="130" Margin="0,0,8,0"
                             Command="{Binding RunCommand}"
                             ToolTip="Create a section view for every checked row in the Planned Sections table above.">
                         <Button.Content>

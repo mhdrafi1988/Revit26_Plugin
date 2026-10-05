@@ -288,8 +288,10 @@ Changes vs V010 (layout only, per Revit_Plugin_UI_Standard.md):
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="Log" Foreground="{StaticResource BrushLogText}"
-                                   FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <ToggleButton x:Name="LogToggle" Style="{StaticResource LogHeaderToggle}" VerticalAlignment="Center" Margin="0,0,10,0" ToolTip="Show / hide the log">
+                            <TextBlock Text="Log" Foreground="{StaticResource BrushLogText}"
+                                       FontSize="11.5" FontWeight="SemiBold"/>
+                        </ToggleButton>
                         <CheckBox Grid.Column="1" Content="Show Detail" IsChecked="{Binding ShowDetailLog}"
                                   Foreground="{StaticResource BrushLogText}" VerticalContentAlignment="Center"/>
                         <StackPanel Grid.Column="2" Orientation="Horizontal">
@@ -299,7 +301,7 @@ Changes vs V010 (layout only, per Revit_Plugin_UI_Standard.md):
                             <Button Content="Clear" Style="{StaticResource DarkGhostButton}" Command="{Binding ClearLogCommand}"/>
                         </StackPanel>
                     </Grid>
-                    <ListBox
+                    <ListBox Visibility="{Binding IsChecked, ElementName=LogToggle, Converter={StaticResource LogToggleVisibility}}"
                         x:Name="LogList"
                         Grid.Row="1"
                         ItemsSource="{Binding VisibleLogEntries}"
@@ -319,7 +321,7 @@ Changes vs V010 (layout only, per Revit_Plugin_UI_Standard.md):
                     Content="Run"
                     Width="90"
                     Margin="0,0,8,0"
-                    Style="{StaticResource PrimaryButton}"
+                    Style="{StaticResource RunButton}"
                     Command="{Binding RunCommand}"/>
                 <Button
                     Content="Close"

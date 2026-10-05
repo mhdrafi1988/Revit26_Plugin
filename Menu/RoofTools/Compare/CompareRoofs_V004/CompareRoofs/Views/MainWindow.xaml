@@ -236,15 +236,17 @@ Changes vs V003 (layout only, per Revit_Plugin_UI_Standard.md):
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="Log" Foreground="{StaticResource BrushLogText}"
-                                   FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <ToggleButton x:Name="LogToggle" Style="{StaticResource LogHeaderToggle}" VerticalAlignment="Center" ToolTip="Show / hide the log">
+                            <TextBlock Text="Log" Foreground="{StaticResource BrushLogText}"
+                                       FontSize="11.5" FontWeight="SemiBold"/>
+                        </ToggleButton>
                         <StackPanel Grid.Column="1" Orientation="Horizontal">
                             <Button Content="Export Logs (.txt)" Style="{StaticResource DarkGhostButton}" Command="{Binding ExportLogsCommand}" Margin="0,0,6,0"/>
                             <Button Content="Copy All" Style="{StaticResource DarkGhostButton}" Command="{Binding CopyAllLogCommand}"/>
                             <Button Content="Copy Selected" Style="{StaticResource DarkGhostButton}" Command="{Binding CopySelectedLogCommand}" Margin="6,0,0,0"/>
                         </StackPanel>
                     </Grid>
-                    <ListBox Grid.Row="1" x:Name="LogListBox" ItemsSource="{Binding LogEntries}" Height="100"
+                    <ListBox Visibility="{Binding IsChecked, ElementName=LogToggle, Converter={StaticResource LogToggleVisibility}}" Grid.Row="1" x:Name="LogListBox" ItemsSource="{Binding LogEntries}" Height="100"
                              Background="Transparent" BorderThickness="0" SelectionMode="Extended"
                              ScrollViewer.VerticalScrollBarVisibility="Auto"
                              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
@@ -279,7 +281,7 @@ Changes vs V003 (layout only, per Revit_Plugin_UI_Standard.md):
                 <TextBlock Grid.Column="1" Text="{Binding SummaryText}" VerticalAlignment="Center" FontSize="11.5" Margin="12,0"
                            Foreground="{StaticResource BrushTextSecondary}" TextTrimming="CharacterEllipsis"/>
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
-                    <Button Content="Apply" Command="{Binding ApplyCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,8,0"
+                    <Button Content="Apply" Command="{Binding ApplyCommand}" Style="{StaticResource RunButton}" Margin="0,0,8,0"
                             IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"/>
                     <Button Content="Close" Click="CloseButton_Click" Style="{StaticResource SecondaryButton}"/>
                 </StackPanel>

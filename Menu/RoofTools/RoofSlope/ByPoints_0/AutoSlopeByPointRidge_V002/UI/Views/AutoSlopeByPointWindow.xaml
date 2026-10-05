@@ -714,15 +714,17 @@ Changes vs Ridge V001 (layout only, per Revit_Plugin_UI_Standard.md):
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="Processing Log" Foreground="{StaticResource BrushLogText}"
-                                   FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <ToggleButton x:Name="LogToggle" Style="{StaticResource LogHeaderToggle}" VerticalAlignment="Center" ToolTip="Show / hide the log">
+                            <TextBlock Text="Processing Log" Foreground="{StaticResource BrushLogText}"
+                                       FontSize="11.5" FontWeight="SemiBold"/>
+                        </ToggleButton>
                         <StackPanel Grid.Column="1" Orientation="Horizontal">
                             <Button Content="Copy All" Style="{StaticResource DarkGhostButton}" Click="CopyAllLogs_Click" Margin="0,0,6,0"/>
                             <Button Content="Copy Selected" Style="{StaticResource DarkGhostButton}" Click="CopySelectedLogs_Click" Margin="0,0,6,0"/>
                             <Button Content="Clear" Style="{StaticResource DarkGhostButton}" Command="{Binding ClearLogCommand}"/>
                         </StackPanel>
                     </Grid>
-                    <ListBox Grid.Row="1" x:Name="LogListBox"
+                    <ListBox Visibility="{Binding IsChecked, ElementName=LogToggle, Converter={StaticResource LogToggleVisibility}}" Grid.Row="1" x:Name="LogListBox"
                              ItemsSource="{Binding LogEntries}"
                              SelectionMode="Extended"
                              Background="Transparent"
@@ -779,7 +781,7 @@ Changes vs Ridge V001 (layout only, per Revit_Plugin_UI_Standard.md):
                         Width="150"
                         Margin="0,0,8,0">
                     <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+                        <Style TargetType="Button" BasedOn="{StaticResource RunButton}">
                             <Setter Property="Content" Value="Run AutoSlope"/>
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding StatusMessage}" Value="Processing...">

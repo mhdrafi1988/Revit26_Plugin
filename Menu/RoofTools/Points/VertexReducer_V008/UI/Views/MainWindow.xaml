@@ -151,14 +151,16 @@ Changes vs V007 (layout only, per Revit_Plugin_UI_Standard.md):
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="Log" Foreground="{StaticResource BrushLogText}" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <ToggleButton x:Name="LogToggle" Style="{StaticResource LogHeaderToggle}" Grid.Column="0" VerticalAlignment="Center" ToolTip="Show / hide the log">
+                            <TextBlock Text="Log" Foreground="{StaticResource BrushLogText}" FontSize="11" FontWeight="SemiBold"/>
+                        </ToggleButton>
                         <StackPanel Grid.Column="1" Orientation="Horizontal">
                             <Button Content="Copy All" Style="{StaticResource DarkGhostButton}" Command="{Binding CopyAllLogsCommand}" Margin="0,0,6,0"/>
                             <Button Content="Copy Selected" Style="{StaticResource DarkGhostButton}" Click="CopySelectedLogs_Click" Margin="0,0,6,0"/>
                             <Button Content="Clear" Style="{StaticResource DarkGhostButton}" Command="{Binding ClearLogsCommand}"/>
                         </StackPanel>
                     </Grid>
-                    <ListBox x:Name="LogList" ItemsSource="{Binding Logs}" Height="110"
+                    <ListBox Visibility="{Binding IsChecked, ElementName=LogToggle, Converter={StaticResource LogToggleVisibility}}" x:Name="LogList" ItemsSource="{Binding Logs}" Height="110"
                              Background="Transparent" BorderThickness="0"
                              Foreground="{StaticResource BrushLogText}"
                              SelectionMode="Extended"
@@ -186,7 +188,7 @@ Changes vs V007 (layout only, per Revit_Plugin_UI_Standard.md):
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Content="Preview" Style="{StaticResource SecondaryButton}" MinWidth="90" Margin="0,0,8,0"
                         Command="{Binding PreviewCommand}" IsEnabled="{Binding CanPreview}"/>
-                <Button Content="Apply" Style="{StaticResource PrimaryButton}" MinWidth="90" Margin="0,0,8,0"
+                <Button Content="Apply" Style="{StaticResource RunButton}" MinWidth="90" Margin="0,0,8,0"
                         Command="{Binding ApplyCommand}" IsEnabled="{Binding CanApply}"/>
                 <Button Content="Close" Style="{StaticResource OutlineButton}" MinWidth="80" Click="Close_Click"/>
             </StackPanel>

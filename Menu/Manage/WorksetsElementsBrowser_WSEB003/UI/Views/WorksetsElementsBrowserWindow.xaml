@@ -189,7 +189,7 @@ Changes vs WSEB002 (layout only, per Revit_Plugin_UI_Standard.md):
                 <Button Content="Isolate + Select Checked" Margin="8,0,0,0" Style="{StaticResource SecondaryButton}" Command="{Binding IsolateAndSelectCheckedCommand}"/>
             </WrapPanel>
             <StackPanel Grid.Column="1" Orientation="Horizontal">
-                <Button Content="Show Checked In 3D" Margin="0,0,8,0" Style="{StaticResource PrimaryButton}" Command="{Binding ShowCheckedIn3DCommand}"/>
+                <Button Content="Show Checked In 3D" Margin="0,0,8,0" Style="{StaticResource RunButton}" Command="{Binding ShowCheckedIn3DCommand}"/>
                 <Button Content="Close" Style="{StaticResource OutlineButton}" Height="38" Width="90" Command="{Binding CloseCommand}"/>
             </StackPanel>
         </Grid>

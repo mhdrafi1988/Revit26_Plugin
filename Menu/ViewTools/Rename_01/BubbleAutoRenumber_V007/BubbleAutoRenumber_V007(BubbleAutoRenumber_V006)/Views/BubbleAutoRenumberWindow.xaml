@@ -212,14 +212,16 @@ Changes vs V006 (layout only, per Revit_Plugin_UI_Standard.md):
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="Log" Foreground="{StaticResource BrushLogText}"
-                                   FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <ToggleButton x:Name="LogToggle" Style="{StaticResource LogHeaderToggle}" VerticalAlignment="Center" ToolTip="Show / hide the log">
+                            <TextBlock Text="Log" Foreground="{StaticResource BrushLogText}"
+                                       FontSize="11.5" FontWeight="SemiBold"/>
+                        </ToggleButton>
                         <StackPanel Grid.Column="1" Orientation="Horizontal">
                             <Button Content="Copy All" Style="{StaticResource DarkGhostButton}" Click="CopyAllLog_Click" Margin="0,0,6,0"/>
                             <Button Content="Copy Selected" Style="{StaticResource DarkGhostButton}" Click="CopySelectedLog_Click"/>
                         </StackPanel>
                     </Grid>
-                    <TextBox Grid.Row="1" x:Name="LogBox"
+                    <TextBox Visibility="{Binding IsChecked, ElementName=LogToggle, Converter={StaticResource LogToggleVisibility}}" Grid.Row="1" x:Name="LogBox"
                              Text="{Binding LogText, Mode=OneWay}"
                              IsReadOnly="True" TextWrapping="Wrap" Height="110"
                              VerticalScrollBarVisibility="Auto"
@@ -232,7 +234,7 @@ Changes vs V006 (layout only, per Revit_Plugin_UI_Standard.md):
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Content="Renumber"
                         Command="{Binding RunCommand}"
-                        Style="{StaticResource PrimaryButton}"
+                        Style="{StaticResource RunButton}"
                         Width="120" Margin="0,0,8,0"/>
                 <Button Content="Close" Style="{StaticResource OutlineButton}" Width="90" Click="CloseButton_Click"/>
             </StackPanel>

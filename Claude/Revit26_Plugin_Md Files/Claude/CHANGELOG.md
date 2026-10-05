@@ -364,6 +364,23 @@ period rather than trusting a reconstruction here.
   `BrushCardBackground` (#FFFFFF). 34 uses in 11 windows; no visual
   change. `Transparent` left as is.
 
+## 2026-10-04 — All UI-standard versions: logs collapsed, red Run button
+
+- Every UI-standard tool version from today (Roof, View, Manage, Sheet,
+  Setup, Detail Lines, Floor, Dimensions) edited in place — no new version
+  numbers:
+  - Log panels start **collapsed**. The log header (title + Copy All /
+    Copy Selected) stays visible; clicking the title (▸ / ▾) shows or hides
+    the log lines. ParaManager V004 and WorksetManager V013 already had a
+    collapsed-by-default log toggle and are unchanged.
+  - Each tool's main footer action (Run, Create, Place, Generate, Apply…)
+    now uses the new red `RunButton` style. Wizard navigation (Next / Back)
+    and popover buttons keep the navy PrimaryButton. Schedule Export/Import
+    keeps its colour-coded Export (green) / Import (red) buttons.
+- `Shared/SharedStyles.xaml`: new `RunButton` (red, same shape as
+  PrimaryButton), `LogHeaderToggle` (chevron toggle for log headers) and
+  `LogToggleVisibility` converter.
+
 ## 2026-10-04 — Dimensions
 
 - Dimensions: DtlLineDim bumped to V009 as a layout-only rebuild per

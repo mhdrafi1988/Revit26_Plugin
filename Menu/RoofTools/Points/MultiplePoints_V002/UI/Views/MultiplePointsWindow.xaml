@@ -176,14 +176,16 @@ Changes vs V001 (layout only, per Revit_Plugin_UI_Standard.md):
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="Activity Log" Foreground="{StaticResource BrushLogText}"
-                                   FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <ToggleButton x:Name="LogToggle" Style="{StaticResource LogHeaderToggle}" VerticalAlignment="Center" ToolTip="Show / hide the log">
+                            <TextBlock Text="Activity Log" Foreground="{StaticResource BrushLogText}"
+                                       FontSize="11.5" FontWeight="SemiBold"/>
+                        </ToggleButton>
                         <StackPanel Grid.Column="1" Orientation="Horizontal">
                             <Button Content="Copy All" Style="{StaticResource DarkGhostButton}" Click="CopyAllLog_Click"/>
                             <Button Content="Copy Selected" Style="{StaticResource DarkGhostButton}" Click="CopySelectedLog_Click" Margin="6,0,0,0"/>
                         </StackPanel>
                     </Grid>
-                    <ListBox Grid.Row="1" x:Name="LogList" ItemsSource="{Binding LogEntries}" Height="100"
+                    <ListBox Visibility="{Binding IsChecked, ElementName=LogToggle, Converter={StaticResource LogToggleVisibility}}" Grid.Row="1" x:Name="LogList" ItemsSource="{Binding LogEntries}" Height="100"
                              Background="Transparent" BorderThickness="0" SelectionMode="Extended"
                              ScrollViewer.VerticalScrollBarVisibility="Auto"
                              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
@@ -209,7 +211,7 @@ Changes vs V001 (layout only, per Revit_Plugin_UI_Standard.md):
                 </Grid>
             </Border>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="Apply Points" Style="{StaticResource PrimaryButton}" Width="150" Margin="0,0,8,0"
+                <Button Content="Apply Points" Style="{StaticResource RunButton}" Width="150" Margin="0,0,8,0"
                         Command="{Binding ApplyCommand}"/>
                 <Button Content="Close" Style="{StaticResource OutlineButton}" Width="90" IsCancel="True" Click="Close_Click"/>
             </StackPanel>

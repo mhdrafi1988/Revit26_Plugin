@@ -291,7 +291,7 @@
             </TextBlock>
             <Button Grid.Column="5" Content="Close" Style="{StaticResource SecondaryButton}" Margin="0,0,6,0"
                     Click="Close_Click"/>
-            <Button Grid.Column="6" Content="Apply ▶" Style="{StaticResource PrimaryButton}" MinWidth="110"
+            <Button Grid.Column="6" Content="Apply ▶" Style="{StaticResource RunButton}" MinWidth="110"
                     Command="{Binding ApplySelectedCommand}"/>
         </Grid>
     </Grid>

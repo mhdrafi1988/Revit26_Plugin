@@ -176,7 +176,9 @@ Changes vs V008 (layout only, per Revit_Plugin_UI_Standard.md):
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="Activity Log" FontSize="11.5" FontWeight="SemiBold" Foreground="{StaticResource BrushLogText}" VerticalAlignment="Center"/>
+                            <ToggleButton x:Name="LogToggle" Style="{StaticResource LogHeaderToggle}" VerticalAlignment="Center" ToolTip="Show / hide the log">
+                                <TextBlock Text="Activity Log" FontSize="11.5" FontWeight="SemiBold" Foreground="{StaticResource BrushLogText}"/>
+                            </ToggleButton>
                             <StackPanel Grid.Column="1" Orientation="Horizontal">
                                 <Button Content="Copy All" Style="{StaticResource DarkGhostButton}"
                                         Command="{Binding CopyAllLogsCommand}"/>
@@ -186,7 +188,7 @@ Changes vs V008 (layout only, per Revit_Plugin_UI_Standard.md):
                                         Command="{Binding ClearLogsCommand}"/>
                             </StackPanel>
                         </Grid>
-                        <ListBox Grid.Row="1" x:Name="LogListBox"
+                        <ListBox Visibility="{Binding IsChecked, ElementName=LogToggle, Converter={StaticResource LogToggleVisibility}}" Grid.Row="1" x:Name="LogListBox"
                                  ItemsSource="{Binding LogEntries}"
                                  Background="Transparent" BorderThickness="0"
                                  Height="110" SelectionMode="Extended"
@@ -228,7 +230,7 @@ Changes vs V008 (layout only, per Revit_Plugin_UI_Standard.md):
                     <Button Grid.Column="0" Content="Export Log (.txt)" Style="{StaticResource OutlineButton}"
                             Command="{Binding ExportLogsCommand}"/>
                     <StackPanel Grid.Column="2" Orientation="Horizontal">
-                        <Button Content="Generate Dimensions" Style="{StaticResource PrimaryButton}" Margin="0,0,8,0"
+                        <Button Content="Generate Dimensions" Style="{StaticResource RunButton}" Margin="0,0,8,0"
                                 Command="{Binding GenerateDimensionsCommand}"/>
                         <Button Content="Close" Style="{StaticResource SecondaryButton}"
                                 Click="CloseButton_Click"/>
