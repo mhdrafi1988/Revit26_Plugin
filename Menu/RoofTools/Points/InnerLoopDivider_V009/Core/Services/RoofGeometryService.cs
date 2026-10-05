@@ -41,12 +41,17 @@ namespace Revit26_Plugin.InnerLoopDivider.V009.Core.Services
                             var loops = pf.GetEdgesAsCurveLoops();
                             int idx = 0;
 
-                            var loopInfos = loops.Select(cl => new
+                            var loopInfos = loops.Select(cl =>
                             {
-                                Index = ++idx,
-                                CurveLoop = cl,
-                                Perimeter = cl.Sum(c => c.Length),
-                                LoopShapeType = ClassifyLoopShape(cl, out XYZ center, out double radius)
+                                string shape = ClassifyLoopShape(cl, out XYZ center, out double radius);
+                                return new
+                                {
+                                    Index = ++idx,
+                                    CurveLoop = cl,
+                                    Perimeter = cl.Sum(c => c.Length),
+                                    LoopShapeType = shape,
+                                    Radius = radius
+                                };
                             }).ToList();
 
                             double maxPerimeter = loopInfos.Max(l => l.Perimeter);
@@ -64,6 +69,9 @@ namespace Revit26_Plugin.InnerLoopDivider.V009.Core.Services
                                     LoopType = loopType,
                                     IsCircular = loopInfo.LoopShapeType == "Circular",
                                     LoopShapeType = loopInfo.LoopShapeType,
+                                    RadiusMm = loopInfo.LoopShapeType == "Circular"
+                                        ? Math.Round(UnitUtils.ConvertFromInternalUnits(loopInfo.Radius, UnitTypeId.Millimeters), 1)
+                                        : (double?)null,
                                     RecommendedPoints = 0,
                                     Geometry = loopInfo.CurveLoop
                                 });
