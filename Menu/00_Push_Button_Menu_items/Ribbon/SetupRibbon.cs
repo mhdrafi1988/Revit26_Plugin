@@ -71,11 +71,20 @@ namespace Revit26_Plugin.Menu.Ribbon
             };
             var dwgLinesPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DwgToDetailLines", "Detail Lines", dwgLinesV011);
 
+            var exportDwgV001 = new PushButtonData("Btn_ExportDwgToFolder_V001", "Export DWG V001", assemblyPath, "Revit26_Plugin.ExportDwgToFolder.V001.Commands.ExportDwgToFolderCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToDetailLines_V011_16.png"),
+                ToolTip = RibbonLayoutHelper.VersionTip("Export DWG to Folder", "V001", "Export all embedded CAD links and imports to a folder, organised by source type and view category.")
+            };
+            var exportDwgPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_ExportDwgToFolder", "Export DWG", exportDwgV001);
+
             var projectItems = RibbonLayoutHelper.AddStackedButtons(projectPanel, new List<RibbonItemData>
             {
                 dwgLinesPulldownData,
+                exportDwgPulldownData,
             });
             RibbonLayoutHelper.WirePulldownButton(projectItems, "Pulldown_DwgToDetailLines", dwgLinesV011, dwgLinesV012, dwgLinesV013);
+            RibbonLayoutHelper.WirePulldownButton(projectItems, "Pulldown_ExportDwgToFolder", exportDwgV001);
         }
     }
 }
