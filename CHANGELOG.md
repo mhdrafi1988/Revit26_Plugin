@@ -9,6 +9,20 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [2.1.0] — 2026-10-06
+
+### Added
+- **Export DWG to Folder v1.0.0** — new tool in the Setup › Project Tools panel.
+  Scans the active document for all embedded CAD links (`IsLinked = true`) and CAD
+  imports, classifies each by source type (link / import) and view category
+  (plan / section / drafting / no_views), and exports them to a user-selected folder.
+  Linked DWGs are copied directly from their source path; imported DWGs are exported
+  from their host view via `Document.Export`.  Optional sidecar `.txt` file per DWG
+  records View Name, Associated Sheet, Element ID and Symbol Name.  Options: toggle
+  linked / imported sources, per-view-type subfolder checkboxes, sidecar toggle,
+  overwrite toggle.  Settings are persisted in
+  `%AppData%\Revit26_Plugin\ExportDwgToFolder\settings.json`.
+
 ## [2.0.0] — 2026-10-02
 
 ### Removed

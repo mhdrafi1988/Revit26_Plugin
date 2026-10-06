@@ -1,0 +1,303 @@
+<Window x:Class="Revit26_Plugin.ExportDwgToFolder.V001.UI.Views.ExportDwgToFolderWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
+        xmlns:vm="clr-namespace:Revit26_Plugin.ExportDwgToFolder.V001.UI.ViewModels"
+        xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
+        Title="Export DWG to Folder — V001"
+        Width="680" Height="780"
+        MinWidth="620" MinHeight="680"
+        ResizeMode="CanResizeWithGrip"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource BrushSystemSecondaryBackground}"
+        FontFamily="{DynamicResource SystemFont}">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Revit26_Plugin;component/Shared/SharedStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+            <converters:InverseBoolConverter      x:Key="InverseBoolConverter"/>
+            <converters:LogLevelToColorConverter  x:Key="LogLevelToColorConverter"/>
+
+            <!-- Metric tile template -->
+            <DataTemplate x:Key="SummaryCardTemplate" DataType="{x:Type vm:SummaryCard}">
+                <Border Style="{StaticResource MetricCard}" Margin="0,0,6,0" Padding="10,8" ToolTip="{Binding Hint}">
+                    <StackPanel>
+                        <TextBlock x:Name="Num" Text="{Binding Value}" Style="{StaticResource MetricNumber}" FontSize="20"/>
+                        <TextBlock Text="{Binding Label}" Style="{StaticResource MetricLabel}" Margin="0,1,0,0" TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+                </Border>
+                <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding Tone}" Value="Accent">
+                        <Setter TargetName="Num" Property="Foreground" Value="{StaticResource BrushAppleBlue}"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Tone}" Value="Success">
+                        <Setter TargetName="Num" Property="Foreground" Value="{StaticResource BrushSuccess}"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Tone}" Value="Warning">
+                        <Setter TargetName="Num" Property="Foreground" Value="{StaticResource BrushWarning}"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Tone}" Value="Danger">
+                        <Setter TargetName="Num" Property="Foreground" Value="{StaticResource BrushDanger}"/>
+                    </DataTrigger>
+                </DataTemplate.Triggers>
+            </DataTemplate>
+
+            <Style x:Key="OptionLabel" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+            </Style>
+
+            <Style x:Key="SectionTitle" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="11"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+                <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}"/>
+                <Setter Property="Margin" Value="0,0,0,7"/>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <shell:ToolWindowShell Title="Export DWG to Folder"
+                           Subtitle="Extract all embedded CAD links and imports to a folder, organised by source and view type."
+                           Version="V001"
+                           IsRunning="{Binding IsBusy}"
+                           IsIndeterminate="False"
+                           Progress="{Binding Progress}"
+                           SummaryText="{Binding StatusMessage}">
+
+        <!-- ═══ HEADER — metrics ═══════════════════════════════════════ -->
+        <shell:ToolWindowShell.HeaderContent>
+            <StackPanel>
+                <DockPanel Margin="0,0,0,4">
+                    <Button DockPanel.Dock="Right" Content="↻ Re-scan"
+                            Style="{StaticResource SmallSecondaryButton}"
+                            Command="{Binding RescanCommand}"
+                            ToolTip="Re-scan the document for DWG instances"/>
+                    <TextBlock Text="DWG instances in document" FontSize="11"
+                               Foreground="{StaticResource BrushTextSecondary}" VerticalAlignment="Center"/>
+                </DockPanel>
+                <ItemsControl ItemsSource="{Binding SummaryCards}" ItemTemplate="{StaticResource SummaryCardTemplate}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Rows="1"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </StackPanel>
+        </shell:ToolWindowShell.HeaderContent>
+
+        <!-- ═══ BODY ═══════════════════════════════════════════════════ -->
+        <shell:ToolWindowShell.BodyContent>
+            <StackPanel>
+
+                <!-- ── Output folder ── -->
+                <Border Style="{StaticResource ContentCard}" Margin="0,0,0,8">
+                    <StackPanel Margin="12,10">
+                        <TextBlock Text="Output Folder" Style="{StaticResource SectionTitle}"/>
+                        <DockPanel>
+                            <Button DockPanel.Dock="Right" Content="Browse…"
+                                    Style="{StaticResource SecondaryButton}"
+                                    Command="{Binding BrowseOutputFolderCommand}"
+                                    Margin="8,0,0,0" Width="80" Height="28"/>
+                            <TextBox Text="{Binding OutputFolder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     Height="28" Padding="8,4" VerticalContentAlignment="Center"
+                                     FontFamily="Consolas" FontSize="11"
+                                     IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}"
+                                     ToolTip="Folder where DWG subfolders will be created"/>
+                        </DockPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- ── Options grid ── -->
+                <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="8"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="8"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Source types -->
+                    <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource ContentCard}">
+                        <StackPanel Margin="12,10">
+                            <TextBlock Text="Source Types" Style="{StaticResource SectionTitle}"/>
+                            <DockPanel Margin="0,0,0,6">
+                                <CheckBox DockPanel.Dock="Right"
+                                          IsChecked="{Binding ExportLinked, Mode=TwoWay}"
+                                          VerticalAlignment="Center"
+                                          IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}"/>
+                                <TextBlock Style="{StaticResource OptionLabel}">
+                                    <Run Text="🔗" FontSize="11"/> <Run Text="Linked CAD files"/>
+                                </TextBlock>
+                            </DockPanel>
+                            <DockPanel>
+                                <CheckBox DockPanel.Dock="Right"
+                                          IsChecked="{Binding ExportImported, Mode=TwoWay}"
+                                          VerticalAlignment="Center"
+                                          IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}"/>
+                                <TextBlock Style="{StaticResource OptionLabel}">
+                                    <Run Text="📥" FontSize="11"/> <Run Text="Imported CAD"/>
+                                </TextBlock>
+                            </DockPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Subfolders by view type -->
+                    <Border Grid.Row="0" Grid.Column="2" Style="{StaticResource ContentCard}">
+                        <StackPanel Margin="12,10">
+                            <DockPanel Margin="0,0,0,7">
+                                <CheckBox DockPanel.Dock="Right"
+                                          IsChecked="{Binding SubfoldersByViewType, Mode=TwoWay}"
+                                          VerticalAlignment="Center"
+                                          IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}"/>
+                                <TextBlock Text="Subfolders by View Type" Style="{StaticResource SectionTitle}" Margin="0"/>
+                            </DockPanel>
+                            <UniformGrid Rows="2" Columns="2">
+                                <CheckBox Content="Plan" Margin="0,0,8,4"
+                                          IsChecked="{Binding IncludePlan, Mode=TwoWay}"
+                                          IsEnabled="{Binding SubfoldersByViewType}"
+                                          Foreground="{StaticResource BrushTextPrimary}" FontSize="11"/>
+                                <CheckBox Content="Section" Margin="0,0,0,4"
+                                          IsChecked="{Binding IncludeSection, Mode=TwoWay}"
+                                          IsEnabled="{Binding SubfoldersByViewType}"
+                                          Foreground="{StaticResource BrushTextPrimary}" FontSize="11"/>
+                                <CheckBox Content="Drafting" Margin="0,0,8,0"
+                                          IsChecked="{Binding IncludeDrafting, Mode=TwoWay}"
+                                          IsEnabled="{Binding SubfoldersByViewType}"
+                                          Foreground="{StaticResource BrushTextPrimary}" FontSize="11"/>
+                                <CheckBox Content="No Views"
+                                          IsChecked="{Binding IncludeNoViews, Mode=TwoWay}"
+                                          IsEnabled="{Binding SubfoldersByViewType}"
+                                          Foreground="{StaticResource BrushTextPrimary}" FontSize="11"/>
+                            </UniformGrid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Sidecar .txt -->
+                    <Border Grid.Row="2" Grid.Column="0" Style="{StaticResource ContentCard}">
+                        <StackPanel Margin="12,10">
+                            <TextBlock Text="Sidecar Info File" Style="{StaticResource SectionTitle}"/>
+                            <DockPanel Margin="0,0,0,5">
+                                <CheckBox DockPanel.Dock="Right"
+                                          IsChecked="{Binding GenerateSidecar, Mode=TwoWay}"
+                                          VerticalAlignment="Center"
+                                          IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}"/>
+                                <TextBlock Text="Generate .txt per DWG" Style="{StaticResource OptionLabel}"/>
+                            </DockPanel>
+                            <TextBlock Text="View Name · Sheet · Element ID · Symbol Name"
+                                       FontSize="10.5" Foreground="{StaticResource BrushTextDisabled}"
+                                       TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Overwrite -->
+                    <Border Grid.Row="2" Grid.Column="2" Style="{StaticResource ContentCard}">
+                        <StackPanel Margin="12,10">
+                            <TextBlock Text="Overwrite" Style="{StaticResource SectionTitle}"/>
+                            <DockPanel Margin="0,0,0,5">
+                                <CheckBox DockPanel.Dock="Right"
+                                          IsChecked="{Binding Overwrite, Mode=TwoWay}"
+                                          VerticalAlignment="Center"
+                                          IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}"/>
+                                <TextBlock Text="Overwrite existing files" Style="{StaticResource OptionLabel}"/>
+                            </DockPanel>
+                            <TextBlock Text="When off, existing files are skipped."
+                                       FontSize="10.5" Foreground="{StaticResource BrushTextDisabled}"
+                                       TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- ── Log ── -->
+                <Border CornerRadius="6" Background="{StaticResource BrushLogBg}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Log title bar -->
+                        <Border Background="{StaticResource BrushLogTitleBar}" CornerRadius="6,6,0,0" Padding="10,4">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock VerticalAlignment="Center" FontSize="10.5" FontWeight="SemiBold"
+                                           Foreground="{StaticResource BrushLogText}">
+                                    <Run Text="Log"/>
+                                    <Run Text="{Binding LogEntries.Count, Mode=OneWay}"
+                                         Foreground="{StaticResource BrushLogTextDim}"/>
+                                </TextBlock>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <Button Content="Copy All"
+                                            Style="{StaticResource DarkGhostButton}"
+                                            Command="{Binding CopyLogCommand}"
+                                            Margin="0,0,4,0"
+                                            ToolTip="Copy all log entries to the clipboard"/>
+                                    <Button x:Name="BtnCopySelected"
+                                            Content="Copy Selected"
+                                            Style="{StaticResource DarkGhostButton}"
+                                            Click="CopySelectedLog_Click"
+                                            ToolTip="Copy selected log entries to the clipboard"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <!-- Log list -->
+                        <ListBox x:Name="LogList"
+                                 Grid.Row="1"
+                                 ItemsSource="{Binding LogEntries}"
+                                 MinHeight="160"
+                                 shell:ShellBehaviors.MaxHeightRatio="0.28"
+                                 shell:ShellBehaviors.ForwardMouseWheel="True"
+                                 SelectionMode="Extended"
+                                 Background="Transparent" BorderThickness="0" Padding="6,4"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                 VirtualizingPanel.IsVirtualizing="True">
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="Padding" Value="0"/>
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock FontFamily="Consolas" FontSize="10.5" TextWrapping="Wrap"
+                                               Foreground="{Binding Level, Converter={StaticResource LogLevelToColorConverter}}"
+                                               Text="{Binding Mode=OneWay}"/>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
+                </Border>
+
+            </StackPanel>
+        </shell:ToolWindowShell.BodyContent>
+
+        <!-- ═══ FOOTER ═════════════════════════════════════════════════ -->
+        <shell:ToolWindowShell.FooterContent>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Run"
+                        Style="{StaticResource RunButton}"
+                        Command="{Binding RunCommand}"
+                        Width="90" Height="38" Margin="0,0,8,0"
+                        ToolTip="Export DWGs to the selected output folder"/>
+                <Button Content="Close"
+                        Style="{StaticResource OutlineButton}"
+                        Width="80" Height="38"
+                        Click="CloseButton_Click"/>
+            </StackPanel>
+        </shell:ToolWindowShell.FooterContent>
+
+    </shell:ToolWindowShell>
+</Window>
