@@ -12,6 +12,12 @@ Each release lists every tool whose version changed, under the plugin version.
 ## [2.1.0] — 2026-10-06
 
 ### Added
+- **Delete Workset v1.0.0 (V001)** — new Manage tool. Select one or more user worksets from a
+  data grid (non-deletable built-ins and the last remaining workset are shown greyed out), choose a
+  migration target workset, and delete them in a single transaction group. Migratable elements are
+  reassigned; view-specific and read-only-partition elements can optionally be hard-deleted. The
+  real-time log panel shows per-step progress and a completion summary. Ribbon button added to the
+  Manage panel.
 - **Export DWG to Folder v1.0.0** — new tool in the Setup › Project Tools panel.
   Scans the active document for all embedded CAD links (`IsLinked = true`) and CAD
   imports, classifies each by source type (link / import) and view category
