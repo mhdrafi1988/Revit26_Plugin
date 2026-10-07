@@ -9,6 +9,33 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [2.2.0] — 2026-10-07
+
+### Added
+- **DWG To Detail Lines v14.0.0 (V014)**: new "Detail Lines V014" button in the Setup › Project Tools
+  › Detail Lines dropdown. V011–V013 are unchanged.
+  - **Place beside CAD**: the tool reads the CAD import's bounding box and creates the converted
+    detail lines and filled regions one bounding-box width to the right of the CAD. The window shows
+    the CAD width.
+  - **Line style shortlist**: tick a few existing line styles and every CAD line layer is mapped to
+    one of them. A style with the layer's exact name wins; otherwise the closest match by colour,
+    lineweight and solid/patterned is used. The Style column of the layer grid becomes a dropdown
+    limited to the shortlist, so any row can be changed, and **Auto-assign** re-matches every row. No
+    line styles are created and no per-layer prompts are shown. The V013 behaviour stays available
+    as "Layer name" mode.
+  - The CAD layer colour is shown as a swatch in the layer grid.
+  - Settings (mapping mode, Place beside CAD, shortlist, layer → style mappings) are saved to
+    `%AppData%\Revit26_Plugin\DwgToDetailLines\settings.json` and re-applied next time.
+
+### Fixed
+- DWG To Detail Lines V014: a line style that Revit does not allow on detail lines (for example
+  `<Room Separation>`) now falls back to the default line style with one log warning. In V013 every
+  curve on that layer was reported as failed, even though it was still created.
+
+### User notes
+- V014 starts in Shortlist mode with Place beside CAD on, and the shortlist starts as Thin, Medium
+  and Wide Lines. Switch to "Layer name" mode or untick Place beside CAD to get the V013 behaviour.
+
 ## [2.1.0] — 2026-10-06
 
 ### Added

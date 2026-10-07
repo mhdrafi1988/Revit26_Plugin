@@ -85,7 +85,7 @@ namespace Revit26_Plugin.Shared.Services
         public static readonly ToolInfo RoofPointComparison = Add("Roof Point Comparison", "1.0.0", "V001", "Revit26_Plugin.RoofPointComparison.V001");
         public static readonly ToolInfo BatchDwgFamilyLinker = Add("Batch Link DWG Family", "0.1.0", "Working build", "BatchDwgFamilyLinker");
         public static readonly ToolInfo DwgToLines = Add("DWG To Lines", "5.0.0", "V005", "Revit26_Plugin.DwgToLines.V005");
-        public static readonly ToolInfo DwgToDetailLines = Add("DWG To Detail Lines", "11.0.0", "V011", "Revit26_Plugin.DwgToDetailLines.V011");
+        public static readonly ToolInfo DwgToDetailLines = Add("DWG To Detail Lines", "14.0.0", "V014", "Revit26_Plugin.DwgToDetailLines.V014");
         public static readonly ToolInfo ExportDwgToFolder = Add("Export DWG to Folder", "1.0.0", "V001", "Revit26_Plugin.ExportDwgToFolder.V001");
         public static readonly ToolInfo PlanFromScopeBox = Add("Plan From Scope Box", "4.0.0", "V004", "Revit26_Plugin.PlanFromScopeBox.V004");
         public static readonly ToolInfo SmartViewToSheetPlacer = Add("Smart View To Sheet Placer", "222.0.0", "V222", "Revit26_Plugin.SmartViewToSheetPlacer.V222");
