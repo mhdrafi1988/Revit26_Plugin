@@ -9,6 +9,21 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [2.2.0] — 2026-10-07
+
+### Added
+- **Sheet View Arrange v1.0.0 (V001)** — new tool in the Sheet Place panel ("Arrange Views").
+  Re-orders the views already on the active sheet by their existing Detail Number (natural
+  order: 1, 2, 10 … A1, A2, B1) and lays them out like a reading table: left → right, wrapping
+  into rows top → bottom. Each row is spread across the full usable width, rows are spread to
+  the full usable height, and views in a row share a bottom line so their titles align. The last
+  row can be packed left (default), justified or centred. Views are only moved — never resized,
+  rescaled or removed. Usable area = title block inset by margins; live to-scale preview; nothing
+  moves if the views don't fit, and Apply is refused if the sheet changed after the preview.
+  Pinned views are moved and re-pinned (option); views owned by another user or changed in
+  central (Reload Latest needed) are skipped and reported. One Undo step. Settings saved in
+  `%AppData%\Revit26_Plugin\SheetViewArrange\settings.json`.
+
 ## [2.1.0] — 2026-10-06
 
 ### Added
