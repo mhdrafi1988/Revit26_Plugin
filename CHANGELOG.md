@@ -9,6 +9,14 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [2.2.1] — 2026-10-07
+
+### Fixed
+- **Delete Workset v1.0.1 (V001)** — the tool crashed on open with "'Border' TargetType does not
+  match type of element 'TextBlock'". The metric-strip labels used a tile (Border) style and the
+  options separator used a Border style on a `Separator`; both now use the correct styles. No
+  behaviour change.
+
 ## [2.2.0] — 2026-10-07
 
 ### Added

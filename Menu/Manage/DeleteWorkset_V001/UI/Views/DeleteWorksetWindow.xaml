@@ -94,7 +94,7 @@
                 <!-- Total -->
                 <Border Style="{StaticResource MetricTile}" Margin="0,0,6,0">
                     <StackPanel>
-                        <TextBlock Text="TOTAL WORKSETS" Style="{StaticResource MetricTileInfo}"
+                        <TextBlock Text="TOTAL WORKSETS" Style="{StaticResource MetricTileLabel}"
                                    Foreground="{StaticResource BrushTextSecondary}"/>
                         <TextBlock Text="{Binding TotalCount}" FontSize="26" FontWeight="Bold"
                                    Foreground="{StaticResource BrushTextPrimary}"/>
@@ -103,7 +103,7 @@
                 <!-- Deletable -->
                 <Border Style="{StaticResource MetricTileSuccess}" Margin="3,0">
                     <StackPanel>
-                        <TextBlock Text="DELETABLE" Style="{StaticResource MetricTileInfo}"
+                        <TextBlock Text="DELETABLE" Style="{StaticResource MetricTileLabel}"
                                    Foreground="{StaticResource BrushSuccess}"/>
                         <TextBlock Text="{Binding DeletableCount}" FontSize="26" FontWeight="Bold"
                                    Foreground="{StaticResource BrushSuccess}"/>
@@ -112,7 +112,7 @@
                 <!-- Non-deletable -->
                 <Border Style="{StaticResource MetricTileDanger}" Margin="6,0,0,0">
                     <StackPanel>
-                        <TextBlock Text="NON-DELETABLE" Style="{StaticResource MetricTileInfo}"
+                        <TextBlock Text="NON-DELETABLE" Style="{StaticResource MetricTileLabel}"
                                    Foreground="{StaticResource BrushDanger}"/>
                         <TextBlock Text="{Binding NonDeletableCount}" FontSize="26" FontWeight="Bold"
                                    Foreground="{StaticResource BrushDanger}"/>
@@ -291,7 +291,7 @@
                               TextSearch.TextPath="Name"/>
                 </Grid>
 
-                <Separator Style="{StaticResource SeparatorLine}" Margin="0,0,0,8"/>
+                <Border Style="{StaticResource SeparatorLine}" Margin="0,0,0,8"/>
 
                 <!-- Options -->
                 <StackPanel>
