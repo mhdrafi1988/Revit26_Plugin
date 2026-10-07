@@ -21,6 +21,9 @@ namespace Revit26_Plugin.DeleteWorkset.V001.Core.Services
 
         /// <summary>
         /// Returns one <see cref="WorksetRow"/> for every user workset in the document.
+        /// A workset is deletable unless another user has it checked out, Revit reports that
+        /// some of its elements are owned by other users, or it is the only user workset.
+        /// Worksets nobody owns are deletable: they are checked out when the run starts.
         /// </summary>
         public List<WorksetRow> LoadWorksets(Document doc)
         {
@@ -28,35 +31,62 @@ namespace Revit26_Plugin.DeleteWorkset.V001.Core.Services
                 .OfKind(WorksetKind.UserWorkset)
                 .ToList();
 
-            // Count how many are open/editable — we cannot delete the last one.
-            int editableCount = allUser.Count(ws => ws.IsEditable);
-
+            string currentUser = doc.Application.Username ?? string.Empty;
             var rows = new List<WorksetRow>();
 
             foreach (var ws in allUser)
             {
                 int elementCount = CountElements(doc, ws.Id);
                 string owner = ws.Owner ?? string.Empty;
-                bool isOpen = ws.IsOpen;
+                bool ownedByOther = owner.Length > 0
+                    && !string.Equals(owner, currentUser, StringComparison.OrdinalIgnoreCase);
 
                 bool isDeletable = true;
                 string reason = null;
+                string badge = null;
 
-                if (!ws.IsEditable)
+                if (allUser.Count == 1)
                 {
                     isDeletable = false;
-                    reason = "Built-in workset — cannot be deleted.";
+                    badge = "Only workset";
+                    reason = "This is the only user workset; Revit requires at least one.";
                 }
-                else if (editableCount == 1)
+                else if (ownedByOther)
                 {
                     isDeletable = false;
-                    reason = "This is the only editable workset; Revit requires at least one.";
+                    badge = "In use";
+                    reason = $"Checked out by {owner}. Ask them to relinquish it, then Refresh.";
+                }
+                else if (ws.IsEditable && !CanDelete(doc, ws.Id))
+                {
+                    isDeletable = false;
+                    badge = "Blocked";
+                    reason = "Revit cannot delete this workset: some of its elements are checked out by other users.";
                 }
 
-                rows.Add(new WorksetRow(ws.Id, ws.Name, elementCount, owner, isOpen, isDeletable, reason));
+                rows.Add(new WorksetRow(ws.Id, ws.Name, elementCount, owner, ws.IsOpen, isDeletable, reason, badge));
             }
 
             return rows.OrderBy(r => r.Name).ToList();
+        }
+
+        /// <summary>
+        /// Checks out the given worksets from central so they can be deleted. Must be called
+        /// outside any transaction. Returns the ids of the worksets now owned by the current user;
+        /// each workset that could not be checked out is logged.
+        /// </summary>
+        public HashSet<int> CheckoutWorksets(Document doc, IReadOnlyList<WorksetRow> rows)
+        {
+            var ids = rows.Select(r => r.WorksetId).ToList();
+            var owned = WorksharingUtils.CheckoutWorksets(doc, ids)
+                .Select(id => id.IntegerValue)
+                .ToHashSet();
+
+            foreach (var row in rows.Where(r => !owned.Contains(r.WorksetId.IntegerValue)))
+                _log(new LogEntry(LogLevel.Warning,
+                    $"Skipped workset '{row.Name}': it could not be checked out (owned by another user?)."));
+
+            return owned;
         }
 
         // ── Deletion ──────────────────────────────────────────────────────────
@@ -72,7 +102,7 @@ namespace Revit26_Plugin.DeleteWorkset.V001.Core.Services
             IReadOnlyList<WorksetRow> toDelete,
             WorksetId targetId,
             bool hardDeleteUnmigratable,
-            Action<WorksetRow> confirmCallback)
+            Func<WorksetRow, bool> confirmCallback)
         {
             int deleted = 0;
             int migrated = 0;
@@ -81,7 +111,26 @@ namespace Revit26_Plugin.DeleteWorkset.V001.Core.Services
 
             foreach (var row in toDelete)
             {
-                confirmCallback?.Invoke(row);
+                if (confirmCallback != null && !confirmCallback(row))
+                {
+                    _log(new LogEntry(LogLevel.Warning, $"Skipped workset '{row.Name}' (not confirmed)."));
+                    skipped++;
+                    continue;
+                }
+
+                // With no target the workset is empty, so deleting "all" its elements removes nothing.
+                var settings = targetId != null
+                    ? new DeleteWorksetSettings(DeleteWorksetOption.MoveElementsToWorkset, targetId)
+                    : new DeleteWorksetSettings();
+
+                if (!WorksetTable.CanDeleteWorkset(doc, row.WorksetId, settings))
+                {
+                    _log(new LogEntry(LogLevel.Error,
+                        $"Skipped workset '{row.Name}': Revit refuses to delete it (not checked out by you, " +
+                        "or some of its elements are owned by other users)."));
+                    skipped++;
+                    continue;
+                }
 
                 using var tx = new Transaction(doc, $"Delete workset '{row.Name}'");
                 tx.Start();
@@ -95,7 +144,9 @@ namespace Revit26_Plugin.DeleteWorkset.V001.Core.Services
                         .ToList();
 
                     // 2. Separate migratable from un-migratable elements.
-                    var (canMigrate, cannotMigrate) = PartitionElements(doc, allIds, targetId);
+                    var (canMigrate, cannotMigrate) = targetId != null
+                        ? PartitionElements(doc, allIds, targetId)
+                        : (new List<ElementId>(), new List<ElementId>(allIds));
 
                     // 3. Migrate migratable elements.
                     foreach (var id in canMigrate)
@@ -143,8 +194,6 @@ namespace Revit26_Plugin.DeleteWorkset.V001.Core.Services
                     // un-migratable elements have been deleted or skipped.
                     // Use MoveElementsToWorkset so any remaining elements (skipped ones)
                     // are at least moved to the target rather than silently deleted by Revit.
-                    var settings = new DeleteWorksetSettings(
-                        DeleteWorksetOption.MoveElementsToWorkset, targetId);
                     WorksetTable.DeleteWorkset(doc, row.WorksetId, settings);
                     deleted++;
                     _log(new LogEntry(LogLevel.Success, $"Deleted workset '{row.Name}'."));
@@ -164,6 +213,12 @@ namespace Revit26_Plugin.DeleteWorkset.V001.Core.Services
         }
 
         // ── Helpers ───────────────────────────────────────────────────────────
+
+        private static bool CanDelete(Document doc, WorksetId id)
+        {
+            try { return WorksetTable.CanDeleteWorkset(doc, id, new DeleteWorksetSettings()); }
+            catch (Exception) { return true; } // let the run report the real failure
+        }
 
         private static int CountElements(Document doc, WorksetId wsId)
             => new FilteredElementCollector(doc)
