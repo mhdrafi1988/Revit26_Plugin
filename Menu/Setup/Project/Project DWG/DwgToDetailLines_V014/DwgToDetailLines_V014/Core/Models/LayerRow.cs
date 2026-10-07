@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using System.Collections.Generic;
 using System.Windows.Media;
 
 namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Models
@@ -31,14 +32,16 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Models
 
         /// <summary>
         /// Style / pattern shown in the grid's "Style / Pattern" column.
-        /// Line rows in Shortlist mode: the line style used at Convert time
-        /// (editable). Line rows in Layer Name mode: the layer name.
-        /// Hatch rows: display of the default fill pattern; GetOrResolve still
-        /// does the real per-layer FilledRegionType lookup at Convert time.
+        /// Shortlist mode: the line style / filled region type used at Convert
+        /// time (editable). Layer Name mode: the layer name (the style / type
+        /// looked up, or created through a prompt, at Convert time).
         /// </summary>
         [ObservableProperty] private string resolvedStyleName;
 
         /// <summary>True when the row's style can be picked from the shortlist (ADDED in V014).</summary>
         [ObservableProperty] private bool isStyleEditable;
+
+        /// <summary>Choices for the row's style dropdown: the line or hatch shortlist (ADDED in V014).</summary>
+        [ObservableProperty] private IList<string> styleChoices;
     }
 }

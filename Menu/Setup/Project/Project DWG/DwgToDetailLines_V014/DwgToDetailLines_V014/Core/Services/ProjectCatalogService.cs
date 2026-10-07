@@ -7,8 +7,9 @@
 // using the exact same lookups DetailLineStyleService / DetailFillRegionStyleService
 // use to resolve a match, so what's shown in the dropdown is always
 // something that can actually resolve.
-// ADDED in V014: GetLineStyles (with colour / lineweight / pattern for the
-// shortlist auto-matcher) and GetLayerAppearances (the same for CAD layers).
+// ADDED in V014: GetLineStyles / GetFilledRegionTypes (with colour,
+// lineweight and pattern for the shortlist auto-matcher) and
+// GetLayerAppearances (the same for CAD layers).
 // ==============================================
 
 using Autodesk.Revit.DB;
@@ -40,18 +41,18 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
         /// Existing line styles (OST_Lines subcategories) with their colour, lineweight
         /// and pattern, sorted by name.
         /// </summary>
-        public static List<LineStyleOption> GetLineStyles(Document doc)
+        public static List<StyleOption> GetLineStyles(Document doc)
         {
             Category linesCategory = doc.Settings.Categories.get_Item(BuiltInCategory.OST_Lines);
             if (linesCategory == null)
-                return new List<LineStyleOption>();
+                return new List<StyleOption>();
 
             return linesCategory.SubCategories
                 .Cast<Category>()
                 .Select(c =>
                 {
                     CadLayerAppearance a = ReadAppearance(c);
-                    return new LineStyleOption
+                    return new StyleOption
                     {
                         Name = c.Name,
                         Appearance = a,
@@ -89,6 +90,41 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
                 : new SolidColorBrush(MediaColor.FromRgb(a.R, a.G, a.B));
             brush.Freeze();
             return brush;
+        }
+
+        /// <summary>
+        /// Existing filled region types with their foreground pattern colour and
+        /// pattern name, sorted by name.
+        /// </summary>
+        public static List<StyleOption> GetFilledRegionTypes(Document doc)
+        {
+            return new FilteredElementCollector(doc)
+                .OfClass(typeof(FilledRegionType))
+                .Cast<FilledRegionType>()
+                .Select(t =>
+                {
+                    Color colour = t.ForegroundPatternColor;
+                    bool valid = colour != null && colour.IsValid;
+                    var pattern = doc.GetElement(t.ForegroundPatternId) as FillPatternElement;
+                    bool solid = pattern?.GetFillPattern()?.IsSolidFill ?? false;
+
+                    var a = new CadLayerAppearance(
+                        valid ? colour.Red : (byte)0,
+                        valid ? colour.Green : (byte)0,
+                        valid ? colour.Blue : (byte)0,
+                        0,
+                        solid);
+
+                    return new StyleOption
+                    {
+                        Name = t.Name,
+                        Appearance = a,
+                        Swatch = ToBrush(a),
+                        Detail = pattern?.Name ?? "no pattern"
+                    };
+                })
+                .OrderBy(o => o.Name)
+                .ToList();
         }
 
         /// <summary>Existing FilledRegionType names in this project.</summary>

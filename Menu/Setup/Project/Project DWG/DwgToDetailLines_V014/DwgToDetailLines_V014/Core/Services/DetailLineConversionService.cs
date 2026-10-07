@@ -13,6 +13,10 @@
 //   ADDED layerStyleMap (Shortlist mode): each line layer uses the mapped
 //         existing style — no prompt, no new styles. Null keeps the V013
 //         layer-name behaviour.
+//   ADDED hatchTypeMap (hatch Shortlist mode): the same for hatch layers
+//         and existing filled region types.
+//   ADDED removeDuplicateLines: exact duplicate curves within a layer are
+//         skipped (DuplicateCurveFilter).
 //   ADDED offset: every created curve / hatch boundary is translated by it
 //         ("Place beside CAD").
 //   FIX   a style Revit does not accept for detail curves (e.g. <Room
@@ -53,6 +57,11 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
         /// Shortlist mode: CAD layer → existing line style name. Null = Layer Name mode
         /// (style named like the layer, created or skipped through a prompt).
         /// </param>
+        /// <param name="hatchTypeMap">
+        /// Hatch Shortlist mode: CAD hatch layer → existing filled region type name.
+        /// Null = Layer Name mode (type named like the layer, created or skipped through a prompt).
+        /// </param>
+        /// <param name="removeDuplicateLines">Skip exact duplicate curves within a layer.</param>
         /// <param name="offset">Translation applied to all created geometry, or null for none.</param>
         public ConversionMetrics Execute(
             ImportInstance cad,
@@ -65,6 +74,8 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
             string defaultLineStyleName,
             string defaultFillPatternName,
             IReadOnlyDictionary<string, string> layerStyleMap,
+            IReadOnlyDictionary<string, string> hatchTypeMap,
+            bool removeDuplicateLines,
             XYZ offset)
         {
             Document doc = _uiApp.ActiveUIDocument.Document;
@@ -91,10 +102,10 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
             var preprocessorResult = TransactionHelper.Run(doc, "DWG to Detail Lines", () =>
             {
                 RunLinePass(cad, doc, activeView, spline, transformMethod, tol, lineSet,
-                    defaultLineStyleName, layerStyleMap, shift, ref placed, ref skipped, ref failed);
+                    defaultLineStyleName, layerStyleMap, removeDuplicateLines, shift, ref placed, ref skipped, ref failed);
 
                 RunHatchPass(cad, doc, activeView, transformMethod, hatchSet,
-                    defaultFillPatternName, shift, ref placed, ref skipped, ref failed);
+                    defaultFillPatternName, hatchTypeMap, shift, ref placed, ref skipped, ref failed);
             });
 
             // Elements that were created (counted in `placed` above) but then
@@ -134,6 +145,7 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
             HashSet<string> lineSet,
             string defaultLineStyleName,
             IReadOnlyDictionary<string, string> layerStyleMap,
+            bool removeDuplicateLines,
             Transform shift,
             ref int placed,
             ref int skipped,
@@ -153,6 +165,8 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
             // Styles Revit accepts on a detail curve — read once from the first
             // curve created, then reused for every layer.
             HashSet<ElementId> validStyleIds = null;
+            double vertexTol = doc.Application.VertexTolerance;
+            int duplicatesTotal = 0;
 
             foreach (var layerGroup in byLayer)
             {
@@ -188,6 +202,17 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
                 if (shortCount > 0)
                 {
                     _log(new LogEntry(LogLevel.Info, $"Layer '{layerGroup.Key}': short curves skipped = {shortCount}"));
+                }
+
+                if (removeDuplicateLines)
+                {
+                    usable = DuplicateCurveFilter.RemoveDuplicates(usable, vertexTol, out int duplicates);
+                    if (duplicates > 0)
+                    {
+                        skipped += duplicates;
+                        duplicatesTotal += duplicates;
+                        _log(new LogEntry(LogLevel.Info, $"Layer '{layerGroup.Key}': duplicate lines skipped = {duplicates}"));
+                    }
                 }
 
                 GraphicsStyle style;
@@ -267,6 +292,9 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
                     $"Detail line style assigned: {layerGroup.Key} → {style?.Name ?? "(Revit default)"} ({layerPlaced} lines" +
                     (layerFailed > 0 ? $", {layerFailed} failed)" : ")")));
             }
+
+            if (duplicatesTotal > 0)
+                _log(new LogEntry(LogLevel.Info, $"Duplicate lines skipped in total: {duplicatesTotal}"));
         }
 
         private void RunHatchPass(
@@ -276,6 +304,7 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
             TransformMethod transformMethod,
             HashSet<string> hatchSet,
             string defaultFillPatternName,
+            IReadOnlyDictionary<string, string> hatchTypeMap,
             Transform shift,
             ref int placed,
             ref int skipped,
@@ -292,14 +321,37 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
 
             foreach (var layerGroup in byLayer)
             {
-                FilledRegionType type = styleService.GetOrResolve(layerGroup.Key);
-
-                if (type == null)
+                FilledRegionType type;
+                if (hatchTypeMap == null)
                 {
-                    int count = layerGroup.Count();
-                    _log(new LogEntry(LogLevel.Warning, $"Hatch layer '{layerGroup.Key}' skipped by user choice"));
-                    skipped += count;
-                    continue;
+                    type = styleService.GetOrResolve(layerGroup.Key);
+
+                    if (type == null)
+                    {
+                        int count = layerGroup.Count();
+                        _log(new LogEntry(LogLevel.Warning, $"Hatch layer '{layerGroup.Key}' skipped by user choice"));
+                        skipped += count;
+                        continue;
+                    }
+                }
+                else
+                {
+                    hatchTypeMap.TryGetValue(layerGroup.Key, out string mapped);
+                    type = styleService.GetByName(mapped);
+
+                    if (type == null)
+                    {
+                        type = styleService.GetByName(defaultFillPatternName);
+                        _log(new LogEntry(LogLevel.Warning,
+                            $"Hatch layer '{layerGroup.Key}': mapped fill type '{mapped ?? "(none)"}' not found — " +
+                            (type != null ? $"using default '{defaultFillPatternName}'" : "layer skipped")));
+
+                        if (type == null)
+                        {
+                            skipped += layerGroup.Count();
+                            continue;
+                        }
+                    }
                 }
 
                 int layerPlaced = 0;
@@ -330,7 +382,7 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
                 failed += layerFailed;
 
                 _log(new LogEntry(LogLevel.Info,
-                    $"Fill pattern assigned: {layerGroup.Key} ({layerPlaced} region(s)" +
+                    $"Fill pattern assigned: {layerGroup.Key} → {type.Name} ({layerPlaced} region(s)" +
                     (layerFailed > 0 ? $", {layerFailed} failed)" : ")")));
             }
         }

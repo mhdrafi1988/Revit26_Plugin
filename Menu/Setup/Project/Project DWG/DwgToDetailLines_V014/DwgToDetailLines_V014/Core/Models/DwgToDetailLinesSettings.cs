@@ -13,7 +13,7 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Models
         /// <summary>Settings schema version.</summary>
         public int Version { get; set; } = 1;
 
-        /// <summary>Line style mapping mode last used.</summary>
+        /// <summary>Line layer mapping mode last used.</summary>
         public LineStyleMappingMode MappingMode { get; set; } = LineStyleMappingMode.Shortlist;
 
         /// <summary>Offset converted elements to the right of the CAD by one bounding-box width.</summary>
@@ -24,5 +24,17 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Models
 
         /// <summary>CAD layer name → line style name, remembered from previous conversions.</summary>
         public Dictionary<string, string> LayerMappings { get; set; } = new();
+
+        /// <summary>Hatch layer mapping mode last used.</summary>
+        public LineStyleMappingMode HatchMappingMode { get; set; } = LineStyleMappingMode.Shortlist;
+
+        /// <summary>Names of the shortlisted filled region types.</summary>
+        public List<string> HatchShortlist { get; set; } = new();
+
+        /// <summary>CAD hatch layer name → filled region type name, remembered from previous conversions.</summary>
+        public Dictionary<string, string> HatchLayerMappings { get; set; } = new();
+
+        /// <summary>Skip exact duplicate lines within a layer.</summary>
+        public bool RemoveDuplicateLines { get; set; } = true;
     }
 }

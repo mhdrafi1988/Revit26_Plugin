@@ -73,7 +73,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             var dwgLinesV014 = new PushButtonData("Btn_DwgToDetailLines_V014", "Detail Lines V014", assemblyPath, "Revit26_Plugin.DwgToDetailLines.V014.Commands.DwgToDetailLinesCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToDetailLines_V011_16.png"),
-                ToolTip = ToolCatalog.DwgToDetailLines.Tip("V013 plus: line style shortlist with auto-assign by CAD colour / lineweight / pattern, and Place beside CAD (offset right by 1× CAD width).")
+                ToolTip = ToolCatalog.DwgToDetailLines.Tip("V013 plus: line style and fill type shortlists with auto-assign, Remove duplicate lines, and Place beside CAD (offset right by 1× CAD width).")
             };
             var dwgLinesPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DwgToDetailLines", "Detail Lines", dwgLinesV011);
 

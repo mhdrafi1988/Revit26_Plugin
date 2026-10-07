@@ -3,11 +3,12 @@
 File: DwgToDetailLinesWindow.xaml
 Location: UI/Views/
 Changes vs V013:
-  - Left column: "Line Style Mapping" card (Layer name / Shortlist mode,
-    filterable shortlist of project line styles, Auto-assign) and
-    "Placement" card (Place beside CAD + CAD width).
+  - Left column: "Line Style Mapping" and "Hatch Mapping" cards (each
+    with its own Layer name / Shortlist mode, filterable shortlist and
+    Auto-assign) and "Placement & Cleanup" card (Place beside CAD + CAD
+    width, Remove duplicate lines).
   - Layers grid: CAD colour swatch column; in Shortlist mode the
-    Style column is a dropdown limited to the shortlisted styles.
+    Style column is a dropdown limited to that row's shortlist.
 Changes vs V012 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
   - Window content is a shared ToolWindowShell:
       HEADER  title bar + V013, metrics card, context banner
@@ -41,6 +42,18 @@ Changes vs V012 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
             <local:BooleanToEnumConverter x:Key="BoolToEnum"/>
             <local:NullableIntToDashConverter x:Key="NullableIntToDash"/>
             <local:MetricCountToBrushConverter x:Key="MetricCountToBrush"/>
+
+            <DataTemplate x:Key="StyleOptionTemplate">
+                <StackPanel Orientation="Horizontal" Margin="0,1">
+                    <CheckBox IsChecked="{Binding IsShortlisted, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"/>
+                    <Border Width="12" Height="12" Margin="6,0,6,0" CornerRadius="2"
+                            Background="{Binding Swatch}" BorderBrush="{StaticResource BrushTextTertiary}" BorderThickness="1"
+                            VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding Detail}" Margin="8,0,0,0" FontSize="10.5"
+                               Foreground="{StaticResource BrushTextTertiary}" VerticalAlignment="Center"/>
+                </StackPanel>
+            </DataTemplate>
             <shared:InverseBoolConverter x:Key="InverseBoolConverter"/>
             <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
             <shared:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibility"/>
@@ -159,9 +172,9 @@ Changes vs V012 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                         <StackPanel Margin="10">
                             <TextBlock Text="Line Style Mapping" Style="{StaticResource SectionTitle}" Margin="0,0,0,8"/>
                             <StackPanel Orientation="Horizontal">
-                                <RadioButton Content="Shortlist (auto-assign)" Margin="0,0,18,0"
+                                <RadioButton GroupName="MappingMode" Content="Shortlist (auto-assign)" Margin="0,0,18,0"
                                              IsChecked="{Binding MappingMode, Converter={StaticResource BoolToEnum}, ConverterParameter=Shortlist}"/>
-                                <RadioButton Content="Layer name (V013)"
+                                <RadioButton GroupName="MappingMode" Content="Layer name (V013)"
                                              IsChecked="{Binding MappingMode, Converter={StaticResource BoolToEnum}, ConverterParameter=LayerName}"/>
                             </StackPanel>
                             <StackPanel IsEnabled="{Binding IsShortlistMode}" Margin="0,8,0,0">
@@ -170,35 +183,58 @@ Changes vs V012 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBox Text="{Binding LineStyleFilterText, UpdateSourceTrigger=PropertyChanged}"
+                                    <TextBox Text="{Binding LineShortlist.FilterText, UpdateSourceTrigger=PropertyChanged}"
                                              Style="{StaticResource StyledTextInput}" Margin="0,0,6,0"
                                              ToolTip="Filter line styles by name"/>
                                     <Button Grid.Column="1" Content="Auto-assign" Command="{Binding AutoAssignCommand}"
                                             Style="{StaticResource SmallSecondaryButton}"
                                             ToolTip="Re-match every line layer to the closest shortlisted style (colour, lineweight, pattern)"/>
                                 </Grid>
-                                <ListBox ItemsSource="{Binding LineStyleOptionsView}"
+                                <ListBox ItemsSource="{Binding LineShortlist.OptionsView}"
                                          Height="150"
                                          BorderBrush="{StaticResource BrushTextTertiary}" BorderThickness="1"
                                          shell:ShellBehaviors.ForwardMouseWheel="True"
                                          VirtualizingPanel.IsVirtualizing="True"
-                                         VirtualizingPanel.VirtualizationMode="Recycling">
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Horizontal" Margin="0,1">
-                                                <CheckBox IsChecked="{Binding IsShortlisted, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"/>
-                                                <Border Width="12" Height="12" Margin="6,0,6,0" CornerRadius="2"
-                                                        Background="{Binding Swatch}" BorderBrush="{StaticResource BrushTextTertiary}" BorderThickness="1"
-                                                        VerticalAlignment="Center"/>
-                                                <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
-                                                <TextBlock Text="{Binding Detail}" Margin="8,0,0,0" FontSize="10.5"
-                                                           Foreground="{StaticResource BrushTextTertiary}" VerticalAlignment="Center"/>
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                </ListBox>
-                                <TextBlock Text="{Binding ShortlistSummary}" Style="{StaticResource HintText}" Margin="0,6,0,0"/>
+                                         VirtualizingPanel.VirtualizationMode="Recycling"
+                                         ItemTemplate="{StaticResource StyleOptionTemplate}"/>
+                                <TextBlock Text="{Binding LineShortlist.Summary}" Style="{StaticResource HintText}" Margin="0,6,0,0"/>
                                 <TextBlock Text="Each line layer is mapped to one shortlisted style (name match first, then closest colour / lineweight / pattern). Change any row in the grid. No line styles are created."
+                                           Style="{StaticResource HintText}" Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                    <!-- ── Hatch mapping (V014) ── -->
+                    <Border Style="{StaticResource ContentCard}" Margin="0,10,0,0">
+                        <StackPanel Margin="10">
+                            <TextBlock Text="Hatch Mapping" Style="{StaticResource SectionTitle}" Margin="0,0,0,8"/>
+                            <StackPanel Orientation="Horizontal">
+                                <RadioButton GroupName="HatchMappingMode" Content="Shortlist (auto-assign)" Margin="0,0,18,0"
+                                             IsChecked="{Binding HatchMappingMode, Converter={StaticResource BoolToEnum}, ConverterParameter=Shortlist}"/>
+                                <RadioButton GroupName="HatchMappingMode" Content="Layer name (V013)"
+                                             IsChecked="{Binding HatchMappingMode, Converter={StaticResource BoolToEnum}, ConverterParameter=LayerName}"/>
+                            </StackPanel>
+                            <StackPanel IsEnabled="{Binding IsHatchShortlistMode}" Margin="0,8,0,0">
+                                <Grid Margin="0,0,0,6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Text="{Binding HatchShortlist.FilterText, UpdateSourceTrigger=PropertyChanged}"
+                                             Style="{StaticResource StyledTextInput}" Margin="0,0,6,0"
+                                             ToolTip="Filter fill types by name"/>
+                                    <Button Grid.Column="1" Content="Auto-assign" Command="{Binding AutoAssignHatchCommand}"
+                                            Style="{StaticResource SmallSecondaryButton}"
+                                            ToolTip="Re-match every hatch layer to the closest shortlisted fill type (colour)"/>
+                                </Grid>
+                                <ListBox ItemsSource="{Binding HatchShortlist.OptionsView}"
+                                         Height="150"
+                                         BorderBrush="{StaticResource BrushTextTertiary}" BorderThickness="1"
+                                         shell:ShellBehaviors.ForwardMouseWheel="True"
+                                         VirtualizingPanel.IsVirtualizing="True"
+                                         VirtualizingPanel.VirtualizationMode="Recycling"
+                                         ItemTemplate="{StaticResource StyleOptionTemplate}"/>
+                                <TextBlock Text="{Binding HatchShortlist.Summary}" Style="{StaticResource HintText}" Margin="0,6,0,0"/>
+                                <TextBlock Text="Each hatch layer is mapped to one shortlisted filled region type (name match first, then closest colour). Change any row in the grid. No fill types are created."
                                            Style="{StaticResource HintText}" Margin="0,4,0,0"/>
                             </StackPanel>
                         </StackPanel>
@@ -206,10 +242,13 @@ Changes vs V012 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                     <!-- ── Placement (V014) ── -->
                     <Border Style="{StaticResource ContentCard}" Margin="0,10,0,0">
                         <StackPanel Margin="10">
-                            <TextBlock Text="Placement" Style="{StaticResource SectionTitle}" Margin="0,0,0,8"/>
+                            <TextBlock Text="Placement &amp; Cleanup" Style="{StaticResource SectionTitle}" Margin="0,0,0,8"/>
                             <CheckBox Content="Place beside CAD (offset right by 1× CAD width)"
                                       IsChecked="{Binding PlaceBesideCad}"/>
                             <TextBlock Text="{Binding CadSizeText}" Style="{StaticResource HintText}" Margin="0,6,0,0"/>
+                            <CheckBox Content="Remove duplicate lines" Margin="0,8,0,0"
+                                      IsChecked="{Binding RemoveDuplicateLines}"
+                                      ToolTip="Skip lines that exactly repeat another line on the same layer (same ends, either direction)"/>
                         </StackPanel>
                     </Border>
                     <!-- ── Spline handling ── -->
@@ -327,7 +366,7 @@ Changes vs V012 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                             <Grid>
                                                 <TextBlock Text="{Binding ResolvedStyleName, Mode=OneWay}" VerticalAlignment="Center"
                                                            Visibility="{Binding IsStyleEditable, Converter={StaticResource InverseBoolToVisibility}}"/>
-                                                <ComboBox ItemsSource="{Binding DataContext.ShortlistNames, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                <ComboBox ItemsSource="{Binding StyleChoices}"
                                                           SelectedItem="{Binding ResolvedStyleName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                           Visibility="{Binding IsStyleEditable, Converter={StaticResource BoolToVisibility}}"
                                                           Height="24" FontSize="11"/>

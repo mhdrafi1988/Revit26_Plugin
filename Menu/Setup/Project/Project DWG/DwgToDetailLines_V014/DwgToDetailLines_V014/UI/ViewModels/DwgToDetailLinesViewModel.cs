@@ -16,6 +16,9 @@
 //   ADDED Line style shortlist + auto-assign (LineStyleMappingMode.Shortlist):
 //         line layers map onto a few existing styles by colour / lineweight /
 //         pattern, editable per row. No per-layer prompts, no new styles.
+//         Hatch layers get their own shortlist of filled region types
+//         (matched by name, then colour) and their own mode switch.
+//   ADDED "Remove duplicate lines" (exact duplicates within a layer).
 //   ADDED "Place beside CAD": created elements are offset right by one CAD
 //         bounding-box width.
 //   ADDED Settings (mode, placement, shortlist, layer mappings) persisted to
@@ -49,12 +52,12 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.UI.ViewModels
     {
         private const string SettingsKey = "DwgToDetailLines";
         private static readonly string[] DefaultShortlist = { "Thin Lines", "Medium Lines", "Wide Lines" };
+        private const int DefaultHatchShortlistSize = 3;
 
         private readonly UIApplication _uiApp;
         private readonly ExternalEvent _convertEvent;
         private readonly ConvertExternalEventHandler _convertHandler;
         private readonly DwgToDetailLinesSettings _settings;
-        private bool _suppressShortlistRebuild;
 
         public ObservableCollection<CadImportItem> AvailableCads { get; } = new();
         public ObservableCollection<LogEntry> LogEntries { get; } = new();
@@ -66,19 +69,16 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.UI.ViewModels
         public List<string> AvailableLineStyles { get; private set; } = new();
         public List<string> AvailableFillPatterns { get; private set; } = new();
 
-        /// <summary>Every project line style, with a shortlist checkbox.</summary>
-        public ObservableCollection<LineStyleOption> LineStyleOptions { get; } = new();
+        /// <summary>Shortlist of line styles for line layers.</summary>
+        public StyleShortlist LineShortlist { get; } = new("line styles");
 
-        /// <summary>Filtered view of <see cref="LineStyleOptions"/> for the shortlist list.</summary>
-        public ICollectionView LineStyleOptionsView { get; }
-
-        /// <summary>Names of the shortlisted styles — the choices in each line row's dropdown.</summary>
-        public ObservableCollection<string> ShortlistNames { get; } = new();
+        /// <summary>Shortlist of filled region types for hatch layers.</summary>
+        public StyleShortlist HatchShortlist { get; } = new("fill types");
 
         [ObservableProperty] private LineStyleMappingMode mappingMode;
+        [ObservableProperty] private LineStyleMappingMode hatchMappingMode;
         [ObservableProperty] private bool placeBesideCad;
-        [ObservableProperty] private string lineStyleFilterText = string.Empty;
-        [ObservableProperty] private string shortlistSummary = string.Empty;
+        [ObservableProperty] private bool removeDuplicateLines;
         [ObservableProperty] private string cadSizeText = string.Empty;
 
         [ObservableProperty] private CadImportItem selectedCad;
@@ -103,6 +103,7 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.UI.ViewModels
         public RelayCommand CopySelectedLogCommand { get; }
         public RelayCommand ExportLogCommand { get; }
         public RelayCommand AutoAssignCommand { get; }
+        public RelayCommand AutoAssignHatchCommand { get; }
 
         /// <summary>Set by the View's SelectionChanged handler for "Copy Selected".</summary>
         public IList SelectedLogEntries { get; set; }
@@ -116,8 +117,12 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.UI.ViewModels
             _settings = SettingsService<DwgToDetailLinesSettings>.Load(SettingsKey);
             _settings.Shortlist ??= new List<string>();
             _settings.LayerMappings ??= new Dictionary<string, string>();
+            _settings.HatchShortlist ??= new List<string>();
+            _settings.HatchLayerMappings ??= new Dictionary<string, string>();
             mappingMode = _settings.MappingMode;
+            hatchMappingMode = _settings.HatchMappingMode;
             placeBesideCad = _settings.PlaceBesideCad;
+            removeDuplicateLines = _settings.RemoveDuplicateLines;
 
             // Must be created while on the main Revit API thread (here, during
             // window construction inside Command.Execute's valid API context).
@@ -132,12 +137,12 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.UI.ViewModels
             CopyAllLogCommand = new RelayCommand(CopyAllLog, () => LogEntries.Count > 0);
             CopySelectedLogCommand = new RelayCommand(CopySelectedLog);
             ExportLogCommand = new RelayCommand(ExportLog);
-            AutoAssignCommand = new RelayCommand(() => ApplyMappingToRows(useSaved: false), () => IsShortlistMode);
+            AutoAssignCommand = new RelayCommand(() => ApplyMapping(CadEntityType.Line, useSaved: false), () => IsShortlistMode);
+            AutoAssignHatchCommand = new RelayCommand(() => ApplyMapping(CadEntityType.Hatch, useSaved: false), () => IsHatchShortlistMode);
             LogEntries.CollectionChanged += (_, _) => CopyAllLogCommand.NotifyCanExecuteChanged();
 
-            LineStyleOptionsView = CollectionViewSource.GetDefaultView(LineStyleOptions);
-            LineStyleOptionsView.Filter = o => string.IsNullOrWhiteSpace(LineStyleFilterText)
-                || (o is LineStyleOption opt && opt.Name.Contains(LineStyleFilterText, StringComparison.OrdinalIgnoreCase));
+            LineShortlist.Changed += () => OnShortlistChanged(CadEntityType.Line);
+            HatchShortlist.Changed += () => OnShortlistChanged(CadEntityType.Hatch);
 
             RefreshCatalog();
 
@@ -163,102 +168,86 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.UI.ViewModels
             DefaultLineStyle = AvailableLineStyles.FirstOrDefault();
             DefaultFillPattern = AvailableFillPatterns.FirstOrDefault();
 
-            LoadLineStyleOptions(doc);
+            LoadShortlists(doc);
         }
 
-        /// <summary>True in Shortlist mapping mode.</summary>
+        /// <summary>True in line Shortlist mapping mode.</summary>
         public bool IsShortlistMode => MappingMode == LineStyleMappingMode.Shortlist;
 
-        private void LoadLineStyleOptions(Document doc)
+        /// <summary>True in hatch Shortlist mapping mode.</summary>
+        public bool IsHatchShortlistMode => HatchMappingMode == LineStyleMappingMode.Shortlist;
+
+        private void LoadShortlists(Document doc)
         {
-            foreach (var o in LineStyleOptions)
-                o.PropertyChanged -= OnLineStyleOptionPropertyChanged;
-            LineStyleOptions.Clear();
-
             var styles = ProjectCatalogService.GetLineStyles(doc);
+            var types = ProjectCatalogService.GetFilledRegionTypes(doc);
 
-            // First run (nothing saved): start from Revit's standard thin /
-            // medium / wide styles, or the first three user styles.
-            var wanted = new HashSet<string>(_settings.Shortlist, StringComparer.Ordinal);
-            if (wanted.Count == 0)
+            // First run (nothing saved): lines start from Revit's standard thin /
+            // medium / wide styles (or the first three user styles); hatches
+            // from the first few fill types.
+            var wantedStyles = new HashSet<string>(_settings.Shortlist, StringComparer.Ordinal);
+            if (wantedStyles.Count == 0)
             {
                 foreach (string n in DefaultShortlist.Where(n => styles.Any(s => s.Name == n)))
-                    wanted.Add(n);
-                if (wanted.Count == 0)
+                    wantedStyles.Add(n);
+                if (wantedStyles.Count == 0)
                     foreach (var s in styles.Where(s => !s.Name.StartsWith("<")).Take(3))
-                        wanted.Add(s.Name);
+                        wantedStyles.Add(s.Name);
             }
 
-            _suppressShortlistRebuild = true;
-            foreach (var opt in styles)
-            {
-                opt.IsShortlisted = wanted.Contains(opt.Name);
-                opt.PropertyChanged += OnLineStyleOptionPropertyChanged;
-                LineStyleOptions.Add(opt);
-            }
-            _suppressShortlistRebuild = false;
+            var wantedTypes = new HashSet<string>(_settings.HatchShortlist, StringComparer.Ordinal);
+            if (wantedTypes.Count == 0)
+                foreach (var t in types.Take(DefaultHatchShortlistSize))
+                    wantedTypes.Add(t.Name);
 
-            RebuildShortlist();
+            LineShortlist.Load(styles, wantedStyles);
+            HatchShortlist.Load(types, wantedTypes);
         }
 
-        private void OnLineStyleOptionPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private StyleShortlist ShortlistFor(CadEntityType kind) =>
+            kind == CadEntityType.Line ? LineShortlist : HatchShortlist;
+
+        private bool IsShortlistModeFor(CadEntityType kind) =>
+            kind == CadEntityType.Line ? IsShortlistMode : IsHatchShortlistMode;
+
+        private Dictionary<string, string> SavedMappingsFor(CadEntityType kind) =>
+            kind == CadEntityType.Line ? _settings.LayerMappings : _settings.HatchLayerMappings;
+
+        private string BestMatch(LayerRow row) =>
+            LineStyleMatcher.BestMatch(row.LayerName, row.Appearance, ShortlistFor(row.EntityType).Checked(),
+                colourOnly: row.EntityType == CadEntityType.Hatch);
+
+        /// <summary>Re-matches rows of <paramref name="kind"/> whose style left the shortlist.</summary>
+        private void OnShortlistChanged(CadEntityType kind)
         {
-            if (e.PropertyName == nameof(LineStyleOption.IsShortlisted) && !_suppressShortlistRebuild)
-                RebuildShortlist();
-        }
-
-        /// <summary>
-        /// Syncs <see cref="ShortlistNames"/> with the checked styles (incrementally, so
-        /// row dropdowns keep their selection), then re-matches line rows whose style
-        /// left the shortlist.
-        /// </summary>
-        private void RebuildShortlist()
-        {
-            var checkedNames = LineStyleOptions.Where(o => o.IsShortlisted).Select(o => o.Name).ToList();
-
-            for (int i = ShortlistNames.Count - 1; i >= 0; i--)
-                if (!checkedNames.Contains(ShortlistNames[i]))
-                    ShortlistNames.RemoveAt(i);
-
-            for (int i = 0; i < checkedNames.Count; i++)
-                if (i >= ShortlistNames.Count || ShortlistNames[i] != checkedNames[i])
-                    ShortlistNames.Insert(i, checkedNames[i]);
-
-            ShortlistSummary = $"{checkedNames.Count} of {LineStyleOptions.Count} line styles shortlisted";
-
-            if (IsShortlistMode)
+            if (IsShortlistModeFor(kind))
             {
-                var shortlist = Shortlist();
-                foreach (var row in LayerRows.Where(r => r.EntityType == CadEntityType.Line))
-                    if (row.ResolvedStyleName == null || !ShortlistNames.Contains(row.ResolvedStyleName))
-                        row.ResolvedStyleName = LineStyleMatcher.BestMatch(row.LayerName, row.Appearance, shortlist);
+                var names = ShortlistFor(kind).Names;
+                foreach (var row in LayerRows.Where(r => r.EntityType == kind))
+                    if (row.ResolvedStyleName == null || !names.Contains(row.ResolvedStyleName))
+                        row.ResolvedStyleName = BestMatch(row);
             }
 
             ConvertCommand?.NotifyCanExecuteChanged();
         }
 
-        private List<LineStyleOption> Shortlist() =>
-            LineStyleOptions.Where(o => o.IsShortlisted).ToList();
-
         /// <summary>
-        /// Sets each row's style column for the current mode. Shortlist mode: the
-        /// remembered mapping when <paramref name="useSaved"/> and still shortlisted,
-        /// else the best auto-match. Layer Name mode: the layer name itself.
+        /// Sets the style column of every row of <paramref name="kind"/> for its mode.
+        /// Shortlist mode: the remembered mapping when <paramref name="useSaved"/> and still
+        /// shortlisted, else the best auto-match. Layer Name mode: the layer name itself.
+        /// <paramref name="rows"/> defaults to the grid's rows.
         /// </summary>
-        private void ApplyMappingToRows(bool useSaved)
+        private void ApplyMapping(CadEntityType kind, bool useSaved, IEnumerable<LayerRow> rows = null)
         {
-            var shortlist = Shortlist();
+            bool shortlistMode = IsShortlistModeFor(kind);
+            var names = ShortlistFor(kind).Names;
+            var saved = SavedMappingsFor(kind);
 
-            foreach (var row in LayerRows)
+            foreach (var row in (rows ?? LayerRows).Where(r => r.EntityType == kind))
             {
-                if (row.EntityType != CadEntityType.Line)
-                {
-                    row.IsStyleEditable = false;
-                    row.ResolvedStyleName = DefaultFillPattern;
-                    continue;
-                }
+                row.StyleChoices = names;
 
-                if (!IsShortlistMode)
+                if (!shortlistMode)
                 {
                     row.IsStyleEditable = false;
                     row.ResolvedStyleName = row.LayerName;
@@ -266,16 +255,11 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.UI.ViewModels
                 }
 
                 row.IsStyleEditable = true;
-                if (useSaved
-                    && _settings.LayerMappings.TryGetValue(row.LayerName, out string saved)
-                    && ShortlistNames.Contains(saved))
-                {
-                    row.ResolvedStyleName = saved;
-                }
-                else
-                {
-                    row.ResolvedStyleName = LineStyleMatcher.BestMatch(row.LayerName, row.Appearance, shortlist);
-                }
+                row.ResolvedStyleName = useSaved
+                    && saved.TryGetValue(row.LayerName, out string name)
+                    && names.Contains(name)
+                        ? name
+                        : BestMatch(row);
             }
         }
 
@@ -283,29 +267,42 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.UI.ViewModels
         {
             OnPropertyChanged(nameof(IsShortlistMode));
             AutoAssignCommand?.NotifyCanExecuteChanged();
-            ApplyMappingToRows(useSaved: true);
+            ApplyMapping(CadEntityType.Line, useSaved: true);
             ConvertCommand?.NotifyCanExecuteChanged();
         }
 
-        partial void OnLineStyleFilterTextChanged(string value) => LineStyleOptionsView?.Refresh();
+        partial void OnHatchMappingModeChanged(LineStyleMappingMode value)
+        {
+            OnPropertyChanged(nameof(IsHatchShortlistMode));
+            AutoAssignHatchCommand?.NotifyCanExecuteChanged();
+            ApplyMapping(CadEntityType.Hatch, useSaved: true);
+            ConvertCommand?.NotifyCanExecuteChanged();
+        }
 
-        /// <summary>Saves mode, placement, shortlist and the current layer mappings.</summary>
+        /// <summary>Saves modes, options, shortlists and the current layer mappings.</summary>
         public void SaveSettings()
         {
             _settings.MappingMode = MappingMode;
+            _settings.HatchMappingMode = HatchMappingMode;
             _settings.PlaceBesideCad = PlaceBesideCad;
-            _settings.Shortlist = LineStyleOptions.Where(o => o.IsShortlisted).Select(o => o.Name).ToList();
+            _settings.RemoveDuplicateLines = RemoveDuplicateLines;
+            _settings.Shortlist = LineShortlist.Checked().Select(o => o.Name).ToList();
+            _settings.HatchShortlist = HatchShortlist.Checked().Select(o => o.Name).ToList();
 
-            if (IsShortlistMode)
-                foreach (var row in LayerRows.Where(r => r.EntityType == CadEntityType.Line && r.ResolvedStyleName != null))
-                    _settings.LayerMappings[row.LayerName] = row.ResolvedStyleName;
+            foreach (var row in LayerRows.Where(r => r.IsStyleEditable && r.ResolvedStyleName != null))
+                SavedMappingsFor(row.EntityType)[row.LayerName] = row.ResolvedStyleName;
 
             SettingsService<DwgToDetailLinesSettings>.Save(SettingsKey, _settings);
         }
 
+        // A shortlist mode needs at least one shortlisted entry, but only when
+        // rows of that kind are selected for conversion.
         private bool CanConvert() =>
             SelectedCad != null && !IsRunning && LayerRows.Any(r => r.IsSelected)
-            && (!IsShortlistMode || ShortlistNames.Count > 0);
+            && (!IsShortlistMode || LineShortlist.Names.Count > 0
+                || !LayerRows.Any(r => r.IsSelected && r.EntityType == CadEntityType.Line))
+            && (!IsHatchShortlistMode || HatchShortlist.Names.Count > 0
+                || !LayerRows.Any(r => r.IsSelected && r.EntityType == CadEntityType.Hatch));
 
         private bool FilterLayerRow(object obj)
         {
@@ -382,15 +379,20 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.UI.ViewModels
             var rows = CadGeometryExtractor.ScanLayers(SelectedCad.ImportInstance, doc, activeView);
             var appearances = ProjectCatalogService.GetLayerAppearances(SelectedCad.ImportInstance);
 
-            foreach (var row in rows.OrderBy(r => r.LayerName, StringComparer.OrdinalIgnoreCase))
+            foreach (var row in rows)
             {
                 appearances.TryGetValue(row.LayerName, out CadLayerAppearance a);
                 row.Appearance = a;
                 row.Swatch = ProjectCatalogService.ToBrush(a);
-                LayerRows.Add(row);
             }
 
-            ApplyMappingToRows(useSaved: true);
+            // Map before the rows reach the grid, so no row dropdown ever binds
+            // without its choices (which would clear the remembered mapping).
+            ApplyMapping(CadEntityType.Line, useSaved: true, rows);
+            ApplyMapping(CadEntityType.Hatch, useSaved: true, rows);
+
+            foreach (var row in rows.OrderBy(r => r.LayerName, StringComparer.OrdinalIgnoreCase))
+                LayerRows.Add(row);
 
             foreach (var row in LayerRows)
                 row.PropertyChanged += OnLayerRowPropertyChanged;
@@ -407,11 +409,11 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.UI.ViewModels
                 ConvertCommand.NotifyCanExecuteChanged();
 
             // A recycled row dropdown can push null when its item list changes;
-            // never leave an editable line row without a style.
+            // never leave an editable row without a style.
             if (e.PropertyName == nameof(LayerRow.ResolvedStyleName)
                 && sender is LayerRow row && row.IsStyleEditable && row.ResolvedStyleName == null)
             {
-                row.ResolvedStyleName = LineStyleMatcher.BestMatch(row.LayerName, row.Appearance, Shortlist());
+                row.ResolvedStyleName = BestMatch(row);
             }
         }
 
@@ -422,12 +424,6 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.UI.ViewModels
                 row.IsSelected = value;
 
             ConvertCommand.NotifyCanExecuteChanged();
-        }
-
-        partial void OnDefaultFillPatternChanged(string value)
-        {
-            foreach (var row in LayerRows.Where(r => r.EntityType == CadEntityType.Hatch))
-                row.ResolvedStyleName = value;
         }
 
         private void AddLog(LogLevel level, string message)
@@ -498,6 +494,12 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.UI.ViewModels
             }
         }
 
+        private Dictionary<string, string> SelectedMappings(CadEntityType kind) =>
+            LayerRows
+                .Where(r => r.IsSelected && r.EntityType == kind && r.ResolvedStyleName != null)
+                .GroupBy(r => r.LayerName)
+                .ToDictionary(g => g.Key, g => g.First().ResolvedStyleName);
+
         private void Convert()
         {
             IsRunning = true;
@@ -522,12 +524,10 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.UI.ViewModels
             string lineStyle = DefaultLineStyle;
             string fillPattern = DefaultFillPattern;
             bool besideCad = PlaceBesideCad;
+            bool removeDuplicates = RemoveDuplicateLines;
 
-            Dictionary<string, string> styleMap = IsShortlistMode
-                ? LayerRows
-                    .Where(r => r.IsSelected && r.EntityType == CadEntityType.Line && r.ResolvedStyleName != null)
-                    .ToDictionary(r => r.LayerName, r => r.ResolvedStyleName)
-                : null;
+            Dictionary<string, string> styleMap = IsShortlistMode ? SelectedMappings(CadEntityType.Line) : null;
+            Dictionary<string, string> hatchMap = IsHatchShortlistMode ? SelectedMappings(CadEntityType.Hatch) : null;
 
             SaveSettings();
 
@@ -550,11 +550,14 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.UI.ViewModels
                     AddLog(LogLevel.Info, styleMap != null
                         ? $"Line style mapping: shortlist ({styleMap.Values.Distinct().Count()} style(s) used)"
                         : "Line style mapping: by layer name");
+                    AddLog(LogLevel.Info, hatchMap != null
+                        ? $"Hatch mapping: shortlist ({hatchMap.Values.Distinct().Count()} fill type(s) used)"
+                        : "Hatch mapping: by layer name");
 
                     var updatedMetrics = service.Execute(
                         cad, spline, transform, entityCount, layerCount,
                         selectedLineLayers, selectedHatchLayers,
-                        lineStyle, fillPattern, styleMap, offset);
+                        lineStyle, fillPattern, styleMap, hatchMap, removeDuplicates, offset);
 
                     Metrics = updatedMetrics;
                 }

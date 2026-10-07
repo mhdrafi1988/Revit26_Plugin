@@ -23,8 +23,15 @@ Each release lists every tool whose version changed, under the plugin version.
     limited to the shortlist, so any row can be changed, and **Auto-assign** re-matches every row. No
     line styles are created and no per-layer prompts are shown. The V013 behaviour stays available
     as "Layer name" mode.
+  - **Fill type shortlist for hatches**: hatch layers work the same way with a separate shortlist
+    of filled region types, matched by name, then by closest foreground pattern colour. Hatches
+    have their own Shortlist / Layer name switch, and no fill types are created in Shortlist mode.
+  - **Remove duplicate lines**: lines that exactly repeat another line on the same layer (same
+    ends in either direction; arcs and splines also the same mid point) are skipped and counted
+    as Skipped. Partly overlapping lines and lines repeated on different layers are kept.
   - The CAD layer colour is shown as a swatch in the layer grid.
-  - Settings (mapping mode, Place beside CAD, shortlist, layer → style mappings) are saved to
+  - Settings (both mapping modes, Place beside CAD, Remove duplicate lines, both shortlists and the
+    layer → style / fill type mappings) are saved to
     `%AppData%\Revit26_Plugin\DwgToDetailLines\settings.json` and re-applied next time.
 
 ### Fixed
@@ -33,8 +40,10 @@ Each release lists every tool whose version changed, under the plugin version.
   curve on that layer was reported as failed, even though it was still created.
 
 ### User notes
-- V014 starts in Shortlist mode with Place beside CAD on, and the shortlist starts as Thin, Medium
-  and Wide Lines. Switch to "Layer name" mode or untick Place beside CAD to get the V013 behaviour.
+- V014 starts with lines and hatches in Shortlist mode, Place beside CAD on and Remove duplicate
+  lines on. The line shortlist starts as Thin, Medium and Wide Lines and the hatch shortlist as the
+  first three fill types. Switch both to "Layer name" and untick the two options to get the V013
+  behaviour.
 
 ## [2.1.0] — 2026-10-06
 
