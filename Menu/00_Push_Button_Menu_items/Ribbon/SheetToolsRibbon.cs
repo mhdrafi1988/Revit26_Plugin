@@ -1,5 +1,6 @@
 using Autodesk.Revit.UI;
 using Revit26_Plugin.Resources.Icons;
+using Revit26_Plugin.Shared.Services;
 using System.Collections.Generic;
 
 namespace Revit26_Plugin.Menu.Ribbon
@@ -92,7 +93,19 @@ namespace Revit26_Plugin.Menu.Ribbon
             };
             var rearrangePulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_SheetAutoRearrange", "Rearrange", rearrangeV026);
 
-            var placeItems = RibbonLayoutHelper.AddStackedButtons(placePanel, new List<RibbonItemData> { rearrangePulldownData });
+            // Sheet View Arrange: separate tool (not a Rearrange version) — keeps the views'
+            // sizes, orders them by detail number and lays them out as a reading table.
+            // TODO: swap for a dedicated icon — temporarily reusing the Rearrange icon.
+            var viewArrangeV001 = new PushButtonData("Btn_SheetViewArrange.V001", "Arrange Views", assemblyPath, "Revit26_Plugin.SheetViewArrange.V001.Commands.SheetViewArrangeCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SheetAutoRearrange_16.png"),
+                LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SheetAutoRearrange_32.png"),
+                ToolTip = ToolCatalog.SheetViewArrange.Tip(
+                    "Orders the views already on the active sheet by detail number and lays them out like a reading table: " +
+                    "left to right, rows top to bottom, evenly spread and bottom-aligned so titles line up.")
+            };
+
+            var placeItems = RibbonLayoutHelper.AddStackedButtons(placePanel, new List<RibbonItemData> { rearrangePulldownData, viewArrangeV001 });
             RibbonLayoutHelper.WirePulldownButton(placeItems, "Pulldown_SheetAutoRearrange", rearrangeV026, rearrangeV027, rearrangeV028, rearrangeV025);
         }
     }

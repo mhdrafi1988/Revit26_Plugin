@@ -1,0 +1,359 @@
+<!--
+=======================================================
+File: SheetViewArrangeWindow.xaml  (Sheet View Arrange V001)
+ToolWindowShell layout:
+  HEADER  metric cards (views / rows / to move / skipped)
+  BODY    left: sheet + spacing + layout options
+          right: live sheet preview, status, Views grid
+          below: activity log
+  FOOTER  status strip, Apply → Close
+The preview canvas is drawn in code-behind from ViewModel.Plan.
+=======================================================
+-->
+<Window x:Class="Revit26_Plugin.SheetViewArrange.V001.UI.Views.SheetViewArrangeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
+        xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
+        Title="Sheet View Arrange"
+        Height="760" Width="1060"
+        MinHeight="640" MinWidth="900"
+        WindowStartupLocation="CenterOwner">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Revit26_Plugin;component/Shared/SharedStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <converters:LogLevelToColorConverter x:Key="LogLevelToColorConverter"/>
+            <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+
+            <!-- One margin / gap input: label, boxed number, "mm". -->
+            <Style x:Key="MmBox" TargetType="TextBox" BasedOn="{StaticResource BoxedTextInput}">
+                <Setter Property="Width" Value="64"/>
+                <Setter Property="MaxLength" Value="7"/>
+                <Setter Property="HorizontalContentAlignment" Value="Right"/>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <shell:ToolWindowShell Title="Sheet View Arrange"
+                           Subtitle="Orders the views on a sheet by detail number and lays them out like a reading table"
+                           Version="V001"
+                           IsRunning="{Binding IsBusy}"
+                           IsIndeterminate="True"
+                           SummaryText="{Binding StatusText}">
+
+        <!-- ═══ HEADER ═══════════════════════════════════════════ -->
+        <shell:ToolWindowShell.HeaderContent>
+            <Grid Margin="0,0,0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="6"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="6"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="6"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Style="{StaticResource MetricCard}">
+                    <StackPanel HorizontalAlignment="Center">
+                        <TextBlock Text="Views" Style="{StaticResource MetricLabel}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding ViewCount}" Style="{StaticResource MetricNumber}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="to arrange" Style="{StaticResource MetricUnit}" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="2" Style="{StaticResource MetricCard}">
+                    <StackPanel HorizontalAlignment="Center">
+                        <TextBlock Text="Rows" Style="{StaticResource MetricLabel}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding RowCount}" Style="{StaticResource MetricNumberAccent}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="on the sheet" Style="{StaticResource MetricUnit}" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="4" Style="{StaticResource MetricCard}">
+                    <StackPanel HorizontalAlignment="Center">
+                        <TextBlock Text="To Move" Style="{StaticResource MetricLabel}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding MoveCount}" Style="{StaticResource MetricNumberSuccess}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="views" Style="{StaticResource MetricUnit}" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="6" Style="{StaticResource MetricCard}">
+                    <StackPanel HorizontalAlignment="Center">
+                        <TextBlock Text="Skipped" Style="{StaticResource MetricLabel}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding SkippedCount}" Style="{StaticResource MetricNumberWarning}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="pinned / owned" Style="{StaticResource MetricUnit}" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </shell:ToolWindowShell.HeaderContent>
+
+        <!-- ═══ BODY ═════════════════════════════════════════════ -->
+        <shell:ToolWindowShell.BodyContent>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="330"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- ── Left: options ───────────────────────────── -->
+                <StackPanel Grid.Column="0">
+                    <Border Style="{StaticResource SectionCard}">
+                        <StackPanel>
+                            <TextBlock Text="Sheet" Style="{StaticResource SectionTitle}"/>
+                            <Grid Margin="12,0,12,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding SheetLabel}" Style="{StaticResource FieldValue}"
+                                           TextTrimming="CharacterEllipsis" VerticalAlignment="Center"
+                                           ToolTip="{Binding SheetLabel}"/>
+                                <Button Grid.Column="1" Content="Refresh" Style="{StaticResource SmallSecondaryButton}"
+                                        Margin="8,0,0,0" Command="{Binding RefreshCommand}"
+                                        ToolTip="Re-read the sheet after changing it in Revit."/>
+                            </Grid>
+                            <TextBlock Style="{StaticResource HintText}" Margin="12,0,12,10"
+                                       Text="Order: by Detail Number (1, 2, 10 … A1, A2, B1). Reading: left → right, then the next row down."/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource SectionCard}">
+                        <StackPanel>
+                            <TextBlock Text="Usable Area (inside title block)" Style="{StaticResource SectionTitle}"/>
+                            <Grid Margin="12,0,12,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="14"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="6"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Top" Style="{StaticResource FieldLabel}" VerticalAlignment="Center"/>
+                                <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource MmBox}" Text="{Binding MarginTopMm}"/>
+                                <TextBlock Grid.Row="0" Grid.Column="2" Text="mm" Style="{StaticResource UnitLabel}"/>
+                                <TextBlock Grid.Row="0" Grid.Column="4" Text="Bottom" Style="{StaticResource FieldLabel}" VerticalAlignment="Center"/>
+                                <TextBox Grid.Row="0" Grid.Column="5" Style="{StaticResource MmBox}" Text="{Binding MarginBottomMm}"/>
+                                <TextBlock Grid.Row="0" Grid.Column="6" Text="mm" Style="{StaticResource UnitLabel}"/>
+
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Left" Style="{StaticResource FieldLabel}" VerticalAlignment="Center"/>
+                                <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource MmBox}" Text="{Binding MarginLeftMm}"/>
+                                <TextBlock Grid.Row="2" Grid.Column="2" Text="mm" Style="{StaticResource UnitLabel}"/>
+                                <TextBlock Grid.Row="2" Grid.Column="4" Text="Right" Style="{StaticResource FieldLabel}" VerticalAlignment="Center"/>
+                                <TextBox Grid.Row="2" Grid.Column="5" Style="{StaticResource MmBox}" Text="{Binding MarginRightMm}"/>
+                                <TextBlock Grid.Row="2" Grid.Column="6" Text="mm" Style="{StaticResource UnitLabel}"/>
+                            </Grid>
+                            <TextBlock Style="{StaticResource HintText}" Margin="12,2,12,10"
+                                       Text="Measured inward from the title block's outer edge. Use Right / Bottom to clear the title strip."/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource SectionCard}">
+                        <StackPanel>
+                            <TextBlock Text="Spacing &amp; Alignment" Style="{StaticResource SectionTitle}"/>
+                            <Grid Margin="12,0,12,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="6"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="Min gap between views" Style="{StaticResource FieldLabel}" VerticalAlignment="Center"/>
+                                <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource MmBox}" Text="{Binding MinHorizontalGapMm}"/>
+                                <TextBlock Grid.Row="0" Grid.Column="2" Text="mm" Style="{StaticResource UnitLabel}"/>
+                                <TextBlock Grid.Row="2" Text="Min gap between rows" Style="{StaticResource FieldLabel}" VerticalAlignment="Center"/>
+                                <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource MmBox}" Text="{Binding MinVerticalGapMm}"/>
+                                <TextBlock Grid.Row="2" Grid.Column="2" Text="mm" Style="{StaticResource UnitLabel}"/>
+                            </Grid>
+                            <TextBlock Style="{StaticResource HintText}" Margin="12,2,12,8"
+                                       Text="A row wraps when the next view won't fit at the minimum gap. Rows are then spread to the full width, and rows are spread to the full height. Views sit on a common bottom line so titles align."/>
+
+                            <Border Style="{StaticResource SeparatorLine}"/>
+
+                            <TextBlock Text="Last row" Style="{StaticResource FieldLabel}" Margin="12,8,12,4"/>
+                            <ComboBox Style="{StaticResource StandardComboBox}" Margin="12,0,12,4"
+                                      ItemsSource="{Binding LastRowOptions}"
+                                      DisplayMemberPath="Label" SelectedValuePath="Mode"
+                                      SelectedValue="{Binding LastRowMode}"/>
+                            <TextBlock Style="{StaticResource HintText}" Margin="12,0,12,8"
+                                       Text="Only applies when there are two or more rows; a single row is always spread across the width."/>
+
+                            <Border Style="{StaticResource SeparatorLine}"/>
+
+                            <StackPanel Orientation="Horizontal" Style="{StaticResource AppleToggleRow}">
+                                <ToggleButton Style="{StaticResource AppleToggleButton}" IsChecked="{Binding MovePinned}"/>
+                                <TextBlock Text="Move pinned views" FontSize="13" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <TextBlock Style="{StaticResource HintText}" Margin="12,-4,12,10"
+                                       Text="On: pinned views are moved and pinned again. Off: they stay where they are and are left out of the order."/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- ── Right: preview + views ──────────────────── -->
+                <StackPanel Grid.Column="2">
+                    <Border Style="{StaticResource SectionCard}" Margin="0,0,0,8">
+                        <StackPanel>
+                            <TextBlock Text="Preview" Style="{StaticResource SectionTitle}"/>
+                            <Border Margin="12,0,12,6" Height="300" Background="{StaticResource BrushSystemSecondaryBackground}"
+                                    CornerRadius="6" ClipToBounds="True">
+                                <Canvas x:Name="PreviewCanvas" SizeChanged="PreviewCanvas_SizeChanged"/>
+                            </Border>
+                            <TextBlock Style="{StaticResource HintText}" Margin="12,0,12,6"
+                                       Text="Blue: new position (number = detail number). Red: does not fit. Grey hatched: skipped, stays put. Dashed: usable area."/>
+
+                            <Border Margin="12,0,12,6" Padding="10,6" CornerRadius="6"
+                                    Background="{StaticResource BrushBannerWarningBackground}"
+                                    BorderBrush="{StaticResource BrushBannerWarningBorder}" BorderThickness="1"
+                                    Visibility="{Binding HasBlocker, Converter={StaticResource BoolToVis}}">
+                                <TextBlock Text="{Binding StatusText}" TextWrapping="Wrap"
+                                           Foreground="{StaticResource BrushBannerWarningText}" FontSize="12"/>
+                            </Border>
+                            <Border Margin="12,0,12,10" Padding="10,6" CornerRadius="6"
+                                    Background="{StaticResource BrushBannerNoteBackground}"
+                                    BorderBrush="{StaticResource BrushBannerNoteBorder}" BorderThickness="1"
+                                    Visibility="{Binding HasWarnings, Converter={StaticResource BoolToVis}}">
+                                <TextBlock Text="{Binding WarningsText}" TextWrapping="Wrap"
+                                           Foreground="{StaticResource BrushBannerNoteText}" FontSize="12"/>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource SectionCard}" Margin="0">
+                        <StackPanel>
+                            <TextBlock Text="Views in Reading Order" Style="{StaticResource SectionTitle}"/>
+                            <DataGrid Margin="12,0,12,10" MinHeight="160"
+                                      shell:ShellBehaviors.MaxHeightRatio="0.4"
+                                      shell:ShellBehaviors.ForwardMouseWheel="True"
+                                      ItemsSource="{Binding Rows}"
+                                      Style="{StaticResource StandardDataGrid}"
+                                      ColumnHeaderStyle="{StaticResource StandardDataGridColumnHeader}"
+                                      CellStyle="{StaticResource StandardDataGridCell}"
+                                      RowStyle="{StaticResource StandardDataGridRow}"
+                                      AutoGenerateColumns="False" IsReadOnly="True"
+                                      CanUserAddRows="False" CanUserDeleteRows="False"
+                                      CanUserSortColumns="False"
+                                      HeadersVisibility="Column">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="#" Width="34" Binding="{Binding Order}"/>
+                                    <DataGridTextColumn Header="Detail No." Width="70" Binding="{Binding DetailNumber}"/>
+                                    <DataGridTextColumn Header="View" Width="2*" Binding="{Binding ViewName}"/>
+                                    <DataGridTextColumn Header="Type" Width="90" Binding="{Binding ViewTypeName}"/>
+                                    <DataGridTextColumn Header="Size (mm)" Width="80" Binding="{Binding SizeText}"/>
+                                    <DataGridTextColumn Header="Row" Width="40" Binding="{Binding Row}"/>
+                                    <DataGridTemplateColumn Header="Status" Width="1.4*">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                    <Border CornerRadius="8" Padding="7,1">
+                                                        <Border.Style>
+                                                            <Style TargetType="Border">
+                                                                <Setter Property="Background" Value="{StaticResource BrushPillInfoBackground}"/>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding Status}" Value="InPlace">
+                                                                        <Setter Property="Background" Value="{StaticResource BrushPillSuccessBackground}"/>
+                                                                    </DataTrigger>
+                                                                    <DataTrigger Binding="{Binding Status}" Value="DoesNotFit">
+                                                                        <Setter Property="Background" Value="{StaticResource BrushSoftDangerBackground}"/>
+                                                                    </DataTrigger>
+                                                                    <DataTrigger Binding="{Binding Status}" Value="Skipped">
+                                                                        <Setter Property="Background" Value="{StaticResource BrushPillMutedBackground}"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Border.Style>
+                                                        <TextBlock Text="{Binding StatusLabel}" FontSize="11" FontWeight="SemiBold"
+                                                                   Foreground="{StaticResource BrushTextPrimary}"/>
+                                                    </Border>
+                                                    <TextBlock Text="{Binding Note}" Margin="6,0,0,0" FontSize="11"
+                                                               Foreground="{StaticResource BrushTextSecondary}"
+                                                               VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- ── Activity log ────────────────────────────── -->
+                <Border Grid.Row="1" Grid.ColumnSpan="3" Margin="0,8,0,0" Background="{StaticResource BrushLogBg}" CornerRadius="8" Padding="10,8">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Activity Log" FontSize="11.5" FontWeight="SemiBold" Foreground="{StaticResource BrushLogText}" VerticalAlignment="Center"/>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <Button Content="Copy All" Style="{StaticResource DarkGhostButton}"
+                                        Command="{Binding CopyAllLogsCommand}"/>
+                                <Button Content="Copy Selected" Style="{StaticResource DarkGhostButton}" Margin="6,0,0,0"
+                                        Click="CopySelectedLogs_Click"/>
+                            </StackPanel>
+                        </Grid>
+                        <ListBox Grid.Row="1" x:Name="LogListBox"
+                                 ItemsSource="{Binding LogEntries}"
+                                 SelectionMode="Extended"
+                                 Background="Transparent" BorderThickness="0"
+                                 MinHeight="90" Padding="0"
+                                 shell:ShellBehaviors.MaxHeightRatio="0.2"
+                                 shell:ShellBehaviors.ForwardMouseWheel="True"
+                                 ScrollViewer.VerticalScrollBarVisibility="Auto">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Time, StringFormat='{}{0:HH:mm:ss}'}"
+                                                   Foreground="{StaticResource BrushLogTextDim}"
+                                                   FontFamily="Consolas" FontSize="11" Margin="0,0,8,0"/>
+                                        <TextBlock Text="{Binding Level}"
+                                                   Foreground="{Binding Level, Converter={StaticResource LogLevelToColorConverter}}"
+                                                   FontFamily="Consolas" FontSize="11" FontWeight="SemiBold"
+                                                   Width="58" Margin="0,0,8,0"/>
+                                        <TextBlock Text="{Binding Message}"
+                                                   Foreground="{StaticResource BrushLogText}"
+                                                   FontFamily="Consolas" FontSize="11" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
+                </Border>
+            </Grid>
+        </shell:ToolWindowShell.BodyContent>
+
+        <!-- ═══ FOOTER ═══════════════════════════════════════════ -->
+        <shell:ToolWindowShell.FooterContent>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Apply" Style="{StaticResource PrimaryButton}" Margin="0,0,8,0"
+                        Command="{Binding ApplyCommand}"
+                        ToolTip="Move the views as shown in the preview (one Undo step)."/>
+                <Button Content="Close" Style="{StaticResource SecondaryButton}" Click="CloseButton_Click"/>
+            </StackPanel>
+        </shell:ToolWindowShell.FooterContent>
+    </shell:ToolWindowShell>
+</Window>
