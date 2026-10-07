@@ -1,4 +1,4 @@
-using Autodesk.Revit.UI;
+﻿using Autodesk.Revit.UI;
 using Revit26_Plugin.Resources.Icons;
 using System.Collections.Generic;
 
@@ -6,8 +6,8 @@ namespace Revit26_Plugin.Menu.Ribbon
 {
     public static class RoofToolsRibbon
     {
-        // Every roof tool is a pulldown: the current version first, the
-        // UI-standard rebuild (Revit_Plugin_UI_Standard.md layout) second.
+        // Every roof tool is a pulldown listing its versions newest first; a
+        // pulldown holding several tools keeps each tool's versions together.
         private const string Icons = "Revit26_Plugin.Resources.Icons.RoofTools.";
 
         private static PushButtonData Btn(string assemblyPath, string name, string text, string commandClass,
@@ -55,8 +55,8 @@ namespace Revit26_Plugin.Menu.Ribbon
             var byDrainPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_AutoSlopeByDrain", "By Drain", byDrainV007);
 
             var slopeItems = RibbonLayoutHelper.AddStackedButtons(slopePanel, new List<RibbonItemData> { byPointPulldownData, byDrainPulldownData });
-            RibbonLayoutHelper.WirePulldownButton(slopeItems, "Pulldown_AutoSlopeByPoint", byPointV029, byPointV030, byPointRidgeV002, byPointRidgeV003, byPointMultiCopies29, byPointMultiCopies30);
-            RibbonLayoutHelper.WirePulldownButton(slopeItems, "Pulldown_AutoSlopeByDrain", byDrainV007, byDrainV011, byDrainV012);
+            RibbonLayoutHelper.WirePulldownButton(slopeItems, "Pulldown_AutoSlopeByPoint", byPointV030, byPointV029, byPointRidgeV003, byPointRidgeV002, byPointMultiCopies30, byPointMultiCopies29);
+            RibbonLayoutHelper.WirePulldownButton(slopeItems, "Pulldown_AutoSlopeByDrain", byDrainV007, byDrainV012, byDrainV011);
 
             // Shape Points — one pulldown per tool (current version, then its rebuild)
             RibbonPanel shapePointsPanel = app.CreateRibbonPanel(tabName, "Shape Points");
@@ -95,12 +95,12 @@ namespace Revit26_Plugin.Menu.Ribbon
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_VertexReducer", "Vertex Reducer", vertexReducerV008),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_MultiplePoints", "Multi Points", multiPointsV002),
             });
-            RibbonLayoutHelper.WirePulldownButton(shapePointsItems, "Pulldown_InnerLoopDivider", innerLoopsV010, innerLoopsV011);
-            RibbonLayoutHelper.WirePulldownButton(shapePointsItems, "Pulldown_OuterCurveDivider", outerCurveV005, outerCurveV006);
-            RibbonLayoutHelper.WirePulldownButton(shapePointsItems, "Pulldown_RoofDetailLineIntersect", lineIntersectV013, lineIntersectV014);
-            RibbonLayoutHelper.WirePulldownButton(shapePointsItems, "Pulldown_InnerLoopsAndPerpendicular", loopsPerpV006, loopsPerpV007);
-            RibbonLayoutHelper.WirePulldownButton(shapePointsItems, "Pulldown_VertexReducer", vertexReducerV008, vertexReducerV009);
-            RibbonLayoutHelper.WirePulldownButton(shapePointsItems, "Pulldown_MultiplePoints", multiPointsV002, multiPointsV003);
+            RibbonLayoutHelper.WirePulldownButton(shapePointsItems, "Pulldown_InnerLoopDivider", innerLoopsV011, innerLoopsV010);
+            RibbonLayoutHelper.WirePulldownButton(shapePointsItems, "Pulldown_OuterCurveDivider", outerCurveV006, outerCurveV005);
+            RibbonLayoutHelper.WirePulldownButton(shapePointsItems, "Pulldown_RoofDetailLineIntersect", lineIntersectV014, lineIntersectV013);
+            RibbonLayoutHelper.WirePulldownButton(shapePointsItems, "Pulldown_InnerLoopsAndPerpendicular", loopsPerpV007, loopsPerpV006);
+            RibbonLayoutHelper.WirePulldownButton(shapePointsItems, "Pulldown_VertexReducer", vertexReducerV009, vertexReducerV008);
+            RibbonLayoutHelper.WirePulldownButton(shapePointsItems, "Pulldown_MultiplePoints", multiPointsV003, multiPointsV002);
 
             // Ridge Lines pulldown — merged into Utilities panel below.
             var ridgeLinesMultiShapeV069 = Btn(assemblyPath, "Btn_RoofRidgeLines_V69", "Ridge By Openings V069", "Revit26_Plugin.RoofRidgeLines.V069.Commands.RoofRidgeCommand",
@@ -136,9 +136,9 @@ namespace Revit26_Plugin.Menu.Ribbon
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofTag", "Roof Tag", roofTagV017),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofFromDetailLines", "Roof From Detail Lines", roofFromLinesV008),
             });
-            RibbonLayoutHelper.WirePulldownButton(roofToolsItems, "Pulldown_CreaserAdv", creaserV011, creaserV012);
-            RibbonLayoutHelper.WirePulldownButton(roofToolsItems, "Pulldown_RoofTag", roofTagV017, roofTagV018);
-            RibbonLayoutHelper.WirePulldownButton(roofToolsItems, "Pulldown_RoofFromDetailLines", roofFromLinesV008, roofFromLinesV009);
+            RibbonLayoutHelper.WirePulldownButton(roofToolsItems, "Pulldown_CreaserAdv", creaserV012, creaserV011);
+            RibbonLayoutHelper.WirePulldownButton(roofToolsItems, "Pulldown_RoofTag", roofTagV018, roofTagV017);
+            RibbonLayoutHelper.WirePulldownButton(roofToolsItems, "Pulldown_RoofFromDetailLines", roofFromLinesV009, roofFromLinesV008);
 
             // Utilities panel: Combined Roof Tools + Ridge Lines + Type Manager (3-item stack)
             const string combinedDetail =
@@ -164,9 +164,9 @@ namespace Revit26_Plugin.Menu.Ribbon
                 ridgeLinesPulldownData,
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofTypeManager", "Roof Type Manager", typeManagerV002),
             });
-            RibbonLayoutHelper.WirePulldownButton(utilitiesItems, "Pulldown_CombinedRoofTools", combinedV002, combinedV003);
-            RibbonLayoutHelper.WirePulldownButton(utilitiesItems, "Pulldown_RoofRidgeLines", ridgeLinesMultiShapeV069, ridgeLinesMultiShapeV070, ridgeLinesByPointsV058, ridgeLinesByPointsV059);
-            RibbonLayoutHelper.WirePulldownButton(utilitiesItems, "Pulldown_RoofTypeManager", typeManagerV002, typeManagerV003);
+            RibbonLayoutHelper.WirePulldownButton(utilitiesItems, "Pulldown_CombinedRoofTools", combinedV003, combinedV002);
+            RibbonLayoutHelper.WirePulldownButton(utilitiesItems, "Pulldown_RoofRidgeLines", ridgeLinesMultiShapeV070, ridgeLinesMultiShapeV069, ridgeLinesByPointsV059, ridgeLinesByPointsV058);
+            RibbonLayoutHelper.WirePulldownButton(utilitiesItems, "Pulldown_RoofTypeManager", typeManagerV003, typeManagerV002);
 
             // Compare
             RibbonPanel comparePanel = app.CreateRibbonPanel(tabName, "Compare");
@@ -189,8 +189,8 @@ namespace Revit26_Plugin.Menu.Ribbon
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofPointComparison", "Comparison", comparisonV002),
                 elevationSyncPulldownData,
             });
-            RibbonLayoutHelper.WirePulldownButton(compareItems, "Pulldown_RoofPointComparison", comparisonV002, comparisonV003);
-            RibbonLayoutHelper.WirePulldownButton(compareItems, "Pulldown_RoofPointElevationSync", elevationSyncV003, elevationSyncV004, elevationSyncV005);
+            RibbonLayoutHelper.WirePulldownButton(compareItems, "Pulldown_RoofPointComparison", comparisonV003, comparisonV002);
+            RibbonLayoutHelper.WirePulldownButton(compareItems, "Pulldown_RoofPointElevationSync", elevationSyncV005, elevationSyncV004, elevationSyncV003);
         }
     }
 }

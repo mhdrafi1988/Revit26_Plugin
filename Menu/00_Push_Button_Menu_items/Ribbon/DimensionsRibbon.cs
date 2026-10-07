@@ -1,4 +1,4 @@
-using Autodesk.Revit.UI;
+﻿using Autodesk.Revit.UI;
 using Revit26_Plugin.Resources.Icons;
 using System.Collections.Generic;
 
@@ -10,7 +10,7 @@ namespace Revit26_Plugin.Menu.Ribbon
         {
             RibbonPanel panel = app.CreateRibbonPanel(tabName, "Dimensions");
 
-            // Previous version first, the ToolWindowShell version second.
+            // Newest version first: the ToolWindowShell version, then the previous one.
             var dtlLineV009 = new PushButtonData("Btn_DtlLine_09", "Detail Lines V009", assemblyPath, "Revit26_Plugin.DtlLineDim.V009.Commands.DtlLineDimCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Dimensions.AutoDimDetailLine_16.png"),
@@ -26,7 +26,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             var dtlLinePulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DtlLineDim", "Detail Lines", dtlLineV009);
 
             var items = RibbonLayoutHelper.AddStackedButtons(panel, new List<RibbonItemData> { dtlLinePulldownData });
-            RibbonLayoutHelper.WirePulldownButton(items, "Pulldown_DtlLineDim", dtlLineV009, dtlLineV010);
+            RibbonLayoutHelper.WirePulldownButton(items, "Pulldown_DtlLineDim", dtlLineV010, dtlLineV009);
         }
     }
 }

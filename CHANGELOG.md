@@ -34,12 +34,18 @@ Each release lists every tool whose version changed, under the plugin version.
     layer → style / fill type mappings) are saved to
     `%AppData%\Revit26_Plugin\DwgToDetailLines\settings.json` and re-applied next time.
 
+### Changed
+- Ribbon: every dropdown now lists the newest version at the top. Dropdowns that hold several tools
+  (e.g. By Point, By Drain, Ridge Lines, From Rooms) keep each tool's versions together, newest
+  first. Button names, labels and icons are unchanged.
+
 ### Fixed
 - DWG To Detail Lines V014: a line style that Revit does not allow on detail lines (for example
   `<Room Separation>`) now falls back to the default line style with one log warning. In V013 every
   curve on that layer was reported as failed, even though it was still created.
 
 ### User notes
+- Dropdown entries moved: the newest version is now the first entry, not the last.
 - V014 starts with lines and hatches in Shortlist mode, Place beside CAD on and Remove duplicate
   lines on. The line shortlist starts as Thin, Medium and Wide Lines and the hatch shortlist as the
   first three fill types. Switch both to "Layer name" and untick the two options to get the V013

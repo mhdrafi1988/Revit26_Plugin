@@ -1,4 +1,4 @@
-using Autodesk.Revit.UI;
+﻿using Autodesk.Revit.UI;
 using Revit26_Plugin.Resources.Icons;
 using System.Collections.Generic;
 
@@ -11,8 +11,8 @@ namespace Revit26_Plugin.Menu.Ribbon
             RibbonPanel panel = app.CreateRibbonPanel(tabName, "Floor Tools");
 
             // Two approaches to the same job, collected under one pulldown
-            // button per request — each approach lists its previous version
-            // first and its newer version second; V012 keeps the icon.
+            // button per request — each approach lists its newest version
+            // first and its previous version second; V012 keeps the icon.
             var fromRoomsV012 = new PushButtonData("Btn_FloorsAndRoofFromLinkedRooms_V012", "From Rooms V012", assemblyPath, "Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V012.Command")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.FloorTools.FloorRoofFromRooms_16.png"),
@@ -40,7 +40,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             var fromRoomsPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_FloorsAndRoofFromLinkedRooms", "From Rooms", fromRoomsV012);
 
             var items = RibbonLayoutHelper.AddStackedButtons(panel, new List<RibbonItemData> { fromRoomsPulldownData });
-            RibbonLayoutHelper.WirePulldownButton(items, "Pulldown_FloorsAndRoofFromLinkedRooms", fromRoomsV012, fromRoomsV013, fromRoomsPlanViewV005, fromRoomsPlanViewV006);
+            RibbonLayoutHelper.WirePulldownButton(items, "Pulldown_FloorsAndRoofFromLinkedRooms", fromRoomsV013, fromRoomsV012, fromRoomsPlanViewV006, fromRoomsPlanViewV005);
         }
     }
 }

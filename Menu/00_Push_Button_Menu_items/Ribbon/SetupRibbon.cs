@@ -14,8 +14,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             // fails the context check, so the panel title now makes that clear.
             RibbonPanel familyPanel = app.CreateRibbonPanel(tabName, "Family Tools");
 
-            // Every tool is a pulldown: previous version first, the UI Standard
-            // version second.
+            // Every tool is a pulldown listing its versions newest first.
             // Batch Link DWG's original build has no version number anywhere in
             // its source (folder "BatchDwgFamilyLinker_WOrking"), so the tip says
             // so rather than inventing one; the UI Standard rebuild is V002.
@@ -48,8 +47,8 @@ namespace Revit26_Plugin.Menu.Ribbon
                 batchLinkPulldownData,
                 dwgToLinesPulldownData,
             });
-            RibbonLayoutHelper.WirePulldownButton(familyItems, "Pulldown_BatchLinkDwg", batchLinkWorking, batchLinkV002);
-            RibbonLayoutHelper.WirePulldownButton(familyItems, "Pulldown_DwgToLines", dwgToLinesV006, dwgToLinesV007);
+            RibbonLayoutHelper.WirePulldownButton(familyItems, "Pulldown_BatchLinkDwg", batchLinkV002, batchLinkWorking);
+            RibbonLayoutHelper.WirePulldownButton(familyItems, "Pulldown_DwgToLines", dwgToLinesV007, dwgToLinesV006);
 
             RibbonPanel projectPanel = app.CreateRibbonPanel(tabName, "Project Tools");
 
@@ -89,7 +88,7 @@ namespace Revit26_Plugin.Menu.Ribbon
                 dwgLinesPulldownData,
                 exportDwgPulldownData,
             });
-            RibbonLayoutHelper.WirePulldownButton(projectItems, "Pulldown_DwgToDetailLines", dwgLinesV011, dwgLinesV012, dwgLinesV013, dwgLinesV014);
+            RibbonLayoutHelper.WirePulldownButton(projectItems, "Pulldown_DwgToDetailLines", dwgLinesV014, dwgLinesV013, dwgLinesV012, dwgLinesV011);
             RibbonLayoutHelper.WirePulldownButton(projectItems, "Pulldown_ExportDwgToFolder", exportDwgV001);
         }
     }
