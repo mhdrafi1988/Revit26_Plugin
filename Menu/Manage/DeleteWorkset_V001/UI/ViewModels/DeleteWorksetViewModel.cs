@@ -143,11 +143,12 @@ namespace Revit26_Plugin.DeleteWorkset.V001.UI.ViewModels
             if (!selected.Any()) return;
 
             // Pre-flight validation
-            bool anyHaveElements = selected.Any(r => r.ElementCount > 0);
+            // Closed worksets may hold elements that are not counted, so they need a target too.
+            bool anyHaveElements = selected.Any(r => r.ElementCount > 0 || !r.IsOpen);
             if (anyHaveElements && MigrationTarget == null)
             {
                 MessageBox.Show(
-                    "One or more selected worksets have elements.\nPlease choose a migration target workset.",
+                    "One or more selected worksets have elements or are closed.\nPlease choose a migration target workset.",
                     "Delete Workset",
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning);
@@ -185,10 +186,14 @@ namespace Revit26_Plugin.DeleteWorkset.V001.UI.ViewModels
                 var svc = new DeleteWorksetService(AddLog);
 
                 using var tg = new TransactionGroup(doc, "Delete Workset(s)");
-                tg.Start();
                 try
                 {
-                    Action<WorksetRow> confirm2 = perStep
+                    // Checkout talks to central and is not allowed inside a transaction.
+                    var owned = svc.CheckoutWorksets(doc, selected);
+                    var toDelete = selected.Where(r => owned.Contains(r.WorksetId.IntegerValue)).ToList();
+
+                    tg.Start();
+                    Func<WorksetRow, bool> confirm2 = perStep
                         ? row =>
                         {
                             bool proceed = false;
@@ -201,12 +206,11 @@ namespace Revit26_Plugin.DeleteWorkset.V001.UI.ViewModels
                                     MessageBoxImage.Question);
                                 proceed = r == MessageBoxResult.Yes;
                             });
-                            if (!proceed)
-                                throw new OperationCanceledException($"User cancelled deletion of '{row.Name}'.");
+                            return proceed;
                         }
-                        : (Action<WorksetRow>)null;
+                        : (Func<WorksetRow, bool>)null;
 
-                    var result = svc.DeleteWorksets(doc, selected, targetId, hardDel, confirm2);
+                    var result = svc.DeleteWorksets(doc, toDelete, targetId, hardDel, confirm2);
                     tg.Assimilate();
 
                     AddLog(new LogEntry(LogLevel.Success,
@@ -221,7 +225,7 @@ namespace Revit26_Plugin.DeleteWorkset.V001.UI.ViewModels
                 }
                 catch (OperationCanceledException ex)
                 {
-                    tg.RollBack();
+                    if (tg.HasStarted()) tg.RollBack();
                     AddLog(new LogEntry(LogLevel.Warning, ex.Message));
                     _dispatcher.Invoke(() =>
                     {
@@ -232,7 +236,7 @@ namespace Revit26_Plugin.DeleteWorkset.V001.UI.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    tg.RollBack();
+                    if (tg.HasStarted()) tg.RollBack();
                     AddLog(new LogEntry(LogLevel.Error, $"Run aborted — all changes rolled back: {ex.Message}"));
                     _dispatcher.Invoke(() =>
                     {
@@ -298,8 +302,9 @@ namespace Revit26_Plugin.DeleteWorkset.V001.UI.ViewModels
                 .Select(r => r.WorksetId.IntegerValue)
                 .ToHashSet();
 
+            // Any user workset not being deleted can receive the elements.
             MigrationTargets.Clear();
-            foreach (var r in Rows.Where(r => r.IsDeletable && !selectedIds.Contains(r.WorksetId.IntegerValue)))
+            foreach (var r in Rows.Where(r => !selectedIds.Contains(r.WorksetId.IntegerValue)))
                 MigrationTargets.Add(r);
 
             // If current target was removed, clear it.

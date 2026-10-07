@@ -9,6 +9,28 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [2.2.2] — 2026-10-07
+
+### Fixed
+- **Delete Workset v1.0.2 (V001)** — no workset could ever be selected. The tool treated every
+  workset you had not already checked out as "Built-in", and then blocked the one you did own as
+  "the only editable workset". Now every user workset is deletable unless another user has it
+  checked out ("In use"), some of its elements are owned by other users ("Blocked"), or it is the
+  only user workset. The badge tooltip gives the reason.
+- Selected worksets are checked out from central automatically when you press Delete Workset;
+  any that cannot be checked out are skipped and logged. Revit's own `CanDeleteWorkset` check runs
+  before each deletion.
+- "Migrate elements to" now lists every workset not being deleted (it only offered "deletable"
+  ones). A target is required when a selected workset has elements or is closed; an empty open
+  workset can be deleted without one (it used to fail).
+- Answering **No** to a per-workset confirmation now skips just that workset instead of rolling
+  back the whole run.
+- Toolbar buttons (Select All / Clear / Refresh) and "Closed" status pills were unreadable
+  (white text on a light background).
+
+**User note:** running the tool now checks the selected worksets out to you in central.
+Synchronize with Central afterwards to publish the deletion and release them.
+
 ## [2.2.1] — 2026-10-07
 
 ### Fixed

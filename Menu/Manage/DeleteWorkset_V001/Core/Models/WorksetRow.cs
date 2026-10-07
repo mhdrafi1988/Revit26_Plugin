@@ -22,13 +22,16 @@ namespace Revit26_Plugin.DeleteWorkset.V001.Core.Models
         public bool IsOpen { get; }
 
         /// <summary>
-        /// False for built-in worksets (Views, Families, etc.) and for the last
-        /// remaining editable user workset — the checkbox is disabled for these.
+        /// False when another user owns the workset, some of its elements are owned by other
+        /// users, or it is the only user workset — the checkbox is disabled for these.
         /// </summary>
         public bool IsDeletable { get; }
 
         /// <summary>Human-readable reason the workset cannot be deleted, shown as a tooltip.</summary>
         public string NonDeletableReason { get; }
+
+        /// <summary>Short badge text shown next to the name of a non-deletable workset.</summary>
+        public string StatusBadge { get; }
 
         [ObservableProperty] private bool isSelected;
 
@@ -39,7 +42,8 @@ namespace Revit26_Plugin.DeleteWorkset.V001.Core.Models
             string owner,
             bool isOpen,
             bool isDeletable,
-            string nonDeletableReason = null)
+            string nonDeletableReason = null,
+            string statusBadge = null)
         {
             WorksetId = id;
             Name = name;
@@ -48,6 +52,7 @@ namespace Revit26_Plugin.DeleteWorkset.V001.Core.Models
             IsOpen = isOpen;
             IsDeletable = isDeletable;
             NonDeletableReason = nonDeletableReason ?? string.Empty;
+            StatusBadge = statusBadge ?? string.Empty;
         }
     }
 }

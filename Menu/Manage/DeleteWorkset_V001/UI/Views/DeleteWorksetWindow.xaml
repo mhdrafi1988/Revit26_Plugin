@@ -152,15 +152,14 @@
                         <Button Grid.Column="1" Content="Select All"
                                 Command="{Binding SelectAllCommand}"
                                 Style="{StaticResource SmallSecondaryButton}"
-                                Margin="0,0,4,0" Foreground="{StaticResource BrushTextOnDark}"/>
+                                Margin="0,0,4,0"/>
                         <Button Grid.Column="2" Content="Clear"
                                 Command="{Binding ClearSelectionCommand}"
                                 Style="{StaticResource SmallSecondaryButton}"
-                                Margin="0,0,4,0" Foreground="{StaticResource BrushTextOnDark}"/>
+                                Margin="0,0,4,0"/>
                         <Button Grid.Column="3" Content="↺ Refresh"
                                 Command="{Binding RefreshCommand}"
-                                Style="{StaticResource SmallSecondaryButton}"
-                                Foreground="{StaticResource BrushTextOnDark}"/>
+                                Style="{StaticResource SmallSecondaryButton}"/>
                     </Grid>
                 </Border>
 
@@ -206,7 +205,7 @@
                                                 BorderThickness="1"
                                                 CornerRadius="3" Padding="5,1" Margin="6,0,0,0"
                                                 ToolTip="{Binding NonDeletableReason}">
-                                            <TextBlock Text="Built-in" FontSize="9" FontWeight="SemiBold"
+                                            <TextBlock Text="{Binding StatusBadge}" FontSize="9" FontWeight="SemiBold"
                                                        Foreground="{StaticResource BrushTextSecondary}"/>
                                         </Border>
                                     </StackPanel>
@@ -248,13 +247,15 @@
                                                 </Style.Triggers>
                                             </Style>
                                         </Border.Style>
-                                        <TextBlock FontSize="10" FontWeight="SemiBold" Foreground="White">
+                                        <TextBlock FontSize="10" FontWeight="SemiBold">
                                             <TextBlock.Style>
                                                 <Style TargetType="TextBlock">
                                                     <Setter Property="Text" Value="Closed"/>
+                                                    <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}"/>
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding IsOpen}" Value="True">
                                                             <Setter Property="Text" Value="Open"/>
+                                                            <Setter Property="Foreground" Value="White"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
