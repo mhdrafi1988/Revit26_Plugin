@@ -106,6 +106,7 @@ namespace Revit26_Plugin.Shared.Services
         public static readonly ToolInfo SectionAutoRenamer = Add("Section Auto Renamer", "24.0.0", "V024", "Revit26_Plugin.SectionAutoRenamer.V024");
         public static readonly ToolInfo DeleteWorkset = Add("Delete Workset", "1.0.3", "V001", "Revit26_Plugin.DeleteWorkset.V001");
         public static readonly ToolInfo DeleteLineStyles = Add("Delete Line Styles", "1.0.2", "V001", "Revit26_Plugin.DeleteLineStyles.V001");
+        public static readonly ToolInfo BulkRename = Add("Bulk Rename", "1.0.0", "V001", "Revit26_Plugin.BulkRename.V001");
 
         private static ToolInfo Add(string name, string version, string buildTag, string namespacePrefix)
         {

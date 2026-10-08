@@ -61,6 +61,12 @@ namespace Revit26_Plugin.Menu.Ribbon
             deleteLineStylesV001.ToolTip = Revit26_Plugin.Shared.Services.ToolCatalog.DeleteLineStyles.Tip(
                 "Deletes unused custom line styles, or all custom line styles (their lines move to a replacement style).");
 
+            var bulkRenameV001 = Btn(assemblyPath, "Btn_BulkRename_V001", "Bulk Rename V001",
+                "Revit26_Plugin.BulkRename.V001.Commands.BulkRenameCommand",
+                "Manage.BulkRename_16.png", "Bulk Rename", "V001");
+            bulkRenameV001.ToolTip = Revit26_Plugin.Shared.Services.ToolCatalog.BulkRename.Tip(
+                "Renames many line styles, line patterns, arrowheads or fill patterns at once: find/replace, prefix/suffix, case change and numbering.");
+
             var worksetRenamerFx04 = Btn(assemblyPath, "Btn_WorksetRenamer_FX04", "Workset Renamer (Excel) FX04", "Revit26_Plugin.WorksetRenamer.FX04.Command",
                 "SetupTools.WorksetRename_16.png", "Workset Renamer (From Excel)", "FX04", "FX03" + Rebuilt);
             var worksetRenamerFx05 = Btn(assemblyPath, "Btn_WorksetRenamer_FX05", "Workset Renamer (Excel) FX05", "Revit26_Plugin.WorksetRenamer.FX05.Command",
@@ -82,6 +88,7 @@ namespace Revit26_Plugin.Menu.Ribbon
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_WorksetRenamerFx", "WS Renamer XL", worksetRenamerFx05),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DeleteWorkset", "Delete Workset", deleteWorksetV001),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DeleteLineStyles", "Del. Line Styles", deleteLineStylesV001),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_BulkRename", "Bulk Rename", bulkRenameV001),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_ScheduleExportImport", "Schedule I/O", scheduleExportImportV007),
             });
             RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_AnnotationOverlapDetection", overlapV004, overlapV003);
@@ -92,6 +99,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_WorksetRenamerFx", worksetRenamerFx05, worksetRenamerFx04);
             RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_DeleteWorkset", deleteWorksetV001);
             RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_DeleteLineStyles", deleteLineStylesV001);
+            RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_BulkRename", bulkRenameV001);
             RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_ScheduleExportImport", scheduleExportImportV007, scheduleExportImportV006);
         }
     }
