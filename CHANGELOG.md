@@ -9,6 +9,42 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [3.0.0] — 2026-10-08
+
+### Removed
+- **Ribbon: every tool now lists only its latest two versions.** Buttons removed from the dropdowns:
+  Elevation Sync V003, Edge Element V002, Roof View Focus V002, Scope Box V004, Sheet Placer V222,
+  Rearrange V025 / V026, From Links VA006 / VA007 / VA008, Schedule I/O V003 / V004 / V005,
+  DWG To DL(P) V011 / V012, By Drain V007.
+- **Source folders of superseded versions deleted from the repository** (still in git history), including
+  older versions that were already off the ribbon: Detail Line Closed Loop V001, Auto Dim Detail Line V008,
+  Floors And Roof From Linked Rooms V011, Via Plan View V004, Annotation Overlap Detection V002,
+  ParaManager V003, Workset Renamer V003 / FX03, Workset Manager V012, Worksets & Elements Browser WSEB002,
+  Combined Roof Tools V001, Roof Point Comparison V001, Roof Point Elevation Sync V003,
+  Ridge By Openings V068, Ridge By Points V057, Multiple Points V001, Roof Edge Vertex Reducer V007,
+  Roof Detail Line Intersect V012, Roof From Detail Lines V007, Auto Slope By Point V028 /
+  Multi Copies 28 / Ridge V001, Multi-Roof Slope By Drain V010, Roof Type Creator V001, DWG To Lines V005,
+  DWG To Detail Lines V011 / V012, Automated Section Placer V001, Plan From Scope Box V004,
+  Smart View To Sheet Placer V222, Sheet Auto Rearrange V026, Roof Tag V016, Create Sections V011,
+  Roof Edge Around Sections V005, Roof Edge Element Sections V002, Roof View Focus V002,
+  Section View Auto Tagger V004, Auto Place Sections V322, Callout To Section V019,
+  Reference Section Head Placer V013, Bubble Auto Renumber V006, Section Auto Renamer V024,
+  View Auto Renamer V004.
+- Kept on disk but **not on the ribbon**: Auto Slope By Drain V007, Creaser Adv V010, Divide Inner Loops V009,
+  Inner Loops And Perpendicular V005 and Outer Curve Divider V004. Combined Roof Tools V002 / V003 are built
+  on these versions and stop compiling without them. They go when Combined Roof Tools moves to the
+  current tool versions.
+
+### Fixed
+- **Detail Lines From Links VA010** — its button did nothing: the command class was never added when
+  VA010 was introduced on 2026-10-04. The command now exists (same entry checks as VA009, run through
+  `ToolGuard`), so VA010 and VA009 both open.
+
+**User note:** Revit ties keyboard shortcuts and Quick Access Toolbar items to a button. Re-assign any you
+had on the removed buttons above. The remaining buttons keep their internal names, command classes and
+shortcuts. This is a MAJOR release because versions were removed (same as 2.0.0); if you still need one,
+it can be restored from git history.
+
 ## [2.5.0] — 2026-10-08
 
 ### Added

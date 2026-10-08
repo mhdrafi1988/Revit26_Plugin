@@ -112,6 +112,11 @@ build the combined "N versions" tooltip via `VersionTip`'s sibling,
 `BuildVersionsTip`. Only the primary `PushButtonData` should carry an icon —
 the other versions carry their own icon/text once added to the dropdown.
 
+**Keep only the latest two versions of each tool in its dropdown** (plugin 3.0.0). When a new
+version is added, drop the oldest button from the dropdown *and* delete its source folder with
+`git rm` (history keeps it) — unless another tool still compiles against it. Check with a repo-wide
+search for the old namespace (`Revit26_Plugin.<Tool>.V0nn`) and a build before deleting.
+
 ## Panel layout — keep the tab narrow
 
 Revit shrinks a ribbon tab that is wider than its window: first it drops the names of stacked

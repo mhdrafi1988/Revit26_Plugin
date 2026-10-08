@@ -7,7 +7,8 @@ namespace Revit26_Plugin.Menu.Ribbon
     public static class ViewToolsRibbon
     {
         // Every View Tools button is a pulldown: highest version number first,
-        // every older version below it in descending order.
+        // every older version below it in descending order. Each tool lists only
+        // its latest two versions.
         private const string Icons = "Revit26_Plugin.Resources.Icons.ViewTools.";
         private const string Rebuilt = " with the standard three-zone window layout.";
         private const string OnShell = " on the shared ToolWindowShell (log in body, capped grids).";
@@ -36,15 +37,11 @@ namespace Revit26_Plugin.Menu.Ribbon
             var edgeAroundV007 = Btn(assemblyPath, "Btn_RoofEdgeAroundSections_V007", "Section Around Edges V007", "Revit26_Plugin.RoofEdgeAroundSections.V007.RoofEdgeAroundSectionsCommand",
                 "RoofEdgeAroundSections_V005_16.png", "Roof Edge Around Sections", "V007", "V006" + OnShell);
 
-            var edgeElementV002 = Btn(assemblyPath, "Btn_RoofEdgeElementSections_V002", "Edge Element V002", "Revit26_Plugin.RoofEdgeElementSections.V002.RoofEdgeElementSectionsCommand",
-                "RoofEdgeElementSections_V002_16.png", "Roof Edge Element Sections", "V002");
             var edgeElementV003 = Btn(assemblyPath, "Btn_RoofEdgeElementSections_V003", "Edge Element V003", "Revit26_Plugin.RoofEdgeElementSections.V003.RoofEdgeElementSectionsCommand",
                 "RoofEdgeElementSections_V002_16.png", "Roof Edge Element Sections", "V003", "V002" + Rebuilt);
             var edgeElementV004 = Btn(assemblyPath, "Btn_RoofEdgeElementSections_V004", "Edge Element V004", "Revit26_Plugin.RoofEdgeElementSections.V004.RoofEdgeElementSectionsCommand",
                 "RoofEdgeElementSections_V002_16.png", "Roof Edge Element Sections", "V004", "V003" + OnShell);
 
-            var roofViewFocusV002 = Btn(assemblyPath, "Btn_RoofViewFocus_V002", "Roof View Focus V002", "Revit26_Plugin.RoofViewFocus.V002.Commands.RoofViewFocusCommand",
-                "RoofViewFocus_16.png", "Roof View Focus", "V002", "Crops the active plan view to the selected roofs.");
             var roofViewFocusV003 = Btn(assemblyPath, "Btn_RoofViewFocus_V003", "Roof View Focus V003", "Revit26_Plugin.RoofViewFocus.V003.Commands.RoofViewFocusCommand",
                 "RoofViewFocus_16.png", "Roof View Focus", "V003", "V002" + Rebuilt);
             var roofViewFocusV004 = Btn(assemblyPath, "Btn_RoofViewFocus_V004", "Roof View Focus V004", "Revit26_Plugin.RoofViewFocus.V004.Commands.RoofViewFocusCommand",
@@ -61,8 +58,8 @@ namespace Revit26_Plugin.Menu.Ribbon
             });
             RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_SectionsFromDetailLines", sectionsFromLinesV013, sectionsFromLinesV012);
             RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeAroundSections", edgeAroundV007, edgeAroundV006);
-            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeElementSections", edgeElementV004, edgeElementV003, edgeElementV002);
-            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofViewFocus", roofViewFocusV004, roofViewFocusV003, roofViewFocusV002);
+            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeElementSections", edgeElementV004, edgeElementV003);
+            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofViewFocus", roofViewFocusV004, roofViewFocusV003);
 
             RibbonPanel placePanel = app.CreateRibbonPanel(tabName, "View Place");
 
