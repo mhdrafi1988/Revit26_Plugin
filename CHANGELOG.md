@@ -29,6 +29,8 @@ Each release lists every tool whose version changed, under the plugin version.
   - **Remove duplicate lines**: lines that exactly repeat another line on the same layer (same
     ends in either direction; arcs and splines also the same mid point) are skipped and counted
     as Skipped. Partly overlapping lines and lines repeated on different layers are kept.
+  - **Select the new elements**: after converting, the detail lines and filled regions just
+    created are selected in Revit, so they can be moved, grouped or deleted in one go.
   - The CAD layer colour is shown as a swatch in the layer grid.
   - Settings (both mapping modes, Place beside CAD, Remove duplicate lines, both shortlists and the
     layer → style / fill type mappings) are saved to

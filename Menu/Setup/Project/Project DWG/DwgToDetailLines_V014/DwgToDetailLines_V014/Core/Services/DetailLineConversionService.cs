@@ -17,6 +17,8 @@
 //         and existing filled region types.
 //   ADDED removeDuplicateLines: exact duplicate curves within a layer are
 //         skipped (DuplicateCurveFilter).
+//   ADDED the created detail lines / filled regions are selected after the
+//         conversion commits, so they can be moved or grouped in one go.
 //   ADDED offset: every created curve / hatch boundary is translated by it
 //         ("Place beside CAD").
 //   FIX   a style Revit does not accept for detail curves (e.g. <Room
@@ -42,6 +44,7 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
     {
         private readonly UIApplication _uiApp;
         private readonly System.Action<LogEntry> _log;
+        private readonly List<ElementId> _created = new();
 
         /// <summary>Creates the service; <paramref name="log"/> receives progress lines.</summary>
         public DetailLineConversionService(UIApplication uiApp, System.Action<LogEntry> log)
@@ -80,6 +83,7 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
         {
             Document doc = _uiApp.ActiveUIDocument.Document;
             View activeView = _uiApp.ActiveUIDocument.ActiveView;
+            _created.Clear();
             double tol = doc.Application.ShortCurveTolerance;
 
             var metrics = new ConversionMetrics
@@ -125,6 +129,8 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
                 }
             }
 
+            SelectCreated(doc);
+
             metrics.Placed = placed;
             metrics.Skipped = skipped;
             metrics.Failed = failed;
@@ -133,6 +139,28 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
                 $"Conversion complete | {placed} placed | {skipped} skipped | {failed} failed"));
 
             return metrics;
+        }
+
+        /// <summary>
+        /// Selects the elements created by this run that survived the commit
+        /// (commit-time failures auto-delete some). Selection is a convenience:
+        /// a failure here is logged, never thrown.
+        /// </summary>
+        private void SelectCreated(Document doc)
+        {
+            var ids = _created.Where(id => doc.GetElement(id) != null).ToList();
+            if (ids.Count == 0)
+                return;
+
+            try
+            {
+                _uiApp.ActiveUIDocument.Selection.SetElementIds(ids);
+                _log(new LogEntry(LogLevel.Info, $"Selected {ids.Count} new element(s)"));
+            }
+            catch (Autodesk.Revit.Exceptions.ApplicationException ex)
+            {
+                _log(new LogEntry(LogLevel.Warning, $"Could not select the new elements: {ex.Message}"));
+            }
         }
 
         private void RunLinePass(
@@ -256,6 +284,7 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
                     try
                     {
                         DetailCurve detailCurve = doc.Create.NewDetailCurve(activeView, c);
+                        _created.Add(detailCurve.Id);
 
                         if (!styleChecked)
                         {
@@ -368,7 +397,7 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
                             ? CurveLoop.CreateViaTransform(h.Boundary, shift)
                             : h.Boundary;
                         var loops = new List<CurveLoop> { boundary };
-                        FilledRegion.Create(doc, type.Id, activeView.Id, loops);
+                        _created.Add(FilledRegion.Create(doc, type.Id, activeView.Id, loops).Id);
                         layerPlaced++;
                     }
                     catch (Autodesk.Revit.Exceptions.ArgumentException ex)
