@@ -1,15 +1,25 @@
 using Autodesk.Revit.UI;
 using Revit26_Plugin.Resources.Icons;
-using System.Collections.Generic;
 
 namespace Revit26_Plugin.Menu.Ribbon
 {
+    /// <summary>
+    /// Builds the Auto Dim Detail Line pulldown. Since plugin 2.4.0 it sits in the Detail Lines
+    /// panel (see <see cref="DetailLInesRibbon"/>); the old one-button Dimensions panel was removed
+    /// to keep the tab narrow enough for Revit to show every button name.
+    /// </summary>
     public static class DimensionsRibbon
     {
-        public static void Build(UIControlledApplication app, string tabName, string assemblyPath)
-        {
-            RibbonPanel panel = app.CreateRibbonPanel(tabName, "Dimensions");
+        /// <summary>Internal name of the pulldown (unchanged since it lived in Dimensions).</summary>
+        public const string DetailLineDimPulldownName = "Pulldown_DtlLineDim";
 
+        /// <summary>
+        /// Returns the "Line Dims" pulldown data to stack in a panel, and in
+        /// <paramref name="versions"/> every version, highest first, for
+        /// <see cref="RibbonLayoutHelper.WirePulldownButton"/>.
+        /// </summary>
+        public static PulldownButtonData CreateDetailLineDimPulldown(string assemblyPath, out PushButtonData[] versions)
+        {
             // Highest version number first, every older version below it in descending order.
             var dtlLineV009 = new PushButtonData("Btn_DtlLine_09", "Detail Lines V009", assemblyPath, "Revit26_Plugin.DtlLineDim.V009.Commands.DtlLineDimCommand")
             {
@@ -23,10 +33,8 @@ namespace Revit26_Plugin.Menu.Ribbon
                 ToolTip = RibbonLayoutHelper.VersionTip("Auto Dim Detail Line", "V010",
                     "V009 on the shared ToolWindowShell (log in body).")
             };
-            var dtlLinePulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DtlLineDim", "Detail Lines", dtlLineV010);
-
-            var items = RibbonLayoutHelper.AddStackedButtons(panel, new List<RibbonItemData> { dtlLinePulldownData });
-            RibbonLayoutHelper.WirePulldownButton(items, "Pulldown_DtlLineDim", dtlLineV010, dtlLineV009);
+            versions = new[] { dtlLineV010, dtlLineV009 };
+            return RibbonLayoutHelper.CreatePulldownButtonData(DetailLineDimPulldownName, "Line Dims", dtlLineV010);
         }
     }
 }

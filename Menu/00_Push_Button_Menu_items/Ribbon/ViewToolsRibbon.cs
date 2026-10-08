@@ -54,10 +54,10 @@ namespace Revit26_Plugin.Menu.Ribbon
             // stack — so this is one call instead of a stack-of-2 + stack-of-2.
             var createItems = RibbonLayoutHelper.AddStackedButtons(createPanel, new List<RibbonItemData>
             {
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_SectionsFromDetailLines", "Sections From Lines", sectionsFromLinesV013),
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofEdgeAroundSections", "Section Around Edges", edgeAroundV007),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_SectionsFromDetailLines", "From Lines", sectionsFromLinesV013),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofEdgeAroundSections", "Around Edges", edgeAroundV007),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofEdgeElementSections", "Edge Element", edgeElementV004),
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofViewFocus", "Roof View Focus", roofViewFocusV004),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofViewFocus", "Roof Focus", roofViewFocusV004),
             });
             RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_SectionsFromDetailLines", sectionsFromLinesV013, sectionsFromLinesV012);
             RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeAroundSections", edgeAroundV007, edgeAroundV006);
@@ -87,8 +87,8 @@ namespace Revit26_Plugin.Menu.Ribbon
             {
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_AutoPlaceSections", "Place Sections", placeSectionsV324),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_CalloutToSection", "Callout To Section", calloutV021),
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RefSectionHeadPlacer", "Section Head Placer", headPlacerV015),
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_SectionViewAutoTagger", "Section View Tagger", taggerV006),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RefSectionHeadPlacer", "Head Placer", headPlacerV015),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_SectionViewAutoTagger", "View Tagger", taggerV006),
             });
             RibbonLayoutHelper.WirePulldownButton(placeItems, "Pulldown_AutoPlaceSections", placeSectionsV324, placeSectionsV323);
             RibbonLayoutHelper.WirePulldownButton(placeItems, "Pulldown_CalloutToSection", calloutV021, calloutV020);

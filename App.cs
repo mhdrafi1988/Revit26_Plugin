@@ -41,9 +41,7 @@ namespace Revit26_Plugin
         {
             string assemblyPath = Assembly.GetExecutingAssembly().Location;
             RoofToolsRibbon.Build(application, RibbonTabName, assemblyPath);
-            FloorToolsRibbon.Build(application, RibbonTabName, assemblyPath);
             ViewToolsRibbon.Build(application, RibbonTabName, assemblyPath);
-            DimensionsRibbon.Build(application, RibbonTabName, assemblyPath);
             SetupRibbon.Build(application, RibbonTabName, assemblyPath);
             SheetToolsRibbon.Build(application, RibbonTabName, assemblyPath);
             DetailLInesRibbon.Build(application, RibbonTabName, assemblyPath);

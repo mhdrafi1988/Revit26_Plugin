@@ -112,6 +112,28 @@ build the combined "N versions" tooltip via `VersionTip`'s sibling,
 `BuildVersionsTip`. Only the primary `PushButtonData` should carry an icon —
 the other versions carry their own icon/text once added to the dropdown.
 
+## Panel layout — keep the tab narrow
+
+Revit shrinks a ribbon tab that is wider than its window: first it drops the names of stacked
+buttons, starting with the right-most panels, then it folds whole panels into one dropdown.
+Every button should show its icon **and** name, so (since plugin 2.4.0):
+
+- **No one-button panels.** Add a new tool to the panel it belongs with instead of creating a
+  panel for it. The one-button panel for a moved tool keeps its pulldown builder in its old file
+  (`FloorToolsRibbon.CreateFromRoomsPulldown`, `DimensionsRibbon.CreateDetailLineDimPulldown`)
+  and the receiving panel stacks it.
+- **No lone large buttons.** `AddStackedButtons` stacks 3 per column and splits 4 as 2 + 2, so
+  only a one-item panel gets a full-size button.
+- **Short labels.** A stacked column is as wide as its longest label, so keep labels to about
+  15 characters; the tooltip carries the full tool name.
+- **Panel names are part of shortcut ids.** Revit keys keyboard shortcuts and QAT items on
+  tab + panel + button name, so moving a button to another panel (or renaming a panel) resets
+  them. Never rename a panel just for its title; note moved buttons in the CHANGELOG user note.
+
+Current tab, left to right (13 panels): Utilities · Roof Slope · Shape Points · Roof Tools ·
+Compare · View Create · View Place · View Rename · Family Tools · Project Tools · Sheet Create ·
+Detail Lines · Manage.
+
 ## Known trap: `QuickAcces.cs`
 
 Filename doesn't contain "Ribbon", so a filename-based search for ribbon
