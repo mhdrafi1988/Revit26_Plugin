@@ -1,5 +1,6 @@
 using Autodesk.Revit.UI;
 using Revit26_Plugin.Resources.Icons;
+using Revit26_Plugin.Shared.Services;
 using System.Collections.Generic;
 
 namespace Revit26_Plugin.Menu.Ribbon
@@ -54,22 +55,27 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             // Two coexisting implementations of the same tool, collected under
             // one pulldown button — each version is a push button inside the dropdown.
-            var dwgLinesV011 = new PushButtonData("Btn_DwgToDetailLines_V011", "Detail Lines V011", assemblyPath, "Revit26_Plugin.DwgToDetailLines.V011.Commands.DwgToDetailLinesCommand")
+            var dwgLinesV011 = new PushButtonData("Btn_DwgToDetailLines_V011", "DWG To DL(P) V011", assemblyPath, "Revit26_Plugin.DwgToDetailLines.V011.Commands.DwgToDetailLinesCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToDetailLines_V011_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("DWG To Detail Lines", "V011")
             };
-            var dwgLinesV012 = new PushButtonData("Btn_DwgToDetailLines_V012", "Detail Lines V012", assemblyPath, "Revit26_Plugin.DwgToDetailLines.V012.Commands.DwgToDetailLinesCommand")
+            var dwgLinesV012 = new PushButtonData("Btn_DwgToDetailLines_V012", "DWG To DL(P) V012", assemblyPath, "Revit26_Plugin.DwgToDetailLines.V012.Commands.DwgToDetailLinesCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToDetailLines_V011_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("DWG To Detail Lines", "V012", "UI Standard layout: metrics on top, full-height layer grid, always-visible footer log, Convert DWG → Close.")
             };
-            var dwgLinesV013 = new PushButtonData("Btn_DwgToDetailLines_V013", "Detail Lines V013", assemblyPath, "Revit26_Plugin.DwgToDetailLines.V013.Commands.DwgToDetailLinesCommand")
+            var dwgLinesV013 = new PushButtonData("Btn_DwgToDetailLines_V013", "DWG To DL(P) V013", assemblyPath, "Revit26_Plugin.DwgToDetailLines.V013.Commands.DwgToDetailLinesCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToDetailLines_V011_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("DWG To Detail Lines", "V013", "V012 on the shared ToolWindowShell (log in body, capped grid).")
             };
-            var dwgLinesPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DwgToDetailLines", "Detail Lines", dwgLinesV013);
+            var dwgLinesV014 = new PushButtonData("Btn_DwgToDetailLines_V014", "DWG To DL(P) V014", assemblyPath, "Revit26_Plugin.DwgToDetailLines.V014.Commands.DwgToDetailLinesCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToDetailLines_V011_16.png"),
+                ToolTip = ToolCatalog.DwgToDlp.Tip("Convert a DWG to detail lines and hatches. Map one global line style and hatch to every layer, or pick a style per layer.")
+            };
+            var dwgLinesPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DwgToDetailLines", "DWG To DL(P)", dwgLinesV014);
 
             var exportDwgV001 = new PushButtonData("Btn_ExportDwgToFolder_V001", "Export DWG V001", assemblyPath, "Revit26_Plugin.ExportDwgToFolder.V001.Commands.ExportDwgToFolderCommand")
             {
@@ -83,7 +89,7 @@ namespace Revit26_Plugin.Menu.Ribbon
                 dwgLinesPulldownData,
                 exportDwgPulldownData,
             });
-            RibbonLayoutHelper.WirePulldownButton(projectItems, "Pulldown_DwgToDetailLines", dwgLinesV013, dwgLinesV012, dwgLinesV011);
+            RibbonLayoutHelper.WirePulldownButton(projectItems, "Pulldown_DwgToDetailLines", dwgLinesV014, dwgLinesV013, dwgLinesV012, dwgLinesV011);
             RibbonLayoutHelper.WirePulldownButton(projectItems, "Pulldown_ExportDwgToFolder", exportDwgV001);
         }
     }
