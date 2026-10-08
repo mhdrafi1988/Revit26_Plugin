@@ -1,0 +1,159 @@
+using System;
+using System.Linq;
+using Autodesk.Revit.Attributes;
+using Autodesk.Revit.DB;
+using Autodesk.Revit.UI;
+using Revit26_Plugin.LinkedDetailLineGenerator.VA010.UI.Views;
+using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin.Utilities;
+
+namespace Revit26_Plugin.LinkedDetailLineGenerator.VA010.Commands
+{
+    /// <summary>
+    /// Ribbon PushButton entry point for Detail Lines From Links VA010. Same entry flow as VA009:
+    /// the user must have a single Floor or Roof selected in the host model BEFORE launching the
+    /// tool, the active view must be a supported plan view, and a valid placed Revit link must
+    /// exist. No window is shown for an invalid or missing selection — just a warning and
+    /// <see cref="Result.Cancelled"/>.
+    /// </summary>
+    [Transaction(TransactionMode.Manual)]
+    [Regeneration(RegenerationOption.Manual)]
+    public class OpenLinkedDetailLineGeneratorCommand : IExternalCommand
+    {
+        private const string DialogTitle = "Boundary Line Generator";
+
+        /// <inheritdoc/>
+        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+            => ToolGuard.RunCommand(GetType(), commandData, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData commandData, ref string message, ElementSet elements)
+        {
+            UIApplication uiApp = commandData.Application;
+            UIDocument uiDoc = uiApp.ActiveUIDocument;
+            if (uiDoc == null)
+            {
+                TaskDialog.Show(DialogTitle, "Open a project first.");
+                return Result.Cancelled;
+            }
+
+            Document doc = uiDoc.Document;
+            View activeView = uiDoc.ActiveView;
+
+            // ── Entry flow: require a single pre-selected Floor/Roof ─────────
+            Element selectedElement;
+            try
+            {
+                selectedElement = GetSelectedFloorOrRoof(uiDoc, doc);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("OpenLinkedDetailLineGeneratorCommand", ex);
+                message = $"Failed to read current selection: {ex.Message}";
+                return Result.Failed;
+            }
+
+            if (selectedElement == null)
+            {
+                TaskDialog.Show(
+                    DialogTitle,
+                    "Select a single Floor or Roof before running this command.\n\n" +
+                    "The tool generates lines inside that element's own boundary — " +
+                    "nothing is drawn without a Floor or Roof selected first.");
+                return Result.Cancelled;
+            }
+
+            // ── Validate Active View (Detail Lines are view-specific) ────────
+            if (!IsSupportedPlanView(activeView))
+            {
+                TaskDialog.Show(DialogTitle, "This command can only be run from a supported plan view.");
+                return Result.Cancelled;
+            }
+
+            // ── Validate Linked Revit Models ─────────────────────────────────
+            bool hasValidLink;
+            try
+            {
+                hasValidLink = new FilteredElementCollector(doc)
+                    .OfClass(typeof(RevitLinkInstance))
+                    .Cast<RevitLinkInstance>()
+                    .Any(IsValidPlacedLink);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("OpenLinkedDetailLineGeneratorCommand", ex);
+                message = $"Failed to validate linked models: {ex.Message}";
+                return Result.Failed;
+            }
+
+            if (!hasValidLink)
+            {
+                TaskDialog.Show(DialogTitle, "No valid placed Revit link was found in the current project.");
+                return Result.Cancelled;
+            }
+
+            // ── Open UI (modeless, matches suite convention) ───────────────
+            try
+            {
+                var window = new MainWindow(uiApp, selectedElement);
+                window.Show();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("OpenLinkedDetailLineGeneratorCommand", ex);
+                message = $"Failed to open Boundary Line Generator: {ex.Message}";
+                return Result.Failed;
+            }
+
+            return Result.Succeeded;
+        }
+
+        /// <summary>Returns the single pre-selected Floor or Roof from the host
+        /// document, or null if the selection is empty or contains no Floor/Roof.
+        /// If multiple elements are selected, the first Floor/Roof found among
+        /// them is used — the rest are ignored rather than treated as an error,
+        /// since a user often box-selects a Floor along with nearby annotation.</summary>
+        private static Element GetSelectedFloorOrRoof(UIDocument uiDoc, Document doc)
+        {
+            var selectedIds = uiDoc.Selection.GetElementIds();
+            if (selectedIds.Count == 0) return null;
+
+            foreach (var id in selectedIds)
+            {
+                Element el = doc.GetElement(id);
+                if (IsFloorOrRoof(el)) return el;
+            }
+            return null;
+        }
+
+        private static bool IsFloorOrRoof(Element element)
+        {
+            if (element?.Category == null) return false;
+            var bic = (BuiltInCategory)element.Category.Id.Value;
+            return bic == BuiltInCategory.OST_Floors || bic == BuiltInCategory.OST_Roofs;
+        }
+
+        /// <summary>Floor Plan and Structural Plan supported, matching VA009.
+        /// Ceiling Plans intentionally excluded pending view-range behavior validation.</summary>
+        private static bool IsSupportedPlanView(View view)
+        {
+            if (view == null) return false;
+            return view.ViewType == ViewType.FloorPlan
+                || view.ViewType == ViewType.EngineeringPlan; // Structural Plan
+        }
+
+        /// <summary>A link is valid if it has a placed instance and a readable linked
+        /// document. Unloaded links (GetLinkDocument() == null) are excluded — the
+        /// window never lists them at all (see LinkService.GetLinkedModels).</summary>
+        private static bool IsValidPlacedLink(RevitLinkInstance linkInstance)
+        {
+            try
+            {
+                return linkInstance.GetLinkDocument() != null;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+    }
+}

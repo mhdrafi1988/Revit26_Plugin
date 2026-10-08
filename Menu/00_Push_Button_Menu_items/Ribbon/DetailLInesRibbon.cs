@@ -17,24 +17,8 @@ namespace Revit26_Plugin.Menu.Ribbon
             RibbonPanel panel = app.CreateRibbonPanel(tabName, "Detail Lines");
 
             // Coexisting versions share one pulldown: highest version number first,
-            // every older version below it in descending order.
-            var linesVA007 = new PushButtonData("Btn_ DeatailLInes VA007", "From Links VA007", assemblyPath, "Revit26_Plugin.LinkedDetailLineGenerator.VA007.Commands.OpenLinkedDetailLineGeneratorCommand")
-            {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.Linematch32_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("Detail Lines From Links", "VA007",
-                    "Create Detail Lines From Linked Files, clipped to a pre-selected Floor/Roof boundary")
-            };
-            var linesVA008 = new PushButtonData("Btn_ DeatailLInes VA008", "From Links VA008", assemblyPath, "Revit26_Plugin.LinkedDetailLineGenerator.VA008.Commands.OpenLinkedDetailLineGeneratorCommand")
-            {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.Linematch32_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("Detail Lines From Links", "VA008",
-                    "UI Standard layout: metrics fixed on top, always-visible footer log with working Copy All / Copy Selected, Create → Close.")
-            };
-            var linesVA006 = new PushButtonData("Btn_ DeatailLInes VA006", "From Links VA006", assemblyPath, "Revit26_Plugin.LinkedDetailLineGenerator.VA006.Commands.OpenLinkedDetailLineGeneratorCommand")
-            {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.Linematch32_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("Detail Lines From Links", "VA006", "Create Detail Lines From Linked Files")
-            };
+            // every older version below it in descending order. Each tool lists only
+            // its latest two versions.
             var linesVA009 = new PushButtonData("Btn_ DeatailLInes VA009", "From Links VA009", assemblyPath, "Revit26_Plugin.LinkedDetailLineGenerator.VA009.Commands.OpenLinkedDetailLineGeneratorCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.Linematch32_16.png"),
@@ -66,7 +50,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             var lineDimsPulldownData = DimensionsRibbon.CreateDetailLineDimPulldown(assemblyPath, out var lineDimsVersions);
 
             var items = RibbonLayoutHelper.AddStackedButtons(panel, new List<RibbonItemData> { linesPulldownData, closedLoopPulldownData, lineDimsPulldownData });
-            RibbonLayoutHelper.WirePulldownButton(items, "Pulldown_DetailLinesFromLinks", linesVA010, linesVA009, linesVA008, linesVA007, linesVA006);
+            RibbonLayoutHelper.WirePulldownButton(items, "Pulldown_DetailLinesFromLinks", linesVA010, linesVA009);
             RibbonLayoutHelper.WirePulldownButton(items, "Pulldown_DetailLineClosedLoop", closedLoopV003, closedLoopV002);
             RibbonLayoutHelper.WirePulldownButton(items, DimensionsRibbon.DetailLineDimPulldownName, lineDimsVersions);
         }
