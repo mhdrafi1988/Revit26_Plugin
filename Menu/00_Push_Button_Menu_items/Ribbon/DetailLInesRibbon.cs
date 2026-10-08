@@ -10,8 +10,8 @@ namespace Revit26_Plugin.Menu.Ribbon
         {
             RibbonPanel createPanel = app.CreateRibbonPanel(tabName, "Detail Line Create");
 
-            // Coexisting versions share one pulldown: previous version first, the
-            // UI Standard version second, the ToolWindowShell version (VA009) third, refactored VA010 fourth.
+            // Coexisting versions share one pulldown: highest version number first,
+            // every older version below it in descending order.
             var linesVA007 = new PushButtonData("Btn_ DeatailLInes VA007", "From Links VA007", assemblyPath, "Revit26_Plugin.LinkedDetailLineGenerator.VA007.Commands.OpenLinkedDetailLineGeneratorCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.Linematch32_16.png"),
@@ -44,7 +44,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             var linesPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DetailLinesFromLinks", "From Links", linesVA010);
 
             var createItems = RibbonLayoutHelper.AddStackedButtons(createPanel, new List<RibbonItemData> { linesPulldownData });
-            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_DetailLinesFromLinks", linesVA010, linesVA007, linesVA008, linesVA009, linesVA006);
+            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_DetailLinesFromLinks", linesVA010, linesVA009, linesVA008, linesVA007, linesVA006);
 
             RibbonPanel processPanel = app.CreateRibbonPanel(tabName, "Detail Line Process");
 
@@ -60,10 +60,10 @@ namespace Revit26_Plugin.Menu.Ribbon
                 ToolTip = RibbonLayoutHelper.VersionTip("Detail Line Closed Loop", "V003",
                     "V002 on the shared ToolWindowShell (log in body, capped grid).")
             };
-            var closedLoopPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DetailLineClosedLoop", "Detail Line Closed Loop", closedLoopV002);
+            var closedLoopPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DetailLineClosedLoop", "Detail Line Closed Loop", closedLoopV003);
 
             var processItems = RibbonLayoutHelper.AddStackedButtons(processPanel, new List<RibbonItemData> { closedLoopPulldownData });
-            RibbonLayoutHelper.WirePulldownButton(processItems, "Pulldown_DetailLineClosedLoop", closedLoopV002, closedLoopV003);
+            RibbonLayoutHelper.WirePulldownButton(processItems, "Pulldown_DetailLineClosedLoop", closedLoopV003, closedLoopV002);
         }
     }
 }

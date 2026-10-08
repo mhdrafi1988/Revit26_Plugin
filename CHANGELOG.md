@@ -9,6 +9,20 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [2.3.3] — 2026-10-08
+
+### Changed
+- **Ribbon dropdowns** — every pulldown that lists coexisting versions of a tool (Manage, Roof
+  Tools, View Tools, Sheet Tools, Setup, Dimensions, Detail Lines, Floor Tools panels) now lists
+  the highest version number first, with every older version below it in descending order. Several
+  pulldowns previously listed the "current" version first and a newer rebuild further down (e.g.
+  Schedule Export/Import showed V005, V006, V007, V004, V003); they now read highest-to-lowest.
+  The pulldown button's own icon is always the highest version's icon.
+
+**User note:** only the dropdown order changed — no button's internal name, command class, or
+behaviour changed, and the ribbon button face still shows only the tool name, never a version
+number.
+
 ## [2.3.2] — 2026-10-08
 
 ### Changed

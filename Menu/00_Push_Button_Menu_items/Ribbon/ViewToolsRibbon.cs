@@ -6,8 +6,8 @@ namespace Revit26_Plugin.Menu.Ribbon
 {
     public static class ViewToolsRibbon
     {
-        // Every View Tools button is a pulldown: the current version first, the
-        // UI-standard rebuild (Revit_Plugin_UI_Standard.md layout) second.
+        // Every View Tools button is a pulldown: highest version number first,
+        // every older version below it in descending order.
         private const string Icons = "Revit26_Plugin.Resources.Icons.ViewTools.";
         private const string Rebuilt = " with the standard three-zone window layout.";
         private const string OnShell = " on the shared ToolWindowShell (log in body, capped grids).";
@@ -54,15 +54,15 @@ namespace Revit26_Plugin.Menu.Ribbon
             // stack — so this is one call instead of a stack-of-2 + stack-of-2.
             var createItems = RibbonLayoutHelper.AddStackedButtons(createPanel, new List<RibbonItemData>
             {
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_SectionsFromDetailLines", "Sections From Lines", sectionsFromLinesV012),
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofEdgeAroundSections", "Section Around Edges", edgeAroundV006),
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofEdgeElementSections", "Edge Element", edgeElementV002),
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofViewFocus", "Roof View Focus", roofViewFocusV002),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_SectionsFromDetailLines", "Sections From Lines", sectionsFromLinesV013),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofEdgeAroundSections", "Section Around Edges", edgeAroundV007),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofEdgeElementSections", "Edge Element", edgeElementV004),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RoofViewFocus", "Roof View Focus", roofViewFocusV004),
             });
-            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_SectionsFromDetailLines", sectionsFromLinesV012, sectionsFromLinesV013);
-            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeAroundSections", edgeAroundV006, edgeAroundV007);
-            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeElementSections", edgeElementV002, edgeElementV003, edgeElementV004);
-            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofViewFocus", roofViewFocusV002, roofViewFocusV003, roofViewFocusV004);
+            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_SectionsFromDetailLines", sectionsFromLinesV013, sectionsFromLinesV012);
+            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeAroundSections", edgeAroundV007, edgeAroundV006);
+            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofEdgeElementSections", edgeElementV004, edgeElementV003, edgeElementV002);
+            RibbonLayoutHelper.WirePulldownButton(createItems, "Pulldown_RoofViewFocus", roofViewFocusV004, roofViewFocusV003, roofViewFocusV002);
 
             RibbonPanel placePanel = app.CreateRibbonPanel(tabName, "View Place");
 
@@ -85,15 +85,15 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             var placeItems = RibbonLayoutHelper.AddStackedButtons(placePanel, new List<RibbonItemData>
             {
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_AutoPlaceSections", "Place Sections", placeSectionsV323),
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_CalloutToSection", "Callout To Section", calloutV020),
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RefSectionHeadPlacer", "Section Head Placer", headPlacerV014),
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_SectionViewAutoTagger", "Section View Tagger", taggerV005),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_AutoPlaceSections", "Place Sections", placeSectionsV324),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_CalloutToSection", "Callout To Section", calloutV021),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_RefSectionHeadPlacer", "Section Head Placer", headPlacerV015),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_SectionViewAutoTagger", "Section View Tagger", taggerV006),
             });
-            RibbonLayoutHelper.WirePulldownButton(placeItems, "Pulldown_AutoPlaceSections", placeSectionsV323, placeSectionsV324);
-            RibbonLayoutHelper.WirePulldownButton(placeItems, "Pulldown_CalloutToSection", calloutV020, calloutV021);
-            RibbonLayoutHelper.WirePulldownButton(placeItems, "Pulldown_RefSectionHeadPlacer", headPlacerV014, headPlacerV015);
-            RibbonLayoutHelper.WirePulldownButton(placeItems, "Pulldown_SectionViewAutoTagger", taggerV005, taggerV006);
+            RibbonLayoutHelper.WirePulldownButton(placeItems, "Pulldown_AutoPlaceSections", placeSectionsV324, placeSectionsV323);
+            RibbonLayoutHelper.WirePulldownButton(placeItems, "Pulldown_CalloutToSection", calloutV021, calloutV020);
+            RibbonLayoutHelper.WirePulldownButton(placeItems, "Pulldown_RefSectionHeadPlacer", headPlacerV015, headPlacerV014);
+            RibbonLayoutHelper.WirePulldownButton(placeItems, "Pulldown_SectionViewAutoTagger", taggerV006, taggerV005);
 
             RibbonPanel renamePanel = app.CreateRibbonPanel(tabName, "View Rename");
 
@@ -112,13 +112,13 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             var renameItems = RibbonLayoutHelper.AddStackedButtons(renamePanel, new List<RibbonItemData>
             {
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_BubbleAutoRenumber", "Bubble Renumber", bubbleV007),
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_SectionAutoRenamer", "Section Renamer", sectionRenamerV025),
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_ViewAutoRenamer", "Auto Renamer", autoRenamerV005),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_BubbleAutoRenumber", "Bubble Renumber", bubbleV008),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_SectionAutoRenamer", "Section Renamer", sectionRenamerV026),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_ViewAutoRenamer", "Auto Renamer", autoRenamerV006),
             });
-            RibbonLayoutHelper.WirePulldownButton(renameItems, "Pulldown_BubbleAutoRenumber", bubbleV007, bubbleV008);
-            RibbonLayoutHelper.WirePulldownButton(renameItems, "Pulldown_SectionAutoRenamer", sectionRenamerV025, sectionRenamerV026);
-            RibbonLayoutHelper.WirePulldownButton(renameItems, "Pulldown_ViewAutoRenamer", autoRenamerV005, autoRenamerV006);
+            RibbonLayoutHelper.WirePulldownButton(renameItems, "Pulldown_BubbleAutoRenumber", bubbleV008, bubbleV007);
+            RibbonLayoutHelper.WirePulldownButton(renameItems, "Pulldown_SectionAutoRenamer", sectionRenamerV026, sectionRenamerV025);
+            RibbonLayoutHelper.WirePulldownButton(renameItems, "Pulldown_ViewAutoRenamer", autoRenamerV006, autoRenamerV005);
         }
     }
 }
