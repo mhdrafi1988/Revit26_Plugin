@@ -4,6 +4,7 @@ using Revit26_Plugin.SheetViewArrange.V001.Core.Models;
 using Revit26_Plugin.SheetViewArrange.V001.Core.Services;
 using Revit26_Plugin.Shared.Models;
 using System;
+using System.Collections.Generic;
 
 namespace Revit26_Plugin.SheetViewArrange.V001.Infrastructure
 {
@@ -40,14 +41,14 @@ namespace Revit26_Plugin.SheetViewArrange.V001.Infrastructure
         });
 
         /// <inheritdoc/>
-        public bool Apply(SheetViewArrangeSettings settings, string previewSignature, Action<SessionResult> done) => Raise(done, () =>
+        public bool Apply(SheetViewArrangeSettings settings, IReadOnlySet<long> unticked, string previewSignature, Action<SessionResult> done) => Raise(done, () =>
         {
             var sheet = GetSheet(out string error);
             if (sheet == null)
                 return Failed(error);
 
             var fresh = SheetReader.Read(_doc, sheet);
-            var plan = ArrangePlanner.Build(fresh, settings);
+            var plan = ArrangePlanner.Build(fresh, settings, unticked);
 
             if (plan.Signature != previewSignature)
                 return new SessionResult

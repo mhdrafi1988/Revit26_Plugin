@@ -48,7 +48,7 @@ namespace Revit26_Plugin.SheetViewArrange.V001.Core.Services
         /// <summary>Viewports left where they are.</summary>
         public List<ViewportSnapshot> Skipped { get; init; } = new();
 
-        /// <summary>Grid rows: participating views in order, then skipped ones.</summary>
+        /// <summary>Grid rows: every view in reading order, each with its slot when it is arranged.</summary>
         public List<ArrangeRow> Rows { get; init; } = new();
 
         /// <summary>Number of layout rows.</summary>
@@ -98,13 +98,20 @@ namespace Revit26_Plugin.SheetViewArrange.V001.Core.Services
         private const double MmToFeet = 1.0 / 304.8;
         private const double FeetToMm = 304.8;
 
-        /// <summary>Builds the plan.</summary>
-        public static ArrangePlan Build(SheetSnapshot sheet, SheetViewArrangeSettings settings)
+        /// <summary>Why a view the user unticked is left where it is.</summary>
+        public const string UntickedReason = "Unticked";
+
+        /// <summary>
+        /// Builds the plan. <paramref name="unticked"/> holds the <see cref="ViewportSnapshot.Key"/>
+        /// of every view the user unticked: those stay where they are and the others are laid out
+        /// without them. Null or empty (the default) means every view takes part, as before.
+        /// </summary>
+        public static ArrangePlan Build(SheetSnapshot sheet, SheetViewArrangeSettings settings, IReadOnlySet<long> unticked = null)
         {
             if (sheet == null) throw new ArgumentNullException(nameof(sheet));
             if (settings == null) throw new ArgumentNullException(nameof(settings));
 
-            var (participants, skipped) = SplitParticipants(sheet, settings.MovePinned);
+            var (all, participants, skipped) = SplitParticipants(sheet, settings.MovePinned, unticked);
             var warnings = CollectWarnings(sheet, participants, skipped);
             var (area, blocker) = UsableArea(sheet, settings);
 
@@ -148,37 +155,50 @@ namespace Revit26_Plugin.SheetViewArrange.V001.Core.Services
                 Area = area,
                 Moves = moves,
                 Skipped = skipped.Select(s => s.Viewport).ToList(),
-                Rows = BuildRows(participants, moves, skipped),
+                Rows = BuildRows(all, participants, moves, skipped, settings.MovePinned),
                 RowCount = rowCount,
                 Blocker = blocker,
                 Warnings = warnings
             };
         }
 
-        /// <summary>Participants in reading order (detail number, then view name), plus skipped views with the reason.</summary>
-        private static (List<ViewportSnapshot> Participants, List<(ViewportSnapshot Viewport, string Why)> Skipped)
-            SplitParticipants(SheetSnapshot sheet, bool movePinned)
-        {
-            var participants = new List<ViewportSnapshot>();
-            var skipped = new List<(ViewportSnapshot, string)>();
-            foreach (var vp in sheet.Viewports)
-            {
-                if (vp.LockReason != null)
-                    skipped.Add((vp, vp.LockReason));
-                else if (vp.IsPinned && !movePinned)
-                    skipped.Add((vp, "Pinned"));
-                else
-                    participants.Add(vp);
-            }
+        /// <summary>True when the user may tick or untick the view (it is not left alone for another reason).</summary>
+        private static bool CanTick(ViewportSnapshot vp, bool movePinned)
+            => vp.LockReason == null && !(vp.IsPinned && !movePinned);
 
-            participants = participants
+        /// <summary>Why the view is left where it is, or null when it takes part. A lock or pin reason wins over "Unticked".</summary>
+        private static string SkipReason(ViewportSnapshot vp, bool movePinned, IReadOnlySet<long> unticked)
+        {
+            if (vp.LockReason != null)
+                return vp.LockReason;
+            if (vp.IsPinned && !movePinned)
+                return "Pinned";
+            return unticked != null && unticked.Contains(vp.Key) ? UntickedReason : null;
+        }
+
+        /// <summary>
+        /// Every view in reading order (detail number, then view name); the ones that take part, in
+        /// that order; and the ones left where they are with the reason.
+        /// </summary>
+        private static (List<ViewportSnapshot> All, List<ViewportSnapshot> Participants, List<(ViewportSnapshot Viewport, string Why)> Skipped)
+            SplitParticipants(SheetSnapshot sheet, bool movePinned, IReadOnlySet<long> unticked)
+        {
+            var all = sheet.Viewports
                 .OrderBy(v => v.DetailNumber, DetailNumberComparer.Instance)
                 .ThenBy(v => v.ViewName, StringComparer.OrdinalIgnoreCase)
                 .ToList();
-            skipped = skipped
-                .OrderBy(s => s.Item1.DetailNumber, DetailNumberComparer.Instance)
+
+            var participants = all.Where(v => SkipReason(v, movePinned, unticked) == null).ToList();
+
+            // Skipped views keep the order they have always had (detail number only, ties in sheet
+            // order) so the warning text reads exactly as before.
+            var skipped = sheet.Viewports
+                .Select(v => (Viewport: v, Why: SkipReason(v, movePinned, unticked)))
+                .Where(s => s.Why != null)
+                .OrderBy(s => s.Viewport.DetailNumber, DetailNumberComparer.Instance)
                 .ToList();
-            return (participants, skipped);
+
+            return (all, participants, skipped);
         }
 
         private static List<string> CollectWarnings(
@@ -230,44 +250,69 @@ namespace Revit26_Plugin.SheetViewArrange.V001.Core.Services
                 : (null, "The margins leave no usable area inside the title block — reduce them.");
         }
 
-        /// <summary>Grid rows: participants in reading order (with their slot when laid out), then skipped views.</summary>
+        /// <summary>
+        /// Grid rows for every view, in reading order — so a view keeps its place in the list when
+        /// it is unticked. Arranged views carry their slot; skipped ones have no "#" or row.
+        /// </summary>
         private static List<ArrangeRow> BuildRows(
+            List<ViewportSnapshot> all,
             List<ViewportSnapshot> participants,
             List<PlannedMove> moves,
-            List<(ViewportSnapshot Viewport, string Why)> skipped)
+            List<(ViewportSnapshot Viewport, string Why)> skipped,
+            bool movePinned)
         {
-            var rows = new List<ArrangeRow>();
+            // Moves are in participant order; look both up by viewport (reference equality).
+            var arranged = new Dictionary<ViewportSnapshot, (int Order, PlannedMove Move)>();
             for (int i = 0; i < participants.Count; i++)
-            {
-                var vp = participants[i];
-                PlannedMove m = moves.Count > 0 ? moves[i] : null; // moves are in participant order
-                ArrangeStatus status = m == null || !m.Fits ? ArrangeStatus.DoesNotFit
-                                     : m.NeedsMove ? ArrangeStatus.Move
-                                     : ArrangeStatus.InPlace;
-                string note = m == null ? "No usable area"
-                            : !m.Fits ? "Outside the usable area"
-                            : !m.NeedsMove ? ""
-                            : vp.IsPinned ? "Stays pinned" : "";
-
-                rows.Add(NewRow(vp, i + 1, m == null ? null : m.Row + 1, status, note));
-            }
-
+                arranged[participants[i]] = (i + 1, moves.Count > 0 ? moves[i] : null);
+            var skipWhy = new Dictionary<ViewportSnapshot, string>();
             foreach (var (vp, why) in skipped)
-                rows.Add(NewRow(vp, null, null, ArrangeStatus.Skipped, why));
+                skipWhy[vp] = why;
+
+            var rows = new List<ArrangeRow>(all.Count);
+            for (int k = 0; k < all.Count; k++)
+            {
+                var vp = all[k];
+                bool canTick = CanTick(vp, movePinned);
+
+                if (arranged.TryGetValue(vp, out var a))
+                {
+                    var m = a.Move;
+                    ArrangeStatus status = m == null || !m.Fits ? ArrangeStatus.DoesNotFit
+                                         : m.NeedsMove ? ArrangeStatus.Move
+                                         : ArrangeStatus.InPlace;
+                    string note = m == null ? "No usable area"
+                                : !m.Fits ? "Outside the usable area"
+                                : !m.NeedsMove ? ""
+                                : vp.IsPinned ? "Stays pinned" : "";
+
+                    rows.Add(NewRow(vp, k, a.Order, m == null ? null : m.Row + 1, status, note, canTick, isTicked: true));
+                }
+                else
+                {
+                    rows.Add(NewRow(vp, k, null, null, ArrangeStatus.Skipped, skipWhy.TryGetValue(vp, out var why) ? why : "", canTick, isTicked: false));
+                }
+            }
 
             return rows;
         }
 
-        private static ArrangeRow NewRow(ViewportSnapshot vp, int? order, int? row, ArrangeStatus status, string note) => new()
+        private static ArrangeRow NewRow(
+            ViewportSnapshot vp, int readingKey, int? order, int? row, ArrangeStatus status, string note, bool canTick, bool isTicked) => new()
         {
+            ViewportKey = vp.Key,
+            ReadingKey = readingKey,
             Order = order,
             DetailNumber = vp.DetailNumber,
             ViewName = vp.ViewName,
             ViewTypeName = vp.ViewTypeName,
             SizeText = $"{vp.Footprint.Width * FeetToMm:F0} × {vp.Footprint.Height * FeetToMm:F0}",
+            SizeArea = vp.Footprint.Width * FeetToMm * vp.Footprint.Height * FeetToMm,
             Row = row,
             Status = status,
-            Note = note
+            Note = note,
+            CanTick = canTick,
+            IsTicked = isTicked
         };
     }
 }
