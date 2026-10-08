@@ -25,11 +25,32 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
     {
         private readonly UIApplication _uiApp;
         private readonly System.Action<LogEntry> _log;
+        private readonly System.Action<double, string> _progress;
+        private int _lastPercent = -1;
 
-        public DetailLineConversionService(UIApplication uiApp, System.Action<LogEntry> log)
+        /// <param name="uiApp">The running Revit application.</param>
+        /// <param name="log">Receives activity log entries.</param>
+        /// <param name="progress">Optional: receives (percent 0-100, status text) while converting.</param>
+        public DetailLineConversionService(UIApplication uiApp, System.Action<LogEntry> log,
+            System.Action<double, string> progress = null)
         {
             _uiApp = uiApp;
             _log = log;
+            _progress = progress;
+        }
+
+        /// <summary>Reports progress, skipping updates that don't change the whole percent.</summary>
+        private void Report(double percent, string text, bool force = false)
+        {
+            if (_progress == null)
+                return;
+
+            int whole = (int)System.Math.Clamp(percent, 0, 100);
+            if (!force && whole == _lastPercent)
+                return;
+
+            _lastPercent = whole;
+            _progress(whole, text);
         }
 
         public ConversionMetrics Execute(
@@ -62,13 +83,21 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
             var lineSet = new HashSet<string>(selectedLineLayers ?? System.Array.Empty<string>());
             var hatchSet = new HashSet<string>(selectedHatchLayers ?? System.Array.Empty<string>());
 
+            // The line pass owns the first part of the bar and the hatch pass the rest; a pass
+            // that has nothing selected gives its share to the other one.
+            double lineEnd = hatchSet.Count == 0 ? 100 : lineSet.Count == 0 ? 0 : 60;
+
+            Report(0, "Starting...", force: true);
+
             var preprocessorResult = TransactionHelper.Run(doc, "DWG to Detail Lines", () =>
             {
                 RunLinePass(cad, doc, activeView, spline, transformMethod, tol, lineSet,
-                    defaultLineStyleName, lineStyleMap, ref placed, ref skipped, ref failed);
+                    defaultLineStyleName, lineStyleMap, 0, lineEnd, ref placed, ref skipped, ref failed);
 
                 RunHatchPass(cad, doc, activeView, transformMethod, hatchSet,
-                    defaultFillPatternName, hatchTypeMap, ref placed, ref skipped, ref failed);
+                    defaultFillPatternName, hatchTypeMap, lineEnd, 100, ref placed, ref skipped, ref failed);
+
+                Report(100, "Committing changes...", force: true);
             });
 
             // Elements that were created (counted in `placed` above) but then
@@ -112,6 +141,8 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
             HashSet<string> lineSet,
             string defaultLineStyleName,
             IReadOnlyDictionary<string, string> lineStyleMap,
+            double pctFrom,
+            double pctTo,
             ref int placed,
             ref int skipped,
             ref int failed)
@@ -119,9 +150,12 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
             if (lineSet.Count == 0)
                 return;
 
+            Report(pctFrom, "Reading CAD lines...", force: true);
             var curves = CadGeometryExtractor.Extract(cad, doc, activeView, spline, transformMethod, _log, out int extractionSkipped);
             skipped += extractionSkipped;
-            var byLayer = curves.Where(c => lineSet.Contains(c.Layer)).GroupBy(c => c.Layer);
+            var byLayer = curves.Where(c => lineSet.Contains(c.Layer)).GroupBy(c => c.Layer).ToList();
+            int totalCurves = System.Math.Max(1, byLayer.Sum(g => g.Count()));
+            int doneCurves = 0;
 
             var resolver = new LineStyleResolutionService();
             var styleService = new DetailLineStyleService(doc, resolver);
@@ -142,6 +176,7 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
                 }
 
                 skipped += shortCount;
+                doneCurves += shortCount;
 
                 if (shortCount > 0)
                 {
@@ -155,6 +190,7 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
                 {
                     _log(new LogEntry(LogLevel.Warning, $"Layer '{layerGroup.Key}' skipped by user choice"));
                     skipped += usable.Count;
+                    doneCurves += usable.Count;
                     continue;
                 }
 
@@ -168,6 +204,10 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
                     // reject curves that pass that filter (e.g. arcs, post-transform
                     // geometry). Isolate per-curve so one bad curve doesn't abort the
                     // whole layer/transaction — log it as Failed and move on.
+                    doneCurves++;
+                    Report(pctFrom + (pctTo - pctFrom) * doneCurves / totalCurves,
+                        $"Lines: layer {layerGroup.Key} ({doneCurves}/{totalCurves})");
+
                     try
                     {
                         DetailCurve detailCurve = doc.Create.NewDetailCurve(activeView, c);
@@ -198,6 +238,8 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
             HashSet<string> hatchSet,
             string defaultFillPatternName,
             IReadOnlyDictionary<string, string> hatchTypeMap,
+            double pctFrom,
+            double pctTo,
             ref int placed,
             ref int skipped,
             ref int failed)
@@ -205,8 +247,11 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
             if (hatchSet.Count == 0)
                 return;
 
+            Report(pctFrom, "Reading CAD hatches...", force: true);
             var hatches = CadGeometryExtractor.ExtractHatches(cad, doc, activeView, transformMethod, _log);
-            var byLayer = hatches.Where(h => hatchSet.Contains(h.Layer)).GroupBy(h => h.Layer);
+            var byLayer = hatches.Where(h => hatchSet.Contains(h.Layer)).GroupBy(h => h.Layer).ToList();
+            int totalHatches = System.Math.Max(1, byLayer.Sum(g => g.Count()));
+            int doneHatches = 0;
 
             var resolver = new FillPatternResolutionService();
             var styleService = new DetailFillRegionStyleService(doc, resolver, defaultFillPatternName);
@@ -221,6 +266,7 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
                     int count = layerGroup.Count();
                     _log(new LogEntry(LogLevel.Warning, $"Hatch layer '{layerGroup.Key}' skipped by user choice"));
                     skipped += count;
+                    doneHatches += count;
                     continue;
                 }
 
@@ -232,6 +278,10 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
                     // A degenerate or self-intersecting boundary loop (rare, but
                     // possible from faceted DWG solids) throws inside NewFilledRegion.
                     // Isolate per-hatch so one bad boundary doesn't abort the layer.
+                    doneHatches++;
+                    Report(pctFrom + (pctTo - pctFrom) * doneHatches / totalHatches,
+                        $"Hatches: layer {layerGroup.Key} ({doneHatches}/{totalHatches})");
+
                     try
                     {
                         var loops = new List<CurveLoop> { h.Boundary };

@@ -370,9 +370,24 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.UI.ViewModels
             }
         }
 
+        /// <summary>
+        /// Updates the status-strip progress bar. Conversion runs on the UI thread inside the
+        /// Revit API event, so the dispatcher is pumped at render priority to repaint the bar.
+        /// </summary>
+        private void ReportProgress(double percent, string text)
+        {
+            Progress = percent;
+            SummaryText = text;
+
+            System.Windows.Application.Current?.Dispatcher.Invoke(
+                System.Windows.Threading.DispatcherPriority.Render, new Action(() => { }));
+        }
+
         private void Convert()
         {
             IsRunning = true;
+            Progress = 0;
+            SummaryText = "Starting...";
             ConvertCommand.NotifyCanExecuteChanged();
 
             var cad = SelectedCad.ImportInstance;
@@ -412,7 +427,7 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.UI.ViewModels
             {
                 try
                 {
-                    var service = new DetailLineConversionService(uiApp, e => LogEntries.Add(e));
+                    var service = new DetailLineConversionService(uiApp, e => LogEntries.Add(e), ReportProgress);
 
                     var updatedMetrics = service.Execute(
                         cad, spline, transform, entityCount, layerCount,
@@ -420,6 +435,8 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.UI.ViewModels
                         lineStyle, fillPattern, lineMap, hatchMap);
 
                     Metrics = updatedMetrics;
+                    Progress = 100;
+                    SummaryText = $"Done: {updatedMetrics.Placed} placed, {updatedMetrics.Skipped} skipped, {updatedMetrics.Failed} failed";
                 }
                 catch (Exception ex)
                 {

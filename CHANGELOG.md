@@ -22,6 +22,8 @@ Each release lists every tool whose version changed, under the plugin version.
 
   - The "missing line style / hatch type" prompt now also offers **Create all remaining** and
     **Skip all remaining**, so a DWG with many new layers needs one click, not one per layer.
+  - A real **progress bar** in the status strip while converting: percent, current layer and
+    element count (lines first, then hatches), and a "Done: N placed..." summary at the end.
 
 ### Changed
 - The **Detail Lines** pulldown in Project Tools is now **DWG To DL(P)**, and its items are labelled
