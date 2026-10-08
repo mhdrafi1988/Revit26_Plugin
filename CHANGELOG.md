@@ -9,6 +9,28 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [2.5.0] — 2026-10-08
+
+### Added
+- **DWG To DL(P) V014 (tool 14.0.0)** — new version of the DWG to detail lines tool, with a
+  line style / hatch mapping choice:
+  - **Single (global):** one global line style and one global hatch apply to every selected layer.
+  - **Multiple (per layer):** each layer row has its own line style (lines) or hatch type (hatches);
+    rows you don't touch follow the global values. "Apply global to all rows" resets them.
+  - The mode, the global picks and per-layer picks are remembered per CAD layer name
+    (`%AppData%\Revit26_Plugin\DwgToDlp\mapping.json`, versioned).
+
+### Changed
+- The **Detail Lines** pulldown in Project Tools is now **DWG To DL(P)**, and its items are labelled
+  "DWG To DL(P) V0xx". V014 is listed first; V013, V012 and V011 stay below it. User note: button
+  internal names are unchanged, so existing customisations keep working.
+- V014 runs through `ToolGuard`, so unexpected errors are logged to `%AppData%\Revit26_Plugin\Logs`.
+
+### Notes
+- The global and per-layer dropdowns start on **(Match layer name)**, which is exactly the V013
+  behaviour (use the style named after the layer, ask before creating a missing one), so V014
+  behaves like V013 until you choose something else.
+
 ## [2.4.0] — 2026-10-08
 
 ### Changed
