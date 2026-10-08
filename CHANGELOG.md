@@ -20,6 +20,9 @@ Each release lists every tool whose version changed, under the plugin version.
   - The mode, the global picks and per-layer picks are remembered per CAD layer name
     (`%AppData%\Revit26_Plugin\DwgToDlp\mapping.json`, versioned).
 
+  - The "missing line style / hatch type" prompt now also offers **Create all remaining** and
+    **Skip all remaining**, so a DWG with many new layers needs one click, not one per layer.
+
 ### Changed
 - The **Detail Lines** pulldown in Project Tools is now **DWG To DL(P)**, and its items are labelled
   "DWG To DL(P) V0xx". V014 is listed first; V013, V012 and V011 stay below it. User note: button

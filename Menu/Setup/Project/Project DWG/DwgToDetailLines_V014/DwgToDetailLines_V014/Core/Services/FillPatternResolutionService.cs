@@ -16,11 +16,19 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
     public class FillPatternResolutionService
     {
         private readonly Dictionary<string, MissingFillPatternDecision> _cache = new();
+        private MissingFillPatternDecision? _forAll;
 
+        /// <summary>
+        /// Returns the Create / Skip decision for a hatch layer, asking at most once per layer.
+        /// "Create all remaining" / "Skip all remaining" answer every further missing layer in the run.
+        /// </summary>
         public MissingFillPatternDecision Resolve(string layerName, string defaultPatternName)
         {
             if (_cache.TryGetValue(layerName, out var decision))
                 return decision;
+
+            if (_forAll.HasValue)
+                return _forAll.Value;
 
             TaskDialog dialog = new TaskDialog("Missing Fill Pattern")
             {
@@ -36,9 +44,22 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
                 TaskDialogCommandLinkId.CommandLink2,
                 "Skip this layer");
 
+            dialog.AddCommandLink(
+                TaskDialogCommandLinkId.CommandLink3,
+                "Create all remaining missing hatch types");
+
+            dialog.AddCommandLink(
+                TaskDialogCommandLinkId.CommandLink4,
+                "Skip all remaining missing hatch types");
+
             TaskDialogResult result = dialog.Show();
 
-            decision = result == TaskDialogResult.CommandLink1
+            if (result == TaskDialogResult.CommandLink3)
+                _forAll = MissingFillPatternDecision.Create;
+            else if (result == TaskDialogResult.CommandLink4)
+                _forAll = MissingFillPatternDecision.Skip;
+
+            decision = result is TaskDialogResult.CommandLink1 or TaskDialogResult.CommandLink3
                 ? MissingFillPatternDecision.Create
                 : MissingFillPatternDecision.Skip;
 
