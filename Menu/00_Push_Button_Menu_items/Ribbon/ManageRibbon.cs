@@ -7,7 +7,8 @@ namespace Revit26_Plugin.Menu.Ribbon
     public static class ManageRibbon
     {
         // Every Manage button is a pulldown: highest version number first,
-        // every older version below it in descending order.
+        // every older version below it in descending order. Each tool lists only
+        // its latest two versions.
         private const string Rebuilt = " with the standard three-zone window layout.";
 
         private static PushButtonData Btn(string assemblyPath, string name, string text, string commandClass,
@@ -71,24 +72,12 @@ namespace Revit26_Plugin.Menu.Ribbon
             var worksetRenamerFx05 = Btn(assemblyPath, "Btn_WorksetRenamer_FX05", "Workset Renamer (Excel) FX05", "Revit26_Plugin.WorksetRenamer.FX05.Command",
                 "SetupTools.WorksetRename_16.png", "Workset Renamer (Excel)", "FX05", "FX04 on the shared ToolWindowShell (capped group grids, shared group colours).");
 
-            // Schedule Export/Import — every working version in one dropdown: the current
-            // version (V005) first, its rebuild (V006) second, the ToolWindowShell version
-            // (V007) third, then the older versions. V001 is left out: its export can never
-            // complete (log-scroll bug fixed in V002); V002 was dropped when V007 was added.
+            // Schedule Export/Import — latest two versions: V007 (ToolWindowShell) first,
+            // then V006 (its three-zone-layout predecessor).
             var scheduleExportImportV006 = Btn(assemblyPath, "Btn_ScheduleExportImport_V006", "Schedule Export/Import V006", "Revit26_Plugin.ScheduleExportImport.V006.Commands.ScheduleExportImportCommand",
                 "Manage.ScheduleExportImport_16.png", "Schedule Export / Import", "V006", "V005" + Rebuilt);
             var scheduleExportImportV007 = Btn(assemblyPath, "Btn_ScheduleExportImport_V007", "Schedule Export/Import V007", "Revit26_Plugin.ScheduleExportImport.V007.Commands.ScheduleExportImportCommand",
                 "Manage.ScheduleExportImport_16.png", "Schedule Export / Import", "V007", "V006 on the shared ToolWindowShell (log in body, capped grids).");
-            var scheduleExportImportV005 = Btn(assemblyPath, "Btn_ScheduleExportImport_V005", "Schedule Export/Import V005", "Revit26_Plugin.ScheduleExportImport.V005.Commands.ScheduleExportImportCommand",
-                "Manage.ScheduleExportImport_16.png", "Schedule Export / Import", "V005",
-                "Flags values changed in Revit since export, checks element ownership, compares numbers by value, Excel dropdowns, type-parameter edits, hidden fields, remembers the folder.");
-            var scheduleExportImportV004 = Btn(assemblyPath, "Btn_ScheduleExportImport_V004", "Schedule Export/Import V004", "Revit26_Plugin.ScheduleExportImport.V004.Commands.ScheduleExportImportCommand",
-                "Manage.ScheduleExportImport_16.png", "Schedule Export / Import", "V004",
-                "Export / Import buttons in a row under the metric cards; schedule list full width. Everything from V003.");
-            var scheduleExportImportV003 = Btn(assemblyPath, "Btn_ScheduleExportImport_V003", "Schedule Export/Import V003", "Revit26_Plugin.ScheduleExportImport.V003.Commands.ScheduleExportImportCommand",
-                "Manage.ScheduleExportImport_16.png", "Schedule Export / Import", "V003",
-                "Errors always shown, import picks the schedule from the file, explains 'nothing to import', Base Level by name.");
-
             var manageItems = RibbonLayoutHelper.AddStackedButtons(panel, new List<RibbonItemData>
             {
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_AnnotationOverlapDetection", "Overlaps", overlapV004),
@@ -111,8 +100,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_DeleteWorkset", deleteWorksetV001);
             RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_DeleteLineStyles", deleteLineStylesV001);
             RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_BulkRename", bulkRenameV001);
-            RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_ScheduleExportImport",
-                scheduleExportImportV007, scheduleExportImportV006, scheduleExportImportV005, scheduleExportImportV004, scheduleExportImportV003);
+            RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_ScheduleExportImport", scheduleExportImportV007, scheduleExportImportV006);
         }
     }
 }

@@ -7,7 +7,8 @@ namespace Revit26_Plugin.Menu.Ribbon
     public static class RoofToolsRibbon
     {
         // Every roof tool is a pulldown: highest version number first,
-        // every older version below it in descending order.
+        // every older version below it in descending order. Each tool lists only
+        // its latest two versions.
         private const string Icons = "Revit26_Plugin.Resources.Icons.RoofTools.";
 
         private static PushButtonData Btn(string assemblyPath, string name, string text, string commandClass,
@@ -46,8 +47,6 @@ namespace Revit26_Plugin.Menu.Ribbon
                 "by_point_16.png", "Auto Slope By Point (Multi Copies)", "MultiCopies30", "MultiCopies29 on the shared ToolWindowShell (log in body).");
             var byPointPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_AutoSlopeByPoint", "By Point", byPointV030);
 
-            var byDrainV007 = Btn(assemblyPath, "Btn_AutoSlopeByDrain_V007", "By Drain V007", "Revit26_Plugin.AutoSlopeByDrain.V007.Commands.AutoSlopeByDrain",
-                "by_drain_16.png", "Auto Slope By Drain", "V007");
             var byDrainV011 = Btn(assemblyPath, "Btn_AutoSlopeByDrain_V011", "By Drain V011", "Revit26_Plugin.MultiRoofSlopeByDrain.V011.Commands.AutoSlopeByDrain",
                 "AutoSlopeByDrain_MultiRoof_16.png", "Auto Slope By Drain (Multi-Roof)", "V011", "V010 with the standard three-zone window layout.");
             var byDrainV012 = Btn(assemblyPath, "Btn_AutoSlopeByDrain_V012", "By Drain V012", "Revit26_Plugin.MultiRoofSlopeByDrain.V012.Commands.AutoSlopeByDrain",
@@ -56,7 +55,7 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             var slopeItems = RibbonLayoutHelper.AddStackedButtons(slopePanel, new List<RibbonItemData> { byPointPulldownData, byDrainPulldownData });
             RibbonLayoutHelper.WirePulldownButton(slopeItems, "Pulldown_AutoSlopeByPoint", byPointV030, byPointV029, byPointRidgeV003, byPointRidgeV002, byPointMultiCopies30, byPointMultiCopies29);
-            RibbonLayoutHelper.WirePulldownButton(slopeItems, "Pulldown_AutoSlopeByDrain", byDrainV012, byDrainV011, byDrainV007);
+            RibbonLayoutHelper.WirePulldownButton(slopeItems, "Pulldown_AutoSlopeByDrain", byDrainV012, byDrainV011);
 
             // Shape Points — one pulldown per tool (current version, then its rebuild)
             RibbonPanel shapePointsPanel = app.CreateRibbonPanel(tabName, "Shape Points");
@@ -179,8 +178,6 @@ namespace Revit26_Plugin.Menu.Ribbon
             var comparisonV003 = Btn(assemblyPath, "Btn_RoofPointComparison_V003", "Comparison V003", "Revit26_Plugin.RoofPointComparison.V003.Commands.RoofComparisonCommand",
                 "PointComparison_16.png", "Roof Point Comparison", "V003", "V002 on the shared ToolWindowShell (log in body).");
 
-            var elevationSyncV003 = Btn(assemblyPath, "Btn_RoofPointElevationSync_V003", "Elevation Sync V003", "Revit26_Plugin.RoofPointElevationSync.V003.Command",
-                "ElevationSync_16.png", "Roof Point Elevation Sync", "V003");
             var elevationSyncV004 = Btn(assemblyPath, "Btn_RoofPointElevationSync_V004", "Elevation Sync V004", "Revit26_Plugin.RoofPointElevationSync.V004.Command",
                 "ElevationSync_16.png", "Roof Point Elevation Sync", "V004", "V003 with the standard three-zone window layout.");
             var elevationSyncV005 = Btn(assemblyPath, "Btn_RoofPointElevationSync_V005", "Elevation Sync V005", "Revit26_Plugin.RoofPointElevationSync.V005.Command",
@@ -193,7 +190,7 @@ namespace Revit26_Plugin.Menu.Ribbon
                 elevationSyncPulldownData,
             });
             RibbonLayoutHelper.WirePulldownButton(compareItems, "Pulldown_RoofPointComparison", comparisonV003, comparisonV002);
-            RibbonLayoutHelper.WirePulldownButton(compareItems, "Pulldown_RoofPointElevationSync", elevationSyncV005, elevationSyncV004, elevationSyncV003);
+            RibbonLayoutHelper.WirePulldownButton(compareItems, "Pulldown_RoofPointElevationSync", elevationSyncV005, elevationSyncV004);
         }
     }
 }

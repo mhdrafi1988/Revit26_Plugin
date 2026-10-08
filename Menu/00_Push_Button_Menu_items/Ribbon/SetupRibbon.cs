@@ -53,18 +53,8 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             RibbonPanel projectPanel = app.CreateRibbonPanel(tabName, "Project Tools");
 
-            // Two coexisting implementations of the same tool, collected under
-            // one pulldown button — each version is a push button inside the dropdown.
-            var dwgLinesV011 = new PushButtonData("Btn_DwgToDetailLines_V011", "DWG To DL(P) V011", assemblyPath, "Revit26_Plugin.DwgToDetailLines.V011.Commands.DwgToDetailLinesCommand")
-            {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToDetailLines_V011_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("DWG To Detail Lines", "V011")
-            };
-            var dwgLinesV012 = new PushButtonData("Btn_DwgToDetailLines_V012", "DWG To DL(P) V012", assemblyPath, "Revit26_Plugin.DwgToDetailLines.V012.Commands.DwgToDetailLinesCommand")
-            {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToDetailLines_V011_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("DWG To Detail Lines", "V012", "UI Standard layout: metrics on top, full-height layer grid, always-visible footer log, Convert DWG → Close.")
-            };
+            // Latest two versions of the tool, collected under one pulldown
+            // button — each version is a push button inside the dropdown.
             var dwgLinesV013 = new PushButtonData("Btn_DwgToDetailLines_V013", "DWG To DL(P) V013", assemblyPath, "Revit26_Plugin.DwgToDetailLines.V013.Commands.DwgToDetailLinesCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToDetailLines_V011_16.png"),
@@ -89,7 +79,7 @@ namespace Revit26_Plugin.Menu.Ribbon
                 dwgLinesPulldownData,
                 exportDwgPulldownData,
             });
-            RibbonLayoutHelper.WirePulldownButton(projectItems, "Pulldown_DwgToDetailLines", dwgLinesV014, dwgLinesV013, dwgLinesV012, dwgLinesV011);
+            RibbonLayoutHelper.WirePulldownButton(projectItems, "Pulldown_DwgToDetailLines", dwgLinesV014, dwgLinesV013);
             RibbonLayoutHelper.WirePulldownButton(projectItems, "Pulldown_ExportDwgToFolder", exportDwgV001);
         }
     }
