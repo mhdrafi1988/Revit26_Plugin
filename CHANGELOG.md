@@ -35,6 +35,13 @@ is in. These six buttons changed panel, so re-assign any shortcut or QAT entry y
 Floor From Rooms, Rearrange, Arrange Views, From Links, Closed Loop, Line Dims (was Dimensions →
 Detail Lines). All other buttons keep their shortcuts. On a narrow screen or with Windows display
 scaling above 100 %, Revit may still hide some names.
+## [2.3.4] — 2026-10-08
+
+### Fixed
+- **Delete Line Styles v1.0.2 (V001)** — every run failed with "Category is unexpectedly NULL"
+  and rolled back, so no line style was ever deleted. The tool read a line style's name after
+  deleting it; it now reads everything it needs first and looks each style up fresh. No other
+  behaviour change.
 
 ## [2.3.3] — 2026-10-08
 
