@@ -1,6 +1,7 @@
 using Revit26_Plugin.SheetViewArrange.V001.Core.Models;
 using Revit26_Plugin.Shared.Models;
 using System;
+using System.Collections.Generic;
 
 namespace Revit26_Plugin.SheetViewArrange.V001.Infrastructure
 {
@@ -32,8 +33,10 @@ namespace Revit26_Plugin.SheetViewArrange.V001.Infrastructure
         /// <summary>
         /// Re-reads the sheet, re-plans with <paramref name="settings"/> and moves the views — but
         /// only when the fresh plan still has <paramref name="previewSignature"/>, i.e. matches
-        /// what the user saw. Returns false when Revit did not accept the request.
+        /// what the user saw. <paramref name="unticked"/> lists the viewport keys
+        /// (<see cref="ViewportSnapshot.Key"/>) the user left out; they are not moved. Returns false
+        /// when Revit did not accept the request.
         /// </summary>
-        bool Apply(SheetViewArrangeSettings settings, string previewSignature, Action<SessionResult> done);
+        bool Apply(SheetViewArrangeSettings settings, IReadOnlySet<long> unticked, string previewSignature, Action<SessionResult> done);
     }
 }

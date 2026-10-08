@@ -1,18 +1,25 @@
 using Revit26_Plugin.SheetViewArrange.V001.Core.Layout;
+using Revit26_Plugin.SheetViewArrange.V001.Core.Models;
 using Revit26_Plugin.SheetViewArrange.V001.UI.ViewModels;
 using Revit26_Plugin.Shared.Services;
 using System;
+using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace Revit26_Plugin.SheetViewArrange.V001.UI.Views
 {
     /// <summary>
     /// Sheet View Arrange window. Draws the to-scale preview of <see cref="SheetViewArrangeViewModel.Plan"/>
-    /// on a canvas; everything else is bound.
+    /// on a canvas and wires the Views grid's sort headers, Space-to-tick and group headers;
+    /// everything else is bound.
     /// </summary>
     public partial class SheetViewArrangeWindow : Window
     {
@@ -27,6 +34,7 @@ namespace Revit26_Plugin.SheetViewArrange.V001.UI.Views
         private static readonly Brush SkipFill = CreateHatch();
 
         private readonly SheetViewArrangeViewModel _viewModel;
+        private double? _savedScrollOffset;
 
         /// <summary>Creates the window for <paramref name="viewModel"/>.</summary>
         public SheetViewArrangeWindow(SheetViewArrangeViewModel viewModel)
@@ -37,14 +45,21 @@ namespace Revit26_Plugin.SheetViewArrange.V001.UI.Views
             Title = ToolCatalog.SheetViewArrange.Title;
 
             _viewModel.PlanChanged += OnPlanChanged;
+            _viewModel.ViewRefreshing += OnViewRefreshing;
+            _viewModel.ViewRefreshed += OnViewRefreshed;
+            _viewModel.SortChanged += OnSortChanged;
             PreviewKeyDown += OnPreviewKeyDown;
             Closing += (_, _) => _viewModel.SaveSettings();
             Closed += (_, _) =>
             {
                 _viewModel.PlanChanged -= OnPlanChanged;
+                _viewModel.ViewRefreshing -= OnViewRefreshing;
+                _viewModel.ViewRefreshed -= OnViewRefreshed;
+                _viewModel.SortChanged -= OnSortChanged;
                 _viewModel.Dispose();
             };
             Loaded += (_, _) => DrawPreview();
+            SyncGroupStyle();
         }
 
         /// <summary>Esc closes; Enter in a number box commits it (boxes otherwise update on focus loss).</summary>
@@ -175,6 +190,124 @@ namespace Revit26_Plugin.SheetViewArrange.V001.UI.Views
             };
             brush.Freeze();
             return brush;
+        }
+
+        // ── Views grid ──────────────────────────────────────────────────────
+
+        /// <summary>Header click: the view model keeps the sort (Shift adds a second key); the grid's own sort is cancelled.</summary>
+        private void ViewsGrid_Sorting(object sender, DataGridSortingEventArgs e)
+        {
+            e.Handled = true;
+            if (Enum.TryParse<ArrangeSortColumn>(e.Column.SortMemberPath, out var column))
+                _viewModel.ToggleSort(column, Keyboard.Modifiers.HasFlag(ModifierKeys.Shift));
+        }
+
+        /// <summary>Shows the arrow on each sorted column header.</summary>
+        private void OnSortChanged(object sender, EventArgs e)
+        {
+            foreach (var column in ViewsGrid.Columns)
+                column.SortDirection = null;
+
+            foreach (var key in _viewModel.SortKeys)
+            {
+                var column = ViewsGrid.Columns.FirstOrDefault(c => c.SortMemberPath == key.Column.ToString());
+                if (column != null)
+                    column.SortDirection = key.Descending ? ListSortDirection.Descending : ListSortDirection.Ascending;
+            }
+        }
+
+        /// <summary>Space ticks / unticks the selected rows (unless a tick box itself has the focus and handles Space).</summary>
+        private void ViewsGrid_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Space || Keyboard.Modifiers != ModifierKeys.None || e.OriginalSource is CheckBox)
+                return;
+
+            _viewModel.ToggleSelected(ViewsGrid.SelectedItems.OfType<GridRowViewModel>());
+            e.Handled = true;
+        }
+
+        /// <summary>Remembers the grid's scroll position before the view is rebuilt …</summary>
+        private void OnViewRefreshing(object sender, EventArgs e)
+        {
+            _savedScrollOffset = FindDescendant<ScrollViewer>(ViewsGrid)?.VerticalOffset;
+            SyncGroupStyle();
+        }
+
+        /// <summary>
+        /// Gives the grid its group template only while grouping is on. (A GroupStyle that is present
+        /// while nothing is grouped makes WPF build the grid's rows before they are attached to it,
+        /// which logs binding warnings; the original ungrouped grid never had one.)
+        /// </summary>
+        private void SyncGroupStyle()
+        {
+            bool grouped = _viewModel.GroupBy != ArrangeGroupBy.None;
+            if (!grouped && ViewsGrid.GroupStyle.Count > 0)
+                ViewsGrid.GroupStyle.Clear();
+            else if (grouped && ViewsGrid.GroupStyle.Count == 0)
+                ViewsGrid.GroupStyle.Add((GroupStyle)FindResource("ViewsGroupStyle"));
+        }
+
+        /// <summary>… and puts it back once the rebuilt rows exist, so ticking never throws the user back to the top.</summary>
+        private void OnViewRefreshed(object sender, EventArgs e)
+        {
+            if (_savedScrollOffset is not double offset)
+                return;
+            _savedScrollOffset = null;
+            Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(()
+                => FindDescendant<ScrollViewer>(ViewsGrid)?.ScrollToVerticalOffset(offset)));
+        }
+
+        /// <summary>Header tick box: ticks / unticks every shown view, then re-reads its own state (it flips itself on click).</summary>
+        private void MasterTick_Click(object sender, RoutedEventArgs e)
+        {
+            _viewModel.ToggleShownCommand.Execute(null);
+            (sender as CheckBox)?.GetBindingExpression(ToggleButton.IsCheckedProperty)?.UpdateTarget();
+        }
+
+        /// <summary>Group header tick box: ticks / unticks the group's views, then re-reads its own state.</summary>
+        private void GroupCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not CheckBox box)
+                return;
+            if (box.DataContext is CollectionViewGroup group)
+                _viewModel.ToggleGroupCommand.Execute(group);
+            BindingOperations.GetMultiBindingExpression(box, ToggleButton.IsCheckedProperty)?.UpdateTarget();
+        }
+
+        /// <summary>A new group header: collapse it if the user collapsed this group before.</summary>
+        private void GroupToggle_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is ToggleButton toggle && toggle.DataContext is CollectionViewGroup group)
+                toggle.IsChecked = !_viewModel.IsGroupCollapsed(group.Name?.ToString());
+        }
+
+        /// <summary>The user collapsed or expanded a group: remember it so a rebuild keeps it.</summary>
+        private void GroupToggle_Changed(object sender, RoutedEventArgs e)
+        {
+            if (sender is ToggleButton toggle && toggle.IsLoaded && toggle.DataContext is CollectionViewGroup group)
+                _viewModel.SetGroupCollapsed(group.Name?.ToString(), toggle.IsChecked != true);
+        }
+
+        private void TypeFilterButton_Click(object sender, RoutedEventArgs e) => TypeFilterPopup.IsOpen = true;
+
+        private void StatusFilterButton_Click(object sender, RoutedEventArgs e) => StatusFilterPopup.IsOpen = true;
+
+        private void RowFilterButton_Click(object sender, RoutedEventArgs e) => RowFilterPopup.IsOpen = true;
+
+        private static T FindDescendant<T>(DependencyObject root) where T : DependencyObject
+        {
+            if (root == null)
+                return null;
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(root); i++)
+            {
+                var child = VisualTreeHelper.GetChild(root, i);
+                if (child is T match)
+                    return match;
+                var deeper = FindDescendant<T>(child);
+                if (deeper != null)
+                    return deeper;
+            }
+            return null;
         }
 
         private void CopySelectedLogs_Click(object sender, RoutedEventArgs e)

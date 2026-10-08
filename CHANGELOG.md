@@ -9,6 +9,39 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [3.2.0] — 2026-10-08
+
+### Added
+- **Sheet View Arrange v1.1.0 (V001)** — the "Views in Reading Order" grid is now an advanced grid:
+  - **Tick / untick** — every view has a tick box. An unticked view is left out: it stays exactly
+    where it is in Revit (grey-hatched in the preview), and the other views are laid out without it.
+    Header tick, **Tick all / Untick all / Invert**, a tick box on every group header, and the Space
+    bar for the selected rows. Everything starts ticked, so nothing changes until you untick a view.
+    Views that are left alone anyway (owned by another user, or pinned while "Move pinned views" is
+    off) show a disabled tick and are skipped by the bulk actions.
+  - **Filter** — a search box (detail number, view name or view type; several words must all match),
+    **Type / Status / Row** pop-ups with counts, a **Show: All / Ticked only / Unticked only** list,
+    removable filter tags and "Clear filters". Bulk tick actions act on the *shown* rows only.
+  - **Sort** — click a column header (ascending, descending, back to reading order); Shift+click adds
+    a second sort. Empty cells ("–") always sort last.
+  - **Group by** None / View type / Status / Layout row, with collapsible groups, "Collapse all /
+    Expand all" and a "N view(s) · M ticked" summary on each header.
+  - The Skipped counter now reads "pinned / owned / unticked", and the status line and warning list
+    mention unticked views ("… stay where they are (Unticked) …").
+
+### Changed
+- **Sheet View Arrange** — the grid lists every view in reading (detail-number) order, so a view that
+  is skipped or unticked keeps its place in the list instead of moving to the bottom; its "#" and
+  "Row" show "–".
+- **Sheet View Arrange** — the settings file gains a `GroupBy` field (format version 2). Version-1
+  files load unchanged and default to no grouping.
+
+**User note:** filtering, sorting and grouping only change what the list shows. A ticked view hidden
+by a filter is still arranged (a blue banner under the grid says how many), and the layout order
+always stays by detail number. Ticks are remembered across Refresh and Apply but not after the window
+is closed; only the "Group by" choice is saved. With nothing unticked the tool behaves exactly as
+v1.0.0 (verified against the previous planner on random sheets).
+
 ## [3.1.0] — 2026-10-08
 
 ### Added

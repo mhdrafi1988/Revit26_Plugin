@@ -13,6 +13,9 @@ namespace Revit26_Plugin.SheetViewArrange.V001.Core.Models
         /// <summary>The viewport element.</summary>
         public ElementId ViewportId { get; init; }
 
+        /// <summary>The viewport's element id value — identifies it across refreshes (0 when there is no id).</summary>
+        public long Key => ViewportId?.Value ?? 0;
+
         /// <summary>Name of the view shown in the viewport.</summary>
         public string ViewName { get; init; }
 
