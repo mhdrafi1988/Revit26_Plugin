@@ -19,8 +19,13 @@ done until it builds with 0 errors. Running it still needs Revit on Windows.
   The ribbon tooltip, window title and error dialogs read from it. A new tool gets a new entry there.
 - **Plugin version** is `<Version>` in `Revit26_Plugin.csproj`.
 - **Ribbon** files are in `Menu/00_Push_Button_Menu_items/Ribbon`. One button runs one tool; use a
-  dropdown only to group different tools. Labels show the tool name; tooltips use
-  `ToolCatalog.<Tool>.Tip(...)`.
+  dropdown only to group different tools. Labels show the tool name, never a version number.
+  Tooltips use `ToolCatalog.<Tool>.Tip(...)`.
+- **Dropdown version order:** when a pulldown lists coexisting versions of the same tool (via
+  `RibbonLayoutHelper.CreatePulldownButtonData` / `WirePulldownButton`), order them highest version
+  number first, every older version below it in descending order — never "current version first".
+  The highest version is also the one that supplies the pulldown button's own icon (the `primary`
+  argument to `CreatePulldownButtonData`).
 - **Entry points:** every `IExternalCommand.Execute` and `IExternalEventHandler.Execute` delegates to
   `ToolGuard.RunCommand` / `ToolGuard.RunHandler` (see any existing command). New ones must too.
 

@@ -82,11 +82,14 @@ namespace Revit26_Plugin.Menu.Ribbon
         /// Builds the placeholder PulldownButtonData for 1+ coexisting versions
         /// of the same tool, collected under one dropdown button — no version
         /// runs by default on a bare click, the list always shows on click.
-        /// <paramref name="primary"/> (the newest version) supplies the button's
-        /// own icon. Insert the returned data into the list passed to
-        /// <see cref="AddStackedButtons"/>, then call <see cref="WirePulldownButton"/>
-        /// afterward with the same name and every version (primary first) to
-        /// finish populating the dropdown and its version-list tooltip.
+        /// The button face never shows a version number, only the tool name
+        /// passed in <paramref name="text"/>.
+        /// <paramref name="primary"/> — always the highest version number —
+        /// supplies the button's own icon. Insert the returned data into the
+        /// list passed to <see cref="AddStackedButtons"/>, then call
+        /// <see cref="WirePulldownButton"/> afterward with the same name and
+        /// every version, highest version first, to finish populating the
+        /// dropdown and its version-list tooltip.
         /// </summary>
         public static PulldownButtonData CreatePulldownButtonData(string name, string text, PushButtonData primary)
         {
@@ -102,9 +105,11 @@ namespace Revit26_Plugin.Menu.Ribbon
         /// <summary>
         /// Finishes wiring a PulldownButton created via <see cref="AddStackedButtons"/>:
         /// finds it among the returned items by name and adds every version to
-        /// its dropdown list, in the given order (newest/primary first). Only
-        /// the first (primary) version should carry an icon on its PushButtonData
-        /// — the rest carry their own icons and text in the dropdown.
+        /// its dropdown list, in the given order. Rule: list the highest
+        /// version number first, then each older version in descending order —
+        /// never the other way round, regardless of which version is "current".
+        /// The first (primary/highest) version should carry an icon on its
+        /// PushButtonData — the rest carry their own icons and text in the dropdown.
         /// The pulldown's own tooltip is then set to list every version wired in
         /// (see <see cref="Shared.Services.ToolInfo.Tip"/> — each entry is the
         /// button's tooltip title), so it can never disagree with the dropdown contents.

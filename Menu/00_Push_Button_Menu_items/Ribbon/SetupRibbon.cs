@@ -13,11 +13,11 @@ namespace Revit26_Plugin.Menu.Ribbon
             // fails the context check, so the panel title now makes that clear.
             RibbonPanel familyPanel = app.CreateRibbonPanel(tabName, "Family Tools");
 
-            // Every tool is a pulldown: previous version first, the UI Standard
-            // version second.
+            // Every tool is a pulldown: highest version number first, every
+            // older version below it in descending order.
             // Batch Link DWG's original build has no version number anywhere in
             // its source (folder "BatchDwgFamilyLinker_WOrking"), so the tip says
-            // so rather than inventing one; the UI Standard rebuild is V002.
+            // so rather than inventing one; V002 is the newer, higher version.
             var batchLinkWorking = new PushButtonData("BatchLinkDwgCommand", "Batch Link DWG (Working)", assemblyPath, "BatchDwgFamilyLinker.Command.BatchLinkDwgCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.Linker_16.png"),
@@ -28,7 +28,7 @@ namespace Revit26_Plugin.Menu.Ribbon
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.Linker_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Batch Link DWG Family", "V002", "UI Standard layout: navy theme, metrics card, footer progress + live log with Copy All / Copy Selected, Start Batch → Close.")
             };
-            var batchLinkPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_BatchLinkDwg", "Batch Link DWG", batchLinkWorking);
+            var batchLinkPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_BatchLinkDwg", "Batch Link DWG", batchLinkV002);
 
             var dwgToLinesV006 = new PushButtonData("Btn_DwgToLines_V006", "DWG To Lines V006", assemblyPath, "Revit26_Plugin.DwgToLines.V006.Commands.DwgToLinesCommand")
             {
@@ -40,15 +40,15 @@ namespace Revit26_Plugin.Menu.Ribbon
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToLines_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("DWG To Lines", "V007", "V006 on the shared ToolWindowShell (log in body).")
             };
-            var dwgToLinesPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DwgToLines", "DWG To Lines", dwgToLinesV006);
+            var dwgToLinesPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DwgToLines", "DWG To Lines", dwgToLinesV007);
 
             var familyItems = RibbonLayoutHelper.AddStackedButtons(familyPanel, new List<RibbonItemData>
             {
                 batchLinkPulldownData,
                 dwgToLinesPulldownData,
             });
-            RibbonLayoutHelper.WirePulldownButton(familyItems, "Pulldown_BatchLinkDwg", batchLinkWorking, batchLinkV002);
-            RibbonLayoutHelper.WirePulldownButton(familyItems, "Pulldown_DwgToLines", dwgToLinesV006, dwgToLinesV007);
+            RibbonLayoutHelper.WirePulldownButton(familyItems, "Pulldown_BatchLinkDwg", batchLinkV002, batchLinkWorking);
+            RibbonLayoutHelper.WirePulldownButton(familyItems, "Pulldown_DwgToLines", dwgToLinesV007, dwgToLinesV006);
 
             RibbonPanel projectPanel = app.CreateRibbonPanel(tabName, "Project Tools");
 
@@ -69,7 +69,7 @@ namespace Revit26_Plugin.Menu.Ribbon
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToDetailLines_V011_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("DWG To Detail Lines", "V013", "V012 on the shared ToolWindowShell (log in body, capped grid).")
             };
-            var dwgLinesPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DwgToDetailLines", "Detail Lines", dwgLinesV011);
+            var dwgLinesPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DwgToDetailLines", "Detail Lines", dwgLinesV013);
 
             var exportDwgV001 = new PushButtonData("Btn_ExportDwgToFolder_V001", "Export DWG V001", assemblyPath, "Revit26_Plugin.ExportDwgToFolder.V001.Commands.ExportDwgToFolderCommand")
             {
@@ -83,7 +83,7 @@ namespace Revit26_Plugin.Menu.Ribbon
                 dwgLinesPulldownData,
                 exportDwgPulldownData,
             });
-            RibbonLayoutHelper.WirePulldownButton(projectItems, "Pulldown_DwgToDetailLines", dwgLinesV011, dwgLinesV012, dwgLinesV013);
+            RibbonLayoutHelper.WirePulldownButton(projectItems, "Pulldown_DwgToDetailLines", dwgLinesV013, dwgLinesV012, dwgLinesV011);
             RibbonLayoutHelper.WirePulldownButton(projectItems, "Pulldown_ExportDwgToFolder", exportDwgV001);
         }
     }
