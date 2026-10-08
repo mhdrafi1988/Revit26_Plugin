@@ -74,17 +74,39 @@ namespace Revit26_Plugin.DeleteWorkset.V001.Core.Services
         /// Checks out the given worksets from central so they can be deleted. Must be called
         /// outside any transaction. Returns the ids of the worksets now owned by the current user;
         /// each workset that could not be checked out is logged.
+        /// If central cannot be reached (server offline, unmapped drive, detached copy), falls back
+        /// to the worksets that are already editable in this model instead of failing the run.
         /// </summary>
         public HashSet<int> CheckoutWorksets(Document doc, IReadOnlyList<WorksetRow> rows)
         {
             var ids = rows.Select(r => r.WorksetId).ToList();
-            var owned = WorksharingUtils.CheckoutWorksets(doc, ids)
-                .Select(id => id.IntegerValue)
-                .ToHashSet();
+            HashSet<int> owned;
+            bool centralUnreachable = false;
 
-            foreach (var row in rows.Where(r => !owned.Contains(r.WorksetId.IntegerValue)))
+            try
+            {
+                owned = WorksharingUtils.CheckoutWorksets(doc, ids)
+                    .Select(id => id.IntegerValue)
+                    .ToHashSet();
+            }
+            catch (Autodesk.Revit.Exceptions.CentralModelException ex)
+            {
+                centralUnreachable = true;
                 _log(new LogEntry(LogLevel.Warning,
-                    $"Skipped workset '{row.Name}': it could not be checked out (owned by another user?)."));
+                    $"Central model unreachable — only worksets you already own can be deleted. ({ex.Message})"));
+
+                var table = doc.GetWorksetTable();
+                owned = rows
+                    .Where(r => table.GetWorkset(r.WorksetId)?.IsEditable == true)
+                    .Select(r => r.WorksetId.IntegerValue)
+                    .ToHashSet();
+            }
+
+            string reason = centralUnreachable
+                ? "you do not own it and central is unreachable. Reconnect, Synchronize with Central, then run again"
+                : "it could not be checked out (owned by another user?)";
+            foreach (var row in rows.Where(r => !owned.Contains(r.WorksetId.IntegerValue)))
+                _log(new LogEntry(LogLevel.Warning, $"Skipped workset '{row.Name}': {reason}."));
 
             return owned;
         }
