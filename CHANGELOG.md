@@ -9,6 +9,12 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [2.3.1] — 2026-10-08
+
+### Changed
+- **Delete Line Styles v1.0.1 (V001)** — has its own ribbon icon (line styles with a red delete
+  badge) instead of the Detail Lines icon. No behaviour change.
+
 ## [2.3.0] — 2026-10-07
 
 ### Added
