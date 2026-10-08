@@ -85,15 +85,15 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             var manageItems = RibbonLayoutHelper.AddStackedButtons(panel, new List<RibbonItemData>
             {
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_AnnotationOverlapDetection", "Overlap Detection", overlapV004),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_AnnotationOverlapDetection", "Overlaps", overlapV004),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_ParaManager", "ParaManager", paraManagerV005),
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_WorksetsElementsBrowser", "Worksets & Elements", wsebV004),
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_WorksetManager", "Workset Manager", worksetManagerV014),
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_WorksetRenamer", "Workset Renamer", worksetRenamerV005),
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_WorksetRenamerFx", "Workset Renamer (Excel)", worksetRenamerFx05),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_WorksetsElementsBrowser", "WS Browser", wsebV004),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_WorksetManager", "WS Manager", worksetManagerV014),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_WorksetRenamer", "WS Renamer", worksetRenamerV005),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_WorksetRenamerFx", "WS Renamer XL", worksetRenamerFx05),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DeleteWorkset", "Delete Workset", deleteWorksetV001),
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DeleteLineStyles", "Delete Line Styles", deleteLineStylesV001),
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_ScheduleExportImport", "Schedule Export/Import", scheduleExportImportV007),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DeleteLineStyles", "Del. Line Styles", deleteLineStylesV001),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_ScheduleExportImport", "Schedule I/O", scheduleExportImportV007),
             });
             RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_AnnotationOverlapDetection", overlapV004, overlapV003);
             RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_ParaManager", paraManagerV005, paraManagerV004);

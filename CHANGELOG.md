@@ -9,6 +9,33 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [2.4.0] — 2026-10-08
+
+### Changed
+- **Ribbon: 17 panels → 13, every button shows its name.** Revit hides button names (and then
+  whole panels) when the tab is wider than the window, starting from the right, which left the
+  Manage panel icon-only. The tab is now narrower:
+  - **Floor Tools** → merged into **Roof Tools** (as "Floor From Rooms").
+  - **Sheet Place** → merged into **Sheet Create** (Rearrange, Arrange Views).
+  - **Detail Line Create**, **Detail Line Process** and **Dimensions** → one new **Detail Lines**
+    panel (From Links, Closed Loop, Line Dims).
+  - View Create and View Place no longer end in a large single button: 4 tools stack as 2 + 2
+    (`RibbonLayoutHelper.AddStackedButtons`: 4 → 2+2, 5 → 3+2, 7 → 3+2+2).
+  - Shorter labels: Combined Roof Tools → Combined Tools, Roof Type Manager → Roof Types,
+    Roof From Detail Lines → Roof From Lines, Sections From Lines → From Lines, Section Around
+    Edges → Around Edges, Roof View Focus → Roof Focus, Section Head Placer → Head Placer,
+    Section View Tagger → View Tagger, Auto Section Placer → Section Placer, Detail Line Closed
+    Loop → Closed Loop, Overlap Detection → Overlaps, Worksets & Elements → WS Browser,
+    Workset Manager → WS Manager, Workset Renamer → WS Renamer, Workset Renamer (Excel) →
+    WS Renamer XL, Delete Line Styles → Del. Line Styles, Schedule Export/Import → Schedule I/O.
+  - Internal button names, command classes, versions and tooltips are unchanged.
+
+**User note:** Revit ties keyboard shortcuts and Quick Access Toolbar items to the panel a button
+is in. These six buttons changed panel, so re-assign any shortcut or QAT entry you had on them:
+Floor From Rooms, Rearrange, Arrange Views, From Links, Closed Loop, Line Dims (was Dimensions →
+Detail Lines). All other buttons keep their shortcuts. On a narrow screen or with Windows display
+scaling above 100 %, Revit may still hide some names.
+
 ## [2.3.3] — 2026-10-08
 
 ### Changed

@@ -7,8 +7,10 @@ namespace Revit26_Plugin.Menu.Ribbon
 {
     /// <summary>
     /// Lays a flat list of ribbon items (push buttons and/or pulldown buttons)
-    /// directly on a panel as small stacked icons, 3 per column (2 for a
-    /// trailing pair, a single full-size button for a trailing odd one out).
+    /// directly on a panel as small stacked icons with their names, 3 per column,
+    /// splitting 4 as 2 + 2 so no single full-size button is left over
+    /// (4 → 2+2, 5 → 3+2, 7 → 3+2+2). Only a panel holding exactly one item
+    /// gets a full-size button.
     /// </summary>
     internal static class RibbonLayoutHelper
     {
@@ -23,14 +25,15 @@ namespace Revit26_Plugin.Menu.Ribbon
             while (i < items.Count)
             {
                 int remaining = items.Count - i;
-                if (remaining >= 3)
+                // Taking 3 from 4 would strand the last item as a wide full-size button.
+                if (remaining >= 3 && remaining != 4)
                 {
                     var stacked3 = panel.AddStackedItems(items[i], items[i + 1], items[i + 2]);
                     RebindStackedText(stacked3, items[i], items[i + 1], items[i + 2]);
                     created.AddRange(stacked3);
                     i += 3;
                 }
-                else if (remaining == 2)
+                else if (remaining >= 2)
                 {
                     var stacked2 = panel.AddStackedItems(items[i], items[i + 1]);
                     RebindStackedText(stacked2, items[i], items[i + 1]);

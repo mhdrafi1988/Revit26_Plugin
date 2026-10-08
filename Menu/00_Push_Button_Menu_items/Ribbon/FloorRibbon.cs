@@ -1,15 +1,25 @@
 using Autodesk.Revit.UI;
 using Revit26_Plugin.Resources.Icons;
-using System.Collections.Generic;
 
 namespace Revit26_Plugin.Menu.Ribbon
 {
+    /// <summary>
+    /// Builds the Floors And Roof From Linked Rooms pulldown. Since plugin 2.4.0 it sits in the
+    /// Roof Tools panel (see <see cref="RoofToolsRibbon"/>); the old one-button Floor Tools panel
+    /// was removed to keep the tab narrow enough for Revit to show every button name.
+    /// </summary>
     public static class FloorToolsRibbon
     {
-        public static void Build(UIControlledApplication app, string tabName, string assemblyPath)
-        {
-            RibbonPanel panel = app.CreateRibbonPanel(tabName, "Floor Tools");
+        /// <summary>Internal name of the pulldown (unchanged since it lived in Floor Tools).</summary>
+        public const string FromRoomsPulldownName = "Pulldown_FloorsAndRoofFromLinkedRooms";
 
+        /// <summary>
+        /// Returns the "Floor From Rooms" pulldown data to stack in a panel, and in
+        /// <paramref name="versions"/> every version, highest first, for
+        /// <see cref="RibbonLayoutHelper.WirePulldownButton"/>.
+        /// </summary>
+        public static PulldownButtonData CreateFromRoomsPulldown(string assemblyPath, out PushButtonData[] versions)
+        {
             // Two approaches to the same job, collected under one pulldown
             // button per request — each approach lists its highest version
             // number first, every older version below it; V013 keeps the icon.
@@ -37,10 +47,8 @@ namespace Revit26_Plugin.Menu.Ribbon
                 ToolTip = RibbonLayoutHelper.VersionTip("Floors And Roof From Linked Rooms (Via Plan View)", "V006",
                     "V005 on the shared ToolWindowShell (summaries and log in body, capped room list).")
             };
-            var fromRoomsPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_FloorsAndRoofFromLinkedRooms", "From Rooms", fromRoomsV013);
-
-            var items = RibbonLayoutHelper.AddStackedButtons(panel, new List<RibbonItemData> { fromRoomsPulldownData });
-            RibbonLayoutHelper.WirePulldownButton(items, "Pulldown_FloorsAndRoofFromLinkedRooms", fromRoomsV013, fromRoomsV012, fromRoomsPlanViewV006, fromRoomsPlanViewV005);
+            versions = new[] { fromRoomsV013, fromRoomsV012, fromRoomsPlanViewV006, fromRoomsPlanViewV005 };
+            return RibbonLayoutHelper.CreatePulldownButtonData(FromRoomsPulldownName, "Floor From Rooms", fromRoomsV013);
         }
     }
 }
