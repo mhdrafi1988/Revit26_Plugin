@@ -9,6 +9,14 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [2.3.4] — 2026-10-08
+
+### Fixed
+- **Delete Line Styles v1.0.2 (V001)** — every run failed with "Category is unexpectedly NULL"
+  and rolled back, so no line style was ever deleted. The tool read a line style's name after
+  deleting it; it now reads everything it needs first and looks each style up fresh. No other
+  behaviour change.
+
 ## [2.3.3] — 2026-10-08
 
 ### Changed

@@ -147,9 +147,9 @@ namespace Revit26_Plugin.DeleteLineStyles.V001.Core.Services
             var lines = GetLinesCategory(doc)
                 ?? throw new InvalidOperationException("This document has no Lines category.");
             var usage = CollectUsage(doc);
-            var current = lines.SubCategories.Cast<Category>()
-                .Where(c => c != null)
-                .ToDictionary(c => c.Id);
+            // Category objects go stale once any line style is deleted (reading one then throws
+            // "Category is unexpectedly NULL"), so keep only ids and look each style up afresh.
+            var linesId = lines.Id;
 
             if (includeUsed && replacement != null && rows.Any(r => r.CategoryId == replacement.CategoryId))
                 throw new InvalidOperationException(
@@ -160,31 +160,34 @@ namespace Revit26_Plugin.DeleteLineStyles.V001.Core.Services
 
             foreach (var row in rows)
             {
-                if (!current.TryGetValue(row.CategoryId, out var sub))
+                var sub = Category.GetCategory(doc, row.CategoryId);
+                if (sub == null || !linesId.Equals(sub.Parent?.Id))
                 {
                     Skip(result, row.Name, "it no longer exists.");
                     continue;
                 }
 
-                usage.TryGetValue(sub.Id, out var lineIds);
+                // Read everything needed from the category before changing the model.
+                string name = sub.Name;
+                usage.TryGetValue(row.CategoryId, out var lineIds);
                 lineIds ??= new List<ElementId>();
 
                 string block = GetBlockReason(doc, sub, lineIds);
                 if (!string.IsNullOrEmpty(block))
                 {
-                    Skip(result, sub.Name, block);
+                    Skip(result, name, block);
                     continue;
                 }
 
                 if (lineIds.Count > 0 && !includeUsed)
                 {
-                    Skip(result, sub.Name, $"{lineIds.Count} line(s) now use it.");
+                    Skip(result, name, $"{lineIds.Count} line(s) now use it.");
                     continue;
                 }
 
                 if (lineIds.Count > 0 && replacement == null)
                 {
-                    Skip(result, sub.Name, "it is in use and no replacement style is chosen.");
+                    Skip(result, name, "it is in use and no replacement style is chosen.");
                     continue;
                 }
 
@@ -192,7 +195,7 @@ namespace Revit26_Plugin.DeleteLineStyles.V001.Core.Services
                 st.Start();
                 try
                 {
-                    int moved = MoveLines(doc, lineIds, replacement, sub.Name);
+                    int moved = MoveLines(doc, lineIds, replacement, name);
                     if (moved < 0)
                     {
                         st.RollBack();
@@ -200,20 +203,20 @@ namespace Revit26_Plugin.DeleteLineStyles.V001.Core.Services
                         continue;
                     }
 
-                    doc.Delete(sub.Id);
+                    doc.Delete(row.CategoryId);
                     st.Commit();
 
                     result.Deleted++;
                     result.LinesMoved += moved;
                     _log(new LogEntry(LogLevel.Success, moved > 0
-                        ? $"Deleted '{sub.Name}' ({moved} line(s) moved to '{replacement.Name}')."
-                        : $"Deleted '{sub.Name}'."));
+                        ? $"Deleted '{name}' ({moved} line(s) moved to '{replacement.Name}')."
+                        : $"Deleted '{name}'."));
                 }
                 catch (Exception ex) when (ex is Autodesk.Revit.Exceptions.ArgumentException
                                               || ex is Autodesk.Revit.Exceptions.InvalidOperationException)
                 {
                     if (st.HasStarted() && !st.HasEnded()) st.RollBack();
-                    Skip(result, sub.Name, $"Revit refused: {ex.Message}");
+                    Skip(result, name, $"Revit refused: {ex.Message}");
                 }
             }
 
