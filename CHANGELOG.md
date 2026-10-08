@@ -9,6 +9,34 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [2.6.0] — 2026-10-08
+
+### Added
+- **Bulk Rename v1.0.0 (V001)** — new tool on the Manage panel that renames many project items at
+  once. A "What to rename" list picks the kind of item:
+  - **Line styles** (Object Styles > Lines), **line patterns** (the dash and dot patterns CAD users
+    call line types), **arrowheads** and **fill patterns** (drafting and model).
+  - **Rules** act on the ticked rows that match the filter: find/replace (optionally case sensitive or
+    a regular expression with `$1` groups), add or remove a prefix or suffix, clean spaces, spaces to
+    underscores, UPPER / lower / Title Case, and numbering with a pattern such as `{name}_{n}` (start,
+    step and digits are adjustable). You can also type a new name straight into the grid.
+  - **Live status per row**: Ready, Unchanged, Invalid (empty name or a character Revit does not
+    allow), Duplicate (two items would get the same name, ignoring case) or Locked. Apply stays off
+    until no ticked row has a problem.
+  - **Apply** renames everything in one transaction, so one Ctrl+Z undoes the whole run. Swaps
+    (A to B and B to A), chains and case-only changes (Dash to DASH) are done in a safe order through
+    a temporary name.
+  - Revit's built-in line styles, the solid fill pattern and items owned by another user are shown
+    dimmed as Locked and never changed. An item that changed, or was taken by another user, since the
+    list was loaded is skipped and logged; so is a name Revit refuses.
+
+**User note:** a line style's category name is read-only in the Revit API, so a line style is renamed
+through its graphics style. Arrowheads have no category in the API; they are found by their "Arrow Style"
+parameter and through the dimension, text and tag types that use them. If a model shows no arrowheads or
+Revit refuses a line style rename, the log says so. DWG To DL(P) V014 remembers its line style and hatch
+choices by name, so renaming a style it remembers makes that saved choice fall back to its "missing style"
+prompt.
+
 ## [2.5.0] — 2026-10-08
 
 ### Added
