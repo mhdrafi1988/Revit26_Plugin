@@ -9,7 +9,7 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
-## [2.2.3] — 2026-10-08
+## [2.3.1] — 2026-10-08
 
 ### Fixed
 - **Delete Workset v1.0.3 (V001)** — the run failed with "The file-based central model could not
@@ -20,6 +20,24 @@ Each release lists every tool whose version changed, under the plugin version.
 **User note:** when central is unreachable, only worksets already checked out to you (or all
 worksets in a detached model) can be deleted. Reconnect and Synchronize with Central to delete
 the others.
+
+## [2.3.0] — 2026-10-07
+
+### Added
+- **Delete Line Styles v1.0.0 (V001)** — new tool on the Manage panel. Lists every custom line
+  style with how many lines use it (model, detail, symbolic and sketch lines, including lines in
+  groups and filled-region boundaries). Two modes:
+  - **Unused line styles only** (default) — deletes styles no line uses.
+  - **All custom line styles** — also deletes used styles; their lines are changed to a
+    replacement style you choose (default `<Thin Lines>`) before the style is deleted.
+
+  Revit's built-in line styles are never touched. Styles owned by another user, or whose lines
+  are owned by other users, are shown as "Blocked" and skipped. A style is skipped (and left
+  unchanged) if any of its lines cannot take the replacement style. Everything runs in one
+  transaction, so Ctrl+Z undoes the whole run.
+
+**User note:** edges overridden with the Linework tool cannot be read through the Revit API, so a
+style used only there counts as unused; those edges revert to their default style if it is deleted.
 
 ## [2.2.2] — 2026-10-07
 
