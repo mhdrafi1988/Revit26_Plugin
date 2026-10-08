@@ -56,7 +56,7 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             var deleteLineStylesV001 = Btn(assemblyPath, "Btn_DeleteLineStyles_V001", "Delete Line Styles V001",
                 "Revit26_Plugin.DeleteLineStyles.V001.Commands.DeleteLineStylesCommand",
-                "DetailLiner.CreateDetailLines_16.png", "Delete Line Styles", "V001");
+                "Manage.DeleteLineStyles_16.png", "Delete Line Styles", "V001");
             deleteLineStylesV001.ToolTip = Revit26_Plugin.Shared.Services.ToolCatalog.DeleteLineStyles.Tip(
                 "Deletes unused custom line styles, or all custom line styles (their lines move to a replacement style).");
 
