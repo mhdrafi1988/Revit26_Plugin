@@ -9,6 +9,18 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [2.3.1] — 2026-10-08
+
+### Fixed
+- **Delete Workset v1.0.3 (V001)** — the run failed with "The file-based central model could not
+  be reached" whenever central was offline or its path was not reachable from this PC (unmapped
+  drive, VPN down, detached or copied model). The tool now deletes the selected worksets you
+  already own and skips the rest, with a log line for each, instead of aborting the whole run.
+
+**User note:** when central is unreachable, only worksets already checked out to you (or all
+worksets in a detached model) can be deleted. Reconnect and Synchronize with Central to delete
+the others.
+
 ## [2.3.0] — 2026-10-07
 
 ### Added
