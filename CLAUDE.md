@@ -1,11 +1,14 @@
 # SloperPro (Revit26_Plugin) — Development Standard
 
-Revit 2026 add-in, .NET 8 / WPF. These rules apply to every change, by people and by Claude.
+Revit 2026 add-ins, .NET 8 / WPF. Three projects: `SloperPro.Core` (shared library),
+`SloperPro.Modelling` (tools that create or edit model elements) and `SloperPro.Documentation`
+(views, sections, sheets, annotation, output). New tools go in the add-in that matches what they do;
+code both need goes in `SloperPro.Core`. These rules apply to every change, by people and by Claude.
 
 ## Build
 
 ```bash
-dotnet build Revit26_Plugin.csproj -p:EnableWindowsTargeting=true
+dotnet build Revit26_Plugin.sln -p:EnableWindowsTargeting=true
 ```
 
 Builds on Linux too (Revit API comes from the `Autodesk.Revit.SDK` NuGet package). A change is not
@@ -15,10 +18,11 @@ done until it builds with 0 errors. Running it still needs Revit on Windows.
 
 - **Git is the version history.** Never copy a tool folder to make a new version (`Tool_V005` next to
   `Tool_V004`), and never commit `.zip` backups. Change the tool in place and bump its version.
-- **Tool versions** live in `Shared/Services/ToolCatalog.cs` (one entry per tool, semantic version).
+- **Tool versions** live in `SloperPro.Core/Shared/Services/ToolCatalog.cs` (one entry per tool, semantic version).
   The ribbon tooltip, window title and error dialogs read from it. A new tool gets a new entry there.
-- **Plugin version** is `<Version>` in `Revit26_Plugin.csproj`.
-- **Ribbon** files are in `Menu/00_Push_Button_Menu_items/Ribbon`. One button runs one tool; use a
+- **Plugin version** is `<Version>` in `Directory.Build.props` (shared by all three projects).
+- **Ribbon** files are in `SloperPro.Modelling/Ribbon` and `SloperPro.Documentation/Ribbon` (each add-in
+  builds its own tab); the shared helper `RibbonLayoutHelper` is in `SloperPro.Core/Ribbon`. One button runs one tool; use a
   dropdown only to group different tools. Labels show the tool name, never a version number.
   Tooltips use `ToolCatalog.<Tool>.Tip(...)`.
 - **Dropdown version order:** when a pulldown lists coexisting versions of the same tool (via
@@ -48,7 +52,7 @@ done until it builds with 0 errors. Running it still needs Revit on Windows.
 2. Update `CHANGELOG.md` for every user-visible change (version, date, Added / Changed / Fixed /
    Removed, and a user note for any behaviour change).
 3. Use semantic versioning (MAJOR.MINOR.PATCH): MAJOR for breaking changes or removals, MINOR for
-   new features, PATCH for fixes. Bump the tool in `ToolCatalog.cs` and the plugin in the `.csproj`.
+   new features, PATCH for fixes. Bump the tool in `ToolCatalog.cs` and the plugin in `Directory.Build.props`.
 
 ## Backward compatibility
 
