@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<AssemblyName>SloperPro.Core</AssemblyName>
+		<Description>Shared code for the SloperPro add-ins: ToolGuard, ToolCatalog, window shell, styles, logging and ribbon helpers.</Description>
+	</PropertyGroup>
+	<ItemGroup>
+	  <PackageReference Include="Autodesk.Revit.SDK" Version="2026.0.0.9999" />
+	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+	  <PackageReference Include="MahApps.Metro" Version="2.4.11" />
+	  <PackageReference Include="MahApps.Metro.IconPacks" Version="6.2.1" />
+	  <PackageReference Include="MaterialDesignColors" Version="5.3.0" />
+	  <PackageReference Include="MaterialDesignThemes" Version="5.3.0" />
+	</ItemGroup>
+	<ItemGroup>
+	  <EmbeddedResource Include="Resources\Icons\**\*.png" />
+	  <Resource Include="Shared\SharedStyles.xaml" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Compile Remove="Resources\App.xaml.cs" />
+	  <None Remove="Resources\Icons\**\*.png" />
+	  <Page Remove="Resources\App.xaml" />
+	  <Page Remove="Shared\SharedStyles - Copy.xaml" />
+	  <Page Remove="Shared\SharedStyles-backup.xaml" />
+	  <Page Remove="Shared\SharedStyles.xaml" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Compile Update="Properties\Resources.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Resources.resx</DependentUpon>
+	  </Compile>
+	  <EmbeddedResource Update="Properties\Resources.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	</ItemGroup>
+</Project>

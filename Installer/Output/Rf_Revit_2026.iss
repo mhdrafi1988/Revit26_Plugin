@@ -8,7 +8,7 @@
 #define BuildStamp "09-06-000"
 
 #define MyAppName      "Rf Revit 2026 Plugin"
-#define MyAppVersion   "1.0.0"
+#define MyAppVersion   "4.0.0"
 #define MyAppPublisher "Rafi"
 #define MyAppExeName   ""
 #define RevitAddinDir  "{commonappdata}\Autodesk\Revit\Addins\2026"
@@ -31,7 +31,7 @@ PrivilegesRequired=admin
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 UninstallDisplayName={#MyAppName}
-UninstallDisplayIcon={app}\Revit26_Plugin.dll
+UninstallDisplayIcon={app}\SloperPro.Modelling.dll
 WizardStyle=modern
 ; Optional: set your own icon below (must be a .ico file)
 ; SetupIconFile=C:\Path\To\YourIcon.ico
@@ -43,9 +43,13 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 ;  FILES — all DLLs + deps.json go into the plugin subfolder
 ; ============================================================
 [Files]
-; --- Main plugin assembly ---
-Source: "{#SourceBase}\Revit26_Plugin.dll";          DestDir: "{app}"; Flags: ignoreversion
-Source: "{#SourceBase}\Revit26_Plugin.deps.json";    DestDir: "{app}"; Flags: ignoreversion
+; --- Plugin assemblies: shared core + the two add-ins ---
+Source: "{#SourceBase}\SloperPro.Core.dll";               DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceBase}\SloperPro.Core.deps.json";         DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceBase}\SloperPro.Modelling.dll";          DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceBase}\SloperPro.Modelling.deps.json";    DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceBase}\SloperPro.Documentation.dll";      DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceBase}\SloperPro.Documentation.deps.json";DestDir: "{app}"; Flags: ignoreversion
 
 ; --- CommunityToolkit ---
 Source: "{#SourceBase}\CommunityToolkit.Mvvm.dll";   DestDir: "{app}"; Flags: ignoreversion
@@ -136,6 +140,11 @@ Source: "{#SourceBase}\Microsoft.Xaml.Behaviors.dll";    DestDir: "{app}"; Flags
 [INI]
 ; Nothing here — we use [Code] to write the XML manifest
 
+[InstallDelete]
+; Plugin 3.x shipped one Revit26_Plugin.dll; remove it so an upgrade leaves no stale copy.
+Type: files; Name: "{app}\Revit26_Plugin.dll"
+Type: files; Name: "{app}\Revit26_Plugin.deps.json"
+
 [Dirs]
 Name: "{#RevitAddinDir}";           Permissions: everyone-full
 Name: "{#RevitAddinDir}\{#PluginSubDir}"; Permissions: everyone-full
@@ -146,31 +155,33 @@ Name: "{#RevitAddinDir}\{#PluginSubDir}"; Permissions: everyone-full
 [Code]
 
 const
-  AddinFileName = 'Rf_Revit_2026.addin';
+  ModellingAddinFileName = 'Rf_Revit_2026.addin';
+  DocumentationAddinFileName = 'Rf_Revit_2026_Documentation.addin';
 
-function GetAddinFilePath(): String;
+function GetAddinFilePath(FileName: String): String;
 begin
-  Result := ExpandConstant('{commonappdata}\Autodesk\Revit\Addins\2026\' + AddinFileName);
+  Result := ExpandConstant('{commonappdata}\Autodesk\Revit\Addins\2026\' + FileName);
 end;
 
-function GetDllInstallPath(): String;
+function GetDllInstallPath(DllName: String): String;
 begin
-  Result := ExpandConstant('{commonappdata}\Autodesk\Revit\Addins\2026\{#PluginSubDir}\Revit26_Plugin.dll');
+  Result := ExpandConstant('{commonappdata}\Autodesk\Revit\Addins\2026\{#PluginSubDir}\' + DllName);
 end;
 
-procedure WriteAddinManifest();
+// Writes one .addin manifest. Both add-ins use the class Revit26_Plugin.App, each in its own assembly.
+procedure WriteAddinManifest(FileName, AddinName, DllName, AddinId: String);
 var
   Lines: TArrayOfString;
   FilePath: String;
 begin
-  FilePath := GetAddinFilePath();
+  FilePath := GetAddinFilePath(FileName);
   SetArrayLength(Lines, 10);
   Lines[0] := '<?xml version="1.0" encoding="utf-8"?>';
   Lines[1] := '<RevitAddIns>';
   Lines[2] := '  <AddIn Type="Application">';
-  Lines[3] := '    <Name>Revit26_Plugin</Name>';
-  Lines[4] := '    <Assembly>' + GetDllInstallPath() + '</Assembly>';
-  Lines[5] := '    <AddInId>a4e8c4c7-9f8b-4a6a-9d31-532f8c980d41</AddInId>';
+  Lines[3] := '    <Name>' + AddinName + '</Name>';
+  Lines[4] := '    <Assembly>' + GetDllInstallPath(DllName) + '</Assembly>';
+  Lines[5] := '    <AddInId>' + AddinId + '</AddInId>';
   Lines[6] := '    <FullClassName>Revit26_Plugin.App</FullClassName>';
   Lines[7] := '    <VendorId>RAFI</VendorId>';
   Lines[8] := '    <VendorDescription>By Rafi</VendorDescription>';
@@ -184,7 +195,11 @@ end;
 procedure CurStepChanged(CurStep: TSetupStep);
 begin
   if CurStep = ssPostInstall then
-    WriteAddinManifest();
+  begin
+    // SloperPro Modelling keeps the add-in id the single plugin used before 4.0.0.
+    WriteAddinManifest(ModellingAddinFileName, 'SloperPro Modelling', 'SloperPro.Modelling.dll', 'a4e8c4c7-9f8b-4a6a-9d31-532f8c980d41');
+    WriteAddinManifest(DocumentationAddinFileName, 'SloperPro Documentation', 'SloperPro.Documentation.dll', 'fcefe864-ac11-49e9-8936-d3349b645b0f');
+  end;
 end;
 
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
@@ -193,7 +208,10 @@ var
 begin
   if CurUninstallStep = usPostUninstall then
   begin
-    FilePath := GetAddinFilePath();
+    FilePath := GetAddinFilePath(ModellingAddinFileName);
+    if FileExists(FilePath) then
+      DeleteFile(FilePath);
+    FilePath := GetAddinFilePath(DocumentationAddinFileName);
     if FileExists(FilePath) then
       DeleteFile(FilePath);
   end;

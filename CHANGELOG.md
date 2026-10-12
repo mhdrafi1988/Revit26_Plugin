@@ -3,11 +3,42 @@
 All notable changes to SloperPro. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
-- **Plugin version** lives in `Revit26_Plugin.csproj` (`<Version>`).
-- **Tool versions** live in `Shared/Services/ToolCatalog.cs`. Each tool has its own semantic version;
+- **Plugin version** lives in `Directory.Build.props` (`<Version>`), shared by all three assemblies.
+- **Tool versions** live in `SloperPro.Core/Shared/Services/ToolCatalog.cs`. Each tool has its own semantic version;
   the ribbon tooltip, the tool's window title and its error dialogs all read it from there.
 
 Each release lists every tool whose version changed, under the plugin version.
+
+## [4.0.0] — 2026-10-12
+
+SloperPro is now two Revit add-ins that share one core library: **SloperPro Modelling** and
+**SloperPro Documentation**. No tool's behaviour or version changed.
+
+### Added
+- **SloperPro Documentation** add-in with its own ribbon tab. It holds the view, section, sheet,
+  annotation and output tools: View Create / Place / Rename, Sheets, Annotate (Roof Tag, Line Dims,
+  Overlaps) and Output (Schedule I/O, Export DWG).
+- **SloperPro.Core** shared library: `ToolGuard`, `ToolCatalog`, the window shell, styles, logging
+  and ribbon helpers. `ToolGuard.Install` now takes the calling add-in's assembly.
+- `Directory.Build.props` holds the plugin version and build settings for all three projects.
+  All projects build into one `bin\<Configuration>\` folder.
+
+### Changed
+- The single `Revit26_Plugin` assembly became `SloperPro.Core.dll`, `SloperPro.Modelling.dll` and
+  `SloperPro.Documentation.dll`. Namespaces, command class names and ribbon button internal names
+  are unchanged.
+- The **SloperPro** ribbon tab is now **SloperPro Modelling**. It keeps the roof, floor, detail-line,
+  DWG-import, workset and parameter tools.
+- Roof Tag, Line Dims, Overlaps, Schedule I/O and Export DWG moved from the Roof Tools, Detail Lines,
+  Manage and Project Tools panels to the SloperPro Documentation tab.
+- The installer writes two `.addin` manifests. The existing add-in GUID stays with SloperPro
+  Modelling; SloperPro Documentation has a new GUID.
+- Solution file lists the three projects. Build with
+  `dotnet build Revit26_Plugin.sln -p:EnableWindowsTargeting=true`.
+
+**User note:** after updating, the Documentation buttons are on the new **SloperPro Documentation**
+tab. Both add-ins must be installed at the same plugin version. Settings, logs and saved config files
+use the same folders as before, so nothing needs to be migrated.
 
 ## [3.2.0] — 2026-10-08
 
