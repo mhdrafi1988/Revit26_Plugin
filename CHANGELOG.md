@@ -9,6 +9,22 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [3.3.0] — 2026-10-12
+
+### Added
+- **Export DWG to Folder v1.1.0 (V001)** —
+  - A **DWG list** with a tick box per DWG (all ticked by default; **Tick all / Untick all**). Only
+    ticked DWGs are exported.
+  - After a run, each row is coloured: **green** = exported (and automatically unticked),
+    **amber** = skipped, **red** = failed, with the reason in the Result column. Skipped and failed
+    rows stay ticked so you can fix the cause and run again.
+  - A **summary file** `Export_Summary_yyyyMMdd_HHmmss.txt` is written in the output root folder and
+    opened in Notepad. It lists successful exports, warnings (skipped, with reason) and failures
+    (with reason).
+
+**User note:** the Source Types / View Type options still apply to ticked rows (a ticked row they
+exclude is reported as skipped). Ticks reset on Re-scan.
+
 ## [3.2.0] — 2026-10-08
 
 ### Added

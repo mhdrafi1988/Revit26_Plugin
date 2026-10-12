@@ -8,6 +8,7 @@ using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Revit26_Plugin.ExportDwgToFolder.V001.Core.Models;
+using Revit26_Plugin.ExportDwgToFolder.V001.Core.Services;
 using Revit26_Plugin.ExportDwgToFolder.V001.Infrastructure.ExternalEvents;
 using Revit26_Plugin.Shared.Models;
 using Revit26_Plugin.Shared.Services;
@@ -22,6 +23,7 @@ namespace Revit26_Plugin.ExportDwgToFolder.V001.UI.ViewModels
         private readonly ExternalEvent _externalEvent;
         private readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
         private readonly ExportDwgSettings _settings;
+        private List<DwgRowViewModel> _exportedRows = new List<DwgRowViewModel>();
 
         // ── Metrics ──────────────────────────────────────────────────────────
         public ObservableCollection<SummaryCard> SummaryCards { get; } = new ObservableCollection<SummaryCard>();
@@ -44,6 +46,12 @@ namespace Revit26_Plugin.ExportDwgToFolder.V001.UI.ViewModels
         [ObservableProperty] private bool isBusy;
         [ObservableProperty] private double progress;
         [ObservableProperty] private string statusMessage = "Opening…";
+
+        // ── DWG list ─────────────────────────────────────────────────────────
+        public ObservableCollection<DwgRowViewModel> Rows { get; } = new ObservableCollection<DwgRowViewModel>();
+
+        /// <summary>Full path of the last summary file written, or empty.</summary>
+        [ObservableProperty] private string lastSummaryPath = string.Empty;
 
         // ── Log ──────────────────────────────────────────────────────────────
         public ObservableCollection<LogEntry> LogEntries { get; } = new ObservableCollection<LogEntry>();
@@ -111,10 +119,21 @@ namespace Revit26_Plugin.ExportDwgToFolder.V001.UI.ViewModels
             AddLog(LogLevel.Info, $"Output folder: {OutputFolder}");
             AddLog(LogLevel.Info, BuildOptionsSummary());
 
+            var ticked = Rows.Where(r => r.IsTicked).ToList();
+            foreach (var r in ticked) { r.Status = DwgRowStatus.Pending; r.Message = string.Empty; }
+            _exportedRows = ticked;
+
             _handler.Settings = BuildSettings();
             _handler.OutputFolder = OutputFolder;
+            _handler.ItemsToExport = ticked.Select(r => r.Info).ToList();
             Raise(DwgExportRequest.Export, "Exporting DWGs…");
         }
+
+        [RelayCommand]
+        private void TickAll() { foreach (var r in Rows) r.IsTicked = true; RunCommand.NotifyCanExecuteChanged(); }
+
+        [RelayCommand]
+        private void UntickAll() { foreach (var r in Rows) r.IsTicked = false; RunCommand.NotifyCanExecuteChanged(); }
 
         [RelayCommand]
         private void CopyLog()
@@ -189,6 +208,16 @@ namespace Revit26_Plugin.ExportDwgToFolder.V001.UI.ViewModels
             int withViews = items.Count(i => i.ViewCategory != DwgViewCategory.NoViews);
             int noViews = items.Count(i => i.ViewCategory == DwgViewCategory.NoViews);
 
+            foreach (var r in Rows) r.PropertyChanged -= OnRowChanged;
+            Rows.Clear();
+            foreach (var i in items)
+            {
+                var row = new DwgRowViewModel(i);
+                row.PropertyChanged += OnRowChanged;
+                Rows.Add(row);
+            }
+            RunCommand.NotifyCanExecuteChanged();
+
             UpdateMetrics(items.Count, linked, imported, withViews, noViews);
             AddLog(LogLevel.Info, $"Found {items.Count} DWG instance(s) — {linked} linked, {imported} imported.");
             StatusMessage = items.Count > 0
@@ -202,19 +231,54 @@ namespace Revit26_Plugin.ExportDwgToFolder.V001.UI.ViewModels
             int skipped = _handler.SkippedCount;
             int failed = _handler.FailedCount;
 
-            var items = _handler.ScannedInstances;
             var errors = _handler.ExportErrors;
+            var summary = new List<ExportSummaryItem>();
 
-            for (int i = 0; i < items.Count && i < errors.Count; i++)
+            for (int i = 0; i < _exportedRows.Count && i < errors.Count; i++)
             {
+                var row = _exportedRows[i];
+                var info = row.Info;
                 string err = errors[i];
+                string result, detail;
+
                 if (err == null)
-                    AddLog(LogLevel.Success, $"✔  {SubfolderPrefix(items[i])}{items[i].OutputFileName}");
+                {
+                    result = "Exported"; detail = string.Empty;
+                    row.Status = DwgRowStatus.Exported;
+                    row.Message = "Exported";
+                    row.IsTicked = false;
+                    AddLog(LogLevel.Success, $"✔  {SubfolderPrefix(info)}{info.OutputFileName}");
+                }
                 else if (err == "SKIP" || err == "SKIP_FILTER")
-                    AddLog(LogLevel.Debug, $"◌  Skipped: {items[i].OutputFileName}");
+                {
+                    result = "Skipped";
+                    detail = err == "SKIP"
+                        ? "File already exists and Overwrite is off."
+                        : "Excluded by the Source Types / View Type options.";
+                    row.Status = DwgRowStatus.Skipped;
+                    row.Message = detail;
+                    AddLog(LogLevel.Warning, $"◌  Skipped: {info.OutputFileName} — {detail}");
+                }
                 else
-                    AddLog(LogLevel.Error, $"✘  {items[i].OutputFileName} — {err}");
+                {
+                    result = "Failed"; detail = err;
+                    row.Status = DwgRowStatus.Failed;
+                    row.Message = err;
+                    AddLog(LogLevel.Error, $"✘  {info.OutputFileName} — {err}");
+                }
+
+                summary.Add(new ExportSummaryItem
+                {
+                    FileName = info.OutputFileName,
+                    Source = info.SourceType == DwgSourceType.Link ? "Link" : "Import",
+                    ViewType = info.ViewCategory == DwgViewCategory.NoViews ? "No views" : info.ViewCategory.ToString(),
+                    Result = result,
+                    Detail = detail
+                });
             }
+
+            RunCommand.NotifyCanExecuteChanged();
+            WriteSummary(summary);
 
             var resultLevel = failed > 0 ? LogLevel.Warning : LogLevel.Success;
             AddLog(resultLevel, $"Done — {exported} exported | {skipped} skipped | {failed} failed");
@@ -223,12 +287,36 @@ namespace Revit26_Plugin.ExportDwgToFolder.V001.UI.ViewModels
 
         // ── Helpers ──────────────────────────────────────────────────────────
 
+        private void OnRowChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(DwgRowViewModel.IsTicked))
+                RunCommand.NotifyCanExecuteChanged();
+        }
+
+        /// <summary>Writes the summary .txt into the output root and opens it in Notepad.</summary>
+        private void WriteSummary(List<ExportSummaryItem> summary)
+        {
+            try
+            {
+                string path = ExportSummaryWriter.Write(OutputFolder, _handler.DocumentTitle,
+                    ToolCatalog.ExportDwgToFolder.Version, BuildOptionsSummary(), summary);
+                LastSummaryPath = path;
+                AddLog(LogLevel.Info, $"Summary written: {path}");
+                try { System.Diagnostics.Process.Start("notepad.exe", $"\"{path}\""); }
+                catch (Exception ex) { AddLog(LogLevel.Warning, $"Could not open Notepad: {ex.Message}"); }
+            }
+            catch (Exception ex)
+            {
+                AddLog(LogLevel.Warning, $"Could not write the summary file: {ex.Message}");
+            }
+        }
+
         private bool NotBusy() => !IsBusy;
 
         private bool CanRun()
             => !IsBusy
             && !string.IsNullOrWhiteSpace(OutputFolder)
-            && _handler.ScannedInstances?.Count > 0;
+            && Rows.Any(r => r.IsTicked);
 
         private void Raise(DwgExportRequest request, string status)
         {

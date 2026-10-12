@@ -216,6 +216,52 @@
                     </Border>
                 </Grid>
 
+                <!-- ── DWG list ── -->
+                <Border Style="{StaticResource ContentCard}" Margin="0,0,0,8">
+                    <StackPanel Margin="12,10">
+                        <DockPanel Margin="0,0,0,7">
+                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                <Button Content="Tick all" Style="{StaticResource SmallSecondaryButton}"
+                                        Command="{Binding TickAllCommand}" Margin="0,0,4,0"/>
+                                <Button Content="Untick all" Style="{StaticResource SmallSecondaryButton}"
+                                        Command="{Binding UntickAllCommand}"/>
+                            </StackPanel>
+                            <TextBlock Text="DWGs to Export — exported rows turn green and are unticked"
+                                       Style="{StaticResource SectionTitle}" Margin="0" VerticalAlignment="Center"/>
+                        </DockPanel>
+                        <DataGrid ItemsSource="{Binding Rows}" AutoGenerateColumns="False"
+                                  CanUserAddRows="False" CanUserDeleteRows="False" HeadersVisibility="Column"
+                                  IsReadOnly="False" SelectionMode="Single" GridLinesVisibility="Horizontal"
+                                  MinHeight="120" MaxHeight="220" FontSize="11"
+                                  IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}">
+                            <DataGrid.RowStyle>
+                                <Style TargetType="DataGridRow">
+                                    <Setter Property="Foreground" Value="#1F2937"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Status}" Value="Exported">
+                                            <Setter Property="Background" Value="#CFEFD3"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Status}" Value="Skipped">
+                                            <Setter Property="Background" Value="#FFEFC7"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Status}" Value="Failed">
+                                            <Setter Property="Background" Value="#F9D2D2"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.RowStyle>
+                            <DataGrid.Columns>
+                                <DataGridCheckBoxColumn Header="✔" Width="34"
+                                    Binding="{Binding IsTicked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <DataGridTextColumn Header="File" Binding="{Binding FileName}" IsReadOnly="True" Width="2*"/>
+                                <DataGridTextColumn Header="Source" Binding="{Binding Source}" IsReadOnly="True" Width="60"/>
+                                <DataGridTextColumn Header="View type" Binding="{Binding ViewType}" IsReadOnly="True" Width="75"/>
+                                <DataGridTextColumn Header="Result" Binding="{Binding Message}" IsReadOnly="True" Width="*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                </Border>
+
                 <!-- ── Log ── -->
                 <Border CornerRadius="6" Background="{StaticResource BrushLogBg}">
                     <Grid>
