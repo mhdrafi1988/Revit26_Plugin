@@ -23,10 +23,16 @@ namespace Revit26_Plugin.ExportDwgToFolder.V001.Infrastructure.ExternalEvents
         public ExportDwgSettings Settings { get; set; }
         public string OutputFolder { get; set; }
 
+        /// <summary>The ticked DWGs to export; when null every scanned DWG is exported.</summary>
+        public List<DwgInstanceInfo> ItemsToExport { get; set; }
+
         // ---- Output properties read by the ViewModel after completion ----
         public List<DwgInstanceInfo> ScannedInstances { get; private set; } = new List<DwgInstanceInfo>();
 
-        // Per-run export results (index matches ScannedInstances order)
+        /// <summary>Title of the document the last export ran against (for the summary file).</summary>
+        public string DocumentTitle { get; private set; } = string.Empty;
+
+        // Per-run export results (index matches the exported item order)
         public List<string> ExportErrors { get; private set; } = new List<string>();
         public int ExportedCount { get; private set; }
         public int SkippedCount { get; private set; }
@@ -91,11 +97,13 @@ namespace Revit26_Plugin.ExportDwgToFolder.V001.Infrastructure.ExternalEvents
 
             var exporter = new DwgExportService(doc);
             var settings = Settings;
-            int total = ScannedInstances.Count;
+            var items = ItemsToExport ?? ScannedInstances;
+            DocumentTitle = doc.Title;
+            int total = items.Count;
 
             for (int i = 0; i < total; i++)
             {
-                var info = ScannedInstances[i];
+                var info = items[i];
                 ProgressChanged?.Invoke(i + 1, total);
 
                 // Source type filter
