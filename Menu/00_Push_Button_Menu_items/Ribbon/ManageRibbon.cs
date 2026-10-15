@@ -78,6 +78,19 @@ namespace Revit26_Plugin.Menu.Ribbon
                 "Manage.ScheduleExportImport_16.png", "Schedule Export / Import", "V006", "V005" + Rebuilt);
             var scheduleExportImportV007 = Btn(assemblyPath, "Btn_ScheduleExportImport_V007", "Schedule Export/Import V007", "Revit26_Plugin.ScheduleExportImport.V007.Commands.ScheduleExportImportCommand",
                 "Manage.ScheduleExportImport_16.png", "Schedule Export / Import", "V007", "V006 on the shared ToolWindowShell (log in body, capped grids).");
+            // Link Version Checker V003 — one tool, three scan modes. Pre-Open and Folder Audit stay
+            // enabled with no project open. Also starts the load-time logger the checker reads.
+            Revit26_Plugin.LinkVersionChecker_V003.Services.LinkLoadTimeLogger.Register(app.ControlledApplication);
+            const string lvcNs = "Revit26_Plugin.LinkVersionChecker_V003.Commands.";
+            var linkPreOpenV003 = Btn(assemblyPath, "Btn_LinkVersionChecker_PreOpen_V003", "Link Check Pre-Open V003", lvcNs + "CmdLinkCheckPreOpen",
+                "Manage.ParaManager_16.png", "Link Version Checker - Pre-Open", "V003", "Check a model's linked file versions BEFORE opening it (no model is opened).");
+            linkPreOpenV003.AvailabilityClassName = lvcNs + "LinkCheckAlwaysAvailable";
+            var linkInModelV003 = Btn(assemblyPath, "Btn_LinkVersionChecker_InModel_V003", "Link Check In-Model V003", lvcNs + "CmdLinkCheckInModel",
+                "Manage.ParaManager_16.png", "Link Version Checker - In-Model", "V003", "Check links, IFC caches, imports and worksets in the open model.");
+            var linkFolderV003 = Btn(assemblyPath, "Btn_LinkVersionChecker_Folder_V003", "Link Check Folder Audit V003", lvcNs + "CmdLinkCheckFolder",
+                "Manage.ParaManager_16.png", "Link Version Checker - Folder Audit", "V003", "Audit every host model in a project folder and export one report.");
+            linkFolderV003.AvailabilityClassName = lvcNs + "LinkCheckAlwaysAvailable";
+
             var manageItems = RibbonLayoutHelper.AddStackedButtons(panel, new List<RibbonItemData>
             {
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_AnnotationOverlapDetection", "Overlaps", overlapV004),
@@ -90,6 +103,7 @@ namespace Revit26_Plugin.Menu.Ribbon
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DeleteLineStyles", "Del. Line Styles", deleteLineStylesV001),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_BulkRename", "Bulk Rename", bulkRenameV001),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_ScheduleExportImport", "Schedule I/O", scheduleExportImportV007),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_LinkVersionChecker", "Link Check", linkInModelV003),
             });
             RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_AnnotationOverlapDetection", overlapV004, overlapV003);
             RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_ParaManager", paraManagerV005, paraManagerV004);
@@ -101,6 +115,7 @@ namespace Revit26_Plugin.Menu.Ribbon
             RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_DeleteLineStyles", deleteLineStylesV001);
             RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_BulkRename", bulkRenameV001);
             RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_ScheduleExportImport", scheduleExportImportV007, scheduleExportImportV006);
+            RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_LinkVersionChecker", linkInModelV003, linkPreOpenV003, linkFolderV003);
         }
     }
 }

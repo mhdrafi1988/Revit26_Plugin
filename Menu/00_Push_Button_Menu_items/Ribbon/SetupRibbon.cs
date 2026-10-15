@@ -67,12 +67,17 @@ namespace Revit26_Plugin.Menu.Ribbon
             };
             var dwgLinesPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DwgToDetailLines", "DWG To DL(P)", dwgLinesV014);
 
+            var exportDwgV003 = new PushButtonData("Btn_ExportDwgToFolder_V003", "Export DWG V003", assemblyPath, "Revit26_Plugin.ExportDwgToFolder.V003.Commands.ExportDwgToFolderCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToDetailLines_V011_16.png"),
+                ToolTip = ToolCatalog.ExportDwgToFolder.Tip("Export all embedded CAD links and imports to a folder, organised by source type and view category.")
+            };
             var exportDwgV001 = new PushButtonData("Btn_ExportDwgToFolder_V001", "Export DWG V001", assemblyPath, "Revit26_Plugin.ExportDwgToFolder.V001.Commands.ExportDwgToFolderCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToDetailLines_V011_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Export DWG to Folder", "V001", "Export all embedded CAD links and imports to a folder, organised by source type and view category.")
             };
-            var exportDwgPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_ExportDwgToFolder", "Export DWG", exportDwgV001);
+            var exportDwgPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_ExportDwgToFolder", "Export DWG", exportDwgV003);
 
             var projectItems = RibbonLayoutHelper.AddStackedButtons(projectPanel, new List<RibbonItemData>
             {
@@ -80,7 +85,7 @@ namespace Revit26_Plugin.Menu.Ribbon
                 exportDwgPulldownData,
             });
             RibbonLayoutHelper.WirePulldownButton(projectItems, "Pulldown_DwgToDetailLines", dwgLinesV014, dwgLinesV013);
-            RibbonLayoutHelper.WirePulldownButton(projectItems, "Pulldown_ExportDwgToFolder", exportDwgV001);
+            RibbonLayoutHelper.WirePulldownButton(projectItems, "Pulldown_ExportDwgToFolder", exportDwgV003, exportDwgV001);
         }
     }
 }

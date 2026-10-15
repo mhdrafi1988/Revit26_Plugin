@@ -9,6 +9,24 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [3.4.0] — 2026-10-15
+
+### Added
+- **Roof Name Builder v2.0.0 (V002)** — new button in the Roof ribbon, **Roof Edit** panel. Bulk
+  renames roof types/instances with configurable INS/SLP/MAT codes.
+- **Island Roof Splitter v0.1.0 (V001, WIP)** — new button in the Roof ribbon, **Roof Edit** panel.
+  Work in progress: try it on a copy of your model.
+- **Link Version Checker v3.0.0 (V003)** — new **Link Check** dropdown in the Manage panel with
+  Pre-Open, In-Model and Folder Audit. Pre-Open and Folder Audit work with no project open.
+  Starts a load-time logger when Revit starts.
+
+## [3.3.0] — 2026-10-15
+
+### Added
+- **Export DWG to Folder v3.0.0 (V003)** — added to the Setup ▸ Project ▸ **Export DWG** dropdown,
+  above V001 (V001 stays available). Includes scan scope, delete-after-export mode, a grouped
+  tick/untick grid and log export (auto-save or save-as picker).
+
 ## [3.2.0] — 2026-10-08
 
 ### Added
