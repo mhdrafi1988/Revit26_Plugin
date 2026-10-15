@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Link Version Checker V003</title>
+<style>
+:root{
+  --bg:#e9ecef; --win:#fff; --title:#1f2a37; --titleText:#fff; --text:#1f2937; --muted:#6b7280;
+  --line:#e5e7eb; --head:#f3f4f6; --accent:#0b6bcb; --accentSoft:#e6f0fb;
+  --red:#c62828; --redSoft:#fdecea; --amber:#b26a00; --amberSoft:#fff4e0;
+  --green:#2e7d32; --greenSoft:#e8f5e9; --sel:#dbeafe;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#111418; --win:#1b1f24; --title:#0d1117; --titleText:#e6edf3; --text:#e6edf3; --muted:#9aa4b2;
+  --line:#2d333b; --head:#22272e; --accent:#4c9bf0; --accentSoft:#1d2b3d;
+  --red:#ff7b72; --redSoft:#3a1d1d; --amber:#e3b341; --amberSoft:#3a2e12; --green:#56d364; --greenSoft:#163020; --sel:#1f3350;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:13px/1.4 "Segoe UI",system-ui,sans-serif;padding:24px 16px}
+.win{position:relative;max-width:1240px;margin:0 auto;background:var(--win);border:1px solid var(--line);border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.15);overflow:hidden}
+.titlebar{background:var(--title);color:var(--titleText);display:flex;align-items:center;gap:10px;padding:8px 12px;font-size:12.5px}
+.logo{width:18px;height:18px;border-radius:4px;background:var(--accent);display:grid;place-items:center;font-weight:700;font-size:11px;color:#fff}
+.sp{flex:1}.ctl{width:28px;text-align:center;opacity:.8}
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:12px;border-bottom:1px solid var(--line)}
+.tabs{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.tabs button{border:0;background:transparent;color:var(--text);padding:7px 14px;cursor:pointer;font:inherit}
+.tabs button.on{background:var(--accent);color:#fff}
+.path{flex:1;min-width:240px;display:flex}
+.path input{flex:1;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--win);color:var(--text);font:inherit}
+.btn{border:1px solid var(--line);background:var(--head);color:var(--text);padding:7px 12px;border-radius:6px;cursor:pointer;font:inherit;white-space:nowrap}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.opts{width:100%;display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;font-size:12px;color:var(--muted)}
+.opts label{color:var(--text)}
+.cards{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;padding:12px}
+.card{border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.card .n{font-size:22px;font-weight:600}.card .l{color:var(--muted);font-size:12px}
+.r .n{color:var(--red)}.a .n{color:var(--amber)}.b .n{color:var(--accent)}
+.filters{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;padding:0 12px 10px}
+.filters .l{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+.filters label{display:flex;align-items:center;gap:6px;cursor:pointer}
+.filters select,.filters input[type=search]{padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--win);color:var(--text);font:inherit}
+.lnk{background:none;border:0;color:var(--accent);cursor:pointer;font:inherit;padding:0 0 0 12px}
+.main{display:grid;grid-template-columns:1fr 320px;border-top:1px solid var(--line)}
+.gridwrap{overflow:auto;max-height:440px}
+table{width:100%;border-collapse:collapse;min-width:900px}
+th{position:sticky;top:0;background:var(--head);text-align:left;font-weight:600;padding:7px 8px;border-bottom:1px solid var(--line);font-size:12px;white-space:nowrap;z-index:1}
+td{padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+tbody tr{cursor:pointer} tbody tr:hover{background:var(--accentSoft)} tr.sel{background:var(--sel)!important}
+.num{text-align:right}.hostcol{display:none}.folder .hostcol{display:table-cell}
+.pill{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11.5px;font-weight:600}
+.Critical{background:var(--redSoft);color:var(--red)}.Warning{background:var(--amberSoft);color:var(--amber)}
+.Info{background:var(--accentSoft);color:var(--accent)}.Ok{background:var(--greenSoft);color:var(--green)}
+.type{font-size:11px;font-weight:600;color:var(--muted)}.nest{color:var(--muted);padding-left:14px}
+.meas{font-weight:600;color:var(--accent)}
+.side{border-left:1px solid var(--line);background:var(--head);display:flex;flex-direction:column}
+.det{padding:12px;flex:1;overflow:auto;max-height:300px}
+.det h3{margin:0 0 4px;font-size:14px;word-break:break-all}
+.kv{display:grid;grid-template-columns:96px 1fr;gap:3px 8px;margin:10px 0;font-size:12px}
+.kv span:nth-child(odd){color:var(--muted)}.kv span{word-break:break-all}
+.rec{border-left:3px solid var(--accent);background:var(--win);padding:8px 10px;border-radius:4px;font-size:12.5px;white-space:pre-line}
+.acts{border-top:1px solid var(--line);padding:12px;display:flex;flex-direction:column;gap:6px}
+.acts .t{font-size:12px;color:var(--muted);margin-bottom:2px}
+.acts .btn{text-align:left}
+.status{display:flex;justify-content:space-between;gap:10px;padding:7px 12px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);flex-wrap:wrap}
+.overlay{position:absolute;inset:0;background:rgba(255,255,255,.6);display:none;align-items:center;justify-content:center}
+@media (prefers-color-scheme: dark){.overlay{background:rgba(0,0,0,.45)}}
+.overlay.on{display:flex}
+.pbox{width:420px;max-width:90%;background:var(--win);border:1px solid var(--line);border-radius:10px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+.bar{height:8px;background:var(--head);border-radius:4px;overflow:hidden;margin:10px 0 14px}
+.bar div{height:100%;width:0;background:var(--accent);transition:width .15s}
+@media (max-width:900px){.cards{grid-template-columns:repeat(3,1fr)}.main{grid-template-columns:1fr}.side{border-left:0;border-top:1px solid var(--line)}}
+</style>
+</head>
+<body>
+<div class="win" id="win">
+  <div class="titlebar"><div class="logo">R</div>Link Version Checker V003 — Revit26_Plugin<span class="sp"></span><span class="ctl">—</span><span class="ctl">☐</span><span class="ctl">✕</span></div>
+
+  <div class="toolbar">
+    <div class="tabs"><button class="on" data-m="pre">Pre-Open</button><button data-m="in">In-Model</button><button data-m="folder">Folder Audit</button></div>
+    <div class="path"><input id="path"></div>
+    <button class="btn">Browse…</button>
+    <button class="btn primary" id="scan">Scan</button>
+    <button class="btn">Export to Excel</button>
+    <div class="opts"><span id="hint"></span><span><label id="subOpt" style="display:none"><input type="checkbox" checked> Include subfolders</label> &nbsp; <label id="nestOpt"><input type="checkbox" checked> Include nested links</label></span></div>
+  </div>
+
+  <div class="cards">
+    <div class="card"><div class="n" id="cTotal">0</div><div class="l">Linked files</div></div>
+    <div class="card r"><div class="n" id="cUp">0</div><div class="l">Temporary upgrades</div></div>
+    <div class="card a"><div class="n" id="cIfc">0</div><div class="l">IFC cache issues</div></div>
+    <div class="card r"><div class="n" id="cMiss">0</div><div class="l">Not found</div></div>
+    <div class="card a"><div class="n" id="cEst">0s</div><div class="l">Est. extra load time</div></div>
+    <div class="card b"><div class="n" id="cMeas">—</div><div class="l" id="cMeasL">Last full open</div></div>
+  </div>
+
+  <div class="filters">
+    <div class="l">
+      <label><input type="checkbox" id="fProb"> Problems only</label>
+      <label><input type="checkbox" id="fUp"> Upgrade needed only</label>
+      <label>Type <select id="fType"><option>All</option><option>RVT</option><option>IFC</option><option>CAD</option><option>CAD (import)</option><option>Point Cloud</option><option>PDF/Image</option></select></label>
+      <label id="hostF" style="display:none">Host <select id="fHost"><option>All hosts</option></select></label>
+      <input type="search" id="fText" placeholder="Search…">
+    </div>
+    <div><button class="lnk" id="tickProb">Tick problems</button><button class="lnk" id="tickAll">Tick all shown</button><button class="lnk" id="clear">Clear ticks</button></div>
+  </div>
+
+  <div class="main">
+    <div class="gridwrap" id="gw">
+      <table>
+        <thead><tr><th>✓</th><th class="hostcol">Host</th><th>Name</th><th>Type</th><th>Saved In</th><th>Check</th><th>Workshared</th><th class="num">Size</th><th>Path</th><th>Status</th><th class="num">Est.</th><th class="num">Measured</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <aside class="side">
+      <div class="det" id="det"><div style="color:var(--muted)">Select a link to see details and recommendations.</div></div>
+      <div class="acts">
+        <div class="t" id="target">Select a row, or tick rows for batch actions</div>
+        <button class="btn primary" id="aUp">Upgrade &amp; Save to current version</button>
+        <button class="btn" id="aIfc">Rebuild IFC cache</button>
+        <button class="btn" id="aSkip">Don't load on next open</button>
+        <button class="btn" id="aRe">Repath selected…</button>
+        <button class="btn" id="aOpen">Open folder</button>
+      </div>
+    </aside>
+  </div>
+  <div class="status"><span id="stat">Ready</span><span id="modeText"></span></div>
+
+  <div class="overlay" id="ov"><div class="pbox"><b>Working…</b><div id="ptext" style="color:var(--muted);margin-top:6px">Checking files on disk…</div><div class="bar"><div id="pbar"></div></div><div style="text-align:right"><button class="btn" id="pcancel">Cancel</button></div></div></div>
+</div>
+
+<script>
+const F=(t,s,m,e=0)=>({t,s,m,e});
+const base=[
+ {h:"OQ_Roof_Main_R26.rvt",name:"ARC_Building_A.rvt",type:"RVT",ver:"2024",ws:"Central",mb:412,path:"Relative",st:"Loaded",meas:88.4,full:"..\\Links\\ARC\\ARC_Building_A.rvt",f:[F("Temporary upgrade","Critical","Saved in 2024 → upgraded in memory every time the host opens (never saved). Workshared (Central) — ask the model owner to upgrade the central to 2026.",75)]},
+ {h:"OQ_Roof_Main_R26.rvt",name:"ARC_Interior_Fitout.rvt",type:"RVT",ver:"2024",ws:"No",mb:146,path:"Relative",st:"Loaded",nested:1,parent:"ARC_Building_A.rvt",full:"..\\Links\\ARC\\ARC_Interior_Fitout.rvt",f:[F("Temporary upgrade","Critical","Saved in 2024 → upgraded in memory every time the host opens. Use Upgrade & Save (a backup is kept).",27),F("Nested","Info","Nested inside ARC_Building_A.rvt. It only loads if attached as Attachment — estimate shown in brackets.")]},
+ {h:"OQ_Roof_Main_R26.rvt",name:"STR_Building_A.rvt",type:"RVT",ver:"2026",ws:"Central",mb:268,path:"Relative",st:"Loaded",meas:21.7,full:"..\\Links\\STR\\STR_Building_A.rvt",f:[]},
+ {h:"OQ_Roof_Main_R26.rvt",name:"MEP_Building_A.rvt",type:"RVT",ver:"2023",ws:"No",mb:530,path:"Absolute",unc:1,st:"Loaded",meas:131.2,full:"\\\\fs01\\MEP\\Issued\\MEP_Building_A.rvt",f:[F("Temporary upgrade","Critical","Saved in 2023 → upgraded in memory every time the host opens. Use Upgrade & Save (a backup is kept).",101),F("Absolute path","Info","Uses an absolute network path. A relative path survives folder moves.")]},
+ {h:"OQ_Roof_Main_R26.rvt",name:"MEP_Building_A.rvt",type:"RVT",ver:"2023",ws:"No",mb:530,path:"Absolute",unc:1,st:"Loaded",full:"\\\\fs01\\MEP\\Issued\\MEP_Building_A.rvt",f:[F("Duplicate link","Warning","This file is linked 2 times in the host, so it loads 2 times. Keep one link type and copy its instances.",58),F("Temporary upgrade","Critical","Saved in 2023 → upgraded in memory on every open.",101)]},
+ {h:"OQ_Roof_Main_R26.rvt",name:"Site_Survey.ifc",type:"IFC",ver:"IFC4",ws:"—",mb:180,path:"Relative",st:"Loaded",meas:54.0,full:"..\\Links\\IFC\\Site_Survey.ifc",ifc:1,f:[F("Cache stale","Warning","The .ifc.RVT cache was built by Revit 2025, so it is upgraded on every open. Rebuild the cache once in 2026.",73)]},
+ {h:"OQ_Roof_Main_R26.rvt",name:"Facade_Supplier.ifc",type:"IFC",ver:"IFC2X3",ws:"—",mb:95,path:"Relative",st:"Loaded",full:"..\\Links\\IFC\\Facade_Supplier.ifc",ifc:1,f:[F("Cache missing","Warning","No .ifc.RVT cache, so the IFC is converted on every open. Use Rebuild IFC cache.",43)]},
+ {h:"OQ_Roof_Main_R26.rvt",name:"Landscape.rvt",type:"RVT",ver:"—",ws:"—",mb:0,path:"Absolute",st:"Not Found",full:"C:\\Users\\Old\\Desktop\\Landscape.rvt",f:[F("Not found","Critical","File not found at its saved path. Revit searches for it on every open. Repath it or remove the link.",15)]},
+ {h:"OQ_Roof_Main_R26.rvt",name:"Old_Survey_2019",type:"CAD (import)",ver:"—",ws:"—",mb:0,path:"",st:"Imported",inModelOnly:1,full:"",f:[F("Imported CAD","Warning","Imported, not linked (3 instances). Imports are embedded in the host and slow every open. Delete it or link the CAD instead.")]},
+ {h:"OQ_Roof_Main_R26.rvt",name:"Roof_Details.dwg",type:"CAD",ver:"AutoCAD 2018+",ws:"—",mb:22,path:"Relative",st:"Loaded",full:"..\\Links\\CAD\\Roof_Details.dwg",f:[]},
+ {h:"OQ_Roof_Main_R26.rvt",name:"Scan_Roof.rcp",type:"Point Cloud",ver:"ReCap",ws:"—",mb:2150,path:"Absolute",unc:1,st:"Loaded",full:"\\\\fs01\\Scans\\Scan_Roof.rcp",f:[F("Point cloud loaded","Warning","Point cloud is loaded (2.1 GB). Unload it when you don't need it.")]},
+];
+const extraHosts=[
+ {h:"OQ_Podium_R26.rvt",name:"ARC_Building_A.rvt",type:"RVT",ver:"2024",ws:"Central",mb:412,path:"Relative",st:"Loaded",meas:90.1,full:"..\\Links\\ARC\\ARC_Building_A.rvt",f:[F("Temporary upgrade","Critical","Saved in 2024 → upgraded in memory every time the host opens. Workshared — ask the owner to upgrade.",75)]},
+ {h:"OQ_Podium_R26.rvt",name:"STR_Podium.rvt",type:"RVT",ver:"2026",ws:"No",mb:190,path:"Relative",st:"Loaded",full:"..\\Links\\STR\\STR_Podium.rvt",f:[]},
+ {h:"OQ_Podium_R26.rvt",name:"Site_Survey.ifc",type:"IFC",ver:"IFC4",ws:"—",mb:180,path:"Relative",st:"Unloaded",full:"..\\Links\\IFC\\Site_Survey.ifc",ifc:1,f:[F("Cache stale","Warning","Cache built by Revit 2025. Currently unloaded, so no load cost now.",0)]},
+];
+const sevRank={Ok:0,Info:1,Warning:2,Critical:3};
+let mode="pre",data=[],sel=null;
+const $=id=>document.getElementById(id);
+function build(){
+  let d=base.filter(x=>mode==="in"||!x.inModelOnly);
+  if(mode==="folder")d=d.concat(extraHosts);
+  data=d.map((x,i)=>{const sev=x.f.reduce((a,f)=>sevRank[f.s]>sevRank[a]?f.s:a,"Ok");
+    const prim=x.f.slice().sort((a,b)=>sevRank[b.s]-sevRank[a.s])[0];
+    const est=x.st==="Unloaded"?0:x.f.reduce((a,f)=>a+f.e,0);
+    return {...x,i,sev,check:prim?prim.t:(x.type==="IFC"?"Cache OK":x.type==="RVT"?"Current":"OK"),est,counts:!(x.nested&&mode!=="in"),chk:false};});
+}
+const fmt=mb=>mb<=0?"—":mb>=1024?(mb/1024).toFixed(1)+" GB":mb+" MB";
+const fs=s=>s>=60?Math.floor(s/60)+"m "+(s%60)+"s":s+"s";
+function visible(){const p=$("fProb").checked,u=$("fUp").checked,t=$("fType").value,h=$("fHost").value,q=$("fText").value.toLowerCase();
+  return data.filter(d=>(!p||sevRank[d.sev]>=2)&&(!u||d.f.some(f=>f.t==="Temporary upgrade"))&&(t==="All"||d.type===t)&&(h==="All hosts"||d.h===h)&&(!q||(d.name+d.full+d.h).toLowerCase().includes(q)));}
+function render(){
+  const list=visible();
+  $("rows").innerHTML=list.map(d=>`<tr data-i="${d.i}" class="${sel===d.i?'sel':''}">
+   <td><input type="checkbox" data-c="${d.i}" ${d.chk?'checked':''}></td><td class="hostcol">${d.h}</td>
+   <td class="${d.nested?'nest':''}">${d.nested?'↳ ':''}${d.name}</td><td class="type">${d.type}</td><td>${d.ver}</td>
+   <td><span class="pill ${d.sev}">${d.check}</span></td><td>${d.ws}</td><td class="num">${fmt(d.mb)}</td>
+   <td>${d.path?d.path+(d.unc?' (network)':''):'—'}</td><td>${d.st}</td>
+   <td class="num">${d.est?(d.counts?'+'+d.est+'s':'(+'+d.est+'s)'):'—'}</td><td class="num ${d.meas?'meas':''}">${d.meas?d.meas.toFixed(1)+'s':'—'}</td></tr>`).join("");
+  $("stat").textContent=`Showing ${list.length} of ${data.length} links`;
+  targets();
+}
+function cards(){
+  $("cTotal").textContent=data.length;
+  $("cUp").textContent=data.filter(d=>d.f.some(f=>f.t==="Temporary upgrade")).length;
+  $("cIfc").textContent=data.filter(d=>d.f.some(f=>f.t.startsWith("Cache"))).length;
+  $("cMiss").textContent=data.filter(d=>d.st==="Not Found").length;
+  $("cEst").textContent=fs(data.filter(d=>d.counts).reduce((a,d)=>a+d.est,0));
+  $("cMeas").textContent=mode==="folder"?"—":"6m 41s";
+  $("cMeasL").textContent=mode==="folder"?"Measured per model in Excel":"Last full open (12-Oct 09:14)";
+  const hosts=[...new Set(data.map(d=>d.h))];$("fHost").innerHTML="<option>All hosts</option>"+hosts.map(h=>`<option>${h}</option>`).join("");
+}
+function tg(){const c=data.filter(d=>d.chk);return c.length?c:(sel!=null?[data[sel]]:[]);}
+function targets(){
+  const c=data.filter(d=>d.chk).length,t=tg();
+  $("target").textContent=c?`Actions apply to ${c} checked row(s)`:sel!=null?"Actions apply to the selected row (tick rows for batch)":"Select a row, or tick rows for batch actions";
+  const up=new Set(t.filter(d=>d.type==="RVT"&&d.f.some(f=>f.t==="Temporary upgrade")&&d.ws==="No").map(d=>d.full)).size;
+  $("aUp").disabled=!up; $("aUp").textContent="Upgrade & Save to current version"+(c&&up?` (${up})`:"");
+  const ifc=t.filter(d=>d.ifc&&d.f.length).length; $("aIfc").disabled=!ifc; $("aIfc").textContent="Rebuild IFC cache"+(c&&ifc?` (${ifc})`:"");
+  const sk=t.filter(d=>!d.nested&&d.type!=="CAD (import)").length; $("aSkip").disabled=!sk;
+  $("aSkip").textContent=(mode==="in"?"Unload now":"Don't load on next open")+(c&&sk?` (${sk})`:"");
+  $("aRe").disabled=sel==null||data[sel].nested||data[sel].type==="CAD (import)"; $("aOpen").disabled=sel==null||!data[sel].full;
+}
+function detail(){
+  if(sel==null){$("det").innerHTML='<div style="color:var(--muted)">Select a link to see details and recommendations.</div>';return;}
+  const d=data[sel];
+  $("det").innerHTML=`<h3>${d.name}</h3><span class="pill ${d.sev}">${d.check}</span>
+  <div class="kv"><span>Host</span><span>${d.h}</span><span>Type</span><span>${d.type}</span><span>Saved in</span><span>${d.ver}</span>
+  <span>Workshared</span><span>${d.ws}</span><span>Size</span><span>${fmt(d.mb)}</span><span>Status</span><span>${d.st}</span>
+  ${d.nested?`<span>Parent</span><span>${d.parent}</span>`:""}
+  <span>Est. / Measured</span><span>${d.est?'+'+d.est+'s':'—'} / <b>${d.meas?d.meas.toFixed(1)+'s':'—'}</b></span>
+  <span>Full path</span><span>${d.full||'(embedded in host)'}</span></div>
+  <div class="rec"><b>Recommendations</b>\n${d.f.length?d.f.map(f=>"• "+f.m).join("\n\n"):"No issues found."}</div>`;
+}
+function setMode(m){mode=m;sel=null;document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.m===m));
+  $("win").classList.toggle("folder",m==="folder");
+  $("path").value=m==="pre"?"P:\\Projects\\OQ_Roof\\Central\\OQ_Roof_Main_R26.rvt":m==="folder"?"P:\\Projects\\OQ_Roof\\":"OQ_Roof_Main_R26 (open model)";
+  $("path").disabled=m==="in";$("subOpt").style.display=m==="folder"?"":"none";$("nestOpt").style.display=m==="in"?"none":"";
+  $("hostF").style.display=m==="folder"?"":"none";
+  $("hint").textContent=m==="pre"?"Reads link table + version headers WITHOUT opening any model.":m==="folder"?"Audits every .rvt in the folder (backups, IFC caches and _LinkCheckerBackup skipped).":"Scans the open model: links, nested, imported CAD, images, worksets.";
+  $("modeText").textContent=m==="pre"?"Pre-Open · file headers only":m==="folder"?"Folder audit · file headers only":"In-Model · OQ_Roof_Main_R26";
+  data=[];cards();render();detail();if(m==="in")scan();}
+function scan(){
+  const steps=mode==="folder"?["Finding models in the folder…","Reading link table 1/2: OQ_Podium_R26.rvt","Reading link table 2/2: OQ_Roof_Main_R26.rvt","Checking files on disk (14/14)…","Reading versions (9/9)","Nested links: ARC_Building_A.rvt","Applying checks…"]:["Reading link table…","Checking files on disk (11/11)…","Reading versions (6/6): MEP_Building_A.rvt","Nested links: ARC_Building_A.rvt","Applying checks…"];
+  let i=0;$("ov").classList.add("on");
+  const t=setInterval(()=>{if(i>=steps.length){clearInterval(t);$("ov").classList.remove("on");build();cards();render();$("stat").textContent+=` · scan took ${mode==="folder"?"3.4":"1.6"} s`;return;}
+    $("ptext").textContent=steps[i];$("pbar").style.width=((i+1)/steps.length*100)+"%";i++;},260);
+  $("pcancel").onclick=()=>{clearInterval(t);$("ov").classList.remove("on");$("stat").textContent="Scan cancelled.";};
+}
+function batch(verb){const t=tg();alert(`${verb}: would run on ${t.length} row(s):\n\n`+t.map(d=>"• "+d.name+(d.h?" — "+d.h:"")).join("\n")+"\n\n(Preview only — the add-in backs up first and shows a done/failed/skipped summary.)");}
+$("rows").addEventListener("click",e=>{if(e.target.dataset.c!==undefined){data[+e.target.dataset.c].chk=e.target.checked;targets();return;}
+  const tr=e.target.closest("tr");if(!tr)return;sel=+tr.dataset.i;render();detail();});
+["fProb","fUp","fType","fHost"].forEach(x=>$(x).addEventListener("change",render));$("fText").addEventListener("input",render);
+$("tickProb").onclick=()=>{visible().forEach(d=>d.chk=sevRank[d.sev]>=2);render();};
+$("tickAll").onclick=()=>{visible().forEach(d=>d.chk=true);render();};
+$("clear").onclick=()=>{data.forEach(d=>d.chk=false);render();};
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>setMode(b.dataset.m));
+$("scan").onclick=scan;
+$("aUp").onclick=()=>batch("Upgrade & Save");$("aIfc").onclick=()=>batch("Rebuild IFC cache");$("aSkip").onclick=()=>batch($("aSkip").textContent);
+setMode("pre");
+</script>
+</body>
+</html>
