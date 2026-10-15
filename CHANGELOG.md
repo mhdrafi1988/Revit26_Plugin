@@ -9,6 +9,13 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [3.3.0] — 2026-10-15
+
+### Added
+- **Export DWG to Folder v3.0.0 (V003)** — added to the Setup ▸ Project ▸ **Export DWG** dropdown,
+  above V001 (V001 stays available). Includes scan scope, delete-after-export mode, a grouped
+  tick/untick grid and log export (auto-save or save-as picker).
+
 ## [3.2.0] — 2026-10-08
 
 ### Added
