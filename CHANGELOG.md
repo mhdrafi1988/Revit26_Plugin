@@ -9,6 +9,15 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [3.5.0] — 2026-10-18
+
+### Added
+- **Roof From Linked Rooms v1.0.0 (V001)** — new **Roof From Linked Rooms** button in the Roof ribbon,
+  **Roof Tools** panel. Pick a linked model and tick its rooms; each room becomes one flat roof built
+  from its boundary, with inner room loops cut as openings. The host level is matched per room by
+  elevation (adjustable tolerance); rooms with no matching level are skipped. Works from any view.
+  Roof From Detail Lines is unchanged.
+
 ## [3.4.0] — 2026-10-15
 
 ### Added
