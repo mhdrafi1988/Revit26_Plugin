@@ -79,6 +79,7 @@ namespace Revit26_Plugin.Shared.Services
         public static readonly ToolInfo CreaserAdv = Add("Creaser Adv", "10.0.0", "V010", "Revit26_Plugin.CreaserAdv.V010");
         public static readonly ToolInfo RoofTag = Add("Roof Tag", "16.0.0", "V016", "Revit26_Plugin.RoofTag.V016");
         public static readonly ToolInfo RoofFromDetailLines = Add("Roof From Detail Lines", "7.0.0", "V007", "Revit26_Plugin.RoofFromDetailLines.V007");
+        public static readonly ToolInfo RoofFromLinkedRooms = Add("Roof From Linked Rooms", "1.0.0", "V001", "Revit26_Plugin.RoofFromLinkedRooms.V001");
         public static readonly ToolInfo CombinedRoofTools = Add("Combined Roof Tools", "1.0.0", "V001", "Revit26_Plugin.CombinedRoofTools.V001");
         public static readonly ToolInfo RoofTypeManager = Add("Roof Type Manager", "1.0.0", "V001", "Revit26_Plugin.RoofTypeCreator.V001");
         public static readonly ToolInfo RoofPointElevationSync = Add("Roof Point Elevation Sync", "3.0.0", "V003", "Revit26_Plugin.RoofPointElevationSync.V003");
