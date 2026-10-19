@@ -14,12 +14,13 @@ Changes vs V008 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
   - No behaviour change — every binding/command is the V008 one.
 =======================================================
 -->
-<Window x:Class="Revit26_Plugin.RoofEdgeVertexReducer.V009.UI.Views.MainWindow"
+<Window x:Class="Revit26_Plugin_Revised.RoofEdgeVertexReducer.V009.UI.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
-        xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
-        Title="Roof Edge Vertex Reducer — V009" Height="700" Width="460"
+        xmlns:svc="clr-namespace:Revit26_Plugin_Revised.Shared.Services"
+        xmlns:converters="clr-namespace:Revit26_Plugin_Revised.Shared.Models"
+        xmlns:shell="clr-namespace:Revit26_Plugin_Revised.Shared.Controls"
+        Title="{Binding Source={x:Static svc:ToolCatalog.RoofEdgeVertexReducer}, Path=Title}" Height="700" Width="460"
         MinHeight="700" MinWidth="460"
         WindowStartupLocation="CenterScreen"
         ResizeMode="CanResizeWithGrip"
@@ -36,7 +37,7 @@ Changes vs V008 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
 
     <shell:ToolWindowShell Title="Roof Edge Vertex Reducer"
                            Subtitle="Straight-edge interior point simplification"
-                           Version="V009"
+                           Version="{Binding Source={x:Static svc:ToolCatalog.RoofEdgeVertexReducer}, Path=Version, StringFormat=v{0}}"
                            IsRunning="{Binding IsRunning}"
                            Progress="{Binding Progress}"
                            SummaryText="{Binding SummaryText}">

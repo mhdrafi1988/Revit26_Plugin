@@ -1,7 +1,7 @@
 using Autodesk.Revit.UI;
-using Revit26_Plugin.Resources.Icons;
+using Revit26_Plugin_Revised.Resources.Icons;
 
-namespace Revit26_Plugin.Menu.Ribbon
+namespace Revit26_Plugin_Revised.Menu.Ribbon
 {
     /// <summary>
     /// Builds the Auto Dim Detail Line pulldown. Since plugin 2.4.0 it sits in the Detail Lines
@@ -21,15 +21,15 @@ namespace Revit26_Plugin.Menu.Ribbon
         public static PulldownButtonData CreateDetailLineDimPulldown(string assemblyPath, out PushButtonData[] versions)
         {
             // Highest version number first, every older version below it in descending order.
-            var dtlLineV009 = new PushButtonData("Btn_DtlLine_09", "Detail Lines V009", assemblyPath, "Revit26_Plugin.DtlLineDim.V009.Commands.DtlLineDimCommand")
+            var dtlLineV009 = new PushButtonData("Btn_DtlLine_09", "Detail Lines V009", assemblyPath, "Revit26_Plugin_Revised.DtlLineDim.V009.Commands.DtlLineDimCommand")
             {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Dimensions.AutoDimDetailLine_16.png"),
+                Image = ImageUtils.Load("Revit26_Plugin_Revised.Resources.Icons.Dimensions.AutoDimDetailLine_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Auto Dim Detail Line", "V009",
                     "UI Standard layout: metrics card, always-visible footer log with Copy All / Copy Selected, Generate Dimensions → Close.")
             };
-            var dtlLineV010 = new PushButtonData("Btn_DtlLine_10", "Detail Lines V010", assemblyPath, "Revit26_Plugin.DtlLineDim.V010.Commands.DtlLineDimCommand")
+            var dtlLineV010 = new PushButtonData("Btn_DtlLine_10", "Detail Lines V010", assemblyPath, "Revit26_Plugin_Revised.DtlLineDim.V010.Commands.DtlLineDimCommand")
             {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Dimensions.AutoDimDetailLine_16.png"),
+                Image = ImageUtils.Load("Revit26_Plugin_Revised.Resources.Icons.Dimensions.AutoDimDetailLine_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Auto Dim Detail Line", "V010",
                     "V009 on the shared ToolWindowShell (log in body).")
             };

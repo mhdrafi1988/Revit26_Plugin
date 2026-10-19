@@ -1,7 +1,7 @@
-using Revit26_Plugin.DeleteWorkset.V001.UI.ViewModels;
+using Revit26_Plugin_Revised.DeleteWorkset.V001.UI.ViewModels;
 using System.Windows;
 
-namespace Revit26_Plugin.DeleteWorkset.V001.UI.Views
+namespace Revit26_Plugin_Revised.DeleteWorkset.V001.UI.Views
 {
     public partial class DeleteWorksetWindow : Window
     {

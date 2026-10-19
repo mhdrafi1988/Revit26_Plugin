@@ -7,12 +7,12 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using Microsoft.Win32;
-using Revit26_Plugin.RoofNameBuilder.V002.Core.Models;
-using Revit26_Plugin.RoofNameBuilder.V002.UI.ViewModels;
-using Revit26_Plugin.Shared.Services;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.RoofNameBuilder.V002.Core.Models;
+using Revit26_Plugin_Revised.RoofNameBuilder.V002.UI.ViewModels;
+using Revit26_Plugin_Revised.Shared.Services;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.RoofNameBuilder.V002.UI.Views
+namespace Revit26_Plugin_Revised.RoofNameBuilder.V002.UI.Views
 {
     /// <summary>
     /// View-only code-behind: builds one "tick + value" column per applied code definition (the set is

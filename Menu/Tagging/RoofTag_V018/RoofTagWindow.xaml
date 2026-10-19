@@ -12,17 +12,18 @@ Changes vs V017 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
     binding/command is the V017 one.
 =======================================================
 -->
-<Window x:Class="Revit26_Plugin.RoofTag.V018.RoofTagWindow"
+<Window x:Class="Revit26_Plugin_Revised.RoofTag.V018.RoofTagWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="clr-namespace:Revit26_Plugin.RoofTag.V018"
-        xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
-        Title="Roof Tag — V018 (FaceRef)"
+        xmlns:svc="clr-namespace:Revit26_Plugin_Revised.Shared.Services"
+        xmlns:local="clr-namespace:Revit26_Plugin_Revised.RoofTag.V018"
+        xmlns:shell="clr-namespace:Revit26_Plugin_Revised.Shared.Controls"
+        Title="{Binding Source={x:Static svc:ToolCatalog.RoofTag}, Path=Title, StringFormat='{}{0} (FaceRef)'}"
         Height="760" Width="560"
         MinHeight="760" MinWidth="560"
         WindowStartupLocation="CenterScreen"
         ResizeMode="CanResizeWithGrip"
-        Background="{DynamicResource BrushSystemBackground}">
+        Background="{DynamicResource BrushSurfaceWindow}">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -55,7 +56,7 @@ Changes vs V017 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
 
     <shell:ToolWindowShell Title="Roof Tag"
                            Subtitle="FaceRef method"
-                           Version="V018"
+                           Version="{Binding Source={x:Static svc:ToolCatalog.RoofTag}, Path=Version, StringFormat=v{0}}"
                            IsRunning="{Binding IsRunning}"
                            Progress="{Binding Progress}"
                            SummaryText="{Binding SummaryText}">
@@ -82,7 +83,7 @@ Changes vs V017 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
         <shell:ToolWindowShell.BodyContent>
             <StackPanel>
                 <!-- ── WARNING BANNER ──────────────────────────────────────── -->
-                <Border Background="{StaticResource BrushInputBackground}" BorderBrush="{StaticResource BrushWarning}" BorderThickness="1"
+                <Border Background="{StaticResource BrushInputBackground}" BorderBrush="{StaticResource BrushStatusWarn}" BorderThickness="1"
                         CornerRadius="6" Padding="8,6" Margin="0,0,0,6">
                     <TextBlock FontSize="10" Foreground="{StaticResource BrushTextPrimary}" FontWeight="SemiBold" TextWrapping="Wrap"
                                Text="FaceRef method — tags DELETE if slab shape is edited after placement. Place tags after finalizing slope."/>
@@ -148,14 +149,14 @@ Changes vs V017 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                             <TextBlock Grid.Column="0" Text="Bend" FontSize="10" Foreground="{StaticResource BrushTextSecondary}"
                                        VerticalAlignment="Center" Margin="0,0,4,0"/>
                             <ComboBox Grid.Column="1" IsEditable="True" FontSize="10" Height="24" Padding="4,2"
-                                      Background="{StaticResource BrushCardBackground}" Foreground="{StaticResource BrushTextPrimary}"
+                                      Background="{StaticResource BrushSurfaceCard}" Foreground="{StaticResource BrushTextPrimary}"
                                       ItemsSource="{Binding PresetOffsetValues}"
                                       Text="{Binding BendOffset, UpdateSourceTrigger=PropertyChanged}"/>
 
                             <TextBlock Grid.Column="3" Text="End" FontSize="10" Foreground="{StaticResource BrushTextSecondary}"
                                        VerticalAlignment="Center" Margin="0,0,4,0"/>
                             <ComboBox Grid.Column="4" IsEditable="True" FontSize="10" Height="24" Padding="4,2"
-                                      Background="{StaticResource BrushCardBackground}" Foreground="{StaticResource BrushTextPrimary}"
+                                      Background="{StaticResource BrushSurfaceCard}" Foreground="{StaticResource BrushTextPrimary}"
                                       ItemsSource="{Binding PresetOffsetValues}"
                                       Text="{Binding EndOffset, UpdateSourceTrigger=PropertyChanged}"/>
 
@@ -178,7 +179,7 @@ Changes vs V017 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                         <TextBlock Grid.Column="0" Text="Spot Tag Type" FontSize="10.5" FontWeight="SemiBold"
                                    Foreground="{StaticResource BrushNavyPrimary}" VerticalAlignment="Center" Margin="0,0,10,0"/>
                         <ComboBox Grid.Column="1" FontSize="10" Height="24"
-                                  Background="{StaticResource BrushCardBackground}" Foreground="{StaticResource BrushTextPrimary}"
+                                  Background="{StaticResource BrushSurfaceCard}" Foreground="{StaticResource BrushTextPrimary}"
                                   ItemsSource="{Binding SpotTagTypes}"
                                   SelectedItem="{Binding SelectedSpotTagType}"
                                   DisplayMemberPath="Name"/>
@@ -199,7 +200,7 @@ Changes vs V017 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                         <TextBlock Grid.Column="1" Text="Radius" FontSize="10" Foreground="{StaticResource BrushTextSecondary}"
                                    VerticalAlignment="Center" Margin="8,0,6,0"/>
                         <TextBox Grid.Column="2" FontSize="10" Height="24" MaxLength="10"
-                                 Background="{StaticResource BrushCardBackground}" Foreground="{StaticResource BrushTextPrimary}"
+                                 Background="{StaticResource BrushSurfaceCard}" Foreground="{StaticResource BrushTextPrimary}"
                                  BorderBrush="{StaticResource BrushSeparator}" BorderThickness="1"
                                  VerticalContentAlignment="Center" Padding="6,0"
                                  IsEnabled="{Binding ClusterFilterEnabled}"
@@ -228,7 +229,7 @@ Changes vs V017 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                             <TextBlock Grid.Column="0" Text="Spacing" FontSize="10" Foreground="{StaticResource BrushTextSecondary}"
                                        VerticalAlignment="Center" Margin="0,0,6,0"/>
                             <TextBox Grid.Column="1" FontSize="10" Height="24" MaxLength="10"
-                                     Background="{StaticResource BrushCardBackground}" Foreground="{StaticResource BrushTextPrimary}"
+                                     Background="{StaticResource BrushSurfaceCard}" Foreground="{StaticResource BrushTextPrimary}"
                                      BorderBrush="{StaticResource BrushSeparator}" BorderThickness="1"
                                      VerticalContentAlignment="Center" Padding="6,0"
                                      Text="{Binding InteriorLoopSpacing, UpdateSourceTrigger=PropertyChanged}"/>
@@ -238,7 +239,7 @@ Changes vs V017 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                             <TextBlock Grid.Column="4" Text="Boundary tol." FontSize="10" Foreground="{StaticResource BrushTextSecondary}"
                                        VerticalAlignment="Center" Margin="0,0,6,0"/>
                             <TextBox Grid.Column="5" FontSize="10" Height="24" MaxLength="10"
-                                     Background="{StaticResource BrushCardBackground}" Foreground="{StaticResource BrushTextPrimary}"
+                                     Background="{StaticResource BrushSurfaceCard}" Foreground="{StaticResource BrushTextPrimary}"
                                      BorderBrush="{StaticResource BrushSeparator}" BorderThickness="1"
                                      VerticalContentAlignment="Center" Padding="6,0"
                                      Text="{Binding InteriorLoopBoundaryTolerance, UpdateSourceTrigger=PropertyChanged}"/>
@@ -269,7 +270,7 @@ Changes vs V017 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                             <TextBlock Grid.Column="0" Text="Spacing" FontSize="10" Foreground="{StaticResource BrushTextSecondary}"
                                        VerticalAlignment="Center" Margin="0,0,6,0"/>
                             <TextBox Grid.Column="1" FontSize="10" Height="24" MaxLength="10"
-                                     Background="{StaticResource BrushCardBackground}" Foreground="{StaticResource BrushTextPrimary}"
+                                     Background="{StaticResource BrushSurfaceCard}" Foreground="{StaticResource BrushTextPrimary}"
                                      BorderBrush="{StaticResource BrushSeparator}" BorderThickness="1"
                                      VerticalContentAlignment="Center" Padding="6,0"
                                      Text="{Binding ExteriorLoopSpacing, UpdateSourceTrigger=PropertyChanged}"/>
@@ -279,7 +280,7 @@ Changes vs V017 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                             <TextBlock Grid.Column="4" Text="Boundary tol." FontSize="10" Foreground="{StaticResource BrushTextSecondary}"
                                        VerticalAlignment="Center" Margin="0,0,6,0"/>
                             <TextBox Grid.Column="5" FontSize="10" Height="24" MaxLength="10"
-                                     Background="{StaticResource BrushCardBackground}" Foreground="{StaticResource BrushTextPrimary}"
+                                     Background="{StaticResource BrushSurfaceCard}" Foreground="{StaticResource BrushTextPrimary}"
                                      BorderBrush="{StaticResource BrushSeparator}" BorderThickness="1"
                                      VerticalContentAlignment="Center" Padding="6,0"
                                      Text="{Binding ExteriorLoopBoundaryTolerance, UpdateSourceTrigger=PropertyChanged}"/>

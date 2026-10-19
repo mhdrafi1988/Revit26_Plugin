@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.IslandRoofSplitter.V001.Core.Models
+namespace Revit26_Plugin_Revised.IslandRoofSplitter.V001.Core.Models
 {
     public readonly record struct PreviewMessage(MessageSeverity Severity, string Text);
 

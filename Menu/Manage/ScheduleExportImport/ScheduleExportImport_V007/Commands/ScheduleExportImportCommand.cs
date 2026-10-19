@@ -3,11 +3,11 @@ using System.Windows.Interop;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.ScheduleExportImport.V007.Infrastructure.ExternalEvents;
-using Revit26_Plugin.ScheduleExportImport.V007.UI.ViewModels;
-using Revit26_Plugin.ScheduleExportImport.V007.UI.Views;
+using Revit26_Plugin_Revised.ScheduleExportImport.V007.Infrastructure.ExternalEvents;
+using Revit26_Plugin_Revised.ScheduleExportImport.V007.UI.ViewModels;
+using Revit26_Plugin_Revised.ScheduleExportImport.V007.UI.Views;
 
-namespace Revit26_Plugin.ScheduleExportImport.V007.Commands
+namespace Revit26_Plugin_Revised.ScheduleExportImport.V007.Commands
 {
     // Import is two-step (Analyze → preview → Apply) and writes only ticked, changed,
     // instance-parameter values; per Rafi's confirmed decision (2026-09-30).

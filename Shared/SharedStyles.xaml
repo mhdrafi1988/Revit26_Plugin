@@ -1,7 +1,7 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models">
+    xmlns:converters="clr-namespace:Revit26_Plugin_Revised.Shared.Models">
 
     <!-- ═══════════════════════════════════════════════════════════
          REVIT PLUGIN SHARED STYLE GUIDE  —  Navy Corporate Theme

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.PlanFromScopeBox.V006.Infrastructure.Helpers
+namespace Revit26_Plugin_Revised.PlanFromScopeBox.V006.Infrastructure.Helpers
 {
     /// <summary>
     /// Targeted failure preprocessor. Deletes only the specific, known-benign warnings that

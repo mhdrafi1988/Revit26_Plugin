@@ -2,11 +2,11 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Revit26_Plugin.RoofTypeCreator.V003.Core.Models;
-using Revit26_Plugin.RoofTypeCreator.V003.UI.ViewModels;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.RoofTypeCreator.V003.Core.Models;
+using Revit26_Plugin_Revised.RoofTypeCreator.V003.UI.ViewModels;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.RoofTypeCreator.V003.UI.Views
+namespace Revit26_Plugin_Revised.RoofTypeCreator.V003.UI.Views
 {
     public partial class RoofTypeManagerWindow : Window
     {

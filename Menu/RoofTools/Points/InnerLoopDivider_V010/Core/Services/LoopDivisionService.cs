@@ -9,12 +9,12 @@
 // =======================================================
 
 using Autodesk.Revit.DB;
-using Revit26_Plugin.InnerLoopDivider.V010.Core.Models;
+using Revit26_Plugin_Revised.InnerLoopDivider.V010.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.InnerLoopDivider.V010.Core.Services
+namespace Revit26_Plugin_Revised.InnerLoopDivider.V010.Core.Services
 {
     /// <summary>
     /// Applies division points to boundary loops on a roof via the slab shape editor.

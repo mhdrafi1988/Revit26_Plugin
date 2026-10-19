@@ -152,7 +152,7 @@ begin
   Lines[3] := '    <Name>Revit26_Plugin</Name>';
   Lines[4] := '    <Assembly>' + GetDllInstallPath() + '</Assembly>';
   Lines[5] := '    <AddInId>a4e8c4c7-9f8b-4a6a-9d31-532f8c980d41</AddInId>';
-  Lines[6] := '    <FullClassName>Revit26_Plugin.App</FullClassName>';
+  Lines[6] := '    <FullClassName>Revit26_Plugin_Revised.App</FullClassName>';
   Lines[7] := '    <VendorId>RAFI</VendorId>';
   Lines[8] := '    <VendorDescription>By Rafi</VendorDescription>';
   Lines[9] := '  </AddIn>';

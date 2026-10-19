@@ -1,7 +1,7 @@
 // Ported unchanged from V003 (namespace updated only).
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.RoofEdgeVertexReducer.V009.Core.Models
+namespace Revit26_Plugin_Revised.RoofEdgeVertexReducer.V009.Core.Models
 {
     /// <summary>
     /// One straight sketch edge from the roof footprint boundary (outer loop or an

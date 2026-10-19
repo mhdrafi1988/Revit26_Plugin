@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.WorksetsElementsBrowser.WSEB004.Core.Models;
-using Revit26_Plugin.WorksetsElementsBrowser.WSEB004.Core.Services;
+using Revit26_Plugin_Revised.WorksetsElementsBrowser.WSEB004.Core.Models;
+using Revit26_Plugin_Revised.WorksetsElementsBrowser.WSEB004.Core.Services;
 
-namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB004.Infrastructure.ExternalEvents
+namespace Revit26_Plugin_Revised.WorksetsElementsBrowser.WSEB004.Infrastructure.ExternalEvents
 {
     /// <summary>
     /// Requests this tool's orchestrator handler can execute, set by the

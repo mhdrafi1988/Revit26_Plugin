@@ -3,7 +3,7 @@ using System.Linq;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Architecture;
 
-namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V012
+namespace Revit26_Plugin_Revised.FloorsAndRoofFromLinkedRooms.V012
 {
     public static class LinkedRoomService
     {

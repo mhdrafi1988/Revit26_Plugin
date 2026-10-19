@@ -3,11 +3,11 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
-using Revit26_Plugin.RoofPointComparison.V003.Infrastructure.Helpers;
-using Revit26_Plugin.RoofPointComparison.V003.UI.Views;
-using Revit26_Plugin.Utilities;
+using Revit26_Plugin_Revised.RoofPointComparison.V003.Infrastructure.Helpers;
+using Revit26_Plugin_Revised.RoofPointComparison.V003.UI.Views;
+using Revit26_Plugin_Revised.Utilities;
 
-namespace Revit26_Plugin.RoofPointComparison.V003.Commands
+namespace Revit26_Plugin_Revised.RoofPointComparison.V003.Commands
 {
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]

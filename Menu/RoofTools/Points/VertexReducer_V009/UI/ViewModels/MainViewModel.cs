@@ -6,12 +6,12 @@ using System.Linq;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.RoofEdgeVertexReducer.V009.Core.Models;
-using Revit26_Plugin.RoofEdgeVertexReducer.V009.Core.Services;
-using Revit26_Plugin.RoofEdgeVertexReducer.V009.Infrastructure.ExternalEvents;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.RoofEdgeVertexReducer.V009.Core.Models;
+using Revit26_Plugin_Revised.RoofEdgeVertexReducer.V009.Core.Services;
+using Revit26_Plugin_Revised.RoofEdgeVertexReducer.V009.Infrastructure.ExternalEvents;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.RoofEdgeVertexReducer.V009.UI.ViewModels
+namespace Revit26_Plugin_Revised.RoofEdgeVertexReducer.V009.UI.ViewModels
 {
     public partial class MainViewModel : ObservableObject
     {

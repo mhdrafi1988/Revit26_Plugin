@@ -1,6 +1,6 @@
 using Autodesk.Revit.UI;
 
-namespace Revit26_Plugin.OuterCurveDivider.V005.Infrastructure.ExternalEvents
+namespace Revit26_Plugin_Revised.OuterCurveDivider.V005.Infrastructure.ExternalEvents
 {
     public static class CurveDividerEventManager
     {

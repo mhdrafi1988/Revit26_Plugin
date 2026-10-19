@@ -1,6 +1,6 @@
-using Revit26_Plugin.SheetViewArrange.V001.Core.Layout;
+using Revit26_Plugin_Revised.SheetViewArrange.V001.Core.Layout;
 
-namespace Revit26_Plugin.SheetViewArrange.V001.Core.Models
+namespace Revit26_Plugin_Revised.SheetViewArrange.V001.Core.Models
 {
     /// <summary>
     /// Persisted to %AppData%\Revit26_Plugin\SheetViewArrange\settings.json.

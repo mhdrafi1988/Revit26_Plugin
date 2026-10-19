@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.ScheduleExportImport.V007.Core.Models;
-using Revit26_Plugin.ScheduleExportImport.V007.Core.Services;
+using Revit26_Plugin_Revised.ScheduleExportImport.V007.Core.Models;
+using Revit26_Plugin_Revised.ScheduleExportImport.V007.Core.Services;
 
-namespace Revit26_Plugin.ScheduleExportImport.V007.Infrastructure.ExternalEvents
+namespace Revit26_Plugin_Revised.ScheduleExportImport.V007.Infrastructure.ExternalEvents
 {
     public enum ScheduleImportRequest
     {

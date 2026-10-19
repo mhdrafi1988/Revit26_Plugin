@@ -19,7 +19,7 @@ using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 
-namespace Revit26_Plugin.OuterCurveDivider.V005.Core.Models
+namespace Revit26_Plugin_Revised.OuterCurveDivider.V005.Core.Models
 {
     /// <summary>
     /// One non-linear edge of the picked roof (one grid row). Every edge resolves to a single

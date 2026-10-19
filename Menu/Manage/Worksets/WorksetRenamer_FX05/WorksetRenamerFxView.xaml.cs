@@ -1,9 +1,9 @@
 using System.IO;
 using System.Linq;
 using System.Windows;
-using Revit26_Plugin.WorksetRenamer.FX05.ViewModels;
+using Revit26_Plugin_Revised.WorksetRenamer.FX05.ViewModels;
 
-namespace Revit26_Plugin.WorksetRenamer.FX05.Views
+namespace Revit26_Plugin_Revised.WorksetRenamer.FX05.Views
 {
     public partial class WorksetRenamerFxView : Window
     {

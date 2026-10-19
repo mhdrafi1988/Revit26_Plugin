@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.PlanFromScopeBox.V006.Core.Models
+namespace Revit26_Plugin_Revised.PlanFromScopeBox.V006.Core.Models
 {
     /// <summary>
     /// One row in the scope-box selection grid. Carries the scope box element id,

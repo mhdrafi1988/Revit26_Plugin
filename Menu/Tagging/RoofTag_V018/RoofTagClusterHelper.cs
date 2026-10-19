@@ -2,7 +2,7 @@ using Autodesk.Revit.DB;
 using System;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.RoofTag.V018.Helpers
+namespace Revit26_Plugin_Revised.RoofTag.V018.Helpers
 {
     /// <summary>
     /// Rule 1: suppress tags on points that share elevation (fixed 5 mm tolerance)

@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.RoofPointComparison.V003.Core.Models
+namespace Revit26_Plugin_Revised.RoofPointComparison.V003.Core.Models
 {
     /// <summary>
     /// Style/config for one marker type (Missing Points / Mismatched Elevation).

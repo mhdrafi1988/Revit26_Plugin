@@ -9,12 +9,12 @@
 // not set here; the hosting window binds it externally per tab.
 // =======================================================
 
-using Revit26_Plugin.InnerLoopDivider.V009.UI.ViewModels;
+using Revit26_Plugin_Revised.InnerLoopDivider.V009.UI.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.Shared.Services;
 
-namespace Revit26_Plugin.CombinedRoofTools.V003.UI.Views.Tabs
+namespace Revit26_Plugin_Revised.CombinedRoofTools.V003.UI.Views.Tabs
 {
     public partial class InnerLoopDividerTabView : UserControl
     {

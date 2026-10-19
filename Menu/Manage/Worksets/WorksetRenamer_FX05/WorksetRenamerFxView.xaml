@@ -17,12 +17,13 @@ Changes vs FX04 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
   - No behaviour change — every binding/command is the FX04 one.
 =======================================================
 -->
-<Window x:Class="Revit26_Plugin.WorksetRenamer.FX05.Views.WorksetRenamerFxView"
+<Window x:Class="Revit26_Plugin_Revised.WorksetRenamer.FX05.Views.WorksetRenamerFxView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="clr-namespace:Revit26_Plugin.WorksetRenamer.FX05.ViewModels"
-        xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
-        Title="Workset Renamer — From Excel (FX05)"
+        xmlns:svc="clr-namespace:Revit26_Plugin_Revised.Shared.Services"
+        xmlns:vm="clr-namespace:Revit26_Plugin_Revised.WorksetRenamer.FX05.ViewModels"
+        xmlns:shell="clr-namespace:Revit26_Plugin_Revised.Shared.Controls"
+        Title="{Binding Source={x:Static svc:ToolCatalog.WorksetRenamerExcel}, Path=Title}"
         Width="920" Height="780"
         MinWidth="920" MinHeight="780"
         ResizeMode="CanResizeWithGrip"
@@ -43,7 +44,7 @@ Changes vs FX04 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
             <!-- ══ Group expander chrome — colored left bar via the Tag brush ══ -->
             <Style x:Key="GroupExpander" TargetType="Expander">
                 <Setter Property="Margin" Value="0,0,0,8"/>
-                <Setter Property="Background" Value="{StaticResource BrushSystemBackground}"/>
+                <Setter Property="Background" Value="{StaticResource BrushSurfaceWindow}"/>
                 <Setter Property="BorderBrush" Value="{StaticResource BrushSeparatorThin}"/>
                 <Setter Property="BorderThickness" Value="1"/>
                 <Setter Property="Padding" Value="0"/>
@@ -98,7 +99,7 @@ Changes vs FX04 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                 <Setter Property="RowStyle" Value="{StaticResource DataGridRowStyle}"/>
                 <Setter Property="CellStyle" Value="{StaticResource DataGridCellStyle}"/>
                 <Setter Property="ColumnHeaderStyle" Value="{StaticResource DataGridColumnHeaderStyle}"/>
-                <Setter Property="Background" Value="{StaticResource BrushSystemBackground}"/>
+                <Setter Property="Background" Value="{StaticResource BrushSurfaceWindow}"/>
                 <Setter Property="BorderThickness" Value="0"/>
                 <Setter Property="RowHeight" Value="28"/>
                 <Setter Property="MinHeight" Value="60"/>
@@ -125,11 +126,11 @@ Changes vs FX04 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                 <Setter Property="Foreground" Value="{StaticResource BrushAppleBlue}"/>
             </Style>
             <Style x:Key="FxDuplicateCellText" TargetType="TextBlock" BasedOn="{StaticResource FxReadOnlyCellText}">
-                <Setter Property="Foreground" Value="{StaticResource BrushGroupWarningText}"/>
+                <Setter Property="Foreground" Value="{StaticResource BrushStatusWarn}"/>
                 <Setter Property="FontWeight" Value="SemiBold"/>
             </Style>
             <Style x:Key="FxInvalidCellText" TargetType="TextBlock" BasedOn="{StaticResource FxReadOnlyCellText}">
-                <Setter Property="Foreground" Value="{StaticResource BrushGroupDangerAccent}"/>
+                <Setter Property="Foreground" Value="{StaticResource BrushStatusError}"/>
             </Style>
             <Style x:Key="FxEditingCellText" TargetType="TextBox">
                 <Setter Property="FontSize" Value="11"/>
@@ -144,7 +145,7 @@ Changes vs FX04 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
 
     <shell:ToolWindowShell Title="Workset Renamer — From Excel"
                            Subtitle="Export the model's worksets, edit New Name in Excel, import, review by group, then Update."
-                           Version="FX05"
+                           Version="{Binding Source={x:Static svc:ToolCatalog.WorksetRenamerExcel}, Path=Version, StringFormat=v{0}}"
                            IsRunning="{Binding IsRunning}"
                            Progress="{Binding Progress}"
                            SummaryText="{Binding StatusMessage}">
@@ -304,7 +305,7 @@ Changes vs FX04 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                 <!-- ══ Grouped by possibility of rename — one expander per bucket (own ScrollViewer removed; OK open, others closed — unchanged) ══ -->
                 <StackPanel>
 
-                    <Expander IsExpanded="True" Style="{StaticResource GroupExpander}" Tag="{StaticResource BrushGroupOkAccent}">
+                    <Expander IsExpanded="True" Style="{StaticResource GroupExpander}" Tag="{StaticResource BrushStatusOk}">
                         <Expander.Header>
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -312,8 +313,8 @@ Changes vs FX04 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Column="0" Text="✅ OK to Rename" FontWeight="SemiBold" FontSize="12"/>
-                                <Border Grid.Column="1" Background="{StaticResource BrushGroupOkBackground}" CornerRadius="9" Padding="8,1">
-                                    <TextBlock Text="{Binding OkCount}" FontSize="10" FontWeight="Bold" Foreground="{StaticResource BrushGroupOkAccent}"/>
+                                <Border Grid.Column="1" Background="{StaticResource BrushStatusOkSoft}" CornerRadius="9" Padding="8,1">
+                                    <TextBlock Text="{Binding OkCount}" FontSize="10" FontWeight="Bold" Foreground="{StaticResource BrushStatusOk}"/>
                                 </Border>
                             </Grid>
                         </Expander.Header>
@@ -326,7 +327,7 @@ Changes vs FX04 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                         </DataGrid>
                     </Expander>
 
-                    <Expander Style="{StaticResource GroupExpander}" Tag="{StaticResource BrushGroupWarningAccent}">
+                    <Expander Style="{StaticResource GroupExpander}" Tag="{StaticResource BrushStatusWarn}">
                         <Expander.Header>
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -337,8 +338,8 @@ Changes vs FX04 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                     <Run Text="▲ Duplicate — Auto-suffixed"/>
                                     <Run Text=" (re-checked again at Update)" FontWeight="Normal" FontSize="10" Foreground="{StaticResource BrushTextSecondary}"/>
                                 </TextBlock>
-                                <Border Grid.Column="1" Background="{StaticResource BrushGroupWarningBackground}" CornerRadius="9" Padding="8,1">
-                                    <TextBlock Text="{Binding DuplicateCount}" FontSize="10" FontWeight="Bold" Foreground="{StaticResource BrushGroupWarningText}"/>
+                                <Border Grid.Column="1" Background="{StaticResource BrushStatusWarnSoft}" CornerRadius="9" Padding="8,1">
+                                    <TextBlock Text="{Binding DuplicateCount}" FontSize="10" FontWeight="Bold" Foreground="{StaticResource BrushStatusWarn}"/>
                                 </Border>
                             </Grid>
                         </Expander.Header>
@@ -351,7 +352,7 @@ Changes vs FX04 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                         </DataGrid>
                     </Expander>
 
-                    <Expander Style="{StaticResource GroupExpander}" Tag="{StaticResource BrushGroupNewAccent}">
+                    <Expander Style="{StaticResource GroupExpander}" Tag="{StaticResource BrushStatusInfo}">
                         <Expander.Header>
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -362,8 +363,8 @@ Changes vs FX04 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                     <Run Text="+ Will Create New Workset"/>
                                     <Run Text=" (Old Name not found in model)" FontWeight="Normal" FontSize="10" Foreground="{StaticResource BrushTextSecondary}"/>
                                 </TextBlock>
-                                <Border Grid.Column="1" Background="{StaticResource BrushGroupNewBackground}" CornerRadius="9" Padding="8,1">
-                                    <TextBlock Text="{Binding NewWorksetCount}" FontSize="10" FontWeight="Bold" Foreground="{StaticResource BrushGroupNewAccent}"/>
+                                <Border Grid.Column="1" Background="{StaticResource BrushStatusInfoSoft}" CornerRadius="9" Padding="8,1">
+                                    <TextBlock Text="{Binding NewWorksetCount}" FontSize="10" FontWeight="Bold" Foreground="{StaticResource BrushStatusInfo}"/>
                                 </Border>
                             </Grid>
                         </Expander.Header>
@@ -376,7 +377,7 @@ Changes vs FX04 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                         </DataGrid>
                     </Expander>
 
-                    <Expander Style="{StaticResource GroupExpander}" Tag="{StaticResource BrushGroupNeutralAccent}">
+                    <Expander Style="{StaticResource GroupExpander}" Tag="{StaticResource BrushTextTertiary}">
                         <Expander.Header>
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -387,8 +388,8 @@ Changes vs FX04 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                     <Run Text="– No Match — Unchanged"/>
                                     <Run Text=" (model worksets with no Excel row)" FontWeight="Normal" FontSize="10" Foreground="{StaticResource BrushTextSecondary}"/>
                                 </TextBlock>
-                                <Border Grid.Column="1" Background="{StaticResource BrushGroupNeutralBackground}" CornerRadius="9" Padding="8,1">
-                                    <TextBlock Text="{Binding NoMatchCount}" FontSize="10" FontWeight="Bold" Foreground="{StaticResource BrushGroupNeutralText}"/>
+                                <Border Grid.Column="1" Background="{StaticResource BrushSystemSecondaryBackground}" CornerRadius="9" Padding="8,1">
+                                    <TextBlock Text="{Binding NoMatchCount}" FontSize="10" FontWeight="Bold" Foreground="{StaticResource BrushTextSecondary}"/>
                                 </Border>
                             </Grid>
                         </Expander.Header>
@@ -399,7 +400,7 @@ Changes vs FX04 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                         </DataGrid>
                     </Expander>
 
-                    <Expander Style="{StaticResource GroupExpander}" Tag="{StaticResource BrushGroupDangerAccent}">
+                    <Expander Style="{StaticResource GroupExpander}" Tag="{StaticResource BrushStatusError}">
                         <Expander.Header>
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -410,8 +411,8 @@ Changes vs FX04 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                     <Run Text="✕ Invalid / Blank"/>
                                     <Run Text=" (cannot be actioned as-is)" FontWeight="Normal" FontSize="10" Foreground="{StaticResource BrushTextSecondary}"/>
                                 </TextBlock>
-                                <Border Grid.Column="1" Background="{StaticResource BrushGroupDangerBackground}" CornerRadius="9" Padding="8,1">
-                                    <TextBlock Text="{Binding InvalidCount}" FontSize="10" FontWeight="Bold" Foreground="{StaticResource BrushGroupDangerAccent}"/>
+                                <Border Grid.Column="1" Background="{StaticResource BrushStatusErrorSoft}" CornerRadius="9" Padding="8,1">
+                                    <TextBlock Text="{Binding InvalidCount}" FontSize="10" FontWeight="Bold" Foreground="{StaticResource BrushStatusError}"/>
                                 </Border>
                             </Grid>
                         </Expander.Header>
@@ -431,7 +432,7 @@ Changes vs FX04 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
         <shell:ToolWindowShell.FooterContent>
             <StackPanel>
                 <TextBlock Text="⚠ Duplicates are re-checked at Update time, including manual edits."
-                           FontSize="10" Foreground="{StaticResource BrushWarning}" Margin="2,0,0,8"/>
+                           FontSize="10" Foreground="{StaticResource BrushStatusWarn}" Margin="2,0,0,8"/>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>

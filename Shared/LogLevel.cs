@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.Shared.Models
+namespace Revit26_Plugin_Revised.Shared.Models
 {
     /// <summary>
     /// Shared log severity levels used by log panels and converters

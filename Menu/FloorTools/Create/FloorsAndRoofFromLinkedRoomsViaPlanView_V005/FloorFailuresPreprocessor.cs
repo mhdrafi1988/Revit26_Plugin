@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V005
+namespace Revit26_Plugin_Revised.FloorsAndRoofFromLinkedRoomsViaPlanView.V005
 {
     /// <summary>
     /// ASSUMPTION (flagged): the GUID list below is a starting point copied from similar

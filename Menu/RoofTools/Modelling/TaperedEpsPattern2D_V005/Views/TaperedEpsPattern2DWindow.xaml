@@ -1,0 +1,393 @@
+<Window
+    x:Class="Revit26_Plugin_Revised.TaperedEpsPattern2D.V005.Views.TaperedEpsPattern2DWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="clr-namespace:Revit26_Plugin_Revised.TaperedEpsPattern2D.V005.ViewModels"
+    xmlns:views="clr-namespace:Revit26_Plugin_Revised.TaperedEpsPattern2D.V005.Views"
+    Title="{Binding Title}"
+    Width="1240" Height="860" MinWidth="960" MinHeight="640"
+    WindowStartupLocation="CenterOwner">
+
+    <!-- Plain WPF Window. Styles are SharedStyles keys via DynamicResource (missing keys fall back to
+         WPF defaults). Group colours come from the tool's token dictionary Pattern2DTheme.xaml.
+         No inline colours here. -->
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Pattern2DTheme.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <BooleanToVisibilityConverter x:Key="BoolToVis" />
+            <views:HexToBrushConverter x:Key="HexToBrush" />
+
+            <DataTemplate DataType="{x:Type vm:NumericFieldViewModel}">
+                <Grid Margin="0,0,0,6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="120" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="36" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="{Binding Label}" Style="{DynamicResource FieldLabel}" VerticalAlignment="Center" />
+                    <TextBox Grid.Column="1" Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
+                             ToolTip="{Binding RangeHint}" Style="{DynamicResource FieldTextBox}" />
+                    <TextBlock Grid.Column="2" Text="{Binding Unit}" Margin="6,0,0,0" VerticalAlignment="Center"
+                               Style="{DynamicResource FieldLabel}" />
+                    <TextBlock Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Error}" TextWrapping="Wrap"
+                               Style="{DynamicResource ErrorText}"
+                               Visibility="{Binding HasError, Converter={StaticResource BoolToVis}}" />
+                </Grid>
+            </DataTemplate>
+
+            <DataTemplate x:Key="LayerRowTemplate" DataType="{x:Type vm:LayerOptionViewModel}">
+                <Grid Margin="0,0,0,6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="140" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <CheckBox Content="{Binding Name}" IsChecked="{Binding IsEnabled}" VerticalAlignment="Center" />
+                    <ComboBox Grid.Column="1" ItemsSource="{Binding Styles}" SelectedItem="{Binding SelectedStyle}"
+                              DisplayMemberPath="Name" IsEnabled="{Binding IsEnabled}" ToolTip="Line style" />
+                </Grid>
+            </DataTemplate>
+
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- ── Header ─────────────────────────────────────────── -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,12">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding Title}" Style="{DynamicResource ToolHeaderTitle}" />
+                <TextBlock Text="{Binding Version}" Margin="12,0,0,0" VerticalAlignment="Bottom" Style="{DynamicResource ToolHeaderMeta}" />
+                <TextBlock Text="{Binding RevitVersion}" Margin="12,0,0,0" VerticalAlignment="Bottom" Style="{DynamicResource ToolHeaderMeta}" />
+                <TextBlock Margin="12,0,0,0" VerticalAlignment="Bottom" Style="{DynamicResource ToolHeaderMeta}">
+                    <Run Text="Build " /><Run Text="{Binding BuildDate, Mode=OneWay}" />
+                </TextBlock>
+            </StackPanel>
+            <ItemsControl ItemsSource="{Binding Tiles}" Margin="0,10,0,0">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Rows="1" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type vm:MetricTileViewModel}">
+                        <Border Style="{DynamicResource MetricTile}" Margin="0,0,8,0">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Value}" Style="{DynamicResource MetricTileValue}" />
+                                <TextBlock Text="{Binding Label}" Style="{DynamicResource MetricTileLabel}" />
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+
+        <!-- ── Body ───────────────────────────────────────────── -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="410" />
+                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- LEFT: grouped settings -->
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="0,0,6,0">
+
+                    <!-- 1 · ROOF -->
+                    <Border Style="{StaticResource Eps2D.GroupHeader}" Background="{StaticResource Eps2D.Group.RoofBrush}">
+                        <DockPanel>
+                            <Border DockPanel.Dock="Right" Style="{DynamicResource Badge}">
+                                <TextBlock Text="{Binding Roof.ShapeBadge}" />
+                            </Border>
+                            <TextBlock Text="1 · Roof" Style="{StaticResource Eps2D.GroupHeaderText}" />
+                        </DockPanel>
+                    </Border>
+                    <Border Style="{StaticResource Eps2D.GroupBody}" BorderBrush="{StaticResource Eps2D.Group.RoofBrush}">
+                        <StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition /><RowDefinition /><RowDefinition /><RowDefinition />
+                                </Grid.RowDefinitions>
+                                <TextBlock Text="View" Style="{DynamicResource FieldLabel}" />
+                                <TextBlock Grid.Column="1" Text="{Binding Roof.ViewName}" TextTrimming="CharacterEllipsis" />
+                                <TextBlock Grid.Row="1" Text="Roof" Style="{DynamicResource FieldLabel}" />
+                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Roof.RoofName}" TextTrimming="CharacterEllipsis" />
+                                <TextBlock Grid.Row="2" Text="Level" Style="{DynamicResource FieldLabel}" />
+                                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Roof.LevelName}" />
+                                <TextBlock Grid.Row="3" Text="Edges" Style="{DynamicResource FieldLabel}" />
+                                <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Roof.Edges}" />
+                            </Grid>
+                            <TextBlock Text="{Binding Roof.ErrorText}" TextWrapping="Wrap" Margin="0,6,0,0"
+                                       Style="{DynamicResource ErrorText}"
+                                       Visibility="{Binding Roof.HasError, Converter={StaticResource BoolToVis}}" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 2 · BOARDS -->
+                    <Border Style="{StaticResource Eps2D.GroupHeader}" Background="{StaticResource Eps2D.Group.BoardsBrush}">
+                        <TextBlock Text="2 · Boards" Style="{StaticResource Eps2D.GroupHeaderText}" />
+                    </Border>
+                    <Border Style="{StaticResource Eps2D.GroupBody}" BorderBrush="{StaticResource Eps2D.Group.BoardsBrush}">
+                        <StackPanel>
+                            <ContentControl Content="{Binding Board.Width}" />
+                            <ContentControl Content="{Binding Board.Length}" />
+                            <ContentControl Content="{Binding Board.Slope}" />
+                            <ContentControl Content="{Binding Board.MinThickness}" />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120" /><ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Water falls to" Style="{DynamicResource FieldLabel}" VerticalAlignment="Center" />
+                                <TextBox Grid.Column="1" Text="{Binding Board.WaterFallsTo, Mode=OneWay}" IsReadOnly="True"
+                                         IsEnabled="False" ToolTip="Locked in this version" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 3 · ROW LAYOUT -->
+                    <Border Style="{StaticResource Eps2D.GroupHeader}" Background="{StaticResource Eps2D.Group.RowLayoutBrush}">
+                        <TextBlock Text="3 · Row layout" Style="{StaticResource Eps2D.GroupHeaderText}" />
+                    </Border>
+                    <Border Style="{StaticResource Eps2D.GroupBody}" BorderBrush="{StaticResource Eps2D.Group.RowLayoutBrush}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="120" /><ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" /><RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Text="Grid direction" Style="{DynamicResource FieldLabel}" VerticalAlignment="Center" />
+                            <ComboBox Grid.Row="0" Grid.Column="1" Margin="0,0,0,6" ItemsSource="{Binding Board.GridDirections}"
+                                      SelectedItem="{Binding Board.SelectedGridDirection}" DisplayMemberPath="Label" />
+
+                            <TextBlock Grid.Row="1" Text="Align to edge" Style="{DynamicResource FieldLabel}" VerticalAlignment="Center" />
+                            <ComboBox Grid.Row="1" Grid.Column="1" Margin="0,0,0,6" ItemsSource="{Binding Board.Edges}"
+                                      SelectedItem="{Binding Board.SelectedEdge}" DisplayMemberPath="Label"
+                                      IsEnabled="{Binding Board.IsEdgePickerEnabled}"
+                                      ToolTip="Single-grid mode: the grid runs parallel to this roof edge" />
+
+                            <TextBlock Grid.Row="2" Text="Grid origin" Style="{DynamicResource FieldLabel}" VerticalAlignment="Center" />
+                            <ComboBox Grid.Row="2" Grid.Column="1" Margin="0,0,0,6" ItemsSource="{Binding Board.GridOrigins}"
+                                      SelectedItem="{Binding Board.SelectedGridOrigin}" DisplayMemberPath="Label" />
+
+                            <TextBlock Grid.Row="3" Text="Row start" Style="{DynamicResource FieldLabel}" VerticalAlignment="Center" />
+                            <ComboBox Grid.Row="3" Grid.Column="1" Margin="0,0,0,6" ItemsSource="{Binding Board.RowStarts}" DisplayMemberPath="Label"
+                                      SelectedItem="{Binding Board.SelectedRowStart}" IsEnabled="{Binding Board.IsRowStartEnabled}"
+                                      ToolTip="Where each row starts and where its leftover cut goes" />
+
+                            <TextBlock Grid.Row="4" Text="Middle start" Style="{DynamicResource FieldLabel}" VerticalAlignment="Center" />
+                            <ComboBox Grid.Row="4" Grid.Column="1" Margin="0,0,0,6" ItemsSource="{Binding Board.MiddleVariants}" DisplayMemberPath="Label"
+                                      SelectedItem="{Binding Board.SelectedMiddleVariant}" IsEnabled="{Binding Board.IsMiddleVariantEnabled}" />
+
+                            <TextBlock Grid.Row="5" Text="Joints per side" Style="{DynamicResource FieldLabel}" VerticalAlignment="Center" />
+                            <ComboBox Grid.Row="5" Grid.Column="1" Margin="0,0,0,6" ItemsSource="{Binding Board.JointPatterns}" DisplayMemberPath="Label"
+                                      SelectedItem="{Binding Board.SelectedJointPattern}" IsEnabled="{Binding Board.IsRowStartEnabled}"
+                                      ToolTip="As set out, aligned up the slope, or staggered — on every side of the roof" />
+
+                            <ContentControl Grid.Row="6" Grid.ColumnSpan="2" Content="{Binding Board.MinPiece}" IsEnabled="{Binding Board.IsRowStartEnabled}" />
+
+                            <TextBlock Grid.Row="7" Grid.ColumnSpan="2" Text="{Binding LayoutSummary}" TextWrapping="Wrap"
+                                       Style="{DynamicResource FieldLabel}" />
+                        </Grid>
+                    </Border>
+
+                    <!-- 4 · HATCHING -->
+                    <Border Style="{StaticResource Eps2D.GroupHeader}" Background="{StaticResource Eps2D.Group.HatchingBrush}">
+                        <TextBlock Text="4 · Hatching (filled regions)" Style="{StaticResource Eps2D.GroupHeaderText}" />
+                    </Border>
+                    <Border Style="{StaticResource Eps2D.GroupBody}" BorderBrush="{StaticResource Eps2D.Group.HatchingBrush}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="120" /><ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Text="Colour by" Style="{DynamicResource FieldLabel}" VerticalAlignment="Center" />
+                            <ComboBox Grid.Row="0" Grid.Column="1" Margin="0,0,0,6" ItemsSource="{Binding Hatching.Modes}" DisplayMemberPath="Label"
+                                      SelectedItem="{Binding Hatching.SelectedMode}" />
+
+                            <TextBlock Grid.Row="1" Text="Fill types" Style="{DynamicResource FieldLabel}" VerticalAlignment="Center" />
+                            <ComboBox Grid.Row="1" Grid.Column="1" Margin="0,0,0,6" ItemsSource="{Binding Hatching.Sources}" DisplayMemberPath="Label"
+                                      SelectedItem="{Binding Hatching.SelectedSource}" IsEnabled="{Binding Hatching.IsEnabled}" />
+
+                            <TextBlock Grid.Row="2" Text="Slot 1" Style="{DynamicResource FieldLabel}" VerticalAlignment="Center" />
+                            <ComboBox Grid.Row="2" Grid.Column="1" Margin="0,0,0,4" ItemsSource="{Binding Hatching.FillTypes}" DisplayMemberPath="Name"
+                                      SelectedItem="{Binding Hatching.Slot1}" IsEnabled="{Binding Hatching.IsSlotPickEnabled}" />
+                            <TextBlock Grid.Row="3" Text="Slot 2" Style="{DynamicResource FieldLabel}" VerticalAlignment="Center" />
+                            <ComboBox Grid.Row="3" Grid.Column="1" Margin="0,0,0,4" ItemsSource="{Binding Hatching.FillTypes}" DisplayMemberPath="Name"
+                                      SelectedItem="{Binding Hatching.Slot2}" IsEnabled="{Binding Hatching.IsSlotPickEnabled}" />
+                            <TextBlock Grid.Row="4" Text="Slot 3" Style="{DynamicResource FieldLabel}" VerticalAlignment="Center" />
+                            <ComboBox Grid.Row="4" Grid.Column="1" Margin="0,0,0,4" ItemsSource="{Binding Hatching.FillTypes}" DisplayMemberPath="Name"
+                                      SelectedItem="{Binding Hatching.Slot3}" IsEnabled="{Binding Hatching.IsSlotPickEnabled}" />
+                            <TextBlock Grid.Row="5" Text="Slot 4" Style="{DynamicResource FieldLabel}" VerticalAlignment="Center" />
+                            <ComboBox Grid.Row="5" Grid.Column="1" Margin="0,0,0,4" ItemsSource="{Binding Hatching.FillTypes}" DisplayMemberPath="Name"
+                                      SelectedItem="{Binding Hatching.Slot4}" IsEnabled="{Binding Hatching.IsSlotPickEnabled}" />
+
+                            <TextBlock Grid.Row="6" Grid.ColumnSpan="2" TextWrapping="Wrap" Margin="0,4,0,0" Style="{DynamicResource FieldLabel}"
+                                       Text="Rows / boards use slots 1–2, piece type 1–4; board codes repeat the picked slots (tool types: 12 colours)." />
+                        </Grid>
+                    </Border>
+
+                    <!-- 5 · LAYERS -->
+                    <Border Style="{StaticResource Eps2D.GroupHeader}" Background="{StaticResource Eps2D.Group.LayersBrush}">
+                        <TextBlock Text="5 · Lines and labels" Style="{StaticResource Eps2D.GroupHeaderText}" />
+                    </Border>
+                    <Border Style="{StaticResource Eps2D.GroupBody}" BorderBrush="{StaticResource Eps2D.Group.LayersBrush}">
+                        <StackPanel>
+                            <ContentControl Content="{Binding Layers.Grid}" ContentTemplate="{StaticResource LayerRowTemplate}" />
+                            <ContentControl Content="{Binding Layers.HipRidge}" ContentTemplate="{StaticResource LayerRowTemplate}" />
+                            <ContentControl Content="{Binding Layers.Contours}" ContentTemplate="{StaticResource LayerRowTemplate}" />
+                            <CheckBox Content="Contours follow board rows" IsChecked="{Binding Layers.ContoursFollowRows}"
+                                      IsEnabled="{Binding Layers.Contours.IsEnabled}" Margin="0,0,0,2"
+                                      ToolTip="Interval = board width × slope, so every row line is a contour" />
+                            <TextBlock Text="{Binding Layers.LockedIntervalText}" Margin="20,0,0,6" Style="{DynamicResource FieldLabel}" />
+                            <ContentControl Content="{Binding Layers.ContourInterval}" IsEnabled="{Binding Layers.IsIntervalEditable}" />
+
+                            <Grid Margin="0,4,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="140" /><ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <CheckBox Content="Board labels" IsChecked="{Binding Layers.LabelsEnabled}" VerticalAlignment="Center" />
+                                <ComboBox Grid.Column="1" ItemsSource="{Binding Layers.LabelModes}" DisplayMemberPath="Label"
+                                          SelectedItem="{Binding Layers.SelectedLabelMode}" IsEnabled="{Binding Layers.LabelsEnabled}" />
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="140" /><ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Text type" Style="{DynamicResource FieldLabel}" VerticalAlignment="Center" />
+                                <ComboBox Grid.Column="1" ItemsSource="{Binding Layers.TextTypes}" DisplayMemberPath="Name"
+                                          SelectedItem="{Binding Layers.SelectedTextType}" IsEnabled="{Binding Layers.LabelsEnabled}" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 6 · OUTPUT -->
+                    <Border Style="{StaticResource Eps2D.GroupHeader}" Background="{StaticResource Eps2D.Group.OutputBrush}">
+                        <TextBlock Text="6 · Output in Revit" Style="{StaticResource Eps2D.GroupHeaderText}" />
+                    </Border>
+                    <Border Style="{StaticResource Eps2D.GroupBody}" BorderBrush="{StaticResource Eps2D.Group.OutputBrush}">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120" /><ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Grouping" Style="{DynamicResource FieldLabel}" VerticalAlignment="Center" />
+                                <ComboBox Grid.Column="1" ItemsSource="{Binding Layers.GroupingModes}" DisplayMemberPath="Label"
+                                          SelectedItem="{Binding Layers.SelectedGrouping}"
+                                          ToolTip="Group per side: move, rotate or align each side's boards on its own" />
+                            </Grid>
+                            <CheckBox Content="Replace previous pattern for this roof in this view"
+                                      IsChecked="{Binding Layers.ReplacePrevious}" IsEnabled="{Binding Layers.CanReplace}" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- RIGHT: preview, legend, summary, log -->
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Border Style="{DynamicResource Card}" Padding="0">
+                    <Grid>
+                        <views:PatternPreviewCanvas Result="{Binding Preview.Result}"
+                                                    SlotColors="{Binding SlotColors}"
+                                                    HighlightEdgeIndex="{Binding Board.HighlightEdgeIndex}"
+                                                    HoverText="{Binding Preview.HoverText, Mode=TwoWay}"
+                                                    ClipToBounds="True" />
+                        <TextBlock Text="Updating…" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="8"
+                                   Style="{DynamicResource ToolHeaderMeta}"
+                                   Visibility="{Binding Preview.IsComputing, Converter={StaticResource BoolToVis}}" />
+                    </Grid>
+                </Border>
+
+                <TextBlock Grid.Row="1" Text="{Binding Preview.HoverText}" Margin="2,6,0,4" Style="{DynamicResource FieldLabel}" />
+
+                <!-- Legend: what each hatch colour means, and the Revit type it will use -->
+                <Border Grid.Row="2" Style="{DynamicResource Card}" Margin="0,0,0,8"
+                        Visibility="{Binding HasLegend, Converter={StaticResource BoolToVis}}">
+                    <StackPanel>
+                        <TextBlock Text="Legend" Style="{DynamicResource CardTitle}" Margin="0,0,0,4" />
+                        <ItemsControl ItemsSource="{Binding Legend}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type vm:LegendItemViewModel}">
+                                    <StackPanel Orientation="Horizontal" Margin="0,2,16,2" ToolTip="{Binding TypeName}">
+                                        <Border Width="18" Height="12" Margin="0,0,6,0" BorderThickness="1"
+                                                BorderBrush="{StaticResource Eps2D.SwatchBorderBrush}"
+                                                Background="{Binding ColorHex, Converter={StaticResource HexToBrush}}" />
+                                        <TextBlock VerticalAlignment="Center">
+                                            <Run Text="{Binding Label, Mode=OneWay}" /><Run Text="  ×" /><Run Text="{Binding Count, Mode=OneWay}" />
+                                        </TextBlock>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <DataGrid Grid.Row="3" ItemsSource="{Binding Summary}" AutoGenerateColumns="False" IsReadOnly="True"
+                          HeadersVisibility="Column" CanUserAddRows="False" Style="{DynamicResource SummaryGrid}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Layer" Binding="{Binding Layer}" Width="*" />
+                        <DataGridTextColumn Header="Lines" Binding="{Binding Lines}" Width="80" />
+                        <DataGridTextColumn Header="Total length m" Binding="{Binding TotalLength}" Width="120" />
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <Expander Grid.Row="4" Header="Log" IsExpanded="{Binding Log.IsExpanded}" Margin="0,8,0,0">
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,4,0,4">
+                            <Button Content="Copy All" Command="{Binding Log.CopyAllCommand}" Style="{DynamicResource SecondaryButton}" />
+                            <Button Content="Copy Selected" Margin="6,0,0,0" Style="{DynamicResource SecondaryButton}"
+                                    Command="{Binding Log.CopySelectedCommand}"
+                                    CommandParameter="{Binding SelectedItems, ElementName=LogList}" />
+                        </StackPanel>
+                        <ListBox x:Name="LogList" ItemsSource="{Binding Log.Entries}" SelectionMode="Extended" Height="120" />
+                    </DockPanel>
+                </Expander>
+            </Grid>
+        </Grid>
+
+        <!-- ── Footer ─────────────────────────────────────────── -->
+        <DockPanel Grid.Row="2" Margin="0,12,0,0" LastChildFill="True">
+            <Button DockPanel.Dock="Left" Content="Reset" Command="{Binding ResetCommand}" Style="{DynamicResource SecondaryButton}" />
+            <Button DockPanel.Dock="Right" Content="Close" Command="{Binding CloseCommand}" Margin="8,0,0,0" Style="{DynamicResource SecondaryButton}" />
+            <Button DockPanel.Dock="Right" Content="Run" Command="{Binding RunCommand}" Style="{DynamicResource RunButton}" />
+            <TextBlock Text="{Binding StatusText}" VerticalAlignment="Center" Margin="12,0" Style="{DynamicResource FieldLabel}" />
+        </DockPanel>
+    </Grid>
+</Window>

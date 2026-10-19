@@ -3,11 +3,11 @@ using Autodesk.Revit.DB.Events;
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.SheetAutoRearrange.V027.Core.Models;
-using Revit26_Plugin.SheetAutoRearrange.V027.Core.Services;
-using Revit26_Plugin.SheetAutoRearrange.V027.Infrastructure.ExternalEvents;
-using Revit26_Plugin.SheetAutoRearrange.V027.Infrastructure.Helpers;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.SheetAutoRearrange.V027.Core.Models;
+using Revit26_Plugin_Revised.SheetAutoRearrange.V027.Core.Services;
+using Revit26_Plugin_Revised.SheetAutoRearrange.V027.Infrastructure.ExternalEvents;
+using Revit26_Plugin_Revised.SheetAutoRearrange.V027.Infrastructure.Helpers;
+using Revit26_Plugin_Revised.Shared.Models;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -15,7 +15,7 @@ using System.Linq;
 using System.Windows.Data;
 using System.Windows.Threading;
 
-namespace Revit26_Plugin.SheetAutoRearrange.V027.UI.ViewModels
+namespace Revit26_Plugin_Revised.SheetAutoRearrange.V027.UI.ViewModels
 {
     /// <summary>
     /// V011 CHANGES (all per explicit request):

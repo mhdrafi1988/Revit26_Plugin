@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using RevitColor = Autodesk.Revit.DB.Color;
 
-namespace Revit26_Plugin.RoofPointComparison.V002.Infrastructure.Helpers
+namespace Revit26_Plugin_Revised.RoofPointComparison.V002.Infrastructure.Helpers
 {
     /// <summary>Maps a named WPF color (offered in the UI dropdowns) to the equivalent Revit color.</summary>
     public static class NamedColorHelper

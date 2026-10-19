@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.SheetAutoRearrange.V028.Core.Models
+namespace Revit26_Plugin_Revised.SheetAutoRearrange.V028.Core.Models
 {
     /// <summary>
     /// Titleblock usable-area margins (mm) plus ONE global gap between views.
