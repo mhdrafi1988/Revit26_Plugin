@@ -24,7 +24,7 @@ Changes vs V004 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
         Height="720" Width="880"
         MinHeight="720" MinWidth="880"
         WindowStartupLocation="CenterScreen"
-        Background="{DynamicResource BrushSystemBackground}"
+        Background="{DynamicResource BrushSurfaceWindow}"
         Closing="Window_Closing">
 
     <Window.Resources>
@@ -120,13 +120,13 @@ Changes vs V004 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                                     <Setter Property="Background" Value="{StaticResource BrushAppleBlue}"/>
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding CurrentStep}" Value="2">
-                                                    <Setter Property="Background" Value="{StaticResource BrushSuccess}"/>
+                                                    <Setter Property="Background" Value="{StaticResource BrushStatusOk}"/>
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding CurrentStep}" Value="3">
-                                                    <Setter Property="Background" Value="{StaticResource BrushSuccess}"/>
+                                                    <Setter Property="Background" Value="{StaticResource BrushStatusOk}"/>
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding CurrentStep}" Value="4">
-                                                    <Setter Property="Background" Value="{StaticResource BrushSuccess}"/>
+                                                    <Setter Property="Background" Value="{StaticResource BrushStatusOk}"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
@@ -150,10 +150,10 @@ Changes vs V004 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                                     <Setter Property="Background" Value="{StaticResource BrushAppleBlue}"/>
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding CurrentStep}" Value="3">
-                                                    <Setter Property="Background" Value="{StaticResource BrushSuccess}"/>
+                                                    <Setter Property="Background" Value="{StaticResource BrushStatusOk}"/>
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding CurrentStep}" Value="4">
-                                                    <Setter Property="Background" Value="{StaticResource BrushSuccess}"/>
+                                                    <Setter Property="Background" Value="{StaticResource BrushStatusOk}"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
@@ -177,7 +177,7 @@ Changes vs V004 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                                     <Setter Property="Background" Value="{StaticResource BrushAppleBlue}"/>
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding CurrentStep}" Value="4">
-                                                    <Setter Property="Background" Value="{StaticResource BrushSuccess}"/>
+                                                    <Setter Property="Background" Value="{StaticResource BrushStatusOk}"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
@@ -270,7 +270,7 @@ Changes vs V004 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
 
                                     <Popup IsOpen="{Binding IsCategoryPopupOpen}" PlacementTarget="{Binding RelativeSource={RelativeSource AncestorType=Grid}}"
                                            Placement="Bottom" StaysOpen="False" Width="320">
-                                        <Border Background="{StaticResource BrushCardBackground}" BorderBrush="{StaticResource BrushCardBorder}"
+                                        <Border Background="{StaticResource BrushSurfaceCard}" BorderBrush="{StaticResource BrushBorderDefault}"
                                                 BorderThickness="1" CornerRadius="5"
                                                 Effect="{x:Null}">
                                             <ItemsControl ItemsSource="{Binding AvailableCategories}" MaxHeight="260">
