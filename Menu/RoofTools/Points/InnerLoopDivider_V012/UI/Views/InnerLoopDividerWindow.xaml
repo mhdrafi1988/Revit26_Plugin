@@ -16,9 +16,10 @@ Changes vs V011:
 <Window x:Class="Revit26_Plugin.InnerLoopDivider.V012.UI.Views.InnerLoopDividerWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:svc="clr-namespace:Revit26_Plugin.Shared.Services"
         xmlns:conv="clr-namespace:Revit26_Plugin.Shared.Models"
         xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
-        Title="Inner Loop Divider — V012"
+        Title="{Binding Source={x:Static svc:ToolCatalog.InnerLoopDivider}, Path=Title}"
         Height="760" Width="1000"
         MinHeight="760" MinWidth="1000"
         WindowStartupLocation="CenterScreen"
@@ -89,7 +90,7 @@ Changes vs V011:
 
     <shell:ToolWindowShell Title="Inner Loop Divider"
                            Subtitle="Shape points around roof openings"
-                           Version="V012"
+                           Version="{Binding Source={x:Static svc:ToolCatalog.InnerLoopDivider}, Path=Version, StringFormat=v{0}}"
                            IsRunning="{Binding IsRunning}"
                            Progress="{Binding Progress}"
                            SummaryText="{Binding SummaryText}">

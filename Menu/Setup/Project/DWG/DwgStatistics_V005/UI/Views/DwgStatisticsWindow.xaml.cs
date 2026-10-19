@@ -27,7 +27,7 @@ namespace Revit26_Plugin.DwgStatistics.V005.UI.Views
             InitializeComponent();
             ViewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
             DataContext = ViewModel;
-            Title = DwgStatisticsTool.Label;
+            Title = ToolCatalog.DwgStatistics.Title;
 
             // Resize limit: never smaller than the minimum, at most 130 % of the default (capped to the screen).
             MaxWidth = Math.Min(Width * 1.3, SystemParameters.WorkArea.Width);

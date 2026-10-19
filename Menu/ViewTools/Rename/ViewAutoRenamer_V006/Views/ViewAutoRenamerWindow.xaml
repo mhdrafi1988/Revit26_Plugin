@@ -20,10 +20,11 @@ Changes vs V005 (layout only):
 <Window x:Class="Revit26_Plugin.ViewAutoRenamer.V006.Views.ViewsListWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:svc="clr-namespace:Revit26_Plugin.Shared.Services"
         xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
         xmlns:local="clr-namespace:Revit26_Plugin.ViewAutoRenamer.V006.ViewModels"
         xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
-        Title="View Auto Renamer — V006"
+        Title="{Binding Source={x:Static svc:ToolCatalog.ViewAutoRenamer}, Path=Title}"
         Height="900" Width="1280"
         MinHeight="900" MinWidth="1280"
         ResizeMode="CanResizeWithGrip"
@@ -63,7 +64,7 @@ Changes vs V005 (layout only):
 
     <shell:ToolWindowShell Title="View Auto Renamer"
                            Subtitle="Prefix, find/replace and standardize view names"
-                           Version="V006"
+                           Version="{Binding Source={x:Static svc:ToolCatalog.ViewAutoRenamer}, Path=Version, StringFormat=v{0}}"
                            IsRunning="{Binding IsRunning}"
                            Progress="{Binding Progress}"
                            SummaryText="{Binding SummaryText}">

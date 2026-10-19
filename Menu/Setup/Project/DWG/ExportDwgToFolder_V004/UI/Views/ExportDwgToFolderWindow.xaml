@@ -35,7 +35,7 @@ V004 (behaviour change — new folder + namespace):
         xmlns:svc="clr-namespace:Revit26_Plugin.Shared.Services"
         xmlns:vm="clr-namespace:Revit26_Plugin.ExportDwgToFolder.V004.UI.ViewModels"
         xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
-        Title="Export DWG to Folder"
+        Title="{Binding Source={x:Static svc:ToolCatalog.ExportDwgToFolder}, Path=Title}"
         Width="920" Height="840"
         MinWidth="920" MinHeight="840"
         MaxWidth="1196" MaxHeight="1092"

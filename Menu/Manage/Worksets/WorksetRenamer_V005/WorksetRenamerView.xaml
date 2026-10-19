@@ -16,9 +16,10 @@ Changes vs V004 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
 <Window x:Class="Revit26_Plugin.WorksetRenamer.V005.Views.WorksetRenamerView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:svc="clr-namespace:Revit26_Plugin.Shared.Services"
         xmlns:vm="clr-namespace:Revit26_Plugin.WorksetRenamer.V005.ViewModels"
         xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
-        Title="Workset Renamer — V005"
+        Title="{Binding Source={x:Static svc:ToolCatalog.WorksetRenamer}, Path=Title}"
         Width="860" Height="680"
         MinWidth="860" MinHeight="680"
         ResizeMode="CanResizeWithGrip"
@@ -40,7 +41,7 @@ Changes vs V004 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
 
     <shell:ToolWindowShell Title="Workset Renamer"
                            Subtitle="Bulk rename worksets — Open and Editable columns are read-only status indicators"
-                           Version="V005"
+                           Version="{Binding Source={x:Static svc:ToolCatalog.WorksetRenamer}, Path=Version, StringFormat=v{0}}"
                            IsRunning="{Binding IsRunning}"
                            Progress="{Binding Progress}"
                            SummaryText="{Binding StatusMessage}">

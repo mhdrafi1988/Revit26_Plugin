@@ -16,9 +16,10 @@ Changes vs V002 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
 <Window x:Class="Revit26_Plugin.DetailLineClosedLoop.V003.UI.Views.DetailLineClosedLoopWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:svc="clr-namespace:Revit26_Plugin.Shared.Services"
         xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
         xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
-        Title="Detail Line Closed Loop — V003"
+        Title="{Binding Source={x:Static svc:ToolCatalog.DetailLineClosedLoop}, Path=Title}"
         Height="720" Width="980"
         MinHeight="720" MinWidth="980"
         WindowStartupLocation="CenterOwner">
@@ -35,7 +36,7 @@ Changes vs V002 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
 
     <shell:ToolWindowShell Title="Detail Line Closed Loop"
                            Subtitle="Trim, merge &amp; close a detail-line boundary"
-                           Version="V003"
+                           Version="{Binding Source={x:Static svc:ToolCatalog.DetailLineClosedLoop}, Path=Version, StringFormat=v{0}}"
                            IsRunning="{Binding IsBusy}"
                            IsIndeterminate="True"
                            Progress="{Binding Progress}"

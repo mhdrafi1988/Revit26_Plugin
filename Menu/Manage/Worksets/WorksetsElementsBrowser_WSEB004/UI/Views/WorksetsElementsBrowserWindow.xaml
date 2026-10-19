@@ -19,6 +19,7 @@ Changes vs WSEB003 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
 <Window x:Class="Revit26_Plugin.WorksetsElementsBrowser.WSEB004.UI.Views.WorksetsElementsBrowserWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:svc="clr-namespace:Revit26_Plugin.Shared.Services"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
@@ -26,7 +27,7 @@ Changes vs WSEB003 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
         xmlns:local="clr-namespace:Revit26_Plugin.WorksetsElementsBrowser.WSEB004.UI.Views"
         xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
         mc:Ignorable="d"
-        Title="Worksets &amp; Elements Browser — WSEB004"
+        Title="{Binding Source={x:Static svc:ToolCatalog.WorksetsElementsBrowser}, Path=Title}"
         Height="760" Width="900"
         MinHeight="760" MinWidth="900"
         ResizeMode="CanResizeWithGrip"
@@ -115,7 +116,7 @@ Changes vs WSEB003 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
     <Grid>
         <shell:ToolWindowShell Title="Worksets &amp; Elements Browser"
                                Subtitle="{Binding DocumentTitle}"
-                               Version="WSEB004"
+                               Version="{Binding Source={x:Static svc:ToolCatalog.WorksetsElementsBrowser}, Path=Version, StringFormat=v{0}}"
                                IsRunning="{Binding IsBusy}"
                                IsIndeterminate="True"
                                Progress="{Binding Progress}">

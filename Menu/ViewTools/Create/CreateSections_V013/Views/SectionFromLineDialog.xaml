@@ -18,11 +18,12 @@ Changes vs V012 (layout only):
 <Window x:Class="Revit26_Plugin.CreateSections.V013.Views.SectionFromLineDialog.SectionFromLineDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:svc="clr-namespace:Revit26_Plugin.Shared.Services"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
         mc:Ignorable="d"
-        Title="Create Sections From Detail Lines — V013"
+        Title="{Binding Source={x:Static svc:ToolCatalog.CreateSections}, Path=Title}"
         Width="1000"
         Height="760"
         MinWidth="1000"
@@ -49,7 +50,7 @@ Changes vs V012 (layout only):
     </Window.Resources>
 
     <shell:ToolWindowShell Title="Create Sections From Detail Lines"
-                           Version="V013"
+                           Version="{Binding Source={x:Static svc:ToolCatalog.CreateSections}, Path=Version, StringFormat=v{0}}"
                            IsRunning="{Binding IsRunning}"
                            IsIndeterminate="True"
                            Progress="{Binding Progress}"
