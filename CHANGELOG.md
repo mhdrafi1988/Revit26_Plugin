@@ -30,6 +30,64 @@ Each release lists every tool whose version changed, under the plugin version.
   tokens only, and the window title shows the version from `ToolCatalog`. Given its own
   `ToolCatalog` entry (it was falling back to a hard-coded 32.0.0). No behaviour change.
 
+- **UI standard rolled out to 49 more tools** — the newest version of each tool now uses
+  the semantic tokens instead of the deprecated per-tool colour keys (MINOR bump each, no behaviour
+  change). Link Version Checker V004 also stops hard-coding its colours and now loads the shared
+  styles. Tools already on the standard (no deprecated keys) are unchanged: Detail Line Closed
+  Loop, Outer Curve Divider, Roof Edge Vertex Reducer, Multiple Points, Creaser Adv, Roof Point
+  Elevation Sync, Roof Point Comparison, Tapered EPS 2D Pattern (keeps its own group colours),
+  DWG To Lines, DWG To DL(P). New `ToolCatalog` entries for the versions the ribbon actually opens:
+  Auto Slope By Drain (Multi-Roof) V013 and Bubble Auto Renumber V009.
+  - Detail Lines From Links v10.1.0 (VA010)
+  - Auto Dim Detail Line v10.1.0 (V010)
+  - Floors And Roof From Linked Rooms v13.1.0 (V013)
+  - Floors And Roof From Linked Rooms (Via Plan View) v6.1.0 (V006)
+  - ParaManager v5.1.0 (V005)
+  - Schedule Export / Import v7.1.0 (V007)
+  - Annotation Overlap Detection v4.1.0 (V004)
+  - Worksets & Elements Browser v4.1.0 (WSEB004)
+  - Workset Manager v14.1.0 (V014)
+  - Workset Renamer v5.1.0 (V005)
+  - Workset Renamer (From Excel) v5.1.0 (FX05)
+  - Auto Slope By Point (Ridge) v3.1.0 (V003)
+  - Auto Slope By Point (Multi Copies) v30.1.0 (MultiCopies30)
+  - Auto Slope By Drain v7.1.0 (V007)
+  - Auto Slope By Drain (Multi-Roof) v13.1.0 (V013)
+  - Divide Inner Loops v12.1.0 (V012)
+  - Roof Detail Line Intersect v14.1.0 (V014)
+  - Inner Loops And Perpendicular v7.1.0 (V007)
+  - Ridge By Openings v70.1.0 (V070)
+  - Ridge By Points v59.1.0 (V059)
+  - Roof Tag v18.1.0 (V018)
+  - Combined Roof Tools v3.1.0 (V003)
+  - Roof Type Manager v3.1.0 (V003)
+  - Batch Link DWG Family v2.1.0 (V002)
+  - DWG Manager v3.1.0 (V003)
+  - DWG Statistics v5.1.0 (V005)
+  - Export DWG to Folder v4.1.0 (V004)
+  - Plan From Scope Box v6.1.0 (V006)
+  - Smart View To Sheet Placer v224.1.0 (V224)
+  - Automated Section Placer v3.1.0 (V003)
+  - Sheet Auto Rearrange v28.1.0 (V028)
+  - Sheet View Arrange v1.2.0 (V001)
+  - Roof Edge Around Sections v7.1.0 (V007)
+  - Roof Edge Element Sections v4.1.0 (V004)
+  - Roof Name Builder v2.1.0 (V002)
+  - Island Roof Splitter v0.2.0 (V001 (WIP))
+  - Link Version Checker v4.1.0 (V004)
+  - Roof View Focus v4.1.0 (V004)
+  - Create Sections From Detail Lines v13.1.0 (V013)
+  - Auto Place Sections v324.1.0 (V324)
+  - Callout To Section View Placement v21.1.0 (V021)
+  - Reference Section Head Placer v15.1.0 (V015)
+  - Section View Auto Tagger v6.1.0 (V006)
+  - View Auto Renamer v6.1.0 (V006)
+  - Bubble Auto Renumber v9.1.0 (V009)
+  - Section Auto Renamer v26.1.0 (V026)
+  - Delete Workset v1.1.0 (V001)
+  - Delete Line Styles v1.1.0 (V001)
+  - Workset Creator v16.1.0 (V016)
+
 > **User note:** tool windows look different (grey background, white inputs, smaller buttons, navy
 > Run button). Nothing about what the tools do has changed. Report any window where text is clipped
 > or a control is hard to see.
