@@ -1,13 +1,13 @@
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin_Revised.SheetAutoRearrange.V028.UI.ViewModels;
-using Revit26_Plugin_Revised.SheetAutoRearrange.V028.UI.Views;
+using Revit26_Plugin.SheetAutoRearrange.V028.UI.ViewModels;
+using Revit26_Plugin.SheetAutoRearrange.V028.UI.Views;
 using System;
 using System.Windows.Interop;
-using Revit26_Plugin_Revised.Utilities;
+using Revit26_Plugin.Utilities;
 
-namespace Revit26_Plugin_Revised.SheetAutoRearrange.V028.Commands
+namespace Revit26_Plugin.SheetAutoRearrange.V028.Commands
 {
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]

@@ -2,7 +2,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin_Revised.WorksetRenamer.V005.ViewModels
+namespace Revit26_Plugin.WorksetRenamer.V005.ViewModels
 {
     public enum RenameStatus { Pending, Renamed, Unchanged, Error }
 

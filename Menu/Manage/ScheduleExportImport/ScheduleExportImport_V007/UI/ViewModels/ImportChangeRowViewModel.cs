@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using Revit26_Plugin_Revised.ScheduleExportImport.V007.Core.Models;
+using Revit26_Plugin.ScheduleExportImport.V007.Core.Models;
 
-namespace Revit26_Plugin_Revised.ScheduleExportImport.V007.UI.ViewModels
+namespace Revit26_Plugin.ScheduleExportImport.V007.UI.ViewModels
 {
     public partial class ImportChangeRowViewModel : ObservableObject
     {

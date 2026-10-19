@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using System.Text;
 using System.Windows;
-using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin.Shared.Models;
 
-namespace Revit26_Plugin_Revised.FloorsAndRoofFromLinkedRoomsViaPlanView.V006
+namespace Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V006
 {
     public partial class FloorsFromLinkedRoomsWindow : Window
     {

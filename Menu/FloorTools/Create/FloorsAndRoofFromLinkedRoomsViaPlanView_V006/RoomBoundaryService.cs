@@ -4,7 +4,7 @@ using System.Linq;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Architecture;
 
-namespace Revit26_Plugin_Revised.FloorsAndRoofFromLinkedRoomsViaPlanView.V006
+namespace Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V006
 {
     public class BoundaryResult
     {

@@ -1,8 +1,8 @@
 using Autodesk.Revit.DB;
-using Revit26_Plugin_Revised.SheetViewArrange.V001.Core.Layout;
+using Revit26_Plugin.SheetViewArrange.V001.Core.Layout;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin_Revised.SheetViewArrange.V001.Core.Models
+namespace Revit26_Plugin.SheetViewArrange.V001.Core.Models
 {
     /// <summary>
     /// One viewport on the sheet, read once so layout and preview never touch the Revit API.

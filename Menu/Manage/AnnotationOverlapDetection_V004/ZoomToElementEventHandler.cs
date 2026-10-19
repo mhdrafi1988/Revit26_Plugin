@@ -4,7 +4,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Events;
 
-namespace Revit26_Plugin_Revised.AnnotationOverlapDetection.V004
+namespace Revit26_Plugin.AnnotationOverlapDetection.V004
 {
     /// <summary>
     /// Step 8: zoom-on-click. The DataGrid hyperlink click happens on the WPF

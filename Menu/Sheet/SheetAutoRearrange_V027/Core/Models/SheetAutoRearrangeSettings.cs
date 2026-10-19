@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin_Revised.SheetAutoRearrange.V027.Core.Models
+namespace Revit26_Plugin.SheetAutoRearrange.V027.Core.Models
 {
     /// <summary>
     /// Everything persisted to %AppData%\Revit26_Plugin\SheetAutoRearrange\settings.json,

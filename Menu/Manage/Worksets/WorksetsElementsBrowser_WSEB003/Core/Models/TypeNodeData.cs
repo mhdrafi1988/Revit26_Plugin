@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin_Revised.WorksetsElementsBrowser.WSEB003.Core.Models
+namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB003.Core.Models
 {
     /// <summary>
     /// Leaf of the tree: one element Type (family+type, or system-family type)

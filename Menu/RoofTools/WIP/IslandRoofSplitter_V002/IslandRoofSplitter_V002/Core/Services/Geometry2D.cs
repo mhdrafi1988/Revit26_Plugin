@@ -2,9 +2,9 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using Revit26_Plugin_Revised.IslandRoofSplitter.V002.Core.Models;
+using Revit26_Plugin.IslandRoofSplitter.V002.Core.Models;
 
-namespace Revit26_Plugin_Revised.IslandRoofSplitter.V002.Core.Services
+namespace Revit26_Plugin.IslandRoofSplitter.V002.Core.Services
 {
     internal static class Geometry2D
     {

@@ -1,7 +1,7 @@
-using Revit26_Plugin_Revised.OuterCurveDivider.V004.UI.ViewModels;
+using Revit26_Plugin.OuterCurveDivider.V004.UI.ViewModels;
 using System.Windows;
 
-namespace Revit26_Plugin_Revised.OuterCurveDivider.V004.UI.Views
+namespace Revit26_Plugin.OuterCurveDivider.V004.UI.Views
 {
     public partial class CurveDividerWindow : Window
     {

@@ -1,9 +1,9 @@
-using Revit26_Plugin_Revised.SheetViewArrange.V001.Core.Layout;
-using Revit26_Plugin_Revised.SheetViewArrange.V001.Core.Models;
+using Revit26_Plugin.SheetViewArrange.V001.Core.Layout;
+using Revit26_Plugin.SheetViewArrange.V001.Core.Models;
 using System;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin_Revised.SheetViewArrange.V001.Core.Services
+namespace Revit26_Plugin.SheetViewArrange.V001.Core.Services
 {
     /// <summary>
     /// What the Views grid shows. Display only: a row hidden by the filter is still arranged if it

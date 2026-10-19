@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Revit26_Plugin_Revised.ScheduleExportImport.V006.Core.Models
+namespace Revit26_Plugin.ScheduleExportImport.V006.Core.Models
 {
     /// <summary>
     /// One row from a schedule export: the element id and a map of

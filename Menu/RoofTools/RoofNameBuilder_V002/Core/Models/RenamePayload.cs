@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Revit26_Plugin_Revised.RoofNameBuilder.V002.Core.Models
+namespace Revit26_Plugin.RoofNameBuilder.V002.Core.Models
 {
     /// <summary>One element's planned rename, handed to the ExternalEvent handler.</summary>
     public class RenameItem

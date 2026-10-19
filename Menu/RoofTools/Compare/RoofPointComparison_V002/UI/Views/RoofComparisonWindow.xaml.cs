@@ -1,11 +1,11 @@
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin_Revised.RoofPointComparison.V002.UI.ViewModels;
+using Revit26_Plugin.RoofPointComparison.V002.UI.ViewModels;
 using System.Windows;
 using System.Windows.Input;
-using Revit26_Plugin_Revised.Shared.Services;
+using Revit26_Plugin.Shared.Services;
 
-namespace Revit26_Plugin_Revised.RoofPointComparison.V002.UI.Views
+namespace Revit26_Plugin.RoofPointComparison.V002.UI.Views
 {
     public partial class RoofComparisonWindow : Window
     {

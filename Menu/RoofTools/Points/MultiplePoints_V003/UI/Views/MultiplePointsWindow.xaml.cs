@@ -1,8 +1,8 @@
-using Revit26_Plugin_Revised.MultiplePoints.V003.UI.ViewModels;
+using Revit26_Plugin.MultiplePoints.V003.UI.ViewModels;
 using System.Windows;
-using Revit26_Plugin_Revised.Shared.Services;
+using Revit26_Plugin.Shared.Services;
 
-namespace Revit26_Plugin_Revised.MultiplePoints.V003.UI.Views
+namespace Revit26_Plugin.MultiplePoints.V003.UI.Views
 {
     public partial class MultiplePointsWindow : Window
     {

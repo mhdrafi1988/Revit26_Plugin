@@ -9,11 +9,11 @@ using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
-using Revit26_Plugin_Revised.RoofTypeCreator.V002.Core.Models;
-using Revit26_Plugin_Revised.RoofTypeCreator.V002.Infrastructure.ExternalEvents;
-using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin.RoofTypeCreator.V002.Core.Models;
+using Revit26_Plugin.RoofTypeCreator.V002.Infrastructure.ExternalEvents;
+using Revit26_Plugin.Shared.Models;
 
-namespace Revit26_Plugin_Revised.RoofTypeCreator.V002.UI.ViewModels
+namespace Revit26_Plugin.RoofTypeCreator.V002.UI.ViewModels
 {
     public partial class RoofTypeManagerViewModel : ObservableObject, IDisposable
     {

@@ -1,4 +1,4 @@
-namespace Revit26_Plugin_Revised.PlanFromScopeBox.V006.Core.Models
+namespace Revit26_Plugin.PlanFromScopeBox.V006.Core.Models
 {
     /// <summary>Outcome classification for a single scope-box -> plan/sheet operation.</summary>
     public enum PlanOutcome

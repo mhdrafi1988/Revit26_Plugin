@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin_Revised.FloorsAndRoofFromLinkedRooms.V012
+namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V012
 {
     /// <summary>
     /// ASSUMPTION (flagged, carried from V004, kept as-is per confirmed spec): the GUID

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin_Revised.RoofTag.V017.Helpers
+namespace Revit26_Plugin.RoofTag.V017.Helpers
 {
     /// <summary>Which set of sketch loops a Filter() call should operate on.</summary>
     public enum LoopScope

@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using Autodesk.Revit.DB;
-using Revit26_Plugin_Revised.PlanFromScopeBox.V006.Core.Models;
+using Revit26_Plugin.PlanFromScopeBox.V006.Core.Models;
 
-namespace Revit26_Plugin_Revised.PlanFromScopeBox.V006.Core.Services
+namespace Revit26_Plugin.PlanFromScopeBox.V006.Core.Services
 {
     /// <summary>
     /// Reads scope boxes from the document and resolves the level from the active view.

@@ -8,7 +8,7 @@ using System.Windows.Input;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 
-namespace Revit26_Plugin_Revised.WorksetRenamer.V005.ViewModels
+namespace Revit26_Plugin.WorksetRenamer.V005.ViewModels
 {
     public class WorksetRenamerViewModel : INotifyPropertyChanged
     {

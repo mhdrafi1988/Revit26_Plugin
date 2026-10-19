@@ -5,9 +5,9 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using Autodesk.Revit.UI;
-using Revit26_Plugin_Revised.WorksetsElementsBrowser.WSEB003.Core.Models;
+using Revit26_Plugin.WorksetsElementsBrowser.WSEB003.Core.Models;
 
-namespace Revit26_Plugin_Revised.WorksetsElementsBrowser.WSEB003.UI.Views
+namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB003.UI.Views
 {
     /// <summary>
     /// Modal 3D-view picker: typable/searchable list, offered both when the

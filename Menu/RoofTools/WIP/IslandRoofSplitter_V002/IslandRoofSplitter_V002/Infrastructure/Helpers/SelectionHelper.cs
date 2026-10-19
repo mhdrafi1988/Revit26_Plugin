@@ -7,7 +7,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 
-namespace Revit26_Plugin_Revised.IslandRoofSplitter.V002.Infrastructure.Helpers
+namespace Revit26_Plugin.IslandRoofSplitter.V002.Infrastructure.Helpers
 {
     public static class SelectionHelper
     {

@@ -1,4 +1,4 @@
-namespace Revit26_Plugin_Revised.SheetViewArrange.V001.Core.Models
+namespace Revit26_Plugin.SheetViewArrange.V001.Core.Models
 {
     /// <summary>Status of one view in the planned arrangement.</summary>
     public enum ArrangeStatus

@@ -1,4 +1,4 @@
-namespace Revit26_Plugin_Revised.RoofNameBuilder.V002.Core.Models
+namespace Revit26_Plugin.RoofNameBuilder.V002.Core.Models
 {
     /// <summary>
     /// One configurable naming code (e.g. INS, SLP, MAT) and how its value is sourced.

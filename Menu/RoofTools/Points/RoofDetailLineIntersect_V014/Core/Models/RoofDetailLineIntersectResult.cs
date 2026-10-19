@@ -5,7 +5,7 @@
 // RoofDetailLineIntersectEngine. No UI, no WPF, no ViewModel references.
 // =======================================================
 
-namespace Revit26_Plugin_Revised.RoofDetailLineIntersect.V014.Core.Models
+namespace Revit26_Plugin.RoofDetailLineIntersect.V014.Core.Models
 {
     public class RoofDetailLineIntersectResult
     {

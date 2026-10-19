@@ -4,11 +4,11 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
-using Revit26_Plugin_Revised.RoofDetailLineIntersect.V013.Infrastructure.Helpers;
-using Revit26_Plugin_Revised.RoofDetailLineIntersect.V013.UI.ViewModels;
-using Revit26_Plugin_Revised.RoofDetailLineIntersect.V013.UI.Views;
+using Revit26_Plugin.RoofDetailLineIntersect.V013.Infrastructure.Helpers;
+using Revit26_Plugin.RoofDetailLineIntersect.V013.UI.ViewModels;
+using Revit26_Plugin.RoofDetailLineIntersect.V013.UI.Views;
 
-namespace Revit26_Plugin_Revised.RoofDetailLineIntersect.V013.Commands
+namespace Revit26_Plugin.RoofDetailLineIntersect.V013.Commands
 {
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]

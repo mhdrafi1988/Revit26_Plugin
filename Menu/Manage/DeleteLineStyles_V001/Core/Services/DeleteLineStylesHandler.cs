@@ -1,8 +1,8 @@
 using Autodesk.Revit.UI;
-using Revit26_Plugin_Revised.Shared.Services;
+using Revit26_Plugin.Shared.Services;
 using System;
 
-namespace Revit26_Plugin_Revised.DeleteLineStyles.V001.Core.Services
+namespace Revit26_Plugin.DeleteLineStyles.V001.Core.Services
 {
     /// <summary>
     /// Routes one queued action from the WPF window into the Revit API context.

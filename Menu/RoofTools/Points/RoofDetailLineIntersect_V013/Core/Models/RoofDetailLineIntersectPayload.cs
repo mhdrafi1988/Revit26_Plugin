@@ -10,11 +10,11 @@
 // =======================================================
 
 using Autodesk.Revit.DB;
-using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin.Shared.Models;
 using System;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin_Revised.RoofDetailLineIntersect.V013.Core.Models
+namespace Revit26_Plugin.RoofDetailLineIntersect.V013.Core.Models
 {
     public class RoofDetailLineIntersectPayload
     {

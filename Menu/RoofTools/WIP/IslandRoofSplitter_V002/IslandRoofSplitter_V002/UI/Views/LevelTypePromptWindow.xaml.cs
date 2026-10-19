@@ -5,10 +5,10 @@
 #nullable enable
 using System.Windows;
 using System.Windows.Controls;
-using Revit26_Plugin_Revised.IslandRoofSplitter.V002.Core.Models;
-using Revit26_Plugin_Revised.IslandRoofSplitter.V002.Core.Services;
+using Revit26_Plugin.IslandRoofSplitter.V002.Core.Models;
+using Revit26_Plugin.IslandRoofSplitter.V002.Core.Services;
 
-namespace Revit26_Plugin_Revised.IslandRoofSplitter.V002.UI.Views
+namespace Revit26_Plugin.IslandRoofSplitter.V002.UI.Views
 {
     public partial class LevelTypePromptWindow : Window
     {

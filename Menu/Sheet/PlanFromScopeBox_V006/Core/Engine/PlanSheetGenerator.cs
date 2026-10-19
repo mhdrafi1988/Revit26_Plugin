@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
-using Revit26_Plugin_Revised.PlanFromScopeBox.V006.Core.Models;
-using Revit26_Plugin_Revised.PlanFromScopeBox.V006.Core.Services;
-using Revit26_Plugin_Revised.PlanFromScopeBox.V006.Infrastructure.Helpers;
-using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin.PlanFromScopeBox.V006.Core.Models;
+using Revit26_Plugin.PlanFromScopeBox.V006.Core.Services;
+using Revit26_Plugin.PlanFromScopeBox.V006.Infrastructure.Helpers;
+using Revit26_Plugin.Shared.Models;
 
-namespace Revit26_Plugin_Revised.PlanFromScopeBox.V006.Core.Engine
+namespace Revit26_Plugin.PlanFromScopeBox.V006.Core.Engine
 {
     /// <summary>Input parameters for a generation run, gathered from the ViewModel.</summary>
     public sealed class GenerationRequest

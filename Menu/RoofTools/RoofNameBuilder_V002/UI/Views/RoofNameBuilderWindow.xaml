@@ -11,16 +11,15 @@ Roof Name Builder — V002  (ToolWindowShell, CLAUDE.md v1.1)
 No inline colours: every brush is a SharedStyles token.
 =======================================================
 -->
-<Window x:Class="Revit26_Plugin_Revised.RoofNameBuilder.V002.UI.Views.RoofNameBuilderWindow"
+<Window x:Class="Revit26_Plugin.RoofNameBuilder.V002.UI.Views.RoofNameBuilderWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:svc="clr-namespace:Revit26_Plugin_Revised.Shared.Services"
-        xmlns:shell="clr-namespace:Revit26_Plugin_Revised.Shared.Controls"
-        xmlns:converters="clr-namespace:Revit26_Plugin_Revised.Shared.Models"
-        Title="{Binding Source={x:Static svc:ToolCatalog.RoofNameBuilder}, Path=Title}"
+        xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
+        xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
+        Title="Roof Name Builder — V002"
         Height="820" Width="1240" MinHeight="820" MinWidth="1240" MaxHeight="1066" MaxWidth="1612" ResizeMode="CanResizeWithGrip"
         WindowStartupLocation="CenterOwner"
-        Background="{DynamicResource BrushSurfaceWindow}"
+        Background="{DynamicResource BrushSystemBackground}"
         FontFamily="{DynamicResource SystemFont}">
 
     <Window.Resources>
@@ -41,7 +40,7 @@ No inline colours: every brush is a SharedStyles token.
                         <Setter Property="Background" Value="{StaticResource BrushRowSuccessBackground}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding IsTooLong}" Value="True">
-                        <Setter Property="Background" Value="{StaticResource BrushStatusWarnSoft}"/>
+                        <Setter Property="Background" Value="{StaticResource BrushSoftWarningBackground}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding HasBlockingIssue}" Value="True">
                         <Setter Property="Background" Value="{StaticResource BrushRowDangerBackground}"/>
@@ -59,7 +58,7 @@ No inline colours: every brush is a SharedStyles token.
 
     <shell:ToolWindowShell Title="Roof Name Builder"
                            Subtitle="Bulk rename roof types or instances with configurable codes (INS / SLP / MAT …)"
-                           Version="{Binding Source={x:Static svc:ToolCatalog.RoofNameBuilder}, Path=Version, StringFormat=v{0}}"
+                           Version="V002"
                            IsRunning="{Binding IsRunning}"
                            Progress="{Binding Progress}"
                            IsIndeterminate="True"
@@ -190,8 +189,8 @@ No inline colours: every brush is a SharedStyles token.
 
                 <!-- Bulk action bar -->
                 <Border Margin="0,0,0,8" Padding="10,8" CornerRadius="6" BorderThickness="1"
-                        Background="{StaticResource BrushStatusInfoSoft}"
-                        BorderBrush="{StaticResource BrushStatusInfoBorder}"
+                        Background="{StaticResource BrushBannerInfoBackground}"
+                        BorderBrush="{StaticResource BrushBannerInfoBorder}"
                         Visibility="{Binding HasSelection, Converter={StaticResource BoolToVisibilityConverter}}">
                     <WrapPanel>
                         <TextBlock VerticalAlignment="Center" Margin="0,0,14,0" FontWeight="SemiBold"

@@ -111,10 +111,12 @@ Full detail in `Claude/LOGO PROMPT FOLDER/Ribbon_Code_Notes.md`. Sharp edges:
 - Only the parent `PulldownButton` gets an icon by default. To icon an
   individual `PushButtonData`, capture `AddPushButton`'s return value (cast
   to `PushButton`) and set `.Image`/`.LargeImage` on it explicitly.
-- `Resources/Icons/**/*.png` is embedded by one wildcard in the `.csproj`;
-  a new PNG dropped in a category folder is picked up automatically. A wrong
-  (or wrong-case) path in `ImageUtils.Load` throws `FileNotFoundException`
-  at `OnStartup` the first time that button is built.
+- `Resources/Icons/*.png` is **not** globbed into the build — each file
+  needs its own `<EmbeddedResource Include="Resources\Icons\<file>.png" />`
+  line in the `.csproj`, or `ImageUtils.Load` throws `FileNotFoundException`
+  at `OnStartup` the first time that button is built. Several PNGs already
+  sit on disk unregistered — check the `.csproj` before assuming a
+  `Resources/Icons/` file is actually wired in.
 - `QuickAcces.cs` (note: not `*Ribbon*.cs`) defines `QuickAccessRibbon`,
   called from `App.cs` — easy to miss in a filename-based search.
 

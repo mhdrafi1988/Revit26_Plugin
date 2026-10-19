@@ -2,16 +2,16 @@
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin_Revised.RoofPointComparison.V003.Core.Models;
-using Revit26_Plugin_Revised.RoofPointComparison.V003.Infrastructure.ExternalEvents;
-using Revit26_Plugin_Revised.RoofPointComparison.V003.Infrastructure.Helpers;
-using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin.RoofPointComparison.V003.Core.Models;
+using Revit26_Plugin.RoofPointComparison.V003.Infrastructure.ExternalEvents;
+using Revit26_Plugin.RoofPointComparison.V003.Infrastructure.Helpers;
+using Revit26_Plugin.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
 
-namespace Revit26_Plugin_Revised.RoofPointComparison.V003.UI.ViewModels
+namespace Revit26_Plugin.RoofPointComparison.V003.UI.ViewModels
 {
     public partial class RoofComparisonViewModel : ObservableObject
     {

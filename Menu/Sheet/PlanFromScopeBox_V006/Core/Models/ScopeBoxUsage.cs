@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Revit26_Plugin_Revised.PlanFromScopeBox.V006.Core.Models
+namespace Revit26_Plugin.PlanFromScopeBox.V006.Core.Models
 {
     /// <summary>
     /// Existing view/sheet placements found for one scope box, prior to this run.

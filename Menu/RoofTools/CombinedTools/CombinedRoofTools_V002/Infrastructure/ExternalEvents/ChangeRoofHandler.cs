@@ -12,10 +12,10 @@
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
-using Revit26_Plugin_Revised.CombinedRoofTools.V002.Core;
+using Revit26_Plugin.CombinedRoofTools.V002.Core;
 using System;
 
-namespace Revit26_Plugin_Revised.CombinedRoofTools.V002.Infrastructure.ExternalEvents
+namespace Revit26_Plugin.CombinedRoofTools.V002.Infrastructure.ExternalEvents
 {
     public class ChangeRoofHandler : IExternalEventHandler
     {

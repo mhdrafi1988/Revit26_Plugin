@@ -2,12 +2,12 @@ using System.Windows.Interop;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin_Revised.RoofEdgeVertexReducer.V009.Infrastructure.ExternalEvents;
-using Revit26_Plugin_Revised.RoofEdgeVertexReducer.V009.UI.ViewModels;
-using Revit26_Plugin_Revised.RoofEdgeVertexReducer.V009.UI.Views;
-using Revit26_Plugin_Revised.Utilities;
+using Revit26_Plugin.RoofEdgeVertexReducer.V009.Infrastructure.ExternalEvents;
+using Revit26_Plugin.RoofEdgeVertexReducer.V009.UI.ViewModels;
+using Revit26_Plugin.RoofEdgeVertexReducer.V009.UI.Views;
+using Revit26_Plugin.Utilities;
 
-namespace Revit26_Plugin_Revised.RoofEdgeVertexReducer.V009.Commands
+namespace Revit26_Plugin.RoofEdgeVertexReducer.V009.Commands
 {
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]

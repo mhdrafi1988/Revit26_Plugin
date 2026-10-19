@@ -1,6 +1,6 @@
 // IslandRoofSplitter V002 — option enums. Member names are matched by EnumToBoolConverter (ToString), keep them stable.
 #nullable enable
-namespace Revit26_Plugin_Revised.IslandRoofSplitter.V002.Core.Models
+namespace Revit26_Plugin.IslandRoofSplitter.V002.Core.Models
 {
     public enum SplitMode { Flat, Sloped }
 

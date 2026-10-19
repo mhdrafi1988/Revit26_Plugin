@@ -1,11 +1,11 @@
 using Autodesk.Revit.DB;
-using Revit26_Plugin_Revised.SheetViewArrange.V001.Core.Layout;
-using Revit26_Plugin_Revised.SheetViewArrange.V001.Core.Models;
+using Revit26_Plugin.SheetViewArrange.V001.Core.Layout;
+using Revit26_Plugin.SheetViewArrange.V001.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin_Revised.SheetViewArrange.V001.Core.Services
+namespace Revit26_Plugin.SheetViewArrange.V001.Core.Services
 {
     /// <summary>
     /// Reads a sheet's viewports, title block frame and schedules into a <see cref="SheetSnapshot"/>.

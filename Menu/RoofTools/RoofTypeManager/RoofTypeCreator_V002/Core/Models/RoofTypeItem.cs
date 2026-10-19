@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin_Revised.RoofTypeCreator.V002.Core.Models
+namespace Revit26_Plugin.RoofTypeCreator.V002.Core.Models
 {
     public partial class RoofTypeItem : ObservableObject
     {

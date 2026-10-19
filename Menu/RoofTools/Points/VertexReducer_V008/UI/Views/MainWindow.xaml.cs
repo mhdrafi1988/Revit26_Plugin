@@ -7,9 +7,9 @@
 
 using System.Windows;
 using System.Windows.Input;
-using Revit26_Plugin_Revised.RoofEdgeVertexReducer.V008.UI.ViewModels;
+using Revit26_Plugin.RoofEdgeVertexReducer.V008.UI.ViewModels;
 
-namespace Revit26_Plugin_Revised.RoofEdgeVertexReducer.V008.UI.Views
+namespace Revit26_Plugin.RoofEdgeVertexReducer.V008.UI.Views
 {
     public partial class MainWindow : Window
     {

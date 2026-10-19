@@ -1,4 +1,4 @@
-namespace Revit26_Plugin_Revised.FloorsAndRoofFromLinkedRooms.V013
+namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V013
 {
     /// <summary>
     /// Per-tool persisted settings (System.Text.Json POCO), stored at

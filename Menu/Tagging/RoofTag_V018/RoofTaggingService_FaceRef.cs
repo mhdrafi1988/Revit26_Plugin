@@ -1,10 +1,10 @@
 using Autodesk.Revit.DB;
-using Revit26_Plugin_Revised.RoofTag.V018.Helpers;
-using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin.RoofTag.V018.Helpers;
+using Revit26_Plugin.Shared.Models;
 using System;
 using System.IO;
 
-namespace Revit26_Plugin_Revised.RoofTag.V018
+namespace Revit26_Plugin.RoofTag.V018
 {
     /// <summary>
     /// V015: FaceRef method only.

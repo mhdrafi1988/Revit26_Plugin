@@ -4,9 +4,9 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using Revit26_Plugin_Revised.IslandRoofSplitter.V001.Core.Models;
+using Revit26_Plugin.IslandRoofSplitter.V001.Core.Models;
 
-namespace Revit26_Plugin_Revised.IslandRoofSplitter.V001.Infrastructure.ExternalEvents
+namespace Revit26_Plugin.IslandRoofSplitter.V001.Infrastructure.ExternalEvents
 {
     public enum SplitterRequestKind { Commit, Highlight, RepickRoof, RepickLines }
 

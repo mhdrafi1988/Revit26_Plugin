@@ -2,9 +2,9 @@ using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
-using Revit26_Plugin_Revised.WorksetsElementsBrowser.WSEB003.UI.ViewModels;
+using Revit26_Plugin.WorksetsElementsBrowser.WSEB003.UI.ViewModels;
 
-namespace Revit26_Plugin_Revised.WorksetsElementsBrowser.WSEB003.UI.Views
+namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB003.UI.Views
 {
     /// <summary>Shows the per-row "Show in 3D" button only on Type rows — Workset/Category rows have no single element set to show.</summary>
     public class KindToTypeVisibilityConverter : IValueConverter

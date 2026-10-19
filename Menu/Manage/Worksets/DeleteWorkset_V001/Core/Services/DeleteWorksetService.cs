@@ -1,11 +1,11 @@
 using Autodesk.Revit.DB;
-using Revit26_Plugin_Revised.DeleteWorkset.V001.Core.Models;
-using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin.DeleteWorkset.V001.Core.Models;
+using Revit26_Plugin.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin_Revised.DeleteWorkset.V001.Core.Services
+namespace Revit26_Plugin.DeleteWorkset.V001.Core.Services
 {
     /// <summary>
     /// Encapsulates workset enumeration and deletion logic, operating inside

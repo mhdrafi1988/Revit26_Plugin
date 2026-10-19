@@ -1,12 +1,12 @@
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin_Revised.DeleteLineStyles.V001.UI.ViewModels;
-using Revit26_Plugin_Revised.DeleteLineStyles.V001.UI.Views;
-using Revit26_Plugin_Revised.Shared.Services;
+using Revit26_Plugin.DeleteLineStyles.V001.UI.ViewModels;
+using Revit26_Plugin.DeleteLineStyles.V001.UI.Views;
+using Revit26_Plugin.Shared.Services;
 using System.Windows.Interop;
 
-namespace Revit26_Plugin_Revised.DeleteLineStyles.V001.Commands
+namespace Revit26_Plugin.DeleteLineStyles.V001.Commands
 {
     /// <summary>
     /// Opens the Delete Line Styles window, which lists the project's custom line styles and

@@ -3,11 +3,11 @@ using System.Windows.Interop;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin_Revised.RoofNameBuilder.V002.UI.ViewModels;
-using Revit26_Plugin_Revised.RoofNameBuilder.V002.UI.Views;
-using Revit26_Plugin_Revised.Shared.Services;
+using Revit26_Plugin.RoofNameBuilder.V002.UI.ViewModels;
+using Revit26_Plugin.RoofNameBuilder.V002.UI.Views;
+using Revit26_Plugin.Shared.Services;
 
-namespace Revit26_Plugin_Revised.RoofNameBuilder.V002.Commands
+namespace Revit26_Plugin.RoofNameBuilder.V002.Commands
 {
     /// <summary>
     /// Roof Name Builder V002 — thin entry point. The body runs through Shared ToolGuard.RunCommand

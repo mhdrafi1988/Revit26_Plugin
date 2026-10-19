@@ -9,15 +9,15 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin_Revised.PlanFromScopeBox.V006.Core.Engine;
-using Revit26_Plugin_Revised.PlanFromScopeBox.V006.Core.Models;
-using Revit26_Plugin_Revised.PlanFromScopeBox.V006.Core.Services;
-using Revit26_Plugin_Revised.PlanFromScopeBox.V006.Infrastructure.ExternalEvents;
-using Revit26_Plugin_Revised.PlanFromScopeBox.V006.Infrastructure.Helpers;
-using Revit26_Plugin_Revised.PlanFromScopeBox.V006.Infrastructure.Settings;
-using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin.PlanFromScopeBox.V006.Core.Engine;
+using Revit26_Plugin.PlanFromScopeBox.V006.Core.Models;
+using Revit26_Plugin.PlanFromScopeBox.V006.Core.Services;
+using Revit26_Plugin.PlanFromScopeBox.V006.Infrastructure.ExternalEvents;
+using Revit26_Plugin.PlanFromScopeBox.V006.Infrastructure.Helpers;
+using Revit26_Plugin.PlanFromScopeBox.V006.Infrastructure.Settings;
+using Revit26_Plugin.Shared.Models;
 
-namespace Revit26_Plugin_Revised.PlanFromScopeBox.V006.UI.ViewModels
+namespace Revit26_Plugin.PlanFromScopeBox.V006.UI.ViewModels
 {
     /// <summary>
     /// Drives the Plan From Scope Box window. Reads scope boxes/level/title blocks on open,

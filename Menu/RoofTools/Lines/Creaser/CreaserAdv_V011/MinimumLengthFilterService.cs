@@ -1,13 +1,13 @@
 ﻿// ==================================
 // File: MinimumLengthFilterService.cs
-// Namespace: Revit26_Plugin_Revised.CreaserAdv.V011
+// Namespace: Revit26_Plugin.CreaserAdv.V011
 // ==================================
 
 using Autodesk.Revit.DB;
 using System;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin_Revised.CreaserAdv.V011.Services
+namespace Revit26_Plugin.CreaserAdv.V011.Services
 {
     /// <summary>
     /// Filters crease lines by minimum length threshold.

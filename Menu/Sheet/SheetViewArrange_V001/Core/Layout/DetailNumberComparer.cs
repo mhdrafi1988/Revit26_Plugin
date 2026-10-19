@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 
-namespace Revit26_Plugin_Revised.SheetViewArrange.V001.Core.Layout
+namespace Revit26_Plugin.SheetViewArrange.V001.Core.Layout
 {
     /// <summary>
     /// Orders detail numbers the way a person counts: digit runs compare as numbers and text

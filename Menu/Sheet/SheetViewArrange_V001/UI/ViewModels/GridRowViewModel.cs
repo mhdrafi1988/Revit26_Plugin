@@ -1,12 +1,12 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin_Revised.SheetViewArrange.V001.Core.Models;
-using Revit26_Plugin_Revised.SheetViewArrange.V001.Core.Services;
+using Revit26_Plugin.SheetViewArrange.V001.Core.Models;
+using Revit26_Plugin.SheetViewArrange.V001.Core.Services;
 using System;
 using System.Collections;
 using System.Windows.Input;
 
-namespace Revit26_Plugin_Revised.SheetViewArrange.V001.UI.ViewModels
+namespace Revit26_Plugin.SheetViewArrange.V001.UI.ViewModels
 {
     /// <summary>What changed when a grid row took a new plan row.</summary>
     [Flags]

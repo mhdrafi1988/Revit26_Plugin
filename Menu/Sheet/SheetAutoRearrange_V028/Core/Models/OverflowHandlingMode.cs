@@ -1,4 +1,4 @@
-namespace Revit26_Plugin_Revised.SheetAutoRearrange.V028.Core.Models
+namespace Revit26_Plugin.SheetAutoRearrange.V028.Core.Models
 {
     /// <summary>
     /// Determines what happens to ticked views that don't fit the titleblock

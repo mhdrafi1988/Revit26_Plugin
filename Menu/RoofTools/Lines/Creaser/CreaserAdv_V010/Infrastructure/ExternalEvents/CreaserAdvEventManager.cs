@@ -1,6 +1,6 @@
 ﻿using Autodesk.Revit.UI;
 
-namespace Revit26_Plugin_Revised.CreaserAdv.V010.Infrastructure.ExternalEvents
+namespace Revit26_Plugin.CreaserAdv.V010.Infrastructure.ExternalEvents
 {
     public static class CreaserAdvEventManager
     {

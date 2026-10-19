@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace Revit26_Plugin_Revised.WorksetRenamer.V005.ViewModels
+namespace Revit26_Plugin.WorksetRenamer.V005.ViewModels
 {
     /// <summary>
     /// Converts a <see cref="RenameStatus"/> enum value to a

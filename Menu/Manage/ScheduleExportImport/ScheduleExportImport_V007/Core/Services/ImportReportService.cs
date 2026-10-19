@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ClosedXML.Excel;
-using Revit26_Plugin_Revised.ScheduleExportImport.V007.Core.Models;
+using Revit26_Plugin.ScheduleExportImport.V007.Core.Models;
 
-namespace Revit26_Plugin_Revised.ScheduleExportImport.V007.Core.Services
+namespace Revit26_Plugin.ScheduleExportImport.V007.Core.Services
 {
     public static class ImportReportService
     {

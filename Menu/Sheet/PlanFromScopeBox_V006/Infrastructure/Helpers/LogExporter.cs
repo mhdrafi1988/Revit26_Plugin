@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin.Shared.Models;
 
-namespace Revit26_Plugin_Revised.PlanFromScopeBox.V006.Infrastructure.Helpers
+namespace Revit26_Plugin.PlanFromScopeBox.V006.Infrastructure.Helpers
 {
     /// <summary>
     /// Writes activity-log entries to a .txt file. Used for both silent auto-save on

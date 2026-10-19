@@ -9,11 +9,11 @@
 // =======================================================
 
 using Autodesk.Revit.DB;
-using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin.Shared.Models;
 using System;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin_Revised.InnerLoopDivider.V011.Core.Models
+namespace Revit26_Plugin.InnerLoopDivider.V011.Core.Models
 {
     public enum InnerLoopDividerOperation { Analyze, Apply }
 

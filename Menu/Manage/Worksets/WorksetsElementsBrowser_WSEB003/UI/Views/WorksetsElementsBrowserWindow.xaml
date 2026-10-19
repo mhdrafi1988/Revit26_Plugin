@@ -9,14 +9,14 @@ Changes vs WSEB002 (layout only, per Revit_Plugin_UI_Standard.md):
     (no behaviour change). MinWidth/MinHeight = default size.
 =======================================================
 -->
-<Window x:Class="Revit26_Plugin_Revised.WorksetsElementsBrowser.WSEB003.UI.Views.WorksetsElementsBrowserWindow"
+<Window x:Class="Revit26_Plugin.WorksetsElementsBrowser.WSEB003.UI.Views.WorksetsElementsBrowserWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:converters="clr-namespace:Revit26_Plugin_Revised.Shared.Models"
-        xmlns:vm="clr-namespace:Revit26_Plugin_Revised.WorksetsElementsBrowser.WSEB003.UI.ViewModels"
-        xmlns:local="clr-namespace:Revit26_Plugin_Revised.WorksetsElementsBrowser.WSEB003.UI.Views"
+        xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
+        xmlns:vm="clr-namespace:Revit26_Plugin.WorksetsElementsBrowser.WSEB003.UI.ViewModels"
+        xmlns:local="clr-namespace:Revit26_Plugin.WorksetsElementsBrowser.WSEB003.UI.Views"
         mc:Ignorable="d"
         Title="Worksets &amp; Elements Browser — WSEB003"
         Height="760" Width="900"

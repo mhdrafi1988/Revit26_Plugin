@@ -1,15 +1,15 @@
 // ==================================
 // File: LoggingService.cs
-// Namespace: Revit26_Plugin_Revised.CreaserAdv.V010.Services
+// Namespace: Revit26_Plugin.CreaserAdv.V010.Services
 // ==================================
 
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading;
-using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin.Shared.Models;
 
-namespace Revit26_Plugin_Revised.CreaserAdv.V010.Services
+namespace Revit26_Plugin.CreaserAdv.V010.Services
 {
     /// <summary>
     /// Thread-safe logging service.

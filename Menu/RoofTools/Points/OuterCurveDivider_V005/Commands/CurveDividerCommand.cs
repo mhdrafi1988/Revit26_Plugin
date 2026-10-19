@@ -22,14 +22,14 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
-using Revit26_Plugin_Revised.OuterCurveDivider.V005.Core.Services;
-using Revit26_Plugin_Revised.OuterCurveDivider.V005.UI.ViewModels;
-using Revit26_Plugin_Revised.OuterCurveDivider.V005.UI.Views;
+using Revit26_Plugin.OuterCurveDivider.V005.Core.Services;
+using Revit26_Plugin.OuterCurveDivider.V005.UI.ViewModels;
+using Revit26_Plugin.OuterCurveDivider.V005.UI.Views;
 using System;
 using System.Windows.Interop;
-using Revit26_Plugin_Revised.Utilities;
+using Revit26_Plugin.Utilities;
 
-namespace Revit26_Plugin_Revised.OuterCurveDivider.V005.Commands
+namespace Revit26_Plugin.OuterCurveDivider.V005.Commands
 {
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]

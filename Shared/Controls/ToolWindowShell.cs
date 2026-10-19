@@ -2,7 +2,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Revit26_Plugin_Revised.Shared.Controls
+namespace Revit26_Plugin.Shared.Controls
 {
     /// <summary>
     /// Standard three-zone tool window layout (CLAUDE.md v1.1).

@@ -1,6 +1,6 @@
 using Autodesk.Revit.UI;
 
-namespace Revit26_Plugin_Revised.RoofPointComparison.V002.Infrastructure.ExternalEvents
+namespace Revit26_Plugin.RoofPointComparison.V002.Infrastructure.ExternalEvents
 {
     public static class RoofComparisonEventManager
     {

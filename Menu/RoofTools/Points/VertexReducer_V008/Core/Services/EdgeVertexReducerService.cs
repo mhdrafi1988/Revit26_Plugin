@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
-using Revit26_Plugin_Revised.RoofEdgeVertexReducer.V008.Core.Models;
+using Revit26_Plugin.RoofEdgeVertexReducer.V008.Core.Models;
 
-namespace Revit26_Plugin_Revised.RoofEdgeVertexReducer.V008.Core.Services
+namespace Revit26_Plugin.RoofEdgeVertexReducer.V008.Core.Services
 {
     /// <summary>
     /// Pure geometry/logic layer. No UI, no ExternalEvent plumbing — only called from

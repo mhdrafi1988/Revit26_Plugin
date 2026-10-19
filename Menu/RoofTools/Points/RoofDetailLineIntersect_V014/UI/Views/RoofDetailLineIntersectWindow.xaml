@@ -13,13 +13,12 @@ Changes vs V013 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
 =======================================================
 -->
 <Window
-    x:Class="Revit26_Plugin_Revised.RoofDetailLineIntersect.V014.UI.Views.RoofDetailLineIntersectWindow"
+    x:Class="Revit26_Plugin.RoofDetailLineIntersect.V014.UI.Views.RoofDetailLineIntersectWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:svc="clr-namespace:Revit26_Plugin_Revised.Shared.Services"
-    xmlns:shared="clr-namespace:Revit26_Plugin_Revised.Shared.Models"
-    xmlns:shell="clr-namespace:Revit26_Plugin_Revised.Shared.Controls"
-    Title="{Binding Source={x:Static svc:ToolCatalog.RoofDetailLineIntersect}, Path=Title}"
+    xmlns:shared="clr-namespace:Revit26_Plugin.Shared.Models"
+    xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
+    Title="Roof Detail Line Intersect — V014"
     Width="520" Height="700"
     MinWidth="520" MinHeight="700"
     ResizeMode="CanResizeWithGrip"
@@ -40,7 +39,7 @@ Changes vs V013 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
 
     <shell:ToolWindowShell Title="Roof Detail Line Intersect"
                            Subtitle="Curves · Endpoints · Shape Points · Line×Line"
-                           Version="{Binding Source={x:Static svc:ToolCatalog.RoofDetailLineIntersect}, Path=Version, StringFormat=v{0}}"
+                           Version="V014"
                            IsRunning="{Binding IsBusy}"
                            IsIndeterminate="True"
                            Progress="{Binding Progress}"
@@ -132,7 +131,7 @@ Changes vs V013 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                             </Grid.ColumnDefinitions>
 
                             <Border Grid.Column="0"
-                                    Background="{StaticResource BrushStatusOk}"
+                                    Background="{StaticResource BrushSuccess}"
                                     CornerRadius="8" Padding="7,2" Margin="0,0,8,0"
                                     VerticalAlignment="Center">
                                 <TextBlock FontSize="10" FontWeight="Bold" Foreground="{StaticResource BrushTextOnDark}">
