@@ -118,11 +118,11 @@ The preview canvas is drawn in code-behind from ViewModel.Plan.
 
             <!-- Removable tag for an active filter. -->
             <DataTemplate x:Key="FilterChipTemplate">
-                <Border CornerRadius="10" Padding="9,1,3,1" Margin="0,0,5,4" Background="{StaticResource BrushPillInfoBackground}">
+                <Border CornerRadius="10" Padding="9,1,3,1" Margin="0,0,5,4" Background="{StaticResource BrushStatusInfoSoft}">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding Text}" FontSize="11.5" Foreground="{StaticResource BrushPillInfoText}" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Text}" FontSize="11.5" Foreground="{StaticResource BrushStatusInfo}" VerticalAlignment="Center"/>
                         <Button Content="×" Command="{Binding RemoveCommand}" Padding="5,0" Margin="2,0,0,0" Background="Transparent"
-                                BorderThickness="0" Cursor="Hand" FontSize="13" Foreground="{StaticResource BrushPillInfoText}"
+                                BorderThickness="0" Cursor="Hand" FontSize="13" Foreground="{StaticResource BrushStatusInfo}"
                                 ToolTip="Remove this filter"/>
                     </StackPanel>
                 </Border>
@@ -139,8 +139,8 @@ The preview canvas is drawn in code-behind from ViewModel.Plan.
             </DataTemplate>
 
             <Style x:Key="FilterPopupCard" TargetType="Border">
-                <Setter Property="Background" Value="{StaticResource BrushCardBackground}"/>
-                <Setter Property="BorderBrush" Value="{StaticResource BrushCardBorder}"/>
+                <Setter Property="Background" Value="{StaticResource BrushSurfaceCard}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource BrushBorderDefault}"/>
                 <Setter Property="BorderThickness" Value="1"/>
                 <Setter Property="CornerRadius" Value="8"/>
                 <Setter Property="Padding" Value="8"/>
@@ -343,18 +343,18 @@ The preview canvas is drawn in code-behind from ViewModel.Plan.
                                        Text="Blue: new position (number = detail number). Red: does not fit. Grey hatched: skipped, stays put. Dashed: usable area."/>
 
                             <Border Margin="12,0,12,6" Padding="10,6" CornerRadius="6"
-                                    Background="{StaticResource BrushBannerWarningBackground}"
-                                    BorderBrush="{StaticResource BrushBannerWarningBorder}" BorderThickness="1"
+                                    Background="{StaticResource BrushStatusWarnSoft}"
+                                    BorderBrush="{StaticResource BrushStatusWarnBorder}" BorderThickness="1"
                                     Visibility="{Binding HasBlocker, Converter={StaticResource BoolToVis}}">
                                 <TextBlock Text="{Binding StatusText}" TextWrapping="Wrap"
-                                           Foreground="{StaticResource BrushBannerWarningText}" FontSize="12"/>
+                                           Foreground="{StaticResource BrushStatusWarn}" FontSize="12"/>
                             </Border>
                             <Border Margin="12,0,12,10" Padding="10,6" CornerRadius="6"
-                                    Background="{StaticResource BrushBannerNoteBackground}"
-                                    BorderBrush="{StaticResource BrushBannerNoteBorder}" BorderThickness="1"
+                                    Background="{StaticResource BrushStatusWarnSoft}"
+                                    BorderBrush="{StaticResource BrushStatusWarnBorder}" BorderThickness="1"
                                     Visibility="{Binding HasWarnings, Converter={StaticResource BoolToVis}}">
                                 <TextBlock Text="{Binding WarningsText}" TextWrapping="Wrap"
-                                           Foreground="{StaticResource BrushBannerNoteText}" FontSize="12"/>
+                                           Foreground="{StaticResource BrushStatusWarn}" FontSize="12"/>
                             </Border>
                         </StackPanel>
                     </Border>
@@ -533,16 +533,16 @@ The preview canvas is drawn in code-behind from ViewModel.Plan.
                                                     <Border CornerRadius="8" Padding="7,1">
                                                         <Border.Style>
                                                             <Style TargetType="Border">
-                                                                <Setter Property="Background" Value="{StaticResource BrushPillInfoBackground}"/>
+                                                                <Setter Property="Background" Value="{StaticResource BrushStatusInfoSoft}"/>
                                                                 <Style.Triggers>
                                                                     <DataTrigger Binding="{Binding Status}" Value="InPlace">
-                                                                        <Setter Property="Background" Value="{StaticResource BrushPillSuccessBackground}"/>
+                                                                        <Setter Property="Background" Value="{StaticResource BrushStatusOkSoft}"/>
                                                                     </DataTrigger>
                                                                     <DataTrigger Binding="{Binding Status}" Value="DoesNotFit">
-                                                                        <Setter Property="Background" Value="{StaticResource BrushSoftDangerBackground}"/>
+                                                                        <Setter Property="Background" Value="{StaticResource BrushStatusErrorSoft}"/>
                                                                     </DataTrigger>
                                                                     <DataTrigger Binding="{Binding Status}" Value="Skipped">
-                                                                        <Setter Property="Background" Value="{StaticResource BrushPillMutedBackground}"/>
+                                                                        <Setter Property="Background" Value="{StaticResource BrushSystemTertiaryBackground}"/>
                                                                     </DataTrigger>
                                                                 </Style.Triggers>
                                                             </Style>
@@ -562,8 +562,8 @@ The preview canvas is drawn in code-behind from ViewModel.Plan.
 
                             <!-- Filters never change what is arranged: say so when ticked views are hidden. -->
                             <Border Margin="12,0,12,6" Padding="10,6" CornerRadius="6"
-                                    Background="{StaticResource BrushBannerInfoBackground}"
-                                    BorderBrush="{StaticResource BrushBannerInfoBorder}" BorderThickness="1"
+                                    Background="{StaticResource BrushStatusInfoSoft}"
+                                    BorderBrush="{StaticResource BrushStatusInfoBorder}" BorderThickness="1"
                                     Visibility="{Binding HasHiddenTicked, Converter={StaticResource BoolToVis}}">
                                 <DockPanel>
                                     <Button DockPanel.Dock="Right" Content="Show them" Margin="8,0,0,0"
