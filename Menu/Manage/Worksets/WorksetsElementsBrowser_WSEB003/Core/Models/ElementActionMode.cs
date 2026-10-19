@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB003.Core.Models
+namespace Revit26_Plugin_Revised.WorksetsElementsBrowser.WSEB003.Core.Models
 {
     /// <summary>
     /// What to do with the checked (or single clicked-type) elements once a

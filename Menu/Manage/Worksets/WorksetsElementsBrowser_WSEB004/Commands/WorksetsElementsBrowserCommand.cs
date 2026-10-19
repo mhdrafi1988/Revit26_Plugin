@@ -1,12 +1,12 @@
 ﻿using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.WorksetsElementsBrowser.WSEB004.UI.ViewModels;
-using Revit26_Plugin.WorksetsElementsBrowser.WSEB004.UI.Views;
+using Revit26_Plugin_Revised.WorksetsElementsBrowser.WSEB004.UI.ViewModels;
+using Revit26_Plugin_Revised.WorksetsElementsBrowser.WSEB004.UI.Views;
 using System.Windows.Interop;
-using Revit26_Plugin.Utilities;
+using Revit26_Plugin_Revised.Utilities;
 
-namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB004.Commands
+namespace Revit26_Plugin_Revised.WorksetsElementsBrowser.WSEB004.Commands
 {
     /// <summary>
     /// Ribbon entry point for the Worksets &amp; Elements Browser tool. Opens a

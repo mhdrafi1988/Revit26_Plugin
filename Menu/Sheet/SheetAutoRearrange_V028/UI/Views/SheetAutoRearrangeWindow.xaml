@@ -18,17 +18,18 @@ Changes vs V027 (layout only):
   - No behaviour change — every binding/command is the V027 one.
 =======================================================
 -->
-<Window x:Class="Revit26_Plugin.SheetAutoRearrange.V028.UI.Views.SheetAutoRearrangeWindow"
+<Window x:Class="Revit26_Plugin_Revised.SheetAutoRearrange.V028.UI.Views.SheetAutoRearrangeWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:models="clr-namespace:Revit26_Plugin.SheetAutoRearrange.V028.Core.Models"
-        xmlns:local="clr-namespace:Revit26_Plugin.SheetAutoRearrange.V028.UI.Views"
-        xmlns:conv="clr-namespace:Revit26_Plugin.Shared.Models"
-        xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
-        Title="Sheet Auto Rearrange — V028"
+        xmlns:svc="clr-namespace:Revit26_Plugin_Revised.Shared.Services"
+        xmlns:models="clr-namespace:Revit26_Plugin_Revised.SheetAutoRearrange.V028.Core.Models"
+        xmlns:local="clr-namespace:Revit26_Plugin_Revised.SheetAutoRearrange.V028.UI.Views"
+        xmlns:conv="clr-namespace:Revit26_Plugin_Revised.Shared.Models"
+        xmlns:shell="clr-namespace:Revit26_Plugin_Revised.Shared.Controls"
+        Title="{Binding Source={x:Static svc:ToolCatalog.SheetAutoRearrange}, Path=Title}"
         Height="920" Width="1180"
         MinHeight="920" MinWidth="1180"
-        Background="{DynamicResource BrushSystemBackground}"
+        Background="{DynamicResource BrushSurfaceWindow}"
         FontFamily="{DynamicResource SystemFont}"
         WindowStartupLocation="CenterOwner"
         ResizeMode="CanResize">
@@ -80,8 +81,8 @@ Changes vs V027 (layout only):
                  Binding, just not inside Style.Triggers), using
                  StrategySelectedBrushConverter. -->
             <Style x:Key="StrategySegmentButton" TargetType="Button">
-                <Setter Property="Background" Value="{StaticResource BrushCardBackground}"/>
-                <Setter Property="BorderBrush" Value="{StaticResource BrushCardBorder}"/>
+                <Setter Property="Background" Value="{StaticResource BrushSurfaceCard}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource BrushBorderDefault}"/>
                 <Setter Property="BorderThickness" Value="1.5"/>
                 <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}"/>
                 <Setter Property="Cursor" Value="Hand"/>
@@ -130,8 +131,8 @@ Changes vs V027 (layout only):
                  Header content, not baked into the template.
             ═══════════════════════════════════════════════════════════ -->
             <Style x:Key="CardExpander" TargetType="Expander">
-                <Setter Property="Background" Value="{StaticResource BrushCardBackground}"/>
-                <Setter Property="BorderBrush" Value="{StaticResource BrushCardBorder}"/>
+                <Setter Property="Background" Value="{StaticResource BrushSurfaceCard}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource BrushBorderDefault}"/>
                 <Setter Property="BorderThickness" Value="1"/>
                 <Setter Property="Margin" Value="0,0,0,8"/>
                 <Setter Property="Template">
@@ -226,7 +227,7 @@ Changes vs V027 (layout only):
 
     <shell:ToolWindowShell Title="Sheet Auto Rearrange"
                            Subtitle="Reselect, remove &amp; repack views on the active sheet"
-                           Version="V028"
+                           Version="{Binding Source={x:Static svc:ToolCatalog.SheetAutoRearrange}, Path=Version, StringFormat=v{0}}"
                            IsRunning="{Binding IsBusy}"
                            IsIndeterminate="True"
                            Progress="{Binding Progress}"
@@ -316,7 +317,7 @@ Changes vs V027 (layout only):
                                 <!-- View Type filter popover -->
                                 <Popup x:Name="ViewTypesPopup" PlacementTarget="{Binding ElementName=ViewTypesPopup}"
                                        StaysOpen="False" Width="220">
-                                    <Border Background="{StaticResource BrushCardBackground}" BorderBrush="{StaticResource BrushCardBorder}"
+                                    <Border Background="{StaticResource BrushSurfaceCard}" BorderBrush="{StaticResource BrushBorderDefault}"
                                             BorderThickness="1" CornerRadius="8" Padding="8">
                                         <Border.Effect>
                                             <DropShadowEffect ShadowDepth="2" BlurRadius="10" Opacity="0.2"/>
@@ -516,7 +517,7 @@ Changes vs V027 (layout only):
                                     <ListBox shell:ShellBehaviors.MaxHeightRatio="0.25" shell:ShellBehaviors.ForwardMouseWheel="True" ItemsSource="{Binding PriorityGroups}"
                                              AlternationCount="{Binding PriorityGroups.Count}"
                                              IsEnabled="{Binding EnablePriorityGroups}"
-                                             BorderThickness="1" BorderBrush="{StaticResource BrushCardBorder}"
+                                             BorderThickness="1" BorderBrush="{StaticResource BrushBorderDefault}"
                                              Margin="12,0,12,8" ScrollViewer.VerticalScrollBarVisibility="Auto">
                                         <ListBox.ItemTemplate>
                                             <DataTemplate>
@@ -765,15 +766,15 @@ Changes vs V027 (layout only):
                                     </UniformGrid>
 
                                     <!-- V022 NEW: Max Fill info note (new default) -->
-                                    <Border Background="{StaticResource BrushBannerInfoBackground}" BorderBrush="{StaticResource BrushBannerInfoBorder}" BorderThickness="1" CornerRadius="6" Margin="12,8,12,4" Padding="8,6">
+                                    <Border Background="{StaticResource BrushStatusInfoSoft}" BorderBrush="{StaticResource BrushStatusInfoBorder}" BorderThickness="1" CornerRadius="6" Margin="12,8,12,4" Padding="8,6">
                                         <TextBlock TextWrapping="Wrap" FontSize="10" Foreground="{StaticResource BrushNavyPrimary}">
                                             <Run FontWeight="SemiBold" Text="Max Fill: "/>
                                             <Run Text="ignores Master Row/Band scaffolding — items sorted smallest-area-first, packed into free rectangles via Best-Short-Side-Fit (ties broken by max resulting free area). New default strategy."/>
                                         </TextBlock>
                                     </Border>
 
-                                    <Border Background="{StaticResource BrushBannerNoteBackground}" BorderBrush="{StaticResource BrushBannerNoteBorder}" BorderThickness="1" CornerRadius="6" Margin="12,4,12,4" Padding="8,6">
-                                        <TextBlock TextWrapping="Wrap" FontSize="10" Foreground="{StaticResource BrushBannerNoteText}">
+                                    <Border Background="{StaticResource BrushStatusWarnSoft}" BorderBrush="{StaticResource BrushStatusWarnBorder}" BorderThickness="1" CornerRadius="6" Margin="12,4,12,4" Padding="8,6">
+                                        <TextBlock TextWrapping="Wrap" FontSize="10" Foreground="{StaticResource BrushStatusWarn}">
                                             <Run FontWeight="SemiBold" Text="Note (Shelf / Guillotine / MaxRects only): "/>
                                             <Run Text="Master Row height is set by the tallest item still unplaced anywhere in the list, not just the tallest item in the current row. With a few unusually tall items in an otherwise short dataset, several rows in a row can end up using that same tall row-height before those items are finally placed. Ported here exactly as specified."/>
                                         </TextBlock>
@@ -787,8 +788,8 @@ Changes vs V027 (layout only):
                                     <TextBlock Text="Live Sheet Preview" Style="{StaticResource ExpanderTitleText}"/>
                                 </Expander.Header>
                                 <StackPanel Margin="0,0,0,10">
-                                    <Border Margin="12,4,12,4" Height="200" Background="{StaticResource BrushSystemBackground}"
-                                            BorderBrush="{StaticResource BrushCardBorder}" BorderThickness="1" CornerRadius="6">
+                                    <Border Margin="12,4,12,4" Height="200" Background="{StaticResource BrushSurfaceWindow}"
+                                            BorderBrush="{StaticResource BrushBorderDefault}" BorderThickness="1" CornerRadius="6">
 
                                         <Canvas x:Name="PreviewCanvas" ClipToBounds="True"/>
                                     </Border>

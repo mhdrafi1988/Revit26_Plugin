@@ -5,10 +5,10 @@
 // no ViewModel references.
 // =======================================================
 
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.MultiplePoints.V003.Core.Models
+namespace Revit26_Plugin_Revised.MultiplePoints.V003.Core.Models
 {
     public class MultiplePointsResult
     {

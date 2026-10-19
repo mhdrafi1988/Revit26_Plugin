@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.PlanFromScopeBox.V005.Core.Services
+namespace Revit26_Plugin_Revised.PlanFromScopeBox.V005.Core.Services
 {
     /// <summary>One item to be packed: its printed footprint on the sheet, in millimetres.</summary>
     public sealed class PackItem

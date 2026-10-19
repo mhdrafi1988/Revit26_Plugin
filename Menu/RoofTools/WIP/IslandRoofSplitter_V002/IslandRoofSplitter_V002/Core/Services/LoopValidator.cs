@@ -4,9 +4,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Revit26_Plugin.IslandRoofSplitter.V002.Core.Models;
+using Revit26_Plugin_Revised.IslandRoofSplitter.V002.Core.Models;
 
-namespace Revit26_Plugin.IslandRoofSplitter.V002.Core.Services
+namespace Revit26_Plugin_Revised.IslandRoofSplitter.V002.Core.Services
 {
     public static class LoopValidator
     {

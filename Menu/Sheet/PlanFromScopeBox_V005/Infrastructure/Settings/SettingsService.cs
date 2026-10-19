@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Text.Json;
 
-namespace Revit26_Plugin.PlanFromScopeBox.V005.Infrastructure.Settings
+namespace Revit26_Plugin_Revised.PlanFromScopeBox.V005.Infrastructure.Settings
 {
     /// <summary>
     /// Loads/saves per-tool settings JSON and resolves the tool's AppData folder. All I/O is

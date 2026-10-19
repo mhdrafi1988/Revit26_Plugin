@@ -1,34 +1,63 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models">
+    xmlns:converters="clr-namespace:Revit26_Plugin_Revised.Shared.Models">
 
     <!-- ═══════════════════════════════════════════════════════════
          REVIT PLUGIN SHARED STYLE GUIDE  —  Navy Corporate Theme
-         Version : 3.1  (adds tinted metric tiles + ToolWindowShell tokens)
-         Drop-in compatible with v2.1 key names; adds DataGrid,
-         header bar, badge, and button-variant styles for reuse
-         across all 10 tools.
+         Version : 4.0  (UI standard: navy header, Revit-neutral body)
+         - New code uses the SEMANTIC TOKENS block below (Surface*,
+           Border*, Status*, ActionPrimary).
+         - Every v3.x key still exists (backward compatibility) but now
+           carries a value from the unified palette; the per-tool status
+           colours (Tile*, Pill*, Soft*, Group*, Banner*) are DEPRECATED
+           aliases of Status* and will be removed in a later release.
+         - Sizes: 8 px spacing grid, 4 px corners, 30 px buttons,
+           26 px inputs (Revit dialog density).
     ═══════════════════════════════════════════════════════════ -->
 
     <!-- ─── FONT FAMILY ───────────────────────────────────────── -->
     <FontFamily x:Key="SystemFont">Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica Neue, sans-serif</FontFamily>
 
     <!-- ═══════════════════════════════════════════════════════════
-         COLOR TOKENS — Navy Corporate Palette
+         SEMANTIC TOKENS (v4.0) — use these in new and migrated XAML.
+         Ok / Warn / Error / Info each have a text colour, a soft
+         background and a border; nothing else is a status colour.
+    ═══════════════════════════════════════════════════════════ -->
+    <Color x:Key="SurfaceWindow">#F3F5F7</Color>
+    <Color x:Key="SurfaceCard">#FFFFFF</Color>
+    <Color x:Key="SurfaceHeader">#1E3A5F</Color>
+    <Color x:Key="BorderDefault">#D6DCE3</Color>
+    <Color x:Key="BorderInput">#B5C2CF</Color>
+    <Color x:Key="ActionPrimary">#1E3A5F</Color>
+    <Color x:Key="StatusOk">#2E7D4F</Color>
+    <Color x:Key="StatusOkSoft">#E6F4EC</Color>
+    <Color x:Key="StatusOkBorder">#9FCFB2</Color>
+    <Color x:Key="StatusWarn">#9A5B00</Color>
+    <Color x:Key="StatusWarnSoft">#FDF1E1</Color>
+    <Color x:Key="StatusWarnBorder">#E8B66B</Color>
+    <Color x:Key="StatusError">#B23A35</Color>
+    <Color x:Key="StatusErrorSoft">#FBE8E7</Color>
+    <Color x:Key="StatusErrorBorder">#EDA5A1</Color>
+    <Color x:Key="StatusInfo">#1F5FBF</Color>
+    <Color x:Key="StatusInfoSoft">#E6EEFB</Color>
+    <Color x:Key="StatusInfoBorder">#A9C3EE</Color>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         COLOR TOKENS — v3.x keys (kept for existing windows)
     ═══════════════════════════════════════════════════════════ -->
 
     <!-- Backgrounds -->
 
-    <Color x:Key="SystemBackground">LightBlue</Color>
-    <Color x:Key="SystemSecondaryBackground">#EEF3F9</Color>
-    <Color x:Key="SystemTertiaryBackground">#DCE6F2</Color>
-    <Color x:Key="SeparatorColor">#D7E1ED</Color>
-    <Color x:Key="SeparatorThin">#E8EEF6</Color>
+    <Color x:Key="SystemBackground">#F3F5F7</Color>
+    <Color x:Key="SystemSecondaryBackground">#ECEFF3</Color>
+    <Color x:Key="SystemTertiaryBackground">#E1E6EC</Color>
+    <Color x:Key="SeparatorColor">#D6DCE3</Color>
+    <Color x:Key="SeparatorThin">#E6EAEF</Color>
 
     <!-- Input fields — light orange fill so text/numeric inputs are visibly
          distinguishable from card backgrounds across ALL tools. -->
-    <Color x:Key="InputBackground">#FDF0E3</Color>
+    <Color x:Key="InputBackground">#FFFFFF</Color>
 
     <!-- Brand / Accent -->
     <Color x:Key="NavyPrimary">#1E3A5F</Color>
@@ -47,10 +76,10 @@
     <Color x:Key="TextOnDark">#EAF1F8</Color>
 
     <!-- Status -->
-    <Color x:Key="ColorSuccess">#2E9E64</Color>
-    <Color x:Key="ColorWarning">#E0922E</Color>
-    <Color x:Key="ColorDanger">#D9534F</Color>
-    <Color x:Key="ColorInfo">#2D6CDF</Color>
+    <Color x:Key="ColorSuccess">#2E7D4F</Color>
+    <Color x:Key="ColorWarning">#9A5B00</Color>
+    <Color x:Key="ColorDanger">#B23A35</Color>
+    <Color x:Key="ColorInfo">#1F5FBF</Color>
 
     <!-- Log Panel (always dark, regardless of window theme) -->
     <Color x:Key="LogBackground">#14283F</Color>
@@ -64,42 +93,42 @@
 
     <!-- Cards -->
     <Color x:Key="CardBackground">#FFFFFF</Color>
-    <Color x:Key="CardBorder">#D7E1ED</Color>
+    <Color x:Key="CardBorder">#D6DCE3</Color>
     <Color x:Key="IconTint">#5B7185</Color>
 
     <!-- Tinted metric tiles (v3.1) — Background / Border / Text per tone.
          Taken from SectionAutoRenamer V024's inline tile colours. -->
-    <Color x:Key="TileInfoBackground">#E6F1FB</Color>
-    <Color x:Key="TileInfoBorder">#85B7EB</Color>
-    <Color x:Key="TileInfoText">#0C447C</Color>
-    <Color x:Key="TileDangerBackground">#FAECE7</Color>
-    <Color x:Key="TileDangerBorder">#F0997B</Color>
-    <Color x:Key="TileDangerText">#712B13</Color>
-    <Color x:Key="TileSuccessBackground">#EAF3DE</Color>
-    <Color x:Key="TileSuccessBorder">#97C459</Color>
-    <Color x:Key="TileSuccessText">#27500A</Color>
-    <Color x:Key="TileWarningBackground">#FAEEDA</Color>
-    <Color x:Key="TileWarningBorder">#EF9F27</Color>
-    <Color x:Key="TileWarningText">#633806</Color>
+    <Color x:Key="TileInfoBackground">#E6EEFB</Color>
+    <Color x:Key="TileInfoBorder">#A9C3EE</Color>
+    <Color x:Key="TileInfoText">#1F4E9A</Color>
+    <Color x:Key="TileDangerBackground">#FBE8E7</Color>
+    <Color x:Key="TileDangerBorder">#EDA5A1</Color>
+    <Color x:Key="TileDangerText">#8E2A26</Color>
+    <Color x:Key="TileSuccessBackground">#E6F4EC</Color>
+    <Color x:Key="TileSuccessBorder">#9FCFB2</Color>
+    <Color x:Key="TileSuccessText">#1F5E3A</Color>
+    <Color x:Key="TileWarningBackground">#FDF1E1</Color>
+    <Color x:Key="TileWarningBorder">#E8B66B</Color>
+    <Color x:Key="TileWarningText">#7A4A00</Color>
 
     <!-- Pass / fail row tints for result grids (v3.1) -->
-    <Color x:Key="RowSuccessBackground">#F5FFF8</Color>
-    <Color x:Key="RowDangerBackground">#FFF5F5</Color>
+    <Color x:Key="RowSuccessBackground">#F3FAF6</Color>
+    <Color x:Key="RowDangerBackground">#FDF3F2</Color>
 
     <!-- Result-group palette (v3.1) — accent bar / count-pill background /
          text, used by grouped result lists (WorksetRenamer FX). -->
-    <Color x:Key="GroupOkAccent">#1E7E1E</Color>
-    <Color x:Key="GroupOkBackground">#DCF3DC</Color>
-    <Color x:Key="GroupWarningAccent">#C98A00</Color>
-    <Color x:Key="GroupWarningBackground">#FFF0CC</Color>
-    <Color x:Key="GroupWarningText">#A06A00</Color>
-    <Color x:Key="GroupNewAccent">#1E7A52</Color>
-    <Color x:Key="GroupNewBackground">#DCF3EA</Color>
-    <Color x:Key="GroupNeutralAccent">#999999</Color>
-    <Color x:Key="GroupNeutralBackground">#EEEEEE</Color>
-    <Color x:Key="GroupNeutralText">#777777</Color>
-    <Color x:Key="GroupDangerAccent">#B23B3B</Color>
-    <Color x:Key="GroupDangerBackground">#FBDADA</Color>
+    <Color x:Key="GroupOkAccent">#2E7D4F</Color>
+    <Color x:Key="GroupOkBackground">#E6F4EC</Color>
+    <Color x:Key="GroupWarningAccent">#B26A00</Color>
+    <Color x:Key="GroupWarningBackground">#FDF1E1</Color>
+    <Color x:Key="GroupWarningText">#7A4A00</Color>
+    <Color x:Key="GroupNewAccent">#2D6CDF</Color>
+    <Color x:Key="GroupNewBackground">#E6EEFB</Color>
+    <Color x:Key="GroupNeutralAccent">#8A99A8</Color>
+    <Color x:Key="GroupNeutralBackground">#ECEFF3</Color>
+    <Color x:Key="GroupNeutralText">#56687A</Color>
+    <Color x:Key="GroupDangerAccent">#B23A35</Color>
+    <Color x:Key="GroupDangerBackground">#FBE8E7</Color>
 
     <!-- Faint status tints for outlined metric tiles (v3.1, from WorksetManager) -->
     <Color x:Key="TintSuccess">#0A34C759</Color>
@@ -107,51 +136,51 @@
     <Color x:Key="TintWarning">#0AFF9F0A</Color>
 
     <!-- Action buttons / status pills / warning banner (v3.1, from ScheduleExportImport) -->
-    <Color x:Key="ActionExport">#1E7E34</Color>
-    <Color x:Key="ActionImport">#C0392B</Color>
+    <Color x:Key="ActionExport">#2E7D4F</Color>
+    <Color x:Key="ActionImport">#B23A35</Color>
     <Color x:Key="ActionText">#FFFFFF</Color>
-    <Color x:Key="PillNeutralBackground">#EEF1F5</Color>
-    <Color x:Key="PillNeutralText">#4B5563</Color>
-    <Color x:Key="PillInfoBackground">#E3ECFB</Color>
-    <Color x:Key="PillInfoText">#1D4ED8</Color>
-    <Color x:Key="PillSuccessBackground">#DCF3E3</Color>
-    <Color x:Key="PillSuccessText">#15803D</Color>
-    <Color x:Key="PillDangerText">#B91C1C</Color>
-    <Color x:Key="PillMutedBackground">#E5E7EB</Color>
-    <Color x:Key="PillMutedText">#374151</Color>
+    <Color x:Key="PillNeutralBackground">#ECEFF3</Color>
+    <Color x:Key="PillNeutralText">#4A5A6A</Color>
+    <Color x:Key="PillInfoBackground">#E6EEFB</Color>
+    <Color x:Key="PillInfoText">#1F5FBF</Color>
+    <Color x:Key="PillSuccessBackground">#E6F4EC</Color>
+    <Color x:Key="PillSuccessText">#2E7D4F</Color>
+    <Color x:Key="PillDangerText">#B23A35</Color>
+    <Color x:Key="PillMutedBackground">#E1E6EC</Color>
+    <Color x:Key="PillMutedText">#3A4856</Color>
     <Color x:Key="PillTypeBackground">#EDE7FB</Color>
     <Color x:Key="PillTypeText">#6D28D9</Color>
-    <Color x:Key="BannerWarningBackground">#FFF6E0</Color>
-    <Color x:Key="BannerWarningBorder">#E8B84A</Color>
-    <Color x:Key="BannerWarningText">#7A4F00</Color>
+    <Color x:Key="BannerWarningBackground">#FDF1E1</Color>
+    <Color x:Key="BannerWarningBorder">#E8B66B</Color>
+    <Color x:Key="BannerWarningText">#7A4A00</Color>
 
     <!-- Import status pills + dark row-detail text (v3.1, from RoofTypeCreator) -->
-    <Color x:Key="PillNewBackground">#E3F2FD</Color>
-    <Color x:Key="PillNewText">#1565C0</Color>
-    <Color x:Key="PillDupBackground">#FFF3E0</Color>
-    <Color x:Key="PillDupText">#E65100</Color>
+    <Color x:Key="PillNewBackground">#E6EEFB</Color>
+    <Color x:Key="PillNewText">#1F5FBF</Color>
+    <Color x:Key="PillDupBackground">#FDF1E1</Color>
+    <Color x:Key="PillDupText">#9A5B00</Color>
     <Color x:Key="PillRenamedBackground">#F3E5F5</Color>
     <Color x:Key="PillRenamedText">#7B1FA2</Color>
     <Color x:Key="DetailMutedText">#888888</Color>
     <Color x:Key="DetailValueText">#DDDDDD</Color>
 
     <!-- Soft status-pill backgrounds (v3.1, from CreateSections) -->
-    <Color x:Key="SoftSuccessBackground">#E4F5EC</Color>
+    <Color x:Key="SoftSuccessBackground">#E6F4EC</Color>
     <Color x:Key="SoftWarningBackground">#FDF1E1</Color>
     <Color x:Key="SoftDangerBackground">#FBE8E7</Color>
     <Color x:Key="BadgeOnDark">#33FFFFFF</Color>  <!-- translucent white badge on navy chips (RoofEdgeAroundSections) -->
-    <Color x:Key="PillTaggableBackground">#E7F5EE</Color>      <!-- SectionViewAutoTagger category pills -->
-    <Color x:Key="PillNotTaggableBackground">#FBEAE9</Color>
-    <Color x:Key="PillPlacedBackground">#EAF6F0</Color>        <!-- CalloutCOP placed pill -->
-    <Color x:Key="PillPlacedText">#1F6B45</Color>
-    <Color x:Key="RowUnmappedBackground">#FBEAEA</Color>       <!-- FloorsAndRoofFromLinkedRooms unmapped level cell -->
-    <Color x:Key="StageCompleteBackground">#E4F3EA</Color>     <!-- SmartViewToSheetPlacer stage badge / no-fit sheet -->
-    <Color x:Key="SheetNoFitBackground">#FDEBEA</Color>
-    <Color x:Key="BannerInfoBackground">#EAF1FC</Color>        <!-- SheetAutoRearrange info / note banners -->
-    <Color x:Key="BannerInfoBorder">#B9CFF2</Color>
-    <Color x:Key="BannerNoteBackground">#FFF8E6</Color>
-    <Color x:Key="BannerNoteBorder">#E8D08A</Color>
-    <Color x:Key="BannerNoteText">#6B5416</Color>
+    <Color x:Key="PillTaggableBackground">#E6F4EC</Color>      <!-- SectionViewAutoTagger category pills -->
+    <Color x:Key="PillNotTaggableBackground">#FBE8E7</Color>
+    <Color x:Key="PillPlacedBackground">#E6F4EC</Color>        <!-- CalloutCOP placed pill -->
+    <Color x:Key="PillPlacedText">#2E7D4F</Color>
+    <Color x:Key="RowUnmappedBackground">#FBE8E7</Color>       <!-- FloorsAndRoofFromLinkedRooms unmapped level cell -->
+    <Color x:Key="StageCompleteBackground">#E6F4EC</Color>     <!-- SmartViewToSheetPlacer stage badge / no-fit sheet -->
+    <Color x:Key="SheetNoFitBackground">#FBE8E7</Color>
+    <Color x:Key="BannerInfoBackground">#E6EEFB</Color>        <!-- SheetAutoRearrange info / note banners -->
+    <Color x:Key="BannerInfoBorder">#A9C3EE</Color>
+    <Color x:Key="BannerNoteBackground">#FDF1E1</Color>
+    <Color x:Key="BannerNoteBorder">#E8B66B</Color>
+    <Color x:Key="BannerNoteText">#7A4A00</Color>
     <Color x:Key="TextOnAccent">#FFFFFF</Color>               <!-- pure white text on navy / blue / coloured badges and buttons -->
 
     <!-- ═══════════════════════════════════════════════════════════
@@ -269,6 +298,26 @@
     <SolidColorBrush x:Key="BrushBannerNoteText"               Color="{StaticResource BannerNoteText}"/>
     <SolidColorBrush x:Key="BrushTextOnAccent"            Color="{StaticResource TextOnAccent}"/>
 
+    <!-- Semantic brushes (v4.0) -->
+    <SolidColorBrush x:Key="BrushSurfaceWindow"     Color="{StaticResource SurfaceWindow}"/>
+    <SolidColorBrush x:Key="BrushSurfaceCard"       Color="{StaticResource SurfaceCard}"/>
+    <SolidColorBrush x:Key="BrushSurfaceHeader"     Color="{StaticResource SurfaceHeader}"/>
+    <SolidColorBrush x:Key="BrushBorderDefault"     Color="{StaticResource BorderDefault}"/>
+    <SolidColorBrush x:Key="BrushBorderInput"       Color="{StaticResource BorderInput}"/>
+    <SolidColorBrush x:Key="BrushActionPrimary"     Color="{StaticResource ActionPrimary}"/>
+    <SolidColorBrush x:Key="BrushStatusOk"          Color="{StaticResource StatusOk}"/>
+    <SolidColorBrush x:Key="BrushStatusOkSoft"      Color="{StaticResource StatusOkSoft}"/>
+    <SolidColorBrush x:Key="BrushStatusOkBorder"    Color="{StaticResource StatusOkBorder}"/>
+    <SolidColorBrush x:Key="BrushStatusWarn"        Color="{StaticResource StatusWarn}"/>
+    <SolidColorBrush x:Key="BrushStatusWarnSoft"    Color="{StaticResource StatusWarnSoft}"/>
+    <SolidColorBrush x:Key="BrushStatusWarnBorder"  Color="{StaticResource StatusWarnBorder}"/>
+    <SolidColorBrush x:Key="BrushStatusError"       Color="{StaticResource StatusError}"/>
+    <SolidColorBrush x:Key="BrushStatusErrorSoft"   Color="{StaticResource StatusErrorSoft}"/>
+    <SolidColorBrush x:Key="BrushStatusErrorBorder" Color="{StaticResource StatusErrorBorder}"/>
+    <SolidColorBrush x:Key="BrushStatusInfo"        Color="{StaticResource StatusInfo}"/>
+    <SolidColorBrush x:Key="BrushStatusInfoSoft"    Color="{StaticResource StatusInfoSoft}"/>
+    <SolidColorBrush x:Key="BrushStatusInfoBorder"  Color="{StaticResource StatusInfoBorder}"/>
+
 
     <!-- ═══════════════════════════════════════════════════════════
          TYPOGRAPHY — sizes nudged up for readability
@@ -330,8 +379,8 @@
          METRIC STYLES
     ═══════════════════════════════════════════════════════════ -->
     <Style x:Key="MetricValue" TargetType="TextBlock">
-        <Setter Property="FontSize"   Value="22"/>
-        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="FontSize"   Value="18"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="Foreground" Value="{StaticResource BrushNavyPrimary}"/>
     </Style>
 
@@ -344,8 +393,8 @@
 
     <!-- Large metric number — base style, navy by default -->
     <Style x:Key="MetricNumber" TargetType="TextBlock">
-        <Setter Property="FontSize"   Value="23"/>
-        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="FontSize"   Value="18"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="Foreground" Value="{StaticResource BrushNavyPrimary}"/>
     </Style>
 
@@ -381,8 +430,8 @@
          </Border>
     ─────────────────────────────────────────────────────────── -->
     <Style x:Key="MetricTile" TargetType="Border">
-        <Setter Property="CornerRadius"    Value="6"/>
-        <Setter Property="BorderThickness" Value="0.5"/>
+        <Setter Property="CornerRadius"    Value="4"/>
+        <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Padding"         Value="10,6"/>
         <Setter Property="Background"      Value="{StaticResource BrushSystemBackground}"/>
         <Setter Property="BorderBrush"     Value="{StaticResource BrushCardBorder}"/>
@@ -424,7 +473,7 @@
 
     <Style x:Key="MetricTileNumber" TargetType="TextBlock">
         <Setter Property="FontSize"   Value="18"/>
-        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}"/>
     </Style>
     <Style x:Key="MetricTileNumberInfo" TargetType="TextBlock" BasedOn="{StaticResource MetricTileNumber}">
@@ -445,7 +494,7 @@
     ═══════════════════════════════════════════════════════════ -->
     <Style x:Key="HeaderBar" TargetType="Border">
         <Setter Property="Background"   Value="{StaticResource BrushNavyPrimary}"/>
-        <Setter Property="CornerRadius" Value="10,10,0,0"/>
+        <Setter Property="CornerRadius" Value="4,4,0,0"/>
         <Setter Property="Padding"      Value="16,12"/>
     </Style>
 
@@ -468,7 +517,7 @@
         <Setter Property="Background"      Value="{StaticResource BrushCardBackground}"/>
         <Setter Property="BorderBrush"     Value="{StaticResource BrushCardBorder}"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="CornerRadius"    Value="10"/>
+        <Setter Property="CornerRadius"    Value="4"/>
     </Style>
 
     <Style x:Key="ContentCard" TargetType="Border" BasedOn="{StaticResource BaseCard}">
@@ -502,7 +551,7 @@
                     <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="10"
+                            CornerRadius="4"
                             Padding="{TemplateBinding Padding}">
                         <StackPanel>
                             <ContentPresenter ContentSource="Header"
@@ -552,7 +601,8 @@
         <Setter Property="FontWeight"               Value="Normal"/>
         <Setter Property="Foreground"               Value="{StaticResource BrushTextPrimary}"/>
         <Setter Property="Background"               Value="{StaticResource BrushInputBackground}"/>
-        <Setter Property="BorderThickness"          Value="0"/>
+        <Setter Property="BorderBrush"              Value="{StaticResource BrushBorderInput}"/>
+        <Setter Property="BorderThickness"          Value="1"/>
         <Setter Property="Padding"                  Value="4,3"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="CaretBrush"               Value="{StaticResource BrushAppleBlue}"/>
@@ -560,6 +610,8 @@
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
                     <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="4">
                         <ScrollViewer x:Name="PART_ContentHost"
                                       Margin="{TemplateBinding Padding}"
@@ -568,6 +620,11 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsFocused" Value="True">
+                <Setter Property="BorderBrush" Value="{StaticResource BrushAppleBlue}"/>
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <!-- Boxed text input — bordered field for forms that need a visible outline -->
@@ -575,17 +632,17 @@
         <Setter Property="FontSize"        Value="13"/>
         <Setter Property="Foreground"      Value="{StaticResource BrushTextPrimary}"/>
         <Setter Property="Background"      Value="{StaticResource BrushInputBackground}"/>
-        <Setter Property="BorderBrush"     Value="{StaticResource BrushSeparator}"/>
+        <Setter Property="BorderBrush"     Value="{StaticResource BrushBorderInput}"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="Padding"         Value="2,2"/>
-        <Setter Property="Height"          Value="32"/>
+        <Setter Property="Padding"         Value="4,0"/>
+        <Setter Property="Height"          Value="26"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
                     <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="6">
+                            CornerRadius="4">
                         <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}" VerticalAlignment="Center"/>
                     </Border>
                 </ControlTemplate>
@@ -601,10 +658,11 @@
     <!-- ComboBox base — minimal styling for consistent look (relies on default chrome) -->
     <Style x:Key="StandardComboBox" TargetType="ComboBox">
         <Setter Property="FontSize" Value="13"/>
-        <Setter Property="Height"   Value="32"/>
+        <Setter Property="Height"   Value="26"/>
         <Setter Property="Padding"  Value="2,2"/>
         <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}"/>
         <Setter Property="Background" Value="{StaticResource BrushInputBackground}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BrushBorderInput}"/>
     </Style>
 
     <!-- ═══════════════════════════════════════════════════════════
@@ -656,8 +714,8 @@
     ═══════════════════════════════════════════════════════════ -->
     <!-- Primary action — navy, used for main "Apply / Run / Save" actions -->
     <Style x:Key="PrimaryButton" TargetType="Button">
-        <Setter Property="Height"     Value="38"/>
-        <Setter Property="FontSize"   Value="13.5"/>
+        <Setter Property="Height"     Value="30"/>
+        <Setter Property="FontSize"   Value="12.5"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="Background" Value="{StaticResource BrushNavyPrimary}"/>
         <Setter Property="Foreground" Value="White"/>
@@ -666,7 +724,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="Bg" Background="{TemplateBinding Background}" CornerRadius="9" Padding="18,0">
+                    <Border x:Name="Bg" Background="{TemplateBinding Background}" CornerRadius="4" Padding="16,0">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -691,7 +749,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="Bg" Background="{TemplateBinding Background}" CornerRadius="9" Padding="18,0">
+                    <Border x:Name="Bg" Background="{TemplateBinding Background}" CornerRadius="4" Padding="16,0">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -710,9 +768,10 @@
         </Setter>
     </Style>
 
-    <!-- Secondary — text-style button on transparent background -->
+    <!-- Secondary — text-style button on transparent background (the "ghost"
+         button of the UI standard: Copy log, Export…, Reset to defaults) -->
     <Style x:Key="SecondaryButton" TargetType="Button">
-        <Setter Property="Height"     Value="32"/>
+        <Setter Property="Height"     Value="30"/>
         <Setter Property="FontSize"   Value="12.5"/>
         <Setter Property="FontWeight" Value="Normal"/>
         <Setter Property="Background" Value="Transparent"/>
@@ -722,7 +781,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="Bg" Background="{TemplateBinding Background}" CornerRadius="9" Padding="10,0">
+                    <Border x:Name="Bg" Background="{TemplateBinding Background}" CornerRadius="4" Padding="10,0">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -737,12 +796,12 @@
 
     <!-- Outline — bordered button, neutral actions (Browse, Cancel) -->
     <Style x:Key="OutlineButton" TargetType="Button">
-        <Setter Property="Height"     Value="32"/>
+        <Setter Property="Height"     Value="30"/>
         <Setter Property="FontSize"   Value="12.5"/>
         <Setter Property="FontWeight" Value="Normal"/>
-        <Setter Property="Background" Value="{StaticResource BrushSystemBackground}"/>
+        <Setter Property="Background" Value="{StaticResource BrushSurfaceCard}"/>
         <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource BrushSeparator}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BrushBorderInput}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Cursor"     Value="Hand"/>
         <Setter Property="Template">
@@ -751,7 +810,7 @@
                     <Border x:Name="Bg" Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="9" Padding="12,0">
+                            CornerRadius="4" Padding="12,0">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -770,7 +829,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="Bg" Background="{TemplateBinding Background}" CornerRadius="9" Padding="18,0">
+                    <Border x:Name="Bg" Background="{TemplateBinding Background}" CornerRadius="4" Padding="16,0">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -786,9 +845,10 @@
         </Setter>
     </Style>
 
-    <!-- Run / main action — red. Used for each tool's main footer action
-         (Run, Create, Place, Generate…). Same shape as PrimaryButton. -->
-    <Style x:Key="RunButton" TargetType="Button" BasedOn="{StaticResource DangerButton}"/>
+    <!-- Run / main action — navy (ActionPrimary) since v4.0; was red in v3.x.
+         Used for each tool's main footer action (Run, Create, Place, Generate…).
+         One per window; DangerButton is for destructive actions only. -->
+    <Style x:Key="RunButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}"/>
 
     <!-- ═══════════════════════════════════════════════════════════
          COLLAPSIBLE LOG — header toggle + list visibility
@@ -859,7 +919,7 @@
                     <Border x:Name="Bg" Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="6" Padding="10,0">
+                            CornerRadius="4" Padding="10,0">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -996,7 +1056,7 @@
         <Setter Property="FontSize"        Value="12"/>
         <Setter Property="Foreground"      Value="{StaticResource BrushTextPrimary}"/>
         <Setter Property="Background"      Value="{StaticResource BrushInputBackground}"/>
-        <Setter Property="BorderBrush"     Value="{StaticResource BrushCardBorder}"/>
+        <Setter Property="BorderBrush"     Value="{StaticResource BrushBorderInput}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Padding"         Value="2,2"/>
         <Setter Property="Height"          Value="26"/>
@@ -1008,7 +1068,7 @@
                     <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="5">
+                            CornerRadius="4">
                         <ScrollViewer x:Name="PART_ContentHost"
                                       Margin="{TemplateBinding Padding}"
                                       VerticalAlignment="Center"/>
@@ -1044,7 +1104,7 @@
                     <Border x:Name="Bg" Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            CornerRadius="4" Padding="{TemplateBinding Padding}">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <ControlTemplate.Triggers>

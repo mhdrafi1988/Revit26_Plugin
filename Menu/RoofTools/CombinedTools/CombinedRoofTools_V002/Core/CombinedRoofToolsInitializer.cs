@@ -18,23 +18,23 @@
 
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.AutoSlopeByDrain.V007.Core.Models;
-using Revit26_Plugin.AutoSlopeByDrain.V007.Core.Services;
-using Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels;
-using Revit26_Plugin.CreaserAdv.V010.Services;
-using Revit26_Plugin.CreaserAdv.V010.ViewModels;
-using Revit26_Plugin.InnerLoopDivider.V009.UI.ViewModels;
-using Revit26_Plugin.InnerLoopsAndPerpendicular.V005.UI.ViewModels;
-using Revit26_Plugin.OuterCurveDivider.V004.Core.Services;
-using Revit26_Plugin.OuterCurveDivider.V004.UI.ViewModels;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.AutoSlopeByDrain.V007.Core.Models;
+using Revit26_Plugin_Revised.AutoSlopeByDrain.V007.Core.Services;
+using Revit26_Plugin_Revised.AutoSlopeByDrain.V007.UI.ViewModels;
+using Revit26_Plugin_Revised.CreaserAdv.V010.Services;
+using Revit26_Plugin_Revised.CreaserAdv.V010.ViewModels;
+using Revit26_Plugin_Revised.InnerLoopDivider.V009.UI.ViewModels;
+using Revit26_Plugin_Revised.InnerLoopsAndPerpendicular.V005.UI.ViewModels;
+using Revit26_Plugin_Revised.OuterCurveDivider.V004.Core.Services;
+using Revit26_Plugin_Revised.OuterCurveDivider.V004.UI.ViewModels;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ILDGeometry = Revit26_Plugin.InnerLoopDivider.V009.Core.Services.RoofGeometryService;
-using ILPGeometry = Revit26_Plugin.InnerLoopsAndPerpendicular.V005.Core.Services.RoofGeometryService;
+using ILDGeometry = Revit26_Plugin_Revised.InnerLoopDivider.V009.Core.Services.RoofGeometryService;
+using ILPGeometry = Revit26_Plugin_Revised.InnerLoopsAndPerpendicular.V005.Core.Services.RoofGeometryService;
 
-namespace Revit26_Plugin.CombinedRoofTools.V002.Core
+namespace Revit26_Plugin_Revised.CombinedRoofTools.V002.Core
 {
     public static class CombinedRoofToolsInitializer
     {

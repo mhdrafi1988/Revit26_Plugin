@@ -1,13 +1,13 @@
 // ==================================
 // File: CreaserAdvWindow.xaml.cs
-// Namespace: Revit26_Plugin.CreaserAdv.V010.Views
+// Namespace: Revit26_Plugin_Revised.CreaserAdv.V010.Views
 // ==================================
 
 using System.Collections.Specialized;
 using System.Windows;
-using Revit26_Plugin.CreaserAdv.V010.ViewModels;
+using Revit26_Plugin_Revised.CreaserAdv.V010.ViewModels;
 
-namespace Revit26_Plugin.CreaserAdv.V010.Views
+namespace Revit26_Plugin_Revised.CreaserAdv.V010.Views
 {
     public partial class CreaserAdvWindow : Window
     {

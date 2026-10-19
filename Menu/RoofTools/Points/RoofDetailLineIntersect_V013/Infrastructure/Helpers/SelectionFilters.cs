@@ -1,7 +1,7 @@
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI.Selection;
 
-namespace Revit26_Plugin.RoofDetailLineIntersect.V013.Infrastructure.Helpers
+namespace Revit26_Plugin_Revised.RoofDetailLineIntersect.V013.Infrastructure.Helpers
 {
     /// <summary>Restricts PickObject to FootPrintRoof elements only.</summary>
     public class RoofSelectionFilter : ISelectionFilter

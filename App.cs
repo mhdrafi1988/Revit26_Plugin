@@ -1,17 +1,17 @@
 using System.Reflection;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.Menu.Ribbon;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.Menu.Ribbon;
+using Revit26_Plugin_Revised.Shared.Services;
 
-namespace Revit26_Plugin
+namespace Revit26_Plugin_Revised
 {
     /// <summary>
     /// Entry point for the Revit add-in.
     /// </summary>
     public partial class App : IExternalApplication
     {
-        private const string ModellingTabName  = "SloperPro-MDL";
-        private const string DocumentsTabName  = "SloperPro-DCM";
+        private const string ModellingTabName  = "SloperPro-MDL_NT_02";
+        private const string DocumentsTabName  = "SloperPro-DCM_NT_02";
 
         public Result OnStartup(UIControlledApplication application)
         {

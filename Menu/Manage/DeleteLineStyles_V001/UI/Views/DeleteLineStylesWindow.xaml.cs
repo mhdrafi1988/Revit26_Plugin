@@ -1,9 +1,9 @@
-using Revit26_Plugin.DeleteLineStyles.V001.UI.ViewModels;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.DeleteLineStyles.V001.UI.ViewModels;
+using Revit26_Plugin_Revised.Shared.Services;
 using System;
 using System.Windows;
 
-namespace Revit26_Plugin.DeleteLineStyles.V001.UI.Views
+namespace Revit26_Plugin_Revised.DeleteLineStyles.V001.UI.Views
 {
     /// <summary>
     /// Delete Line Styles window; everything is bound to <see cref="DeleteLineStylesViewModel"/>.

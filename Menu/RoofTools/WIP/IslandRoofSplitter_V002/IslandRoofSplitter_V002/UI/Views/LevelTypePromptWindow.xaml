@@ -4,7 +4,7 @@
   Modal, owned by the Revit main window. Creates nothing: it only returns the two chosen ids.
   No inline colours and no new style keys: every key below is already used by IslandRoofSplitterWindow.xaml.
 -->
-<Window x:Class="Revit26_Plugin.IslandRoofSplitter.V002.UI.Views.LevelTypePromptWindow"
+<Window x:Class="Revit26_Plugin_Revised.IslandRoofSplitter.V002.UI.Views.LevelTypePromptWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Island Roof Splitter — level &amp; roof type"

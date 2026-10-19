@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.SheetAutoRearrange.V028.Core.Models
+namespace Revit26_Plugin_Revised.SheetAutoRearrange.V028.Core.Models
 {
     /// <summary>
     /// Outcome of a single Run — drives the metric cards and the completion

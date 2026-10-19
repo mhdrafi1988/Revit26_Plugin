@@ -1,6 +1,6 @@
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.SheetAutoRearrange.V027.Core.Models
+namespace Revit26_Plugin_Revised.SheetAutoRearrange.V027.Core.Models
 {
     /// <summary>
     /// How the usable placement area was determined for the active sheet.

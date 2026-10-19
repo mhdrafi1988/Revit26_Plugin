@@ -8,13 +8,13 @@
 // by both the initial Command and the "Change Roof" ExternalEvent.
 // =======================================================
 
-using Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels;
-using Revit26_Plugin.CreaserAdv.V010.ViewModels;
-using Revit26_Plugin.InnerLoopDivider.V009.UI.ViewModels;
-using Revit26_Plugin.InnerLoopsAndPerpendicular.V005.UI.ViewModels;
-using Revit26_Plugin.OuterCurveDivider.V004.UI.ViewModels;
+using Revit26_Plugin_Revised.AutoSlopeByDrain.V007.UI.ViewModels;
+using Revit26_Plugin_Revised.CreaserAdv.V010.ViewModels;
+using Revit26_Plugin_Revised.InnerLoopDivider.V009.UI.ViewModels;
+using Revit26_Plugin_Revised.InnerLoopsAndPerpendicular.V005.UI.ViewModels;
+using Revit26_Plugin_Revised.OuterCurveDivider.V004.UI.ViewModels;
 
-namespace Revit26_Plugin.CombinedRoofTools.V002.Core
+namespace Revit26_Plugin_Revised.CombinedRoofTools.V002.Core
 {
     public class CombinedRoofToolsInitResult
     {

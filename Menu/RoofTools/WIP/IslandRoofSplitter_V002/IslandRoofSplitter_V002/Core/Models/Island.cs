@@ -2,7 +2,7 @@
 #nullable enable
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.IslandRoofSplitter.V002.Core.Models
+namespace Revit26_Plugin_Revised.IslandRoofSplitter.V002.Core.Models
 {
     /// <summary>A boundary piece handed to Revit: a line, or a three-point arc (Flat + true arcs only).</summary>
     public readonly record struct LoopEdge(Pt2 Start, Pt2 End, Pt2? Mid)

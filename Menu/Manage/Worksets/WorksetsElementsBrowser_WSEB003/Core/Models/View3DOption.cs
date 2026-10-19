@@ -1,6 +1,6 @@
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB003.Core.Models
+namespace Revit26_Plugin_Revised.WorksetsElementsBrowser.WSEB003.Core.Models
 {
     /// <summary>One selectable 3D view, offered in the "Show in 3D View" picker.</summary>
     public class View3DOption

@@ -8,11 +8,11 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.WorksetsElementsBrowser.WSEB004.Core.Models;
-using Revit26_Plugin.WorksetsElementsBrowser.WSEB004.Infrastructure.ExternalEvents;
-using Revit26_Plugin.WorksetsElementsBrowser.WSEB004.UI.Views;
+using Revit26_Plugin_Revised.WorksetsElementsBrowser.WSEB004.Core.Models;
+using Revit26_Plugin_Revised.WorksetsElementsBrowser.WSEB004.Infrastructure.ExternalEvents;
+using Revit26_Plugin_Revised.WorksetsElementsBrowser.WSEB004.UI.Views;
 
-namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB004.UI.ViewModels
+namespace Revit26_Plugin_Revised.WorksetsElementsBrowser.WSEB004.UI.ViewModels
 {
     public partial class WorksetsElementsBrowserViewModel : ObservableObject, IDisposable
     {

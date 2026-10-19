@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.SheetAutoRearrange.V027.Core.Models
+namespace Revit26_Plugin_Revised.SheetAutoRearrange.V027.Core.Models
 {
     /// <summary>Per-row alignment for Sheet Order Rearrange — how shorter views in a row align against the row's tallest view.</summary>
     public enum RowAlignment { Top, Center, Bottom }

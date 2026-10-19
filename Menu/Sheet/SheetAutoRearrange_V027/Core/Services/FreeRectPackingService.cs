@@ -1,10 +1,10 @@
 using Autodesk.Revit.DB;
-using Revit26_Plugin.SheetAutoRearrange.V027.Core.Models;
+using Revit26_Plugin_Revised.SheetAutoRearrange.V027.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.SheetAutoRearrange.V027.Core.Services
+namespace Revit26_Plugin_Revised.SheetAutoRearrange.V027.Core.Services
 {
     /// <summary>
     /// V022 NEW. Implements the 3 "no banding" strategies from the

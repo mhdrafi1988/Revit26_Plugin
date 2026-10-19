@@ -5,10 +5,10 @@
 // No UI, no WPF, no ViewModel references.
 // =======================================================
 
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.OuterCurveDivider.V004.Core.Models
+namespace Revit26_Plugin_Revised.OuterCurveDivider.V004.Core.Models
 {
     public class CurveDividerResult
     {

@@ -14,7 +14,7 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.MultiplePoints.V003.Core.Models
+namespace Revit26_Plugin_Revised.MultiplePoints.V003.Core.Models
 {
     public partial class MultiplePointsSettings : ObservableObject
     {

@@ -1,6 +1,6 @@
 ﻿// ==================================
 // File: DrainPointGroupingService.cs
-// Namespace: Revit26_Plugin.CreaserAdv.V011
+// Namespace: Revit26_Plugin_Revised.CreaserAdv.V011
 // ==================================
 
 using Autodesk.Revit.DB;
@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.CreaserAdv.V011.Services
+namespace Revit26_Plugin_Revised.CreaserAdv.V011.Services
 {
     /// <summary>
     /// Groups crease lines by drain points (lowest Z endpoints) within a proximity radius.

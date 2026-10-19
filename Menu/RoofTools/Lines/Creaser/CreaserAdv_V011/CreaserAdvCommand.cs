@@ -1,6 +1,6 @@
 ﻿// =======================================================
 // File: CreaserAdvCommand.cs
-// Namespace: Revit26_Plugin.CreaserAdv.V011.Commands
+// Namespace: Revit26_Plugin_Revised.CreaserAdv.V011.Commands
 // Changes vs V009:
 //   FIX  Window shown modeless (.Show()) instead of modal (.ShowDialog()),
 //        parented to Revit's main window — the convention the other roof
@@ -15,14 +15,14 @@
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.CreaserAdv.V011.Services;
-using Revit26_Plugin.CreaserAdv.V011.ViewModels;
-using Revit26_Plugin.CreaserAdv.V011.Views;
+using Revit26_Plugin_Revised.CreaserAdv.V011.Services;
+using Revit26_Plugin_Revised.CreaserAdv.V011.ViewModels;
+using Revit26_Plugin_Revised.CreaserAdv.V011.Views;
 using System;
 using System.Windows.Interop;
-using Revit26_Plugin.Utilities;
+using Revit26_Plugin_Revised.Utilities;
 
-namespace Revit26_Plugin.CreaserAdv.V011.Commands
+namespace Revit26_Plugin_Revised.CreaserAdv.V011.Commands
 {
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]

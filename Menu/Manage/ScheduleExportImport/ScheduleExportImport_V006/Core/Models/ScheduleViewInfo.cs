@@ -1,6 +1,6 @@
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.ScheduleExportImport.V006.Core.Models
+namespace Revit26_Plugin_Revised.ScheduleExportImport.V006.Core.Models
 {
     /// <summary>
     /// Summary item shown in the schedule picker list.

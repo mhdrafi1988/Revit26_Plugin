@@ -15,15 +15,15 @@
 //   KEPT CopySelectedLogs_Click and DrainCheckBox_PreviewMouseLeftButtonDown
 //     unchanged â€” both still work fine on a UserControl.
 
-using Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels;
-using Revit26_Plugin.Shared.Models; // LogEntry
+using Revit26_Plugin_Revised.AutoSlopeByDrain.V007.UI.ViewModels;
+using Revit26_Plugin_Revised.Shared.Models; // LogEntry
 using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace Revit26_Plugin.CombinedRoofTools.V002.UI.Views.Tabs
+namespace Revit26_Plugin_Revised.CombinedRoofTools.V002.UI.Views.Tabs
 {
     public partial class AutoSlopeByDrainTabView : UserControl
     {

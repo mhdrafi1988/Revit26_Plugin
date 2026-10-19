@@ -1,7 +1,7 @@
-using Revit26_Plugin.SheetViewArrange.V001.Core.Layout;
-using Revit26_Plugin.SheetViewArrange.V001.Core.Models;
-using Revit26_Plugin.SheetViewArrange.V001.UI.ViewModels;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.SheetViewArrange.V001.Core.Layout;
+using Revit26_Plugin_Revised.SheetViewArrange.V001.Core.Models;
+using Revit26_Plugin_Revised.SheetViewArrange.V001.UI.ViewModels;
+using Revit26_Plugin_Revised.Shared.Services;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -14,7 +14,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
-namespace Revit26_Plugin.SheetViewArrange.V001.UI.Views
+namespace Revit26_Plugin_Revised.SheetViewArrange.V001.UI.Views
 {
     /// <summary>
     /// Sheet View Arrange window. Draws the to-scale preview of <see cref="SheetViewArrangeViewModel.Plan"/>

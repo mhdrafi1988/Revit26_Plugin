@@ -1,7 +1,7 @@
 using System.Windows;
-using Revit26_Plugin.AnnotationOverlapDetection.V004.ViewModels;
+using Revit26_Plugin_Revised.AnnotationOverlapDetection.V004.ViewModels;
 
-namespace Revit26_Plugin.AnnotationOverlapDetection.V004.Views
+namespace Revit26_Plugin_Revised.AnnotationOverlapDetection.V004.Views
 {
     public partial class AnnotationOverlapPanel : Window
     {

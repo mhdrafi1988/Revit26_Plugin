@@ -17,12 +17,13 @@ Changes vs V012 (layout only):
   - No behaviour change — every binding/command is the V012 one.
 =======================================================
 -->
-<Window x:Class="Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V013.FloorsFromLinkedRoomsWindow"
+<Window x:Class="Revit26_Plugin_Revised.FloorsAndRoofFromLinkedRooms.V013.FloorsFromLinkedRoomsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
-        xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
-        Title="Floors and Roofs From Linked Rooms — V013"
+        xmlns:svc="clr-namespace:Revit26_Plugin_Revised.Shared.Services"
+        xmlns:converters="clr-namespace:Revit26_Plugin_Revised.Shared.Models"
+        xmlns:shell="clr-namespace:Revit26_Plugin_Revised.Shared.Controls"
+        Title="{Binding Source={x:Static svc:ToolCatalog.FloorsAndRoofFromLinkedRooms}, Path=Title}"
         Width="1180" Height="760" MinWidth="1180" MinHeight="760"
         WindowStartupLocation="CenterOwner"
         ResizeMode="CanResize">
@@ -57,7 +58,7 @@ Changes vs V012 (layout only):
 
     <shell:ToolWindowShell Title="Floors and Roofs From Linked Rooms"
                            Subtitle="Create floors and roofs from linked room boundaries — advanced level mapping"
-                           Version="V013"
+                           Version="{Binding Source={x:Static svc:ToolCatalog.FloorsAndRoofFromLinkedRooms}, Path=Version, StringFormat=v{0}}"
                            IsRunning="{Binding IsBusy}"
                            Progress="{Binding Progress, Mode=OneWay}"
                            SummaryText="{Binding ProgressText}">
@@ -174,7 +175,7 @@ Changes vs V012 (layout only):
                         <!-- DataGrid (DATAGRID SPEC items 2-6). Rounded bottom corners come from
                              the wrapping Border (DataGrid has no CornerRadius). -->
                         <Border Grid.Row="1" CornerRadius="0,0,10,10" BorderThickness="1"
-                                BorderBrush="{StaticResource BrushCardBorder}" ClipToBounds="True">
+                                BorderBrush="{StaticResource BrushBorderDefault}" ClipToBounds="True">
                             <DataGrid shell:ShellBehaviors.MaxHeightRatio="0.5" shell:ShellBehaviors.ForwardMouseWheel="True" MinHeight="200" Style="{StaticResource StandardDataGrid}"
                                       ColumnHeaderStyle="{StaticResource StandardDataGridColumnHeader}"
                                       CellStyle="{StaticResource StandardDataGridCell}"
@@ -243,7 +244,7 @@ Changes vs V012 (layout only):
                                                         <Setter Property="Background" Value="{StaticResource BrushSystemSecondaryBackground}"/>
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding IsMapped}" Value="False">
-                                                                <Setter Property="Background" Value="{StaticResource BrushRowUnmappedBackground}"/>
+                                                                <Setter Property="Background" Value="{StaticResource BrushStatusErrorSoft}"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -254,7 +255,7 @@ Changes vs V012 (layout only):
                                                             <Setter Property="Foreground" Value="{StaticResource BrushNavyPrimary}"/>
                                                             <Style.Triggers>
                                                                 <DataTrigger Binding="{Binding IsMapped}" Value="False">
-                                                                    <Setter Property="Foreground" Value="{StaticResource BrushDanger}"/>
+                                                                    <Setter Property="Foreground" Value="{StaticResource BrushStatusError}"/>
                                                                 </DataTrigger>
                                                             </Style.Triggers>
                                                         </Style>
@@ -279,7 +280,7 @@ Changes vs V012 (layout only):
                                                     <Style TargetType="ComboBox" BasedOn="{StaticResource NewLevelComboStyle}">
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding IsMapped}" Value="False">
-                                                                <Setter Property="BorderBrush" Value="{StaticResource BrushDanger}"/>
+                                                                <Setter Property="BorderBrush" Value="{StaticResource BrushStatusError}"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -396,7 +397,7 @@ Changes vs V012 (layout only):
                     </Grid>
 
                     <TextBlock Text="{Binding ToastMessage}" Style="{StaticResource HintText}" Margin="0,0,0,8"
-                               Foreground="{StaticResource BrushSuccess}"
+                               Foreground="{StaticResource BrushStatusOk}"
                                Visibility="{Binding HasToast, Converter={StaticResource BoolToVisibilityConverter}}"/>
                 </StackPanel>
 

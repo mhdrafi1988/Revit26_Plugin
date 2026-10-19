@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.PlanFromScopeBox.V005.Core.Services
+namespace Revit26_Plugin_Revised.PlanFromScopeBox.V005.Core.Services
 {
     /// <summary>
     /// Single source of truth for the usable placement area on a sheet, in millimetres.

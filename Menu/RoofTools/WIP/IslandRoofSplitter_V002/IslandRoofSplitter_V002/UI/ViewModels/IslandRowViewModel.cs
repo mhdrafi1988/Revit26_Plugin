@@ -1,9 +1,9 @@
 // IslandRoofSplitter V002 — one row of the islands grid.
 #nullable enable
 using CommunityToolkit.Mvvm.ComponentModel;
-using Revit26_Plugin.IslandRoofSplitter.V002.Core.Models;
+using Revit26_Plugin_Revised.IslandRoofSplitter.V002.Core.Models;
 
-namespace Revit26_Plugin.IslandRoofSplitter.V002.UI.ViewModels
+namespace Revit26_Plugin_Revised.IslandRoofSplitter.V002.UI.ViewModels
 {
     public partial class IslandRowViewModel : ObservableObject
     {

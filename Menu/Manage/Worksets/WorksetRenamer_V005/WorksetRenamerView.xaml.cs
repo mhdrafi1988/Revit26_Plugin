@@ -1,7 +1,7 @@
 using System.Windows;
-using Revit26_Plugin.WorksetRenamer.V005.ViewModels;
+using Revit26_Plugin_Revised.WorksetRenamer.V005.ViewModels;
 
-namespace Revit26_Plugin.WorksetRenamer.V005.Views
+namespace Revit26_Plugin_Revised.WorksetRenamer.V005.Views
 {
     public partial class WorksetRenamerView : Window
     {

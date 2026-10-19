@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.AnnotationOverlapDetection.V004.Models
+namespace Revit26_Plugin_Revised.AnnotationOverlapDetection.V004.Models
 {
     /// <summary>
     /// One overlapping pair, as displayed in the results DataGrid.

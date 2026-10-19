@@ -9,11 +9,11 @@
   when a floor can be created, and an Element column in the grid showing what each island actually became.
   Window Title has no version: Shared ToolGuard appends " — v<ToolCatalog version>" on load.
 -->
-<Window x:Class="Revit26_Plugin.IslandRoofSplitter.V002.UI.Views.IslandRoofSplitterWindow"
+<Window x:Class="Revit26_Plugin_Revised.IslandRoofSplitter.V002.UI.Views.IslandRoofSplitterWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
-        xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
+        xmlns:shell="clr-namespace:Revit26_Plugin_Revised.Shared.Controls"
+        xmlns:converters="clr-namespace:Revit26_Plugin_Revised.Shared.Models"
         Title="Island Roof Splitter"
         Width="920" Height="960" MinWidth="920" MinHeight="900"
         MaxWidth="1196" MaxHeight="1170"

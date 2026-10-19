@@ -24,15 +24,15 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
-using Revit26_Plugin.InnerLoopDivider.V010.Core.Services;
-using Revit26_Plugin.InnerLoopDivider.V010.UI.ViewModels;
-using Revit26_Plugin.InnerLoopDivider.V010.UI.Views;
+using Revit26_Plugin_Revised.InnerLoopDivider.V010.Core.Services;
+using Revit26_Plugin_Revised.InnerLoopDivider.V010.UI.ViewModels;
+using Revit26_Plugin_Revised.InnerLoopDivider.V010.UI.Views;
 using System;
 using System.Linq;
 using System.Windows.Interop;
-using Revit26_Plugin.Utilities;
+using Revit26_Plugin_Revised.Utilities;
 
-namespace Revit26_Plugin.InnerLoopDivider.V010.Commands
+namespace Revit26_Plugin_Revised.InnerLoopDivider.V010.Commands
 {
     /// <summary>
     /// External command that launches the Inner Loop Divider tool.

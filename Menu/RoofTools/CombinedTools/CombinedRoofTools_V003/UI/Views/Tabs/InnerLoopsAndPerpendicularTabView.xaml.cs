@@ -13,12 +13,12 @@
 //   Close button for the whole dialog.
 // =======================================================
 
-using Revit26_Plugin.InnerLoopsAndPerpendicular.V005.UI.ViewModels;
+using Revit26_Plugin_Revised.InnerLoopsAndPerpendicular.V005.UI.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.Shared.Services;
 
-namespace Revit26_Plugin.CombinedRoofTools.V003.UI.Views.Tabs
+namespace Revit26_Plugin_Revised.CombinedRoofTools.V003.UI.Views.Tabs
 {
     public partial class InnerLoopsAndPerpendicularTabView : UserControl
     {

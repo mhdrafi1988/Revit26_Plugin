@@ -1,7 +1,7 @@
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.WorksetRenamer.FX05.ViewModels
+namespace Revit26_Plugin_Revised.WorksetRenamer.FX05.ViewModels
 {
     /// <summary>What this row represents and what Update will do with it.</summary>
     public enum RowKind

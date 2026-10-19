@@ -7,7 +7,7 @@
 
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.InnerLoopDivider.V011.Core.Models
+namespace Revit26_Plugin_Revised.InnerLoopDivider.V011.Core.Models
 {
     public class InnerLoopDividerResult
     {

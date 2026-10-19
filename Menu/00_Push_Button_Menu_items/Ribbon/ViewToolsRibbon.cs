@@ -1,15 +1,15 @@
 using Autodesk.Revit.UI;
-using Revit26_Plugin.Resources.Icons;
+using Revit26_Plugin_Revised.Resources.Icons;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.Menu.Ribbon
+namespace Revit26_Plugin_Revised.Menu.Ribbon
 {
     public static class ViewToolsRibbon
     {
         // Every View Tools button is a pulldown: highest version number first,
         // every older version below it in descending order. Each tool lists only
         // its latest two versions.
-        private const string Icons = "Revit26_Plugin.Resources.Icons.ViewTools.";
+        private const string Icons = "Revit26_Plugin_Revised.Resources.Icons.ViewTools.";
         private const string Rebuilt = " with the standard three-zone window layout.";
         private const string OnShell = " on the shared ToolWindowShell (log in body, capped grids).";
 
@@ -27,24 +27,24 @@ namespace Revit26_Plugin.Menu.Ribbon
         {
             RibbonPanel createPanel = app.CreateRibbonPanel(tabName, "View Create");
 
-            var sectionsFromLinesV012 = Btn(assemblyPath, "Btn_SectionsFromDetailLines_V012", "Sections From Lines V012", "Revit26_Plugin.CreateSections.V012.Commands.CreateSectionsFromDetailLines",
+            var sectionsFromLinesV012 = Btn(assemblyPath, "Btn_SectionsFromDetailLines_V012", "Sections From Lines V012", "Revit26_Plugin_Revised.CreateSections.V012.Commands.CreateSectionsFromDetailLines",
                 "SectionsFromDetailLines_16.png", "Create Sections From Detail Lines", "V012", "V011" + Rebuilt);
-            var sectionsFromLinesV013 = Btn(assemblyPath, "Btn_SectionsFromDetailLines_V013", "Sections From Lines V013", "Revit26_Plugin.CreateSections.V013.Commands.CreateSectionsFromDetailLines",
+            var sectionsFromLinesV013 = Btn(assemblyPath, "Btn_SectionsFromDetailLines_V013", "Sections From Lines V013", "Revit26_Plugin_Revised.CreateSections.V013.Commands.CreateSectionsFromDetailLines",
                 "SectionsFromDetailLines_16.png", "Create Sections From Detail Lines", "V013", "V012" + OnShell);
 
-            var edgeAroundV006 = Btn(assemblyPath, "Btn_RoofEdgeAroundSections_V006", "Section Around Edges V006", "Revit26_Plugin.RoofEdgeAroundSections.V006.RoofEdgeAroundSectionsCommand",
+            var edgeAroundV006 = Btn(assemblyPath, "Btn_RoofEdgeAroundSections_V006", "Section Around Edges V006", "Revit26_Plugin_Revised.RoofEdgeAroundSections.V006.RoofEdgeAroundSectionsCommand",
                 "RoofEdgeAroundSections_V005_16.png", "Roof Edge Around Sections", "V006", "V005" + Rebuilt);
-            var edgeAroundV007 = Btn(assemblyPath, "Btn_RoofEdgeAroundSections_V007", "Section Around Edges V007", "Revit26_Plugin.RoofEdgeAroundSections.V007.RoofEdgeAroundSectionsCommand",
+            var edgeAroundV007 = Btn(assemblyPath, "Btn_RoofEdgeAroundSections_V007", "Section Around Edges V007", "Revit26_Plugin_Revised.RoofEdgeAroundSections.V007.RoofEdgeAroundSectionsCommand",
                 "RoofEdgeAroundSections_V005_16.png", "Roof Edge Around Sections", "V007", "V006" + OnShell);
 
-            var edgeElementV003 = Btn(assemblyPath, "Btn_RoofEdgeElementSections_V003", "Edge Element V003", "Revit26_Plugin.RoofEdgeElementSections.V003.RoofEdgeElementSectionsCommand",
+            var edgeElementV003 = Btn(assemblyPath, "Btn_RoofEdgeElementSections_V003", "Edge Element V003", "Revit26_Plugin_Revised.RoofEdgeElementSections.V003.RoofEdgeElementSectionsCommand",
                 "RoofEdgeElementSections_V002_16.png", "Roof Edge Element Sections", "V003", "V002" + Rebuilt);
-            var edgeElementV004 = Btn(assemblyPath, "Btn_RoofEdgeElementSections_V004", "Edge Element V004", "Revit26_Plugin.RoofEdgeElementSections.V004.RoofEdgeElementSectionsCommand",
+            var edgeElementV004 = Btn(assemblyPath, "Btn_RoofEdgeElementSections_V004", "Edge Element V004", "Revit26_Plugin_Revised.RoofEdgeElementSections.V004.RoofEdgeElementSectionsCommand",
                 "RoofEdgeElementSections_V002_16.png", "Roof Edge Element Sections", "V004", "V003" + OnShell);
 
-            var roofViewFocusV003 = Btn(assemblyPath, "Btn_RoofViewFocus_V003", "Roof View Focus V003", "Revit26_Plugin.RoofViewFocus.V003.Commands.RoofViewFocusCommand",
+            var roofViewFocusV003 = Btn(assemblyPath, "Btn_RoofViewFocus_V003", "Roof View Focus V003", "Revit26_Plugin_Revised.RoofViewFocus.V003.Commands.RoofViewFocusCommand",
                 "RoofViewFocus_16.png", "Roof View Focus", "V003", "V002" + Rebuilt);
-            var roofViewFocusV004 = Btn(assemblyPath, "Btn_RoofViewFocus_V004", "Roof View Focus V004", "Revit26_Plugin.RoofViewFocus.V004.Commands.RoofViewFocusCommand",
+            var roofViewFocusV004 = Btn(assemblyPath, "Btn_RoofViewFocus_V004", "Roof View Focus V004", "Revit26_Plugin_Revised.RoofViewFocus.V004.Commands.RoofViewFocusCommand",
                 "RoofViewFocus_16.png", "Roof View Focus", "V004", "V003" + OnShell);
 
             // Pulldown buttons, unlike split buttons, are fine in a 4-item
@@ -63,21 +63,21 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             RibbonPanel placePanel = app.CreateRibbonPanel(tabName, "View Place");
 
-            var placeSectionsV323 = Btn(assemblyPath, "Btn_AutoPlaceSectionsCommand_V323", "Place Sections V323", "Revit26_Plugin.APUS.V323.Commands.AutoPlaceSectionsCommand",
+            var placeSectionsV323 = Btn(assemblyPath, "Btn_AutoPlaceSectionsCommand_V323", "Place Sections V323", "Revit26_Plugin_Revised.APUS.V323.Commands.AutoPlaceSectionsCommand",
                 "AutoPlaceSections_16.png", "Auto Place Sections", "V323", "V322" + Rebuilt);
-            var placeSectionsV324 = Btn(assemblyPath, "Btn_AutoPlaceSectionsCommand_V324", "Place Sections V324", "Revit26_Plugin.APUS.V324.Commands.AutoPlaceSectionsCommand",
+            var placeSectionsV324 = Btn(assemblyPath, "Btn_AutoPlaceSectionsCommand_V324", "Place Sections V324", "Revit26_Plugin_Revised.APUS.V324.Commands.AutoPlaceSectionsCommand",
                 "AutoPlaceSections_16.png", "Auto Place Sections", "V324", "V323" + OnShell);
-            var calloutV020 = Btn(assemblyPath, "Btn_CalloutToSectionViewPlacement_V020", "Callout To Section V020", "Revit26_Plugin.CalloutCOP.V020.Commands.CalloutCOPCommand",
+            var calloutV020 = Btn(assemblyPath, "Btn_CalloutToSectionViewPlacement_V020", "Callout To Section V020", "Revit26_Plugin_Revised.CalloutCOP.V020.Commands.CalloutCOPCommand",
                 "CalloutToSection_16.png", "Callout To Section View Placement", "V020", "V019" + Rebuilt);
-            var calloutV021 = Btn(assemblyPath, "Btn_CalloutToSectionViewPlacement_V021", "Callout To Section V021", "Revit26_Plugin.CalloutCOP.V021.Commands.CalloutCOPCommand",
+            var calloutV021 = Btn(assemblyPath, "Btn_CalloutToSectionViewPlacement_V021", "Callout To Section V021", "Revit26_Plugin_Revised.CalloutCOP.V021.Commands.CalloutCOPCommand",
                 "CalloutToSection_16.png", "Callout To Section View Placement", "V021", "V020" + OnShell);
-            var headPlacerV014 = Btn(assemblyPath, "Btn_RefSectionHeadPlacerCommand_V014", "Section Head Placer V014", "Revit26_Plugin.RefSectionHeadPlacer.V014.Commands.RefSectionHeadPlacerCommand",
+            var headPlacerV014 = Btn(assemblyPath, "Btn_RefSectionHeadPlacerCommand_V014", "Section Head Placer V014", "Revit26_Plugin_Revised.RefSectionHeadPlacer.V014.Commands.RefSectionHeadPlacerCommand",
                 "RefSectionHeadPlacer_16.png", "Reference Section Head Placer", "V014", "V013" + Rebuilt);
-            var headPlacerV015 = Btn(assemblyPath, "Btn_RefSectionHeadPlacerCommand_V015", "Section Head Placer V015", "Revit26_Plugin.RefSectionHeadPlacer.V015.Commands.RefSectionHeadPlacerCommand",
+            var headPlacerV015 = Btn(assemblyPath, "Btn_RefSectionHeadPlacerCommand_V015", "Section Head Placer V015", "Revit26_Plugin_Revised.RefSectionHeadPlacer.V015.Commands.RefSectionHeadPlacerCommand",
                 "RefSectionHeadPlacer_16.png", "Reference Section Head Placer", "V015", "V014" + OnShell);
-            var taggerV005 = Btn(assemblyPath, "Btn_SectionViewAutoTagger.V005", "Section View Tagger V005", "Revit26_Plugin.SectionViewAutoTagger.V005.SectionViewAutoTaggerCommand",
+            var taggerV005 = Btn(assemblyPath, "Btn_SectionViewAutoTagger.V005", "Section View Tagger V005", "Revit26_Plugin_Revised.SectionViewAutoTagger.V005.SectionViewAutoTaggerCommand",
                 "SectionAutoTagger_16.png", "Section View Auto Tagger", "V005", "V004" + Rebuilt);
-            var taggerV006 = Btn(assemblyPath, "Btn_SectionViewAutoTagger.V006", "Section View Tagger V006", "Revit26_Plugin.SectionViewAutoTagger.V006.SectionViewAutoTaggerCommand",
+            var taggerV006 = Btn(assemblyPath, "Btn_SectionViewAutoTagger.V006", "Section View Tagger V006", "Revit26_Plugin_Revised.SectionViewAutoTagger.V006.SectionViewAutoTaggerCommand",
                 "SectionAutoTagger_16.png", "Section View Auto Tagger", "V006", "V005" + OnShell);
 
             var placeItems = RibbonLayoutHelper.AddStackedButtons(placePanel, new List<RibbonItemData>
@@ -94,19 +94,19 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             RibbonPanel renamePanel = app.CreateRibbonPanel(tabName, "View Rename");
 
-            var bubbleV007 = Btn(assemblyPath, "Btn_BubbleAutoRenumber_V007", "Bubble Renumber V007", "Revit26_Plugin.BubbleAutoRenumber.V007.Commands.SectionAutoRenumberCommand",
+            var bubbleV007 = Btn(assemblyPath, "Btn_BubbleAutoRenumber_V007", "Bubble Renumber V007", "Revit26_Plugin_Revised.BubbleAutoRenumber.V007.Commands.SectionAutoRenumberCommand",
                 "BubbleAutoRenumber_16.png", "Bubble Auto Renumber", "V007", "V006" + Rebuilt);
-            var bubbleV008 = Btn(assemblyPath, "Btn_BubbleAutoRenumber_V008", "Bubble Renumber V008", "Revit26_Plugin.BubbleAutoRenumber.V008.Commands.SectionAutoRenumberCommand",
+            var bubbleV008 = Btn(assemblyPath, "Btn_BubbleAutoRenumber_V008", "Bubble Renumber V008", "Revit26_Plugin_Revised.BubbleAutoRenumber.V008.Commands.SectionAutoRenumberCommand",
                 "BubbleAutoRenumber_16.png", "Bubble Auto Renumber", "V008", "V007" + OnShell);
-            var bubbleV009 = Btn(assemblyPath, "Btn_BubbleAutoRenumber_V009", "Bubble Renumber V009", "Revit26_Plugin.BubbleAutoRenumber.V009.Commands.BubbleAutoRenumberCommand",
+            var bubbleV009 = Btn(assemblyPath, "Btn_BubbleAutoRenumber_V009", "Bubble Renumber V009", "Revit26_Plugin_Revised.BubbleAutoRenumber.V009.Commands.BubbleAutoRenumberCommand",
                 "BubbleAutoRenumber_16.png", "Bubble Auto Renumber", "V009", "V008 with the bubble renumber command renamed.");
-            var sectionRenamerV025 = Btn(assemblyPath, "Btn_SectionAutoRenamer_V025", "Section Renamer V025", "Revit26_Plugin.SectionAutoRenamer.V025.Commands.OpenSectionManagerCommand",
+            var sectionRenamerV025 = Btn(assemblyPath, "Btn_SectionAutoRenamer_V025", "Section Renamer V025", "Revit26_Plugin_Revised.SectionAutoRenamer.V025.Commands.OpenSectionManagerCommand",
                 "SectionAutoRenamer_16.png", "Section Auto Renamer", "V025", "V024" + Rebuilt);
-            var sectionRenamerV026 = Btn(assemblyPath, "Btn_SectionAutoRenamer_V026", "Section Renamer V026", "Revit26_Plugin.SectionAutoRenamer.V026.Commands.OpenSectionManagerCommand",
+            var sectionRenamerV026 = Btn(assemblyPath, "Btn_SectionAutoRenamer_V026", "Section Renamer V026", "Revit26_Plugin_Revised.SectionAutoRenamer.V026.Commands.OpenSectionManagerCommand",
                 "SectionAutoRenamer_16.png", "Section Auto Renamer", "V026", "V025" + OnShell);
-            var autoRenamerV005 = Btn(assemblyPath, "Btn_ViewAutoRenamer_V005", "View Renamer V005", "Revit26_Plugin.ViewAutoRenamer.V005.Commands.OpenViewAutoRenamerCommand",
+            var autoRenamerV005 = Btn(assemblyPath, "Btn_ViewAutoRenamer_V005", "View Renamer V005", "Revit26_Plugin_Revised.ViewAutoRenamer.V005.Commands.OpenViewAutoRenamerCommand",
                 "ViewAutoRenamer_V004_16.png", "View Auto Renamer", "V005", "V004" + Rebuilt);
-            var autoRenamerV006 = Btn(assemblyPath, "Btn_ViewAutoRenamer_V006", "View Renamer V006", "Revit26_Plugin.ViewAutoRenamer.V006.Commands.OpenViewAutoRenamerCommand",
+            var autoRenamerV006 = Btn(assemblyPath, "Btn_ViewAutoRenamer_V006", "View Renamer V006", "Revit26_Plugin_Revised.ViewAutoRenamer.V006.Commands.OpenViewAutoRenamerCommand",
                 "ViewAutoRenamer_V004_16.png", "View Auto Renamer", "V006", "V005" + OnShell);
 
             var renameItems = RibbonLayoutHelper.AddStackedButtons(renamePanel, new List<RibbonItemData>

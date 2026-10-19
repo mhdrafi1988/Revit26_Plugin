@@ -1,6 +1,6 @@
 using Autodesk.Revit.UI;
 
-namespace Revit26_Plugin.RoofDetailLineIntersect.V013.Infrastructure.ExternalEvents
+namespace Revit26_Plugin_Revised.RoofDetailLineIntersect.V013.Infrastructure.ExternalEvents
 {
     public static class RoofDetailLineIntersectEventManager
     {

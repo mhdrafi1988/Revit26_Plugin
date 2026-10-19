@@ -2,10 +2,10 @@ using System.Windows.Interop;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.RoofTypeCreator.V002.UI.ViewModels;
-using Revit26_Plugin.RoofTypeCreator.V002.UI.Views;
+using Revit26_Plugin_Revised.RoofTypeCreator.V002.UI.ViewModels;
+using Revit26_Plugin_Revised.RoofTypeCreator.V002.UI.Views;
 
-namespace Revit26_Plugin.RoofTypeCreator.V002.Commands
+namespace Revit26_Plugin_Revised.RoofTypeCreator.V002.Commands
 {
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]
