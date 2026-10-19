@@ -1,5 +1,5 @@
 // Ported unchanged from V003 (namespace updated only).
-namespace Revit26_Plugin_Revised.RoofEdgeVertexReducer.V009.Core.Models
+namespace Revit26_Plugin.RoofEdgeVertexReducer.V009.Core.Models
 {
     /// <summary>Plain display row bound to the preview DataGrid — no Revit types.</summary>
     public class VertexPreviewRow

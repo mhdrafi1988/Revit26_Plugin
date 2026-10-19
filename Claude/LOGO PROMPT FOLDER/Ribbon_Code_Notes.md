@@ -57,8 +57,8 @@ This is a product decision, not something fixed automatically: either delete the
 A handful of tool folders exist on disk but contain only `.zip` archives with no extracted `.cs` source, so there's no compiled class a `PushButtonData` could reference. These were left out of the ribbon rewrite entirely (not "removed," since they were never wired in the first place):
 
 - `RoofTools/Lines/Mechanicaltolines/*` (LinesFromMechanical V0007/V009/V010)
-- `RoofTools/RoofSlope/ByPoints/ASPWithRidge.zip`, `AutoSlopeByPointRPF_V002.zip`, `AutoSlopeByPointTwoSlopes_V002.zip`/`V003.zip`, `AutoSlopeByPoint_0026.zip`, `AutoSlopeByPoint_RPF_001.zip`, `AutoSlopeByPoint_V0027.zip`
-- `ViewTools/Place/Roof Drain Callout Placing/*` (all five variants)
+- `RoofTools/RoofSlope/ByPoints_0/ASPWithRidge.zip`, `AutoSlopeByPointRPF_V002.zip`, `AutoSlopeByPointTwoSlopes_V002.zip`/`V003.zip`, `AutoSlopeByPoint_0026.zip`, `AutoSlopeByPoint_RPF_001.zip`, `AutoSlopeByPoint_V0027.zip`
+- `ViewTools/Place_01/Roof Drain Callout Placing/*` (all five variants)
 
 If any of these are still wanted, unzip the source into the project first — then a PushButton can be added for it.
 

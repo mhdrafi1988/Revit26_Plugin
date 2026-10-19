@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Revit26_Plugin_Revised.PlanFromScopeBox.V005.Core.Services
+namespace Revit26_Plugin.PlanFromScopeBox.V005.Core.Services
 {
     /// <summary>
     /// Expands token-based naming patterns into concrete sheet/view numbers and names.

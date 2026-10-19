@@ -25,16 +25,16 @@
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin_Revised.RoofDetailLineIntersect.V013.Core.Models;
-using Revit26_Plugin_Revised.RoofDetailLineIntersect.V013.Infrastructure.ExternalEvents;
-using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin.RoofDetailLineIntersect.V013.Core.Models;
+using Revit26_Plugin.RoofDetailLineIntersect.V013.Infrastructure.ExternalEvents;
+using Revit26_Plugin.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 using System.Windows;
 
-namespace Revit26_Plugin_Revised.RoofDetailLineIntersect.V013.UI.ViewModels
+namespace Revit26_Plugin.RoofDetailLineIntersect.V013.UI.ViewModels
 {
     public partial class RoofDetailLineIntersectViewModel : ObservableObject
     {

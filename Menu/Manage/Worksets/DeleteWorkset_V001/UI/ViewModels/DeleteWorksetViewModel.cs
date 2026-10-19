@@ -2,9 +2,9 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin_Revised.DeleteWorkset.V001.Core.Models;
-using Revit26_Plugin_Revised.DeleteWorkset.V001.Core.Services;
-using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin.DeleteWorkset.V001.Core.Models;
+using Revit26_Plugin.DeleteWorkset.V001.Core.Services;
+using Revit26_Plugin.Shared.Models;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -14,7 +14,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Threading;
 
-namespace Revit26_Plugin_Revised.DeleteWorkset.V001.UI.ViewModels
+namespace Revit26_Plugin.DeleteWorkset.V001.UI.ViewModels
 {
     public partial class DeleteWorksetViewModel : ObservableObject
     {

@@ -1,6 +1,6 @@
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin_Revised.RoofPointComparison.V002.Core.Models
+namespace Revit26_Plugin.RoofPointComparison.V002.Core.Models
 {
     public enum PointComparisonStatus
     {

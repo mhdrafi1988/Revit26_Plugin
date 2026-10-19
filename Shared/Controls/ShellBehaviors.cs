@@ -4,13 +4,13 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace Revit26_Plugin_Revised.Shared.Controls
+namespace Revit26_Plugin.Shared.Controls
 {
     /// <summary>
     /// Attached properties for content hosted in a <see cref="ToolWindowShell"/> body
     /// (CLAUDE.md v1.1). Apply both to every DataGrid and log ListBox:
     /// <code>
-    /// xmlns:shell="clr-namespace:Revit26_Plugin_Revised.Shared.Controls"
+    /// xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
     /// &lt;DataGrid shell:ShellBehaviors.MaxHeightRatio="0.45"
     ///           shell:ShellBehaviors.ForwardMouseWheel="True" .../&gt;
     /// </code>

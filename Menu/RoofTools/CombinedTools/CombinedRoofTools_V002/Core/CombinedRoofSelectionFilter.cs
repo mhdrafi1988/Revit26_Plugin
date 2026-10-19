@@ -1,7 +1,7 @@
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI.Selection;
 
-namespace Revit26_Plugin_Revised.CombinedRoofTools.V002.Core
+namespace Revit26_Plugin.CombinedRoofTools.V002.Core
 {
     /// <summary>
     /// Shared pick filter for the combined window's roof selection — accepts

@@ -2,10 +2,10 @@ using System;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin_Revised.PlanFromScopeBox.V005.UI.Views;
-using Revit26_Plugin_Revised.Utilities;
+using Revit26_Plugin.PlanFromScopeBox.V005.UI.Views;
+using Revit26_Plugin.Utilities;
 
-namespace Revit26_Plugin_Revised.PlanFromScopeBox.V005.Commands
+namespace Revit26_Plugin.PlanFromScopeBox.V005.Commands
 {
     /// <summary>
     /// Ribbon entry point for the Plan From Scope Box tool. Opens the modeless window.

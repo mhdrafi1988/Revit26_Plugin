@@ -3,7 +3,7 @@
 #nullable enable
 using System;
 
-namespace Revit26_Plugin_Revised.IslandRoofSplitter.V001.Core.Models
+namespace Revit26_Plugin.IslandRoofSplitter.V001.Core.Models
 {
     public readonly record struct Pt2(double X, double Y)
     {

@@ -9,13 +9,13 @@
 
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin_Revised.InnerLoopDivider.V009.Core.Engine;
-using Revit26_Plugin_Revised.InnerLoopDivider.V009.Core.Models;
-using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin.InnerLoopDivider.V009.Core.Engine;
+using Revit26_Plugin.InnerLoopDivider.V009.Core.Models;
+using Revit26_Plugin.Shared.Models;
 using System;
-using Revit26_Plugin_Revised.Shared.Services;
+using Revit26_Plugin.Shared.Services;
 
-namespace Revit26_Plugin_Revised.InnerLoopDivider.V009.Infrastructure.ExternalEvents
+namespace Revit26_Plugin.InnerLoopDivider.V009.Infrastructure.ExternalEvents
 {
     public class InnerLoopDividerHandler : IExternalEventHandler
     {

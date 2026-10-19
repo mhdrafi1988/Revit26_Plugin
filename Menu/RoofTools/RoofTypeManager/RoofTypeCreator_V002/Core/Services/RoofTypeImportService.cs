@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using ClosedXML.Excel;
-using Revit26_Plugin_Revised.RoofTypeCreator.V002.Core.Models;
+using Revit26_Plugin.RoofTypeCreator.V002.Core.Models;
 
-namespace Revit26_Plugin_Revised.RoofTypeCreator.V002.Core.Services
+namespace Revit26_Plugin.RoofTypeCreator.V002.Core.Services
 {
     public static class RoofTypeImportService
     {

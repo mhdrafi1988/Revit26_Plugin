@@ -1,7 +1,7 @@
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin_Revised.DeleteLineStyles.V001.Core.Models
+namespace Revit26_Plugin.DeleteLineStyles.V001.Core.Models
 {
     /// <summary>
     /// One custom line style (a user subcategory of Lines) in the Delete Line Styles grid.

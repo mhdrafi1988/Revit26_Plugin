@@ -1,6 +1,6 @@
 using Autodesk.Revit.UI;
 
-namespace Revit26_Plugin_Revised.CombinedRoofTools.V002.Infrastructure.ExternalEvents
+namespace Revit26_Plugin.CombinedRoofTools.V002.Infrastructure.ExternalEvents
 {
     public static class ChangeRoofEventManager
     {

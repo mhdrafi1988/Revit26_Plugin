@@ -1,8 +1,8 @@
 ﻿<Window
-    x:Class="Revit26_Plugin_Revised.CreaserAdv.V010.Views.CreaserAdvWindow"
+    x:Class="Revit26_Plugin.CreaserAdv.V010.Views.CreaserAdvWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:models="clr-namespace:Revit26_Plugin_Revised.Shared.Models"
+    xmlns:models="clr-namespace:Revit26_Plugin.Shared.Models"
     Title="Revit26 – Creaser Advanced V010"
     Width="480"
     Height="680"
@@ -20,7 +20,7 @@
             <!--
                 Declared here directly — avoids MC3074 designer resolution issues
                 with assembly= references. Uses the same shared class from
-                Revit26_Plugin_Revised.Shared.Models that all other tools use.
+                Revit26_Plugin.Shared.Models that all other tools use.
             -->
             <models:LogLevelToColorConverter    x:Key="LogLevelToColor"/>
             <models:BoolToVisibilityConverter   x:Key="BoolToVisibility"/>

@@ -1,7 +1,7 @@
 using System.Windows.Controls;
-using Revit26_Plugin_Revised.Shared.Services;
+using Revit26_Plugin.Shared.Services;
 
-namespace Revit26_Plugin_Revised.CombinedRoofTools.V003.UI.Views.Tabs
+namespace Revit26_Plugin.CombinedRoofTools.V003.UI.Views.Tabs
 {
     public partial class CreaserAdvTabView : UserControl
     {

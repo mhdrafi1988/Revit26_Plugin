@@ -1,0 +1,58 @@
+using Autodesk.Revit.Attributes;
+using Autodesk.Revit.DB;
+using Autodesk.Revit.UI;
+using Revit26_Plugin.SectionAutoRenamer.V026.Services;
+using Revit26_Plugin.SectionAutoRenamer.V026.ViewModels;
+using Revit26_Plugin.SectionAutoRenamer.V026.Views;
+using System.Linq;
+using Revit26_Plugin.Utilities;
+
+namespace Revit26_Plugin.SectionAutoRenamer.V026.Commands;
+
+[Transaction(TransactionMode.Manual)]
+[Regeneration(RegenerationOption.Manual)]
+public class OpenSectionManagerCommand : IExternalCommand
+{
+    public Result Execute(ExternalCommandData c, ref string m, ElementSet e)
+    {
+        try
+        {
+            return ExecuteInternal(c, ref m, e);
+        }
+        catch (Autodesk.Revit.Exceptions.OperationCanceledException)
+        {
+            return Result.Cancelled;
+        }
+        catch (System.Exception ex)
+        {
+            Logger.Error("OpenSectionManagerCommand", ex);
+            m = ex.Message;
+            TaskDialog.Show("Section Manager", $"An unexpected error occurred: {ex.Message}");
+            return Result.Failed;
+        }
+    }
+
+    private Result ExecuteInternal(ExternalCommandData c, ref string m, ElementSet e)
+    {
+        RevitEventManager.Initialize();
+
+        var uidoc = c.Application.ActiveUIDocument;
+        var doc   = uidoc.Document;
+
+        var activeSheet       = uidoc.ActiveView as ViewSheet;
+        string activeSheetNum = activeSheet?.SheetNumber ?? "";
+
+        // Only collect true section views (not callouts — both are ViewSection subclasses)
+        var sections = new FilteredElementCollector(doc)
+            .OfClass(typeof(ViewSection))
+            .Cast<ViewSection>()
+            .Where(v => !v.IsTemplate && v.ViewType == ViewType.Section)
+            .Select(v => new SectionItemViewModel(v))
+            .ToList();
+
+        var vm = new SectionsListViewModel(sections, activeSheetNum);
+        new SectionsListWindow(vm).Show();
+
+        return Result.Succeeded;
+    }
+}

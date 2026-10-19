@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using ClosedXML.Excel;
 using Autodesk.Revit.DB;
-using Revit26_Plugin_Revised.RoofTypeCreator.V003.Core.Models;
+using Revit26_Plugin.RoofTypeCreator.V003.Core.Models;
 
-namespace Revit26_Plugin_Revised.RoofTypeCreator.V003.Core.Services
+namespace Revit26_Plugin.RoofTypeCreator.V003.Core.Services
 {
     public static class RoofTypeExportService
     {

@@ -5,7 +5,7 @@
 // ExternalEvent boundary via CreaserAdvPayload.OnCompleted.
 // =======================================================
 
-namespace Revit26_Plugin_Revised.CreaserAdv.V011.Core.Models
+namespace Revit26_Plugin.CreaserAdv.V011.Core.Models
 {
     public class CreaserAdvResult
     {

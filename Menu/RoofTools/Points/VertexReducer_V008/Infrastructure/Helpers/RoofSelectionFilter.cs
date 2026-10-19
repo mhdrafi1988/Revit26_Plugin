@@ -1,7 +1,7 @@
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI.Selection;
 
-namespace Revit26_Plugin_Revised.RoofEdgeVertexReducer.V008.Infrastructure.Helpers
+namespace Revit26_Plugin.RoofEdgeVertexReducer.V008.Infrastructure.Helpers
 {
     public class RoofSelectionFilter : ISelectionFilter
     {

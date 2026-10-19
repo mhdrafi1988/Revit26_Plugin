@@ -1,6 +1,6 @@
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin_Revised.RoofPointComparison.V002.Core.Models
+namespace Revit26_Plugin.RoofPointComparison.V002.Core.Models
 {
     /// <summary>One shape-editing point read from a roof's SlabShapeEditor.</summary>
     public class RoofPointSample

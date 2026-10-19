@@ -2,11 +2,11 @@ using System;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin_Revised.WorksetRenamer.V005.ViewModels;
-using Revit26_Plugin_Revised.WorksetRenamer.V005.Views;
-using Revit26_Plugin_Revised.Utilities;
+using Revit26_Plugin.WorksetRenamer.V005.ViewModels;
+using Revit26_Plugin.WorksetRenamer.V005.Views;
+using Revit26_Plugin.Utilities;
 
-namespace Revit26_Plugin_Revised.WorksetRenamer.V005
+namespace Revit26_Plugin.WorksetRenamer.V005
 {
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]

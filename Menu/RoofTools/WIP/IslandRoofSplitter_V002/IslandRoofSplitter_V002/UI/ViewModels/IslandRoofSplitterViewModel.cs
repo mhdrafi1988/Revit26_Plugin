@@ -28,14 +28,14 @@ using System.Windows.Data;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin_Revised.IslandRoofSplitter.V002.Core.Models;
-using Revit26_Plugin_Revised.IslandRoofSplitter.V002.Core.Services;
-using Revit26_Plugin_Revised.IslandRoofSplitter.V002.Infrastructure.ExternalEvents;
-using Revit26_Plugin_Revised.Shared.Models;
-using Revit26_Plugin_Revised.Shared.Services;
-using Revit26_Plugin_Revised.Shared.ViewModels;
+using Revit26_Plugin.IslandRoofSplitter.V002.Core.Models;
+using Revit26_Plugin.IslandRoofSplitter.V002.Core.Services;
+using Revit26_Plugin.IslandRoofSplitter.V002.Infrastructure.ExternalEvents;
+using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin.Shared.ViewModels;
 
-namespace Revit26_Plugin_Revised.IslandRoofSplitter.V002.UI.ViewModels
+namespace Revit26_Plugin.IslandRoofSplitter.V002.UI.ViewModels
 {
     public partial class IslandRoofSplitterViewModel : ToolViewModelBase
     {

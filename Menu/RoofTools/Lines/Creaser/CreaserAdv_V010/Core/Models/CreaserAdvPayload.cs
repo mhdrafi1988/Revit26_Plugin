@@ -9,10 +9,10 @@
 // =======================================================
 
 using Autodesk.Revit.DB;
-using Revit26_Plugin_Revised.CreaserAdv.V010.Services;
+using Revit26_Plugin.CreaserAdv.V010.Services;
 using System;
 
-namespace Revit26_Plugin_Revised.CreaserAdv.V010.Core.Models
+namespace Revit26_Plugin.CreaserAdv.V010.Core.Models
 {
     public class CreaserAdvPayload
     {

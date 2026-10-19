@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Text.Json;
 
-namespace Revit26_Plugin_Revised.SheetAutoRearrange.V027.Infrastructure.Helpers
+namespace Revit26_Plugin.SheetAutoRearrange.V027.Infrastructure.Helpers
 {
     /// <summary>
     /// Generic settings load/save helper, per suite convention:

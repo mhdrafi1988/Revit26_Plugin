@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin_Revised.PlanFromScopeBox.V006.Core.Services
+namespace Revit26_Plugin.PlanFromScopeBox.V006.Core.Services
 {
     /// <summary>Measured title-block info: full sheet size and the clear-zone strips (mm).</summary>
     public sealed class TitleBlockExtents

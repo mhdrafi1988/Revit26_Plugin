@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin_Revised.SheetViewArrange.V001.Core.Layout
+namespace Revit26_Plugin.SheetViewArrange.V001.Core.Layout
 {
     /// <summary>How the last row is laid out when the layout has two or more rows.</summary>
     public enum LastRowMode

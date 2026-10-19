@@ -12,13 +12,13 @@ using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
-using Revit26_Plugin_Revised.ScheduleExportImport.V007.Core.Models;
-using Revit26_Plugin_Revised.ScheduleExportImport.V007.Core.Services;
-using Revit26_Plugin_Revised.ScheduleExportImport.V007.Infrastructure.ExternalEvents;
-using Revit26_Plugin_Revised.Shared.Models;
-using Revit26_Plugin_Revised.Shared.Services;
+using Revit26_Plugin.ScheduleExportImport.V007.Core.Models;
+using Revit26_Plugin.ScheduleExportImport.V007.Core.Services;
+using Revit26_Plugin.ScheduleExportImport.V007.Infrastructure.ExternalEvents;
+using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin.Shared.Services;
 
-namespace Revit26_Plugin_Revised.ScheduleExportImport.V007.UI.ViewModels
+namespace Revit26_Plugin.ScheduleExportImport.V007.UI.ViewModels
 {
     public enum PreviewFilter { All, Changes, Conflicts, TypeEdits, NotFound, Duplicate, MissingFromFile, Skipped, Applied, Failed }
 

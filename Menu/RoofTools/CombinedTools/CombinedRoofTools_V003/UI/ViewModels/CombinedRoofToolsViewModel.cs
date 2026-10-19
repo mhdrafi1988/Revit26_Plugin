@@ -13,17 +13,17 @@
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin_Revised.AutoSlopeByDrain.V007.UI.ViewModels;
-using Revit26_Plugin_Revised.CombinedRoofTools.V003.Core;
-using Revit26_Plugin_Revised.CombinedRoofTools.V003.Infrastructure.ExternalEvents;
-using Revit26_Plugin_Revised.CreaserAdv.V010.ViewModels;
-using Revit26_Plugin_Revised.InnerLoopDivider.V009.UI.ViewModels;
-using Revit26_Plugin_Revised.InnerLoopsAndPerpendicular.V005.UI.ViewModels;
-using Revit26_Plugin_Revised.OuterCurveDivider.V004.UI.ViewModels;
+using Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels;
+using Revit26_Plugin.CombinedRoofTools.V003.Core;
+using Revit26_Plugin.CombinedRoofTools.V003.Infrastructure.ExternalEvents;
+using Revit26_Plugin.CreaserAdv.V010.ViewModels;
+using Revit26_Plugin.InnerLoopDivider.V009.UI.ViewModels;
+using Revit26_Plugin.InnerLoopsAndPerpendicular.V005.UI.ViewModels;
+using Revit26_Plugin.OuterCurveDivider.V004.UI.ViewModels;
 using System;
 using System.Threading.Tasks;
 
-namespace Revit26_Plugin_Revised.CombinedRoofTools.V003.UI.ViewModels
+namespace Revit26_Plugin.CombinedRoofTools.V003.UI.ViewModels
 {
     public partial class CombinedRoofToolsViewModel : ObservableObject
     {

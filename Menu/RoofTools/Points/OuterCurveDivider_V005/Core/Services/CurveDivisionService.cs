@@ -8,13 +8,13 @@
 // =======================================================
 
 using Autodesk.Revit.DB;
-using Revit26_Plugin_Revised.OuterCurveDivider.V005.Core.Models;
-using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin.OuterCurveDivider.V005.Core.Models;
+using Revit26_Plugin.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin_Revised.OuterCurveDivider.V005.Core.Services
+namespace Revit26_Plugin.OuterCurveDivider.V005.Core.Services
 {
     /// <summary>
     /// Extracts non-linear edges from a roof's top face and places exactly

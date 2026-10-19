@@ -1,8 +1,8 @@
 using Autodesk.Revit.DB;
-using Revit26_Plugin_Revised.AnnotationOverlapDetection.V004.Models;
+using Revit26_Plugin.AnnotationOverlapDetection.V004.Models;
 using System;
 
-namespace Revit26_Plugin_Revised.AnnotationOverlapDetection.V004.Helpers
+namespace Revit26_Plugin.AnnotationOverlapDetection.V004.Helpers
 {
     /// <summary>
     /// Pure geometry helpers. No Revit transactions, no UI references.

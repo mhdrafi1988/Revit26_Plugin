@@ -2,14 +2,14 @@
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin.Shared.Models;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 
-namespace Revit26_Plugin_Revised.RoofTag.V018
+namespace Revit26_Plugin.RoofTag.V018
 {
     public class RoofTagViewModel : ObservableObject, INotifyPropertyChanged
     {

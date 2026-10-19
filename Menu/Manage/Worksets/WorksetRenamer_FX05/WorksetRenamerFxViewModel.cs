@@ -11,7 +11,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
 
-namespace Revit26_Plugin_Revised.WorksetRenamer.FX05.ViewModels
+namespace Revit26_Plugin.WorksetRenamer.FX05.ViewModels
 {
     public partial class WorksetRenamerFxViewModel : ObservableObject
     {

@@ -10,7 +10,7 @@
 using System;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin_Revised.IslandRoofSplitter.V002.Infrastructure.Helpers
+namespace Revit26_Plugin.IslandRoofSplitter.V002.Infrastructure.Helpers
 {
     public static class CreationVerifier
     {

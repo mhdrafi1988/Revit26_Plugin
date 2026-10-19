@@ -1,4 +1,4 @@
-namespace Revit26_Plugin_Revised.RoofPointComparison.V002.Core.Models
+namespace Revit26_Plugin.RoofPointComparison.V002.Core.Models
 {
     /// <summary>All metrics shown on the Metrics Card, computed by RoofComparisonEngine.</summary>
     public class ComparisonMetrics

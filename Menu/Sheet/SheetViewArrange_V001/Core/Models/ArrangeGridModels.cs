@@ -1,4 +1,4 @@
-namespace Revit26_Plugin_Revised.SheetViewArrange.V001.Core.Models
+namespace Revit26_Plugin.SheetViewArrange.V001.Core.Models
 {
     /// <summary>
     /// How the Views grid is grouped. Display only — it never changes the layout order, which

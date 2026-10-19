@@ -1,4 +1,4 @@
-namespace Revit26_Plugin_Revised.PlanFromScopeBox.V006.Infrastructure.Settings
+namespace Revit26_Plugin.PlanFromScopeBox.V006.Infrastructure.Settings
 {
     /// <summary>
     /// Plain POCO of user-tunable defaults persisted between sessions (H2). Serialized to

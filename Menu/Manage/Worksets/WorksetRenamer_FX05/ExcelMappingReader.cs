@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ClosedXML.Excel;
 
-namespace Revit26_Plugin_Revised.WorksetRenamer.FX05.ViewModels
+namespace Revit26_Plugin.WorksetRenamer.FX05.ViewModels
 {
     public struct ExcelMappingRow
     {

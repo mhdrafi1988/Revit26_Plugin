@@ -1,14 +1,14 @@
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin_Revised.SheetAutoRearrange.V027.Core.Engine;
-using Revit26_Plugin_Revised.SheetAutoRearrange.V027.Core.Models;
-using Revit26_Plugin_Revised.SheetAutoRearrange.V027.Core.Services;
-using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin.SheetAutoRearrange.V027.Core.Engine;
+using Revit26_Plugin.SheetAutoRearrange.V027.Core.Models;
+using Revit26_Plugin.SheetAutoRearrange.V027.Core.Services;
+using Revit26_Plugin.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace Revit26_Plugin_Revised.SheetAutoRearrange.V027.Infrastructure.ExternalEvents
+namespace Revit26_Plugin.SheetAutoRearrange.V027.Infrastructure.ExternalEvents
 {
     public enum SheetAutoRearrangeAction
     {

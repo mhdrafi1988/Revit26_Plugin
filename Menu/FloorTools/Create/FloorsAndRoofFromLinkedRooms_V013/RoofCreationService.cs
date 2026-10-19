@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Autodesk.Revit.DB;
-using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin.Shared.Models;
 
-namespace Revit26_Plugin_Revised.FloorsAndRoofFromLinkedRooms.V013
+namespace Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V013
 {
     /// <summary>
     /// V010 — Roof creation for footprint roofs from linked-room boundaries.

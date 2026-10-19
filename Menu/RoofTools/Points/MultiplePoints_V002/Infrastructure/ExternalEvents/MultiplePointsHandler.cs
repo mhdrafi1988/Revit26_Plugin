@@ -9,12 +9,12 @@
 
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin_Revised.MultiplePoints.V002.Core.Engine;
-using Revit26_Plugin_Revised.MultiplePoints.V002.Core.Models;
-using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin.MultiplePoints.V002.Core.Engine;
+using Revit26_Plugin.MultiplePoints.V002.Core.Models;
+using Revit26_Plugin.Shared.Models;
 using System;
 
-namespace Revit26_Plugin_Revised.MultiplePoints.V002.Infrastructure.ExternalEvents
+namespace Revit26_Plugin.MultiplePoints.V002.Infrastructure.ExternalEvents
 {
     public class MultiplePointsHandler : IExternalEventHandler
     {

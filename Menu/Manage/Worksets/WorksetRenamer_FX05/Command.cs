@@ -3,11 +3,11 @@ using System.Windows.Interop;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin_Revised.WorksetRenamer.FX05.ViewModels;
-using Revit26_Plugin_Revised.WorksetRenamer.FX05.Views;
-using Revit26_Plugin_Revised.Utilities;
+using Revit26_Plugin.WorksetRenamer.FX05.ViewModels;
+using Revit26_Plugin.WorksetRenamer.FX05.Views;
+using Revit26_Plugin.Utilities;
 
-namespace Revit26_Plugin_Revised.WorksetRenamer.FX05
+namespace Revit26_Plugin.WorksetRenamer.FX05
 {
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]

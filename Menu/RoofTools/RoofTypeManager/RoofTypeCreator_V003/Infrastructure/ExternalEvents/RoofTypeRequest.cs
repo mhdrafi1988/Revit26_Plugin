@@ -1,4 +1,4 @@
-namespace Revit26_Plugin_Revised.RoofTypeCreator.V003.Infrastructure.ExternalEvents
+namespace Revit26_Plugin.RoofTypeCreator.V003.Infrastructure.ExternalEvents
 {
     public enum RoofTypeRequest
     {

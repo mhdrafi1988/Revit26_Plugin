@@ -1,10 +1,10 @@
 using Autodesk.Revit.DB;
-using Revit26_Plugin_Revised.RoofPointComparison.V003.Core.Models;
+using Revit26_Plugin.RoofPointComparison.V003.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin_Revised.RoofPointComparison.V003.Core.Engine
+namespace Revit26_Plugin.RoofPointComparison.V003.Core.Engine
 {
     /// <summary>
     /// Compares two lists of roof shape-editing points by position (XY, within

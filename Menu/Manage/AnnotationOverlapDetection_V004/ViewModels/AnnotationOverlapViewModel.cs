@@ -6,10 +6,10 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin_Revised.AnnotationOverlapDetection.V004.Helpers;
-using Revit26_Plugin_Revised.AnnotationOverlapDetection.V004.Models;
+using Revit26_Plugin.AnnotationOverlapDetection.V004.Helpers;
+using Revit26_Plugin.AnnotationOverlapDetection.V004.Models;
 
-namespace Revit26_Plugin_Revised.AnnotationOverlapDetection.V004.ViewModels
+namespace Revit26_Plugin.AnnotationOverlapDetection.V004.ViewModels
 {
     public partial class AnnotationOverlapViewModel : ObservableObject
     {

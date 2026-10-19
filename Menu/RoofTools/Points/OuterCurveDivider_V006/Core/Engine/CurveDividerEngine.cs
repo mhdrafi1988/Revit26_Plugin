@@ -8,11 +8,11 @@
 
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin_Revised.OuterCurveDivider.V006.Core.Services;
-using Revit26_Plugin_Revised.Shared.Models;
-using Revit26_Plugin_Revised.OuterCurveDivider.V006.Core.Models;
+using Revit26_Plugin.OuterCurveDivider.V006.Core.Services;
+using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin.OuterCurveDivider.V006.Core.Models;
 
-namespace Revit26_Plugin_Revised.OuterCurveDivider.V006.Core.Engine
+namespace Revit26_Plugin.OuterCurveDivider.V006.Core.Engine
 {
     public static class CurveDividerEngine
     {

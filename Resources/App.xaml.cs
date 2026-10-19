@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Revit26_Plugin_Revised.Resources
+namespace Revit26_Plugin.Resources
 {
     /// <summary>
     /// Interaction logic for App.xaml

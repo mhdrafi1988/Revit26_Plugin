@@ -4,11 +4,11 @@ using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Revit26_Plugin_Revised.IslandRoofSplitter.V002.UI.ViewModels;
-using Revit26_Plugin_Revised.Shared.Services;
-using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin.IslandRoofSplitter.V002.UI.ViewModels;
+using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin.Shared.Models;
 
-namespace Revit26_Plugin_Revised.IslandRoofSplitter.V002.UI.Views
+namespace Revit26_Plugin.IslandRoofSplitter.V002.UI.Views
 {
     public partial class IslandRoofSplitterWindow : Window
     {

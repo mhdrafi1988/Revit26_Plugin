@@ -1,11 +1,11 @@
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin_Revised.AnnotationOverlapDetection.V004.ViewModels;
-using Revit26_Plugin_Revised.AnnotationOverlapDetection.V004.Views;
-using Revit26_Plugin_Revised.Utilities;
+using Revit26_Plugin.AnnotationOverlapDetection.V004.ViewModels;
+using Revit26_Plugin.AnnotationOverlapDetection.V004.Views;
+using Revit26_Plugin.Utilities;
 
-namespace Revit26_Plugin_Revised.AnnotationOverlapDetection.V004
+namespace Revit26_Plugin.AnnotationOverlapDetection.V004
 {
     [Transaction(TransactionMode.ReadOnly)]
     [Regeneration(RegenerationOption.Manual)]

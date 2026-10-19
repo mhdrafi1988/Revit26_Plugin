@@ -1,9 +1,9 @@
-using Revit26_Plugin_Revised.SheetViewArrange.V001.Core.Models;
-using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin.SheetViewArrange.V001.Core.Models;
+using Revit26_Plugin.Shared.Models;
 using System;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin_Revised.SheetViewArrange.V001.Infrastructure
+namespace Revit26_Plugin.SheetViewArrange.V001.Infrastructure
 {
     /// <summary>Result of a Refresh or Apply request.</summary>
     public sealed class SessionResult

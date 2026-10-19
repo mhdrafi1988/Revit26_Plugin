@@ -1,6 +1,6 @@
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin_Revised.Shared.Models
+namespace Revit26_Plugin.Shared.Models
 {
     /// <summary>Name/ElementId pair for ComboBox items bound via DisplayMemberPath="Name".</summary>
     public class ComboItem

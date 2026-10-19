@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
-using Revit26_Plugin_Revised.WorksetsElementsBrowser.WSEB004.Core.Models;
+using Revit26_Plugin.WorksetsElementsBrowser.WSEB004.Core.Models;
 
-namespace Revit26_Plugin_Revised.WorksetsElementsBrowser.WSEB004.Core.Services
+namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB004.Core.Services
 {
     /// <summary>
     /// Builds the Workset -> Category -> Type hierarchy for the host document

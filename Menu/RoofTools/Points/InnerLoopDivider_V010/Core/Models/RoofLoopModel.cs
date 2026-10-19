@@ -14,7 +14,7 @@
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin_Revised.InnerLoopDivider.V010.Core.Models
+namespace Revit26_Plugin.InnerLoopDivider.V010.Core.Models
 {
     /// <summary>
     /// Represents a single boundary loop extracted from a roof, including its

@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace Revit26_Plugin_Revised.WorksetsElementsBrowser.WSEB004.Infrastructure.ExternalEvents
+namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB004.Infrastructure.ExternalEvents
 {
     /// <summary>
     /// TEMPORARY diagnostic logger for tracking down why the isolate/select

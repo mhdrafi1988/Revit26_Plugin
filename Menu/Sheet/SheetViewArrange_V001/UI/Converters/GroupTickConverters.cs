@@ -1,10 +1,10 @@
-using Revit26_Plugin_Revised.SheetViewArrange.V001.UI.ViewModels;
+using Revit26_Plugin.SheetViewArrange.V001.UI.ViewModels;
 using System;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Data;
 
-namespace Revit26_Plugin_Revised.SheetViewArrange.V001.UI.Converters
+namespace Revit26_Plugin.SheetViewArrange.V001.UI.Converters
 {
     /// <summary>
     /// Tick state of a group header: true when every tickable view in the group is ticked, false

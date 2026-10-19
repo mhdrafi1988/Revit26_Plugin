@@ -1,7 +1,7 @@
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI.Selection;
 
-namespace Revit26_Plugin_Revised.RoofPointComparison.V003.Infrastructure.Helpers
+namespace Revit26_Plugin.RoofPointComparison.V003.Infrastructure.Helpers
 {
     /// <summary>Restricts element picking to roof elements only.</summary>
     public class RoofSelectionFilter : ISelectionFilter

@@ -26,12 +26,12 @@ using System.Windows.Interop;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin_Revised.IslandRoofSplitter.V002.Infrastructure.Helpers;
-using Revit26_Plugin_Revised.IslandRoofSplitter.V002.UI.ViewModels;
-using Revit26_Plugin_Revised.IslandRoofSplitter.V002.UI.Views;
-using Revit26_Plugin_Revised.Shared.Services;
+using Revit26_Plugin.IslandRoofSplitter.V002.Infrastructure.Helpers;
+using Revit26_Plugin.IslandRoofSplitter.V002.UI.ViewModels;
+using Revit26_Plugin.IslandRoofSplitter.V002.UI.Views;
+using Revit26_Plugin.Shared.Services;
 
-namespace Revit26_Plugin_Revised.IslandRoofSplitter.V002.Commands
+namespace Revit26_Plugin.IslandRoofSplitter.V002.Commands
 {
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]

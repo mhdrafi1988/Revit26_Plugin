@@ -8,9 +8,9 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin.Shared.Models;
 
-namespace Revit26_Plugin_Revised.FloorsAndRoofFromLinkedRoomsViaPlanView.V005
+namespace Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V005
 {
     public partial class MainViewModel : ObservableObject
     {

@@ -1,0 +1,87 @@
+﻿// ==============================================
+// File: DetailFillRegionStyleService.cs
+// Layer: Core/Services
+// ==============================================
+
+using Autodesk.Revit.DB;
+using System.Collections.Generic;
+using System.Linq;
+using Revit26_Plugin.DwgToDetailLines.V014.Core.Models;
+
+namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
+{
+    /// <summary>
+    /// Resolves FilledRegionType based on CAD hatch layer names, for
+    /// FilledRegion creation. Handles missing patterns via user prompt
+    /// (pre-filled with the global default) and caching. Mirrors
+    /// DetailLineStyleService's structure for line styles.
+    /// </summary>
+    public class DetailFillRegionStyleService
+    {
+        private readonly Document _doc;
+        private readonly FillPatternResolutionService _resolver;
+        private readonly string _defaultPatternName;
+        private readonly Dictionary<string, ElementId> _createdPerLayer = new();
+
+        public DetailFillRegionStyleService(
+            Document document,
+            FillPatternResolutionService resolver,
+            string defaultPatternName)
+        {
+            _doc = document;
+            _resolver = resolver;
+            _defaultPatternName = defaultPatternName;
+        }
+
+        /// <summary>
+        /// Returns the filled region type for a CAD hatch layer. When <paramref name="mappedTypeName"/>
+        /// names an existing type it is used directly (no prompt); the match-layer-name entry, null,
+        /// or a type that no longer exists falls back to the V013 lookup by layer name.
+        /// </summary>
+        public FilledRegionType GetOrResolve(string cadLayerName, string mappedTypeName = null)
+        {
+            if (!string.IsNullOrEmpty(mappedTypeName) && mappedTypeName != LayerRow.MatchLayerName)
+            {
+                FilledRegionType mapped = new FilteredElementCollector(_doc)
+                    .OfClass(typeof(FilledRegionType))
+                    .Cast<FilledRegionType>()
+                    .FirstOrDefault(t => t.Name.Equals(mappedTypeName));
+
+                if (mapped != null)
+                    return mapped;
+            }
+
+            var existing = new FilteredElementCollector(_doc)
+                .OfClass(typeof(FilledRegionType))
+                .Cast<FilledRegionType>()
+                .FirstOrDefault(t => t.Name.Equals(cadLayerName));
+
+            if (existing != null)
+                return existing;
+
+            MissingFillPatternDecision decision =
+                _resolver.Resolve(cadLayerName, _defaultPatternName);
+
+            if (decision == MissingFillPatternDecision.Skip)
+                return null;
+
+            FilledRegionType baseType =
+                new FilteredElementCollector(_doc)
+                    .OfClass(typeof(FilledRegionType))
+                    .Cast<FilledRegionType>()
+                    .FirstOrDefault(t => t.Name.Equals(_defaultPatternName))
+                ?? new FilteredElementCollector(_doc)
+                    .OfClass(typeof(FilledRegionType))
+                    .Cast<FilledRegionType>()
+                    .FirstOrDefault();
+
+            if (baseType == null)
+                return null;
+
+            FilledRegionType newType =
+                (FilledRegionType)baseType.Duplicate(cadLayerName);
+
+            return newType;
+        }
+    }
+}

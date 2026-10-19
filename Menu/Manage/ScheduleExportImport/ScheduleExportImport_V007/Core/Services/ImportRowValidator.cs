@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
-using Revit26_Plugin_Revised.ScheduleExportImport.V007.Core.Models;
+using Revit26_Plugin.ScheduleExportImport.V007.Core.Models;
 
-namespace Revit26_Plugin_Revised.ScheduleExportImport.V007.Core.Services
+namespace Revit26_Plugin.ScheduleExportImport.V007.Core.Services
 {
     /// <summary>
     /// Resolves repeated Element IDs in an import file. Rows that repeat an ID with identical

@@ -28,7 +28,7 @@ grep the ribbon files for the old fully-qualified name — folder moves alone
 don't update it.
 
 **Namespace does not mirror the folder path.** `AutoSlopeByDrain_V010` lives
-under `Menu/RoofTools/RoofSlope/ByDrains/` on disk but its code is in
+under `Menu/RoofTools/RoofSlope/ByDrains_0/` on disk but its code is in
 namespace `Revit26_Plugin.MultiRoofSlopeByDrain.V010` — a leftover/renamed
 identity from when it was split out as a multi-roof variant. To find what
 code a ribbon button actually runs, read the fully-qualified type string in

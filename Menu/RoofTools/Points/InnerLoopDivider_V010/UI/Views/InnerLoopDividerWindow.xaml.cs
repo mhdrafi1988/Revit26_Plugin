@@ -7,12 +7,12 @@
 //   (Show()); IsCancel="True" alone only auto-closes for ShowDialog().
 // =======================================================
 
-using Revit26_Plugin_Revised.InnerLoopDivider.V010.UI.ViewModels;
-using Revit26_Plugin_Revised.Shared.Services;
+using Revit26_Plugin.InnerLoopDivider.V010.UI.ViewModels;
+using Revit26_Plugin.Shared.Services;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Revit26_Plugin_Revised.InnerLoopDivider.V010.UI.Views
+namespace Revit26_Plugin.InnerLoopDivider.V010.UI.Views
 {
     public partial class InnerLoopDividerWindow : Window
     {

@@ -1,9 +1,9 @@
 ﻿// ==================================
 // File: RunSummary.cs
-// Namespace: Revit26_Plugin_Revised.CreaserAdv.V010
+// Namespace: Revit26_Plugin.CreaserAdv.V010
 // ==================================
 
-namespace Revit26_Plugin_Revised.CreaserAdv.V010.Services
+namespace Revit26_Plugin.CreaserAdv.V010.Services
 {
     /// <summary>
     /// Immutable snapshot of a single Run result, displayed in the summary bar.

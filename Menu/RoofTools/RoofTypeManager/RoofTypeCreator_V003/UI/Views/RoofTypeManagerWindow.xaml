@@ -14,17 +14,16 @@ Changes vs V002 (layout only):
   - No behaviour change — every binding/command is the V002 one.
 =======================================================
 -->
-<Window x:Class="Revit26_Plugin_Revised.RoofTypeCreator.V003.UI.Views.RoofTypeManagerWindow"
+<Window x:Class="Revit26_Plugin.RoofTypeCreator.V003.UI.Views.RoofTypeManagerWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:svc="clr-namespace:Revit26_Plugin_Revised.Shared.Services"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:converters="clr-namespace:Revit26_Plugin_Revised.Shared.Models"
-        xmlns:shell="clr-namespace:Revit26_Plugin_Revised.Shared.Controls"
-        xmlns:models="clr-namespace:Revit26_Plugin_Revised.RoofTypeCreator.V003.Core.Models"
+        xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
+        xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
+        xmlns:models="clr-namespace:Revit26_Plugin.RoofTypeCreator.V003.Core.Models"
         mc:Ignorable="d"
-        Title="{Binding Source={x:Static svc:ToolCatalog.RoofTypeManager}, Path=Title}"
+        Title="Roof Type Manager — V003"
         Height="900" Width="1020"
         MinHeight="900" MinWidth="1020"
         WindowStartupLocation="CenterOwner"
@@ -80,7 +79,7 @@ Changes vs V002 (layout only):
 
     <shell:ToolWindowShell Title="Roof Type Manager"
                            Subtitle="Export and import roof type definitions via Excel"
-                           Version="{Binding Source={x:Static svc:ToolCatalog.RoofTypeManager}, Path=Version, StringFormat=v{0}}"
+                           Version="V003"
                            IsRunning="{Binding IsBusy}"
                            IsIndeterminate="True"
                            Progress="{Binding Progress}"
@@ -127,8 +126,8 @@ Changes vs V002 (layout only):
         <shell:ToolWindowShell.BodyContent>
             <StackPanel>
                 <!-- Export / Import tabs in workflow order -->
-                <TabControl Margin="0,0,0,10" Background="{StaticResource BrushSurfaceCard}"
-                            BorderBrush="{StaticResource BrushBorderDefault}">
+                <TabControl Margin="0,0,0,10" Background="{StaticResource BrushCardBackground}"
+                            BorderBrush="{StaticResource BrushCardBorder}">
                     <TabItem Header="Export">
                         <Grid>
                             <Grid.RowDefinitions>
@@ -502,13 +501,13 @@ Changes vs V002 (layout only):
                                                 </Border>
                                                 <DataTemplate.Triggers>
                                                     <DataTrigger Binding="{Binding Status}" Value="New">
-                                                        <Setter TargetName="PillBorder" Property="Background" Value="{StaticResource BrushStatusInfoSoft}"/>
-                                                        <Setter TargetName="PillText"   Property="Foreground" Value="{StaticResource BrushStatusInfo}"/>
+                                                        <Setter TargetName="PillBorder" Property="Background" Value="{StaticResource BrushPillNewBackground}"/>
+                                                        <Setter TargetName="PillText"   Property="Foreground" Value="{StaticResource BrushPillNewText}"/>
                                                         <Setter TargetName="PillText"   Property="Text"       Value="NEW"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding Status}" Value="Dup">
-                                                        <Setter TargetName="PillBorder" Property="Background" Value="{StaticResource BrushStatusWarnSoft}"/>
-                                                        <Setter TargetName="PillText"   Property="Foreground" Value="{StaticResource BrushStatusWarn}"/>
+                                                        <Setter TargetName="PillBorder" Property="Background" Value="{StaticResource BrushPillDupBackground}"/>
+                                                        <Setter TargetName="PillText"   Property="Foreground" Value="{StaticResource BrushPillDupText}"/>
                                                         <Setter TargetName="PillText"   Property="Text"       Value="DUP → RENAME"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding Status}" Value="Renamed">

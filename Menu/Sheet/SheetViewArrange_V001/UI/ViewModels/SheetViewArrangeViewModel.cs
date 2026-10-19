@@ -1,11 +1,11 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin_Revised.SheetViewArrange.V001.Core.Layout;
-using Revit26_Plugin_Revised.SheetViewArrange.V001.Core.Models;
-using Revit26_Plugin_Revised.SheetViewArrange.V001.Core.Services;
-using Revit26_Plugin_Revised.SheetViewArrange.V001.Infrastructure;
-using Revit26_Plugin_Revised.Shared.Models;
-using Revit26_Plugin_Revised.Shared.Services;
+using Revit26_Plugin.SheetViewArrange.V001.Core.Layout;
+using Revit26_Plugin.SheetViewArrange.V001.Core.Models;
+using Revit26_Plugin.SheetViewArrange.V001.Core.Services;
+using Revit26_Plugin.SheetViewArrange.V001.Infrastructure;
+using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin.Shared.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,7 +13,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
 
-namespace Revit26_Plugin_Revised.SheetViewArrange.V001.UI.ViewModels
+namespace Revit26_Plugin.SheetViewArrange.V001.UI.ViewModels
 {
     /// <summary>A choice in the "Last row" combo box.</summary>
     public sealed record LastRowOption(LastRowMode Mode, string Label);

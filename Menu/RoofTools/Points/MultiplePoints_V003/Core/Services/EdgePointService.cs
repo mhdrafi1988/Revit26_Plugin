@@ -28,13 +28,13 @@
 // =======================================================
 
 using Autodesk.Revit.DB;
-using Revit26_Plugin_Revised.MultiplePoints.V003.Core.Models;
-using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin.MultiplePoints.V003.Core.Models;
+using Revit26_Plugin.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin_Revised.MultiplePoints.V003.Core.Services
+namespace Revit26_Plugin.MultiplePoints.V003.Core.Services
 {
     public class EdgePointService
     {

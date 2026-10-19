@@ -3,7 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 
-namespace Revit26_Plugin_Revised.Utilities
+namespace Revit26_Plugin.Utilities
 {
     /// <summary>
     /// Appends structured log lines to %APPDATA%\SloperPro\sloper_pro.log.

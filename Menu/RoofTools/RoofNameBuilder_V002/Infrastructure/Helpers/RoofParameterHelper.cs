@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Autodesk.Revit.DB;
-using Revit26_Plugin_Revised.RoofNameBuilder.V002.Core.Models;
+using Revit26_Plugin.RoofNameBuilder.V002.Core.Models;
 
-namespace Revit26_Plugin_Revised.RoofNameBuilder.V002.Infrastructure.Helpers
+namespace Revit26_Plugin.RoofNameBuilder.V002.Infrastructure.Helpers
 {
     /// <summary>
     /// All Revit-API-dependent reads for this tool live here — ARCHITECTURE.md §3:

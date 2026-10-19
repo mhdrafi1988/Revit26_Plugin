@@ -1,7 +1,7 @@
 using System.Windows;
-using Revit26_Plugin_Revised.ScheduleExportImport.V006.UI.ViewModels;
+using Revit26_Plugin.ScheduleExportImport.V006.UI.ViewModels;
 
-namespace Revit26_Plugin_Revised.ScheduleExportImport.V006.UI.Views
+namespace Revit26_Plugin.ScheduleExportImport.V006.UI.Views
 {
     public partial class ImportPreviewWindow : Window
     {

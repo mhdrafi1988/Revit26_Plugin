@@ -4,9 +4,9 @@ using System.Linq;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin.Shared.Models;
 
-namespace Revit26_Plugin_Revised.Shared.ViewModels
+namespace Revit26_Plugin.Shared.ViewModels
 {
     /// <summary>
     /// Shared base for all tool ViewModels.

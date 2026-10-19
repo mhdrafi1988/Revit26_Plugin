@@ -3,7 +3,7 @@ using System.Collections;
 using System.Linq;
 using System.Windows;
 
-namespace Revit26_Plugin_Revised.Shared.Services
+namespace Revit26_Plugin.Shared.Services
 {
     /// <summary>
     /// Copy All / Copy Selected for a tool's log panel (UI standard §5.1).

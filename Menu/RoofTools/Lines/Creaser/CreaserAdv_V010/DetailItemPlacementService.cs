@@ -1,13 +1,13 @@
 // ==================================
 // File: DetailItemPlacementService.cs
-// Namespace: Revit26_Plugin_Revised.CreaserAdv.V010.Services
+// Namespace: Revit26_Plugin.CreaserAdv.V010.Services
 // ==================================
 
 using Autodesk.Revit.DB;
 using System;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin_Revised.CreaserAdv.V010.Services
+namespace Revit26_Plugin.CreaserAdv.V010.Services
 {
     /// <summary>
     /// Places a line-based detail component along each supplied plan line.
