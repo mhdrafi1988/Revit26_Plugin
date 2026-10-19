@@ -9,6 +9,43 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [3.10.0] — 2026-10-19
+
+### Fixed
+- **Bulk Rename v1.1.0** — the Manage ▸ **Bulk Rename** button now works. Its code sat in
+  `Menu/RoofTools/New items`, which the build excluded, so the button pointed at a class that was
+  never compiled. Moved to `Menu/Manage/BulkRename_V001` (namespace unchanged) and moved onto the
+  UI standard colour tokens.
+
+### Removed
+- **Roof From Detail Lines V008 / V009** — the Roof Tools ▸ **Roof From Lines** dropdown is removed.
+  Its source code is not in the repository, its git history or any backup, so both buttons could
+  only show an error. It comes back when the source is found. Its `ToolCatalog` entry is kept so old
+  log lines still name the tool.
+- 48 committed `.zip` backups (24 MB), `Revit26_Plugin.csproj.bak`, stale copies of Export DWG V003
+  and Roof Name Builder V002 in `New items`, and the excluded `LinkVersionChecker_V003_UPDATED` copy.
+  Git is the version history.
+
+### Changed
+- **Folder structure** (no namespace, class, ribbon-button or GUID changes; the build compiles the
+  same 2,575 files, byte for byte):
+  - Wrapper levels removed, e.g. `TaperedEpsPattern2D_V006/Menu/RoofTools/Modelling/TaperedEpsPattern2D_V006/`
+    → `TaperedEpsPattern2D_V006/`, `AutoSlopeByPoint_V032/AutoSlopeByPoint_V032/` → `AutoSlopeByPoint_V032/`
+    (43 tools).
+  - Folder names fixed: `DeatailLInes` → `DetailLines`, `Setup/Familiy` → `Setup/Family`,
+    `Line&Points` → `LinesAndPoints`, `Project DWG` → `DWG`, `Work set Manager` → `WorksetManager`,
+    `ByPoints_0` / `ByDrains_0` / `Create_01` / `Rename_01` / `Place_01` / `Links_02` lose their
+    suffixes; `(1)`, `_1`, `_updated`, `_WOrking`, `_By_POints` / `_by_openings` normalised.
+  - Auto Slope By Drain (Multi-Roof) V013 moved from `ByPoints` to `ByDrains`; Link Version Checker
+    V003 moved into `Manage/Links` beside V004 / V005.
+  - `.csproj`: 672 entries pointing at folders that no longer exist are removed. Six of them would
+    have excluded live tools once the folders were renamed. Only `Menu/RoofTools/WIP` is excluded now.
+  - CLAUDE.md: folder-layout rule added.
+
+> **User note:** after pulling, delete the `bin` and `obj` folders (or run *Clean Solution*) before
+> building, because the old build output still points at the old folder paths. No tool behaves
+> differently.
+
 ## [3.9.0] — 2026-10-19
 
 ### Changed

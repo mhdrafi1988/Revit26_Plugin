@@ -103,11 +103,11 @@ Last host, recent hosts (dropdown), last folder, nested/subfolder options, filte
 
 ## Install
 
-1. Copy the `LinkVersionChecker_V004` folder into the repo, e.g. `Revit26_Plugin\Menu\Manage\Links_02\LinkVersionChecker_V004\`. Point your ribbon wiring at V004.
+1. Copy the `LinkVersionChecker_V004` folder into the repo, e.g. `Revit26_Plugin\Menu\Manage\Links\LinkVersionChecker_V004\`. Point your ribbon wiring at V004.
    **Retire V003** (and V002 if it is still there) — SDK-style projects build every folder. Add next to the other exclusions in `Revit26_Plugin.csproj` (adjust the path):
    ```xml
-   <Compile Remove="Menu\Manage\Links_02\LinkVersionChecker_V003\**" />
-   <Page Remove="Menu\Manage\Links_02\LinkVersionChecker_V003\**" />
+   <Compile Remove="Menu\Manage\Links\LinkVersionChecker_V003\**" />
+   <Page Remove="Menu\Manage\Links\LinkVersionChecker_V003\**" />
    ```
    (`Page Remove` is needed too, or V002's XAML still generates code-behind for a class that no longer exists.)
 2. Add ClosedXML to the `.csproj` (and keep `<UseWPF>true</UseWPF>`):
