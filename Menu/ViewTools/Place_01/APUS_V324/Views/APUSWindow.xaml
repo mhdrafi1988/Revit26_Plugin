@@ -182,7 +182,7 @@ Changes vs V323 (layout only):
                             </Border>
 
                             <!-- Sections grid -->
-                            <Border Grid.Row="3" BorderBrush="{StaticResource BrushCardBorder}" BorderThickness="1" CornerRadius="6">
+                            <Border Grid.Row="3" BorderBrush="{StaticResource BrushBorderDefault}" BorderThickness="1" CornerRadius="6">
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
