@@ -104,18 +104,18 @@
                 <Border Style="{StaticResource MetricTileSuccess}" Margin="3,0">
                     <StackPanel>
                         <TextBlock Text="DELETABLE" Style="{StaticResource MetricTileLabel}"
-                                   Foreground="{StaticResource BrushSuccess}"/>
+                                   Foreground="{StaticResource BrushStatusOk}"/>
                         <TextBlock Text="{Binding DeletableCount}" FontSize="26" FontWeight="Bold"
-                                   Foreground="{StaticResource BrushSuccess}"/>
+                                   Foreground="{StaticResource BrushStatusOk}"/>
                     </StackPanel>
                 </Border>
                 <!-- Non-deletable -->
                 <Border Style="{StaticResource MetricTileDanger}" Margin="6,0,0,0">
                     <StackPanel>
                         <TextBlock Text="NON-DELETABLE" Style="{StaticResource MetricTileLabel}"
-                                   Foreground="{StaticResource BrushDanger}"/>
+                                   Foreground="{StaticResource BrushStatusError}"/>
                         <TextBlock Text="{Binding NonDeletableCount}" FontSize="26" FontWeight="Bold"
-                                   Foreground="{StaticResource BrushDanger}"/>
+                                   Foreground="{StaticResource BrushStatusError}"/>
                     </StackPanel>
                 </Border>
             </UniformGrid>
@@ -178,7 +178,7 @@
                           GridLinesVisibility="Horizontal"
                           HorizontalGridLinesBrush="{StaticResource BrushSeparatorThin}"
                           BorderThickness="1"
-                          BorderBrush="{StaticResource BrushCardBorder}">
+                          BorderBrush="{StaticResource BrushBorderDefault}">
                     <DataGrid.Columns>
                         <!-- Checkbox -->
                         <DataGridTemplateColumn Header="" Width="36" CanUserResize="False">
@@ -242,7 +242,7 @@
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding IsOpen}" Value="True">
                                                         <Setter Property="Background"
-                                                                Value="{StaticResource BrushSuccess}"/>
+                                                                Value="{StaticResource BrushStatusOk}"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -271,8 +271,8 @@
         </Border>
 
         <!-- ══ ROW 3 — Migration target + options ═══════════════════════════ -->
-        <Border Grid.Row="3" Margin="12,8,12,0" Padding="12" Background="{StaticResource BrushCardBackground}"
-                BorderBrush="{StaticResource BrushCardBorder}" BorderThickness="1" CornerRadius="4">
+        <Border Grid.Row="3" Margin="12,8,12,0" Padding="12" Background="{StaticResource BrushSurfaceCard}"
+                BorderBrush="{StaticResource BrushBorderDefault}" BorderThickness="1" CornerRadius="4">
             <StackPanel>
                 <!-- Migration target -->
                 <Grid Margin="0,0,0,10">
