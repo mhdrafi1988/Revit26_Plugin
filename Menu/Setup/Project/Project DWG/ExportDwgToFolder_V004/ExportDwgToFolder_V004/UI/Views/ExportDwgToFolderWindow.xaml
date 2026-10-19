@@ -70,7 +70,7 @@ V004 (behaviour change — new folder + namespace):
                  column's DataTemplate, each row gets its own instance.
             ──────────────────────────────────────────────────────────────── -->
             <DataTemplate x:Key="PathTooltipTemplate" DataType="{x:Type vm:DwgRowViewModel}">
-                        <Border Background="{DynamicResource BrushCardBackground}"
+                        <Border Background="{DynamicResource BrushSurfaceCard}"
                                 BorderBrush="{DynamicResource BrushNavyLight}"
                                 BorderThickness="1" CornerRadius="6" Padding="10,8" MaxWidth="560">
                             <Grid>
@@ -145,13 +145,13 @@ V004 (behaviour change — new folder + namespace):
                         <Setter TargetName="Num" Property="Foreground" Value="{StaticResource BrushAppleBlue}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding Tone}" Value="Success">
-                        <Setter TargetName="Num" Property="Foreground" Value="{StaticResource BrushSuccess}"/>
+                        <Setter TargetName="Num" Property="Foreground" Value="{StaticResource BrushStatusOk}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding Tone}" Value="Warning">
-                        <Setter TargetName="Num" Property="Foreground" Value="{StaticResource BrushWarning}"/>
+                        <Setter TargetName="Num" Property="Foreground" Value="{StaticResource BrushStatusWarn}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding Tone}" Value="Danger">
-                        <Setter TargetName="Num" Property="Foreground" Value="{StaticResource BrushDanger}"/>
+                        <Setter TargetName="Num" Property="Foreground" Value="{StaticResource BrushStatusError}"/>
                     </DataTrigger>
                 </DataTemplate.Triggers>
             </DataTemplate>
@@ -187,14 +187,14 @@ V004 (behaviour change — new folder + namespace):
                         <Setter TargetName="Pct" Property="Foreground" Value="{StaticResource BrushAppleBlue}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding State}" Value="Done">
-                        <Setter TargetName="Dot" Property="Fill" Value="{StaticResource BrushSuccess}"/>
-                        <Setter TargetName="Bar" Property="Foreground" Value="{StaticResource BrushSuccess}"/>
-                        <Setter TargetName="Pct" Property="Foreground" Value="{StaticResource BrushSuccess}"/>
+                        <Setter TargetName="Dot" Property="Fill" Value="{StaticResource BrushStatusOk}"/>
+                        <Setter TargetName="Bar" Property="Foreground" Value="{StaticResource BrushStatusOk}"/>
+                        <Setter TargetName="Pct" Property="Foreground" Value="{StaticResource BrushStatusOk}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding State}" Value="Warning">
-                        <Setter TargetName="Dot" Property="Fill" Value="{StaticResource BrushWarning}"/>
-                        <Setter TargetName="Bar" Property="Foreground" Value="{StaticResource BrushWarning}"/>
-                        <Setter TargetName="Pct" Property="Foreground" Value="{StaticResource BrushWarning}"/>
+                        <Setter TargetName="Dot" Property="Fill" Value="{StaticResource BrushStatusWarn}"/>
+                        <Setter TargetName="Bar" Property="Foreground" Value="{StaticResource BrushStatusWarn}"/>
+                        <Setter TargetName="Pct" Property="Foreground" Value="{StaticResource BrushStatusWarn}"/>
                     </DataTrigger>
                 </DataTemplate.Triggers>
             </DataTemplate>
@@ -637,9 +637,9 @@ V004 (behaviour change — new folder + namespace):
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <Border CornerRadius="8" Padding="7,0" HorizontalAlignment="Left" VerticalAlignment="Center"
-                                                    Background="{StaticResource BrushPillInfoBackground}">
+                                                    Background="{StaticResource BrushStatusInfoSoft}">
                                                 <TextBlock x:Name="Pill" Text="{Binding SourceGroup}" FontSize="10.5" FontWeight="SemiBold"
-                                                           Foreground="{StaticResource BrushPillInfoText}"/>
+                                                           Foreground="{StaticResource BrushStatusInfo}"/>
                                             </Border>
                                             <DataTemplate.Triggers>
                                                 <DataTrigger Binding="{Binding SourceGroup}" Value="Import">
@@ -666,7 +666,7 @@ V004 (behaviour change — new folder + namespace):
                                                        ToolTip="Layer subcategories this CAD instance brings into the model. 1 means it was already flattened on import — no export setting can bring its layers back. ? means the count could not be read."/>
                                             <DataTemplate.Triggers>
                                                 <DataTrigger Binding="{Binding LayersSuspicious}" Value="True">
-                                                    <Setter TargetName="LayerCell" Property="Foreground" Value="{StaticResource BrushWarning}"/>
+                                                    <Setter TargetName="LayerCell" Property="Foreground" Value="{StaticResource BrushStatusWarn}"/>
                                                     <Setter TargetName="LayerCell" Property="FontWeight" Value="SemiBold"/>
                                                 </DataTrigger>
                                             </DataTemplate.Triggers>
@@ -706,22 +706,22 @@ V004 (behaviour change — new folder + namespace):
                                                        ToolTip="{Binding StatusNote}"/>
                                             <DataTemplate.Triggers>
                                                 <DataTrigger Binding="{Binding Status}" Value="Ready">
-                                                    <Setter TargetName="StatusText" Property="Foreground" Value="{StaticResource BrushSuccess}"/>
+                                                    <Setter TargetName="StatusText" Property="Foreground" Value="{StaticResource BrushStatusOk}"/>
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding Status}" Value="Exported">
-                                                    <Setter TargetName="StatusText" Property="Foreground" Value="{StaticResource BrushSuccess}"/>
+                                                    <Setter TargetName="StatusText" Property="Foreground" Value="{StaticResource BrushStatusOk}"/>
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding Status}" Value="Issue">
-                                                    <Setter TargetName="StatusText" Property="Foreground" Value="{StaticResource BrushWarning}"/>
+                                                    <Setter TargetName="StatusText" Property="Foreground" Value="{StaticResource BrushStatusWarn}"/>
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding Status}" Value="Skipped">
-                                                    <Setter TargetName="StatusText" Property="Foreground" Value="{StaticResource BrushWarning}"/>
+                                                    <Setter TargetName="StatusText" Property="Foreground" Value="{StaticResource BrushStatusWarn}"/>
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding Status}" Value="Exporting">
                                                     <Setter TargetName="StatusText" Property="Foreground" Value="{StaticResource BrushAppleBlue}"/>
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding Status}" Value="Failed">
-                                                    <Setter TargetName="StatusText" Property="Foreground" Value="{StaticResource BrushDanger}"/>
+                                                    <Setter TargetName="StatusText" Property="Foreground" Value="{StaticResource BrushStatusError}"/>
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding Status}" Value="Deleted">
                                                     <Setter TargetName="StatusText" Property="Foreground" Value="{StaticResource BrushTextTertiary}"/>
@@ -730,7 +730,7 @@ V004 (behaviour change — new folder + namespace):
                                                     <Setter TargetName="StatusText" Property="Foreground" Value="{StaticResource BrushPillTypeText}"/>
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding Status}" Value="Relinked">
-                                                    <Setter TargetName="StatusText" Property="Foreground" Value="{StaticResource BrushPillInfoText}"/>
+                                                    <Setter TargetName="StatusText" Property="Foreground" Value="{StaticResource BrushStatusInfo}"/>
                                                 </DataTrigger>
                                             </DataTemplate.Triggers>
                                         </DataTemplate>
@@ -840,7 +840,7 @@ V004 (behaviour change — new folder + namespace):
         <!-- ═══ FOOTER — progress bars + buttons ═══════════════════════ -->
         <shell:ToolWindowShell.FooterContent>
             <StackPanel>
-                <Border Background="{StaticResource BrushCardBackground}" BorderBrush="{StaticResource BrushCardBorder}"
+                <Border Background="{StaticResource BrushSurfaceCard}" BorderBrush="{StaticResource BrushBorderDefault}"
                         BorderThickness="1" CornerRadius="6" Padding="10,5" Margin="0,0,0,8">
                     <ItemsControl ItemsSource="{Binding Phases}" ItemTemplate="{StaticResource PhaseTemplate}"/>
                 </Border>
