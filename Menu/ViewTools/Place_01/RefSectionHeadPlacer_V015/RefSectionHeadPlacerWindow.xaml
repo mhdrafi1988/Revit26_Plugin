@@ -26,7 +26,7 @@ Changes vs V014 (layout only):
         MinHeight="860" MinWidth="1180"
         ResizeMode="CanResizeWithGrip"
         WindowStartupLocation="CenterScreen"
-        Background="{DynamicResource BrushSystemBackground}">
+        Background="{DynamicResource BrushSurfaceWindow}">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -99,7 +99,7 @@ Changes vs V014 (layout only):
                     <Setter.Value>
                         <Style TargetType="ComboBoxItem">
                             <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}"/>
-                            <Setter Property="Background" Value="{StaticResource BrushCardBackground}"/>
+                            <Setter Property="Background" Value="{StaticResource BrushSurfaceCard}"/>
                             <Style.Triggers>
                                 <Trigger Property="IsHighlighted" Value="True">
                                     <Setter Property="Background" Value="{StaticResource BrushAppleBlue}"/>
@@ -144,7 +144,7 @@ Changes vs V014 (layout only):
             <Style x:Key="PlanTypeFilterToggle" TargetType="ToggleButton">
                 <Setter Property="FontSize"        Value="11"/>
                 <Setter Property="Height"          Value="26"/>
-                <Setter Property="Background"      Value="{StaticResource BrushSystemBackground}"/>
+                <Setter Property="Background"      Value="{StaticResource BrushSurfaceWindow}"/>
                 <Setter Property="Foreground"      Value="{StaticResource BrushTextPrimary}"/>
                 <Setter Property="BorderBrush"     Value="{StaticResource BrushSeparator}"/>
                 <Setter Property="BorderThickness" Value="1"/>
@@ -330,8 +330,8 @@ Changes vs V014 (layout only):
                                     <Popup PlacementTarget="{Binding ElementName=BtnRoofType}" Placement="Bottom"
                                            IsOpen="{Binding IsRoofTypePopoverOpen, Mode=TwoWay}"
                                            StaysOpen="False" AllowsTransparency="True" PopupAnimation="Fade">
-                                        <Border Background="{StaticResource BrushCardBackground}"
-                                                BorderBrush="{StaticResource BrushCardBorder}" BorderThickness="1"
+                                        <Border Background="{StaticResource BrushSurfaceCard}"
+                                                BorderBrush="{StaticResource BrushBorderDefault}" BorderThickness="1"
                                                 CornerRadius="8" Padding="8" Width="200">
                                             <Border.Effect>
                                                 <DropShadowEffect ShadowDepth="2" BlurRadius="8" Opacity="0.2"/>
@@ -404,8 +404,8 @@ Changes vs V014 (layout only):
                                     <Popup PlacementTarget="{Binding ElementName=BtnPlanType}" Placement="Bottom"
                                            IsOpen="{Binding IsPlanTypePopoverOpen, Mode=TwoWay}"
                                            StaysOpen="False" AllowsTransparency="True" PopupAnimation="Fade">
-                                        <Border Background="{StaticResource BrushCardBackground}"
-                                                BorderBrush="{StaticResource BrushCardBorder}" BorderThickness="1"
+                                        <Border Background="{StaticResource BrushSurfaceCard}"
+                                                BorderBrush="{StaticResource BrushBorderDefault}" BorderThickness="1"
                                                 CornerRadius="8" Padding="8" Width="200">
                                             <Border.Effect>
                                                 <DropShadowEffect ShadowDepth="2" BlurRadius="8" Opacity="0.2"/>
@@ -695,7 +695,7 @@ Changes vs V014 (layout only):
                      IsRunning so the state is honest instead of implying a live control.
                      Tooltip explains why; command/plumbing kept for a future async engine. -->
                 <Button Content="Cancel" Style="{StaticResource OutlineButton}"
-                        Foreground="{StaticResource BrushDanger}" BorderBrush="{StaticResource BrushDanger}"
+                        Foreground="{StaticResource BrushStatusError}" BorderBrush="{StaticResource BrushStatusError}"
                         Command="{Binding CancelCommand}" Margin="0,0,8,0"
                         IsEnabled="False"
                         ToolTip="Cancel isn't available yet — the run executes on Revit's own thread, which freezes this window until it finishes."
