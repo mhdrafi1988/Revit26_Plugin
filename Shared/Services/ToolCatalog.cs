@@ -117,7 +117,7 @@ namespace Revit26_Plugin.Shared.Services
         public static readonly ToolInfo DeleteWorkset = Add("Delete Workset", "1.1.0", "V001", "Revit26_Plugin.DeleteWorkset.V001");
         public static readonly ToolInfo DeleteLineStyles = Add("Delete Line Styles", "1.1.0", "V001", "Revit26_Plugin.DeleteLineStyles.V001");
         public static readonly ToolInfo BulkRename = Add("Bulk Rename", "1.0.0", "V001", "Revit26_Plugin.BulkRename.V001");
-        public static readonly ToolInfo WorksetCreator = Add("Workset Creator", "16.0.0", "V016", "Revit26_Plugin.WorksetCreator.V016");
+        public static readonly ToolInfo WorksetCreator = Add("Workset Creator", "16.1.0", "V016", "Revit26_Plugin.WorksetCreator.V016");
 
         private static ToolInfo Add(string name, string version, string buildTag, string namespacePrefix)
         {
