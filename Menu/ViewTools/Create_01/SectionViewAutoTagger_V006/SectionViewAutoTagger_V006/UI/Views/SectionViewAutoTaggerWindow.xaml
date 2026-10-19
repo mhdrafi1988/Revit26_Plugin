@@ -26,7 +26,7 @@ Changes vs V005 (layout only):
         Title="Section View Auto Tagger — V006"
         Height="800" Width="1000"
         MinHeight="800" MinWidth="1000"
-        Background="{DynamicResource BrushSystemBackground}"
+        Background="{DynamicResource BrushSurfaceWindow}"
         FontFamily="{DynamicResource SystemFont}"
         WindowStartupLocation="CenterOwner"
         ResizeMode="CanResizeWithGrip"
@@ -52,7 +52,7 @@ Changes vs V005 (layout only):
                 <Setter Property="BorderBrush" Value="{StaticResource BrushSeparator}"/>
                 <Setter Property="BorderThickness" Value="1"/>
                 <Setter Property="CornerRadius" Value="8"/>
-                <Setter Property="Background" Value="{StaticResource BrushCardBackground}"/>
+                <Setter Property="Background" Value="{StaticResource BrushSurfaceCard}"/>
                 <Setter Property="Padding" Value="8,6"/>
                 <Setter Property="Cursor" Value="Hand"/>
                 <Setter Property="MinHeight" Value="34"/>
@@ -160,7 +160,7 @@ Changes vs V005 (layout only):
                                                Width="{Binding ActualWidth, ElementName=SectionViewPopoverToggle}"
                                                IsOpen="{Binding IsChecked, ElementName=SectionViewPopoverToggle, Mode=TwoWay}"
                                                local:SectionViewMultiSelectBehavior.IsEnabled="True">
-                                            <Border Background="{StaticResource BrushCardBackground}" BorderBrush="{StaticResource BrushCardBorder}"
+                                            <Border Background="{StaticResource BrushSurfaceCard}" BorderBrush="{StaticResource BrushBorderDefault}"
                                                     BorderThickness="1" CornerRadius="10" Padding="8">
                                                 <Border.Effect>
                                                     <DropShadowEffect ShadowDepth="2" BlurRadius="10" Opacity="0.2"/>
@@ -281,10 +281,10 @@ Changes vs V005 (layout only):
                                                             <Border Grid.Column="3" CornerRadius="8" Padding="7,2">
                                                                 <Border.Style>
                                                                     <Style TargetType="Border">
-                                                                        <Setter Property="Background" Value="{StaticResource BrushPillTaggableBackground}"/>
+                                                                        <Setter Property="Background" Value="{StaticResource BrushStatusOkSoft}"/>
                                                                         <Style.Triggers>
                                                                             <DataTrigger Binding="{Binding IsTaggable}" Value="False">
-                                                                                <Setter Property="Background" Value="{StaticResource BrushPillNotTaggableBackground}"/>
+                                                                                <Setter Property="Background" Value="{StaticResource BrushStatusErrorSoft}"/>
                                                                             </DataTrigger>
                                                                         </Style.Triggers>
                                                                     </Style>
@@ -293,11 +293,11 @@ Changes vs V005 (layout only):
                                                                     <TextBlock.Style>
                                                                         <Style TargetType="TextBlock">
                                                                             <Setter Property="Text" Value="Taggable"/>
-                                                                            <Setter Property="Foreground" Value="{StaticResource BrushSuccess}"/>
+                                                                            <Setter Property="Foreground" Value="{StaticResource BrushStatusOk}"/>
                                                                             <Style.Triggers>
                                                                                 <DataTrigger Binding="{Binding IsTaggable}" Value="False">
                                                                                     <Setter Property="Text" Value="{Binding Reason}"/>
-                                                                                    <Setter Property="Foreground" Value="{StaticResource BrushDanger}"/>
+                                                                                    <Setter Property="Foreground" Value="{StaticResource BrushStatusError}"/>
                                                                                 </DataTrigger>
                                                                             </Style.Triggers>
                                                                         </Style>
@@ -339,7 +339,7 @@ Changes vs V005 (layout only):
                                                             <TextBlock Text="{Binding SheetDisplay}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource BrushNavyPrimary}"/>
                                                             <TextBlock Text="{Binding CategoriesDisplay}" FontSize="11" Foreground="{StaticResource BrushTextSecondary}"/>
                                                         </StackPanel>
-                                                        <TextBlock Grid.Column="1" Text="✕" FontWeight="Bold" Foreground="{StaticResource BrushDanger}"
+                                                        <TextBlock Grid.Column="1" Text="✕" FontWeight="Bold" Foreground="{StaticResource BrushStatusError}"
                                                                    Cursor="Hand" VerticalAlignment="Center" Padding="4,0">
                                                             <TextBlock.InputBindings>
                                                                 <MouseBinding MouseAction="LeftClick"

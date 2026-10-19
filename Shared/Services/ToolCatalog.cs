@@ -109,7 +109,7 @@ namespace Revit26_Plugin.Shared.Services
         public static readonly ToolInfo APUS = Add("Auto Place Sections", "324.1.0", "V324", "Revit26_Plugin.APUS.V324");
         public static readonly ToolInfo CalloutCOP = Add("Callout To Section View Placement", "21.1.0", "V021", "Revit26_Plugin.CalloutCOP.V021");
         public static readonly ToolInfo RefSectionHeadPlacer = Add("Reference Section Head Placer", "15.1.0", "V015", "Revit26_Plugin.RefSectionHeadPlacer.V015");
-        public static readonly ToolInfo SectionViewAutoTagger = Add("Section View Auto Tagger", "6.0.0", "V006", "Revit26_Plugin.SectionViewAutoTagger.V006");
+        public static readonly ToolInfo SectionViewAutoTagger = Add("Section View Auto Tagger", "6.1.0", "V006", "Revit26_Plugin.SectionViewAutoTagger.V006");
         public static readonly ToolInfo ViewAutoRenamer = Add("View Auto Renamer", "6.0.0", "V006", "Revit26_Plugin.ViewAutoRenamer.V006");
         public static readonly ToolInfo BubbleAutoRenumber = Add("Bubble Auto Renumber", "8.0.0", "V008", "Revit26_Plugin.BubbleAutoRenumber.V008");
         public static readonly ToolInfo SectionAutoRenamer = Add("Section Auto Renamer", "26.0.0", "V026", "Revit26_Plugin.SectionAutoRenamer.V026");
