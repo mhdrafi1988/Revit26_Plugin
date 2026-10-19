@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.RoofRidgeLines.V069.Models;
+using Revit26_Plugin_Revised.RoofRidgeLines.V069.Models;
 
-namespace Revit26_Plugin.RoofRidgeLines.V069.Services
+namespace Revit26_Plugin_Revised.RoofRidgeLines.V069.Services
 {
     /// <summary>
     /// Clips raw Voronoi edges against the roof boundary polygon and collects

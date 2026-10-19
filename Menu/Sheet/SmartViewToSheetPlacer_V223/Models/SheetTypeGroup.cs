@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.SmartViewToSheetPlacer.V223.Models
+namespace Revit26_Plugin_Revised.SmartViewToSheetPlacer.V223.Models
 {
     /// <summary>
     /// V213 UPDATE: one card per SHEET now, not per ViewType — confirmed

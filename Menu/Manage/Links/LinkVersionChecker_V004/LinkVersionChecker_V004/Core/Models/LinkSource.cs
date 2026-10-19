@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.LinkVersionChecker_V004.Core.Models
+namespace Revit26_Plugin_Revised.LinkVersionChecker_V004.Core.Models
 {
     /// <summary>Where a linked file physically lives. One value per row of the Source column.</summary>
     public enum LinkSource

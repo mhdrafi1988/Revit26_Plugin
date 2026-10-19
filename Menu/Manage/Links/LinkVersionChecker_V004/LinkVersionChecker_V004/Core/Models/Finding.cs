@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.LinkVersionChecker_V004.Core.Models
+namespace Revit26_Plugin_Revised.LinkVersionChecker_V004.Core.Models
 {
     /// <summary>One issue a rule found on a link.</summary>
     public sealed class Finding

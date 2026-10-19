@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.RefSectionHeadPlacer.V015.Core.Models;
+using Revit26_Plugin_Revised.RefSectionHeadPlacer.V015.Core.Models;
 
-namespace Revit26_Plugin.RefSectionHeadPlacer.V015.Core.Services
+namespace Revit26_Plugin_Revised.RefSectionHeadPlacer.V015.Core.Services
 {
     /// <summary>
     /// Loads document data for the grids/selectors:

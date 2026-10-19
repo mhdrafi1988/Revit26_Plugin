@@ -1,6 +1,6 @@
 // =======================================================
 // File: AutoSlopeResult.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models
 // Changes vs V030:
 //   - Real start/end DateTime and fractional DurationSeconds (V030 B8
 //     showed whole seconds × 1000 as "milliseconds").
@@ -12,7 +12,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models
 {
     /// <summary>Plain roof description captured during the run (for Excel and the log).</summary>
     public sealed record RoofInfo(long IdValue, string TypeName, string BaseLevelName, double BaseOffsetMm);

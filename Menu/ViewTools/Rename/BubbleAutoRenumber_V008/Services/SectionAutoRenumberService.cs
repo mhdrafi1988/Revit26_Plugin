@@ -1,10 +1,10 @@
 using Autodesk.Revit.DB;
-using Revit26_Plugin.BubbleAutoRenumber.V008.Models;
+using Revit26_Plugin_Revised.BubbleAutoRenumber.V008.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.BubbleAutoRenumber.V008.Services
+namespace Revit26_Plugin_Revised.BubbleAutoRenumber.V008.Services
 {
     public static class SectionAutoRenumberService
     {

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.Shared.Models;
-using Revit26_Plugin.SmartViewToSheetPlacer.V224.Models;
-using Revit26_Plugin.SmartViewToSheetPlacer.V224.Services;
+using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin_Revised.SmartViewToSheetPlacer.V224.Models;
+using Revit26_Plugin_Revised.SmartViewToSheetPlacer.V224.Services;
 
-namespace Revit26_Plugin.SmartViewToSheetPlacer.V224.Infrastructure.ExternalEvents
+namespace Revit26_Plugin_Revised.SmartViewToSheetPlacer.V224.Infrastructure.ExternalEvents
 {
     /// <summary>
     /// Requests this tool's orchestrator handler can execute. Set on the

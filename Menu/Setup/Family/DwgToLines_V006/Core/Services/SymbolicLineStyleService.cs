@@ -1,8 +1,8 @@
 using Autodesk.Revit.DB;
 using System.Linq;
-using Revit26_Plugin.DwgToLines.V006.Core.Models;
+using Revit26_Plugin_Revised.DwgToLines.V006.Core.Models;
 
-namespace Revit26_Plugin.DwgToLines.V006.Core.Services
+namespace Revit26_Plugin_Revised.DwgToLines.V006.Core.Services
 {
     /// <summary>
     /// Resolves Symbolic Line Styles based on CAD layer names.

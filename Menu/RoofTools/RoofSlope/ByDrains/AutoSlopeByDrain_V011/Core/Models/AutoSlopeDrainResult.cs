@@ -23,7 +23,7 @@
 // collapsed into a single ExportedFilePath, since export is now one Excel
 // workbook, not two CSVs.
 
-namespace Revit26_Plugin.MultiRoofSlopeByDrain.V011.Core.Models
+namespace Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V011.Core.Models
 {
     public class AutoSlopeDrainResult
     {

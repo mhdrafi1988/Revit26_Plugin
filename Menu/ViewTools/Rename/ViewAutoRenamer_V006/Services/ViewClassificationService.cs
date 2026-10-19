@@ -1,9 +1,9 @@
 using Autodesk.Revit.DB;
-using Revit26_Plugin.ViewAutoRenamer.V006.Models;
+using Revit26_Plugin_Revised.ViewAutoRenamer.V006.Models;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.ViewAutoRenamer.V006.Services;
+namespace Revit26_Plugin_Revised.ViewAutoRenamer.V006.Services;
 
 /// <summary>
 /// Extracted from OpenViewAutoRenamerCommand — view classification and

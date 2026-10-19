@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Models
+namespace Revit26_Plugin_Revised.DwgToDetailLines.V014.Core.Models
 {
     /// <summary>
     /// One row in the Layers &amp; Hatches To Convert grid.

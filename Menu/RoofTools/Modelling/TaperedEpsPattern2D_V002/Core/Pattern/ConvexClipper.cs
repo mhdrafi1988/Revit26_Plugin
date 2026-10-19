@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V002.Core.Pattern
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V002.Core.Pattern
 {
     /// <summary>Clipping of convex polygons and infinite lines by half-planes.</summary>
     public static class ConvexClipper

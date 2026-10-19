@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.TaperedEpsPattern2D.V006.Core.Pattern;
+using Revit26_Plugin_Revised.TaperedEpsPattern2D.V006.Core.Pattern;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V006.Revit
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V006.Revit
 {
     /// <summary>Everything the writer needs, captured on the UI side before ExternalEvent.Raise().</summary>
     public sealed class PatternWriteRequest

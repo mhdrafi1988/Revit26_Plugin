@@ -1,6 +1,6 @@
 // =======================================================
 // File: InputParsing.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.Core.Services
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Services
 // New in V032 (plan 2.3). Text inputs are parsed and range-checked here so
 // the window can show an inline message and keep Run disabled with the
 // reason, instead of V030's silent red border on an int TextBox.
@@ -8,7 +8,7 @@
 
 using System.Globalization;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.Core.Services
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Services
 {
     public static class InputParsing
     {

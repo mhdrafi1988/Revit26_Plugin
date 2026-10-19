@@ -1,5 +1,5 @@
 // File: SectionFootprint.cs
-namespace Revit26_Plugin.APUS.V323.Models
+namespace Revit26_Plugin_Revised.APUS.V323.Models
 {
     /// <summary>
     /// Real rendered viewport footprint, always sourced from

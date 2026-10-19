@@ -1,10 +1,10 @@
 using Autodesk.Revit.DB;
-using Revit26_Plugin.AutoSlopeByPoint.V030.Core.Engine;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V030.Core.Engine;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V030.Infrastructure.Helpers
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V030.Infrastructure.Helpers
 {
     public static class DrainDetectionHelper
     {

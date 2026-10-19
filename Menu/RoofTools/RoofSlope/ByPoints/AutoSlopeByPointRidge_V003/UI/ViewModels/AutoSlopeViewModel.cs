@@ -1,6 +1,6 @@
 ﻿// =======================================================
 // File: AutoSlopeViewModel.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPointRidge.V003
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPointRidge.V003
 // Changes vs V028:
 //   - Ridge inputs: RidgeDetectionEnabled (toggle) and
 //     DrainGroupRadiusMm (drains closer than this are one group).
@@ -14,10 +14,10 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.AutoSlopeByPointRidge.V003.Core.Models;
-using Revit26_Plugin.AutoSlopeByPointRidge.V003.Infrastructure.ExternalEvents;
-using Revit26_Plugin.AutoSlopeByPointRidge.V003.Infrastructure.Helpers;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPointRidge.V003.Core.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPointRidge.V003.Infrastructure.ExternalEvents;
+using Revit26_Plugin_Revised.AutoSlopeByPointRidge.V003.Infrastructure.Helpers;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -25,7 +25,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 
-namespace Revit26_Plugin.AutoSlopeByPointRidge.V003.UI.ViewModels
+namespace Revit26_Plugin_Revised.AutoSlopeByPointRidge.V003.UI.ViewModels
 {
     public partial class AutoSlopeViewModel : ObservableObject
     {

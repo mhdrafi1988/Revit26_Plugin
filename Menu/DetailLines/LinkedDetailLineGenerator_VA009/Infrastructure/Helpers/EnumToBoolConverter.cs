@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace Revit26_Plugin.LinkedDetailLineGenerator.VA009.Infrastructure.Helpers
+namespace Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA009.Infrastructure.Helpers
 {
     /// <summary>
     /// Binds a RadioButton/ToggleButton's IsChecked to one value of an enum-typed

@@ -14,9 +14,9 @@ using Autodesk.Revit.UI;
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.Shared.Models;
-using Revit26_Plugin.WorksetManager.V013.Core.Models;
-using Revit26_Plugin.WorksetManager.V013.Core.Services;
+using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin_Revised.WorksetManager.V013.Core.Models;
+using Revit26_Plugin_Revised.WorksetManager.V013.Core.Services;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -26,7 +26,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Threading;
 
-namespace Revit26_Plugin.WorksetManager.V013.UI.ViewModels
+namespace Revit26_Plugin_Revised.WorksetManager.V013.UI.ViewModels
 {
     public partial class WorksetsViewModel : ObservableObject
     {

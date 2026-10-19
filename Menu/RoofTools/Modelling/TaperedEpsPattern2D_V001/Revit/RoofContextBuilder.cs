@@ -1,8 +1,8 @@
 using System.Linq;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.TaperedEpsPattern2D.V001.Core.Pattern;
+using Revit26_Plugin_Revised.TaperedEpsPattern2D.V001.Core.Pattern;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V001.Revit
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V001.Revit
 {
     /// <summary>Builds a <see cref="RoofContext"/>; checks 3 (footprint roof) and 4 (visible in view).</summary>
     public static class RoofContextBuilder

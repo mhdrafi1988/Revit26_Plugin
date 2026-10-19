@@ -1,6 +1,6 @@
 // =======================================================
 // File: AutoSlopeDrainHandler.cs + AutoSlopeDrainEventManager
-// Namespace: Revit26_Plugin.MultiRoofSlopeByDrain.V013.Infrastructure.ExternalEvents
+// Namespace: Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Infrastructure.ExternalEvents
 // Changes vs V012:
 //   - No static mutable MultiPayload: one pending job per handler, and
 //     Submit refuses a second job while one is pending.
@@ -12,9 +12,9 @@
 // =======================================================
 
 using Autodesk.Revit.UI;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.Shared.Services;
 
-namespace Revit26_Plugin.MultiRoofSlopeByDrain.V013.Infrastructure.ExternalEvents
+namespace Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Infrastructure.ExternalEvents
 {
     public sealed class AutoSlopeDrainHandler : IExternalEventHandler
     {

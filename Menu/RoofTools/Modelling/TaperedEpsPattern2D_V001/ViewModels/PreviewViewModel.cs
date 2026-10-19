@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using Revit26_Plugin.TaperedEpsPattern2D.V001.Core.Pattern;
+using Revit26_Plugin_Revised.TaperedEpsPattern2D.V001.Core.Pattern;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V001.ViewModels
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V001.ViewModels
 {
     /// <summary>State of the live 2D preview: the exact result that Run will write.</summary>
     public sealed partial class PreviewViewModel : ObservableObject

@@ -1,7 +1,7 @@
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI.Selection;
 
-namespace Revit26_Plugin.CreateSections.V013.Filters
+namespace Revit26_Plugin_Revised.CreateSections.V013.Filters
 {
     /// <summary>Unchanged from V07.</summary>
     public class StraightDetailLineSelectionFilter : ISelectionFilter

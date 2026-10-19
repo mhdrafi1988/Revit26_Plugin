@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V006.Revit
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V006.Revit
 {
     /// <summary>Lists filled region types, and creates the tool's own EPS2D_Fill_nn types when asked.</summary>
     public static class FillTypeProvider

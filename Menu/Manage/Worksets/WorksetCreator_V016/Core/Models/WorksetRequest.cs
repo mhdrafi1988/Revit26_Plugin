@@ -21,7 +21,7 @@
 //        thing a rename changes.
 // ==============================================
 
-namespace Revit26_Plugin.WorksetCreator.V016.Core.Models
+namespace Revit26_Plugin_Revised.WorksetCreator.V016.Core.Models
 {
     public sealed class WorksetRequest
     {

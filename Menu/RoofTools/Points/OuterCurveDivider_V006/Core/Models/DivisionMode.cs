@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.OuterCurveDivider.V006.Core.Models
+namespace Revit26_Plugin_Revised.OuterCurveDivider.V006.Core.Models
 {
     /// <summary>
     /// How a curved edge is divided.

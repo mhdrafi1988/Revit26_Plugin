@@ -6,7 +6,7 @@ using System.Linq;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 
-namespace Revit26_Plugin.IslandRoofSplitter.V002.Infrastructure.Helpers
+namespace Revit26_Plugin_Revised.IslandRoofSplitter.V002.Infrastructure.Helpers
 {
     public static class IslandHighlighter
     {

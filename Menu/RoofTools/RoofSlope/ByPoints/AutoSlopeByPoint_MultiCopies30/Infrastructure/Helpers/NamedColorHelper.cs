@@ -1,6 +1,6 @@
 // =======================================================
 // File: NamedColorHelper.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.MultiCopies30
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30
 // New in V026.
 // Purpose: Maps a named WPF color (System.Windows.Media.Colors,
 //          used for the Color dropdown in the UI) to the
@@ -16,7 +16,7 @@
 using System.Collections.Generic;
 using RevitColor = Autodesk.Revit.DB.Color;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.Infrastructure.Helpers
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30.Infrastructure.Helpers
 {
     public static class NamedColorHelper
     {

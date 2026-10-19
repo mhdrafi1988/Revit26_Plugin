@@ -2,13 +2,13 @@
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.APUS.V324.Services;
+using Revit26_Plugin_Revised.APUS.V324.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Revit26_Plugin.Utilities;
+using Revit26_Plugin_Revised.Utilities;
 
-namespace Revit26_Plugin.APUS.V324.Commands
+namespace Revit26_Plugin_Revised.APUS.V324.Commands
 {
     /// <summary>
     /// Revit command entry point. All Revit API calls happen here, on the

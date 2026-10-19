@@ -1,13 +1,13 @@
 // =======================================================
 // File: AutoSlopeConstants.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models
 // Replaces V030's Infrastructure/Helpers/AppConstants.cs. Moved into Core
 // so Core no longer depends on Infrastructure (V030 had that backwards).
 // Single source of defaults: AutoSlopeSettings initialises from these
 // (fixes V030 B2, where the settings POCO silently overrode them).
 // =======================================================
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models
 {
     public static class AutoSlopeConstants
     {

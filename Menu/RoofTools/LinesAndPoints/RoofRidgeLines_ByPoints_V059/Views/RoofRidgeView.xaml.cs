@@ -1,9 +1,9 @@
 using System.Windows;
 using MahApps.Metro.Controls;
-using Revit26_Plugin.Shared.Services;
-using Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V059.ViewModels;
+using Revit26_Plugin_Revised.Shared.Services;
+using Revit26_Plugin_Revised.RoofTools.LineAndPoints.RoofRidgeLines.V059.ViewModels;
 
-namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V059.Views
+namespace Revit26_Plugin_Revised.RoofTools.LineAndPoints.RoofRidgeLines.V059.Views
 {
     /// <summary>
     /// Code-behind for the Roof Ridge (Voronoi) tool window. Contains no logic beyond

@@ -1,6 +1,6 @@
 // =======================================================
 // File: MultiSlopeRunSummary.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.MultiCopies30
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30
 // Purpose: Aggregate result returned once by MultiSlopeVariantEngine
 //          via MultiSlopePayload.OnCompleted, after every active
 //          slope row has been processed (or the run aborted early
@@ -9,7 +9,7 @@
 
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.Core.Models
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30.Core.Models
 {
     public class MultiSlopeRunSummary
     {

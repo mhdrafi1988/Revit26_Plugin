@@ -12,12 +12,12 @@ Changes vs V017 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
     binding/command is the V017 one.
 =======================================================
 -->
-<Window x:Class="Revit26_Plugin.RoofTag.V018.RoofTagWindow"
+<Window x:Class="Revit26_Plugin_Revised.RoofTag.V018.RoofTagWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:svc="clr-namespace:Revit26_Plugin.Shared.Services"
-        xmlns:local="clr-namespace:Revit26_Plugin.RoofTag.V018"
-        xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
+        xmlns:svc="clr-namespace:Revit26_Plugin_Revised.Shared.Services"
+        xmlns:local="clr-namespace:Revit26_Plugin_Revised.RoofTag.V018"
+        xmlns:shell="clr-namespace:Revit26_Plugin_Revised.Shared.Controls"
         Title="{Binding Source={x:Static svc:ToolCatalog.RoofTag}, Path=Title, StringFormat='{}{0} (FaceRef)'}"
         Height="760" Width="560"
         MinHeight="760" MinWidth="560"

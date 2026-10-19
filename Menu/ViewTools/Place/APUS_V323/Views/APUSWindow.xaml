@@ -11,14 +11,14 @@ Changes vs V322 (layout only, per Revit_Plugin_UI_Standard.md):
   - No behaviour change — every binding/command is the V322 one.
 =======================================================
 -->
-<Window x:Class="Revit26_Plugin.APUS.V323.Views.AutoPlaceSectionsWindow"
+<Window x:Class="Revit26_Plugin_Revised.APUS.V323.Views.AutoPlaceSectionsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="clr-namespace:Revit26_Plugin.APUS.V323.Views"
-        xmlns:converters="clr-namespace:Revit26_Plugin.APUS.V323.Converters"
-        xmlns:shared="clr-namespace:Revit26_Plugin.Shared.Models"
-        xmlns:viewModels="clr-namespace:Revit26_Plugin.APUS.V323.ViewModels"
-        xmlns:models="clr-namespace:Revit26_Plugin.APUS.V323.Models"
+        xmlns:local="clr-namespace:Revit26_Plugin_Revised.APUS.V323.Views"
+        xmlns:converters="clr-namespace:Revit26_Plugin_Revised.APUS.V323.Converters"
+        xmlns:shared="clr-namespace:Revit26_Plugin_Revised.Shared.Models"
+        xmlns:viewModels="clr-namespace:Revit26_Plugin_Revised.APUS.V323.ViewModels"
+        xmlns:models="clr-namespace:Revit26_Plugin_Revised.APUS.V323.Models"
         Title="Auto Place Sections — V323"
         Height="800" Width="960"
         MinHeight="800" MinWidth="960"

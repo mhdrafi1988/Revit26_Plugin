@@ -10,7 +10,7 @@ using System;
 using System.IO;
 using System.Text.Json;
 
-namespace Revit26_Plugin.MultiRoofSlopeByDrain.V012.Infrastructure.Helpers
+namespace Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V012.Infrastructure.Helpers
 {
     /// <summary>Ported from AutoSlopeByPoint's CircleMarkerGroupSettings — persisted by Line Style NAME, not ElementId (project-specific, not portable).</summary>
     public class CircleMarkerGroupSettings

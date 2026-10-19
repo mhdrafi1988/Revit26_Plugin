@@ -3,11 +3,11 @@ using System.Windows.Interop;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.DetailLineClosedLoop.V003.UI.ViewModels;
-using Revit26_Plugin.DetailLineClosedLoop.V003.UI.Views;
-using Revit26_Plugin.Utilities;
+using Revit26_Plugin_Revised.DetailLineClosedLoop.V003.UI.ViewModels;
+using Revit26_Plugin_Revised.DetailLineClosedLoop.V003.UI.Views;
+using Revit26_Plugin_Revised.Utilities;
 
-namespace Revit26_Plugin.DetailLineClosedLoop.V003.Commands
+namespace Revit26_Plugin_Revised.DetailLineClosedLoop.V003.Commands
 {
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]

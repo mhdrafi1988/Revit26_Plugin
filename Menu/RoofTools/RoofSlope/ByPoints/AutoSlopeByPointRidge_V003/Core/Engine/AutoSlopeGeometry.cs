@@ -1,7 +1,7 @@
 using Autodesk.Revit.DB;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.AutoSlopeByPointRidge.V003.Core.Engine
+namespace Revit26_Plugin_Revised.AutoSlopeByPointRidge.V003.Core.Engine
 {
     public static class AutoSlopeGeometry
     {

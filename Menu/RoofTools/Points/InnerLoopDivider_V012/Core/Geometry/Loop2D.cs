@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.InnerLoopDivider.V012.Core.Geometry
+namespace Revit26_Plugin_Revised.InnerLoopDivider.V012.Core.Geometry
 {
     public sealed class Loop2D
     {

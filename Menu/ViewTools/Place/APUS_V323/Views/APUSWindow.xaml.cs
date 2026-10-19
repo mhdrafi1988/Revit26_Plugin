@@ -1,9 +1,9 @@
 // File: AutoPlaceSectionsWindow.xaml.cs
 using Autodesk.Revit.UI;
-using Revit26_Plugin.APUS.V323.Models;
-using Revit26_Plugin.APUS.V323.Services;
-using Revit26_Plugin.APUS.V323.ViewModels;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.APUS.V323.Models;
+using Revit26_Plugin_Revised.APUS.V323.Services;
+using Revit26_Plugin_Revised.APUS.V323.ViewModels;
+using Revit26_Plugin_Revised.Shared.Services;
 using System;
 using System.Linq;
 using System.Windows;
@@ -12,7 +12,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
 
-namespace Revit26_Plugin.APUS.V323.Views
+namespace Revit26_Plugin_Revised.APUS.V323.Views
 {
     public partial class AutoPlaceSectionsWindow : Window
     {

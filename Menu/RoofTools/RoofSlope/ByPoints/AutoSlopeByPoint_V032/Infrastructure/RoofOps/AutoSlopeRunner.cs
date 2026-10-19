@@ -1,6 +1,6 @@
 // =======================================================
 // File: AutoSlopeRunner.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.RoofOps
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.RoofOps
 // Replaces V030's 514-line AutoSlopeEngine with a thin orchestrator
 // (plan 1.3). Steps, in order:
 //   0. read-only checks before anything changes (D6)
@@ -21,13 +21,13 @@ using System.Linq;
 using System.Threading;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Core.Services;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.Helpers;
-using Revit26_Plugin.Shared.Models;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Services;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.Helpers;
+using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Services;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.RoofOps
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.RoofOps
 {
     internal static class AutoSlopeRunner
     {

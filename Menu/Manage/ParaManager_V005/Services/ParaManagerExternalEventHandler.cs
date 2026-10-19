@@ -1,9 +1,9 @@
 using Autodesk.Revit.UI;
-using Revit26_Plugin.ParaManager.V005.Models;
+using Revit26_Plugin_Revised.ParaManager.V005.Models;
 using System;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.ParaManager.V005.Services
+namespace Revit26_Plugin_Revised.ParaManager.V005.Services
 {
     /// <summary>
     /// Single IExternalEventHandler/ExternalEvent pair for ParaManager (suite default:

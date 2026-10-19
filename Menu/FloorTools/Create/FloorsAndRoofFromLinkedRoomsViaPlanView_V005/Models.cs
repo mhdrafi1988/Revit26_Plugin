@@ -3,7 +3,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Architecture;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V005
+namespace Revit26_Plugin_Revised.FloorsAndRoofFromLinkedRoomsViaPlanView.V005
 {
     /// <summary>A linked RVT document that contains at least one Room element.</summary>
     public class LinkedDocumentOption

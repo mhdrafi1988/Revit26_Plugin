@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.DwgStatistics.V005.Core.Models
+namespace Revit26_Plugin_Revised.DwgStatistics.V005.Core.Models
 {
     /// <summary>How serious an issue badge is; drives its colour.</summary>
     public enum IssueSeverity

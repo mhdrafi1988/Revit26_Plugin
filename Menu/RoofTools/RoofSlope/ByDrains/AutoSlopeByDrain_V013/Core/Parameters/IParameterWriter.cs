@@ -3,9 +3,9 @@
 // Ported unchanged from AutoSlopeByDrain V004.
 
 using Autodesk.Revit.DB;
-using Revit26_Plugin.MultiRoofSlopeByDrain.V013.Core.Models;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Core.Models;
 
-namespace Revit26_Plugin.MultiRoofSlopeByDrain.V013.Core.Parameters
+namespace Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Core.Parameters
 {
     public interface IParameterWriter
     {

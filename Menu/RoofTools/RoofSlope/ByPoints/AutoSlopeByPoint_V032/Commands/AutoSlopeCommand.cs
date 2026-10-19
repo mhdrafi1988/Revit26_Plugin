@@ -1,7 +1,7 @@
 // =======================================================
 // File: AutoSlopeCommand.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.Commands
-// Ribbon string: "Revit26_Plugin.AutoSlopeByPoint.V032.Commands.AutoSlopeCommand"
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Commands
+// Ribbon string: "Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Commands.AutoSlopeCommand"
 // Changes vs V030:
 //   - Body runs through ToolGuard.RunCommand (CLAUDE.md: whole body guarded).
 //   - If the window is already open it is brought to the front instead of
@@ -23,12 +23,12 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.RoofOps;
-using Revit26_Plugin.AutoSlopeByPoint.V032.UI.Views;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.RoofOps;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.UI.Views;
+using Revit26_Plugin_Revised.Shared.Services;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.Commands
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Commands
 {
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]

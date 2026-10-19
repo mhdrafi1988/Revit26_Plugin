@@ -8,7 +8,7 @@
 
 using System;
 
-namespace Revit26_Plugin.InnerLoopDivider.V012.Core.Geometry
+namespace Revit26_Plugin_Revised.InnerLoopDivider.V012.Core.Geometry
 {
     /// <summary>2D point / vector in plan.</summary>
     public readonly struct P2

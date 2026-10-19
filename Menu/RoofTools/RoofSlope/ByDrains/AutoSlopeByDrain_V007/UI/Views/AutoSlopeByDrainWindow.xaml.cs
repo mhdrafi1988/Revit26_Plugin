@@ -13,8 +13,8 @@
 //   ADDED   DrainCheckBox_PreviewMouseLeftButtonDown â€” blocks the DataGrid
 //     row-select cascade on checkbox click, per Rafi's DataGrid spec.
 
-using Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels;
-using Revit26_Plugin.Shared.Models; // LogEntry
+using Revit26_Plugin_Revised.AutoSlopeByDrain.V007.UI.ViewModels;
+using Revit26_Plugin_Revised.Shared.Models; // LogEntry
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -22,7 +22,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.Views
+namespace Revit26_Plugin_Revised.AutoSlopeByDrain.V007.UI.Views
 {
     public partial class AutoSlopeByDrainWindow : Window
     {

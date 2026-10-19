@@ -1,7 +1,7 @@
 using System;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.DetailLineClosedLoop.V002.Core.Geometry
+namespace Revit26_Plugin_Revised.DetailLineClosedLoop.V002.Core.Geometry
 {
     /// <summary>
     /// Finds where two (possibly non-overlapping) infinite lines would meet,

@@ -3,10 +3,10 @@ using System.Linq;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.LinkedDetailLineGenerator.VA009.UI.Views;
-using Revit26_Plugin.Utilities;
+using Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA009.UI.Views;
+using Revit26_Plugin_Revised.Utilities;
 
-namespace Revit26_Plugin.LinkedDetailLineGenerator.VA009.Commands
+namespace Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA009.Commands
 {
     /// <summary>
     /// Ribbon PushButton entry point. VA007 replaces VA006's "must be run from a

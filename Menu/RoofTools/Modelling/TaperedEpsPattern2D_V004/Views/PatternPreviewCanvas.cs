@@ -4,9 +4,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using Revit26_Plugin.TaperedEpsPattern2D.V004.Core.Pattern;
+using Revit26_Plugin_Revised.TaperedEpsPattern2D.V004.Core.Pattern;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V004.Views
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V004.Views
 {
     /// <summary>
     /// Live 2D preview. Draws exactly the segments of <see cref="Result"/> (what Run will create),

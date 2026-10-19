@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V059.Converters
+namespace Revit26_Plugin_Revised.RoofTools.LineAndPoints.RoofRidgeLines.V059.Converters
 {
     public class BoolToVisibilityConverter : IValueConverter
     {

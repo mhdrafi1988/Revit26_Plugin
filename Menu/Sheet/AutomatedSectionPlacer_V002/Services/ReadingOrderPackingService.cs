@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.AutomatedSectionPlacer.V002.Models;
+using Revit26_Plugin_Revised.AutomatedSectionPlacer.V002.Models;
 
-namespace Revit26_Plugin.AutomatedSectionPlacer.V002.Services
+namespace Revit26_Plugin_Revised.AutomatedSectionPlacer.V002.Services
 {
     /// <summary>
     /// Pure calculation service: packs selected views onto suggested sheets.

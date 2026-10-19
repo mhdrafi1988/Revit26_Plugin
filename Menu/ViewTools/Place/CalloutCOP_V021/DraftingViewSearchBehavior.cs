@@ -3,9 +3,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using Revit26_Plugin.CalloutCOP.V021.ViewModels;
+using Revit26_Plugin_Revised.CalloutCOP.V021.ViewModels;
 
-namespace Revit26_Plugin.CalloutCOP.V021.Views
+namespace Revit26_Plugin_Revised.CalloutCOP.V021.Views
 {
     /// <summary>
     /// Attached behavior powering the searchable popover on the shared

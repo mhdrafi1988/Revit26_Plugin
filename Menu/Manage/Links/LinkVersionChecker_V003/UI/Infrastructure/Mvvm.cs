@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace Revit26_Plugin.LinkVersionChecker_V003.UI.Infrastructure
+namespace Revit26_Plugin_Revised.LinkVersionChecker_V003.UI.Infrastructure
 {
     public abstract class ObservableObject : INotifyPropertyChanged
     {

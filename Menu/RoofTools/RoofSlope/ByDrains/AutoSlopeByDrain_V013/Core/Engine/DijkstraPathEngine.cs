@@ -23,7 +23,7 @@ using System.Diagnostics;
 using System.Threading;
 // V013: BuildGraph uses a plan grid (PlanGrid) instead of all pairs; same edges.
 
-namespace Revit26_Plugin.MultiRoofSlopeByDrain.V013.Core.Engine
+namespace Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Core.Engine
 {
     public enum EdgeRouteType { Straight, SameArc, TangentRoute }
 

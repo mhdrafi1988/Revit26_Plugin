@@ -10,10 +10,10 @@ Changes vs V013 (layout only, per Revit_Plugin_UI_Standard.md):
   - No behaviour change — every binding/command is the V013 one.
 =======================================================
 -->
-<Window x:Class="Revit26_Plugin.RefSectionHeadPlacer.V014.UI.Views.RefSectionHeadPlacerWindow"
+<Window x:Class="Revit26_Plugin_Revised.RefSectionHeadPlacer.V014.UI.Views.RefSectionHeadPlacerWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
+        xmlns:converters="clr-namespace:Revit26_Plugin_Revised.Shared.Models"
         Title="Reference Section Head Placer — V014"
         Height="860" Width="1180"
         MinHeight="860" MinWidth="1180"

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.DetailLineClosedLoop.V003.Core.Models
+namespace Revit26_Plugin_Revised.DetailLineClosedLoop.V003.Core.Models
 {
     /// <summary>
     /// Outcome of one run of the trim/merge/close pipeline — drives both the

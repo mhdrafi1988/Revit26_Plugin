@@ -1,13 +1,13 @@
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.ViewAutoRenamer.V006.Models;
-using Revit26_Plugin.ViewAutoRenamer.V006.ViewModels;
+using Revit26_Plugin_Revised.ViewAutoRenamer.V006.Models;
+using Revit26_Plugin_Revised.ViewAutoRenamer.V006.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Revit26_Plugin.ViewAutoRenamer.V006.Services;
+namespace Revit26_Plugin_Revised.ViewAutoRenamer.V006.Services;
 
 public class RenameViewsHandler : IExternalEventHandler
 {

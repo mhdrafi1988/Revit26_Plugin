@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Concurrent;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.Shared.Services;
 
-namespace Revit26_Plugin.DwgManager.V002.Core.Services
+namespace Revit26_Plugin_Revised.DwgManager.V002.Core.Services
 {
     /// <summary>
     /// Runs actions queued by the DWG Manager window inside the Revit API context. Several actions can

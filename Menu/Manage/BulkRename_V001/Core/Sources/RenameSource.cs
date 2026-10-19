@@ -1,12 +1,12 @@
 using Autodesk.Revit.DB;
-using Revit26_Plugin.BulkRename.V001.Core.Models;
-using Revit26_Plugin.BulkRename.V001.Core.Services;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.BulkRename.V001.Core.Models;
+using Revit26_Plugin_Revised.BulkRename.V001.Core.Services;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.BulkRename.V001.Core.Sources
+namespace Revit26_Plugin_Revised.BulkRename.V001.Core.Sources
 {
     /// <summary>
     /// One kind of project item Bulk Rename can rename. A source only finds its elements (<see cref="Collect"/>);

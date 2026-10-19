@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.DetailLineClosedLoop.V003.Core.Geometry;
+using Revit26_Plugin_Revised.DetailLineClosedLoop.V003.Core.Geometry;
 
-namespace Revit26_Plugin.DetailLineClosedLoop.V003.Core.Services
+namespace Revit26_Plugin_Revised.DetailLineClosedLoop.V003.Core.Services
 {
     /// <summary>
     /// Step 7 — validates that the processed curve set forms exactly one

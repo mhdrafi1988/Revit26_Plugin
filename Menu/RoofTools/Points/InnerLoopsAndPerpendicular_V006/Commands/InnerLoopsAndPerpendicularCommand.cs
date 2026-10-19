@@ -29,15 +29,15 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
-using Revit26_Plugin.InnerLoopsAndPerpendicular.V006.Core.Services;
-using Revit26_Plugin.InnerLoopsAndPerpendicular.V006.UI.ViewModels;
-using Revit26_Plugin.InnerLoopsAndPerpendicular.V006.UI.Views;
+using Revit26_Plugin_Revised.InnerLoopsAndPerpendicular.V006.Core.Services;
+using Revit26_Plugin_Revised.InnerLoopsAndPerpendicular.V006.UI.ViewModels;
+using Revit26_Plugin_Revised.InnerLoopsAndPerpendicular.V006.UI.Views;
 using System;
 using System.Linq;
 using System.Windows.Interop;
-using Revit26_Plugin.Utilities;
+using Revit26_Plugin_Revised.Utilities;
 
-namespace Revit26_Plugin.InnerLoopsAndPerpendicular.V006.Commands
+namespace Revit26_Plugin_Revised.InnerLoopsAndPerpendicular.V006.Commands
 {
     /// <summary>
     /// External command that launches the Inner Loops And Perpendicular tool.

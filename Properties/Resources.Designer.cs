@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Revit26_Plugin.Properties {
+namespace Revit26_Plugin_Revised.Properties {
     using System;
     
     

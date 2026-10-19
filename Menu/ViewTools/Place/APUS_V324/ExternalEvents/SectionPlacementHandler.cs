@@ -1,16 +1,16 @@
 // File: SectionPlacementHandler.cs
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.APUS.V324.Models;
-using Revit26_Plugin.APUS.V324.Services;
-using Revit26_Plugin.APUS.V324.Services.PlacingAlgorithms;
-using Revit26_Plugin.APUS.V324.ViewModels;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.APUS.V324.Models;
+using Revit26_Plugin_Revised.APUS.V324.Services;
+using Revit26_Plugin_Revised.APUS.V324.Services.PlacingAlgorithms;
+using Revit26_Plugin_Revised.APUS.V324.ViewModels;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.APUS.V324.ExternalEvents
+namespace Revit26_Plugin_Revised.APUS.V324.ExternalEvents
 {
     /// <summary>
     /// SINGLE SOURCE OF TRUTH for Revit document modification. All document

@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.TaperedEpsPattern2D.V006.Core.Pattern
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V006.Core.Pattern
 {
     /// <summary>All inputs of the 2D pattern engine. Lengths in metres, thickness in mm.</summary>
     public sealed record Pattern2DSettings

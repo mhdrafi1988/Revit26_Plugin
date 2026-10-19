@@ -4,10 +4,10 @@ using System.IO;
 using System.Linq;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.RoofTypeCreator.V003.Core.Models;
-using Revit26_Plugin.RoofTypeCreator.V003.Core.Services;
+using Revit26_Plugin_Revised.RoofTypeCreator.V003.Core.Models;
+using Revit26_Plugin_Revised.RoofTypeCreator.V003.Core.Services;
 
-namespace Revit26_Plugin.RoofTypeCreator.V003.Infrastructure.ExternalEvents
+namespace Revit26_Plugin_Revised.RoofTypeCreator.V003.Infrastructure.ExternalEvents
 {
     public class RoofTypeExternalEventHandler : IExternalEventHandler
     {

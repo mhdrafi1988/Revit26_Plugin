@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.ScheduleExportImport.V007.Core.Models
+namespace Revit26_Plugin_Revised.ScheduleExportImport.V007.Core.Models
 {
     public class ImportAnalysis
     {

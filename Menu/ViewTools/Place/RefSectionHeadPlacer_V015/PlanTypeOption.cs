@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.RefSectionHeadPlacer.V015.Core.Models
+namespace Revit26_Plugin_Revised.RefSectionHeadPlacer.V015.Core.Models
 {
     /// <summary>
     /// Bindable row for the Plan Type filter popover above Grid 1.

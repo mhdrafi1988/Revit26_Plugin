@@ -2,7 +2,7 @@ using Autodesk.Revit.DB;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.ParaManager.V005.Models
+namespace Revit26_Plugin_Revised.ParaManager.V005.Models
 {
     /// <summary>
     /// One Properties-palette parameter group a shared parameter can be bound under

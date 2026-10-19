@@ -14,16 +14,16 @@
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.MultiplePoints.V003.Core.Models;
-using Revit26_Plugin.MultiplePoints.V003.Core.Services;
-using Revit26_Plugin.MultiplePoints.V003.Infrastructure.ExternalEvents;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.MultiplePoints.V003.Core.Models;
+using Revit26_Plugin_Revised.MultiplePoints.V003.Core.Services;
+using Revit26_Plugin_Revised.MultiplePoints.V003.Infrastructure.ExternalEvents;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 
-namespace Revit26_Plugin.MultiplePoints.V003.UI.ViewModels
+namespace Revit26_Plugin_Revised.MultiplePoints.V003.UI.ViewModels
 {
     public partial class MultiplePointsViewModel : ObservableObject
     {

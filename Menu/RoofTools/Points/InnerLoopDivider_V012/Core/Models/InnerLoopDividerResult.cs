@@ -6,10 +6,10 @@
 // notes. PointsAdded keeps its V011 meaning (-1 on failure).
 // =======================================================
 
-using Revit26_Plugin.InnerLoopDivider.V012.Core.Geometry;
+using Revit26_Plugin_Revised.InnerLoopDivider.V012.Core.Geometry;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.InnerLoopDivider.V012.Core.Models
+namespace Revit26_Plugin_Revised.InnerLoopDivider.V012.Core.Models
 {
     public class InnerLoopDividerResult
     {

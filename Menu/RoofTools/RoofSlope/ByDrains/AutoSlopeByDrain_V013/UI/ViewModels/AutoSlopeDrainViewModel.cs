@@ -1,6 +1,6 @@
 ﻿// =======================================================
 // File: AutoSlopeDrainViewModel.cs
-// Namespace: Revit26_Plugin.MultiRoofSlopeByDrain.V013.UI.ViewModels
+// Namespace: Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.UI.ViewModels
 // Rewritten for V013 on Shared ToolViewModelBase: IsRunning / Progress /
 // SummaryText, the log collection (2,000 cap) and the Copy / Clear log
 // commands come from the base class. Layout follows AutoSlopeByPoint V032.
@@ -34,13 +34,13 @@ using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Events;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.MultiRoofSlopeByDrain.V013.Core.Engine;
-using Revit26_Plugin.MultiRoofSlopeByDrain.V013.Core.Models;
-using Revit26_Plugin.MultiRoofSlopeByDrain.V013.Infrastructure.ExternalEvents;
-using Revit26_Plugin.MultiRoofSlopeByDrain.V013.Infrastructure.Helpers;
-using Revit26_Plugin.Shared.Models;
-using Revit26_Plugin.Shared.Services;
-using Revit26_Plugin.Shared.ViewModels;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Core.Engine;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Core.Models;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Infrastructure.ExternalEvents;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Infrastructure.Helpers;
+using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Services;
+using Revit26_Plugin_Revised.Shared.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -54,7 +54,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Threading;
 
-namespace Revit26_Plugin.MultiRoofSlopeByDrain.V013.UI.ViewModels
+namespace Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.UI.ViewModels
 {
     public enum DrainRunState
     {

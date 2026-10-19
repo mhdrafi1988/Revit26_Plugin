@@ -1,11 +1,11 @@
 // ==============================================
 // File: WorksetCreatorTool.cs
-// Layer: tool root (namespace Revit26_Plugin.WorksetCreator.V015)
+// Layer: tool root (namespace Revit26_Plugin_Revised.WorksetCreator.V015)
 // Workset Creator V015.
 //
 // The tool's own name and version, so this folder compiles and runs with no
 // edit to Shared/Services/ToolCatalog.cs. Every type under
-// Revit26_Plugin.WorksetCreator.V015 resolves it without a using directive.
+// Revit26_Plugin_Revised.WorksetCreator.V015 resolves it without a using directive.
 //
 // Adding a "Workset Creator" entry to ToolCatalog later is still worth doing —
 // ToolGuard then decorates the window title with the version and names this
@@ -13,7 +13,7 @@
 // on it. Keep the two in step if you add it.
 // ==============================================
 
-namespace Revit26_Plugin.WorksetCreator.V015
+namespace Revit26_Plugin_Revised.WorksetCreator.V015
 {
     internal static class WorksetCreatorTool
     {

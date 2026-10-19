@@ -1,10 +1,10 @@
 using Autodesk.Revit.DB;
-using Revit26_Plugin.SheetAutoRearrange.V028.Core.Models;
+using Revit26_Plugin_Revised.SheetAutoRearrange.V028.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.SheetAutoRearrange.V028.Core.Services
+namespace Revit26_Plugin_Revised.SheetAutoRearrange.V028.Core.Services
 {
     /// <summary>
     /// V014 NEW: replaces ShelfPackingService entirely. Implements the

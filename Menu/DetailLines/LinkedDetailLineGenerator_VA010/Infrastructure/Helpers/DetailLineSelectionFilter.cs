@@ -1,7 +1,7 @@
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI.Selection;
 
-namespace Revit26_Plugin.LinkedDetailLineGenerator.VA010.Infrastructure.Helpers
+namespace Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA010.Infrastructure.Helpers
 {
     /// <summary>Restricts PickObject (RectangleMarker's "Pick Line" alignment button)
     /// to Detail Line elements only, per suite convention (see

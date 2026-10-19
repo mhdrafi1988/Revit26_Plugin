@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.DetailLineClosedLoop.V003.Core.Models;
-using Revit26_Plugin.DetailLineClosedLoop.V003.Core.Services;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.DetailLineClosedLoop.V003.Core.Models;
+using Revit26_Plugin_Revised.DetailLineClosedLoop.V003.Core.Services;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.DetailLineClosedLoop.V003.Core.Engine
+namespace Revit26_Plugin_Revised.DetailLineClosedLoop.V003.Core.Engine
 {
     /// <summary>Orchestrates steps 1–7 in order, logging progress/counts at each stage.</summary>
     public static class DetailLineClosedLoopEngine

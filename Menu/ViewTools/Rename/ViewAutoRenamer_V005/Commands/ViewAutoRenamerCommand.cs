@@ -1,13 +1,13 @@
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.ViewAutoRenamer.V005.Services;
-using Revit26_Plugin.ViewAutoRenamer.V005.ViewModels;
-using Revit26_Plugin.ViewAutoRenamer.V005.Views;
+using Revit26_Plugin_Revised.ViewAutoRenamer.V005.Services;
+using Revit26_Plugin_Revised.ViewAutoRenamer.V005.ViewModels;
+using Revit26_Plugin_Revised.ViewAutoRenamer.V005.Views;
 using System.Diagnostics;
-using Revit26_Plugin.Utilities;
+using Revit26_Plugin_Revised.Utilities;
 
-namespace Revit26_Plugin.ViewAutoRenamer.V005.Commands;
+namespace Revit26_Plugin_Revised.ViewAutoRenamer.V005.Commands;
 
 /// <summary>
 /// Opens the window and nothing else.

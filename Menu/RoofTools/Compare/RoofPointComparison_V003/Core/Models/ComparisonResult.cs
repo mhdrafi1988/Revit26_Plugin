@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.RoofPointComparison.V003.Core.Models
+namespace Revit26_Plugin_Revised.RoofPointComparison.V003.Core.Models
 {
     /// <summary>Output of RoofComparisonEngine.Compare — the full entry list plus rolled-up metrics.</summary>
     public class ComparisonResult

@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.RoofViewFocus.V003.Core.Models
+namespace Revit26_Plugin_Revised.RoofViewFocus.V003.Core.Models
 {
     /// <summary>Display + lookup data for one selected roof.</summary>
     public sealed class RoofInfo

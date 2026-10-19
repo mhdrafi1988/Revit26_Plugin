@@ -1,8 +1,8 @@
 // File: TitleBlockItemViewModel.cs
 using Autodesk.Revit.DB;
-using Revit26_Plugin.APUS.V324.ViewModels;
+using Revit26_Plugin_Revised.APUS.V324.ViewModels;
 
-namespace Revit26_Plugin.APUS.V324.Models
+namespace Revit26_Plugin_Revised.APUS.V324.Models
 {
     public class TitleBlockItemViewModel : BaseViewModel
     {

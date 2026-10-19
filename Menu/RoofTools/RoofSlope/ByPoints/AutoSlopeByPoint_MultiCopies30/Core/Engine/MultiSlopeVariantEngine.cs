@@ -1,6 +1,6 @@
 // =======================================================
 // File: MultiSlopeVariantEngine.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.MultiCopies30
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30
 // Purpose: Orchestrates the Multi-Slope Roof Variants feature.
 //
 // Transaction structure (standardized 2026-09 — AutoSlopeParameterWriter
@@ -24,15 +24,15 @@
 
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.Core.Models;
-using Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.Infrastructure.Helpers;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30.Core.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30.Infrastructure.Helpers;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.Core.Engine
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30.Core.Engine
 {
     public static class MultiSlopeVariantEngine
     {

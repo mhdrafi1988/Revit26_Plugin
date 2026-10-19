@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.ExportDwgToFolder.V003.Core.Models;
+using Revit26_Plugin_Revised.ExportDwgToFolder.V003.Core.Models;
 
-namespace Revit26_Plugin.ExportDwgToFolder.V003.Core.Services
+namespace Revit26_Plugin_Revised.ExportDwgToFolder.V003.Core.Services
 {
     /// <summary>
     /// Scans the document for the CAD-link and CAD-import instances inside a

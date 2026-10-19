@@ -5,9 +5,9 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using ClosedXML.Excel;
-using Revit26_Plugin.LinkVersionChecker_V003.Core.Models;
+using Revit26_Plugin_Revised.LinkVersionChecker_V003.Core.Models;
 
-namespace Revit26_Plugin.LinkVersionChecker_V003.Services
+namespace Revit26_Plugin_Revised.LinkVersionChecker_V003.Services
 {
     /// <summary>
     /// Formatted .xlsx (ClosedXML) with Summary / Links / Findings sheets.

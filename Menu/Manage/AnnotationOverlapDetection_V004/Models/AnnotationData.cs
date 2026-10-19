@@ -1,6 +1,6 @@
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.AnnotationOverlapDetection.V004.Models
+namespace Revit26_Plugin_Revised.AnnotationOverlapDetection.V004.Models
 {
     /// <summary>
     /// Internal working data for a single annotation element, collected during

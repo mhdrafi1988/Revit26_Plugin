@@ -39,11 +39,11 @@
 using Autodesk.Revit.UI;
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.Shared.Models;
-using Revit26_Plugin.Shared.ViewModels;
-using Revit26_Plugin.WorksetCreator.V016.Core.Models;
-using Revit26_Plugin.WorksetCreator.V016.Core.Services;
-using Revit26_Plugin.WorksetCreator.V016.UI;
+using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin_Revised.Shared.ViewModels;
+using Revit26_Plugin_Revised.WorksetCreator.V016.Core.Models;
+using Revit26_Plugin_Revised.WorksetCreator.V016.Core.Services;
+using Revit26_Plugin_Revised.WorksetCreator.V016.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
@@ -53,7 +53,7 @@ using System.Linq;
 using System.Windows.Data;
 using System.Windows.Threading;
 
-namespace Revit26_Plugin.WorksetCreator.V016.UI.ViewModels
+namespace Revit26_Plugin_Revised.WorksetCreator.V016.UI.ViewModels
 {
     public partial class WorksetCreatorViewModel : ToolViewModelBase
     {

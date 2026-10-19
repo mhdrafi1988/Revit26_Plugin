@@ -15,7 +15,7 @@ using Autodesk.Revit.DB;
 using System;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.AutoSlopeByDrain.V007.Core.Models
+namespace Revit26_Plugin_Revised.AutoSlopeByDrain.V007.Core.Models
 {
     public class DrainVertexData
     {

@@ -11,7 +11,7 @@ using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.UI.Views
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30.UI.Views
 {
     public class ColorStringToBrushConverter : IValueConverter
     {

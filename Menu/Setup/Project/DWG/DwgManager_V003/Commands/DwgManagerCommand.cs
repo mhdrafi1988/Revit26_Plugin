@@ -3,11 +3,11 @@ using System.Windows.Interop;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.DwgManager.V003.UI.ViewModels;
-using Revit26_Plugin.DwgManager.V003.UI.Views;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.DwgManager.V003.UI.ViewModels;
+using Revit26_Plugin_Revised.DwgManager.V003.UI.Views;
+using Revit26_Plugin_Revised.Shared.Services;
 
-namespace Revit26_Plugin.DwgManager.V003.Commands
+namespace Revit26_Plugin_Revised.DwgManager.V003.Commands
 {
     // V003 (2026-10-12) — delete fix, bumped from V002:
     //   • Row "Delete" never deleted: DwgGrid had RowDetailsVisibilityMode="Collapsed", which overrides

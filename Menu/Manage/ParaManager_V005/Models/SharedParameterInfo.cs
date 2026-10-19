@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.ParaManager.V005.Models
+namespace Revit26_Plugin_Revised.ParaManager.V005.Models
 {
     /// <summary>
     /// Represents a single definition line parsed from a Revit shared parameter (.txt) file.

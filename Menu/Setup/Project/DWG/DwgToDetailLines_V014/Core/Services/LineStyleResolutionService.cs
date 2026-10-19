@@ -1,8 +1,8 @@
 using Autodesk.Revit.UI;
 using System.Collections.Generic;
-using Revit26_Plugin.DwgToDetailLines.V014.Core.Models;
+using Revit26_Plugin_Revised.DwgToDetailLines.V014.Core.Models;
 
-namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
+namespace Revit26_Plugin_Revised.DwgToDetailLines.V014.Core.Services
 {
     /// <summary>
     /// Asks Create / Skip for a layer whose line style does not exist. Besides the per-layer

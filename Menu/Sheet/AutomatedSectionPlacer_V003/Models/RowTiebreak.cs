@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.AutomatedSectionPlacer.V003.Models
+namespace Revit26_Plugin_Revised.AutomatedSectionPlacer.V003.Models
 {
     /// <summary>
     /// Secondary sort applied to views that land in the same row band

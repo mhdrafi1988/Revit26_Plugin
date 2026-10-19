@@ -9,10 +9,10 @@ using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Media;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.PlanFromScopeBox.V006.UI.ViewModels;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.PlanFromScopeBox.V006.UI.ViewModels;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.PlanFromScopeBox.V006.UI.Views
+namespace Revit26_Plugin_Revised.PlanFromScopeBox.V006.UI.Views
 {
     /// <summary>
     /// Modeless window for the Plan From Scope Box tool. Parented to the Revit main window.

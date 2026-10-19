@@ -15,11 +15,11 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using System.Collections.Generic;
 using System.Linq;
-using Revit26_Plugin.DwgToDetailLines.V013.Core.Models;
-using Revit26_Plugin.DwgToDetailLines.V013.Infrastructure.Helpers;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.DwgToDetailLines.V013.Core.Models;
+using Revit26_Plugin_Revised.DwgToDetailLines.V013.Infrastructure.Helpers;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.DwgToDetailLines.V013.Core.Services
+namespace Revit26_Plugin_Revised.DwgToDetailLines.V013.Core.Services
 {
     public class DetailLineConversionService
     {

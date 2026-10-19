@@ -1,17 +1,17 @@
 ﻿// ==============================================
 // File: DwgToDetailLinesCommand.cs
 // Layer: Commands
-// Namespace: Revit26_Plugin.DwgToDetailLines.V013.Commands
+// Namespace: Revit26_Plugin_Revised.DwgToDetailLines.V013.Commands
 // ==============================================
 
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.DwgToDetailLines.V013.Infrastructure.Helpers;
-using Revit26_Plugin.DwgToDetailLines.V013.UI.Views;
-using Revit26_Plugin.Utilities;
+using Revit26_Plugin_Revised.DwgToDetailLines.V013.Infrastructure.Helpers;
+using Revit26_Plugin_Revised.DwgToDetailLines.V013.UI.Views;
+using Revit26_Plugin_Revised.Utilities;
 
-namespace Revit26_Plugin.DwgToDetailLines.V013.Commands
+namespace Revit26_Plugin_Revised.DwgToDetailLines.V013.Commands
 {
     /// <summary>
     /// Entry point for the DWG to Detail Lines tool.

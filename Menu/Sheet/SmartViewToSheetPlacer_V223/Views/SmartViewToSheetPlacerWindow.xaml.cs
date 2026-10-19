@@ -5,10 +5,10 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.SmartViewToSheetPlacer.V223.ViewModels;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.SmartViewToSheetPlacer.V223.ViewModels;
+using Revit26_Plugin_Revised.Shared.Services;
 
-namespace Revit26_Plugin.SmartViewToSheetPlacer.V223.Views
+namespace Revit26_Plugin_Revised.SmartViewToSheetPlacer.V223.Views
 {
     /// <summary>
     /// Code-behind is intentionally minimal — all behavior is driven by

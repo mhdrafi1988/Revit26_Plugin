@@ -1,6 +1,6 @@
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.AutomatedSectionPlacer.V003.Models
+namespace Revit26_Plugin_Revised.AutomatedSectionPlacer.V003.Models
 {
     /// <summary>
     /// Represents a titleblock family/type available for new sheets, along with

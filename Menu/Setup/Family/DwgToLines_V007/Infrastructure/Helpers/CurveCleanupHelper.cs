@@ -2,7 +2,7 @@ using Autodesk.Revit.DB;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.DwgToLines.V007.Infrastructure.Helpers
+namespace Revit26_Plugin_Revised.DwgToLines.V007.Infrastructure.Helpers
 {
     public static class CurveCleanupHelper
     {

@@ -8,7 +8,7 @@
 		<PackageId />
 		<AssemblyName>Revit26_Plugin</AssemblyName>
 		<!-- Plugin version (SemVer). Per-tool versions live in Shared/Services/ToolCatalog.cs. -->
-		<Version>3.10.2</Version>
+		<Version>4.0.0</Version>
 		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\51</BaseOutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

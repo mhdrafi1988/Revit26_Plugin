@@ -2,9 +2,9 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using System.Collections.Generic;
 using System.Linq;
-using Revit26_Plugin.DwgToDetailLines.V014.Core.Models;
+using Revit26_Plugin_Revised.DwgToDetailLines.V014.Core.Models;
 
-namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
+namespace Revit26_Plugin_Revised.DwgToDetailLines.V014.Core.Services
 {
     public class CadImportCollectorService
     {

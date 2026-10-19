@@ -1,5 +1,5 @@
-using Revit26_Plugin.SheetAutoRearrange.V028.Core.Models;
-using Revit26_Plugin.SheetAutoRearrange.V028.UI.ViewModels;
+using Revit26_Plugin_Revised.SheetAutoRearrange.V028.Core.Models;
+using Revit26_Plugin_Revised.SheetAutoRearrange.V028.UI.ViewModels;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
@@ -8,9 +8,9 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.Shared.Services;
 
-namespace Revit26_Plugin.SheetAutoRearrange.V028.UI.Views
+namespace Revit26_Plugin_Revised.SheetAutoRearrange.V028.UI.Views
 {
     public partial class SheetAutoRearrangeWindow : Window
     {

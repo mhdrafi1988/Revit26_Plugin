@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V005.Revit
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V005.Revit
 {
     /// <summary>Collects the line styles usable for detail lines and finds the per-layer defaults.</summary>
     public static class LineStyleProvider

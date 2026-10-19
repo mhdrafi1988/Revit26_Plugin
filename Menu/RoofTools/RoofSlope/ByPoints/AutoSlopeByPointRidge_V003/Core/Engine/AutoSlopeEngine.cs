@@ -1,6 +1,6 @@
 // =======================================================
 // File: AutoSlopeEngine.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPointRidge.V003
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPointRidge.V003
 // Changes vs V028:
 //   - RIDGE RULE (see RidgeEngine.cs): drains are clustered into
 //     groups, every vertex is assigned to the basin of its nearest
@@ -21,15 +21,15 @@
 
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.AutoSlopeByPointRidge.V003.Core.Models;
-using Revit26_Plugin.AutoSlopeByPointRidge.V003.Core.Parameters;
-using Revit26_Plugin.AutoSlopeByPointRidge.V003.Infrastructure.Helpers;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPointRidge.V003.Core.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPointRidge.V003.Core.Parameters;
+using Revit26_Plugin_Revised.AutoSlopeByPointRidge.V003.Infrastructure.Helpers;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.AutoSlopeByPointRidge.V003.Core.Engine
+namespace Revit26_Plugin_Revised.AutoSlopeByPointRidge.V003.Core.Engine
 {
     public static class AutoSlopeEngine
     {

@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.BulkRename.V001.Core.Models
+namespace Revit26_Plugin_Revised.BulkRename.V001.Core.Models
 {
     /// <summary>State of one row in the Bulk Rename grid.</summary>
     public enum RenameStatus

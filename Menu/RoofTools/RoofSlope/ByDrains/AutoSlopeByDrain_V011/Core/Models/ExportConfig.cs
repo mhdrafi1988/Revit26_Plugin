@@ -19,7 +19,7 @@
 
 using System;
 
-namespace Revit26_Plugin.MultiRoofSlopeByDrain.V011.Core.Models
+namespace Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V011.Core.Models
 {
     public class ExportConfig
     {

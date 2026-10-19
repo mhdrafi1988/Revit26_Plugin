@@ -20,12 +20,12 @@ Changes vs V008:
   - No inline colours: every brush is a SharedStyles token (Transparent aside).
 =======================================================
 -->
-<Window x:Class="Revit26_Plugin.BubbleAutoRenumber.V009.UI.Views.BubbleAutoRenumberWindow"
+<Window x:Class="Revit26_Plugin_Revised.BubbleAutoRenumber.V009.UI.Views.BubbleAutoRenumberWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:svc="clr-namespace:Revit26_Plugin.Shared.Services"
-        xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
-        xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
+        xmlns:svc="clr-namespace:Revit26_Plugin_Revised.Shared.Services"
+        xmlns:shell="clr-namespace:Revit26_Plugin_Revised.Shared.Controls"
+        xmlns:converters="clr-namespace:Revit26_Plugin_Revised.Shared.Models"
         Title="{Binding Source={x:Static svc:ToolCatalog.BubbleAutoRenumberV009}, Path=Title}"
         Width="660" Height="780"
         MinWidth="560" MinHeight="620"

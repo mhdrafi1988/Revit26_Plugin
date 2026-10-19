@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text;
 using Autodesk.Revit.UI;
 
-namespace Revit26_Plugin.Menu.Ribbon
+namespace Revit26_Plugin_Revised.Menu.Ribbon
 {
     /// <summary>
     /// Lays a flat list of ribbon items (push buttons and/or pulldown buttons)

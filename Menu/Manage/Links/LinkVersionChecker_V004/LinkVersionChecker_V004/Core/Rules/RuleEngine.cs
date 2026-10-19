@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Revit26_Plugin.LinkVersionChecker_V004.Core.Models;
+using Revit26_Plugin_Revised.LinkVersionChecker_V004.Core.Models;
 
-namespace Revit26_Plugin.LinkVersionChecker_V004.Core.Rules
+namespace Revit26_Plugin_Revised.LinkVersionChecker_V004.Core.Rules
 {
     /// <summary>Data every rule can see.</summary>
     public sealed class RuleContext

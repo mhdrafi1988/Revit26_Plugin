@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.ExportDwgToFolder.V003.UI.ViewModels
+namespace Revit26_Plugin_Revised.ExportDwgToFolder.V003.UI.ViewModels
 {
     /// <summary>State of one progress bar in the footer.</summary>
     public enum PhaseState

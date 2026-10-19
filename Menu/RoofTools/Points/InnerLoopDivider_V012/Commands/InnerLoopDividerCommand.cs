@@ -16,15 +16,15 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
-using Revit26_Plugin.InnerLoopDivider.V012.Infrastructure.Revit;
-using Revit26_Plugin.InnerLoopDivider.V012.UI.ViewModels;
-using Revit26_Plugin.InnerLoopDivider.V012.UI.Views;
-using Revit26_Plugin.Utilities;
+using Revit26_Plugin_Revised.InnerLoopDivider.V012.Infrastructure.Revit;
+using Revit26_Plugin_Revised.InnerLoopDivider.V012.UI.ViewModels;
+using Revit26_Plugin_Revised.InnerLoopDivider.V012.UI.Views;
+using Revit26_Plugin_Revised.Utilities;
 using System;
 using System.Linq;
 using System.Windows.Interop;
 
-namespace Revit26_Plugin.InnerLoopDivider.V012.Commands
+namespace Revit26_Plugin_Revised.InnerLoopDivider.V012.Commands
 {
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]

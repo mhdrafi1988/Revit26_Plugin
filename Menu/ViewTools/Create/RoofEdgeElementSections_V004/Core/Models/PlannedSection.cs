@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.RoofEdgeElementSections.V004
+namespace Revit26_Plugin_Revised.RoofEdgeElementSections.V004
 {
     /// <summary>
     /// One row of the Planned Sections grid: one detected cluster of linked elements

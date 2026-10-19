@@ -12,10 +12,10 @@ Changes vs V008 (layout only, per Revit_Plugin_UI_Standard.md):
   - No behaviour change — every binding/command is the V008 one.
 =======================================================
 -->
-<Window x:Class="Revit26_Plugin.DtlLineDim.V009.UI.Views.DtlLineDimWindow"
+<Window x:Class="Revit26_Plugin_Revised.DtlLineDim.V009.UI.Views.DtlLineDimWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
+        xmlns:converters="clr-namespace:Revit26_Plugin_Revised.Shared.Models"
         Title="Detail Line Dimension — V009"
         Height="680" Width="560"
         MinHeight="680" MinWidth="560"

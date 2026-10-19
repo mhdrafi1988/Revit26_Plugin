@@ -1,6 +1,6 @@
 // =======================================================
 // File: AutoSlopeByPointWindow.xaml.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.UI.Views
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.UI.Views
 // Changes vs V030:
 //   - Owner set to Revit's main window via WindowInteropHelper (CLAUDE.md).
 //   - One window at a time: the command brings an open window to the front.
@@ -20,11 +20,11 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models;
-using Revit26_Plugin.AutoSlopeByPoint.V032.UI.ViewModels;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.UI.ViewModels;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.UI.Views
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.UI.Views
 {
     public partial class AutoSlopeByPointWindow : Window
     {

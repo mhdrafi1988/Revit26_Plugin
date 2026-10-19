@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace Revit26_Plugin.APUS.V324.ViewModels
+namespace Revit26_Plugin_Revised.APUS.V324.ViewModels
 {
     public abstract class BaseViewModel : INotifyPropertyChanged
     {

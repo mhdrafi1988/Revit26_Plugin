@@ -1,9 +1,9 @@
-using Revit26_Plugin.ViewAutoRenamer.V006.Models;
+using Revit26_Plugin_Revised.ViewAutoRenamer.V006.Models;
 using System;
 using System.IO;
 using System.Text.Json;
 
-namespace Revit26_Plugin.ViewAutoRenamer.V006.Services;
+namespace Revit26_Plugin_Revised.ViewAutoRenamer.V006.Services;
 
 public static class ViewAutoRenamerSettingsService
 {

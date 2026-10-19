@@ -1,6 +1,6 @@
 using System;
 
-namespace Revit26_Plugin.DwgStatistics.V005.Core.Models
+namespace Revit26_Plugin_Revised.DwgStatistics.V005.Core.Models
 {
     /// <summary>
     /// Title, version and limits of the tool. Kept local instead of in Shared ToolCatalog so this tool

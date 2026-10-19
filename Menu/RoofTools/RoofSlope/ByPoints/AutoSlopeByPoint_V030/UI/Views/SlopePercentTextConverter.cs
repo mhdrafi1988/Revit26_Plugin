@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V030.UI.Views
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V030.UI.Views
 {
     /// <summary>
     /// Backs the editable Slope &gt; Percentage ComboBox. Formats the bound

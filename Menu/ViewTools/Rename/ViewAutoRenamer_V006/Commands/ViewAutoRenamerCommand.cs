@@ -1,15 +1,15 @@
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.ViewAutoRenamer.V006.Models;
-using Revit26_Plugin.ViewAutoRenamer.V006.Services;
-using Revit26_Plugin.ViewAutoRenamer.V006.ViewModels;
-using Revit26_Plugin.ViewAutoRenamer.V006.Views;
+using Revit26_Plugin_Revised.ViewAutoRenamer.V006.Models;
+using Revit26_Plugin_Revised.ViewAutoRenamer.V006.Services;
+using Revit26_Plugin_Revised.ViewAutoRenamer.V006.ViewModels;
+using Revit26_Plugin_Revised.ViewAutoRenamer.V006.Views;
 using System.Collections.Generic;
 using System.Linq;
-using Revit26_Plugin.Utilities;
+using Revit26_Plugin_Revised.Utilities;
 
-namespace Revit26_Plugin.ViewAutoRenamer.V006.Commands;
+namespace Revit26_Plugin_Revised.ViewAutoRenamer.V006.Commands;
 
 [Transaction(TransactionMode.Manual)]
 [Regeneration(RegenerationOption.Manual)]

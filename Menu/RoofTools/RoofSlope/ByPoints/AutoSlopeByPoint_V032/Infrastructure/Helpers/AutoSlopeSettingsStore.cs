@@ -1,6 +1,6 @@
 // =======================================================
 // File: AutoSlopeSettingsStore.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.Helpers
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.Helpers
 // (Named AutoSlopeSettingsStore, not SettingsService, to avoid clashing with
 // Shared.Services.SettingsService where both namespaces are imported.)
 // Load/save AutoSlopeSettings as JSON (try/catch, defaults on failure —
@@ -12,9 +12,9 @@
 using System;
 using System.IO;
 using System.Text.Json;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.Helpers
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.Helpers
 {
     public static class AutoSlopeSettingsStore
     {

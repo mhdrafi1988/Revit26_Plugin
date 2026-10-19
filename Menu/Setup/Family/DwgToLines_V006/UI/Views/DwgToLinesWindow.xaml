@@ -12,11 +12,11 @@ Changes vs V005 (layout only, per Revit_Plugin_UI_Standard.md):
   - No behaviour change — every binding/command is the V005 one.
 =======================================================
 -->
-<Window x:Class="Revit26_Plugin.DwgToLines.V006.UI.Views.DwgToLinesWindow"
+<Window x:Class="Revit26_Plugin_Revised.DwgToLines.V006.UI.Views.DwgToLinesWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:shared="clr-namespace:Revit26_Plugin.Shared.Models"
-        xmlns:local="clr-namespace:Revit26_Plugin.DwgToLines.V006.Infrastructure.Helpers"
+        xmlns:shared="clr-namespace:Revit26_Plugin_Revised.Shared.Models"
+        xmlns:local="clr-namespace:Revit26_Plugin_Revised.DwgToLines.V006.Infrastructure.Helpers"
         Title="DWG to Lines — V006"
         Width="560" Height="640"
         MinWidth="560" MinHeight="640"

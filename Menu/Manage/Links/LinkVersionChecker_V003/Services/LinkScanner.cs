@@ -7,11 +7,11 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.LinkVersionChecker_V003.Core.Models;
-using Revit26_Plugin.LinkVersionChecker_V003.Core.Rules;
+using Revit26_Plugin_Revised.LinkVersionChecker_V003.Core.Models;
+using Revit26_Plugin_Revised.LinkVersionChecker_V003.Core.Rules;
 using RevitApp = Autodesk.Revit.ApplicationServices.Application;
 
-namespace Revit26_Plugin.LinkVersionChecker_V003.Services
+namespace Revit26_Plugin_Revised.LinkVersionChecker_V003.Services
 {
     /// <summary>
     /// Scan pipeline:

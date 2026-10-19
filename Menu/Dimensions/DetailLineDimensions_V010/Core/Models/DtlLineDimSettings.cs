@@ -1,9 +1,9 @@
-namespace Revit26_Plugin.DtlLineDim.V010.Core.Models
+namespace Revit26_Plugin_Revised.DtlLineDim.V010.Core.Models
 {
     /// <summary>
     /// Persisted settings for DtlLineDim, serialized via System.Text.Json to
     /// %AppData%\Revit26_Plugin\DtlLineDim\settings.json (load/save mechanics
-    /// now in Revit26_Plugin.Shared.Services.SettingsService&lt;T&gt;).
+    /// now in Revit26_Plugin_Revised.Shared.Services.SettingsService&lt;T&gt;).
     /// ElementIds are not stable across documents, so last-used type is
     /// stored by Family/Type name string and re-resolved on load.
     /// </summary>

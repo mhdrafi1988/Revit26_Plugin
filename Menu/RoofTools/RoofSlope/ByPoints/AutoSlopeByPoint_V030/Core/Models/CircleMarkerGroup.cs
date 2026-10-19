@@ -1,6 +1,6 @@
 // =======================================================
 // File: CircleMarkerGroup.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V030
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V030
 // New in V026.
 // Purpose: Single reusable style/config unit for a circle-marker
 //          group (Drains / Highest Point / Allowed Offset).
@@ -21,7 +21,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V030.Core.Models
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V030.Core.Models
 {
     public partial class CircleMarkerGroup : ObservableObject
     {

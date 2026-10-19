@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.RoofRidgeLines.V069.Models;
+using Revit26_Plugin_Revised.RoofRidgeLines.V069.Models;
 
-namespace Revit26_Plugin.RoofRidgeLines.V069.Services
+namespace Revit26_Plugin_Revised.RoofRidgeLines.V069.Services
 {
     /// <summary>
     /// Static helper that analyses an inner‑loop vertex list and produces an <see cref="OpeningData"/>.

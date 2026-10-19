@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.TaperedEpsPattern2D.V002.Core.Pattern;
+using Revit26_Plugin_Revised.TaperedEpsPattern2D.V002.Core.Pattern;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V002.Revit
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V002.Revit
 {
     /// <summary>
     /// Writes the pattern as detail lines (+ optional text notes and detail groups) in the view

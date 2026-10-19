@@ -13,10 +13,10 @@ using CommunityToolkit.Mvvm.Input;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
-using Revit26_Plugin.RoofRidgeLines.V069.Models;
-using Revit26_Plugin.RoofRidgeLines.V069.Services;
+using Revit26_Plugin_Revised.RoofRidgeLines.V069.Models;
+using Revit26_Plugin_Revised.RoofRidgeLines.V069.Services;
 
-namespace Revit26_Plugin.RoofRidgeLines.V069.ViewModels
+namespace Revit26_Plugin_Revised.RoofRidgeLines.V069.ViewModels
 {
     public partial class RoofRidgeViewModel : ObservableObject
     {

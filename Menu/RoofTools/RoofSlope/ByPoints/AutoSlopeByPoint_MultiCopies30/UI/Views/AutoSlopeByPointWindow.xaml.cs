@@ -8,15 +8,15 @@
 
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.UI.ViewModels;   // ensure ViewModel namespace matches
-using Revit26_Plugin.Shared.Models;                          // LogEntry
+using Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30.UI.ViewModels;   // ensure ViewModel namespace matches
+using Revit26_Plugin_Revised.Shared.Models;                          // LogEntry
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.UI.Views      // âœ… changed from _04 to _041
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30.UI.Views      // âœ… changed from _04 to _041
 {
     public partial class AutoSlopeByPointWindow : Window
     {

@@ -1,7 +1,7 @@
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.SmartViewToSheetPlacer.V223.Models
+namespace Revit26_Plugin_Revised.SmartViewToSheetPlacer.V223.Models
 {
     /// <summary>
     /// Per-ViewType-group packing settings: horizontal/vertical gap values

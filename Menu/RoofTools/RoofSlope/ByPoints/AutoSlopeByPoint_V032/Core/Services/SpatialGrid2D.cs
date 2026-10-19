@@ -1,6 +1,6 @@
 // =======================================================
 // File: SpatialGrid2D.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.Core.Services
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Services
 // New in V032 (V030 P1/P2). Buckets points by XY cell so neighbour queries
 // only look at nearby cells instead of every point. With a cell larger
 // than the roof it degrades to "check everything", i.e. V030's behaviour.
@@ -8,9 +8,9 @@
 
 using System;
 using System.Collections.Generic;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.Core.Services
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Services
 {
     public sealed class SpatialGrid2D
     {

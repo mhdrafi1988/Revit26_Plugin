@@ -1,7 +1,7 @@
 ﻿// =======================================================
 // File: AutoSlopeDrainCommand.cs
-// Namespace: Revit26_Plugin.MultiRoofSlopeByDrain.V013.Commands
-// Ribbon string: "Revit26_Plugin.MultiRoofSlopeByDrain.V013.Commands.AutoSlopeByDrain"
+// Namespace: Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Commands
+// Ribbon string: "Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Commands.AutoSlopeByDrain"
 // Changes vs V012:
 //   - Picking roofs no longer changes the model. V012 enabled shape editing
 //     and reset every vertex to 0 here, one committed transaction per roof,
@@ -19,16 +19,16 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
-using Revit26_Plugin.MultiRoofSlopeByDrain.V013.Core.Models;
-using Revit26_Plugin.MultiRoofSlopeByDrain.V013.Core.Services;
-using Revit26_Plugin.MultiRoofSlopeByDrain.V013.UI.ViewModels;
-using Revit26_Plugin.MultiRoofSlopeByDrain.V013.UI.Views;
-using Revit26_Plugin.Shared.Models;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Core.Models;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Core.Services;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.UI.ViewModels;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.UI.Views;
+using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Services;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.MultiRoofSlopeByDrain.V013.Commands
+namespace Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Commands
 {
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]

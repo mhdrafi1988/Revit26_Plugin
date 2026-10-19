@@ -16,13 +16,13 @@ using System.Linq;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
-using Revit26_Plugin.RoofEdgeVertexReducer.V008.Core.Models;
-using Revit26_Plugin.RoofEdgeVertexReducer.V008.Core.Services;
-using Revit26_Plugin.RoofEdgeVertexReducer.V008.Infrastructure.Helpers;
-using Revit26_Plugin.RoofEdgeVertexReducer.V008.UI.ViewModels;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.RoofEdgeVertexReducer.V008.Core.Models;
+using Revit26_Plugin_Revised.RoofEdgeVertexReducer.V008.Core.Services;
+using Revit26_Plugin_Revised.RoofEdgeVertexReducer.V008.Infrastructure.Helpers;
+using Revit26_Plugin_Revised.RoofEdgeVertexReducer.V008.UI.ViewModels;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.RoofEdgeVertexReducer.V008.Infrastructure.ExternalEvents
+namespace Revit26_Plugin_Revised.RoofEdgeVertexReducer.V008.Infrastructure.ExternalEvents
 {
     public enum ReducerRequest
     {

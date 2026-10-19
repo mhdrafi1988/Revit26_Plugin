@@ -3,7 +3,7 @@ using System.IO;
 using System.Windows;
 using Autodesk.Revit.UI;
 
-namespace Revit26_Plugin.SmartViewToSheetPlacer.V224.Services
+namespace Revit26_Plugin_Revised.SmartViewToSheetPlacer.V224.Services
 {
     /// <summary>
     /// Pure-WPF dialog helper — no System.Windows.Forms dependency. WPF has

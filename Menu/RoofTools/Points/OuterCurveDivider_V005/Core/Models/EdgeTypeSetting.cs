@@ -12,7 +12,7 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.OuterCurveDivider.V005.Core.Models
+namespace Revit26_Plugin_Revised.OuterCurveDivider.V005.Core.Models
 {
     /// <summary>
     /// Default division rule for one curve type (e.g. all Arcs). Edges of that type follow

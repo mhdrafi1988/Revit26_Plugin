@@ -17,12 +17,12 @@ Changes vs FX04 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
   - No behaviour change — every binding/command is the FX04 one.
 =======================================================
 -->
-<Window x:Class="Revit26_Plugin.WorksetRenamer.FX05.Views.WorksetRenamerFxView"
+<Window x:Class="Revit26_Plugin_Revised.WorksetRenamer.FX05.Views.WorksetRenamerFxView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:svc="clr-namespace:Revit26_Plugin.Shared.Services"
-        xmlns:vm="clr-namespace:Revit26_Plugin.WorksetRenamer.FX05.ViewModels"
-        xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
+        xmlns:svc="clr-namespace:Revit26_Plugin_Revised.Shared.Services"
+        xmlns:vm="clr-namespace:Revit26_Plugin_Revised.WorksetRenamer.FX05.ViewModels"
+        xmlns:shell="clr-namespace:Revit26_Plugin_Revised.Shared.Controls"
         Title="{Binding Source={x:Static svc:ToolCatalog.WorksetRenamerExcel}, Path=Title}"
         Width="920" Height="780"
         MinWidth="920" MinHeight="780"

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using Revit26_Plugin.LinkVersionChecker_V005.Core.Models;
+using Revit26_Plugin_Revised.LinkVersionChecker_V005.Core.Models;
 
-namespace Revit26_Plugin.LinkVersionChecker_V005.Services
+namespace Revit26_Plugin_Revised.LinkVersionChecker_V005.Services
 {
     /// <summary>Plain file-system facts about one linked file.</summary>
     public sealed class FileFacts

@@ -4,12 +4,12 @@ using System.Windows.Interop;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.TaperedEpsPattern2D.V005.Events;
-using Revit26_Plugin.TaperedEpsPattern2D.V005.Revit;
-using Revit26_Plugin.TaperedEpsPattern2D.V005.ViewModels;
-using Revit26_Plugin.TaperedEpsPattern2D.V005.Views;
+using Revit26_Plugin_Revised.TaperedEpsPattern2D.V005.Events;
+using Revit26_Plugin_Revised.TaperedEpsPattern2D.V005.Revit;
+using Revit26_Plugin_Revised.TaperedEpsPattern2D.V005.ViewModels;
+using Revit26_Plugin_Revised.TaperedEpsPattern2D.V005.Views;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V005.Commands
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V005.Commands
 {
     /// <summary>
     /// Tapered EPS 2D Pattern — draws the tapered EPS board pattern as detail lines in a plan view.

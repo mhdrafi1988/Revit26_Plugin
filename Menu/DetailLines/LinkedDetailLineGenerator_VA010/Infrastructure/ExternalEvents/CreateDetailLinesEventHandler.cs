@@ -4,11 +4,11 @@ using System.Diagnostics;
 using System.Linq;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.LinkedDetailLineGenerator.VA010.Core.Engine;
-using Revit26_Plugin.LinkedDetailLineGenerator.VA010.Core.Models;
-using Revit26_Plugin.LinkedDetailLineGenerator.VA010.Core.Services;
+using Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA010.Core.Engine;
+using Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA010.Core.Models;
+using Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA010.Core.Services;
 
-namespace Revit26_Plugin.LinkedDetailLineGenerator.VA010.Infrastructure.ExternalEvents
+namespace Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA010.Infrastructure.ExternalEvents
 {
     /// <summary>
     /// Single IExternalEventHandler/ExternalEvent pair for this tool (per suite

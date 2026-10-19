@@ -1,6 +1,6 @@
 // =======================================================
 // File: Point3.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models
 // New in V032: Revit-free point (internal units, feet) so Core/ stays
 // free of the Revit API (ARCHITECTURE.md §3). Infrastructure converts
 // XYZ <-> Point3 via RoofOps.RevitConvert.
@@ -8,7 +8,7 @@
 
 using System;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models
 {
     /// <summary>3D point in Revit internal units (decimal feet).</summary>
     public readonly struct Point3 : IEquatable<Point3>

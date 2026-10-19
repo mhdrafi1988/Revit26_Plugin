@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.CalloutCOP.V021.ViewModels
+namespace Revit26_Plugin_Revised.CalloutCOP.V021.ViewModels
 {
     public partial class ViewItemViewModel : ObservableObject
     {

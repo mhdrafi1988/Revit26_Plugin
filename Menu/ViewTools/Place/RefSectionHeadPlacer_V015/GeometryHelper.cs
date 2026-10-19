@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.RefSectionHeadPlacer.V015.Infrastructure.Helpers
+namespace Revit26_Plugin_Revised.RefSectionHeadPlacer.V015.Infrastructure.Helpers
 {
     /// <summary>
     /// Small geometry/document utility helpers shared across this tool's

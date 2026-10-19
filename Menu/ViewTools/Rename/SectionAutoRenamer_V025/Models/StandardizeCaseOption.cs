@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.SectionAutoRenamer.V025.Models
+namespace Revit26_Plugin_Revised.SectionAutoRenamer.V025.Models
 {
     /// <summary>
     /// Case rule applied by the Standardize row. Replaces the old

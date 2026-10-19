@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.SmartViewToSheetPlacer.V224.Models
+namespace Revit26_Plugin_Revised.SmartViewToSheetPlacer.V224.Models
 {
     /// <summary>
     /// Represents one suggested (and later, actually created) sheet: its

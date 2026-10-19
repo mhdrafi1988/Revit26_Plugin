@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V004.ViewModels
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V004.ViewModels
 {
     /// <summary>One header metric tile (label + value).</summary>
     public sealed partial class MetricTileViewModel : ObservableObject

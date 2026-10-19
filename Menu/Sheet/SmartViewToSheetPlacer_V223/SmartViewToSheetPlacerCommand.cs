@@ -1,11 +1,11 @@
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.SmartViewToSheetPlacer.V223.ViewModels;
-using Revit26_Plugin.SmartViewToSheetPlacer.V223.Views;
-using Revit26_Plugin.Utilities;
+using Revit26_Plugin_Revised.SmartViewToSheetPlacer.V223.ViewModels;
+using Revit26_Plugin_Revised.SmartViewToSheetPlacer.V223.Views;
+using Revit26_Plugin_Revised.Utilities;
 
-namespace Revit26_Plugin.SmartViewToSheetPlacer.V223
+namespace Revit26_Plugin_Revised.SmartViewToSheetPlacer.V223
 {
     /// <summary>
     /// Ribbon entry point for the Smart View To Sheet Placer tool. Opens the

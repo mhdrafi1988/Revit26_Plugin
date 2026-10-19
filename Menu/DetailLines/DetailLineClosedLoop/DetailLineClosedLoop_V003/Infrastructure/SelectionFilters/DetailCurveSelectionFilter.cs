@@ -1,7 +1,7 @@
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI.Selection;
 
-namespace Revit26_Plugin.DetailLineClosedLoop.V003.Infrastructure.SelectionFilters
+namespace Revit26_Plugin_Revised.DetailLineClosedLoop.V003.Infrastructure.SelectionFilters
 {
     /// <summary>Restricts PickObjects to Detail Curves (Detail Lines/Arcs) only — no Model Lines, no other categories.</summary>
     public class DetailCurveSelectionFilter : ISelectionFilter

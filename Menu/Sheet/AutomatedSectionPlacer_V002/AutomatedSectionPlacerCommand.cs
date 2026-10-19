@@ -1,11 +1,11 @@
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.AutomatedSectionPlacer.V002.ViewModels;
-using Revit26_Plugin.AutomatedSectionPlacer.V002.Views;
-using Revit26_Plugin.Utilities;
+using Revit26_Plugin_Revised.AutomatedSectionPlacer.V002.ViewModels;
+using Revit26_Plugin_Revised.AutomatedSectionPlacer.V002.Views;
+using Revit26_Plugin_Revised.Utilities;
 
-namespace Revit26_Plugin.AutomatedSectionPlacer.V002
+namespace Revit26_Plugin_Revised.AutomatedSectionPlacer.V002
 {
     /// <summary>
     /// Ribbon entry point for the Automated Section Placer tool. Opens the

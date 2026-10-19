@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.CreateSections.V013.Services
+namespace Revit26_Plugin_Revised.CreateSections.V013.Services
 {
     /// <summary>
     /// Generates unique section view names, de-duplicating with a "_dupN"

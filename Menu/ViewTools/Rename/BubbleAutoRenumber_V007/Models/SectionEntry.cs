@@ -1,6 +1,6 @@
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.BubbleAutoRenumber.V007.Models
+namespace Revit26_Plugin_Revised.BubbleAutoRenumber.V007.Models
 {
     internal class SectionEntry
     {

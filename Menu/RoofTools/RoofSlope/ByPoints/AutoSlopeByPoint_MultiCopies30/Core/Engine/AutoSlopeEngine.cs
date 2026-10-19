@@ -1,6 +1,6 @@
 // =======================================================
 // File: AutoSlopeEngine.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.MultiCopies30
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30
 // Changes vs V028:
 //   - Execute(app, payload) replaced by ApplySlope(app, payload):
 //     no internal Transaction.Start/Commit — the caller
@@ -26,15 +26,15 @@
 
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.Core.Models;
-using Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.Core.Parameters;
-using Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.Infrastructure.Helpers;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30.Core.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30.Core.Parameters;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30.Infrastructure.Helpers;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.Core.Engine
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30.Core.Engine
 {
     public static class AutoSlopeEngine
     {

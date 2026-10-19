@@ -9,6 +9,23 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [4.0.0] — 2026-10-19
+
+### Changed
+- **Root namespace renamed `Revit26_Plugin` → `Revit26_Plugin_Revised`** across all C# and XAML
+  (`namespace`/`using` declarations, `x:Class`, `clr-namespace:`, and the command class names the
+  ribbon passes to `PushButtonData`). The add-in entry class is now `Revit26_Plugin_Revised.App`,
+  and the installer scripts write that `FullClassName` into the `.addin` manifest.
+- Unchanged on purpose: the assembly name (`Revit26_Plugin.dll`), `pack://…/Revit26_Plugin;component`
+  URIs, embedded-resource names (`Revit26_Plugin.Resources.…`, `Revit26_Plugin.Properties.Resources`),
+  and the `%AppData%\Revit26_Plugin` / `Documents\Revit26_Plugin` settings and log folders, so
+  existing settings and logs still load. No tool versions changed.
+
+**User note (breaking):** reinstall with the updated installer, or edit an existing `.addin` file so
+`FullClassName` reads `Revit26_Plugin_Revised.App`; a manifest still pointing at
+`Revit26_Plugin.App` will fail to load. Keyboard shortcuts and Quick Access Toolbar entries are keyed
+to command class names and must be re-assigned.
+
 ## [3.10.2] — 2026-10-19
 
 ### Fixed

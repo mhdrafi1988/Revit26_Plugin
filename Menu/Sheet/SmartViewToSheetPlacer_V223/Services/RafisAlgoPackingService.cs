@@ -1,10 +1,10 @@
 using Autodesk.Revit.DB;
-using Revit26_Plugin.SmartViewToSheetPlacer.V223.Models;
+using Revit26_Plugin_Revised.SmartViewToSheetPlacer.V223.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.SmartViewToSheetPlacer.V223.Services
+namespace Revit26_Plugin_Revised.SmartViewToSheetPlacer.V223.Services
 {
     /// <summary>
     /// V220 PORT from SheetAutoRearrange V022 (verbatim algorithm, retargeted

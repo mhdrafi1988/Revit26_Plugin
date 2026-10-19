@@ -1,6 +1,6 @@
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.ParaManager.V005.Models
+namespace Revit26_Plugin_Revised.ParaManager.V005.Models
 {
     /// <summary>
     /// Lightweight wrapper around a Revit Category for display/selection in the UI.

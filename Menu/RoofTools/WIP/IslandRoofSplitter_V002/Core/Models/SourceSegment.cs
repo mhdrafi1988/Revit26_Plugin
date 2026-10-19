@@ -2,7 +2,7 @@
 #nullable enable
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.IslandRoofSplitter.V002.Core.Models
+namespace Revit26_Plugin_Revised.IslandRoofSplitter.V002.Core.Models
 {
     public enum SegmentKind
     {

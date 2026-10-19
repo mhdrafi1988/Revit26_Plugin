@@ -5,7 +5,7 @@ using System.Linq;
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.RefSectionHeadPlacer.V014.Core.Models
+namespace Revit26_Plugin_Revised.RefSectionHeadPlacer.V014.Core.Models
 {
     /// <summary>Display wrapper for a drafting view in the mapping ComboBox (Grid 3).
     /// V004: equality is by underlying view ElementId, NOT reference — LoadDraftingViews()

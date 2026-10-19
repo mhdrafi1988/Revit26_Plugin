@@ -1,7 +1,7 @@
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.DwgManager.V003.UI.ViewModels
+namespace Revit26_Plugin_Revised.DwgManager.V003.UI.ViewModels
 {
     /// <summary>
     /// One element-ID chip in a row's ID panel. Clicking it selects and zooms to the instance, which is

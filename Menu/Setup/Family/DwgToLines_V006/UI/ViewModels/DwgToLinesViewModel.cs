@@ -23,11 +23,11 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using Revit26_Plugin.DwgToLines.V006.Core.Models;
-using Revit26_Plugin.DwgToLines.V006.Core.Services;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.DwgToLines.V006.Core.Models;
+using Revit26_Plugin_Revised.DwgToLines.V006.Core.Services;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.DwgToLines.V006.UI.ViewModels
+namespace Revit26_Plugin_Revised.DwgToLines.V006.UI.ViewModels
 {
     public partial class DwgToLinesViewModel : ObservableObject
     {

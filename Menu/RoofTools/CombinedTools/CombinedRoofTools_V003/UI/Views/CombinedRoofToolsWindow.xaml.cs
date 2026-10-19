@@ -1,9 +1,9 @@
 using Autodesk.Revit.UI;
-using Revit26_Plugin.CombinedRoofTools.V003.UI.ViewModels;
+using Revit26_Plugin_Revised.CombinedRoofTools.V003.UI.ViewModels;
 using System.ComponentModel;
 using System.Windows;
 
-namespace Revit26_Plugin.CombinedRoofTools.V003.UI.Views
+namespace Revit26_Plugin_Revised.CombinedRoofTools.V003.UI.Views
 {
     public partial class CombinedRoofToolsWindow : Window
     {

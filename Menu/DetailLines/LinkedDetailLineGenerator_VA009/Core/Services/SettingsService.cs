@@ -1,9 +1,9 @@
 using System;
 using System.IO;
 using System.Text.Json;
-using Revit26_Plugin.LinkedDetailLineGenerator.VA009.Core.Models;
+using Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA009.Core.Models;
 
-namespace Revit26_Plugin.LinkedDetailLineGenerator.VA009.Core.Services
+namespace Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA009.Core.Services
 {
     /// <summary>
     /// Loads/saves ToolSettings as JSON at

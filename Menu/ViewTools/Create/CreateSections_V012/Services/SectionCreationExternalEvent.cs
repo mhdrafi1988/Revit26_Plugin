@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.CreateSections.V012.ViewModels;
+using Revit26_Plugin_Revised.CreateSections.V012.ViewModels;
 
-namespace Revit26_Plugin.CreateSections.V012.Services
+namespace Revit26_Plugin_Revised.CreateSections.V012.Services
 {
     /// <summary>
     /// Revit ExternalEvent handler responsible for executing section

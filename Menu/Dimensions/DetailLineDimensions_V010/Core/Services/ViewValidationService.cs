@@ -1,6 +1,6 @@
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.DtlLineDim.V010.Core.Services
+namespace Revit26_Plugin_Revised.DtlLineDim.V010.Core.Services
 {
     /// <summary>
     /// Validates that the active view is a plan view suitable for line-based

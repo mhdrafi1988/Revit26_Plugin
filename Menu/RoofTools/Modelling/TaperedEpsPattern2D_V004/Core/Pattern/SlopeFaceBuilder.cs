@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V004.Core.Pattern
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V004.Core.Pattern
 {
     /// <summary>Face i = outline ∩ { Lj − Li ≥ 0 for all j ≠ i }.</summary>
     public static class SlopeFaceBuilder

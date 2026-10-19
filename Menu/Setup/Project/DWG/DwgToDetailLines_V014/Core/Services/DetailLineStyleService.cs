@@ -5,9 +5,9 @@
 
 using Autodesk.Revit.DB;
 using System.Linq;
-using Revit26_Plugin.DwgToDetailLines.V014.Core.Models;
+using Revit26_Plugin_Revised.DwgToDetailLines.V014.Core.Models;
 
-namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
+namespace Revit26_Plugin_Revised.DwgToDetailLines.V014.Core.Services
 {
     /// <summary>
     /// Resolves Line Styles (GraphicsStyle under OST_Lines) based on CAD layer names,

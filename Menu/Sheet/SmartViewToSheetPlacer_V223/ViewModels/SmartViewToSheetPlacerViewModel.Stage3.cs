@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-namespace Revit26_Plugin.SmartViewToSheetPlacer.V223.ViewModels
+namespace Revit26_Plugin_Revised.SmartViewToSheetPlacer.V223.ViewModels
 {
     /// <summary>Stage 3: Suggested Placement — badges + editable grid (the packed
     /// SheetGroups/ViewPlacements are already populated by Stage 2's RunPacking;

@@ -4,10 +4,10 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
-using Revit26_Plugin.DwgManager.V003.UI.ViewModels;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.DwgManager.V003.UI.ViewModels;
+using Revit26_Plugin_Revised.Shared.Services;
 
-namespace Revit26_Plugin.DwgManager.V003.UI.Views
+namespace Revit26_Plugin_Revised.DwgManager.V003.UI.Views
 {
     /// <summary>
     /// DWG Manager window; everything is bound to <see cref="DwgManagerViewModel"/>. The code-behind only

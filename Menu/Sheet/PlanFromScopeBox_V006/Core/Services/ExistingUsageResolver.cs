@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.PlanFromScopeBox.V006.Core.Models;
+using Revit26_Plugin_Revised.PlanFromScopeBox.V006.Core.Models;
 
-namespace Revit26_Plugin.PlanFromScopeBox.V006.Core.Services
+namespace Revit26_Plugin_Revised.PlanFromScopeBox.V006.Core.Services
 {
     /// <summary>
     /// Finds views already cropped to each scope box (VIEWER_VOLUME_OF_INTEREST_CROP) and,

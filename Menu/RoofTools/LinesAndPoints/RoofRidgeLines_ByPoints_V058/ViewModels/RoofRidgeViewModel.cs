@@ -10,10 +10,10 @@ using CommunityToolkit.Mvvm.Input;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
-using Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V058.Models;
-using Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V058.Services;
+using Revit26_Plugin_Revised.RoofTools.LineAndPoints.RoofRidgeLines.V058.Models;
+using Revit26_Plugin_Revised.RoofTools.LineAndPoints.RoofRidgeLines.V058.Services;
 
-namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V058.ViewModels
+namespace Revit26_Plugin_Revised.RoofTools.LineAndPoints.RoofRidgeLines.V058.ViewModels
 {
     public partial class RoofRidgeViewModel : ObservableObject
     {

@@ -1,8 +1,8 @@
 using Autodesk.Revit.DB;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 
-namespace Revit26_Plugin.RoofPointComparison.V002.Core.Models
+namespace Revit26_Plugin_Revised.RoofPointComparison.V002.Core.Models
 {
     public enum ComparisonMode
     {

@@ -2,10 +2,10 @@ using System.Windows;
 using System.Windows.Input;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.LinkedDetailLineGenerator.VA009.UI.ViewModels;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA009.UI.ViewModels;
+using Revit26_Plugin_Revised.Shared.Services;
 
-namespace Revit26_Plugin.LinkedDetailLineGenerator.VA009.UI.Views
+namespace Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA009.UI.Views
 {
     /// <summary>
     /// Code-behind is intentionally thin â€” no Revit API or business logic here.

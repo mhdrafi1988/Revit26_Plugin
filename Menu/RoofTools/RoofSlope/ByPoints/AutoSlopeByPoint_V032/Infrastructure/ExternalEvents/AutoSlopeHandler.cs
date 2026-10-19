@@ -1,6 +1,6 @@
 // =======================================================
 // File: AutoSlopeHandler.cs + AutoSlopeEventManager
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.ExternalEvents
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.ExternalEvents
 // Changes vs V030:
 //   - No static mutable Payload: one pending job per handler, and Submit
 //     refuses a second job while one is pending (plan 1.5).
@@ -10,9 +10,9 @@
 // =======================================================
 
 using Autodesk.Revit.UI;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.Shared.Services;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.ExternalEvents
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.ExternalEvents
 {
     public sealed class AutoSlopeHandler : IExternalEventHandler
     {

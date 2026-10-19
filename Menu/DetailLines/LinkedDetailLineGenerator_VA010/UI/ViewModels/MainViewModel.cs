@@ -8,15 +8,15 @@ using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.LinkedDetailLineGenerator.VA010.Core.Engine;
-using Revit26_Plugin.LinkedDetailLineGenerator.VA010.Core.Models;
-using Revit26_Plugin.LinkedDetailLineGenerator.VA010.Core.Services;
-using Revit26_Plugin.LinkedDetailLineGenerator.VA010.Infrastructure.ExternalEvents;
-using Revit26_Plugin.LinkedDetailLineGenerator.VA010.Infrastructure.Helpers;
-using Revit26_Plugin.Shared.Models;
-using Revit26_Plugin.Shared.ViewModels;
+using Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA010.Core.Engine;
+using Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA010.Core.Models;
+using Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA010.Core.Services;
+using Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA010.Infrastructure.ExternalEvents;
+using Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA010.Infrastructure.Helpers;
+using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin_Revised.Shared.ViewModels;
 
-namespace Revit26_Plugin.LinkedDetailLineGenerator.VA010.UI.ViewModels
+namespace Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA010.UI.ViewModels
 {
     /// <summary>
     /// VA010 — inherits ToolViewModelBase (log, IsRunning, Progress, SummaryText).

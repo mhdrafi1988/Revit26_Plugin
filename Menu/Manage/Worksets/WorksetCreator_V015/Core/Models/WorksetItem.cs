@@ -7,7 +7,7 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.WorksetCreator.V015.Core.Models
+namespace Revit26_Plugin_Revised.WorksetCreator.V015.Core.Models
 {
     public enum WorksetGridCategory
     {

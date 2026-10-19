@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace Revit26_Plugin.RoofRidgeLines.V070.Converters
+namespace Revit26_Plugin_Revised.RoofRidgeLines.V070.Converters
 {
     public class InverseBoolConverter : IValueConverter
     {

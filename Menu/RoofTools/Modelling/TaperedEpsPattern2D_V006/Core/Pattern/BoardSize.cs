@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V006.Core.Pattern
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V006.Core.Pattern
 {
     /// <summary>A board size to compare: length along the row × width up the slope (m).</summary>
     public readonly struct BoardSize

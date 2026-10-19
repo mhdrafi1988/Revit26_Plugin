@@ -1,17 +1,17 @@
 // ==============================================
 // File: DwgToLinesCommand.cs
 // Layer: Commands
-// Namespace: Revit26_Plugin.DwgToLines.V006.Commands
+// Namespace: Revit26_Plugin_Revised.DwgToLines.V006.Commands
 // ==============================================
 
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.DwgToLines.V006.Infrastructure.Helpers;
-using Revit26_Plugin.DwgToLines.V006.UI.Views;
-using Revit26_Plugin.Utilities;
+using Revit26_Plugin_Revised.DwgToLines.V006.Infrastructure.Helpers;
+using Revit26_Plugin_Revised.DwgToLines.V006.UI.Views;
+using Revit26_Plugin_Revised.Utilities;
 
-namespace Revit26_Plugin.DwgToLines.V006.Commands
+namespace Revit26_Plugin_Revised.DwgToLines.V006.Commands
 {
     /// <summary>
     /// Entry point for the DWG to Lines tool.

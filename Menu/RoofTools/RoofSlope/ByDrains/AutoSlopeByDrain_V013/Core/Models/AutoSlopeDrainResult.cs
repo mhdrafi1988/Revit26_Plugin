@@ -30,7 +30,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.MultiRoofSlopeByDrain.V013.Core.Models
+namespace Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Core.Models
 {
     public class AutoSlopeDrainResult
     {

@@ -6,7 +6,7 @@
 
 using Autodesk.Revit.UI;
 
-namespace Revit26_Plugin.AutoSlopeByDrain.V007.Infrastructure.ExternalEvents
+namespace Revit26_Plugin_Revised.AutoSlopeByDrain.V007.Infrastructure.ExternalEvents
 {
     public static class AutoSlopeDrainEventManager
     {

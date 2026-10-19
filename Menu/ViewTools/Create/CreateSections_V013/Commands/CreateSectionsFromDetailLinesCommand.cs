@@ -5,11 +5,11 @@ using Autodesk.Revit.UI.Selection;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Interop;
-using Revit26_Plugin.CreateSections.V013.Filters;
-using Revit26_Plugin.CreateSections.V013.Views.SectionFromLineDialog;
-using Revit26_Plugin.CreateSections.V013.Services;
+using Revit26_Plugin_Revised.CreateSections.V013.Filters;
+using Revit26_Plugin_Revised.CreateSections.V013.Views.SectionFromLineDialog;
+using Revit26_Plugin_Revised.CreateSections.V013.Services;
 
-namespace Revit26_Plugin.CreateSections.V013.Commands
+namespace Revit26_Plugin_Revised.CreateSections.V013.Commands
 {
     /// <summary>
     /// V008 changes from V07:

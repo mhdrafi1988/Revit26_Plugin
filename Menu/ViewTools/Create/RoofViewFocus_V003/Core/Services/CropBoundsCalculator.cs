@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.RoofViewFocus.V003.Core.Services
+namespace Revit26_Plugin_Revised.RoofViewFocus.V003.Core.Services
 {
     /// <summary>2D rectangle in view-local coordinates. Units: feet (Revit internal).</summary>
     public readonly record struct Bounds2D(double MinX, double MinY, double MaxX, double MaxY)

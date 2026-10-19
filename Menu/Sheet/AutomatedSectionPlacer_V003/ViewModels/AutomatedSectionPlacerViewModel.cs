@@ -7,11 +7,11 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.Shared.Models;
-using Revit26_Plugin.AutomatedSectionPlacer.V003.Infrastructure.ExternalEvents;
-using Revit26_Plugin.AutomatedSectionPlacer.V003.Models;
+using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin_Revised.AutomatedSectionPlacer.V003.Infrastructure.ExternalEvents;
+using Revit26_Plugin_Revised.AutomatedSectionPlacer.V003.Models;
 
-namespace Revit26_Plugin.AutomatedSectionPlacer.V003.ViewModels
+namespace Revit26_Plugin_Revised.AutomatedSectionPlacer.V003.ViewModels
 {
     /// <summary>
     /// Single shared ViewModel driving all 5 accordion stages in one window:

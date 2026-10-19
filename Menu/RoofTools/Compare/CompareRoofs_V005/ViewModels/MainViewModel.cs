@@ -9,9 +9,9 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.RoofPointElevationSync.V005
+namespace Revit26_Plugin_Revised.RoofPointElevationSync.V005
 {
     public partial class MainViewModel : ObservableObject
     {

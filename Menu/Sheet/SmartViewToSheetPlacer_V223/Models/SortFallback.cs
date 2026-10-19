@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.SmartViewToSheetPlacer.V223.Models
+namespace Revit26_Plugin_Revised.SmartViewToSheetPlacer.V223.Models
 {
     /// <summary>
     /// How to order views whose crop-box center could not be resolved

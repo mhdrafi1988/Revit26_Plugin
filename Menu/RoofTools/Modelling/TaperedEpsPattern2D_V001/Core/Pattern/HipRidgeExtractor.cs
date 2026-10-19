@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V001.Core.Pattern
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V001.Core.Pattern
 {
     /// <summary>
     /// Layer B — hips and ridges: slope-face edges that are not on the perimeter,

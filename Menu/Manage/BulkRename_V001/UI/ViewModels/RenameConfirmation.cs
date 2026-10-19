@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Revit26_Plugin.BulkRename.V001.UI.ViewModels
+namespace Revit26_Plugin_Revised.BulkRename.V001.UI.ViewModels
 {
     /// <summary>Builds the text of the "Rename …?" question shown before Apply. Pure text, no Revit or WPF.</summary>
     public static class RenameConfirmation

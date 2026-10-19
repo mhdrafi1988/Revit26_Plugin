@@ -25,9 +25,9 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.InnerLoopsAndPerpendicular.V007.Core.Models;
-using Revit26_Plugin.InnerLoopsAndPerpendicular.V007.Infrastructure.ExternalEvents;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.InnerLoopsAndPerpendicular.V007.Core.Models;
+using Revit26_Plugin_Revised.InnerLoopsAndPerpendicular.V007.Infrastructure.ExternalEvents;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -35,7 +35,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
 
-namespace Revit26_Plugin.InnerLoopsAndPerpendicular.V007.UI.ViewModels
+namespace Revit26_Plugin_Revised.InnerLoopsAndPerpendicular.V007.UI.ViewModels
 {
     /// <summary>
     /// ViewModel for the Inner Loops And Perpendicular tool.

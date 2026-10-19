@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.CalloutCOP.V020.ViewModels
+namespace Revit26_Plugin_Revised.CalloutCOP.V020.ViewModels
 {
     /// <summary>
     /// Single checkbox row in the sheet-filter popup checklist.

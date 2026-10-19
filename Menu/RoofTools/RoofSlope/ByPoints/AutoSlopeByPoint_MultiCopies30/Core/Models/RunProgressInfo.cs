@@ -9,7 +9,7 @@
 // is what turns this into an on-screen percentage + phase label and pumps
 // the UI so it actually repaints mid-run (see UiPumpHelper).
 
-namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.Core.Models
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30.Core.Models
 {
     public class RunProgressInfo
     {

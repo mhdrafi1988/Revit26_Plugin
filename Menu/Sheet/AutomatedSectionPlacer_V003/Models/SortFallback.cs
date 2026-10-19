@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.AutomatedSectionPlacer.V003.Models
+namespace Revit26_Plugin_Revised.AutomatedSectionPlacer.V003.Models
 {
     /// <summary>
     /// How to order views whose crop-box center could not be resolved

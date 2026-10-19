@@ -1,10 +1,10 @@
 using Autodesk.Revit.DB;
-using Revit26_Plugin.ParaManager.V005.Models;
+using Revit26_Plugin_Revised.ParaManager.V005.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Revit26_Plugin.ParaManager.V005.Services
+namespace Revit26_Plugin_Revised.ParaManager.V005.Services
 {
     /// <summary>
     /// Per-row outcome, reported back to the ViewModel so it can update the

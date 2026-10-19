@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.TaperedEpsPattern2D.V005.Core.Pattern
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V005.Core.Pattern
 {
     /// <summary>How a row starting from its middle (<see cref="RowStartMode.FromMiddle"/>) is set out.</summary>
     public enum MiddleStartVariant

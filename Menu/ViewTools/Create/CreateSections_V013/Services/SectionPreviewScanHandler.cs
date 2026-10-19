@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.CreateSections.V013.Models;
-using Revit26_Plugin.CreateSections.V013.ViewModels;
+using Revit26_Plugin_Revised.CreateSections.V013.Models;
+using Revit26_Plugin_Revised.CreateSections.V013.ViewModels;
 
-namespace Revit26_Plugin.CreateSections.V013.Services
+namespace Revit26_Plugin_Revised.CreateSections.V013.Services
 {
     /// <summary>
     /// V009: new. Revit ExternalEvent handler that populates the

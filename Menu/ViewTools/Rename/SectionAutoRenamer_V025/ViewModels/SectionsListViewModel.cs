@@ -1,8 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.SectionAutoRenamer.V025.Models;
-using Revit26_Plugin.SectionAutoRenamer.V025.Services;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.SectionAutoRenamer.V025.Models;
+using Revit26_Plugin_Revised.SectionAutoRenamer.V025.Services;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Data;
 using System.Windows.Threading;
 
-namespace Revit26_Plugin.SectionAutoRenamer.V025.ViewModels;
+namespace Revit26_Plugin_Revised.SectionAutoRenamer.V025.ViewModels;
 
 public partial class SectionsListViewModel : ObservableObject
 {

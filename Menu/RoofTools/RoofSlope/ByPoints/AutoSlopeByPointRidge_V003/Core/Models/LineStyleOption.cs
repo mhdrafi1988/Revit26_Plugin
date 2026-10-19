@@ -1,6 +1,6 @@
 // =======================================================
 // File: LineStyleOption.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPointRidge.V003
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPointRidge.V003
 // New in V026.
 // Purpose: Simple Id+Name pair for populating the "Line Style"
 //          ComboBox from the project's existing OST_Lines
@@ -11,7 +11,7 @@
 
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.AutoSlopeByPointRidge.V003.Core.Models
+namespace Revit26_Plugin_Revised.AutoSlopeByPointRidge.V003.Core.Models
 {
     public class LineStyleOption
     {

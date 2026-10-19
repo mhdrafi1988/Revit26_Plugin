@@ -9,7 +9,7 @@
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.InnerLoopsAndPerpendicular.V005.Core.Models
+namespace Revit26_Plugin_Revised.InnerLoopsAndPerpendicular.V005.Core.Models
 {
     /// <summary>
     /// Represents a single boundary loop extracted from a roof, including its

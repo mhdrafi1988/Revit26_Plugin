@@ -1,18 +1,18 @@
 ﻿// ==============================================
 // File: DwgToDetailLinesCommand.cs
 // Layer: Commands
-// Namespace: Revit26_Plugin.DwgToDetailLines.V014.Commands
+// Namespace: Revit26_Plugin_Revised.DwgToDetailLines.V014.Commands
 // ==============================================
 
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.DwgToDetailLines.V014.Infrastructure.Helpers;
-using Revit26_Plugin.DwgToDetailLines.V014.UI.Views;
-using Revit26_Plugin.Shared.Services;
-using Revit26_Plugin.Utilities;
+using Revit26_Plugin_Revised.DwgToDetailLines.V014.Infrastructure.Helpers;
+using Revit26_Plugin_Revised.DwgToDetailLines.V014.UI.Views;
+using Revit26_Plugin_Revised.Shared.Services;
+using Revit26_Plugin_Revised.Utilities;
 
-namespace Revit26_Plugin.DwgToDetailLines.V014.Commands
+namespace Revit26_Plugin_Revised.DwgToDetailLines.V014.Commands
 {
     /// <summary>
     /// Entry point for the DWG To DL(P) tool (V014).

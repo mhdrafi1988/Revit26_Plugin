@@ -2,9 +2,9 @@
 using System;
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Revit26_Plugin.APUS.V323.Services;
+using Revit26_Plugin_Revised.APUS.V323.Services;
 
-namespace Revit26_Plugin.APUS.V323.ViewModels
+namespace Revit26_Plugin_Revised.APUS.V323.ViewModels
 {
     /// <summary>
     /// ViewModel for a single row in the Sections grid.

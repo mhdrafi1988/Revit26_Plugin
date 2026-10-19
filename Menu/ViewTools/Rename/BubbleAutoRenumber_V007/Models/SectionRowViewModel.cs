@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.BubbleAutoRenumber.V007.Models
+namespace Revit26_Plugin_Revised.BubbleAutoRenumber.V007.Models
 {
     public class SectionRowViewModel
     {

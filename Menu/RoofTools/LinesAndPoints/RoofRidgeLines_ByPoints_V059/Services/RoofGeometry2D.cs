@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V059.Models;
+using Revit26_Plugin_Revised.RoofTools.LineAndPoints.RoofRidgeLines.V059.Models;
 
-namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V059.Services
+namespace Revit26_Plugin_Revised.RoofTools.LineAndPoints.RoofRidgeLines.V059.Services
 {
     /// <summary>
     /// Shared 2D (XY-plane, Z ignored) geometry primitives used across the Voronoi

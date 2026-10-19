@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.DwgStatistics.V005.Core.Models
+namespace Revit26_Plugin_Revised.DwgStatistics.V005.Core.Models
 {
     // Plain facts read from the Revit model by Infrastructure/Revit/DwgStatsScanner. No Revit API types
     // here (element IDs are stored as long), so Core/Services can aggregate them without Revit.

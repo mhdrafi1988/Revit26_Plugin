@@ -1,9 +1,9 @@
 // File: SheetLayoutService.cs
 using Autodesk.Revit.DB;
-using Revit26_Plugin.APUS.V324.Helpers;
-using Revit26_Plugin.APUS.V324.Models;
+using Revit26_Plugin_Revised.APUS.V324.Helpers;
+using Revit26_Plugin_Revised.APUS.V324.Models;
 
-namespace Revit26_Plugin.APUS.V324.Services
+namespace Revit26_Plugin_Revised.APUS.V324.Services
 {
     /// <summary>
     /// Computes the usable placement rectangle on a sheet by subtracting

@@ -1,6 +1,6 @@
 // =======================================================
 // File: ViewConverters.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.UI.Views
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.UI.Views
 // Two small converters this window needs that Shared/Converters.cs does
 // not have. Declared in the window's own Resources (UI_UX_PATTERNS.md).
 // Replaces V030's ColorStringToBrushConverter (unused there) and
@@ -13,9 +13,9 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.UI.Views
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.UI.Views
 {
     /// <summary>Non-empty string → Visible, null/empty → Collapsed (inline error lines).</summary>
     public class NonEmptyToVisibilityConverter : IValueConverter

@@ -2,12 +2,12 @@ using System.Windows.Interop;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.ExportDwgToFolder.V003.Infrastructure.ExternalEvents;
-using Revit26_Plugin.ExportDwgToFolder.V003.UI.ViewModels;
-using Revit26_Plugin.ExportDwgToFolder.V003.UI.Views;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.ExportDwgToFolder.V003.Infrastructure.ExternalEvents;
+using Revit26_Plugin_Revised.ExportDwgToFolder.V003.UI.ViewModels;
+using Revit26_Plugin_Revised.ExportDwgToFolder.V003.UI.Views;
+using Revit26_Plugin_Revised.Shared.Services;
 
-namespace Revit26_Plugin.ExportDwgToFolder.V003.Commands
+namespace Revit26_Plugin_Revised.ExportDwgToFolder.V003.Commands
 {
     /// <summary>
     /// Opens Export DWG to Folder (modeless). Nothing is scanned on open: the user picks a scope,

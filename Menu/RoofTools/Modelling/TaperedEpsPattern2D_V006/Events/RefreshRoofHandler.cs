@@ -1,8 +1,8 @@
 using System;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.TaperedEpsPattern2D.V006.Revit;
+using Revit26_Plugin_Revised.TaperedEpsPattern2D.V006.Revit;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V006.Events
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V006.Events
 {
     /// <summary>Re-reads the picked roof (used by Reset) so edits made while the window is open are picked up.</summary>
     public sealed class RefreshRoofHandler : IExternalEventHandler

@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.SmartViewToSheetPlacer.V224.Models
+namespace Revit26_Plugin_Revised.SmartViewToSheetPlacer.V224.Models
 {
     /// <summary>
     /// Persisted per-tool settings, stored at

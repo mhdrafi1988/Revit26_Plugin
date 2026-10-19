@@ -10,9 +10,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
-using Revit26_Plugin.DwgToDetailLines.V014.Core.Models;
+using Revit26_Plugin_Revised.DwgToDetailLines.V014.Core.Models;
 
-namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
+namespace Revit26_Plugin_Revised.DwgToDetailLines.V014.Core.Services
 {
     /// <summary>Persisted mapping choices (file format version 1).</summary>
     public class MappingSettings

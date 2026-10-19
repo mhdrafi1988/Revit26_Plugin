@@ -15,12 +15,12 @@
 
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.AutoSlopeByPointRidge.V003.Core.Engine;
-using Revit26_Plugin.AutoSlopeByPointRidge.V003.Core.Models;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPointRidge.V003.Core.Engine;
+using Revit26_Plugin_Revised.AutoSlopeByPointRidge.V003.Core.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 
-namespace Revit26_Plugin.AutoSlopeByPointRidge.V003.Infrastructure.ExternalEvents
+namespace Revit26_Plugin_Revised.AutoSlopeByPointRidge.V003.Infrastructure.ExternalEvents
 {
     public class AutoSlopeHandler : IExternalEventHandler
     {

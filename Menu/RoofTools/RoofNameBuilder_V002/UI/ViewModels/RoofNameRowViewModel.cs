@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Revit26_Plugin.RoofNameBuilder.V002.Core.Models;
-using Revit26_Plugin.RoofNameBuilder.V002.Core.Services;
+using Revit26_Plugin_Revised.RoofNameBuilder.V002.Core.Models;
+using Revit26_Plugin_Revised.RoofNameBuilder.V002.Core.Services;
 
-namespace Revit26_Plugin.RoofNameBuilder.V002.UI.ViewModels
+namespace Revit26_Plugin_Revised.RoofNameBuilder.V002.UI.ViewModels
 {
     /// <summary>
     /// One grid row. Recomputes NewName live as BaseName or any code's tick/value changes.

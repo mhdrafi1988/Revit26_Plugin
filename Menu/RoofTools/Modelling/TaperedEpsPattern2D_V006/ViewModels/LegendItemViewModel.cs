@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.TaperedEpsPattern2D.V006.ViewModels
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V006.ViewModels
 {
     /// <summary>One legend row under the preview: colour swatch, meaning, piece count.</summary>
     public sealed class LegendItemViewModel

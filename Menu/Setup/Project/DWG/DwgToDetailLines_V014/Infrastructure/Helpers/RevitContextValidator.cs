@@ -7,7 +7,7 @@
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 
-namespace Revit26_Plugin.DwgToDetailLines.V014.Infrastructure.Helpers
+namespace Revit26_Plugin_Revised.DwgToDetailLines.V014.Infrastructure.Helpers
 {
     public static class RevitContextValidator
     {

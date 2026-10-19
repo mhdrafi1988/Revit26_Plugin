@@ -1,10 +1,10 @@
 using Autodesk.Revit.UI;
 using System.Linq;
 using System.Windows;
-using Revit26_Plugin.CalloutCOP.V021.ViewModels;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.CalloutCOP.V021.ViewModels;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.CalloutCOP.V021.Views
+namespace Revit26_Plugin_Revised.CalloutCOP.V021.Views
 {
     public partial class CalloutCOPWindow : Window
     {

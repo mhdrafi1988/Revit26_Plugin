@@ -1,8 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.ViewAutoRenamer.V006.Models;
-using Revit26_Plugin.ViewAutoRenamer.V006.Services;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.ViewAutoRenamer.V006.Models;
+using Revit26_Plugin_Revised.ViewAutoRenamer.V006.Services;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,7 +13,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Data;
 using System.Windows.Threading;
 
-namespace Revit26_Plugin.ViewAutoRenamer.V006.ViewModels;
+namespace Revit26_Plugin_Revised.ViewAutoRenamer.V006.ViewModels;
 
 /// <summary>
 /// One row per distinct Autodesk.Revit.DB.ViewType present in the loaded

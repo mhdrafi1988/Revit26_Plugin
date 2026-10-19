@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V002.ViewModels
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V002.ViewModels
 {
     /// <summary>A numeric text input with range validation. <see cref="Value"/> is null while the text is invalid.</summary>
     public sealed partial class NumericFieldViewModel : ObservableObject

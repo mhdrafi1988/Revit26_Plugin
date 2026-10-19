@@ -7,7 +7,7 @@
 //          in AutoSlopePayload and reads from this object.
 // =======================================================
 
-namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.Core.Models
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30.Core.Models
 {
     public class AutoSlopeResult
     {

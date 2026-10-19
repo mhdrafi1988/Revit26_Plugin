@@ -1,6 +1,6 @@
 // =======================================================
 // File: PathGraphBuilder.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.RoofOps
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.RoofOps
 // Replaces DijkstraPathEngine's constructor/BuildGraph (V030). The edge
 // rules are unchanged (same-arc bypass, tangent route around crossing
 // arcs, face-sampling validity). What changed:
@@ -21,10 +21,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Core.Services;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Services;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.RoofOps
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.RoofOps
 {
     internal sealed class PathGraphBuilder
     {

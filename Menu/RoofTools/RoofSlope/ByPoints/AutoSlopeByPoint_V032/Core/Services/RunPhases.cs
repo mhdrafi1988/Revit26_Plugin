@@ -1,15 +1,15 @@
 // =======================================================
 // File: RunPhases.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.Core.Services
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Services
 // New in V032 (V030 P4). Each phase owns a slice of 0–100 so the bar only
 // ever moves forward. Weights reflect where the time goes on a large roof:
 // the path graph dominates.
 // =======================================================
 
 using System;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.Core.Services
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Services
 {
     public enum RunPhase
     {

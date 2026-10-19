@@ -1,7 +1,7 @@
 #nullable enable
 using Autodesk.Revit.UI;
 
-namespace Revit26_Plugin.RoofNameBuilder.V002.Infrastructure.ExternalEvents
+namespace Revit26_Plugin_Revised.RoofNameBuilder.V002.Infrastructure.ExternalEvents
 {
     /// <summary>
     /// Static holder for one Handler + one ExternalEvent, created once.

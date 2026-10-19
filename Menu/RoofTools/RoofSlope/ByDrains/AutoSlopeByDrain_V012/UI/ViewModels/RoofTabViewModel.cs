@@ -13,15 +13,15 @@
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.MultiRoofSlopeByDrain.V012.Core.Models;
-using Revit26_Plugin.MultiRoofSlopeByDrain.V012.Core.Services;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V012.Core.Models;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V012.Core.Services;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
 
-namespace Revit26_Plugin.MultiRoofSlopeByDrain.V012.UI.ViewModels
+namespace Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V012.UI.ViewModels
 {
     public partial class RoofTabViewModel : ObservableObject
     {

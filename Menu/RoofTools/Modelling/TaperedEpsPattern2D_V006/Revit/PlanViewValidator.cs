@@ -1,6 +1,6 @@
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V006.Revit
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V006.Revit
 {
     /// <summary>Entry check 1 — the active view must be a non-template plan view with a level.</summary>
     public static class PlanViewValidator

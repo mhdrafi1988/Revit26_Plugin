@@ -1,6 +1,6 @@
 using System;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V004.ViewModels
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V004.ViewModels
 {
     /// <summary>One line in the log panel.</summary>
     public sealed class LogEntryViewModel

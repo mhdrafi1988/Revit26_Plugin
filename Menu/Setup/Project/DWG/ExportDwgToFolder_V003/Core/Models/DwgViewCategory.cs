@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.ExportDwgToFolder.V003.Core.Models
+namespace Revit26_Plugin_Revised.ExportDwgToFolder.V003.Core.Models
 {
     /// <summary>
     /// View category of the view that hosts a DWG instance.

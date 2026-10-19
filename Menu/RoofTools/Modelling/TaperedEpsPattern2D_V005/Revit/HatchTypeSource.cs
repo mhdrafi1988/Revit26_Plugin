@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.TaperedEpsPattern2D.V005.Revit
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V005.Revit
 {
     /// <summary>Where the filled region types for the hatching come from.</summary>
     public enum HatchTypeSource

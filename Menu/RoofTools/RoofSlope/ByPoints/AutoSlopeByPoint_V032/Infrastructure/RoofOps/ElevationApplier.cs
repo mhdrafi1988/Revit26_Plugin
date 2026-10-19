@@ -1,6 +1,6 @@
 // =======================================================
 // File: ElevationApplier.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.RoofOps
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.RoofOps
 // The "Apply AutoSlope" loop, split out of V030's AutoSlopeEngine.
 // Must run inside an open Transaction (the runner's "Apply AutoSlope"
 // transaction, which also holds the circle markers: one commit, one undo
@@ -17,10 +17,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Core.Services;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Services;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.RoofOps
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.RoofOps
 {
     internal sealed class ApplyOutcome
     {

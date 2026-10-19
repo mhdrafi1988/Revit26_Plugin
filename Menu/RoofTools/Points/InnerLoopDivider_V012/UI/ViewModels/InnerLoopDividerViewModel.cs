@@ -25,10 +25,10 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.InnerLoopDivider.V012.Core.Geometry;
-using Revit26_Plugin.InnerLoopDivider.V012.Core.Models;
-using Revit26_Plugin.InnerLoopDivider.V012.Infrastructure.ExternalEvents;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.InnerLoopDivider.V012.Core.Geometry;
+using Revit26_Plugin_Revised.InnerLoopDivider.V012.Core.Models;
+using Revit26_Plugin_Revised.InnerLoopDivider.V012.Infrastructure.ExternalEvents;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -36,7 +36,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
 
-namespace Revit26_Plugin.InnerLoopDivider.V012.UI.ViewModels
+namespace Revit26_Plugin_Revised.InnerLoopDivider.V012.UI.ViewModels
 {
     public partial class InnerLoopDividerViewModel : ObservableObject
     {

@@ -1,6 +1,6 @@
 // =======================================================
 // File: MultiSlopeVariantResult.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.MultiCopies30
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30
 // Purpose: Outcome of processing a single active slope row —
 //          one roof copy, one SubTransaction. Collected into
 //          MultiSlopeRunSummary.Results by MultiSlopeVariantEngine.
@@ -8,7 +8,7 @@
 
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.Core.Models
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30.Core.Models
 {
     public class MultiSlopeVariantResult
     {

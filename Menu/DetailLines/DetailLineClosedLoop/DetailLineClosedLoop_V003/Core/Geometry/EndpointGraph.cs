@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.DetailLineClosedLoop.V003.Core.Geometry
+namespace Revit26_Plugin_Revised.DetailLineClosedLoop.V003.Core.Geometry
 {
     /// <summary>
     /// Clusters curve endpoints that fall within tolerance of each other into

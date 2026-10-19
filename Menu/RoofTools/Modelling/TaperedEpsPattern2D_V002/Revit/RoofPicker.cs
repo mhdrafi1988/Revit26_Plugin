@@ -3,7 +3,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V002.Revit
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V002.Revit
 {
     /// <summary>
     /// Entry check 2 — uses a single preselected roof, otherwise prompts for one.

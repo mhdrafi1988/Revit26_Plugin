@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.SmartViewToSheetPlacer.V223.Models
+namespace Revit26_Plugin_Revised.SmartViewToSheetPlacer.V223.Models
 {
     /// <summary>
     /// Stage 1's view-selection grid filter: show all views, only views

@@ -2,10 +2,10 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using Revit26_Plugin.Shared.Models;
-using Revit26_Plugin.AutomatedSectionPlacer.V002.Models;
+using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin_Revised.AutomatedSectionPlacer.V002.Models;
 
-namespace Revit26_Plugin.AutomatedSectionPlacer.V002.ViewModels
+namespace Revit26_Plugin_Revised.AutomatedSectionPlacer.V002.ViewModels
 {
     /// <summary>Settings persistence: %AppData%\Revit26_Plugin\AutomatedSectionPlacer\settings.json,
     /// via System.Text.Json. Loaded once in the ctor; saved from NextToStage1→2

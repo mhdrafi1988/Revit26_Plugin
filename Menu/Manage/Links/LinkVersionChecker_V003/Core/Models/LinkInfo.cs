@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.LinkVersionChecker_V003.UI.Infrastructure;
+using Revit26_Plugin_Revised.LinkVersionChecker_V003.UI.Infrastructure;
 
-namespace Revit26_Plugin.LinkVersionChecker_V003.Core.Models
+namespace Revit26_Plugin_Revised.LinkVersionChecker_V003.Core.Models
 {
     public enum LinkKind { RVT, IFC, CAD, PointCloud, Image, Other }
 

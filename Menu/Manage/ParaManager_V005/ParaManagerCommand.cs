@@ -1,16 +1,16 @@
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.ParaManager.V005.Services;
-using Revit26_Plugin.ParaManager.V005.ViewModels;
-using Revit26_Plugin.ParaManager.V005.Views;
-using Revit26_Plugin.Utilities;
+using Revit26_Plugin_Revised.ParaManager.V005.Services;
+using Revit26_Plugin_Revised.ParaManager.V005.ViewModels;
+using Revit26_Plugin_Revised.ParaManager.V005.Views;
+using Revit26_Plugin_Revised.Utilities;
 
-namespace Revit26_Plugin.ParaManager.V005
+namespace Revit26_Plugin_Revised.ParaManager.V005
 {
     /// <summary>
     /// Ribbon entry point for ParaManager — registered under the Manage panel
-    /// in <see cref="Revit26_Plugin.Menu.Ribbon.ManageRibbon"/> (not duplicated
+    /// in <see cref="Revit26_Plugin_Revised.Menu.Ribbon.ManageRibbon"/> (not duplicated
     /// here; this class only launches the modeless tool window).
     /// </summary>
     [Transaction(TransactionMode.Manual)]

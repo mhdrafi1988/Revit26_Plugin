@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.DwgStatistics.V005.Core.Models
+namespace Revit26_Plugin_Revised.DwgStatistics.V005.Core.Models
 {
     /// <summary>
     /// V004: what one scan looked like, saved per project as JSON so the next session can show what

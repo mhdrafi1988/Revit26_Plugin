@@ -17,7 +17,7 @@
 using System;
 using System.Linq;
 
-namespace Revit26_Plugin.InnerLoopDivider.V012.Core.Geometry
+namespace Revit26_Plugin_Revised.InnerLoopDivider.V012.Core.Geometry
 {
     public enum LoopShape { Circular, Rectangle, Other }
 

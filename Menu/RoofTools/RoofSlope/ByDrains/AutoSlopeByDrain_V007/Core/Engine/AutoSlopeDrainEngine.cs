@@ -33,16 +33,16 @@
 
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.AutoSlopeByDrain.V007.Core.Models;
-using Revit26_Plugin.AutoSlopeByDrain.V007.Core.Parameters;
-using Revit26_Plugin.AutoSlopeByDrain.V007.Core.Services;
-using Revit26_Plugin.AutoSlopeByDrain.V007.Infrastructure.Helpers;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.AutoSlopeByDrain.V007.Core.Models;
+using Revit26_Plugin_Revised.AutoSlopeByDrain.V007.Core.Parameters;
+using Revit26_Plugin_Revised.AutoSlopeByDrain.V007.Core.Services;
+using Revit26_Plugin_Revised.AutoSlopeByDrain.V007.Infrastructure.Helpers;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.AutoSlopeByDrain.V007.Core.Engine
+namespace Revit26_Plugin_Revised.AutoSlopeByDrain.V007.Core.Engine
 {
     public static class AutoSlopeDrainEngine
     {

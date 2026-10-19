@@ -1,7 +1,7 @@
 using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.LinkedDetailLineGenerator.VA010.Core.Models
+namespace Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA010.Core.Models
 {
     /// <summary>
     /// One row of the Mapping Grid (Section 3): a single Category+Family+Type from a

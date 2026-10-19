@@ -1,8 +1,8 @@
 using System;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.TaperedEpsPattern2D.V006.Revit;
+using Revit26_Plugin_Revised.TaperedEpsPattern2D.V006.Revit;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V006.Events
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V006.Events
 {
     /// <summary>
     /// Runs <see cref="DetailPatternWriter"/> in Revit's API context. Created once per command

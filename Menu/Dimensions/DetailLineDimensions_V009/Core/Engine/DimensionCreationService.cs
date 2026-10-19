@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Revit26_Plugin.DtlLineDim.V009.Core.Models;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.DtlLineDim.V009.Core.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.DtlLineDim.V009.Core.Engine
+namespace Revit26_Plugin_Revised.DtlLineDim.V009.Core.Engine
 {
     /// <summary>
     /// Creates linear length dimensions across line-based detail-item instances,

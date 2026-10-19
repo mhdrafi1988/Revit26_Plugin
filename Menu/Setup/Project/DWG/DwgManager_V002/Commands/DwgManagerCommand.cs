@@ -3,11 +3,11 @@ using System.Windows.Interop;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.DwgManager.V002.UI.ViewModels;
-using Revit26_Plugin.DwgManager.V002.UI.Views;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.DwgManager.V002.UI.ViewModels;
+using Revit26_Plugin_Revised.DwgManager.V002.UI.Views;
+using Revit26_Plugin_Revised.Shared.Services;
 
-namespace Revit26_Plugin.DwgManager.V002.Commands
+namespace Revit26_Plugin_Revised.DwgManager.V002.Commands
 {
     /// <summary>
     /// Opens the DWG Manager window (single instance per Revit session). Running it again brings the

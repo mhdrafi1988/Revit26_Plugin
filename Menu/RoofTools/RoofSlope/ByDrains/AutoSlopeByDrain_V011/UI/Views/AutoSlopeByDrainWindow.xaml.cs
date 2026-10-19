@@ -22,8 +22,8 @@
 //     is the CollectionViewGroup, not the RoofTabViewModel — the owning
 //     RoofTabViewModel is found by walking up to the enclosing DataGrid.
 
-using Revit26_Plugin.MultiRoofSlopeByDrain.V011.UI.ViewModels;
-using Revit26_Plugin.Shared.Models; // LogEntry
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V011.UI.ViewModels;
+using Revit26_Plugin_Revised.Shared.Models; // LogEntry
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -33,7 +33,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace Revit26_Plugin.MultiRoofSlopeByDrain.V011.UI.Views
+namespace Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V011.UI.Views
 {
     public partial class AutoSlopeByDrainWindow : Window
     {

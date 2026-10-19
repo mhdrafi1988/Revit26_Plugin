@@ -1,6 +1,6 @@
 // =======================================================
 // File: ProjectQueries.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.RoofOps
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.RoofOps
 // New in V032: read-only lookups the window needs (line styles, roof and
 // view descriptions), moved out of the ViewModel so the ViewModel does not
 // walk the Revit API itself. Call only in a Revit API context (command,
@@ -10,9 +10,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.RoofOps
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.RoofOps
 {
     public sealed class LineStyleInfo
     {

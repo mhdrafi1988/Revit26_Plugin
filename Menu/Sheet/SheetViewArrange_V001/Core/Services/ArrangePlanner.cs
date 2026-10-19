@@ -1,12 +1,12 @@
-using Revit26_Plugin.SheetViewArrange.V001.Core.Layout;
-using Revit26_Plugin.SheetViewArrange.V001.Core.Models;
+using Revit26_Plugin_Revised.SheetViewArrange.V001.Core.Layout;
+using Revit26_Plugin_Revised.SheetViewArrange.V001.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 
-namespace Revit26_Plugin.SheetViewArrange.V001.Core.Services
+namespace Revit26_Plugin_Revised.SheetViewArrange.V001.Core.Services
 {
     /// <summary>One viewport and the footprint it should end up at.</summary>
     public sealed class PlannedMove

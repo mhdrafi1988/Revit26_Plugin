@@ -2,7 +2,7 @@ using Autodesk.Revit.DB;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.CalloutCOP.V021.ViewModels
+namespace Revit26_Plugin_Revised.CalloutCOP.V021.ViewModels
 {
     /// <summary>
     /// Wraps a ViewDrafting for combo-box binding, adding detail number(s) and

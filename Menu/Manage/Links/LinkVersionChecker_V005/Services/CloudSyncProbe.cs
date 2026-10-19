@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.LinkVersionChecker_V005.Core.Models;
+using Revit26_Plugin_Revised.LinkVersionChecker_V005.Core.Models;
 
-namespace Revit26_Plugin.LinkVersionChecker_V005.Services
+namespace Revit26_Plugin_Revised.LinkVersionChecker_V005.Services
 {
     /// <summary>What one run of the cloud status check found.</summary>
     public sealed class CloudSyncResult

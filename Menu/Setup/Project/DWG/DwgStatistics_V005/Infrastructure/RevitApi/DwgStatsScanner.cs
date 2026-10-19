@@ -5,10 +5,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.DwgStatistics.V005.Core.Models;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.DwgStatistics.V005.Core.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.DwgStatistics.V005.Infrastructure.RevitApi
+namespace Revit26_Plugin_Revised.DwgStatistics.V005.Infrastructure.RevitApi
 {
     /// <summary>
     /// V004: state of one deep scan that runs in batches. Between batches Revit returns to its message

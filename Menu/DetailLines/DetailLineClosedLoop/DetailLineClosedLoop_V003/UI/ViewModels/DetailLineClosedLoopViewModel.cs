@@ -9,12 +9,12 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.DetailLineClosedLoop.V003.Core.Models;
-using Revit26_Plugin.DetailLineClosedLoop.V003.Infrastructure.ExternalEvents;
-using Revit26_Plugin.Shared.Models;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.DetailLineClosedLoop.V003.Core.Models;
+using Revit26_Plugin_Revised.DetailLineClosedLoop.V003.Infrastructure.ExternalEvents;
+using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Services;
 
-namespace Revit26_Plugin.DetailLineClosedLoop.V003.UI.ViewModels
+namespace Revit26_Plugin_Revised.DetailLineClosedLoop.V003.UI.ViewModels
 {
     public partial class DetailLineClosedLoopViewModel : ObservableObject
     {

@@ -4,11 +4,11 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.Shared.Models;
-using Revit26_Plugin.AutomatedSectionPlacer.V003.Models;
-using Revit26_Plugin.AutomatedSectionPlacer.V003.Services;
+using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin_Revised.AutomatedSectionPlacer.V003.Models;
+using Revit26_Plugin_Revised.AutomatedSectionPlacer.V003.Services;
 
-namespace Revit26_Plugin.AutomatedSectionPlacer.V003.ViewModels
+namespace Revit26_Plugin_Revised.AutomatedSectionPlacer.V003.ViewModels
 {
     /// <summary>
     /// Stage 2: Preview Placement — packing algorithm/gap inputs + to-scale

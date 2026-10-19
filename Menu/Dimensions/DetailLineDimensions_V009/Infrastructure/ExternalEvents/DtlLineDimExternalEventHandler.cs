@@ -1,11 +1,11 @@
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using System;
-using Revit26_Plugin.DtlLineDim.V009.Core.Engine;
-using Revit26_Plugin.DtlLineDim.V009.Core.Services;
-using Revit26_Plugin.DtlLineDim.V009.UI.ViewModels;
+using Revit26_Plugin_Revised.DtlLineDim.V009.Core.Engine;
+using Revit26_Plugin_Revised.DtlLineDim.V009.Core.Services;
+using Revit26_Plugin_Revised.DtlLineDim.V009.UI.ViewModels;
 
-namespace Revit26_Plugin.DtlLineDim.V009.Infrastructure.ExternalEvents
+namespace Revit26_Plugin_Revised.DtlLineDim.V009.Infrastructure.ExternalEvents
 {
     /// <summary>
     /// Single handler for all Revit API access required by DtlLineDim.

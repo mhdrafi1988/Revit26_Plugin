@@ -1,6 +1,6 @@
 // =======================================================
 // File: AutoSlopePayload.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V030
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V030
 // Changes vs V06:
 //   - Log callback changed from Action<string> to Action<LogEntry>
 //     so the engine emits structured LogEntry (LogLevel + message)
@@ -9,12 +9,12 @@
 // =======================================================
 
 using Autodesk.Revit.DB;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V030.Core.Models
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V030.Core.Models
 {
     public class AutoSlopePayload
     {

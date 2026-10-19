@@ -1,6 +1,6 @@
 // =======================================================
 // File: ShortestPathSolver.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.Core.Services
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Services
 // Replaces DijkstraPathEngine.ComputeAllDistances (V030). Pure .NET, so it
 // is unit-testable. Changes:
 //   - Weighted adjacency lists instead of a tuple-keyed weight dictionary,
@@ -13,7 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.Core.Services
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Services
 {
     /// <summary>Undirected weighted graph over roof shape points.</summary>
     public sealed class PathGraph

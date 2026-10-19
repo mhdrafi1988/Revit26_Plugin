@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.ExportDwgToFolder.V004.Core.Models;
+using Revit26_Plugin_Revised.ExportDwgToFolder.V004.Core.Models;
 
-namespace Revit26_Plugin.ExportDwgToFolder.V004.Core.Services
+namespace Revit26_Plugin_Revised.ExportDwgToFolder.V004.Core.Services
 {
     /// <summary>
     /// Writes one DWG file (and optionally a sidecar .txt) for each <see cref="DwgInstanceInfo"/>.

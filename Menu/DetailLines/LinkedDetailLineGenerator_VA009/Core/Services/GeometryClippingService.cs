@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.LinkedDetailLineGenerator.VA009.Core.Models;
+using Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA009.Core.Models;
 
-namespace Revit26_Plugin.LinkedDetailLineGenerator.VA009.Core.Services
+namespace Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA009.Core.Services
 {
     /// <summary>Outcome of clipping one boundary loop against the processing boundary.</summary>
     public class ClipResult

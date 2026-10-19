@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.ParaManager.V005.Models
+namespace Revit26_Plugin_Revised.ParaManager.V005.Models
 {
     /// <summary>
     /// The two supported Revit shared-parameter binding types.

@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.DwgManager.V003.Core.Models;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.DwgManager.V003.Core.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.DwgManager.V003.Core.Services
+namespace Revit26_Plugin_Revised.DwgManager.V003.Core.Services
 {
     /// <summary>
     /// Reads the CAD links and imports of a document. Every method must run in a Revit API context

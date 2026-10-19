@@ -3,10 +3,10 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using System;
 using System.Windows.Interop;
-using Revit26_Plugin.CalloutCOP.V020.Views;
-using Revit26_Plugin.Utilities;
+using Revit26_Plugin_Revised.CalloutCOP.V020.Views;
+using Revit26_Plugin_Revised.Utilities;
 
-namespace Revit26_Plugin.CalloutCOP.V020.Commands
+namespace Revit26_Plugin_Revised.CalloutCOP.V020.Commands
 {
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]

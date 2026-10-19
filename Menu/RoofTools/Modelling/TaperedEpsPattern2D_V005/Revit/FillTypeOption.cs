@@ -1,6 +1,6 @@
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V005.Revit
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V005.Revit
 {
     /// <summary>A filled region type for the hatch slot pickers.</summary>
     public sealed class FillTypeOption

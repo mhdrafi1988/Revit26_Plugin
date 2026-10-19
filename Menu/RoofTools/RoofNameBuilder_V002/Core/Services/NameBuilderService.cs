@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Revit26_Plugin.RoofNameBuilder.V002.Core.Models;
+using Revit26_Plugin_Revised.RoofNameBuilder.V002.Core.Models;
 
-namespace Revit26_Plugin.RoofNameBuilder.V002.Core.Services
+namespace Revit26_Plugin_Revised.RoofNameBuilder.V002.Core.Services
 {
     /// <summary>Result of splitting an existing name into base name + recognised code segments.</summary>
     public sealed class ParsedName

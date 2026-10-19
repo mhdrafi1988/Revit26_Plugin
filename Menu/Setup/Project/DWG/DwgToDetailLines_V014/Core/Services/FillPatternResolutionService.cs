@@ -1,8 +1,8 @@
 using Autodesk.Revit.UI;
 using System.Collections.Generic;
-using Revit26_Plugin.DwgToDetailLines.V014.Core.Models;
+using Revit26_Plugin_Revised.DwgToDetailLines.V014.Core.Models;
 
-namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
+namespace Revit26_Plugin_Revised.DwgToDetailLines.V014.Core.Services
 {
     /// <summary>
     /// Resolves the Create/Skip decision for a hatch layer with no existing

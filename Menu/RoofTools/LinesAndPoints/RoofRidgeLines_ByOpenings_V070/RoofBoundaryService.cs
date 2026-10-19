@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.RoofRidgeLines.V070.Services
+namespace Revit26_Plugin_Revised.RoofRidgeLines.V070.Services
 {
     /// <summary>
     /// Extracts the 2D plan boundary polygon from a RoofBase element.

@@ -1,6 +1,6 @@
 ﻿// =======================================================
 // File: AutoSlopeViewModel.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V030
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V030
 // Refactored to CommunityToolkit.Mvvm ([ObservableProperty]/[RelayCommand])
 // per MasterGuide stack convention, matching CircleMarkerGroup.cs in this
 // same tool. Same public API (property/command names unchanged, so XAML
@@ -12,10 +12,10 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.AutoSlopeByPoint.V030.Core.Models;
-using Revit26_Plugin.AutoSlopeByPoint.V030.Infrastructure.ExternalEvents;
-using Revit26_Plugin.AutoSlopeByPoint.V030.Infrastructure.Helpers;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V030.Core.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V030.Infrastructure.ExternalEvents;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V030.Infrastructure.Helpers;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -23,7 +23,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V030.UI.ViewModels
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V030.UI.ViewModels
 {
     public partial class AutoSlopeViewModel : ObservableObject
     {

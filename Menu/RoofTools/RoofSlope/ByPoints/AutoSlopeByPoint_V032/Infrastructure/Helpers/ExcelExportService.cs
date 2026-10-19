@@ -1,6 +1,6 @@
 // =======================================================
 // File: ExcelExportService.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.Helpers
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.Helpers
 // Changes vs V030:
 //   - Works only from AutoSlopeResult (no Revit objects), so the manual
 //     "Export results…" writes the SAME full workbook as the auto-export
@@ -20,11 +20,11 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 using DrawingColor = System.Drawing.Color;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.Helpers
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.Helpers
 {
     public static class ExcelExportService
     {

@@ -1,7 +1,7 @@
-using Revit26_Plugin.WorksetManager.V013.UI.ViewModels;
+using Revit26_Plugin_Revised.WorksetManager.V013.UI.ViewModels;
 using System.Windows;
 
-namespace Revit26_Plugin.WorksetManager.V013.UI.Views
+namespace Revit26_Plugin_Revised.WorksetManager.V013.UI.Views
 {
     public partial class WorksetSelectorWindow : Window
     {

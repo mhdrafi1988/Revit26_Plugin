@@ -1,11 +1,11 @@
 // File: LogEntryViewModel.cs
 using System;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.APUS.V323.ViewModels
+namespace Revit26_Plugin_Revised.APUS.V323.ViewModels
 {
     /// <summary>
-    /// Uses the shared Revit26_Plugin.Shared.Models.LogLevel rather than a
+    /// Uses the shared Revit26_Plugin_Revised.Shared.Models.LogLevel rather than a
     /// local duplicate (V320 had its own Models.LogLevel enum, which violated
     /// the suite convention of never duplicating shared LogEntry/LogLevel).
     /// </summary>

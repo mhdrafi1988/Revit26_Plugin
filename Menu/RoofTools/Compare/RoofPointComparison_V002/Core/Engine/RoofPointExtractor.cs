@@ -1,10 +1,10 @@
 using Autodesk.Revit.DB;
-using Revit26_Plugin.RoofPointComparison.V002.Core.Models;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.RoofPointComparison.V002.Core.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.RoofPointComparison.V002.Core.Engine
+namespace Revit26_Plugin_Revised.RoofPointComparison.V002.Core.Engine
 {
     /// <summary>
     /// Reads shape-editing points from a roof's SlabShapeEditor. Read-only — never

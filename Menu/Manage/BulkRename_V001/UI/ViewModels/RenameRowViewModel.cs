@@ -1,8 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using Revit26_Plugin.BulkRename.V001.Core.Models;
+using Revit26_Plugin_Revised.BulkRename.V001.Core.Models;
 using System;
 
-namespace Revit26_Plugin.BulkRename.V001.UI.ViewModels
+namespace Revit26_Plugin_Revised.BulkRename.V001.UI.ViewModels
 {
     /// <summary>
     /// One row of the Bulk Rename grid: a listed <see cref="RenameItem"/> plus what the user is doing with

@@ -11,7 +11,7 @@ using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace Revit26_Plugin.AutoSlopeByPointRidge.V003.UI.Views
+namespace Revit26_Plugin_Revised.AutoSlopeByPointRidge.V003.UI.Views
 {
     public class ColorStringToBrushConverter : IValueConverter
     {

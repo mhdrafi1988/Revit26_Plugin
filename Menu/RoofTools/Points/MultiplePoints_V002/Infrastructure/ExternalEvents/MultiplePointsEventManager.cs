@@ -1,6 +1,6 @@
 using Autodesk.Revit.UI;
 
-namespace Revit26_Plugin.MultiplePoints.V002.Infrastructure.ExternalEvents
+namespace Revit26_Plugin_Revised.MultiplePoints.V002.Infrastructure.ExternalEvents
 {
     public static class MultiplePointsEventManager
     {

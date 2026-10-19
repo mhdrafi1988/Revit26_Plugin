@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.WorksetManager.V014.Core.Models
+namespace Revit26_Plugin_Revised.WorksetManager.V014.Core.Models
 {
     public enum WorksetGridCategory
     {

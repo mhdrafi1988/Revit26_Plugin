@@ -1,9 +1,9 @@
 // IslandRoofSplitter V001 — triangulates the source roof's top faces once, so Core can sample Z without Revit.
 #nullable enable
 using Autodesk.Revit.DB;
-using Revit26_Plugin.IslandRoofSplitter.V001.Core.Models;
+using Revit26_Plugin_Revised.IslandRoofSplitter.V001.Core.Models;
 
-namespace Revit26_Plugin.IslandRoofSplitter.V001.Infrastructure.Helpers
+namespace Revit26_Plugin_Revised.IslandRoofSplitter.V001.Infrastructure.Helpers
 {
     public static class RoofSurfaceExtractor
     {

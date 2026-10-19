@@ -1,9 +1,9 @@
 using System.Windows;
 using System.Windows.Input;
-using Revit26_Plugin.RoofDetailLineIntersect.V014.UI.ViewModels;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.RoofDetailLineIntersect.V014.UI.ViewModels;
+using Revit26_Plugin_Revised.Shared.Services;
 
-namespace Revit26_Plugin.RoofDetailLineIntersect.V014.UI.Views
+namespace Revit26_Plugin_Revised.RoofDetailLineIntersect.V014.UI.Views
 {
     public partial class RoofDetailLineIntersectWindow : Window
     {

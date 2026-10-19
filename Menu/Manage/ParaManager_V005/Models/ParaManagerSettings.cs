@@ -1,11 +1,11 @@
 using System;
 
-namespace Revit26_Plugin.ParaManager.V005.Models
+namespace Revit26_Plugin_Revised.ParaManager.V005.Models
 {
     /// <summary>
     /// Settings persisted between sessions: last-used shared parameter file path,
     /// last-selected category names, and last log-export folder.
-    /// Loaded/saved via the suite-wide <see cref="Revit26_Plugin.Shared.Services.SettingsService{T}"/>.
+    /// Loaded/saved via the suite-wide <see cref="Revit26_Plugin_Revised.Shared.Services.SettingsService{T}"/>.
     /// </summary>
     public class ParaManagerSettings
     {

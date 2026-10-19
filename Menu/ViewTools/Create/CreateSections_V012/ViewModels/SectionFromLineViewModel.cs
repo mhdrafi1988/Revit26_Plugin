@@ -5,11 +5,11 @@ using System.Linq;
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.CreateSections.V012.Models;
-using Revit26_Plugin.CreateSections.V012.Services;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.CreateSections.V012.Models;
+using Revit26_Plugin_Revised.CreateSections.V012.Services;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.CreateSections.V012.ViewModels
+namespace Revit26_Plugin_Revised.CreateSections.V012.ViewModels
 {
     /// <summary>
     /// ViewModel for creating section views from detail lines.
@@ -23,7 +23,7 @@ namespace Revit26_Plugin.CreateSections.V012.ViewModels
     /// - Added SelectedCount/CreatedCount/SkippedCount/FailedCount/RenamedCount
     ///   for the metric cards, plus ResetMetrics().
     /// - Added IsRunning to drive the Create button's disabled/"Running…" state.
-    /// - LiveLog now uses the shared Revit26_Plugin.Shared.Models.LogEntry
+    /// - LiveLog now uses the shared Revit26_Plugin_Revised.Shared.Models.LogEntry
     ///   instead of the V07 tool-local Brush-coupled LogEntry.
     ///
     /// V009 changes from V008:
@@ -141,7 +141,7 @@ namespace Revit26_Plugin.CreateSections.V012.ViewModels
 
         /// <summary>
         /// Live UI log bound to the dialog.
-        /// V008: uses the shared LogEntry (Revit26_Plugin.Shared.Models),
+        /// V008: uses the shared LogEntry (Revit26_Plugin_Revised.Shared.Models),
         /// not the V07 tool-local Brush-coupled LogEntry.
         /// </summary>
         public ObservableCollection<LogEntry> LiveLog { get; } = new();

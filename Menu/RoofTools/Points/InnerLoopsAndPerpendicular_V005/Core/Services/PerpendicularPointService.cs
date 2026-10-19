@@ -11,12 +11,12 @@
 // =======================================================
 
 using Autodesk.Revit.DB;
-using Revit26_Plugin.InnerLoopsAndPerpendicular.V005.Core.Models;
+using Revit26_Plugin_Revised.InnerLoopsAndPerpendicular.V005.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.InnerLoopsAndPerpendicular.V005.Core.Services
+namespace Revit26_Plugin_Revised.InnerLoopsAndPerpendicular.V005.Core.Services
 {
     /// <summary>
     /// For a selected opening (any shape — Circular/Rectangle/Other), pools its

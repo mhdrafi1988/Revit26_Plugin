@@ -15,16 +15,16 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
-using Revit26_Plugin.AutoSlopeByDrain.V007.Core.Models;
-using Revit26_Plugin.AutoSlopeByDrain.V007.Core.Services;
-using Revit26_Plugin.AutoSlopeByDrain.V007.UI.ViewModels;
-using Revit26_Plugin.AutoSlopeByDrain.V007.UI.Views;
+using Revit26_Plugin_Revised.AutoSlopeByDrain.V007.Core.Models;
+using Revit26_Plugin_Revised.AutoSlopeByDrain.V007.Core.Services;
+using Revit26_Plugin_Revised.AutoSlopeByDrain.V007.UI.ViewModels;
+using Revit26_Plugin_Revised.AutoSlopeByDrain.V007.UI.Views;
 using System.Collections.Generic;
 using System.Windows.Interop;
-using Revit26_Plugin.Utilities;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.Utilities;
+using Revit26_Plugin_Revised.Shared.Services;
 
-namespace Revit26_Plugin.AutoSlopeByDrain.V007.Commands
+namespace Revit26_Plugin_Revised.AutoSlopeByDrain.V007.Commands
 {
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]
@@ -72,7 +72,7 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.Commands
                 // exist yet at this point, so we collect them and flush into the
                 // ViewModel's log once it's constructed below. Detection results
                 // (detectedDrains) are completely unaffected by this.
-                var diagnosticLog = new List<Revit26_Plugin.Shared.Models.LogEntry>();
+                var diagnosticLog = new List<Revit26_Plugin_Revised.Shared.Models.LogEntry>();
 
                 var detectionService = new DrainDetectionService();
                 var detectedDrains = detectionService.DetectDrainsFromRoof(

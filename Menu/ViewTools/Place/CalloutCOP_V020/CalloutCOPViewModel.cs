@@ -9,12 +9,12 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
-using Revit26_Plugin.CalloutCOP.V020.ExternalEvents;
-using Revit26_Plugin.CalloutCOP.V020.Helpers;
-using Revit26_Plugin.CalloutCOP.V020.Services;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.CalloutCOP.V020.ExternalEvents;
+using Revit26_Plugin_Revised.CalloutCOP.V020.Helpers;
+using Revit26_Plugin_Revised.CalloutCOP.V020.Services;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.CalloutCOP.V020.ViewModels
+namespace Revit26_Plugin_Revised.CalloutCOP.V020.ViewModels
 {
     public partial class CalloutCOPViewModel : ObservableObject
     {

@@ -1,9 +1,9 @@
 using Autodesk.Revit.DB;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.DtlLineDim.V010.Core.Services
+namespace Revit26_Plugin_Revised.DtlLineDim.V010.Core.Services
 {
     /// <summary>
     /// Collects Linear-style DimensionTypes available in the document.

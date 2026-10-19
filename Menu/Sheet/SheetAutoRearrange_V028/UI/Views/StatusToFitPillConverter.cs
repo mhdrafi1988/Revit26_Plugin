@@ -1,10 +1,10 @@
-using Revit26_Plugin.SheetAutoRearrange.V028.Core.Models;
+using Revit26_Plugin_Revised.SheetAutoRearrange.V028.Core.Models;
 using System;
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace Revit26_Plugin.SheetAutoRearrange.V028.UI.Views
+namespace Revit26_Plugin_Revised.SheetAutoRearrange.V028.UI.Views
 {
     /// <summary>
     /// Tool-local converter (not merged to shared Converters.cs) mapping
