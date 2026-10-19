@@ -101,7 +101,7 @@ namespace Revit26_Plugin.Shared.Services
         public static readonly ToolInfo RoofEdgeAroundSections = Add("Roof Edge Around Sections", "7.1.0", "V007", "Revit26_Plugin.RoofEdgeAroundSections.V007");
         public static readonly ToolInfo RoofEdgeElementSections = Add("Roof Edge Element Sections", "4.1.0", "V004", "Revit26_Plugin.RoofEdgeElementSections.V004");
         public static readonly ToolInfo RoofNameBuilder = Add("Roof Name Builder", "2.1.0", "V002", "Revit26_Plugin.RoofNameBuilder.V002");
-        public static readonly ToolInfo IslandRoofSplitter = Add("Island Roof Splitter", "0.1.0", "V001 (WIP)", "Revit26_Plugin.IslandRoofSplitter.V001");
+        public static readonly ToolInfo IslandRoofSplitter = Add("Island Roof Splitter", "0.2.0", "V001 (WIP)", "Revit26_Plugin.IslandRoofSplitter.V001");
         public static readonly ToolInfo LinkVersionChecker = Add("Link Version Checker", "3.0.0", "V003", "Revit26_Plugin.LinkVersionChecker_V003");
         public static readonly ToolInfo LinkVersionCheckerV004 = Add("Link Version Checker", "4.0.0", "V004", "Revit26_Plugin.LinkVersionChecker_V004");
         public static readonly ToolInfo RoofViewFocus = Add("Roof View Focus", "4.0.0", "V004", "Revit26_Plugin.RoofViewFocus.V004");
