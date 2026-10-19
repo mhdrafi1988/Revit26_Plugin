@@ -9,23 +9,180 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
-## [3.4.0] — 2026-10-15
+## [3.8.0] — 2026-10-17
 
 ### Added
-- **Roof Name Builder v2.0.0 (V002)** — new button in the Roof ribbon, **Roof Edit** panel. Bulk
-  renames roof types/instances with configurable INS/SLP/MAT codes.
-- **Island Roof Splitter v0.1.0 (V001, WIP)** — new button in the Roof ribbon, **Roof Edit** panel.
-  Work in progress: try it on a copy of your model.
-- **Link Version Checker v3.0.0 (V003)** — new **Link Check** dropdown in the Manage panel with
-  Pre-Open, In-Model and Folder Audit. Pre-Open and Folder Audit work with no project open.
-  Starts a load-time logger when Revit starts.
+- **Export DWG to Folder v4.0.0 (V004)** — added to Setup ▸ Project Tools ▸ **Export DWG** dropdown
+  as the top (newest) entry, labelled `Export DWG V004 #`; V003 and V001 stay available below it.
+  Adds layer-property export modes, a post-export review step and an export manifest.
+  Internal button name: `Btn_ExportDwgToFolder_V004`.
+- **Workset Creator v16.0.0 (V016)** — added to the new Worksets panel ▸ **WS Creator** dropdown as
+  the top entry, labelled `Workset Creator V016 #`; V015 stays below it. Internal button name:
+  `Btn_WorksetCreator_V016`. Also given its first `ToolCatalog` entry, so ToolGuard's error dialog
+  and daily log name the tool and version.
+- **Worksets ribbon panel** — new panel on the SloperPro-Documents tab, after Manage, holding every
+  workset tool: WS Browser, WS Creator, WS Renamer, WS Renamer XL, Delete Workset.
+- **Link Version Checker v4.0.0 (V004)** — all three scan modes added to the top of the **Link
+  Check** dropdown, labelled `… V004 #`; V003's three modes stay below. V004 sees ACC / Autodesk
+  Docs cloud links that V003 silently dropped, and adds a Source column with a 13-value filter.
+  Internal button names: `Btn_LinkVersionChecker_InModel_V004`, `_PreOpen_V004`, `_Folder_V004`;
+  Pre-Open and Folder Audit keep their always-available class so they work with no project open.
+  Own `ToolCatalog` entry added.
+- **Links ribbon panel** — new panel after Worksets holding the **Link Check** dropdown.
+- **DWG Tools panel** — the Setup **Project Tools** panel is renamed **DWG Tools**; its four buttons
+  (DWG To DL(P), Export DWG, DWG Manager, DWG Statistics) were already all DWG tools. Nothing moved,
+  and the separate **Family Tools** panel still marks the two family-editor-only DWG tools
+  (Batch Link DWG, DWG To Lines).
 
-## [3.3.0] — 2026-10-15
+### Changed
+- **Manage panel** — workset tools moved out to the new Worksets panel and **Link Check** to the new
+  Links panel. Manage now holds Overlaps, ParaManager, Del. Line Styles, Bulk Rename and Schedule I/O.
+- **Plugin version** — `<Version>` in the .csproj corrected from 3.6.0 (it had been left behind at
+  the 3.7.0 release) to 3.8.0.
+- **Ribbon naming convention** — the most recently added version of a tool carries a trailing `#`
+  in its dropdown label.
+
+### Removed
+- **Workset Manager (V013, V014)** — removed from the ribbon on request. The commands, windows and
+  `ToolCatalog` entry stay in the project, so the buttons can be restored by re-adding the two
+  `PushButtonData` entries and the `Pulldown_WorksetManager` wiring in `ManageRibbon.cs`.
+
+### Removed
+- **File Status Checker (V001, V002)** — the tool was deleted from the repo
+  (`Menu\Manage\Links`, now excluded in the .csproj), so its ribbon buttons and `ToolCatalog`
+  entry were removed with it.
+
+### Fixed
+- **Duplicate Link Version Checker V003 source** — a second copy of the V003 tool
+  (`Menu\Manage\Links_02\LinkVersionChecker_V003_UPDATED\lvc`, 18 files with the same
+  namespaces as the live tool) had landed in a compiled path and would have failed the build with
+  duplicate type definitions. Excluded in the .csproj (Compile / EmbeddedResource / None / Page);
+  the folder can be deleted outright.
+- **Link load-time logger registered once.** V003 and V004 share
+  `%AppData%\Revit26_Plugin\LinkVersionChecker\loadtimes.json`, so only V004's logger is
+  registered now — registering both would double-handle Revit's link-load events. V003 still reads
+  the same file.
+
+#### User note
+Workset Manager no longer appears on the ribbon. Every other workset tool is unchanged but now lives
+in the **Worksets** panel instead of **Manage**, and Link Check has moved to the new **Links**
+panel, where V004 is now the top set of entries.
+
+---
+
+## [3.7.0] — 2026-10-15
 
 ### Added
 - **Export DWG to Folder v3.0.0 (V003)** — added to the Setup ▸ Project ▸ **Export DWG** dropdown,
   above V001 (V001 stays available). Includes scan scope, delete-after-export mode, a grouped
   tick/untick grid and log export (auto-save or save-as picker).
+- **Roof Name Builder v2.0.0 (V002)** — Roof ribbon, new **Roof Edit** panel. Bulk renames roof
+  types/instances with configurable INS/SLP/MAT codes.
+- **Island Roof Splitter v0.1.0 (V001, WIP)** — Roof ribbon, **Roof Edit** panel. Work in progress:
+  try it on a copy of your model.
+- **Link Version Checker v3.0.0 (V003)** — new **Link Check** dropdown in the Manage panel
+  (Pre-Open, In-Model, Folder Audit). Starts a load-time logger when Revit starts.
+
+---
+
+## [3.6.0] — 2026-10-14
+
+### Added
+- **AutoSlopeByDrain V007** (single-roof) registered in RoofToolsRibbon — the tool existed in source
+  but had no ribbon entry; added to the `Pulldown_AutoSlopeByDrain` pulldown as third item
+  (order: V012 → V011 → V007), with its own icon (`by_drain_16.png`) to distinguish it from the
+  multi-roof entries. Internal button name: `Btn_AutoSlopeByDrain_V007`.
+
+### Changed
+- **ToolCatalog** — synced all 44 stale tool-version entries to match the highest version registered
+  in the ribbon files. No tool public behaviour changed; tooltips, window titles and error dialogs
+  now show the correct current version for every tool.
+
+---
+
+## [3.5.0] — 2026-10-13
+
+### Added
+- **InnerLoopDivider V012** added to RoofToolsRibbon Shape Points panel as primary pulldown button (order: V012 → V011 → V010).
+- **DwgManager V003** added to SetupRibbon Project panel as primary pulldown button; V002 remains as secondary.
+- **DwgStatistics V005** added to SetupRibbon Project panel as new pulldown button.
+
+### Fixed
+- **DwgManager V002** button had wrong namespace () — corrected to .
+
+### Changed
+- ToolCatalog:  version corrected to 12.0.0 / V012;  to 3.0.0 / V003;  to 5.0.0 / V005;  entry added at 5.0.0 / V005.
+
+## [3.4.0] — 2026-10-13
+
+### Added
+- **TaperedEpsPattern2D** registered in ToolCatalog (version 6.0.0 / V006) — the tool existed in
+  source (V001-V006) but had no catalog entry; ribbon tooltips, window titles and error dialogs now
+  read from the catalog like every other tool.
+
+### Fixed
+- **TaperedEpsPattern2D ribbon (Insulation panel)**:
+  - Btn_TaperedEpsPattern2D_V002 (new): correct button for V002 (V002.Commands).
+  - Btn_TaperedEpsPattern2D_V004: corrected command class from V006.Commands to V004.Commands.
+  - Btn_TaperedEpsPattern2D_V005 (previously wired to V002 code): corrected to V005.Commands.
+  - Btn_TaperedEpsPattern2D_V006 (new): button for V006 (V006.Commands).
+  - Pulldown primary is now V006 (highest); order V006, V005, V004, V002, V001 per CLAUDE.md
+    convention (highest first, descending).
+
+## [3.3.0] — 2026-10-08
+
+### Added
+- **DWG Manager v2.0.0 (V002)** — lists every CAD link and import, grouped Linked / Imported →
+  view type, one row per file per view (a file placed in three views shows three rows).
+  - Metric cards (CAD files, linked, imported, instances), filter, Select All / Clear Selection,
+    sortable columns (sorting stays inside the groups), collapsible groups.
+  - **Open Views** opens the views of up to 5 ticked rows.
+  - **IDs** shows a row's element IDs; click an ID to select it and zoom to it. IDs not drawn in the
+    active view are greyed out; this updates when you come back to the window after switching views.
+  - **Delete** per row (inline confirmation with its own purge tick) and **Delete Selected (n)** in
+    the toolbar and footer for any number of ticked rows (asks first).
+  - **Purge on delete** removes a CAD link / import type only when no instance of it is left anywhere
+    in the model; otherwise the type is kept and the log says why.
+  - Log with Copy All / Copy Selected / Clear, and a completion summary
+    ("X deleted | Y skipped | Z failed | N type(s) purged").
+  - Replaces the unreleased V001 draft, which did not build on Revit 2026 and changed the model
+    from outside a Revit API context. Actions stop if the active document is not the one the window
+    was opened for; elements owned by another user are skipped.
+
+  **User note:** Delete removes only the instances in the row's view. Purge never removes a CAD type
+  that is still placed in another view. Ctrl+Z in Revit undoes a delete.
+
+### Changed
+- **Export DWG to Folder v2.0.0 (V001)** — you now choose what to scan and what to export:
+  - **Nothing is scanned when the window opens.** A new **Scan Scope** card has Source (Linked /
+    Imported) and View type (Plan / Section / Drafting / No Views) boxes and a **Scan** button. All six
+    boxes start unticked every time; Scan stays off until at least one source and one view type are
+    ticked. The scan collects only DWGs inside that scope (and skips the slow "find views for
+    model-space imports" pass when only Drafting is ticked).
+  - **Advanced list of the scanned DWGs**, grouped Source → View type with collapsible groups and
+    "Collapse All / Expand All": Name, Source, View Type, Host View, Sheet, Output File, Element ID and
+    Status columns; click a header to sort inside the groups; a filter box (every word must match);
+    **Select All / Select None** and a header tick box that act on the shown rows; Space ticks the
+    highlighted rows; virtualised for large lists. **Every row starts unticked.**
+  - **Status pre-check** while the list loads: a linked DWG whose source file can't be found, or an
+    imported DWG with no host view, shows ⚠ and counts under the new **Issues** tile. During an export
+    each ticked row updates live: Queued → Exporting… → Exported / Skipped / Failed.
+  - **Export (n)** (was "Run") exports only the ticked rows and shows how many are ticked. It is off
+    until a folder is set and at least one row is ticked.
+  - **Three progress bars** in the footer — Scanning, Loading list and Exporting — each with a count
+    and a percentage (grey = not started, blue = running, green = done, amber = finished with failures
+    or stopped). The window repaints while Revit works, so the bars move during a long scan or export.
+  - **Reset** (footer, left) unticks the scope and clears the list and the bars.
+  - Header tiles are now Scanned / Linked / Imported / Ready / Issues / Selected. The window is wider
+    (920 px) for the grid, and the folder picker is a standard folder dialog.
+  - Settings file format version 2: the scan scope is no longer remembered. Version-1 files load; their
+    scope fields are ignored. Output folder, subfolders, sidecar and overwrite are still remembered.
+  - Opening the tool now goes through `ToolGuard`, and a Revit request that Revit refuses no longer
+    leaves the window stuck as busy.
+
+**User note:** v1 scanned the whole model on open and exported every DWG that passed the source and
+view-type boxes. In v2 those boxes only decide what is *scanned*; only the rows you tick are
+exported. Ticked rows hidden by the filter are exported too (the log says how many).
 
 ## [3.2.0] — 2026-10-08
 

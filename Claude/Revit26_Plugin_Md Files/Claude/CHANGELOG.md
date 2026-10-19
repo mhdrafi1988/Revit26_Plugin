@@ -19,6 +19,25 @@ period rather than trusting a reconstruction here.
 ---
 
 
+## 2026-10-17 — Manage / Links
+
+- FileStatusChecker V002 — picks up the two 2026-10-04 conventions V001 shipped
+  without. The log panel now starts **collapsed**: the header row and its Copy
+  All / Copy Selected / Export / Clear stay visible, and the title toggles the
+  lines. The footer `Rescan` moves to the red `RunButton`; Tab 2's `Search`
+  stays navy, being a body action rather than the footer action.
+- New `IsLogExpanded` on the ViewModel and in `settings.json`, so the collapsed
+  or expanded choice survives a reopen. The log title bar is fully rounded while
+  collapsed so no dark lip shows beneath it.
+- No behaviour change: every binding, command, transaction and Revit-side call
+  is V001's. Namespace `Revit26_Plugin.FileStatusChecker.V002`; V001's folder
+  kept on disk per `Claude/TOOL_VERSIONING.md`.
+- Ribbon: **not yet wired.** The Manage pulldown still points at V001 only —
+  V002 is compiled-but-orphaned until the `ManageRibbon.cs` edit lands
+  (V001 first, V002 second).
+- Note: `settings.json` and the snapshot store are keyed by tool name, not
+  version, so V001 and V002 share both.
+
 ## 2026-10-04 — ToolWindowShell (CLAUDE.md v1.1)
 
 - Shared: new `Shared/Controls/ToolWindowShell` (header / body / footer;

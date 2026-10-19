@@ -3,17 +3,12 @@
 ;  Rafi | Revit 2026 Plugin Installer
 ; ============================================================
 
-; --- UPDATE THIS LINE each time you build ---
-; It is the date-stamped folder inside bin\Release\net8.0-windows\
-#define BuildStamp "09-06-000"
-
 #define MyAppName      "Rf Revit 2026 Plugin"
 #define MyAppVersion   "1.0.0"
 #define MyAppPublisher "Rafi"
-#define MyAppExeName   ""
 #define RevitAddinDir  "{commonappdata}\Autodesk\Revit\Addins\2026"
 #define PluginSubDir   "Rf_Revit_2026"
-#define SourceBase     "C:\Users\Rafi\source\repos\Revit26_Plugin\bin\Release\net8.0-windows\" + BuildStamp + "\Release\net8.0-windows"
+#define SourceBase     "C:\Users\Rafi\source\repos\Revit26_Plugin\bin\12\Release\net8.0-windows"
 
 [Setup]
 AppId={{a4e8c4c7-9f8b-4a6a-9d31-532f8c980d41}
@@ -33,14 +28,16 @@ ArchitecturesInstallIn64BitMode=x64compatible
 UninstallDisplayName={#MyAppName}
 UninstallDisplayIcon={app}\Revit26_Plugin.dll
 WizardStyle=modern
-; Optional: set your own icon below (must be a .ico file)
-; SetupIconFile=C:\Path\To\YourIcon.ico
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
+[Dirs]
+Name: "{#RevitAddinDir}";                     Permissions: everyone-full
+Name: "{#RevitAddinDir}\{#PluginSubDir}";     Permissions: everyone-full
+
 ; ============================================================
-;  FILES — all DLLs + deps.json go into the plugin subfolder
+;  FILES
 ; ============================================================
 [Files]
 ; --- Main plugin assembly ---
@@ -53,12 +50,8 @@ Source: "{#SourceBase}\CommunityToolkit.Mvvm.dll";   DestDir: "{app}"; Flags: ig
 ; --- ControlzEx ---
 Source: "{#SourceBase}\ControlzEx.dll";              DestDir: "{app}"; Flags: ignoreversion
 
-; --- EPPlus ---
-Source: "{#SourceBase}\EPPlus.dll";                  DestDir: "{app}"; Flags: ignoreversion
-Source: "{#SourceBase}\EPPlus.Interfaces.dll";       DestDir: "{app}"; Flags: ignoreversion
-Source: "{#SourceBase}\EPPlus.System.Drawing.dll";   DestDir: "{app}"; Flags: ignoreversion
 
-; --- MahApps.Metro core ---
+; --- MahApps.Metro ---
 Source: "{#SourceBase}\MahApps.Metro.dll";           DestDir: "{app}"; Flags: ignoreversion
 
 ; --- MahApps IconPacks ---
@@ -111,42 +104,30 @@ Source: "{#SourceBase}\MahApps.Metro.IconPacks.Zondicons.dll";            DestDi
 Source: "{#SourceBase}\MaterialDesignColors.dll";         DestDir: "{app}"; Flags: ignoreversion
 Source: "{#SourceBase}\MaterialDesignThemes.Wpf.dll";     DestDir: "{app}"; Flags: ignoreversion
 
-; --- MIConvexHull (used by RoofRidgeLines) ---
+; --- MIConvexHull ---
 Source: "{#SourceBase}\MIConvexHull.dll";                 DestDir: "{app}"; Flags: ignoreversion
 
 ; --- Microsoft.Extensions ---
-Source: "{#SourceBase}\Microsoft.Extensions.Configuration.Abstractions.dll";  DestDir: "{app}"; Flags: ignoreversion
-Source: "{#SourceBase}\Microsoft.Extensions.Configuration.dll";               DestDir: "{app}"; Flags: ignoreversion
-Source: "{#SourceBase}\Microsoft.Extensions.Configuration.FileExtensions.dll";DestDir: "{app}"; Flags: ignoreversion
-Source: "{#SourceBase}\Microsoft.Extensions.Configuration.Json.dll";          DestDir: "{app}"; Flags: ignoreversion
-Source: "{#SourceBase}\Microsoft.Extensions.FileProviders.Abstractions.dll";  DestDir: "{app}"; Flags: ignoreversion
-Source: "{#SourceBase}\Microsoft.Extensions.FileProviders.Physical.dll";      DestDir: "{app}"; Flags: ignoreversion
-Source: "{#SourceBase}\Microsoft.Extensions.FileSystemGlobbing.dll";          DestDir: "{app}"; Flags: ignoreversion
-Source: "{#SourceBase}\Microsoft.Extensions.Primitives.dll";                  DestDir: "{app}"; Flags: ignoreversion
-Source: "{#SourceBase}\Microsoft.IO.RecyclableMemoryStream.dll";              DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceBase}\Microsoft.Extensions.Configuration.Abstractions.dll";   DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceBase}\Microsoft.Extensions.Configuration.dll";                DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceBase}\Microsoft.Extensions.Configuration.FileExtensions.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceBase}\Microsoft.Extensions.Configuration.Json.dll";           DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceBase}\Microsoft.Extensions.FileProviders.Abstractions.dll";   DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceBase}\Microsoft.Extensions.FileProviders.Physical.dll";       DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceBase}\Microsoft.Extensions.FileSystemGlobbing.dll";           DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceBase}\Microsoft.Extensions.Primitives.dll";                   DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceBase}\Microsoft.IO.RecyclableMemoryStream.dll";               DestDir: "{app}"; Flags: ignoreversion
 
 ; --- XAML Behaviors ---
 Source: "{#SourceBase}\Microsoft.Xaml.Behaviors.dll";    DestDir: "{app}"; Flags: ignoreversion
 
 ; ============================================================
-;  .ADDIN MANIFEST — written fresh by the installer
-;  Points to {commonappdata}\Autodesk\Revit\Addins\2026\Rf_Revit_2026\
-;  Placed directly in the Addins\2026 root (NOT inside the subfolder)
-; ============================================================
-[INI]
-; Nothing here — we use [Code] to write the XML manifest
-
-[Dirs]
-Name: "{#RevitAddinDir}";           Permissions: everyone-full
-Name: "{#RevitAddinDir}\{#PluginSubDir}"; Permissions: everyone-full
-
-; ============================================================
-;  CODE — writes the .addin manifest on install, deletes on uninstall
+;  CODE — writes .addin manifest on install, deletes on uninstall
 ; ============================================================
 [Code]
 
 const
-  AddinFileName = 'Rf_Revit_2026.addin';
+  AddinFileName = 'rf12_Revit_2026.addin';
 
 function GetAddinFilePath(): String;
 begin
@@ -175,9 +156,7 @@ begin
   Lines[7] := '    <VendorId>RAFI</VendorId>';
   Lines[8] := '    <VendorDescription>By Rafi</VendorDescription>';
   Lines[9] := '  </AddIn>';
-  // Note: closing tag written separately to avoid Inno string limit issues
   SaveStringsToFile(FilePath, Lines, False);
-  // Append the closing tag
   SaveStringToFile(FilePath, '</RevitAddIns>', True);
 end;
 

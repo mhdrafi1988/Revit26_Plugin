@@ -9,9 +9,9 @@ namespace Revit26_Plugin.Menu.Ribbon
     {
         public static void Build(UIControlledApplication app, string tabName, string assemblyPath)
         {
-            // Family-editor tools and Project tools are split into their own
+            // Family-editor tools and project DWG tools are split into their own
             // panels — running a Family tool in a Project (or vice versa)
-            // fails the context check, so the panel title now makes that clear.
+            // fails the context check, so the panel titles make that clear.
             RibbonPanel familyPanel = app.CreateRibbonPanel(tabName, "Family Tools");
 
             // Every tool is a pulldown: highest version number first, every
@@ -51,7 +51,10 @@ namespace Revit26_Plugin.Menu.Ribbon
             RibbonLayoutHelper.WirePulldownButton(familyItems, "Pulldown_BatchLinkDwg", batchLinkV002, batchLinkWorking);
             RibbonLayoutHelper.WirePulldownButton(familyItems, "Pulldown_DwgToLines", dwgToLinesV007, dwgToLinesV006);
 
-            RibbonPanel projectPanel = app.CreateRibbonPanel(tabName, "Project Tools");
+            // Every button on this panel is a DWG tool, hence the panel name.
+            // Project context only — the two family-editor DWG tools stay on
+            // the Family Tools panel above.
+            RibbonPanel projectPanel = app.CreateRibbonPanel(tabName, "DWG Tools");
 
             // Latest two versions of the tool, collected under one pulldown
             // button — each version is a push button inside the dropdown.
@@ -67,25 +70,54 @@ namespace Revit26_Plugin.Menu.Ribbon
             };
             var dwgLinesPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DwgToDetailLines", "DWG To DL(P)", dwgLinesV014);
 
+            // Newest build first. "#" at the end of the label marks the version added last.
+            var exportDwgV004 = new PushButtonData("Btn_ExportDwgToFolder_V004", "Export DWG V004 #", assemblyPath, "Revit26_Plugin.ExportDwgToFolder.V004.Commands.ExportDwgToFolderCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToDetailLines_V011_16.png"),
+                ToolTip = ToolCatalog.ExportDwgToFolder.Tip("Export embedded CAD links and imports to a folder, with layer-property and post-export review options, plus an export manifest.")
+            };
             var exportDwgV003 = new PushButtonData("Btn_ExportDwgToFolder_V003", "Export DWG V003", assemblyPath, "Revit26_Plugin.ExportDwgToFolder.V003.Commands.ExportDwgToFolderCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToDetailLines_V011_16.png"),
-                ToolTip = ToolCatalog.ExportDwgToFolder.Tip("Export all embedded CAD links and imports to a folder, organised by source type and view category.")
+                ToolTip = RibbonLayoutHelper.VersionTip("Export DWG to Folder", "V003", "Export all embedded CAD links and imports to a folder, organised by source type and view category.")
             };
             var exportDwgV001 = new PushButtonData("Btn_ExportDwgToFolder_V001", "Export DWG V001", assemblyPath, "Revit26_Plugin.ExportDwgToFolder.V001.Commands.ExportDwgToFolderCommand")
             {
                 Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToDetailLines_V011_16.png"),
-                ToolTip = RibbonLayoutHelper.VersionTip("Export DWG to Folder", "V001", "Export all embedded CAD links and imports to a folder, organised by source type and view category.")
+                ToolTip = RibbonLayoutHelper.VersionTip("Export DWG to Folder", "V001", "Choose which CAD links / imports and view types to scan, tick the DWGs you want and export them to a folder, organised by source type and view category.")
             };
-            var exportDwgPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_ExportDwgToFolder", "Export DWG", exportDwgV003);
+            var exportDwgPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_ExportDwgToFolder", "Export DWG", exportDwgV004);
+
+            var dwgManagerV002 = new PushButtonData("Btn_DwgManager_V002", "DWG Manager V002", assemblyPath, "Revit26_Plugin.DwgManager.V002.Commands.DwgManagerCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToDetailLines_16.png"),
+                ToolTip = ToolCatalog.DwgManager.Tip("List every CAD link and import by link type and view, open up to 5 of their views, select instances by ID, and delete them (optionally purging types no longer placed anywhere).")
+            };
+            var dwgManagerV003 = new PushButtonData("Btn_DwgManager_V003", "DWG Manager V003", assemblyPath, "Revit26_Plugin.DwgManager.V003.Commands.DwgManagerCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToDetailLines_16.png"),
+                ToolTip = ToolCatalog.DwgManager.Tip("List every CAD link and import by link type and view, open up to 5 of their views, select instances by ID, and delete them (optionally purging types no longer placed anywhere).")
+            };
+            var dwgManagerPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DwgManager", "DWG Manager", dwgManagerV003);
+
+            var dwgStatisticsV005 = new PushButtonData("Btn_DwgStatistics_V005", "DWG Statistics V005", assemblyPath, "Revit26_Plugin.DwgStatistics.V005.Commands.DwgStatisticsCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SetupTools.DwgToDetailLines_16.png"),
+                ToolTip = ToolCatalog.DwgStatistics.Tip("Report DWG usage statistics across the project.")
+            };
+            var dwgStatisticsPulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DwgStatistics", "DWG Statistics", dwgStatisticsV005);
 
             var projectItems = RibbonLayoutHelper.AddStackedButtons(projectPanel, new List<RibbonItemData>
             {
                 dwgLinesPulldownData,
                 exportDwgPulldownData,
+                dwgManagerPulldownData,
+                dwgStatisticsPulldownData,
             });
             RibbonLayoutHelper.WirePulldownButton(projectItems, "Pulldown_DwgToDetailLines", dwgLinesV014, dwgLinesV013);
-            RibbonLayoutHelper.WirePulldownButton(projectItems, "Pulldown_ExportDwgToFolder", exportDwgV003, exportDwgV001);
+            RibbonLayoutHelper.WirePulldownButton(projectItems, "Pulldown_ExportDwgToFolder", exportDwgV004, exportDwgV003, exportDwgV001);
+            RibbonLayoutHelper.WirePulldownButton(projectItems, "Pulldown_DwgManager", dwgManagerV003, dwgManagerV002);
+            RibbonLayoutHelper.WirePulldownButton(projectItems, "Pulldown_DwgStatistics", dwgStatisticsV005);
         }
     }
 }

@@ -8,8 +8,8 @@
 		<PackageId />
 		<AssemblyName>Revit26_Plugin</AssemblyName>
 		<!-- Plugin version (SemVer). Per-tool versions live in Shared/Services/ToolCatalog.cs. -->
-		<Version>3.4.0</Version>
-		<BaseOutputPath></BaseOutputPath>
+		<Version>3.8.0</Version>
+		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\51</BaseOutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 	  <IsPublishable>False</IsPublishable>
@@ -19,6 +19,11 @@
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
+	  <Compile Remove="Menu\Manage\Links\**" />
+	  <Compile Remove="Menu\Manage\Links_02\LinkVersionChecker_V003_UPDATED\**" />
+	  <Compile Remove="Menu\Manage\Links_01\**" />
+	  <Compile Remove="Menu\RoofTools\New items\**" />
+	  <Compile Remove="Menu\RoofTools\WIP\**" />
 	  <Compile Remove="Menu\Dimensions\TwoPOintLInes_V02\**" />
 	  <Compile Remove="Menu\Dimensions\TwoPointLInes_V03\**" />
 	  <Compile Remove="Menu\RoofTools\CreasetoLines\CreaserAdvCommand\**" />
@@ -182,6 +187,11 @@
 	  <Compile Remove="Menu\ViewTools\Rename_01\Section_Renamer_V09\**" />
 	  <Compile Remove="ViewModels\**" />
 	  <EmbeddedResource Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
+	  <EmbeddedResource Remove="Menu\Manage\Links\**" />
+	  <EmbeddedResource Remove="Menu\Manage\Links_02\LinkVersionChecker_V003_UPDATED\**" />
+	  <EmbeddedResource Remove="Menu\Manage\Links_01\**" />
+	  <EmbeddedResource Remove="Menu\RoofTools\New items\**" />
+	  <EmbeddedResource Remove="Menu\RoofTools\WIP\**" />
 	  <EmbeddedResource Remove="Menu\Dimensions\TwoPOintLInes_V02\**" />
 	  <EmbeddedResource Remove="Menu\Dimensions\TwoPointLInes_V03\**" />
 	  <EmbeddedResource Remove="Menu\RoofTools\CreasetoLines\CreaserAdvCommand\**" />
@@ -345,6 +355,11 @@
 	  <EmbeddedResource Remove="Menu\ViewTools\Rename_01\Section_Renamer_V09\**" />
 	  <EmbeddedResource Remove="ViewModels\**" />
 	  <None Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
+	  <None Remove="Menu\Manage\Links\**" />
+	  <None Remove="Menu\Manage\Links_02\LinkVersionChecker_V003_UPDATED\**" />
+	  <None Remove="Menu\Manage\Links_01\**" />
+	  <None Remove="Menu\RoofTools\New items\**" />
+	  <None Remove="Menu\RoofTools\WIP\**" />
 	  <None Remove="Menu\Dimensions\TwoPOintLInes_V02\**" />
 	  <None Remove="Menu\Dimensions\TwoPointLInes_V03\**" />
 	  <None Remove="Menu\RoofTools\CreasetoLines\CreaserAdvCommand\**" />
@@ -508,6 +523,11 @@
 	  <None Remove="Menu\ViewTools\Rename_01\Section_Renamer_V09\**" />
 	  <None Remove="ViewModels\**" />
 	  <Page Remove="Menu\Dimensions\TwoPOintLInes_V01\**" />
+	  <Page Remove="Menu\Manage\Links\**" />
+	  <Page Remove="Menu\Manage\Links_02\LinkVersionChecker_V003_UPDATED\**" />
+	  <Page Remove="Menu\Manage\Links_01\**" />
+	  <Page Remove="Menu\RoofTools\New items\**" />
+	  <Page Remove="Menu\RoofTools\WIP\**" />
 	  <Page Remove="Menu\Dimensions\TwoPOintLInes_V02\**" />
 	  <Page Remove="Menu\Dimensions\TwoPointLInes_V03\**" />
 	  <Page Remove="Menu\RoofTools\CreasetoLines\CreaserAdvCommand\**" />

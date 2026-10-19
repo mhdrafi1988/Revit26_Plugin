@@ -1,0 +1,56 @@
+{
+  "v": 4,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-10-03T12:00:00Z"
+  },
+  "lists": "css",
+  "title": "BIM Automation and DA4R \u2013 IKK Rollout Proposal",
+  "order": [
+    "cover",
+    "problem",
+    "built",
+    "time",
+    "workflow",
+    "cloud",
+    "apiflow",
+    "powerbi",
+    "d_site",
+    "d_4d",
+    "d_exp",
+    "d_mat",
+    "d_clash",
+    "d_issues",
+    "powerapps",
+    "pt_overview",
+    "pt_powerbi",
+    "pt_powerapps",
+    "pt_automate",
+    "pt_pages",
+    "pt_copilot",
+    "pt_data",
+    "rollout",
+    "benefits",
+    "ask"
+  ],
+  "sections": {
+    "s1": {
+      "description": "Purpose, problem and what is built",
+      "start": "cover"
+    },
+    "s2": {
+      "description": "Part 1: Autodesk, DA4R and APIs",
+      "start": "workflow"
+    },
+    "s3": {
+      "description": "Part 2: Power BI and Power Platform",
+      "start": "powerbi"
+    },
+    "s4": {
+      "description": "Rollout and the ask",
+      "start": "rollout"
+    }
+  },
+  "faces": {},
+  "designSystems": []
+}

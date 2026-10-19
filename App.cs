@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.Menu.Ribbon;
 using Revit26_Plugin.Shared.Services;
@@ -10,12 +10,14 @@ namespace Revit26_Plugin
     /// </summary>
     public partial class App : IExternalApplication
     {
-        private const string RibbonTabName = "SloperPro";
+        private const string ModellingTabName  = "SloperPro-MDL";
+        private const string DocumentsTabName  = "SloperPro-DCM";
 
         public Result OnStartup(UIControlledApplication application)
         {
             ToolGuard.Install();
-            EnsureRibbonTabExists(application);
+            EnsureRibbonTabExists(application, ModellingTabName);
+            EnsureRibbonTabExists(application, DocumentsTabName);
             InitializeRibbonPanels(application);
             return Result.Succeeded;
         }
@@ -25,11 +27,11 @@ namespace Revit26_Plugin
             return Result.Succeeded;
         }
 
-        private void EnsureRibbonTabExists(UIControlledApplication application)
+        private static void EnsureRibbonTabExists(UIControlledApplication application, string tabName)
         {
             try
             {
-                application.CreateRibbonTab(RibbonTabName);
+                application.CreateRibbonTab(tabName);
             }
             catch
             {
@@ -40,12 +42,16 @@ namespace Revit26_Plugin
         private void InitializeRibbonPanels(UIControlledApplication application)
         {
             string assemblyPath = Assembly.GetExecutingAssembly().Location;
-            RoofToolsRibbon.Build(application, RibbonTabName, assemblyPath);
-            ViewToolsRibbon.Build(application, RibbonTabName, assemblyPath);
-            SetupRibbon.Build(application, RibbonTabName, assemblyPath);
-            SheetToolsRibbon.Build(application, RibbonTabName, assemblyPath);
-            DetailLInesRibbon.Build(application, RibbonTabName, assemblyPath);
-            ManageRibbon.Build(application, RibbonTabName, assemblyPath);
+
+            // ── SloperPro-Modelling ──────────────────────────────────────────
+            RoofToolsRibbon.Build(application, ModellingTabName, assemblyPath);
+            DetailLInesRibbon.Build(application, ModellingTabName, assemblyPath);
+
+            // ── SloperPro-Documents ──────────────────────────────────────────
+            ViewToolsRibbon.Build(application, DocumentsTabName, assemblyPath);
+            SetupRibbon.Build(application, DocumentsTabName, assemblyPath);
+            SheetToolsRibbon.Build(application, DocumentsTabName, assemblyPath);
+            ManageRibbon.Build(application, DocumentsTabName, assemblyPath);
         }
     }
 }

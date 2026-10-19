@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Link Version Checker V004</title>
+<style>
+:root{
+  --bg:#e9ecef; --win:#fff; --title:#1E3A5F; --titleText:#fff; --text:#1f2937; --muted:#6b7280;
+  --line:#e5e7eb; --head:#f3f4f6; --accent:#1E3A5F; --accentSoft:#e6edf6;
+  --cyan:#0b6bcb; --cyanSoft:#e6f0fb;
+  --red:#c62828; --redSoft:#fdecea; --amber:#b26a00; --amberSoft:#fff4e0;
+  --green:#2e7d32; --greenSoft:#e8f5e9; --sel:#dbeafe; --newSoft:#e8f5e9; --new:#2e7d32;
+  --purple:#6a3fa0; --purpleSoft:#f1e9fb;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111418; --win:#1b1f24; --title:#13273f; --titleText:#e6edf3; --text:#e6edf3; --muted:#9aa4b2;
+  --line:#2d333b; --head:#22272e; --accent:#4c9bf0; --accentSoft:#1d2b3d;
+  --cyan:#4c9bf0; --cyanSoft:#1d2b3d;
+  --red:#ff7b72; --redSoft:#3a1d1d; --amber:#e3b341; --amberSoft:#3a2e12;
+  --green:#56d364; --greenSoft:#163020; --sel:#1f3350; --newSoft:#163020; --new:#56d364;
+  --purple:#c9a4f5; --purpleSoft:#2a2140;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:13px/1.4 "Segoe UI",system-ui,sans-serif;padding:24px 16px}
+.win{position:relative;max-width:1400px;margin:0 auto;background:var(--win);border:1px solid var(--line);border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.15);overflow:hidden}
+.titlebar{background:var(--title);color:var(--titleText);display:flex;align-items:center;gap:10px;padding:8px 12px;font-size:12.5px}
+.logo{width:18px;height:18px;border-radius:4px;background:#2d6fb3;display:grid;place-items:center;font-weight:700;font-size:11px;color:#fff}
+.sp{flex:1}.ctl{width:28px;text-align:center;opacity:.8}
+.ver{opacity:.75;font-size:11.5px}
+.note{margin:10px 12px 0;border:1px dashed var(--cyan);border-radius:6px;background:var(--cyanSoft);padding:8px 10px;font-size:12px}
+.note b{color:var(--cyan)}
+.note ul{margin:6px 0 0 16px;padding:0}.note li{margin:2px 0}
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:12px;border-bottom:1px solid var(--line)}
+.tabs{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.tabs button{border:0;background:transparent;color:var(--text);padding:7px 14px;cursor:pointer;font:inherit}
+.tabs button.on{background:var(--accent);color:#fff}
+.path{flex:1;min-width:240px;display:flex}
+.path input{flex:1;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--win);color:var(--text);font:inherit}
+.btn{border:1px solid var(--line);background:var(--head);color:var(--text);padding:7px 12px;border-radius:6px;cursor:pointer;font:inherit;white-space:nowrap}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.opts{width:100%;display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;font-size:12px;color:var(--muted)}
+.opts label{color:var(--text)}
+.cards{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;padding:12px}
+.card{border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.card .n{font-size:21px;font-weight:600}.card .l{color:var(--muted);font-size:12px}
+.r .n{color:var(--red)}.a .n{color:var(--amber)}.b .n{color:var(--cyan)}.g .n{color:var(--green)}
+.filters{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;padding:0 12px 10px}
+.filters .l{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+.filters label{display:flex;align-items:center;gap:6px;cursor:pointer}
+.filters select,.filters input[type=search],.filters input[list]{padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--win);color:var(--text);font:inherit}
+.avail{border:1px solid var(--cyan);border-radius:6px;padding:4px 8px;background:var(--cyanSoft)}
+.lnk{background:none;border:0;color:var(--cyan);cursor:pointer;font:inherit;padding:0 0 0 12px}
+.main{display:grid;grid-template-columns:1fr 340px;border-top:1px solid var(--line)}
+.gridwrap{overflow:auto;max-height:480px}
+table{width:100%;border-collapse:collapse;min-width:1180px}
+th{position:sticky;top:0;background:var(--head);text-align:left;font-weight:700;padding:7px 8px;border-bottom:1px solid var(--line);font-size:12px;white-space:nowrap;z-index:1;cursor:pointer}
+th.num{text-align:right}
+td{padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+tbody tr:nth-child(even){background:rgba(127,127,127,.045)}
+tbody tr{cursor:pointer} tbody tr:hover{background:var(--accentSoft)} tr.sel{background:var(--sel)!important}
+.num{text-align:right}.hostcol{display:none}.folder .hostcol{display:table-cell}
+.pill{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11.5px;font-weight:600}
+.Critical{background:var(--redSoft);color:var(--red)}.Warning{background:var(--amberSoft);color:var(--amber)}
+.Info{background:var(--cyanSoft);color:var(--cyan)}.Ok{background:var(--greenSoft);color:var(--green)}
+.src{display:inline-block;padding:1px 7px;border-radius:4px;font-size:11px;font-weight:600;border:1px solid var(--line);white-space:nowrap}
+.g-acc{background:var(--cyanSoft);color:var(--cyan);border-color:var(--cyan)}
+.g-warn{background:var(--amberSoft);color:var(--amber);border-color:var(--amber)}
+.g-disk{background:var(--head);color:var(--muted)}
+.g-srv{background:var(--purpleSoft);color:var(--purple);border-color:var(--purple)}
+.g-none{background:var(--redSoft);color:var(--red);border-color:var(--red)}
+.new{display:inline-block;margin-left:6px;padding:0 6px;border-radius:9px;font-size:10px;font-weight:700;background:var(--newSoft);color:var(--new)}
+.type{font-size:11px;font-weight:600;color:var(--muted)}.nest{color:var(--muted);padding-left:14px}
+.meas{font-weight:600;color:var(--cyan)}
+.side{border-left:1px solid var(--line);background:var(--head);display:flex;flex-direction:column}
+.det{padding:12px;flex:1;overflow:auto;max-height:350px}
+.det h3{margin:0 0 4px;font-size:14px;word-break:break-all}
+.kv{display:grid;grid-template-columns:108px 1fr;gap:3px 8px;margin:10px 0;font-size:12px}
+.kv span:nth-child(odd){color:var(--muted)}.kv span{word-break:break-all}
+.rec{border-left:3px solid var(--cyan);background:var(--win);padding:8px 10px;border-radius:4px;font-size:12.5px;white-space:pre-line}
+.acts{border-top:1px solid var(--line);padding:12px;display:flex;flex-direction:column;gap:6px}
+.acts .t{font-size:12px;color:var(--muted);margin-bottom:2px}
+.acts .btn{text-align:left}
+.footer{display:flex;align-items:center;gap:10px;padding:9px 12px;border-top:1px solid var(--line);background:var(--head);flex-wrap:wrap}
+.footer .sp{flex:1}
+.status{font-size:12px;color:var(--muted)}
+@media (max-width:1100px){.cards{grid-template-columns:repeat(4,1fr)}.main{grid-template-columns:1fr}.side{border-left:0;border-top:1px solid var(--line)}}
+@media (max-width:560px){.cards{grid-template-columns:repeat(2,1fr)}body{padding:16px}}
+</style>
+</head>
+<body>
+<div class="win" id="win">
+  <div class="titlebar">
+    <div class="logo">R</div>Link Version Checker — Revit26_Plugin
+    <span class="ver">v4.0.0 · Revit 2026 · WAMI</span>
+    <span class="sp"></span><span class="ctl">—</span><span class="ctl">☐</span><span class="ctl">✕</span>
+  </div>
+
+  <div class="note">
+    <b>V004 proposal — assumptions flagged for approval</b>
+    <ul>
+      <li><b>Source</b> column + filter is new; 13 values across 4 groups. Rows tagged <span class="new">NEW</span> are ones V003 never listed (cloud links come from <code>GetExternalResourceReferences()</code>, not <code>ExternalFileUtils</code>).</li>
+      <li><b>“Available only” is ticked by default</b> — the Source and Type lists shrink to the values actually present in the scan, with counts. Untick to see all 13 possible values (absent ones greyed, count 0).</li>
+      <li>Assumed: <i>Desktop Connector</i> and <i>OneDrive</i> override <i>Local PC</i> — they are the true source, detected by folder prefix (editable in settings.json).</li>
+      <li>Assumed: <i>ACC — other project</i> covers other hub/account too; ACC does not always return the account id.</li>
+      <li>Assumed: cloud rows have no Saved-In year / Size / disk probe → “—”, and file actions stay disabled.</li>
+      <li>Path type (Absolute / Relative / Server-relative) stays in the <b>Path</b> column, not mixed into Source.</li>
+    </ul>
+  </div>
+
+  <div class="toolbar">
+    <div class="tabs"><button data-m="pre">Pre-Open</button><button class="on" data-m="in">In-Model</button><button data-m="folder">Folder Audit</button></div>
+    <div class="path"><input id="path" value="WAMI-ARC-Host.rvt  (Autodesk Docs › Wynn Marjan Island › 03_Models)"></div>
+    <button class="btn">Browse…</button>
+    <button class="btn">Export to Excel</button>
+    <div class="opts">
+      <span id="hint">In-Model · reads the open project: links from every source (ACC, Desktop Connector, network, local, Revit Server), nested links, imported CAD, images, worksets, instances.</span>
+      <span><label id="subOpt" style="display:none"><input type="checkbox" checked> Include subfolders</label> &nbsp; <label id="nestOpt"><input type="checkbox" checked> Include nested links</label></span>
+    </div>
+  </div>
+
+  <div class="cards">
+    <div class="card"><div class="n" id="cTotal">0</div><div class="l">Linked Files</div></div>
+    <div class="card b"><div class="n" id="cAcc">0</div><div class="l">From ACC</div></div>
+    <div class="card"><div class="n" id="cDisk">0</div><div class="l">On Disk</div></div>
+    <div class="card r"><div class="n" id="cUp">0</div><div class="l">Temporary Upgrades</div></div>
+    <div class="card a"><div class="n" id="cIfc">0</div><div class="l">IFC Cache Issues</div></div>
+    <div class="card r"><div class="n" id="cMiss">0</div><div class="l">Not Found</div></div>
+    <div class="card g"><div class="n" id="cMeas">6m 04s</div><div class="l">Last Full Open</div></div>
+  </div>
+
+  <div class="filters">
+    <div class="l">
+      <label><input type="checkbox" id="fProb"> Problems only</label>
+      <label><input type="checkbox" id="fUp"> Upgrade needed only</label>
+      <label>Source <input list="srcList" id="fSrc" value="All" size="26" placeholder="Type to filter…"><datalist id="srcList"></datalist></label>
+      <label>Type <input list="typeList" id="fType" value="All" size="14"><datalist id="typeList"></datalist></label>
+      <label class="avail" title="Show only the Source and Type values present in this scan"><input type="checkbox" id="fAvail" checked> Available only</label>
+      <label id="hostF" style="display:none">Host <input list="hostList" id="fHost" value="All hosts" size="16"><datalist id="hostList"><option>All hosts</option></datalist></label>
+      <input type="search" id="fText" placeholder="Search…">
+    </div>
+    <div><button class="lnk" id="tickProb">Tick problems</button><button class="lnk" id="tickAll">Tick all shown</button><button class="lnk" id="clear">Clear ticks</button></div>
+  </div>
+
+  <div class="main">
+    <div class="gridwrap" id="gw">
+      <table>
+        <thead><tr>
+          <th style="width:34px">✓</th><th class="hostcol">Host</th><th>Name</th><th>Type</th><th>Source</th>
+          <th>Saved In</th><th>Check</th><th>Workshared</th><th class="num">Size</th><th>Path</th>
+          <th>Status</th><th class="num">Est.</th><th class="num">Measured</th>
+        </tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <aside class="side">
+      <div class="det" id="det"><div style="color:var(--muted)">Select a link to see details and recommendations.</div></div>
+      <div class="acts">
+        <div class="t" id="target">Select a row, or tick rows for batch actions</div>
+        <button class="btn primary" id="aUp">Upgrade &amp; Save to current version</button>
+        <button class="btn" id="aIfc">Rebuild IFC cache</button>
+        <button class="btn" id="aSkip">Unload now</button>
+        <button class="btn" id="aRe">Repath selected…</button>
+        <button class="btn" id="aOpen">Open folder</button>
+      </div>
+    </aside>
+  </div>
+
+  <div class="footer">
+    <span class="status" id="status"></span>
+    <span class="sp"></span>
+    <button class="btn" id="cancel" disabled>Cancel</button>
+    <button class="btn primary" id="scan">Scan</button>
+    <button class="btn">Close</button>
+  </div>
+</div>
+
+<script>
+/* ---- the 13 possible Source values, in 4 groups ---------------------- */
+const SRC = {
+  acc  :{t:"ACC — this project",   g:"ACC",   c:"g-acc",  how:"ExternalResourceReference · ProjectId == host"},
+  accx :{t:"ACC — other project",  g:"ACC",   c:"g-warn", how:"ExternalResourceReference · ProjectId differs"},
+  b360 :{t:"BIM 360 (legacy)",     g:"ACC",   c:"g-acc",  how:"display path starts BIM 360://"},
+  dc   :{t:"Desktop Connector",    g:"ACC",   c:"g-warn", how:"disk path under the ACCDocs / DC root (prefix)"},
+  od   :{t:"OneDrive / SharePoint",g:"Disk",  c:"g-warn", how:"disk path under %OneDrive% (prefix)"},
+  loc  :{t:"Local PC",             g:"Disk",  c:"g-disk", how:"DriveType == Fixed"},
+  rem  :{t:"Removable drive",      g:"Disk",  c:"g-warn", how:"DriveType == Removable"},
+  map  :{t:"Mapped drive",         g:"Disk",  c:"g-disk", how:"DriveType == Network · UNC via WNetGetConnection"},
+  net  :{t:"Network (UNC)",        g:"Disk",  c:"g-disk", how:"path starts \\\\"},
+  rsn  :{t:"Revit Server",         g:"Server",c:"g-srv",  how:"ModelPath.ServerPath == true (RSN://)"},
+  res  :{t:"Other resource server",g:"Server",c:"g-srv",  how:"resource server GUID is not Autodesk's"},
+  imp  :{t:"In model (imported)",  g:"None",  c:"g-none", how:"ImportInstance.IsLinked == false / embedded image"},
+  unk  :{t:"Unknown / unresolved", g:"None",  c:"g-none", how:"path blank or GetAbsolutePath() fails"}
+};
+const GROUPS = {
+  "ACC (all)"          : ["acc","accx","b360","dc"],
+  "On disk (all)"      : ["dc","od","loc","rem","map","net"],
+  "Server (all)"       : ["rsn","res"],
+  "No file (all)"      : ["imp","unk"]
+};
+const TYPES = ["RVT","IFC","CAD","CAD (import)","Point Cloud","PDF/Image","Other"];
+
+const data = [
+ {n:"WAMI-ARC-Tower-A.rvt",k:"RVT",s:"acc",nw:1,saved:"—",chk:"Info",chkT:"Cloud model (ACC)",ws:"Central · 12/40 worksets",size:"—",
+  path:"Autodesk Docs://Wynn Marjan Island/03_Models/WAMI-ARC-Tower-A.rvt",st:"Loaded",est:"—",meas:"48s",prob:0,
+  rec:"Cloud model opened from ACC. No local file, so version and upgrade checks do not apply."},
+ {n:"WAMI-ARC-Core.rvt",k:"RVT",s:"acc",nw:1,nest:1,saved:"—",chk:"Info",chkT:"Nested cloud link",ws:"Central",size:"—",
+  path:"Autodesk Docs://Wynn Marjan Island/03_Models/WAMI-ARC-Core.rvt",st:"Loaded",est:"(21s)",meas:"21s",prob:0,
+  rec:"Nested under WAMI-ARC-Tower-A.rvt. Loads only if the parent attaches it as Attachment."},
+ {n:"WAMI-STR-Podium.rvt",k:"RVT",s:"acc",nw:1,saved:"—",chk:"Ok",chkT:"OK",ws:"Central · 5/18 worksets",size:"—",
+  path:"Autodesk Docs://Wynn Marjan Island/03_Models/WAMI-STR-Podium.rvt",st:"Loaded",est:"—",meas:"33s",prob:0,rec:"No issues found."},
+ {n:"KCG-MEP-Shared.rvt",k:"RVT",s:"accx",nw:1,saved:"—",chk:"Warning",chkT:"Cloud link from another project",ws:"Central",size:"—",
+  path:"Autodesk Docs://KCG Shared Library/MEP/KCG-MEP-Shared.rvt",st:"Loaded",est:"—",meas:"1m 05s",prob:1,
+  rec:"Lives in a DIFFERENT ACC project (KCG Shared Library).\nAnyone without access to that project gets 'Not Found' on open — confirm the team's permissions."},
+ {n:"OLD-Infra-Roads.rvt",k:"RVT",s:"b360",nw:1,saved:"—",chk:"Info",chkT:"Legacy BIM 360 link",ws:"Central",size:"—",
+  path:"BIM 360://WAMI Infra/Roads/OLD-Infra-Roads.rvt",st:"Loaded",est:"—",meas:"52s",prob:0,
+  rec:"Still pointing at a legacy BIM 360 Docs location. Migrate to the ACC project when the infra team is ready."},
+ {n:"WAMI-LAN-Hardscape.rvt",k:"RVT",s:"dc",nw:1,saved:"2026",chk:"Warning",chkT:"Desktop Connector path",ws:"Central",size:"96 MB",
+  path:"C:\\Users\\Rafi\\ACCDocs\\IKK Group\\Wynn Marjan Island\\Landscape\\WAMI-LAN-Hardscape.rvt",st:"Loaded",est:"35s",meas:"41s",prob:1,
+  rec:"Looks local but is an ACC file synced by Desktop Connector.\nOpen time depends on the sync state — link it as a true cloud link instead."},
+ {n:"IKK-Standards-Titleblocks.rvt",k:"RVT",s:"od",saved:"2026",chk:"Warning",chkT:"OneDrive sync folder",ws:"No",size:"18 MB",
+  path:"C:\\Users\\Rafi\\OneDrive - IKK Group\\BIM\\IKK-Standards-Titleblocks.rvt",st:"Loaded",est:"12s",meas:"—",prob:1,
+  rec:"Personal OneDrive folder — nobody else on the team can resolve this path. Move it to the project folder or ACC."},
+ {n:"ADJ-Plot-Boundary.rvt",k:"RVT",s:"net",saved:"2024",chk:"Critical",chkT:"Temporary upgrade",ws:"No",size:"184 MB",
+  path:"\\\\kcg-fs01\\Projects\\WAMI\\Shared\\ADJ-Plot-Boundary.rvt",st:"Loaded",est:"95s",meas:"1m 48s",prob:1,
+  rec:"Saved in Revit 2024 — every open silently upgrades it in memory, the slowest single item here.\nUpgrade & Save to 2026 (a backup is written first)."},
+ {n:"WAMI-Site-Survey.dwg",k:"CAD",s:"map",saved:"AC1032",chk:"Info",chkT:"Absolute path",ws:"—",size:"26 MB",
+  path:"Z:\\WAMI\\CAD\\WAMI-Site-Survey.dwg  →  \\\\kcg-fs01\\Projects",st:"Loaded",est:"8s",meas:"—",prob:0,
+  rec:"Mapped drive Z: resolves to \\\\kcg-fs01\\Projects on this PC only.\nOther users with a different mapping will lose the link — use the UNC path."},
+ {n:"Facade-Panels.ifc",k:"IFC",s:"loc",saved:"IFC4",chk:"Warning",chkT:"IFC cache stale",ws:"—",size:"312 MB",
+  path:"C:\\WAMI\\Local\\IFC\\Facade-Panels.ifc",st:"Loaded",est:"140s",meas:"2m 20s",prob:1,
+  rec:"The .ifc is newer than its .ifc.RVT cache — Revit rebuilds it on every open.\nRebuild IFC cache once to make later opens fast."},
+ {n:"Landscape-Softscape.rvt",k:"RVT",s:"loc",saved:"—",chk:"Critical",chkT:"Not found",ws:"—",size:"—",
+  path:"C:\\WAMI\\Local\\Arch\\Landscape-Softscape.rvt",st:"Not Found",est:"15s",meas:"—",prob:1,
+  rec:"Not at the stored path. Repath it, or unload it so Revit stops searching on every open."},
+ {n:"Topo-Scan-Zone1.rcp",k:"Point Cloud",s:"net",saved:"—",chk:"Warning",chkT:"Point cloud > 1 GB",ws:"—",size:"2.4 GB",
+  path:"\\\\kcg-fs01\\Projects\\WAMI\\ReCap\\Topo-Scan-Zone1.rcp",st:"Loaded",est:"45s",meas:"—",prob:1,
+  rec:"Large point cloud. Unload it when you are not setting out."},
+ {n:"Contractor-Temp-Works.rvt",k:"RVT",s:"rem",saved:"2025",chk:"Warning",chkT:"Link on removable drive",ws:"No",size:"64 MB",
+  path:"E:\\Handover\\Contractor-Temp-Works.rvt",st:"Loaded",est:"40s",meas:"—",prob:1,
+  rec:"Sitting on a USB drive — the link breaks the moment it is unplugged. Copy it into the project folder and repath."},
+ {n:"QA-Coordination.rvt",k:"RVT",s:"rsn",saved:"2026",chk:"Info",chkT:"Revit Server link",ws:"Central",size:"—",
+  path:"RSN://kcg-rs01/WAMI/QA-Coordination.rvt",st:"Loaded",est:"30s",meas:"38s",prob:0,
+  rec:"Hosted on Revit Server. Open time depends on the accelerator — no local file to probe."},
+ {n:"Consultant-Grid.dwg",k:"CAD (import)",s:"imp",saved:"—",chk:"Warning",chkT:"Imported, not linked",ws:"—",size:"—",
+  path:"(imported into the model)",st:"Imported",est:"—",meas:"—",prob:1,
+  rec:"Imported CAD lives inside the model permanently. Delete and re-link instead."},
+ {n:"Unresolved-Ref.dwg",k:"CAD",s:"unk",saved:"—",chk:"Critical",chkT:"Path unresolved",ws:"—",size:"—",
+  path:"(empty — Revit cannot resolve this reference)",st:"Not Found",est:"15s",meas:"—",prob:1,
+  rec:"Revit holds a reference with no usable path. Repath it or delete the link type."},
+ {n:"WAMI-Logo.png",k:"PDF/Image",s:"loc",saved:"—",chk:"Ok",chkT:"OK",ws:"—",size:"1.2 MB",
+  path:"C:\\WAMI\\Local\\Graphics\\WAMI-Logo.png",st:"Loaded",est:"—",meas:"—",prob:0,rec:"No issues found."}
+];
+
+const $ = s => document.querySelector(s);
+let sel = null, sortKey = null, sortAsc = true;
+
+/* ---- the filter lists: shrink to present values when "Available only" -- */
+function buildLists(){
+  const avail = $("#fAvail").checked;
+  const srcCount = {}, typeCount = {};
+  data.forEach(r => { srcCount[r.s] = (srcCount[r.s]||0)+1; typeCount[r.k] = (typeCount[r.k]||0)+1; });
+
+  let out = `<option value="All">All (${data.length})</option>`;
+  for (const [g, keys] of Object.entries(GROUPS)){
+    const n = keys.reduce((a,k) => a + (srcCount[k]||0), 0);
+    if (avail && n === 0) continue;
+    out += `<option value="${g}">${g} — ${n}</option>`;
+  }
+  for (const [key, v] of Object.entries(SRC)){
+    const n = srcCount[key] || 0;
+    if (avail && n === 0) continue;
+    out += `<option value="${v.t}">${v.t} — ${n}</option>`;
+  }
+  $("#srcList").innerHTML = out;
+
+  let t = `<option value="All">All (${data.length})</option>`;
+  TYPES.forEach(k => { const n = typeCount[k]||0; if (!(avail && n===0)) t += `<option value="${k}">${k} — ${n}</option>`; });
+  $("#typeList").innerHTML = t;
+
+  const nSrc = avail ? Object.keys(srcCount).length : Object.keys(SRC).length;
+  $("#fSrc").placeholder = avail ? `${nSrc} in use…` : `all ${Object.keys(SRC).length} values…`;
+}
+
+/* ---- filtering ------------------------------------------------------- */
+function clean(v){ return (v||"All").split(" — ")[0].split(" (")[0].trim() || "All"; }
+function matchSrc(r){
+  const f = clean($("#fSrc").value);
+  if (f === "All") return true;
+  if (GROUPS[f + " (all)"]) return GROUPS[f + " (all)"].includes(r.s);
+  if (GROUPS[f]) return GROUPS[f].includes(r.s);
+  return SRC[r.s].t === f || SRC[r.s].t.startsWith(f);
+}
+function visible(){
+  const t = clean($("#fType").value), q = $("#fText").value.toLowerCase();
+  return data.filter(r =>
+    (!$("#fProb").checked || r.prob) &&
+    (!$("#fUp").checked || r.chkT === "Temporary upgrade") &&
+    (t === "All" || r.k === t) && matchSrc(r) &&
+    (q === "" || (r.n + " " + r.path).toLowerCase().includes(q)));
+}
+function render(){
+  let rows = visible();
+  if (sortKey) rows = rows.slice().sort((a,b)=>{
+    const x = (sortKey==="s"? SRC[a.s].t : a[sortKey]||"").toString();
+    const y = (sortKey==="s"? SRC[b.s].t : b[sortKey]||"").toString();
+    return sortAsc ? x.localeCompare(y) : y.localeCompare(x);
+  });
+  $("#rows").innerHTML = rows.map(r => {
+    const s = SRC[r.s];
+    return `<tr data-i="${data.indexOf(r)}" class="${r===sel?'sel':''}">
+      <td><input type="checkbox" class="tick"></td>
+      <td class="hostcol">WAMI-ARC-Host.rvt</td>
+      <td class="${r.nest?'nest':''}">${r.nest?'↳ ':''}${r.n}${r.nw?'<span class="new">NEW</span>':''}</td>
+      <td class="type">${r.k}</td>
+      <td><span class="src ${s.c}">${s.t}</span></td>
+      <td>${r.saved}</td>
+      <td><span class="pill ${r.chk}">${r.chkT}</span></td>
+      <td>${r.ws}</td><td class="num">${r.size}</td>
+      <td style="max-width:240px;overflow:hidden;text-overflow:ellipsis">${r.path}</td>
+      <td>${r.st}</td><td class="num">${r.est}</td><td class="num meas">${r.meas}</td></tr>`;
+  }).join("");
+  const acc = data.filter(r => SRC[r.s].g === "ACC").length;
+  $("#status").textContent = `Showing ${rows.length} of ${data.length} links · ${acc} from ACC · ${data.length-acc} other sources`;
+  counts(acc);
+}
+function counts(acc){
+  $("#cTotal").textContent = data.length;
+  $("#cAcc").textContent = acc;
+  $("#cDisk").textContent = data.filter(r => SRC[r.s].g === "Disk").length;
+  $("#cUp").textContent = data.filter(r => r.chkT === "Temporary upgrade").length;
+  $("#cIfc").textContent = data.filter(r => r.chkT.startsWith("IFC")).length;
+  $("#cMiss").textContent = data.filter(r => r.st === "Not Found").length;
+}
+function detail(r){
+  const s = SRC[r.s], cloud = s.g === "ACC" && r.s !== "dc", nofile = cloud || r.s === "rsn" || r.s === "imp" || r.s === "unk";
+  $("#det").innerHTML = `<h3>${r.n}</h3><span class="pill ${r.chk}">${r.chkT}</span>
+    <div class="kv">
+      <span>Type</span><span>${r.k}</span>
+      <span>Source</span><span><span class="src ${s.c}">${s.t}</span></span>
+      <span>Detected by</span><span style="font-size:11.5px">${s.how}</span>
+      <span>Path</span><span>${r.path}</span>
+      ${cloud?'<span>Project Id</span><span>b.9f2c…-e41a</span><span>Model Id</span><span>urn:adsk.wipemea:fs.file:vf.7Qk…</span>':''}
+      <span>Saved in</span><span>${r.saved}</span><span>Size</span><span>${r.size}</span>
+      <span>Status</span><span>${r.st}</span><span>Estimate</span><span>${r.est}</span><span>Measured</span><span>${r.meas}</span>
+    </div><div class="rec">${r.rec}</div>`;
+  $("#aUp").disabled = nofile || r.chkT !== "Temporary upgrade";
+  $("#aIfc").disabled = nofile || !r.chkT.startsWith("IFC");
+  $("#aSkip").disabled = r.s === "imp";
+  $("#aRe").disabled = nofile;
+  $("#aOpen").disabled = nofile;
+  $("#target").textContent = nofile ? "No local file — file actions are disabled for this source"
+                                    : "Actions apply to the selected row (tick rows for batch)";
+}
+$("#rows").addEventListener("click", e => {
+  const tr = e.target.closest("tr"); if (!tr || e.target.classList.contains("tick")) return;
+  sel = data[+tr.dataset.i]; render(); detail(sel);
+});
+document.querySelectorAll("thead th").forEach((th,i) => th.addEventListener("click", () => {
+  const keys = [null,null,"n","k","s","saved","chkT","ws","size","path","st","est","meas"];
+  if (!keys[i]) return;
+  sortAsc = sortKey === keys[i] ? !sortAsc : true; sortKey = keys[i];
+  document.querySelectorAll("thead th").forEach(h => h.textContent = h.textContent.replace(/ [▲▼]$/,""));
+  th.textContent += sortAsc ? " ▲" : " ▼"; render();
+}));
+["fProb","fUp","fSrc","fType","fText"].forEach(id => {
+  $("#"+id).addEventListener("input", render); $("#"+id).addEventListener("change", render);
+});
+$("#fAvail").addEventListener("change", () => { buildLists(); render(); });
+document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => {
+  document.querySelectorAll(".tabs button").forEach(x => x.classList.remove("on"));
+  b.classList.add("on");
+  const m = b.dataset.m;
+  $("#win").classList.toggle("folder", m === "folder");
+  $("#hostF").style.display = m === "folder" ? "flex" : "none";
+  $("#subOpt").style.display = m === "folder" ? "inline" : "none";
+  $("#hint").textContent = m === "pre"
+    ? "Pre-Open · reads the host's saved link table (TransmissionData) — cloud and server links are listed from the table, no model opened, no live status."
+    : m === "folder"
+    ? "Folder Audit · every .rvt in the folder, same reads, one combined grid. ACC-hosted hosts cannot be enumerated in this mode."
+    : "In-Model · reads the open project: links from every source (ACC, Desktop Connector, network, local, Revit Server), nested links, imported CAD, images, worksets, instances.";
+}));
+$("#tickAll").addEventListener("click", () => document.querySelectorAll(".tick").forEach(c => c.checked = true));
+$("#clear").addEventListener("click", () => document.querySelectorAll(".tick").forEach(c => c.checked = false));
+$("#tickProb").addEventListener("click", () => document.querySelectorAll("#rows tr").forEach(tr => {
+  tr.querySelector(".tick").checked = !!data[+tr.dataset.i].prob;
+}));
+buildLists(); render();
+</script>
+</body>
+</html>

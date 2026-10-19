@@ -98,6 +98,8 @@ namespace Revit26_Plugin.Menu.Ribbon
                 "BubbleAutoRenumber_16.png", "Bubble Auto Renumber", "V007", "V006" + Rebuilt);
             var bubbleV008 = Btn(assemblyPath, "Btn_BubbleAutoRenumber_V008", "Bubble Renumber V008", "Revit26_Plugin.BubbleAutoRenumber.V008.Commands.SectionAutoRenumberCommand",
                 "BubbleAutoRenumber_16.png", "Bubble Auto Renumber", "V008", "V007" + OnShell);
+            var bubbleV009 = Btn(assemblyPath, "Btn_BubbleAutoRenumber_V009", "Bubble Renumber V009", "Revit26_Plugin.BubbleAutoRenumber.V009.Commands.BubbleAutoRenumberCommand",
+                "BubbleAutoRenumber_16.png", "Bubble Auto Renumber", "V009", "V008 with the bubble renumber command renamed.");
             var sectionRenamerV025 = Btn(assemblyPath, "Btn_SectionAutoRenamer_V025", "Section Renamer V025", "Revit26_Plugin.SectionAutoRenamer.V025.Commands.OpenSectionManagerCommand",
                 "SectionAutoRenamer_16.png", "Section Auto Renamer", "V025", "V024" + Rebuilt);
             var sectionRenamerV026 = Btn(assemblyPath, "Btn_SectionAutoRenamer_V026", "Section Renamer V026", "Revit26_Plugin.SectionAutoRenamer.V026.Commands.OpenSectionManagerCommand",
@@ -109,11 +111,11 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             var renameItems = RibbonLayoutHelper.AddStackedButtons(renamePanel, new List<RibbonItemData>
             {
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_BubbleAutoRenumber", "Bubble Renumber", bubbleV008),
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_BubbleAutoRenumber", "Bubble Renumber", bubbleV009),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_SectionAutoRenamer", "Section Renamer", sectionRenamerV026),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_ViewAutoRenamer", "Auto Renamer", autoRenamerV006),
             });
-            RibbonLayoutHelper.WirePulldownButton(renameItems, "Pulldown_BubbleAutoRenumber", bubbleV008, bubbleV007);
+            RibbonLayoutHelper.WirePulldownButton(renameItems, "Pulldown_BubbleAutoRenumber", bubbleV009, bubbleV008, bubbleV007);
             RibbonLayoutHelper.WirePulldownButton(renameItems, "Pulldown_SectionAutoRenamer", sectionRenamerV026, sectionRenamerV025);
             RibbonLayoutHelper.WirePulldownButton(renameItems, "Pulldown_ViewAutoRenamer", autoRenamerV006, autoRenamerV005);
         }
