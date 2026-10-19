@@ -24,6 +24,12 @@ Each release lists every tool whose version changed, under the plugin version.
   URIs, and the `%AppData%\Revit26_Plugin` / `Documents\Revit26_Plugin` settings and log folders, so
   existing settings and logs still load. No tool versions changed.
 
+### Fixed
+- **Ribbon icons are embedded again** — the `.csproj` clean-up in an earlier release dropped every
+  `<EmbeddedResource>` line for `Resources/Icons/*.png`, so `ImageUtils.Load` could not find the
+  ribbon icons. All PNGs under `Resources/Icons/` are now embedded through one wildcard; a new icon
+  only needs to be dropped in its category folder.
+
 **User note (breaking):** reinstall with the updated installer, or edit an existing `.addin` file so
 `FullClassName` reads `Revit26_Plugin_Revised.App`; a manifest still pointing at
 `Revit26_Plugin.App` will fail to load. Keyboard shortcuts and Quick Access Toolbar entries are keyed
