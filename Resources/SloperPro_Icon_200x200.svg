@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Background -->
+  <rect width="200" height="200" rx="36" fill="#0D1B2A"/>
+
+  <!-- Roof left face (dark side) -->
+  <polygon points="100,38 28,118 28,148 100,148" fill="#1A3550"/>
+
+  <!-- Roof right face (light side) -->
+  <polygon points="100,38 172,118 172,148 100,148" fill="#FFFFFF" opacity="0.92"/>
+
+  <!-- Ridge line -->
+  <line x1="100" y1="38" x2="100" y2="148" stroke="#0D1B2A" stroke-width="3" opacity="0.3"/>
+
+  <!-- Roof outline -->
+  <polyline points="28,118 100,38 172,118" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+
+  <!-- Slope arrow on right face -->
+  <line x1="112" y1="68" x2="158" y2="116" stroke="#00AEEF" stroke-width="4" stroke-linecap="round"/>
+  <polygon points="158,116 140,112 152,100" fill="#00AEEF"/>
+
+  <!-- Angle arc on right face -->
+  <path d="M 124,118 A 20,20 0 0,0 143,100" fill="none" stroke="#F5A623" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Eave line -->
+  <line x1="24" y1="148" x2="176" y2="148" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity="0.6"/>
+
+  <!-- SP monogram bottom -->
+  <text x="100" y="176" font-family="'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="700" fill="#00AEEF" text-anchor="middle" letter-spacing="3">SP</text>
+</svg>

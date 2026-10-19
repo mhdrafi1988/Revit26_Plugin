@@ -1,0 +1,21 @@
+# This is a Revit shared parameter file.
+# Do not edit manually.
+*META	VERSION	MINVERSION
+META	2	1
+*GROUP	ID	NAME
+GROUP	1	AutoSlope
+*PARAM	GUID	NAME	DATATYPE	DATACATEGORY	GROUP	VISIBLE	DESCRIPTION	USERMODIFIABLE	HIDEWHENNOVALUE
+PARAM	952e046a-47c0-41c9-98fd-697d5cb13df7	AutoSlope_HighestElevation	LENGTH		1	1	Highest roof point elevation reached by the last AutoSlope run (internal units / Length)	1	0
+PARAM	dc23676d-292e-4029-9449-5ff8a9be5bdc	AutoSlope_VerticesProcessed	INTEGER		1	1	Count of shape-editor vertices successfully processed by the last run	1	0
+PARAM	6306abc7-b111-459d-8bc3-d88bf1e555ad	AutoSlope_VerticesSkipped	INTEGER		1	1	Count of shape-editor vertices skipped (out of threshold or unreachable) by the last run	1	0
+PARAM	cc00dc78-8b93-4106-b951-512eccee0e2d	AutoSlope_DrainCount	INTEGER		1	1	Number of drains/points used as slope targets in the last run	1	0
+PARAM	defb0d5e-3b12-4f46-9090-a76d577a8942	AutoSlope_RunDuration_sec	INTEGER		1	1	Duration of the last AutoSlope run, in seconds	1	0
+PARAM	64491b3b-4aa4-4832-bc78-0419fd8455f2	AutoSlope_LongestPath	NUMBER		1	1	Longest flow path length from the last run, in meters (unitless Number, not Length)	1	0
+PARAM	bbaf8812-de77-40b0-9866-7b7ab5e24c7b	AutoSlope_SlopePercent	NUMBER		1	1	Slope percent applied by the last run, stored as the raw percent value (e.g. 2 for 2%)	1	0
+PARAM	2c4d7995-fcfe-43d6-aaf5-6c8a87ed7971	AutoSlope_SlopePercent_Text	TEXT		1	1	Slope percent as display text, e.g. "2%"	1	0
+PARAM	d0f0bada-f397-4109-b8a5-fdd23554f7d1	AutoSlope_Threshold	LENGTH		1	1	Max path/connection distance threshold used by the last run (internal units / Length)	1	0
+PARAM	ea5bf1b5-54af-44f1-9de4-2d0ea1e57e98	AutoSlope_RunDate	TEXT		1	1	Date/time of the last AutoSlope run (dd-MM-yy HH:mm)	1	0
+PARAM	27ad9895-7696-444d-a6f4-5caa1103b899	AutoSlope_Status	INTEGER		1	1	Result of the last run: 1 = OK, 2 = Partial, 3 = Failed	1	0
+PARAM	ea915b71-2d67-465c-91cd-a470af62468e	AutoSlope_Versions	TEXT		1	1	Version string of the tool that last ran on this roof	1	0
+PARAM	158b7d2c-4af3-49c0-bacf-e08c3a677e52	AutoSlope_DrainToleranceMm	INTEGER		1	1	Pick-point drain-matching tolerance used by the last run, in millimeters	1	0
+PARAM	e2b37a00-603b-4033-9b98-f01c3c613d58	AutoSlope_DrainToleranceEnabled	INTEGER		1	1	Whether drain tolerance matching was enabled for the last run: 1 = yes, 0 = no	1	0

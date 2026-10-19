@@ -1,0 +1,509 @@
+<!--
+=======================================================
+File: DwgManagerWindow.xaml  (DWG Manager V003 — ToolWindowShell)
+  HEADER  metric cards: CAD files / linked / imported / instances
+  BODY    toolbar card (filter, Select All, Clear Selection, Delete Selected, Refresh, Purge on delete),
+          grouped grid (Linked / Imported → view type) with row details for the element-ID
+          panel and the inline delete confirmation, log
+  FOOTER  Delete Selected (left, same command as the toolbar button) · Open Views, Close (right)
+
+  V003 (2026-10-12): removed RowDetailsVisibilityMode="Collapsed" from DwgGrid. A value set on
+  the DataGrid itself beats the DetailsVisibility setter in DwgRowStyle, so row details never
+  opened: the row Delete button's inline confirmation (and the IDs panel) stayed hidden and the
+  delete could never be confirmed. Do NOT set RowDetailsVisibilityMode here — DwgRowStyle drives it.
+=======================================================
+-->
+<Window x:Class="Revit26_Plugin.DwgManager.V003.UI.Views.DwgManagerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
+        xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
+        Title="DWG Manager"
+        Width="980" Height="760"
+        MinWidth="980" MinHeight="760"
+        ResizeMode="CanResizeWithGrip"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource BrushSystemSecondaryBackground}"
+        FontFamily="{DynamicResource SystemFont}">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Revit26_Plugin;component/Shared/SharedStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Converters instantiated locally per suite convention -->
+            <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+            <converters:LogLevelToColorConverter  x:Key="LogLevelToColorConverter"/>
+
+            <!-- Rows open their details (ID panel / delete confirmation) on demand -->
+            <Style x:Key="DwgRowStyle" TargetType="DataGridRow" BasedOn="{StaticResource DataGridRowStyle}">
+                <Setter Property="DetailsVisibility"
+                        Value="{Binding ShowDetails, Converter={StaticResource BoolToVisibilityConverter}}"/>
+            </Style>
+
+            <!-- Numeric column header, right-aligned -->
+            <Style x:Key="RightHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource DataGridColumnHeaderStyle}">
+                <Setter Property="HorizontalContentAlignment" Value="Right"/>
+            </Style>
+
+            <!-- Centered column header -->
+            <Style x:Key="CenterHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource DataGridColumnHeaderStyle}">
+                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            </Style>
+
+            <Style x:Key="GridCellText" TargetType="TextBlock">
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}"/>
+                <Setter Property="FontSize" Value="11"/>
+                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+            </Style>
+
+            <Style x:Key="GridNumberText" TargetType="TextBlock" BasedOn="{StaticResource GridCellText}">
+                <Setter Property="HorizontalAlignment" Value="Right"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+                <Setter Property="Margin" Value="0,0,8,0"/>
+            </Style>
+
+            <!-- Small red button for row Delete and the inline confirmation -->
+            <Style x:Key="SmallDangerButton" TargetType="Button" BasedOn="{StaticResource SmallSecondaryButton}">
+                <Setter Property="Foreground" Value="{StaticResource BrushDanger}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource BrushDanger}"/>
+            </Style>
+
+            <!-- Active / Inactive pill -->
+            <Style x:Key="ActivePill" TargetType="Border">
+                <Setter Property="CornerRadius" Value="8"/>
+                <Setter Property="Padding" Value="8,1"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="Background" Value="{StaticResource BrushPillMutedBackground}"/>
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsActive}" Value="True">
+                        <Setter Property="Background" Value="{StaticResource BrushPillSuccessBackground}"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style x:Key="ActivePillText" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="10"/>
+                <Setter Property="Text" Value="Inactive"/>
+                <Setter Property="Foreground" Value="{StaticResource BrushPillMutedText}"/>
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsActive}" Value="True">
+                        <Setter Property="Text" Value="Active"/>
+                        <Setter Property="Foreground" Value="{StaticResource BrushPillSuccessText}"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
+            <!-- Element-ID chip: clickable only while the instance is in the active view -->
+            <Style x:Key="IdChip" TargetType="Button">
+                <Setter Property="Margin" Value="0,0,4,4"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="FontFamily" Value="Consolas"/>
+                <Setter Property="FontSize" Value="11"/>
+                <Setter Property="Foreground" Value="{StaticResource BrushAppleBlue}"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="Bg" Background="{StaticResource BrushPillInfoBackground}"
+                                    BorderBrush="{StaticResource BrushCardBorder}" BorderThickness="1"
+                                    CornerRadius="4" Padding="7,2">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Bg" Property="BorderBrush" Value="{StaticResource BrushAppleBlue}"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="Bg" Property="Background" Value="{StaticResource BrushPillMutedBackground}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource BrushTextDisabled}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Group header (level 1: Linked / Imported) -->
+            <Style x:Key="LinkGroupContainer" TargetType="GroupItem">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="GroupItem">
+                            <Expander IsExpanded="True" Background="{StaticResource BrushSystemTertiaryBackground}"
+                                      BorderThickness="0" Margin="0,0,0,2">
+                                <Expander.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="12"
+                                                   Foreground="{StaticResource BrushNavyPrimary}"/>
+                                        <TextBlock Text="{Binding ItemCount, StringFormat='  ·  {0} row(s)'}" FontSize="11"
+                                                   Foreground="{StaticResource BrushTextSecondary}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Expander.Header>
+                                <ItemsPresenter/>
+                            </Expander>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Group header (level 2: view type) -->
+            <Style x:Key="ViewGroupContainer" TargetType="GroupItem">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="GroupItem">
+                            <Expander IsExpanded="True" Background="{StaticResource BrushSystemSecondaryBackground}"
+                                      BorderThickness="0" Margin="14,0,0,0">
+                                <Expander.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="11"
+                                                   Foreground="{StaticResource BrushTextPrimary}"/>
+                                        <TextBlock Text="{Binding ItemCount, StringFormat='  ·  {0} row(s)'}" FontSize="10.5"
+                                                   Foreground="{StaticResource BrushTextTertiary}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Expander.Header>
+                                <ItemsPresenter/>
+                            </Expander>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <shell:ToolWindowShell Title="DWG Manager"
+                           Subtitle="List, open and delete CAD links and imports by link type and view"
+                           Version="V003"
+                           IsRunning="{Binding IsRunning}"
+                           IsIndeterminate="True"
+                           Progress="{Binding Progress}"
+                           SummaryText="{Binding SummaryText}">
+
+        <!-- ═══ HEADER ═══════════════════════════════════════════ -->
+        <shell:ToolWindowShell.HeaderContent>
+            <UniformGrid Columns="4" Margin="0,0,0,8">
+                <Border Style="{StaticResource MetricCard}" Margin="0,0,4,0" Padding="10,8">
+                    <StackPanel>
+                        <TextBlock Text="CAD Files" Style="{StaticResource MetricLabel}"/>
+                        <TextBlock Text="{Binding TotalFiles}" Style="{StaticResource MetricNumber}" FontSize="18"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource MetricCard}" Margin="4,0,4,0" Padding="10,8">
+                    <StackPanel>
+                        <TextBlock Text="Linked" Style="{StaticResource MetricLabel}"/>
+                        <TextBlock Text="{Binding LinkedCount}" Style="{StaticResource MetricNumberAccent}" FontSize="18"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource MetricCard}" Margin="4,0,4,0" Padding="10,8">
+                    <StackPanel>
+                        <TextBlock Text="Imported" Style="{StaticResource MetricLabel}"/>
+                        <TextBlock Text="{Binding ImportedCount}" Style="{StaticResource MetricNumberWarning}" FontSize="18"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource MetricCard}" Margin="4,0,0,0" Padding="10,8">
+                    <StackPanel>
+                        <TextBlock Text="Instances" Style="{StaticResource MetricLabel}"/>
+                        <TextBlock Text="{Binding TotalInstances}" Style="{StaticResource MetricNumberSuccess}" FontSize="18"/>
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+        </shell:ToolWindowShell.HeaderContent>
+
+        <!-- ═══ BODY ═════════════════════════════════════════════ -->
+        <shell:ToolWindowShell.BodyContent>
+            <StackPanel>
+
+                <!-- ══ Toolbar ══ -->
+                <Border Style="{StaticResource ContentCard}" Margin="0,0,0,8">
+                    <StackPanel>
+                        <Grid Margin="10,8,10,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Filter" Style="{StaticResource FieldLabel}"
+                                       VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBox Grid.Column="1" Style="{StaticResource StyledTextInput}" MaxLength="25"
+                                     ToolTip="Shows only rows whose file, view or view type contains every word typed."
+                                     Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"/>
+                            <Button Grid.Column="2" Content="Select All" Style="{StaticResource SmallSecondaryButton}"
+                                    Margin="10,0,0,0" Command="{Binding SelectAllCommand}"
+                                    ToolTip="Tick every row that matches the filter."/>
+                            <Button Grid.Column="3" Content="Clear Selection" Style="{StaticResource SmallSecondaryButton}"
+                                    Margin="6,0,0,0" Command="{Binding ClearSelectionCommand}"
+                                    ToolTip="Untick every row that matches the filter."/>
+                            <Button Grid.Column="4" Content="{Binding DeleteSelectedLabel}" Style="{StaticResource SmallDangerButton}"
+                                    Margin="6,0,0,0" Command="{Binding DeleteSelectedCommand}"
+                                    ToolTip="Delete the CAD instances of every ticked row (asks first). Uses the Purge on delete setting."/>
+                            <Button Grid.Column="5" Content="Refresh" Style="{StaticResource SmallSecondaryButton}"
+                                    Margin="6,0,0,0" Command="{Binding RefreshCommand}"
+                                    ToolTip="Scan the model again. Ticks are kept."/>
+                            <CheckBox Grid.Column="6" Content="Purge on delete" Margin="14,0,0,0"
+                                      VerticalAlignment="Center" FontSize="11"
+                                      Foreground="{StaticResource BrushTextSecondary}"
+                                      IsChecked="{Binding PurgeOnDelete}"
+                                      ToolTip="After deleting, also remove a CAD link or import type that has no instances left anywhere in the model."/>
+                        </Grid>
+                        <TextBlock Style="{StaticResource HintText}" TextWrapping="Wrap" Margin="10,0,10,8">
+                            <Run Text="Active view:"/>
+                            <Run Text="{Binding ActiveViewName, Mode=OneWay}" FontWeight="SemiBold"/>
+                            <Run Text=" ·  Click IDs to see a row's element IDs; click an ID to select and zoom (only IDs in the active view)."/>
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+
+                <!-- ══ Grouped grid ══ -->
+                <Border Style="{StaticResource ContentCard}">
+                    <DataGrid x:Name="DwgGrid"
+                              ItemsSource="{Binding RowsView}"
+                              MinHeight="200"
+                              shell:ShellBehaviors.MaxHeightRatio="0.5"
+                              shell:ShellBehaviors.ForwardMouseWheel="True"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              CanUserReorderColumns="False"
+                              CanUserResizeRows="False"
+                              CanUserSortColumns="True"
+                              Sorting="DwgGrid_Sorting"
+                              SelectionMode="Single"
+                              SelectionUnit="FullRow"
+                              GridLinesVisibility="Horizontal"
+                              HorizontalGridLinesBrush="{StaticResource BrushSeparatorThin}"
+                              AlternationCount="2"
+                              RowStyle="{StaticResource DwgRowStyle}"
+                              CellStyle="{StaticResource DataGridCellStyle}"
+                              ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
+                              Background="{StaticResource BrushSystemBackground}"
+                              BorderThickness="0"
+                              HeadersVisibility="Column"
+                              VirtualizingPanel.IsVirtualizing="True"
+                              VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                              VirtualizingPanel.VirtualizationMode="Recycling"
+                              VirtualizingPanel.ScrollUnit="Pixel">
+
+                        <DataGrid.GroupStyle>
+                            <GroupStyle ContainerStyle="{StaticResource LinkGroupContainer}"/>
+                            <GroupStyle ContainerStyle="{StaticResource ViewGroupContainer}"/>
+                        </DataGrid.GroupStyle>
+
+                        <DataGrid.Columns>
+
+                            <!-- Ticked -->
+                            <DataGridTemplateColumn Header="☑" Width="36" CanUserSort="False"
+                                                    HeaderStyle="{StaticResource CenterHeaderStyle}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <!-- DWG file -->
+                            <DataGridTemplateColumn Header="DWG File" Width="2*" SortMemberPath="FileName">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding FileName, Mode=OneWay}" ToolTip="{Binding FileToolTip}"
+                                                   Style="{StaticResource GridCellText}" Margin="4,0,0,0"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <!-- View name -->
+                            <DataGridTemplateColumn Header="View Name" Width="1.5*" SortMemberPath="ViewName">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding ViewName, Mode=OneWay}" ToolTip="{Binding ViewName}"
+                                                   Style="{StaticResource GridCellText}" Foreground="{StaticResource BrushTextSecondary}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <!-- Active in the current view -->
+                            <DataGridTemplateColumn Header="Active" Width="80" SortMemberPath="IsActive"
+                                                    HeaderStyle="{StaticResource CenterHeaderStyle}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border Style="{StaticResource ActivePill}"
+                                                ToolTip="Active = drawn in the view that is active in Revit">
+                                            <TextBlock Style="{StaticResource ActivePillText}"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <!-- Instance count -->
+                            <DataGridTemplateColumn Header="Instances" Width="80" SortMemberPath="InstanceCount"
+                                                    HeaderStyle="{StaticResource RightHeaderStyle}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding InstanceCount, Mode=OneWay}" Style="{StaticResource GridNumberText}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <!-- Row actions -->
+                            <DataGridTemplateColumn Header="Actions" Width="120" CanUserSort="False"
+                                                    HeaderStyle="{StaticResource CenterHeaderStyle}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                            <Button Content="IDs" Style="{StaticResource SmallSecondaryButton}" Height="22"
+                                                    Margin="0,0,4,0" Command="{Binding ToggleIdsCommand}"
+                                                    ToolTip="Show / hide the element IDs of this row"/>
+                                            <Button Content="Delete" Style="{StaticResource SmallDangerButton}" Height="22"
+                                                    Command="{Binding AskDeleteCommand}"
+                                                    ToolTip="Delete this row's CAD instances (asks first)"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+
+                        <!-- Row details: inline delete confirmation + element-ID panel -->
+                        <DataGrid.RowDetailsTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="36,0,8,6">
+
+                                    <!-- Inline delete confirmation -->
+                                    <Border Background="{StaticResource BrushSoftDangerBackground}"
+                                            BorderBrush="{StaticResource BrushDanger}" BorderThickness="2,0,0,0"
+                                            CornerRadius="4" Padding="10,6" Margin="0,2,0,4"
+                                            Visibility="{Binding IsConfirmingDelete, Converter={StaticResource BoolToVisibilityConverter}}">
+                                        <DockPanel LastChildFill="False">
+                                            <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
+                                                <TextBlock FontSize="11.5" Foreground="{StaticResource BrushTextPrimary}" VerticalAlignment="Center">
+                                                    <Run Text="Delete"/>
+                                                    <Run Text="{Binding InstanceCount, Mode=OneWay}" FontWeight="SemiBold"/>
+                                                    <Run Text="instance(s) of"/>
+                                                    <Run Text="{Binding FileName, Mode=OneWay}" FontWeight="SemiBold"/>
+                                                    <Run Text="in"/>
+                                                    <Run Text="{Binding ViewName, Mode=OneWay}" FontWeight="SemiBold"/>
+                                                    <Run Text="?"/>
+                                                </TextBlock>
+                                                <CheckBox Content="Purge type if unused" Margin="14,0,0,0" FontSize="11"
+                                                          VerticalAlignment="Center"
+                                                          Foreground="{StaticResource BrushTextSecondary}"
+                                                          IsChecked="{Binding PurgeOnConfirm}"
+                                                          ToolTip="Also remove the CAD link or import type if no instance of it is left anywhere in the model."/>
+                                            </StackPanel>
+                                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                                <Button Content="Delete" Style="{StaticResource SmallDangerButton}"
+                                                        Margin="0,0,6,0" Command="{Binding ConfirmDeleteCommand}"/>
+                                                <Button Content="Cancel" Style="{StaticResource SmallSecondaryButton}"
+                                                        Command="{Binding CancelDeleteCommand}"/>
+                                            </StackPanel>
+                                        </DockPanel>
+                                    </Border>
+
+                                    <!-- Element IDs -->
+                                    <StackPanel Visibility="{Binding IsIdsExpanded, Converter={StaticResource BoolToVisibilityConverter}}">
+                                        <TextBlock Text="Element IDs" FontSize="10" FontWeight="SemiBold"
+                                                   Foreground="{StaticResource BrushTextTertiary}" Margin="0,2,0,4"/>
+                                        <ItemsControl ItemsSource="{Binding Ids}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Content="{Binding Label}" Style="{StaticResource IdChip}"
+                                                            IsEnabled="{Binding IsClickable}"
+                                                            ToolTipService.ShowOnDisabled="True"
+                                                            ToolTip="{Binding ToolTipText}"
+                                                            Command="{Binding DataContext.SelectInstanceCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                            CommandParameter="{Binding}"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGrid.RowDetailsTemplate>
+                    </DataGrid>
+                </Border>
+
+                <!-- ══ Log ══ -->
+                <Border Background="{StaticResource BrushLogBg}" CornerRadius="8" Padding="10,8" Margin="0,8,0,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Log" FontSize="11.5" FontWeight="SemiBold"
+                                       Foreground="{StaticResource BrushLogText}" VerticalAlignment="Center"/>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <Button Content="Copy All" Style="{StaticResource DarkGhostButton}" Click="CopyAllLog_Click"/>
+                                <Button Content="Copy Selected" Style="{StaticResource DarkGhostButton}" Margin="6,0,0,0" Click="CopySelectedLog_Click"/>
+                                <Button Content="Clear" Style="{StaticResource DarkGhostButton}" Margin="6,0,0,0"
+                                        Command="{Binding ClearLogCommand}"/>
+                            </StackPanel>
+                        </Grid>
+                        <ListBox Grid.Row="1" x:Name="LogList" ItemsSource="{Binding LogEntries}"
+                                 MinHeight="90"
+                                 shell:ShellBehaviors.MaxHeightRatio="0.2"
+                                 shell:ShellBehaviors.ForwardMouseWheel="True"
+                                 Background="Transparent" BorderThickness="0" SelectionMode="Extended"
+                                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="Padding" Value="0,1"/>
+                                    <Setter Property="Background" Value="Transparent"/>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Margin="0,1,0,1">
+                                        <TextBlock Text="{Binding Time, StringFormat='HH:mm:ss', Mode=OneWay}"
+                                                   FontFamily="Consolas" FontSize="11"
+                                                   Foreground="{StaticResource BrushLogTextDim}" Margin="0,0,8,0"/>
+                                        <TextBlock Text="{Binding Level, Mode=OneWay}"
+                                                   FontFamily="Consolas" FontSize="11" FontWeight="Bold" Width="60"
+                                                   Foreground="{Binding Level, Converter={StaticResource LogLevelToColorConverter}, Mode=OneWay}"/>
+                                        <TextBlock Text="{Binding Message, Mode=OneWay}"
+                                                   FontFamily="Consolas" FontSize="11"
+                                                   Foreground="{StaticResource BrushLogText}" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
+                </Border>
+            </StackPanel>
+        </shell:ToolWindowShell.BodyContent>
+
+        <!-- ═══ FOOTER ═══════════════════════════════════════════ -->
+        <shell:ToolWindowShell.FooterContent>
+            <DockPanel LastChildFill="False">
+                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+                    <Button Content="{Binding DeleteSelectedLabel}" Style="{StaticResource DangerButton}"
+                            Command="{Binding DeleteSelectedCommand}" MinWidth="120"
+                            ToolTip="Delete the CAD instances of every ticked row (asks first)."/>
+                    <TextBlock Text="{Binding SelectionHint}" Style="{StaticResource HintText}"
+                               VerticalAlignment="Center" Margin="12,0,0,0"/>
+                </StackPanel>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <Button Content="{Binding OpenViewsLabel}" Style="{StaticResource PrimaryButton}"
+                            Command="{Binding OpenViewsCommand}" MinWidth="150" Margin="0,0,8,0"
+                            ToolTip="Open the views of the ticked rows (up to 5)."/>
+                    <Button Content="Close" Style="{StaticResource OutlineButton}" Width="90" Height="38"
+                            Click="CloseButton_Click"/>
+                </StackPanel>
+            </DockPanel>
+        </shell:ToolWindowShell.FooterContent>
+    </shell:ToolWindowShell>
+</Window>

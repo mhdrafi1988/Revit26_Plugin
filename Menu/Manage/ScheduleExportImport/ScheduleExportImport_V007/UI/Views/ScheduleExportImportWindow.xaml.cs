@@ -1,0 +1,66 @@
+using System;
+using System.Collections.Specialized;
+using System.Windows;
+using System.Windows.Threading;
+using Revit26_Plugin.ScheduleExportImport.V007.UI.ViewModels;
+using Revit26_Plugin.Shared.Services;
+
+namespace Revit26_Plugin.ScheduleExportImport.V007.UI.Views
+{
+    public partial class ScheduleExportImportWindow : Window
+    {
+        private readonly ScheduleExportImportViewModel _viewModel;
+        private ImportPreviewWindow _preview;
+
+        public ScheduleExportImportWindow(ScheduleExportImportViewModel viewModel)
+        {
+            InitializeComponent();
+            _viewModel = viewModel;
+            DataContext = viewModel;
+
+            _viewModel.PreviewRequested += ShowPreview;
+            _viewModel.LogEntries.CollectionChanged += LogEntries_CollectionChanged;
+            Closed += OnClosed;
+        }
+
+        private void LogEntries_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action != NotifyCollectionChangedAction.Add) return;
+            // This handler runs before the ListBox has seen the Add. Scrolling now forces a
+            // layout pass on a stale generator ("ItemsControl is inconsistent with its items
+            // source"), which aborts the caller and breaks every later redraw of the log.
+            Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+            {
+                if (LogList.Items.Count > 0)
+                    LogList.ScrollIntoView(LogList.Items[LogList.Items.Count - 1]);
+            }));
+        }
+
+        private void ShowPreview()
+        {
+            if (_preview == null)
+            {
+                _preview = new ImportPreviewWindow(_viewModel) { Owner = this };
+                _preview.Closed += (_, _) => _preview = null;
+                _preview.Show();
+                _preview.Activate();
+            }
+            else
+            {
+                if (_preview.WindowState == WindowState.Minimized) _preview.WindowState = WindowState.Normal;
+                _preview.Activate();
+            }
+        }
+
+        private void OnClosed(object sender, EventArgs e)
+        {
+            _viewModel.PreviewRequested -= ShowPreview;
+            _viewModel.LogEntries.CollectionChanged -= LogEntries_CollectionChanged;
+            _preview?.Close();
+        }
+
+        private void CopySelectedLog_Click(object sender, RoutedEventArgs e) => LogClipboardService.CopySelected(LogList.SelectedItems);
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e) => Close();
+    }
+}
