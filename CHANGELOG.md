@@ -9,6 +9,36 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [3.9.0] — 2026-10-19
+
+### Changed
+- **UI standard v4.0 (`Shared/SharedStyles.xaml`)** — one look for every tool window: navy header,
+  Revit-neutral body. Affects every window that uses the shared styles.
+  - Window background is a soft grey (#F3F5F7) instead of light blue.
+  - Text boxes and combo boxes are white with a visible border (the light-orange fill is gone).
+  - Status colours unified: one green / amber / red / blue set replaces the per-tool tile, pill,
+    banner and group colours.
+  - Revit dialog density: buttons 30 px (were 38), inputs 26 px (were 32), 4 px corners, metric
+    numbers 18 px semibold.
+  - The main **Run** button (`RunButton`) is navy instead of red. Red is now only for destructive
+    actions (`DangerButton`).
+  - New semantic tokens for new code: `Surface*`, `Border*`, `ActionPrimary`, `Status{Ok,Warn,Error,Info}`
+    with `Soft` / `Border` variants. All v3.x keys still exist; the per-tool status keys
+    (`Tile*`, `Pill*`, `Soft*`, `Group*`, `Banner*`) are deprecated aliases and will be removed in a
+    later release.
+- **ToolWindowShell** (`Shared/Controls/ToolWindowShellTemplate.xaml`) — body and footer use the
+  new `BrushSurfaceWindow`; footer padding 12,8.
+
+### Fixed
+- Windows built on the UI standard (they reference `BrushSurfaceWindow` and the other semantic
+  keys, e.g. DWG Manager V003) no longer stop with *"Cannot find resource named
+  'BrushSurfaceWindow'"* when opened: the shared dictionary now defines those keys.
+
+> **User note:** every tool window changes colour and gets slightly denser controls; no tool
+> behaves differently. If the error still appears after updating, more than one copy of
+> `Revit26_Plugin.dll` is being loaded — keep a single `.addin` for this plugin in
+> `C:\ProgramData\Autodesk\Revit\Addins\2026` and `%AppData%\Autodesk\Revit\Addins\2026`.
+
 ## [3.8.0] — 2026-10-17
 
 ### Added
