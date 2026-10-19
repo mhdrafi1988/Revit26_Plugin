@@ -51,7 +51,7 @@ namespace Revit26_Plugin.Shared.Services
     {
         private static readonly List<ToolInfo> All = new();
 
-        public static readonly ToolInfo LinkedDetailLineGenerator = Add("Detail Lines From Links", "10.0.0", "VA010", "Revit26_Plugin.LinkedDetailLineGenerator.VA010");
+        public static readonly ToolInfo LinkedDetailLineGenerator = Add("Detail Lines From Links", "10.1.0", "VA010", "Revit26_Plugin.LinkedDetailLineGenerator.VA010");
         public static readonly ToolInfo DetailLineClosedLoop = Add("Detail Line Closed Loop", "3.0.0", "V003", "Revit26_Plugin.DetailLineClosedLoop.V003");
         public static readonly ToolInfo DtlLineDim = Add("Auto Dim Detail Line", "10.0.0", "V010", "Revit26_Plugin.DtlLineDim.V010");
         public static readonly ToolInfo FloorsAndRoofFromLinkedRooms = Add("Floors And Roof From Linked Rooms", "13.0.0", "V013", "Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V013");
