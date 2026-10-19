@@ -174,7 +174,7 @@ Changes vs V012 (layout only):
                         <!-- DataGrid (DATAGRID SPEC items 2-6). Rounded bottom corners come from
                              the wrapping Border (DataGrid has no CornerRadius). -->
                         <Border Grid.Row="1" CornerRadius="0,0,10,10" BorderThickness="1"
-                                BorderBrush="{StaticResource BrushCardBorder}" ClipToBounds="True">
+                                BorderBrush="{StaticResource BrushBorderDefault}" ClipToBounds="True">
                             <DataGrid shell:ShellBehaviors.MaxHeightRatio="0.5" shell:ShellBehaviors.ForwardMouseWheel="True" MinHeight="200" Style="{StaticResource StandardDataGrid}"
                                       ColumnHeaderStyle="{StaticResource StandardDataGridColumnHeader}"
                                       CellStyle="{StaticResource StandardDataGridCell}"
@@ -243,7 +243,7 @@ Changes vs V012 (layout only):
                                                         <Setter Property="Background" Value="{StaticResource BrushSystemSecondaryBackground}"/>
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding IsMapped}" Value="False">
-                                                                <Setter Property="Background" Value="{StaticResource BrushRowUnmappedBackground}"/>
+                                                                <Setter Property="Background" Value="{StaticResource BrushStatusErrorSoft}"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -254,7 +254,7 @@ Changes vs V012 (layout only):
                                                             <Setter Property="Foreground" Value="{StaticResource BrushNavyPrimary}"/>
                                                             <Style.Triggers>
                                                                 <DataTrigger Binding="{Binding IsMapped}" Value="False">
-                                                                    <Setter Property="Foreground" Value="{StaticResource BrushDanger}"/>
+                                                                    <Setter Property="Foreground" Value="{StaticResource BrushStatusError}"/>
                                                                 </DataTrigger>
                                                             </Style.Triggers>
                                                         </Style>
@@ -279,7 +279,7 @@ Changes vs V012 (layout only):
                                                     <Style TargetType="ComboBox" BasedOn="{StaticResource NewLevelComboStyle}">
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding IsMapped}" Value="False">
-                                                                <Setter Property="BorderBrush" Value="{StaticResource BrushDanger}"/>
+                                                                <Setter Property="BorderBrush" Value="{StaticResource BrushStatusError}"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -396,7 +396,7 @@ Changes vs V012 (layout only):
                     </Grid>
 
                     <TextBlock Text="{Binding ToastMessage}" Style="{StaticResource HintText}" Margin="0,0,0,8"
-                               Foreground="{StaticResource BrushSuccess}"
+                               Foreground="{StaticResource BrushStatusOk}"
                                Visibility="{Binding HasToast, Converter={StaticResource BoolToVisibilityConverter}}"/>
                 </StackPanel>
 
