@@ -206,11 +206,11 @@ Changes vs V005 (layout only):
                                                     <TextBlock.Style>
                                                         <Style TargetType="TextBlock">
                                                             <Setter Property="Text" Value="✓"/>
-                                                            <Setter Property="Foreground" Value="{StaticResource BrushSuccess}"/>
+                                                            <Setter Property="Foreground" Value="{StaticResource BrushStatusOk}"/>
                                                             <Style.Triggers>
                                                                 <DataTrigger Binding="{Binding Fits}" Value="False">
                                                                     <Setter Property="Text" Value="⚠"/>
-                                                                    <Setter Property="Foreground" Value="{StaticResource BrushWarning}"/>
+                                                                    <Setter Property="Foreground" Value="{StaticResource BrushStatusWarn}"/>
                                                                 </DataTrigger>
                                                             </Style.Triggers>
                                                         </Style>
