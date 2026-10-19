@@ -5,8 +5,11 @@
     xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
+    xmlns:svc="clr-namespace:Revit26_Plugin.Shared.Services"
     mc:Ignorable="d"
-    Title="Delete Workset — V001"
+    Title="{Binding Source={x:Static svc:ToolCatalog.DeleteWorkset}, Path=Title}"
+    Background="{DynamicResource BrushSurfaceWindow}"
     Height="700"
     Width="800"
     MinHeight="560"
@@ -49,55 +52,27 @@
         </ResourceDictionary>
     </Window.Resources>
 
-    <Grid Background="{StaticResource BrushSystemSecondaryBackground}">
-        <Grid.RowDefinitions>
-            <!-- 0: Navy header -->
-            <RowDefinition Height="Auto"/>
-            <!-- 1: Metrics strip -->
-            <RowDefinition Height="Auto"/>
-            <!-- 2: Grid section -->
-            <RowDefinition Height="*"/>
-            <!-- 3: Migration + options -->
-            <RowDefinition Height="Auto"/>
-            <!-- 4: Log panel (collapsible) -->
-            <RowDefinition Height="Auto"/>
-            <!-- 5: Footer -->
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <!-- UI standard v4.0: shared ToolWindowShell.
+         HEADER  title / subtitle / version + three metric tiles
+         BODY    filter toolbar + workset grid (capped by ShellBehaviors),
+                 migration target + options, run log
+         FOOTER  status strip (busy bar) · Reset left · Delete → Close right
+         Bindings, commands, handlers and x:Names are unchanged. -->
+    <shell:ToolWindowShell Title="Delete Workset"
+                           Subtitle="Delete worksets and migrate or hard-delete their elements"
+                           Version="{Binding Source={x:Static svc:ToolCatalog.DeleteWorkset}, Path=Version, StringFormat=v{0}}"
+                           IsRunning="{Binding IsRunning}"
+                           IsIndeterminate="True">
 
-        <!-- ══ ROW 0 — Navy header ══════════════════════════════════════════ -->
-        <Border Grid.Row="0" Style="{StaticResource HeaderBar}">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="0">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Delete Workset" Style="{StaticResource HeaderTitle}"/>
-                        <Border Style="{StaticResource BadgePill}"
-                                Background="{StaticResource BrushNavyLight}"
-                                Margin="8,0,0,0">
-                            <TextBlock Text="V001" FontSize="10" FontWeight="SemiBold"
-                                       Foreground="{StaticResource BrushTextOnDark}"/>
-                        </Border>
-                    </StackPanel>
-                    <TextBlock Text="Delete worksets and migrate or hard-delete their elements"
-                               Style="{StaticResource HeaderSubtitle}"/>
-                </StackPanel>
-            </Grid>
-        </Border>
-
-        <!-- ══ ROW 1 — Metrics strip ════════════════════════════════════════ -->
-        <Border Grid.Row="1" Padding="12,8" Background="{StaticResource BrushSystemSecondaryBackground}">
+        <!-- ═══ HEADER ═══ -->
+        <shell:ToolWindowShell.HeaderContent>
             <UniformGrid Columns="3" HorizontalAlignment="Stretch">
                 <!-- Total -->
                 <Border Style="{StaticResource MetricTile}" Margin="0,0,6,0">
                     <StackPanel>
                         <TextBlock Text="TOTAL WORKSETS" Style="{StaticResource MetricTileLabel}"
                                    Foreground="{StaticResource BrushTextSecondary}"/>
-                        <TextBlock Text="{Binding TotalCount}" FontSize="26" FontWeight="Bold"
-                                   Foreground="{StaticResource BrushTextPrimary}"/>
+                        <TextBlock Text="{Binding TotalCount}" Style="{StaticResource MetricTileNumber}"/>
                     </StackPanel>
                 </Border>
                 <!-- Deletable -->
@@ -105,8 +80,7 @@
                     <StackPanel>
                         <TextBlock Text="DELETABLE" Style="{StaticResource MetricTileLabel}"
                                    Foreground="{StaticResource BrushStatusOk}"/>
-                        <TextBlock Text="{Binding DeletableCount}" FontSize="26" FontWeight="Bold"
-                                   Foreground="{StaticResource BrushStatusOk}"/>
+                        <TextBlock Text="{Binding DeletableCount}" Style="{StaticResource MetricTileNumberSuccess}"/>
                     </StackPanel>
                 </Border>
                 <!-- Non-deletable -->
@@ -114,23 +88,18 @@
                     <StackPanel>
                         <TextBlock Text="NON-DELETABLE" Style="{StaticResource MetricTileLabel}"
                                    Foreground="{StaticResource BrushStatusError}"/>
-                        <TextBlock Text="{Binding NonDeletableCount}" FontSize="26" FontWeight="Bold"
-                                   Foreground="{StaticResource BrushStatusError}"/>
+                        <TextBlock Text="{Binding NonDeletableCount}" Style="{StaticResource MetricTileNumberDanger}"/>
                     </StackPanel>
                 </Border>
             </UniformGrid>
-        </Border>
+        </shell:ToolWindowShell.HeaderContent>
 
-        <!-- ══ ROW 2 — Workset grid ══════════════════════════════════════════ -->
-        <Border Grid.Row="2" Margin="12,0,12,0">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-
+        <!-- ═══ BODY ═══ -->
+        <shell:ToolWindowShell.BodyContent>
+            <StackPanel>
+                <!-- Workset grid -->
                 <!-- Toolbar -->
-                <Border Grid.Row="0" Background="{StaticResource BrushNavyPrimary}"
+                <Border Background="{StaticResource BrushSystemSecondaryBackground}" BorderBrush="{StaticResource BrushBorderDefault}" BorderThickness="1,1,1,0"
                         CornerRadius="4,4,0,0" Padding="8,6">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -144,10 +113,7 @@
                                  Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"
                                  Style="{StaticResource StyledTextInput}"
                                  Margin="0,0,8,0"
-                                 FontSize="11"
-                                 Background="#1A2B3C"
-                                 Foreground="{StaticResource BrushTextOnDark}"
-                                 BorderBrush="{StaticResource BrushNavyLight}"/>
+                                 FontSize="11"/>
 
                         <Button Grid.Column="1" Content="Select All"
                                 Command="{Binding SelectAllCommand}"
@@ -164,7 +130,9 @@
                 </Border>
 
                 <!-- DataGrid -->
-                <DataGrid Grid.Row="1"
+                <DataGrid MinHeight="160"
+                          shell:ShellBehaviors.MaxHeightRatio="0.4"
+                          shell:ShellBehaviors.ForwardMouseWheel="True"
                           ItemsSource="{Binding RowsView}"
                           AutoGenerateColumns="False"
                           CanUserAddRows="False"
@@ -267,166 +235,149 @@
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
-            </Grid>
-        </Border>
 
-        <!-- ══ ROW 3 — Migration target + options ═══════════════════════════ -->
-        <Border Grid.Row="3" Margin="12,8,12,0" Padding="12" Background="{StaticResource BrushSurfaceCard}"
-                BorderBrush="{StaticResource BrushBorderDefault}" BorderThickness="1" CornerRadius="4">
-            <StackPanel>
-                <!-- Migration target -->
-                <Grid Margin="0,0,0,10">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="170"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="Migrate elements to →"
-                               VerticalAlignment="Center"
-                               Style="{StaticResource FieldLabel}" FontWeight="SemiBold"/>
-                    <ComboBox Grid.Column="1"
-                              ItemsSource="{Binding MigrationTargets}"
-                              SelectedItem="{Binding MigrationTarget}"
-                              DisplayMemberPath="Name"
-                              Style="{StaticResource StandardComboBox}"
-                              IsEditable="True"
-                              TextSearch.TextPath="Name"/>
-                </Grid>
+                <!-- ══ ROW 3 — Migration target + options ═══════════════════════════ -->
+                <Border Margin="0,8,0,0" Padding="12" Background="{StaticResource BrushSurfaceCard}"
+                        BorderBrush="{StaticResource BrushBorderDefault}" BorderThickness="1" CornerRadius="4">
+                    <StackPanel>
+                        <!-- Migration target -->
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="170"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Migrate elements to →"
+                                       VerticalAlignment="Center"
+                                       Style="{StaticResource FieldLabel}" FontWeight="SemiBold"/>
+                            <ComboBox Grid.Column="1"
+                                      ItemsSource="{Binding MigrationTargets}"
+                                      SelectedItem="{Binding MigrationTarget}"
+                                      DisplayMemberPath="Name"
+                                      Style="{StaticResource StandardComboBox}"
+                                      IsEditable="True"
+                                      TextSearch.TextPath="Name"/>
+                        </Grid>
 
-                <Border Style="{StaticResource SeparatorLine}" Margin="0,0,0,8"/>
+                        <Border Style="{StaticResource SeparatorLine}" Margin="0,0,0,8"/>
 
-                <!-- Options -->
-                <StackPanel>
-                    <CheckBox IsChecked="{Binding HardDeleteUnmigratable}" Margin="0,0,0,6">
+                        <!-- Options -->
                         <StackPanel>
-                            <TextBlock Text="Also delete elements that cannot be migrated"
-                                       FontSize="12" FontWeight="Medium"
-                                       Foreground="{StaticResource BrushTextPrimary}"/>
-                            <TextBlock Text="Hard-deletes annotation elements, view-specific elements, and hosted elements with no valid target."
-                                       FontSize="10" Foreground="{StaticResource BrushTextSecondary}"
-                                       TextWrapping="Wrap" Margin="0,2,0,0"/>
+                            <CheckBox IsChecked="{Binding HardDeleteUnmigratable}" Margin="0,0,0,6">
+                                <StackPanel>
+                                    <TextBlock Text="Also delete elements that cannot be migrated"
+                                               FontSize="12" FontWeight="Medium"
+                                               Foreground="{StaticResource BrushTextPrimary}"/>
+                                    <TextBlock Text="Hard-deletes annotation elements, view-specific elements, and hosted elements with no valid target."
+                                               FontSize="10" Foreground="{StaticResource BrushTextSecondary}"
+                                               TextWrapping="Wrap" Margin="0,2,0,0"/>
+                                </StackPanel>
+                            </CheckBox>
+                            <CheckBox IsChecked="{Binding ConfirmEachDeletion}">
+                                <StackPanel>
+                                    <TextBlock Text="Confirm before each deletion"
+                                               FontSize="12" FontWeight="Medium"
+                                               Foreground="{StaticResource BrushTextPrimary}"/>
+                                    <TextBlock Text="Shows a per-workset confirmation prompt during the run."
+                                               FontSize="10" Foreground="{StaticResource BrushTextSecondary}"
+                                               Margin="0,2,0,0"/>
+                                </StackPanel>
+                            </CheckBox>
                         </StackPanel>
-                    </CheckBox>
-                    <CheckBox IsChecked="{Binding ConfirmEachDeletion}">
-                        <StackPanel>
-                            <TextBlock Text="Confirm before each deletion"
-                                       FontSize="12" FontWeight="Medium"
-                                       Foreground="{StaticResource BrushTextPrimary}"/>
-                            <TextBlock Text="Shows a per-workset confirmation prompt during the run."
-                                       FontSize="10" Foreground="{StaticResource BrushTextSecondary}"
-                                       Margin="0,2,0,0"/>
-                        </StackPanel>
-                    </CheckBox>
-                </StackPanel>
-            </StackPanel>
-        </Border>
-
-        <!-- ══ ROW 4 — Log panel ════════════════════════════════════════════ -->
-        <Border Grid.Row="4" Margin="12,8,12,0"
-                Background="{StaticResource BrushLogBg}"
-                CornerRadius="4">
-            <DockPanel>
-                <!-- Log title bar -->
-                <Border DockPanel.Dock="Top"
-                        Background="{StaticResource BrushLogTitleBar}"
-                        CornerRadius="4,4,0,0" Padding="10,6">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="RUN LOG"
-                                   FontSize="10" FontWeight="SemiBold"
-                                   Foreground="{StaticResource BrushTextOnDark}"
-                                   VerticalAlignment="Center"/>
-                        <Button Grid.Column="1" Content="Copy All"
-                                Command="{Binding CopyAllLogCommand}"
-                                Style="{StaticResource DarkGhostButton}" Margin="0,0,4,0"/>
-                        <Button Grid.Column="2" Content="Copy Selected"
-                                Command="{Binding CopySelectedLogCommand}"
-                                Style="{StaticResource DarkGhostButton}" Margin="0,0,4,0"/>
-                        <ToggleButton Grid.Column="3"
-                                      IsChecked="{Binding IsLogExpanded}"
-                                      Style="{StaticResource LogHeaderToggle}"/>
-                    </Grid>
+                    </StackPanel>
                 </Border>
 
-                <!-- Log entries (collapsible) -->
-                <ListBox x:Name="LogListBox"
-                         Visibility="{Binding IsLogExpanded, Converter={StaticResource NativeBoolToVis}}"
-                         ItemsSource="{Binding Log}"
-                         Background="{StaticResource BrushLogBg}"
-                         BorderThickness="0"
-                         Height="120"
-                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                    <ListBox.ItemContainerStyle>
-                        <Style TargetType="ListBoxItem">
-                            <Setter Property="Padding"           Value="0"/>
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                            <Setter Property="Background"        Value="Transparent"/>
-                            <Setter Property="BorderThickness"   Value="0"/>
-                        </Style>
-                    </ListBox.ItemContainerStyle>
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Margin="10,1">
+                <!-- ══ ROW 4 — Log panel ════════════════════════════════════════════ -->
+                <Border Margin="0,8,0,0"
+                        Background="{StaticResource BrushLogBg}"
+                        CornerRadius="4">
+                    <DockPanel>
+                        <!-- Log title bar -->
+                        <Border DockPanel.Dock="Top"
+                                Background="{StaticResource BrushLogTitleBar}"
+                                CornerRadius="4,4,0,0" Padding="10,6">
+                            <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="60"/>
                                     <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0"
-                                           Text="{Binding Time, StringFormat=HH:mm:ss}"
-                                           FontFamily="Consolas, Courier New" FontSize="10"
-                                           Foreground="{StaticResource BrushLogTextDim}"/>
-                                <TextBlock Grid.Column="1"
-                                           Text="{Binding Message}"
-                                           FontFamily="Consolas, Courier New" FontSize="10"
-                                           Foreground="{Binding Level, Converter={StaticResource LogLevelToColor}}"
-                                           TextWrapping="Wrap"/>
+                                <TextBlock Grid.Column="0" Text="RUN LOG"
+                                           FontSize="10" FontWeight="SemiBold"
+                                           Foreground="{StaticResource BrushTextOnDark}"
+                                           VerticalAlignment="Center"/>
+                                <Button Grid.Column="1" Content="Copy All"
+                                        Command="{Binding CopyAllLogCommand}"
+                                        Style="{StaticResource DarkGhostButton}" Margin="0,0,4,0"/>
+                                <Button Grid.Column="2" Content="Copy Selected"
+                                        Command="{Binding CopySelectedLogCommand}"
+                                        Style="{StaticResource DarkGhostButton}" Margin="0,0,4,0"/>
+                                <ToggleButton Grid.Column="3"
+                                              IsChecked="{Binding IsLogExpanded}"
+                                              Style="{StaticResource LogHeaderToggle}"/>
                             </Grid>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </DockPanel>
-        </Border>
+                        </Border>
 
-        <!-- ══ ROW 5 — Footer ═══════════════════════════════════════════════ -->
-        <Border Grid.Row="5"
-                Background="{StaticResource BrushNavyPrimary}"
-                Padding="12,8">
+                        <!-- Log entries (collapsible) -->
+                        <ListBox x:Name="LogListBox"
+                                 Visibility="{Binding IsLogExpanded, Converter={StaticResource NativeBoolToVis}}"
+                                 ItemsSource="{Binding Log}"
+                                 Background="{StaticResource BrushLogBg}"
+                                 BorderThickness="0"
+                                 Height="120"
+                                 shell:ShellBehaviors.ForwardMouseWheel="True"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="Padding"           Value="0"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    <Setter Property="Background"        Value="Transparent"/>
+                                    <Setter Property="BorderThickness"   Value="0"/>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="10,1">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="60"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0"
+                                                   Text="{Binding Time, StringFormat=HH:mm:ss}"
+                                                   FontFamily="Consolas, Courier New" FontSize="10"
+                                                   Foreground="{StaticResource BrushLogTextDim}"/>
+                                        <TextBlock Grid.Column="1"
+                                                   Text="{Binding Message}"
+                                                   FontFamily="Consolas, Courier New" FontSize="10"
+                                                   Foreground="{Binding Level, Converter={StaticResource LogLevelToColor}}"
+                                                   TextWrapping="Wrap"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </DockPanel>
+                </Border>
+            </StackPanel>
+        </shell:ToolWindowShell.BodyContent>
+
+        <!-- ═══ FOOTER ═══ -->
+        <shell:ToolWindowShell.FooterContent>
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-
-                <Button Grid.Column="0" Content="Reset"
-                        Command="{Binding ResetCommand}"
-                        Style="{StaticResource SecondaryButton}"
-                        Foreground="{StaticResource BrushTextOnDark}"/>
-
-                <!-- Running indicator -->
-                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center"
-                            Visibility="{Binding IsRunning, Converter={StaticResource NativeBoolToVis}}">
-                    <TextBlock Text="Running…" FontSize="11" FontWeight="SemiBold"
-                               Foreground="{StaticResource BrushAppleBlueLight}"
-                               VerticalAlignment="Center"/>
-                </StackPanel>
-
-                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <Button Content="Reset" Command="{Binding ResetCommand}"
+                        Style="{StaticResource SecondaryButton}" HorizontalAlignment="Left"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
                     <Button Content="Delete Workset"
                             Command="{Binding DeleteCommand}"
                             Style="{StaticResource DangerButton}"
                             Margin="0,0,8,0"
                             IsEnabled="{Binding IsRunning, Converter={StaticResource InverseBool}}"/>
-                    <Button Content="Close"
-                            Style="{StaticResource SecondaryButton}"
-                            Foreground="{StaticResource BrushTextOnDark}"
-                            Click="CloseButton_Click"/>
+                    <Button Content="Close" Style="{StaticResource OutlineButton}" Width="90" Click="CloseButton_Click"/>
                 </StackPanel>
             </Grid>
-        </Border>
-    </Grid>
+        </shell:ToolWindowShell.FooterContent>
+    </shell:ToolWindowShell>
 </Window>
