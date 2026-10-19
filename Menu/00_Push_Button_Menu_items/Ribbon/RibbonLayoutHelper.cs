@@ -20,6 +20,9 @@ namespace Revit26_Plugin.Menu.Ribbon
 
         public static IList<RibbonItem> AddStackedButtons(RibbonPanel panel, IList<RibbonItemData> items)
         {
+            foreach (var pushData in items.OfType<PushButtonData>())
+                ApplyCatalogTip(pushData);
+
             var created = new List<RibbonItem>();
             int i = 0;
             while (i < items.Count)
@@ -123,9 +126,28 @@ namespace Revit26_Plugin.Menu.Ribbon
             if (pulldown == null) return;
 
             foreach (var version in versions)
+            {
+                ApplyCatalogTip(version);
                 pulldown.AddPushButton(version);
+            }
 
             pulldown.ToolTip = BuildVersionsTip(pulldown.ItemText, versions);
+        }
+
+        /// <summary>
+        /// Makes a button's tooltip title line come from <see cref="Shared.Services.ToolCatalog"/>:
+        /// when the button's command class belongs to a catalogued tool, the first line becomes
+        /// "Name — vX.Y.Z (build Vnnn)" and any detail lines below it are kept. Buttons for
+        /// versions the catalog doesn't list keep the tooltip they were built with.
+        /// </summary>
+        private static void ApplyCatalogTip(PushButtonData data)
+        {
+            var tool = Shared.Services.ToolCatalog.Find(data.ClassName);
+            if (tool == null) return;
+
+            string tip = data.ToolTip ?? string.Empty;
+            int eol = tip.IndexOf('\n');
+            data.ToolTip = eol >= 0 ? tool.Tip() + tip.Substring(eol) : tool.Tip();
         }
 
         /// <summary>

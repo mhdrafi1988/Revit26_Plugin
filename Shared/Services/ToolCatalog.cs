@@ -126,9 +126,21 @@ namespace Revit26_Plugin.Shared.Services
         /// <summary>
         /// Finds the tool that owns <paramref name="type"/> by namespace, or null for shared/ribbon code.
         /// </summary>
-        public static ToolInfo Find(Type type)
+        public static ToolInfo Find(Type type) => FindByNamespace(type?.Namespace);
+
+        /// <summary>
+        /// Finds the tool that owns the type named <paramref name="typeFullName"/>
+        /// (e.g. a ribbon button's command class name), or null when no tool matches.
+        /// </summary>
+        public static ToolInfo Find(string typeFullName)
         {
-            string ns = type?.Namespace;
+            if (string.IsNullOrEmpty(typeFullName)) return null;
+            int dot = typeFullName.LastIndexOf('.');
+            return dot > 0 ? FindByNamespace(typeFullName.Substring(0, dot)) : null;
+        }
+
+        private static ToolInfo FindByNamespace(string ns)
+        {
             if (string.IsNullOrEmpty(ns)) return null;
             return All
                 .Where(t => ns == t.NamespacePrefix || ns.StartsWith(t.NamespacePrefix + ".", StringComparison.Ordinal))

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace Revit26_Plugin.Menu.Ribbon
 {
+    /// <summary>Builds the Manage and Worksets panels of the SloperPro Documents tab.</summary>
     public static class ManageRibbon
     {
         // Every Manage button is a pulldown: highest version number first,
@@ -21,18 +22,15 @@ namespace Revit26_Plugin.Menu.Ribbon
             };
         }
 
+        /// <summary>Creates the Manage panel, then the Worksets panel, on <paramref name="tabName"/>.</summary>
         public static void Build(UIControlledApplication app, string tabName, string assemblyPath)
         {
-            // Two panels: general model-management tools, and a Worksets panel of its own.
+            // Two panels: general model-management tools (Link Check included), and a Worksets panel of its own.
             RibbonPanel panel = app.CreateRibbonPanel(tabName, "Manage");
 
-            var overlapV003 = Btn(assemblyPath, "Btn_AnnotationOverlapDetection_V003", "Overlap Detection V003", "Revit26_Plugin.AnnotationOverlapDetection.V003.Command",
-                "Manage.AnnotationOverlapDetection_16.png", "Annotation Overlap Detection", "V003", "V002" + Rebuilt);
             var overlapV004 = Btn(assemblyPath, "Btn_AnnotationOverlapDetection_V004", "Overlap Detection V004", "Revit26_Plugin.AnnotationOverlapDetection.V004.Command",
                 "Manage.AnnotationOverlapDetection_16.png", "Annotation Overlap Detection", "V004", "V003 on the shared ToolWindowShell (capped lists).");
 
-            var paraManagerV004 = Btn(assemblyPath, "Btn_ParaManager_V004", "ParaManager V004", "Revit26_Plugin.ParaManager.V004.ParaManagerCommand",
-                "Manage.ParaManager_16.png", "ParaManager", "V004", "V003" + Rebuilt);
             var paraManagerV005 = Btn(assemblyPath, "Btn_ParaManager_V005", "ParaManager V005", "Revit26_Plugin.ParaManager.V005.ParaManagerCommand",
                 "Manage.ParaManager_16.png", "ParaManager", "V005", "V004 on the shared ToolWindowShell (log in body, capped queue grid).");
 
@@ -44,8 +42,6 @@ namespace Revit26_Plugin.Menu.Ribbon
             // Workset Manager is intentionally NOT on the ribbon — its commands and code
             // remain in the project (and in ToolCatalog) so it can be re-added later.
 
-            var worksetRenamerV004 = Btn(assemblyPath, "Btn_WorksetRenamer_V004", "Workset Renamer V004", "Revit26_Plugin.WorksetRenamer.V004.Command",
-                "SetupTools.WorksetRename_16.png", "Workset Renamer", "V004", "V003" + Rebuilt);
             var worksetRenamerV005 = Btn(assemblyPath, "Btn_WorksetRenamer_V005", "Workset Renamer V005", "Revit26_Plugin.WorksetRenamer.V005.Command",
                 "SetupTools.WorksetRename_16.png", "Workset Renamer", "V005", "V004 on the shared ToolWindowShell (capped grid).");
 
@@ -70,14 +66,11 @@ namespace Revit26_Plugin.Menu.Ribbon
             deleteLineStylesV001.ToolTip = Revit26_Plugin.Shared.Services.ToolCatalog.DeleteLineStyles.Tip(
                 "Deletes unused custom line styles, or all custom line styles (their lines move to a replacement style).");
 
-            var bulkRenameV001 = Btn(assemblyPath, "Btn_BulkRename_V001", "Bulk Rename V001",
-                "Revit26_Plugin.BulkRename.V001.Commands.BulkRenameCommand",
-                "Manage.BulkRename_16.png", "Bulk Rename", "V001");
-            bulkRenameV001.ToolTip = Revit26_Plugin.Shared.Services.ToolCatalog.BulkRename.Tip(
-                "Renames many line styles, line patterns, arrowheads or fill patterns at once: find/replace, prefix/suffix, case change and numbering.");
+            // Removed in plugin 3.8.1 because their source is not compiled into the add-in, so the
+            // buttons could only raise an error: Overlap Detection V003, ParaManager V004,
+            // Workset Renamer V004 and FX04, and Bulk Rename V001 (source only in the excluded
+            // Menu/RoofTools/New items folder).
 
-            var worksetRenamerFx04 = Btn(assemblyPath, "Btn_WorksetRenamer_FX04", "Workset Renamer (Excel) FX04", "Revit26_Plugin.WorksetRenamer.FX04.Command",
-                "SetupTools.WorksetRename_16.png", "Workset Renamer (From Excel)", "FX04", "FX03" + Rebuilt);
             var worksetRenamerFx05 = Btn(assemblyPath, "Btn_WorksetRenamer_FX05", "Workset Renamer (Excel) FX05", "Revit26_Plugin.WorksetRenamer.FX05.Command",
                 "SetupTools.WorksetRename_16.png", "Workset Renamer (Excel)", "FX05", "FX04 on the shared ToolWindowShell (capped group grids, shared group colours).");
 
@@ -122,14 +115,18 @@ namespace Revit26_Plugin.Menu.Ribbon
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_AnnotationOverlapDetection", "Overlaps", overlapV004),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_ParaManager", "ParaManager", paraManagerV005),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_DeleteLineStyles", "Del. Line Styles", deleteLineStylesV001),
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_BulkRename", "Bulk Rename", bulkRenameV001),
                 RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_ScheduleExportImport", "Schedule I/O", scheduleExportImportV007),
+                // Link Check moved here from its own one-button Links panel (plugin 3.8.1).
+                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_LinkVersionChecker", "Link Check", linkInModelV004),
             });
-            RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_AnnotationOverlapDetection", overlapV004, overlapV003);
-            RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_ParaManager", paraManagerV005, paraManagerV004);
+            RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_AnnotationOverlapDetection", overlapV004);
+            RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_ParaManager", paraManagerV005);
             RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_DeleteLineStyles", deleteLineStylesV001);
-            RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_BulkRename", bulkRenameV001);
             RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_ScheduleExportImport", scheduleExportImportV007, scheduleExportImportV006);
+            // Link Check lists V004's three scan modes first, then V003's.
+            RibbonLayoutHelper.WirePulldownButton(manageItems, "Pulldown_LinkVersionChecker",
+                linkInModelV004, linkPreOpenV004, linkFolderV004,
+                linkInModelV003, linkPreOpenV003, linkFolderV003);
 
             // ── Worksets panel ───────────────────────────────────────────────
             // Every workset tool lives here, in its own panel, instead of being
@@ -146,21 +143,9 @@ namespace Revit26_Plugin.Menu.Ribbon
             });
             RibbonLayoutHelper.WirePulldownButton(worksetItems, "Pulldown_WorksetsElementsBrowser", wsebV004, wsebV003);
             RibbonLayoutHelper.WirePulldownButton(worksetItems, "Pulldown_WorksetCreator", worksetCreatorV016, worksetCreatorV015);
-            RibbonLayoutHelper.WirePulldownButton(worksetItems, "Pulldown_WorksetRenamer", worksetRenamerV005, worksetRenamerV004);
-            RibbonLayoutHelper.WirePulldownButton(worksetItems, "Pulldown_WorksetRenamerFx", worksetRenamerFx05, worksetRenamerFx04);
+            RibbonLayoutHelper.WirePulldownButton(worksetItems, "Pulldown_WorksetRenamer", worksetRenamerV005);
+            RibbonLayoutHelper.WirePulldownButton(worksetItems, "Pulldown_WorksetRenamerFx", worksetRenamerFx05);
             RibbonLayoutHelper.WirePulldownButton(worksetItems, "Pulldown_DeleteWorkset", deleteWorksetV001);
-
-            // ── Links panel ──────────────────────────────────────────────────
-            // Link tools. Link Check lists V004's three scan modes first, then V003's.
-            RibbonPanel linksPanel = app.CreateRibbonPanel(tabName, "Links");
-
-            var linkItems = RibbonLayoutHelper.AddStackedButtons(linksPanel, new List<RibbonItemData>
-            {
-                RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_LinkVersionChecker", "Link Check", linkInModelV004),
-            });
-            RibbonLayoutHelper.WirePulldownButton(linkItems, "Pulldown_LinkVersionChecker",
-                linkInModelV004, linkPreOpenV004, linkFolderV004,
-                linkInModelV003, linkPreOpenV003, linkFolderV003);
         }
     }
 }
