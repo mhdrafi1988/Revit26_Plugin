@@ -72,7 +72,7 @@ namespace Revit26_Plugin.Shared.Services
         public static readonly ToolInfo MultiRoofSlopeByDrainV013 = Add("Auto Slope By Drain (Multi-Roof)", "13.1.0", "V013", "Revit26_Plugin.MultiRoofSlopeByDrain.V013");
         public static readonly ToolInfo InnerLoopDivider = Add("Divide Inner Loops", "12.1.0", "V012", "Revit26_Plugin.InnerLoopDivider.V012");
         public static readonly ToolInfo OuterCurveDivider = Add("Outer Curve Divider", "6.0.0", "V006", "Revit26_Plugin.OuterCurveDivider.V006");
-        public static readonly ToolInfo RoofDetailLineIntersect = Add("Roof Detail Line Intersect", "14.0.0", "V014", "Revit26_Plugin.RoofDetailLineIntersect.V014");
+        public static readonly ToolInfo RoofDetailLineIntersect = Add("Roof Detail Line Intersect", "14.1.0", "V014", "Revit26_Plugin.RoofDetailLineIntersect.V014");
         public static readonly ToolInfo InnerLoopsAndPerpendicular = Add("Inner Loops And Perpendicular", "7.0.0", "V007", "Revit26_Plugin.InnerLoopsAndPerpendicular.V007");
         public static readonly ToolInfo RoofEdgeVertexReducer = Add("Roof Edge Vertex Reducer", "9.0.0", "V009", "Revit26_Plugin.RoofEdgeVertexReducer.V009");
         public static readonly ToolInfo MultiplePoints = Add("Multiple Points (1/2–1/4)", "3.0.0", "V003", "Revit26_Plugin.MultiplePoints.V003");

@@ -131,7 +131,7 @@ Changes vs V013 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                             </Grid.ColumnDefinitions>
 
                             <Border Grid.Column="0"
-                                    Background="{StaticResource BrushSuccess}"
+                                    Background="{StaticResource BrushStatusOk}"
                                     CornerRadius="8" Padding="7,2" Margin="0,0,8,0"
                                     VerticalAlignment="Center">
                                 <TextBlock FontSize="10" FontWeight="Bold" Foreground="{StaticResource BrushTextOnDark}">
