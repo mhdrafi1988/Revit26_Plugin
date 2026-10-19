@@ -55,7 +55,7 @@ namespace Revit26_Plugin.Shared.Services
         public static readonly ToolInfo DetailLineClosedLoop = Add("Detail Line Closed Loop", "3.0.0", "V003", "Revit26_Plugin.DetailLineClosedLoop.V003");
         public static readonly ToolInfo DtlLineDim = Add("Auto Dim Detail Line", "10.1.0", "V010", "Revit26_Plugin.DtlLineDim.V010");
         public static readonly ToolInfo FloorsAndRoofFromLinkedRooms = Add("Floors And Roof From Linked Rooms", "13.1.0", "V013", "Revit26_Plugin.FloorsAndRoofFromLinkedRooms.V013");
-        public static readonly ToolInfo FloorsAndRoofFromLinkedRoomsViaPlanView = Add("Floors And Roof From Linked Rooms (Via Plan View)", "6.0.0", "V006", "Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V006");
+        public static readonly ToolInfo FloorsAndRoofFromLinkedRoomsViaPlanView = Add("Floors And Roof From Linked Rooms (Via Plan View)", "6.1.0", "V006", "Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V006");
         public static readonly ToolInfo ParaManager = Add("ParaManager", "5.0.0", "V005", "Revit26_Plugin.ParaManager.V005");
         public static readonly ToolInfo ScheduleExportImport = Add("Schedule Export / Import", "7.0.0", "V007", "Revit26_Plugin.ScheduleExportImport.V007");
         public static readonly ToolInfo AnnotationOverlapDetection = Add("Annotation Overlap Detection", "4.0.0", "V004", "Revit26_Plugin.AnnotationOverlapDetection.V004");
