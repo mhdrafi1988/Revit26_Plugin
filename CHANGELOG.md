@@ -9,6 +9,31 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [3.9.0] — 2026-10-19
+
+### Changed
+- **UI standard v4.0 (`Shared/SharedStyles.xaml`)** — one look for every tool window: navy header,
+  Revit-neutral body. Affects every window that uses the shared styles.
+  - Window background is a soft grey (#F3F5F7) instead of light blue.
+  - Text boxes and combo boxes are white with a visible border (the light-orange fill is gone).
+  - Status colours unified: one green / amber / red / blue set replaces the per-tool tile, pill,
+    banner and group colours.
+  - Revit dialog density: buttons 30 px (were 38), inputs 26 px (were 32), 4 px corners, metric
+    numbers 18 px semibold.
+  - The main **Run** button (`RunButton`) is navy instead of red. Red is now only for destructive
+    actions (`DangerButton`).
+  - New semantic tokens for new code: `Surface*`, `Border*`, `ActionPrimary`, `Status{Ok,Warn,Error,Info}`
+    with `Soft` / `Border` variants. All v3.x keys still exist; the per-tool status keys
+    (`Tile*`, `Pill*`, `Soft*`, `Group*`, `Banner*`) are deprecated aliases and will be removed in a
+    later release.
+- **Auto Slope By Point v32.1.0 (V032)** — pilot for the UI standard: window uses the semantic
+  tokens only, and the window title shows the version from `ToolCatalog`. Given its own
+  `ToolCatalog` entry (it was falling back to a hard-coded 32.0.0). No behaviour change.
+
+> **User note:** tool windows look different (grey background, white inputs, smaller buttons, navy
+> Run button). Nothing about what the tools do has changed. Report any window where text is clipped
+> or a control is hard to see.
+
 ## [3.8.0] — 2026-10-17
 
 ### Added
