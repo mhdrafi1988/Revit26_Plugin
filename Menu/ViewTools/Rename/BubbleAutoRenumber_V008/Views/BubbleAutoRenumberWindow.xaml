@@ -16,8 +16,9 @@ Changes vs V007 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
 <Window x:Class="Revit26_Plugin.BubbleAutoRenumber.V008.Views.SectionAutoRenumberWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:svc="clr-namespace:Revit26_Plugin.Shared.Services"
         xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
-        Title="Section Auto Renumber — V008"
+        Title="{Binding Source={x:Static svc:ToolCatalog.BubbleAutoRenumber}, Path=Title}"
         Width="520" Height="720"
         MinWidth="520" MinHeight="720"
         ResizeMode="CanResizeWithGrip"
@@ -34,7 +35,7 @@ Changes vs V007 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
 
     <shell:ToolWindowShell Title="Section Auto Renumber"
                            Subtitle="Renumber section bubbles on a sheet, top-left to bottom-right"
-                           Version="V008"
+                           Version="{Binding Source={x:Static svc:ToolCatalog.BubbleAutoRenumber}, Path=Version, StringFormat=v{0}}"
                            IsRunning="{Binding IsRunning}"
                            Progress="{Binding Progress}"
                            SummaryText="{Binding SummaryText}">

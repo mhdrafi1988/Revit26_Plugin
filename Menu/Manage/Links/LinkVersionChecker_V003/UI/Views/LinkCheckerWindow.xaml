@@ -1,8 +1,9 @@
 <Window x:Class="Revit26_Plugin.LinkVersionChecker_V003.UI.Views.LinkCheckerWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:svc="clr-namespace:Revit26_Plugin.Shared.Services"
         xmlns:infra="clr-namespace:Revit26_Plugin.LinkVersionChecker_V003.UI.Infrastructure"
-        Title="Link Version Checker V003 — Revit26_Plugin"
+        Title="{Binding Source={x:Static svc:ToolCatalog.LinkVersionChecker}, Path=Title}"
         Width="1280" Height="800" MinWidth="1280" MinHeight="800" MaxWidth="1664" MaxHeight="1040" ResizeMode="CanResizeWithGrip"
         WindowStartupLocation="CenterOwner"
         FontFamily="Segoe UI" FontSize="12.5" Background="White">

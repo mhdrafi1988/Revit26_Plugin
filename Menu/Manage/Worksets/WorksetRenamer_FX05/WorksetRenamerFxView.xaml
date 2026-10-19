@@ -20,9 +20,10 @@ Changes vs FX04 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
 <Window x:Class="Revit26_Plugin.WorksetRenamer.FX05.Views.WorksetRenamerFxView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:svc="clr-namespace:Revit26_Plugin.Shared.Services"
         xmlns:vm="clr-namespace:Revit26_Plugin.WorksetRenamer.FX05.ViewModels"
         xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
-        Title="Workset Renamer — From Excel (FX05)"
+        Title="{Binding Source={x:Static svc:ToolCatalog.WorksetRenamerExcel}, Path=Title}"
         Width="920" Height="780"
         MinWidth="920" MinHeight="780"
         ResizeMode="CanResizeWithGrip"
@@ -144,7 +145,7 @@ Changes vs FX04 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
 
     <shell:ToolWindowShell Title="Workset Renamer — From Excel"
                            Subtitle="Export the model's worksets, edit New Name in Excel, import, review by group, then Update."
-                           Version="FX05"
+                           Version="{Binding Source={x:Static svc:ToolCatalog.WorksetRenamerExcel}, Path=Version, StringFormat=v{0}}"
                            IsRunning="{Binding IsRunning}"
                            Progress="{Binding Progress}"
                            SummaryText="{Binding StatusMessage}">

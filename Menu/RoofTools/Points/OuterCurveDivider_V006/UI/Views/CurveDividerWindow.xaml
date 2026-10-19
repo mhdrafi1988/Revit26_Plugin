@@ -17,9 +17,10 @@ Changes vs V005 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
 <Window x:Class="Revit26_Plugin.OuterCurveDivider.V006.UI.Views.CurveDividerWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:svc="clr-namespace:Revit26_Plugin.Shared.Services"
         xmlns:conv="clr-namespace:Revit26_Plugin.Shared.Models"
         xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
-        Title="Curve Point Divider — V006"
+        Title="{Binding Source={x:Static svc:ToolCatalog.OuterCurveDivider}, Path=Title}"
         Width="860" Height="720"
         MinWidth="860" MinHeight="720"
         WindowStartupLocation="CenterScreen"
@@ -39,7 +40,7 @@ Changes vs V005 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
 
     <shell:ToolWindowShell Title="Curve Point Divider"
                            Subtitle="Each edge's point count is seeded from its length (4 / 8 / 12 / L÷2) and is editable per row. Type rules and per-edge overrides still apply. Straight (Line) edges are filtered out; interior points only."
-                           Version="V006"
+                           Version="{Binding Source={x:Static svc:ToolCatalog.OuterCurveDivider}, Path=Version, StringFormat=v{0}}"
                            IsRunning="{Binding IsRunning}"
                            Progress="{Binding Progress}"
                            SummaryText="{Binding SummaryText}">

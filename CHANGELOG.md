@@ -9,6 +9,20 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [3.10.1] — 2026-10-19
+
+### Fixed
+- **Window titles and version badges come from `ToolCatalog`** — 56 tools showed a build tag
+  typed into the window (caption "Tool — V012", header badge "V012"), which drifted from the real
+  version. The caption is now `ToolCatalog`'s "Name — vX.Y.Z" and the header badge "vX.Y.Z", bound
+  in XAML through `x:Static` (no view-model changes). Sub-dialogs (Import Preview, Show in 3D View,
+  Review exported CAD) keep their own caption and show the tool's catalog version. Each tool gets a
+  PATCH bump:
+  Auto Place Sections v324.1.1 (V324), Annotation Overlap Detection v4.1.1 (V004), Auto Slope By Point v30.0.1 (V030), Auto Slope By Point (Multi Copies) v30.1.1 (MultiCopies30), Auto Slope By Point (Ridge) v3.1.1 (V003), Automated Section Placer v3.1.1 (V003), Bubble Auto Renumber v8.0.1 (V008), Bubble Auto Renumber v9.1.1 (V009), Bulk Rename v1.1.1 (V001), Callout To Section View Placement v21.1.1 (V021), Combined Roof Tools v3.1.1 (V003), Creaser Adv v12.0.1 (V012), Create Sections From Detail Lines v13.1.1 (V013), Detail Line Closed Loop v3.0.1 (V003), Auto Dim Detail Line v10.1.1 (V010), DWG Manager v3.1.1 (V003), DWG Statistics v5.1.1 (V005), DWG To DL(P) v14.0.1 (V014), DWG To Lines v7.0.1 (V007), Export DWG to Folder v4.1.1 (V004), Floors And Roof From Linked Rooms v13.1.1 (V013), Floors And Roof From Linked Rooms (Via Plan View) v6.1.1 (V006), Divide Inner Loops v12.1.1 (V012), Inner Loops And Perpendicular v7.1.1 (V007), Island Roof Splitter v0.2.1 (V001 (WIP)), Link Version Checker v3.0.1 (V003), Detail Lines From Links v10.1.1 (VA010), Auto Slope By Drain (Multi-Roof) v12.0.1 (V012), Auto Slope By Drain (Multi-Roof) v13.1.1 (V013), Multiple Points (1/2–1/4) v3.0.1 (V003), Outer Curve Divider v6.0.1 (V006), ParaManager v5.1.1 (V005), Plan From Scope Box v6.1.1 (V006), Reference Section Head Placer v15.1.1 (V015), Roof Detail Line Intersect v14.1.1 (V014), Roof Edge Around Sections v7.1.1 (V007), Roof Edge Element Sections v4.1.1 (V004), Roof Edge Vertex Reducer v9.0.1 (V009), Roof Name Builder v2.1.1 (V002), Roof Point Comparison v3.0.1 (V003), Roof Point Elevation Sync v5.0.1 (V005), Roof Tag v18.1.1 (V018), Roof Type Manager v3.1.1 (V003), Roof View Focus v4.1.1 (V004), Schedule Export / Import v7.1.1 (V007), Section Auto Renamer v26.1.1 (V026), Section View Auto Tagger v6.1.1 (V006), Sheet Auto Rearrange v28.1.1 (V028), Sheet View Arrange v1.2.1 (V001), Smart View To Sheet Placer v224.1.1 (V224), View Auto Renamer v6.1.1 (V006), Workset Creator v16.1.1 (V016), Workset Manager v14.1.1 (V014), Workset Renamer v5.1.1 (V005), Workset Renamer (From Excel) v5.1.1 (FX05), Worksets & Elements Browser v4.2.1 (WSEB004).
+
+> **User note:** window captions now use the catalog tool name, so a few read slightly differently
+> (for example "Curve Point Divider — V006" becomes "Outer Curve Divider — v6.0.1"). Nothing else changes.
+
 ## [3.10.0] — 2026-10-19
 
 ### Fixed

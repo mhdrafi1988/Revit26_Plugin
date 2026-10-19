@@ -19,9 +19,10 @@ Changes vs V014 (layout only):
 <Window x:Class="Revit26_Plugin.RefSectionHeadPlacer.V015.UI.Views.RefSectionHeadPlacerWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:svc="clr-namespace:Revit26_Plugin.Shared.Services"
         xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
         xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
-        Title="Reference Section Head Placer — V015"
+        Title="{Binding Source={x:Static svc:ToolCatalog.RefSectionHeadPlacer}, Path=Title}"
         Height="860" Width="1180"
         MinHeight="860" MinWidth="1180"
         ResizeMode="CanResizeWithGrip"
@@ -182,7 +183,7 @@ Changes vs V014 (layout only):
     </Window.Resources>
 
     <shell:ToolWindowShell Title="Reference Section Head Placer"
-                           Version="V015"
+                           Version="{Binding Source={x:Static svc:ToolCatalog.RefSectionHeadPlacer}, Path=Version, StringFormat=v{0}}"
                            IsRunning="{Binding IsRunning}"
                            Progress="{Binding ProgressPercent, Mode=OneWay}"
                            SummaryText="{Binding ProgressStatusText}">

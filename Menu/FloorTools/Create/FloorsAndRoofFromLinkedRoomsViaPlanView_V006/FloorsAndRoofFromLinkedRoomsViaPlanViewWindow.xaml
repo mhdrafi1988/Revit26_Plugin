@@ -17,9 +17,10 @@ Changes vs V005 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
 <Window x:Class="Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V006.FloorsFromLinkedRoomsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:svc="clr-namespace:Revit26_Plugin.Shared.Services"
         xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
         xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
-        Title="Floors and Roofs From Linked Rooms — V006"
+        Title="{Binding Source={x:Static svc:ToolCatalog.FloorsAndRoofFromLinkedRoomsViaPlanView}, Path=Title}"
         Width="900" Height="760"
         MinWidth="900" MinHeight="760"
         WindowStartupLocation="CenterOwner"
@@ -39,7 +40,7 @@ Changes vs V005 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
 
     <shell:ToolWindowShell Title="Floors and Roofs From Linked Rooms"
                            Subtitle="Create floors from linked room boundaries"
-                           Version="V006"
+                           Version="{Binding Source={x:Static svc:ToolCatalog.FloorsAndRoofFromLinkedRoomsViaPlanView}, Path=Version, StringFormat=v{0}}"
                            IsRunning="{Binding IsBusy}"
                            Progress="{Binding Progress}"
                            SummaryText="{Binding ProgressText}">

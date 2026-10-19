@@ -20,6 +20,7 @@ Changes vs VA008 (layout only):
 <Window x:Class="Revit26_Plugin.LinkedDetailLineGenerator.VA010.UI.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:svc="clr-namespace:Revit26_Plugin.Shared.Services"
         xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
         xmlns:local="clr-namespace:Revit26_Plugin.LinkedDetailLineGenerator.VA010.Infrastructure.Helpers"
         xmlns:models="clr-namespace:Revit26_Plugin.LinkedDetailLineGenerator.VA010.Core.Models"
@@ -28,7 +29,7 @@ Changes vs VA008 (layout only):
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
         mc:Ignorable="d"
-        Title="Linked Detail Line Generator — VA010"
+        Title="{Binding Source={x:Static svc:ToolCatalog.LinkedDetailLineGenerator}, Path=Title}"
         Height="900" Width="1280"
         MinHeight="900" MinWidth="1280"
         WindowStartupLocation="CenterOwner"
@@ -109,7 +110,7 @@ Changes vs VA008 (layout only):
     </Window.Resources>
 
     <shell:ToolWindowShell Title="Linked Detail Line Generator"
-                           Version="VA010"
+                           Version="{Binding Source={x:Static svc:ToolCatalog.LinkedDetailLineGenerator}, Path=Version, StringFormat=v{0}}"
                            IsRunning="{Binding IsRunning, Mode=OneWay}"
                            IsIndeterminate="True"
                            Progress="{Binding Progress}"

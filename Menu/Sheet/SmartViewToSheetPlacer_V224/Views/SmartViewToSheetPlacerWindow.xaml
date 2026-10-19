@@ -22,12 +22,13 @@ Changes vs V223 (layout only):
 <Window x:Class="Revit26_Plugin.SmartViewToSheetPlacer.V224.Views.SmartViewToSheetPlacerWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:svc="clr-namespace:Revit26_Plugin.Shared.Services"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
         xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
         mc:Ignorable="d"
-        Title="Smart View To Sheet Placer — V224"
+        Title="{Binding Source={x:Static svc:ToolCatalog.SmartViewToSheetPlacer}, Path=Title}"
         Height="1080" Width="1200"
         MinHeight="720" MinWidth="900"
         WindowStartupLocation="CenterScreen"
@@ -191,7 +192,7 @@ Changes vs V223 (layout only):
     </Window.InputBindings>
 
     <shell:ToolWindowShell Title="Smart View To Sheet Placer"
-                           Version="V224"
+                           Version="{Binding Source={x:Static svc:ToolCatalog.SmartViewToSheetPlacer}, Path=Version, StringFormat=v{0}}"
                            IsRunning="{Binding IsBusy}"
                            Progress="{Binding ProgressPercent, Mode=OneWay}"
                            SummaryText="{Binding ProgressDetailText}">
