@@ -107,7 +107,7 @@ namespace Revit26_Plugin.Shared.Services
         public static readonly ToolInfo RoofViewFocus = Add("Roof View Focus", "4.1.0", "V004", "Revit26_Plugin.RoofViewFocus.V004");
         public static readonly ToolInfo CreateSections = Add("Create Sections From Detail Lines", "13.1.0", "V013", "Revit26_Plugin.CreateSections.V013");
         public static readonly ToolInfo APUS = Add("Auto Place Sections", "324.1.0", "V324", "Revit26_Plugin.APUS.V324");
-        public static readonly ToolInfo CalloutCOP = Add("Callout To Section View Placement", "21.0.0", "V021", "Revit26_Plugin.CalloutCOP.V021");
+        public static readonly ToolInfo CalloutCOP = Add("Callout To Section View Placement", "21.1.0", "V021", "Revit26_Plugin.CalloutCOP.V021");
         public static readonly ToolInfo RefSectionHeadPlacer = Add("Reference Section Head Placer", "15.0.0", "V015", "Revit26_Plugin.RefSectionHeadPlacer.V015");
         public static readonly ToolInfo SectionViewAutoTagger = Add("Section View Auto Tagger", "6.0.0", "V006", "Revit26_Plugin.SectionViewAutoTagger.V006");
         public static readonly ToolInfo ViewAutoRenamer = Add("View Auto Renamer", "6.0.0", "V006", "Revit26_Plugin.ViewAutoRenamer.V006");
