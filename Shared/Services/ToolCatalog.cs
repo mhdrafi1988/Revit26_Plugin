@@ -66,7 +66,7 @@ namespace Revit26_Plugin.Shared.Services
         public static readonly ToolInfo AutoSlopeByPoint = Add("Auto Slope By Point", "30.0.0", "V030", "Revit26_Plugin.AutoSlopeByPoint.V030");
         public static readonly ToolInfo AutoSlopeByPointV032 = Add("Auto Slope By Point", "32.1.0", "V032", "Revit26_Plugin.AutoSlopeByPoint.V032");
         public static readonly ToolInfo AutoSlopeByPointRidge = Add("Auto Slope By Point (Ridge)", "3.1.0", "V003", "Revit26_Plugin.AutoSlopeByPointRidge.V003");
-        public static readonly ToolInfo AutoSlopeByPointMultiCopies = Add("Auto Slope By Point (Multi Copies)", "30.0.0", "MultiCopies30", "Revit26_Plugin.AutoSlopeByPoint.MultiCopies30");
+        public static readonly ToolInfo AutoSlopeByPointMultiCopies = Add("Auto Slope By Point (Multi Copies)", "30.1.0", "MultiCopies30", "Revit26_Plugin.AutoSlopeByPoint.MultiCopies30");
         public static readonly ToolInfo AutoSlopeByDrain = Add("Auto Slope By Drain", "7.0.0", "V007", "Revit26_Plugin.AutoSlopeByDrain.V007");
         public static readonly ToolInfo MultiRoofSlopeByDrain = Add("Auto Slope By Drain (Multi-Roof)", "12.0.0", "V012", "Revit26_Plugin.MultiRoofSlopeByDrain.V012");
         public static readonly ToolInfo InnerLoopDivider = Add("Divide Inner Loops", "12.0.0", "V012", "Revit26_Plugin.InnerLoopDivider.V012");

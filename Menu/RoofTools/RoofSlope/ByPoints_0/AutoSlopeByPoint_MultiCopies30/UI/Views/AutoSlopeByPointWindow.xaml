@@ -739,15 +739,15 @@ Changes vs MultiCopies29 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                     <DataTrigger Binding="{Binding StatusMessage}" Value="Processing...">
                                         <Setter Property="Content" Value="Processing..."/>
                                         <Setter Property="IsEnabled" Value="False"/>
-                                        <Setter Property="Background" Value="{StaticResource BrushWarning}"/>
+                                        <Setter Property="Background" Value="{StaticResource BrushStatusWarn}"/>
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding StatusMessage}" Value="Completed">
                                         <Setter Property="Content" Value="✓ Complete"/>
-                                        <Setter Property="Background" Value="{StaticResource BrushSuccess}"/>
+                                        <Setter Property="Background" Value="{StaticResource BrushStatusOk}"/>
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding StatusMessage}" Value="Cancelled">
                                         <Setter Property="Content" Value="Cancelled — Run Again"/>
-                                        <Setter Property="Background" Value="{StaticResource BrushWarning}"/>
+                                        <Setter Property="Background" Value="{StaticResource BrushStatusWarn}"/>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
