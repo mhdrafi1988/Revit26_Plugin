@@ -80,6 +80,7 @@ namespace Revit26_Plugin.Shared.Services
         public static readonly ToolInfo RidgeByPoints = Add("Ridge By Points", "59.1.0", "V059", "Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V059");
         public static readonly ToolInfo CreaserAdv = Add("Creaser Adv", "12.0.0", "V012", "Revit26_Plugin.CreaserAdv.V012");
         public static readonly ToolInfo RoofTag = Add("Roof Tag", "18.1.0", "V018", "Revit26_Plugin.RoofTag.V018");
+        // Source not in the repository; removed from the ribbon in plugin 3.10.0. Kept so logs stay readable.
         public static readonly ToolInfo RoofFromDetailLines = Add("Roof From Detail Lines", "9.0.0", "V009", "Revit26_Plugin.RoofFromDetailLines.V009");
         public static readonly ToolInfo CombinedRoofTools = Add("Combined Roof Tools", "3.1.0", "V003", "Revit26_Plugin.CombinedRoofTools.V003");
         public static readonly ToolInfo RoofTypeManager = Add("Roof Type Manager", "3.1.0", "V003", "Revit26_Plugin.RoofTypeCreator.V003");
@@ -116,7 +117,7 @@ namespace Revit26_Plugin.Shared.Services
         public static readonly ToolInfo SectionAutoRenamer = Add("Section Auto Renamer", "26.1.0", "V026", "Revit26_Plugin.SectionAutoRenamer.V026");
         public static readonly ToolInfo DeleteWorkset = Add("Delete Workset", "1.2.0", "V001", "Revit26_Plugin.DeleteWorkset.V001");
         public static readonly ToolInfo DeleteLineStyles = Add("Delete Line Styles", "1.2.0", "V001", "Revit26_Plugin.DeleteLineStyles.V001");
-        public static readonly ToolInfo BulkRename = Add("Bulk Rename", "1.0.0", "V001", "Revit26_Plugin.BulkRename.V001");
+        public static readonly ToolInfo BulkRename = Add("Bulk Rename", "1.1.0", "V001", "Revit26_Plugin.BulkRename.V001");
         public static readonly ToolInfo WorksetCreator = Add("Workset Creator", "16.1.0", "V016", "Revit26_Plugin.WorksetCreator.V016");
 
         private static ToolInfo Add(string name, string version, string buildTag, string namespacePrefix)

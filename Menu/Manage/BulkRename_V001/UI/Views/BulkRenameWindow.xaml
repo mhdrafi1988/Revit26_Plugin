@@ -61,10 +61,10 @@ File: BulkRenameWindow.xaml  (Bulk Rename V001 — ToolWindowShell)
                         <Setter Property="Foreground" Value="{StaticResource BrushAppleBlue}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding Status}" Value="Invalid">
-                        <Setter Property="Foreground" Value="{StaticResource BrushDanger}"/>
+                        <Setter Property="Foreground" Value="{StaticResource BrushStatusError}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding Status}" Value="Duplicate">
-                        <Setter Property="Foreground" Value="{StaticResource BrushDanger}"/>
+                        <Setter Property="Foreground" Value="{StaticResource BrushStatusError}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding Status}" Value="Locked">
                         <Setter Property="Foreground" Value="{StaticResource BrushTextDisabled}"/>
@@ -79,10 +79,10 @@ File: BulkRenameWindow.xaml  (Bulk Rename V001 — ToolWindowShell)
                         <Setter Property="Fill" Value="{StaticResource BrushAppleBlue}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding Status}" Value="Invalid">
-                        <Setter Property="Fill" Value="{StaticResource BrushDanger}"/>
+                        <Setter Property="Fill" Value="{StaticResource BrushStatusError}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding Status}" Value="Duplicate">
-                        <Setter Property="Fill" Value="{StaticResource BrushDanger}"/>
+                        <Setter Property="Fill" Value="{StaticResource BrushStatusError}"/>
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
@@ -335,7 +335,7 @@ File: BulkRenameWindow.xaml  (Bulk Rename V001 — ToolWindowShell)
                                   RowStyle="{StaticResource BulkRenameRowStyle}"
                                   CellStyle="{StaticResource DataGridCellStyle}"
                                   ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
-                                  Background="{StaticResource BrushSystemBackground}"
+                                  Background="{StaticResource BrushSurfaceWindow}"
                                   BorderThickness="0"
                                   RowHeight="28"
                                   VirtualizingStackPanel.IsVirtualizing="True"
