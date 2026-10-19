@@ -107,7 +107,7 @@ Changes vs the unversioned "_WOrking" build (layout only, per Revit_Plugin_UI_St
         </ScrollViewer>
 
         <!-- ══════════════ FOOTER ══════════════ -->
-        <Border Grid.Row="2" Background="{StaticResource BrushCardBackground}" BorderBrush="{StaticResource BrushCardBorder}"
+        <Border Grid.Row="2" Background="{StaticResource BrushSurfaceCard}" BorderBrush="{StaticResource BrushBorderDefault}"
                 BorderThickness="0,1,0,0" Padding="12,10" Margin="0,10,0,0">
             <StackPanel>
                 <Grid Margin="0,0,0,8">

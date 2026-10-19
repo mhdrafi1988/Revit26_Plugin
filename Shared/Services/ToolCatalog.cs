@@ -86,7 +86,7 @@ namespace Revit26_Plugin.Shared.Services
         public static readonly ToolInfo RoofPointElevationSync = Add("Roof Point Elevation Sync", "5.0.0", "V005", "Revit26_Plugin.RoofPointElevationSync.V005");
         public static readonly ToolInfo RoofPointComparison = Add("Roof Point Comparison", "3.0.0", "V003", "Revit26_Plugin.RoofPointComparison.V003");
         public static readonly ToolInfo TaperedEpsPattern2D = Add("Tapered EPS 2D Pattern", "6.0.0", "V006", "Revit26_Plugin.TaperedEpsPattern2D.V006");
-        public static readonly ToolInfo BatchDwgFamilyLinker = Add("Batch Link DWG Family", "2.0.0", "V002", "BatchDwgFamilyLinker.V002");
+        public static readonly ToolInfo BatchDwgFamilyLinker = Add("Batch Link DWG Family", "2.1.0", "V002", "BatchDwgFamilyLinker.V002");
         public static readonly ToolInfo DwgToLines = Add("DWG To Lines", "7.0.0", "V007", "Revit26_Plugin.DwgToLines.V007");
         public static readonly ToolInfo DwgToDetailLines = Add("DWG To Detail Lines", "11.0.0", "V011", "Revit26_Plugin.DwgToDetailLines.V011");
         public static readonly ToolInfo DwgToDlp = Add("DWG To DL(P)", "14.0.0", "V014", "Revit26_Plugin.DwgToDetailLines.V014");
