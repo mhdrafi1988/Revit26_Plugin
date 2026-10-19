@@ -90,7 +90,7 @@ namespace Revit26_Plugin.Shared.Services
         public static readonly ToolInfo DwgToLines = Add("DWG To Lines", "7.0.0", "V007", "Revit26_Plugin.DwgToLines.V007");
         public static readonly ToolInfo DwgToDetailLines = Add("DWG To Detail Lines", "11.0.0", "V011", "Revit26_Plugin.DwgToDetailLines.V011");
         public static readonly ToolInfo DwgToDlp = Add("DWG To DL(P)", "14.0.0", "V014", "Revit26_Plugin.DwgToDetailLines.V014");
-        public static readonly ToolInfo DwgManager = Add("DWG Manager", "3.0.0", "V003", "Revit26_Plugin.DwgManager.V003");
+        public static readonly ToolInfo DwgManager = Add("DWG Manager", "3.1.0", "V003", "Revit26_Plugin.DwgManager.V003");
         public static readonly ToolInfo DwgStatistics = Add("DWG Statistics", "5.0.0", "V005", "Revit26_Plugin.DwgStatistics.V005");
         public static readonly ToolInfo ExportDwgToFolder = Add("Export DWG to Folder", "4.0.0", "V004", "Revit26_Plugin.ExportDwgToFolder.V004");
         public static readonly ToolInfo PlanFromScopeBox = Add("Plan From Scope Box", "6.0.0", "V006", "Revit26_Plugin.PlanFromScopeBox.V006");
