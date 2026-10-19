@@ -29,7 +29,7 @@ Changes vs V012 (layout only):
         MinHeight="760"
         WindowStartupLocation="CenterOwner"
         ResizeMode="CanResizeWithGrip"
-        Background="{DynamicResource BrushSystemBackground}">
+        Background="{DynamicResource BrushSurfaceWindow}">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -271,8 +271,8 @@ Changes vs V012 (layout only):
                         </Border>
 
                         <!-- ===== VIEW CROP (V009 — new, accordion, collapsed by default) ===== -->
-                        <Border Background="{StaticResource BrushCardBackground}"
-                                BorderBrush="{StaticResource BrushCardBorder}"
+                        <Border Background="{StaticResource BrushSurfaceCard}"
+                                BorderBrush="{StaticResource BrushBorderDefault}"
                                 BorderThickness="1"
                                 CornerRadius="10"
                                 Margin="0,0,0,6">
@@ -493,13 +493,13 @@ Changes vs V012 (layout only):
                                                 <Border CornerRadius="8" Padding="7,2" HorizontalAlignment="Left">
                                                     <Border.Style>
                                                         <Style TargetType="Border">
-                                                            <Setter Property="Background" Value="{StaticResource BrushSoftSuccessBackground}"/>
+                                                            <Setter Property="Background" Value="{StaticResource BrushStatusOkSoft}"/>
                                                             <Style.Triggers>
                                                                 <DataTrigger Binding="{Binding Status}" Value="NoHostFound">
-                                                                    <Setter Property="Background" Value="{StaticResource BrushSoftWarningBackground}"/>
+                                                                    <Setter Property="Background" Value="{StaticResource BrushStatusWarnSoft}"/>
                                                                 </DataTrigger>
                                                                 <DataTrigger Binding="{Binding Status}" Value="DuplicateName">
-                                                                    <Setter Property="Background" Value="{StaticResource BrushSoftDangerBackground}"/>
+                                                                    <Setter Property="Background" Value="{StaticResource BrushStatusErrorSoft}"/>
                                                                 </DataTrigger>
                                                             </Style.Triggers>
                                                         </Style>
@@ -507,13 +507,13 @@ Changes vs V012 (layout only):
                                                     <TextBlock Text="{Binding StatusDisplay}" FontSize="10" FontWeight="SemiBold">
                                                         <TextBlock.Style>
                                                             <Style TargetType="TextBlock">
-                                                                <Setter Property="Foreground" Value="{StaticResource BrushSuccess}"/>
+                                                                <Setter Property="Foreground" Value="{StaticResource BrushStatusOk}"/>
                                                                 <Style.Triggers>
                                                                     <DataTrigger Binding="{Binding Status}" Value="NoHostFound">
-                                                                        <Setter Property="Foreground" Value="{StaticResource BrushWarning}"/>
+                                                                        <Setter Property="Foreground" Value="{StaticResource BrushStatusWarn}"/>
                                                                     </DataTrigger>
                                                                     <DataTrigger Binding="{Binding Status}" Value="DuplicateName">
-                                                                        <Setter Property="Foreground" Value="{StaticResource BrushDanger}"/>
+                                                                        <Setter Property="Foreground" Value="{StaticResource BrushStatusError}"/>
                                                                     </DataTrigger>
                                                                 </Style.Triggers>
                                                             </Style>
