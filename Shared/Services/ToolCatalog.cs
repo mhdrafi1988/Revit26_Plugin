@@ -113,7 +113,7 @@ namespace Revit26_Plugin.Shared.Services
         public static readonly ToolInfo ViewAutoRenamer = Add("View Auto Renamer", "6.1.0", "V006", "Revit26_Plugin.ViewAutoRenamer.V006");
         public static readonly ToolInfo BubbleAutoRenumber = Add("Bubble Auto Renumber", "8.0.0", "V008", "Revit26_Plugin.BubbleAutoRenumber.V008");
         public static readonly ToolInfo BubbleAutoRenumberV009 = Add("Bubble Auto Renumber", "9.1.0", "V009", "Revit26_Plugin.BubbleAutoRenumber.V009");
-        public static readonly ToolInfo SectionAutoRenamer = Add("Section Auto Renamer", "26.0.0", "V026", "Revit26_Plugin.SectionAutoRenamer.V026");
+        public static readonly ToolInfo SectionAutoRenamer = Add("Section Auto Renamer", "26.1.0", "V026", "Revit26_Plugin.SectionAutoRenamer.V026");
         public static readonly ToolInfo DeleteWorkset = Add("Delete Workset", "1.0.3", "V001", "Revit26_Plugin.DeleteWorkset.V001");
         public static readonly ToolInfo DeleteLineStyles = Add("Delete Line Styles", "1.0.2", "V001", "Revit26_Plugin.DeleteLineStyles.V001");
         public static readonly ToolInfo BulkRename = Add("Bulk Rename", "1.0.0", "V001", "Revit26_Plugin.BulkRename.V001");
