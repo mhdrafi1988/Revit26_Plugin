@@ -88,6 +88,19 @@ Each release lists every tool whose version changed, under the plugin version.
   - Delete Line Styles v1.1.0 (V001)
   - Workset Creator v16.1.0 (V016)
 
+- **Every current tool window now uses `ToolWindowShell`** — the last seven windows that built
+  their own layout (six tools) now use the shared header / body / footer shell: one scrolling body,
+  status strip with progress in the footer, primary action → Close on the right. Master-detail
+  windows (Link Version Checker, Tapered EPS 2D) size their body to the window so the grid / live
+  preview stays in view. No behaviour change.
+  - Worksets & Elements Browser v4.2.0 (WSEB004): 3D view picker dialog moved onto ToolWindowShell.
+  - Delete Line Styles v1.2.0 (V001): window moved onto ToolWindowShell; light filter toolbar replaces the dark inline-coloured one; title/version from ToolCatalog.
+  - Delete Workset v1.2.0 (V001): window moved onto ToolWindowShell; light filter toolbar replaces the dark inline-coloured one; title/version from ToolCatalog.
+  - Batch Link DWG Family v2.2.0 (V002): window moved onto ToolWindowShell; live log moved into the body; title/version from ToolCatalog.
+  - Tapered EPS 2D Pattern v6.1.0 (V006): window moved onto ToolWindowShell and now loads SharedStyles (its style keys previously fell back to default WPF chrome); preview stays in view.
+  - Link Version Checker v4.2.0 (V004): window moved onto ToolWindowShell (busy overlay kept on top); title/version from ToolCatalog.
+  - Auto Slope By Drain v7.2.0 (V007): window moved onto ToolWindowShell; footer Cancel · Run → Close (new Close button); title/version from ToolCatalog.
+
 > **User note:** tool windows look different (grey background, white inputs, smaller buttons, navy
 > Run button). Nothing about what the tools do has changed. Report any window where text is clipped
 > or a control is hard to see.
