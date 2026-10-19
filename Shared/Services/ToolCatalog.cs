@@ -62,7 +62,7 @@ namespace Revit26_Plugin.Shared.Services
         public static readonly ToolInfo WorksetsElementsBrowser = Add("Worksets & Elements Browser", "4.1.0", "WSEB004", "Revit26_Plugin.WorksetsElementsBrowser.WSEB004");
         public static readonly ToolInfo WorksetManager = Add("Workset Manager", "14.1.0", "V014", "Revit26_Plugin.WorksetManager.V014");
         public static readonly ToolInfo WorksetRenamer = Add("Workset Renamer", "5.1.0", "V005", "Revit26_Plugin.WorksetRenamer.V005");
-        public static readonly ToolInfo WorksetRenamerExcel = Add("Workset Renamer (From Excel)", "5.0.0", "FX05", "Revit26_Plugin.WorksetRenamer.FX05");
+        public static readonly ToolInfo WorksetRenamerExcel = Add("Workset Renamer (From Excel)", "5.1.0", "FX05", "Revit26_Plugin.WorksetRenamer.FX05");
         public static readonly ToolInfo AutoSlopeByPoint = Add("Auto Slope By Point", "30.0.0", "V030", "Revit26_Plugin.AutoSlopeByPoint.V030");
         public static readonly ToolInfo AutoSlopeByPointV032 = Add("Auto Slope By Point", "32.1.0", "V032", "Revit26_Plugin.AutoSlopeByPoint.V032");
         public static readonly ToolInfo AutoSlopeByPointRidge = Add("Auto Slope By Point (Ridge)", "3.0.0", "V003", "Revit26_Plugin.AutoSlopeByPointRidge.V003");
