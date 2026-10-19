@@ -71,8 +71,8 @@ File: DwgStatisticsWindow.xaml  (DWG Statistics V005 — ToolWindowShell)
 
             <!-- Small red button (Purge) -->
             <Style x:Key="SmallDangerButton" TargetType="Button" BasedOn="{StaticResource SmallSecondaryButton}">
-                <Setter Property="Foreground" Value="{StaticResource BrushDanger}"/>
-                <Setter Property="BorderBrush" Value="{StaticResource BrushDanger}"/>
+                <Setter Property="Foreground" Value="{StaticResource BrushStatusError}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource BrushStatusError}"/>
             </Style>
 
             <!-- Quick-filter chip (one-way checked state + command, per UI_UX_PATTERNS) -->
@@ -84,8 +84,8 @@ File: DwgStatisticsWindow.xaml  (DWG Statistics V005 — ToolWindowShell)
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="RadioButton">
-                            <Border x:Name="Bg" Background="{StaticResource BrushPillMutedBackground}"
-                                    BorderBrush="{StaticResource BrushCardBorder}" BorderThickness="1"
+                            <Border x:Name="Bg" Background="{StaticResource BrushSystemTertiaryBackground}"
+                                    BorderBrush="{StaticResource BrushBorderDefault}" BorderThickness="1"
                                     CornerRadius="11" Padding="10,3">
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
@@ -94,7 +94,7 @@ File: DwgStatisticsWindow.xaml  (DWG Statistics V005 — ToolWindowShell)
                                     <Setter TargetName="Bg" Property="BorderBrush" Value="{StaticResource BrushAppleBlue}"/>
                                 </Trigger>
                                 <Trigger Property="IsChecked" Value="True">
-                                    <Setter TargetName="Bg" Property="Background" Value="{StaticResource BrushPillInfoBackground}"/>
+                                    <Setter TargetName="Bg" Property="Background" Value="{StaticResource BrushStatusInfoSoft}"/>
                                     <Setter TargetName="Bg" Property="BorderBrush" Value="{StaticResource BrushAppleBlue}"/>
                                     <Setter Property="Foreground" Value="{StaticResource BrushAppleBlue}"/>
                                     <Setter Property="FontWeight" Value="SemiBold"/>
@@ -111,17 +111,17 @@ File: DwgStatisticsWindow.xaml  (DWG Statistics V005 — ToolWindowShell)
                 <Setter Property="Padding" Value="8,1"/>
                 <Setter Property="HorizontalAlignment" Value="Center"/>
                 <Setter Property="VerticalAlignment" Value="Center"/>
-                <Setter Property="Background" Value="{StaticResource BrushPillSuccessBackground}"/>
+                <Setter Property="Background" Value="{StaticResource BrushStatusOkSoft}"/>
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding IsLinked}" Value="False">
-                        <Setter Property="Background" Value="{StaticResource BrushSoftWarningBackground}"/>
+                        <Setter Property="Background" Value="{StaticResource BrushStatusWarnSoft}"/>
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
 
             <Style x:Key="KindPillText" TargetType="TextBlock">
                 <Setter Property="FontSize" Value="10"/>
-                <Setter Property="Foreground" Value="{StaticResource BrushPillSuccessText}"/>
+                <Setter Property="Foreground" Value="{StaticResource BrushStatusOk}"/>
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding IsLinked}" Value="False">
                         <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}"/>
@@ -133,7 +133,7 @@ File: DwgStatisticsWindow.xaml  (DWG Statistics V005 — ToolWindowShell)
             <Style x:Key="StatusText" TargetType="TextBlock" BasedOn="{StaticResource GridCellText}">
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding IsLoaded}" Value="False">
-                        <Setter Property="Foreground" Value="{StaticResource BrushDanger}"/>
+                        <Setter Property="Foreground" Value="{StaticResource BrushStatusError}"/>
                         <Setter Property="FontWeight" Value="SemiBold"/>
                     </DataTrigger>
                 </Style.Triggers>
@@ -144,13 +144,13 @@ File: DwgStatisticsWindow.xaml  (DWG Statistics V005 — ToolWindowShell)
                 <Setter Property="CornerRadius" Value="8"/>
                 <Setter Property="Padding" Value="6,0"/>
                 <Setter Property="Margin" Value="0,1,4,1"/>
-                <Setter Property="Background" Value="{StaticResource BrushPillInfoBackground}"/>
+                <Setter Property="Background" Value="{StaticResource BrushStatusInfoSoft}"/>
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding SeverityName}" Value="Warning">
-                        <Setter Property="Background" Value="{StaticResource BrushSoftWarningBackground}"/>
+                        <Setter Property="Background" Value="{StaticResource BrushStatusWarnSoft}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding SeverityName}" Value="Danger">
-                        <Setter Property="Background" Value="{StaticResource BrushSoftDangerBackground}"/>
+                        <Setter Property="Background" Value="{StaticResource BrushStatusErrorSoft}"/>
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
@@ -163,7 +163,7 @@ File: DwgStatisticsWindow.xaml  (DWG Statistics V005 — ToolWindowShell)
                         <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding SeverityName}" Value="Danger">
-                        <Setter Property="Foreground" Value="{StaticResource BrushDanger}"/>
+                        <Setter Property="Foreground" Value="{StaticResource BrushStatusError}"/>
                         <Setter Property="FontWeight" Value="SemiBold"/>
                     </DataTrigger>
                 </Style.Triggers>
@@ -179,8 +179,8 @@ File: DwgStatisticsWindow.xaml  (DWG Statistics V005 — ToolWindowShell)
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
-                            <Border x:Name="Bg" Background="{StaticResource BrushPillInfoBackground}"
-                                    BorderBrush="{StaticResource BrushCardBorder}" BorderThickness="1"
+                            <Border x:Name="Bg" Background="{StaticResource BrushStatusInfoSoft}"
+                                    BorderBrush="{StaticResource BrushBorderDefault}" BorderThickness="1"
                                     CornerRadius="4" Padding="7,1">
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
@@ -200,7 +200,7 @@ File: DwgStatisticsWindow.xaml  (DWG Statistics V005 — ToolWindowShell)
                 <Setter Property="Padding" Value="8,1"/>
                 <Setter Property="HorizontalAlignment" Value="Center"/>
                 <Setter Property="VerticalAlignment" Value="Center"/>
-                <Setter Property="Background" Value="{StaticResource BrushPillInfoBackground}"/>
+                <Setter Property="Background" Value="{StaticResource BrushStatusInfoSoft}"/>
                 <Setter Property="BorderBrush" Value="{StaticResource BrushAppleBlue}"/>
                 <Setter Property="BorderThickness" Value="1"/>
             </Style>
@@ -222,7 +222,7 @@ File: DwgStatisticsWindow.xaml  (DWG Statistics V005 — ToolWindowShell)
                 <Setter Property="RowStyle" Value="{StaticResource DataGridRowStyle}"/>
                 <Setter Property="CellStyle" Value="{StaticResource DataGridCellStyle}"/>
                 <Setter Property="ColumnHeaderStyle" Value="{StaticResource DataGridColumnHeaderStyle}"/>
-                <Setter Property="Background" Value="{StaticResource BrushSystemBackground}"/>
+                <Setter Property="Background" Value="{StaticResource BrushSurfaceWindow}"/>
                 <Setter Property="BorderThickness" Value="0"/>
                 <Setter Property="HeadersVisibility" Value="Column"/>
                 <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True"/>
@@ -643,7 +643,7 @@ File: DwgStatisticsWindow.xaml  (DWG Statistics V005 — ToolWindowShell)
                             <TextBlock Text="{Binding DetailSummary}" Style="{StaticResource HintText}"
                                        TextWrapping="Wrap" Margin="0,2,0,6"/>
 
-                            <TabControl Background="{StaticResource BrushSystemBackground}" BorderBrush="{StaticResource BrushCardBorder}"
+                            <TabControl Background="{StaticResource BrushSurfaceWindow}" BorderBrush="{StaticResource BrushBorderDefault}"
                                         SelectedIndex="{Binding DataContext.SelectedDetailTab, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay}">
 
                                 <!-- Views -->
