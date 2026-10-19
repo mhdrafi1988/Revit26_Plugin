@@ -163,7 +163,7 @@ Changes vs WSEB003 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                   IsChecked="{Binding HideEmptyWorksets, Mode=TwoWay}"/>
                     </WrapPanel>
                     <!-- Tree -->
-                    <Border Margin="0" Background="{StaticResource BrushCardBackground}" BorderBrush="{StaticResource BrushSeparator}" BorderThickness="1" CornerRadius="4">
+                    <Border Margin="0" Background="{StaticResource BrushSurfaceCard}" BorderBrush="{StaticResource BrushSeparator}" BorderThickness="1" CornerRadius="4">
                         <TreeView x:Name="Tree" ItemsSource="{Binding RootNodes}" BorderThickness="0" Background="Transparent"
                           MinHeight="300"
                           shell:ShellBehaviors.MaxHeightRatio="0.55"
