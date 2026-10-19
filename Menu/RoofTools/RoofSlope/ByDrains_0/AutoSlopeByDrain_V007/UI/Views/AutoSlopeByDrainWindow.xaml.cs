@@ -46,6 +46,9 @@ namespace Revit26_Plugin.AutoSlopeByDrain.V007.UI.Views
         // Kept as code-behind (not a [RelayCommand]) because it needs direct
         // access to LogListBox.SelectedItems, which ListBox doesn't expose as a
         // bindable dependency property.
+        /// <summary>Footer Close button (UI standard v4.0 footer: Cancel · Run → Close).</summary>
+        private void CloseButton_Click(object sender, RoutedEventArgs e) => Close();
+
         private void CopySelectedLogs_Click(object sender, RoutedEventArgs e)
         {
             var selected = LogListBox.SelectedItems.Cast<LogEntry>().ToList();
