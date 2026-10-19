@@ -72,25 +72,25 @@
                 <Border Style="{StaticResource MetricTileSuccess}" Margin="3,0">
                     <StackPanel>
                         <TextBlock Text="UNUSED" Style="{StaticResource MetricTileLabel}"
-                                   Foreground="{StaticResource BrushSuccess}"/>
+                                   Foreground="{StaticResource BrushStatusOk}"/>
                         <TextBlock Text="{Binding UnusedCount}" FontSize="26" FontWeight="Bold"
-                                   Foreground="{StaticResource BrushSuccess}"/>
+                                   Foreground="{StaticResource BrushStatusOk}"/>
                     </StackPanel>
                 </Border>
                 <Border Style="{StaticResource MetricTileDanger}" Margin="6,0,0,0">
                     <StackPanel>
                         <TextBlock Text="USED" Style="{StaticResource MetricTileLabel}"
-                                   Foreground="{StaticResource BrushDanger}"/>
+                                   Foreground="{StaticResource BrushStatusError}"/>
                         <TextBlock Text="{Binding UsedCount}" FontSize="26" FontWeight="Bold"
-                                   Foreground="{StaticResource BrushDanger}"/>
+                                   Foreground="{StaticResource BrushStatusError}"/>
                     </StackPanel>
                 </Border>
             </UniformGrid>
         </Border>
 
         <!-- ══ Mode ══ -->
-        <Border Grid.Row="2" Margin="12,0,12,8" Padding="12" Background="{StaticResource BrushCardBackground}"
-                BorderBrush="{StaticResource BrushCardBorder}" BorderThickness="1" CornerRadius="4"
+        <Border Grid.Row="2" Margin="12,0,12,8" Padding="12" Background="{StaticResource BrushSurfaceCard}"
+                BorderBrush="{StaticResource BrushBorderDefault}" BorderThickness="1" CornerRadius="4"
                 IsEnabled="{Binding IsRunning, Converter={StaticResource InverseBool}}">
             <StackPanel>
                 <RadioButton GroupName="Mode" IsChecked="{Binding UnusedOnly}" Margin="0,0,0,6">
@@ -170,7 +170,7 @@
                       GridLinesVisibility="Horizontal"
                       HorizontalGridLinesBrush="{StaticResource BrushSeparatorThin}"
                       BorderThickness="1"
-                      BorderBrush="{StaticResource BrushCardBorder}">
+                      BorderBrush="{StaticResource BrushBorderDefault}">
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Header="" Width="36" CanUserResize="False">
                         <DataGridTemplateColumn.CellTemplate>
@@ -204,10 +204,10 @@
                                         ToolTip="{Binding StatusTip}">
                                     <Border.Style>
                                         <Style TargetType="Border">
-                                            <Setter Property="Background" Value="{StaticResource BrushSuccess}"/>
+                                            <Setter Property="Background" Value="{StaticResource BrushStatusOk}"/>
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding IsUsed}" Value="True">
-                                                    <Setter Property="Background" Value="{StaticResource BrushDanger}"/>
+                                                    <Setter Property="Background" Value="{StaticResource BrushStatusError}"/>
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding IsBlocked}" Value="True">
                                                     <Setter Property="Background" Value="{StaticResource BrushTextSecondary}"/>
