@@ -1,6 +1,6 @@
 // =======================================================
 // File: VertexData.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPointRidge.V003
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPointRidge.V003
 // Changes vs V028:
 //   Added ridge fields — IsRidgePoint, BasinGroup (nearest drain
 //   group), FlowsToGroup (group the final elevation is measured
@@ -14,7 +14,7 @@
 using Autodesk.Revit.DB;
 using System;
 
-namespace Revit26_Plugin.AutoSlopeByPointRidge.V003.Core.Models
+namespace Revit26_Plugin_Revised.AutoSlopeByPointRidge.V003.Core.Models
 {
     public class VertexData
     {

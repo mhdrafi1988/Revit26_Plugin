@@ -5,7 +5,7 @@
 // roof instance parameters), so this is a straight union of constants used
 // by either side, plus new V005 defaults for the ported/added fields.
 
-namespace Revit26_Plugin.AutoSlopeByDrain.V007.Infrastructure.Helpers
+namespace Revit26_Plugin_Revised.AutoSlopeByDrain.V007.Infrastructure.Helpers
 {
     public static class AppConstants
     {

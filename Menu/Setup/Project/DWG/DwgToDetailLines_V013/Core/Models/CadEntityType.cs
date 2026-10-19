@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.DwgToDetailLines.V013.Core.Models
+namespace Revit26_Plugin_Revised.DwgToDetailLines.V013.Core.Models
 {
     /// <summary>
     /// Distinguishes line-geometry layers from hatch/fill layers in the

@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Models
+namespace Revit26_Plugin_Revised.DwgToDetailLines.V014.Core.Models
 {
     /// <summary>
     /// How line styles and hatch (filled region) types are chosen for the converted layers.

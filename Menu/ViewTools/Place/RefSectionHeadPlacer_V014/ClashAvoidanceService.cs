@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.RefSectionHeadPlacer.V014.Core.Services
+namespace Revit26_Plugin_Revised.RefSectionHeadPlacer.V014.Core.Services
 {
     /// <summary>
     /// Checks a candidate section origin against section heads already placed

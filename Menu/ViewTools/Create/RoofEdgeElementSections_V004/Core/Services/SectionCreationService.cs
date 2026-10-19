@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.RoofEdgeElementSections.V004
+namespace Revit26_Plugin_Revised.RoofEdgeElementSections.V004
 {
     /// <summary>
     /// Creates ViewSection elements from the confirmed (checked) rows of the plan.

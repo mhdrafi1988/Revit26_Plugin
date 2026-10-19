@@ -1,6 +1,6 @@
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.BulkRename.V001.Core.Models
+namespace Revit26_Plugin_Revised.BulkRename.V001.Core.Models
 {
     /// <summary>
     /// One rename the user confirmed. Requests are captured the moment the user clicks Yes, so the names

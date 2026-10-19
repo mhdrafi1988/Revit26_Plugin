@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.DwgManager.V002.Core.Services
+namespace Revit26_Plugin_Revised.DwgManager.V002.Core.Services
 {
     /// <summary>
     /// Opens views and selects CAD instances in the Revit UI. Must run in a Revit API context

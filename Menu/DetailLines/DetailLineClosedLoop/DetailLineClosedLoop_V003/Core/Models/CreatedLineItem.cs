@@ -1,7 +1,7 @@
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.DetailLineClosedLoop.V003.Core.Models
+namespace Revit26_Plugin_Revised.DetailLineClosedLoop.V003.Core.Models
 {
     /// <summary>One row in the Created Lines grid — a single detail curve drawn by the most recent run.</summary>
     public partial class CreatedLineItem : ObservableObject

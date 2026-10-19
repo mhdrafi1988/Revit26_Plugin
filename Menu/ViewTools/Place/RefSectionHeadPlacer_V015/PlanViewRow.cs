@@ -1,7 +1,7 @@
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.RefSectionHeadPlacer.V015.Core.Models
+namespace Revit26_Plugin_Revised.RefSectionHeadPlacer.V015.Core.Models
 {
     /// <summary>
     /// Bindable row representing a single plan view in Grid 1.

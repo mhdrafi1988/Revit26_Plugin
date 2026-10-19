@@ -3,7 +3,7 @@
 // V002 adds Output (Roof / Roof-then-Floor / Floor). Settings key is unchanged, so V001's saved options carry
 // over; unknown members are ignored by SettingsService, and V001 ignores Output.
 #nullable enable
-namespace Revit26_Plugin.IslandRoofSplitter.V002.Core.Models
+namespace Revit26_Plugin_Revised.IslandRoofSplitter.V002.Core.Models
 {
     public sealed class IslandSplitterSettings
     {

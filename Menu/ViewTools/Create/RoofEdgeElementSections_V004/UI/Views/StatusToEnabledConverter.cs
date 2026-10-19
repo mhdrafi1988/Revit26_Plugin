@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace Revit26_Plugin.RoofEdgeElementSections.V004
+namespace Revit26_Plugin_Revised.RoofEdgeElementSections.V004
 {
     /// <summary>
     /// Converts PlannedSectionStatus to a bool for the grid checkbox's IsEnabled:

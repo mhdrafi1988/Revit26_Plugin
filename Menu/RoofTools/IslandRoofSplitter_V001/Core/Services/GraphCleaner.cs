@@ -5,9 +5,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Revit26_Plugin.IslandRoofSplitter.V001.Core.Models;
+using Revit26_Plugin_Revised.IslandRoofSplitter.V001.Core.Models;
 
-namespace Revit26_Plugin.IslandRoofSplitter.V001.Core.Services
+namespace Revit26_Plugin_Revised.IslandRoofSplitter.V001.Core.Services
 {
     public sealed class OpenChain
     {

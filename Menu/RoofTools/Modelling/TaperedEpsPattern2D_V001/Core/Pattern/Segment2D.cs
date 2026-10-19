@@ -1,7 +1,7 @@
 using System;
 using System.Globalization;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V001.Core.Pattern
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V001.Core.Pattern
 {
     /// <summary>Immutable straight segment in plan, metres.</summary>
     public readonly struct Segment2D

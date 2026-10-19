@@ -1,6 +1,6 @@
 // =======================================================
 // File: SelectionFilters.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.RoofOps
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.RoofOps
 // New in V032 (plan 1.2). Revit only lets the user click valid targets, so
 // V030's "one or more drain points were not on the roof — re-run the
 // command" dead end can no longer happen.
@@ -9,7 +9,7 @@
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI.Selection;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.RoofOps
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.RoofOps
 {
     /// <summary>Only roofs can be picked.</summary>
     public sealed class RoofSelectionFilter : ISelectionFilter

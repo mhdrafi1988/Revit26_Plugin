@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Revit26_Plugin.TaperedEpsPattern2D.V001.Core.Pattern;
+using Revit26_Plugin_Revised.TaperedEpsPattern2D.V001.Core.Pattern;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V001.ViewModels
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V001.ViewModels
 {
     /// <summary>Board Settings card: board size, slope, minimum thickness, grid direction and origin.</summary>
     public sealed partial class BoardSettingsViewModel : ObservableObject

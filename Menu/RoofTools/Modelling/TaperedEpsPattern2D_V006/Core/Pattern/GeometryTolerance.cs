@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.TaperedEpsPattern2D.V006.Core.Pattern
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V006.Core.Pattern
 {
     /// <summary>Tolerances used by the 2D pattern engine. All lengths in metres.</summary>
     public static class GeometryTolerance

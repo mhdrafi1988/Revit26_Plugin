@@ -1,6 +1,6 @@
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.SectionViewAutoTagger.V006
+namespace Revit26_Plugin_Revised.SectionViewAutoTagger.V006
 {
     /// <summary>
     /// One category's tag-type choice, locked in at "Add to Worklist" time

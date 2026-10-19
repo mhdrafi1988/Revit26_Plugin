@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.DwgToDetailLines.V013.Core.Models
+namespace Revit26_Plugin_Revised.DwgToDetailLines.V013.Core.Models
 {
     public enum SplineHandlingMode
     {

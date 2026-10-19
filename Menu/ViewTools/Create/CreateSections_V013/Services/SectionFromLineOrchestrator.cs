@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using Revit26_Plugin.CreateSections.V013.Helpers;
-using Revit26_Plugin.CreateSections.V013.Models;
-using Revit26_Plugin.CreateSections.V013.ViewModels;
+using Revit26_Plugin_Revised.CreateSections.V013.Helpers;
+using Revit26_Plugin_Revised.CreateSections.V013.Models;
+using Revit26_Plugin_Revised.CreateSections.V013.ViewModels;
 
-namespace Revit26_Plugin.CreateSections.V013.Services
+namespace Revit26_Plugin_Revised.CreateSections.V013.Services
 {
     /// <summary>
     /// Coordinates the full per-line pipeline: orientation -> host search

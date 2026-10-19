@@ -1,6 +1,6 @@
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.CreateSections.V013.Helpers
+namespace Revit26_Plugin_Revised.CreateSections.V013.Helpers
 {
     /// <summary>
     /// Centralized unit conversion helper for Revit 2026.

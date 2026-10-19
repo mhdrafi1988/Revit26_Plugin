@@ -1,6 +1,6 @@
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.SmartViewToSheetPlacer.V224.Services
+namespace Revit26_Plugin_Revised.SmartViewToSheetPlacer.V224.Services
 {
     /// <summary>
     /// Single source of truth for human-friendly ViewType labels. Previously

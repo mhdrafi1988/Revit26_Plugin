@@ -10,11 +10,11 @@
 // TransactionGroup (one combined Undo entry) and report back once with
 // every roof's result.
 
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.MultiRoofSlopeByDrain.V011.Core.Models
+namespace Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V011.Core.Models
 {
     public class AutoSlopeDrainMultiPayload
     {

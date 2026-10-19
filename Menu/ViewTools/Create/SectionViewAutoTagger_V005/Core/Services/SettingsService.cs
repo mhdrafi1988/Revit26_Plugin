@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Text.Json;
 
-namespace Revit26_Plugin.SectionViewAutoTagger.V005
+namespace Revit26_Plugin_Revised.SectionViewAutoTagger.V005
 {
     /// <summary>
     /// Loads/saves TagPlacementSettings to

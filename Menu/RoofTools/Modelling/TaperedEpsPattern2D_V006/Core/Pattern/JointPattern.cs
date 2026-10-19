@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.TaperedEpsPattern2D.V006.Core.Pattern
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V006.Core.Pattern
 {
     /// <summary>How the cross joints of one row relate to the rows above it on the same side (contour-rows mode).</summary>
     public enum JointPattern

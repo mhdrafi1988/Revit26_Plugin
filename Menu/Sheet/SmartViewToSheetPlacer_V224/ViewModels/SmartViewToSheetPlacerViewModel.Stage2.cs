@@ -4,11 +4,11 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.Shared.Models;
-using Revit26_Plugin.SmartViewToSheetPlacer.V224.Models;
-using Revit26_Plugin.SmartViewToSheetPlacer.V224.Services;
+using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin_Revised.SmartViewToSheetPlacer.V224.Models;
+using Revit26_Plugin_Revised.SmartViewToSheetPlacer.V224.Services;
 
-namespace Revit26_Plugin.SmartViewToSheetPlacer.V224.ViewModels
+namespace Revit26_Plugin_Revised.SmartViewToSheetPlacer.V224.ViewModels
 {
     /// <summary>
     /// Stage 2: Preview Placement — packing algorithm/gap inputs + to-scale

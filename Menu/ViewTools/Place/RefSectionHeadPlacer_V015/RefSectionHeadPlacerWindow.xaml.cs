@@ -4,11 +4,11 @@ using System.Windows.Controls;
 using System.Windows.Interop;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.RefSectionHeadPlacer.V015.Core.Models;
-using Revit26_Plugin.RefSectionHeadPlacer.V015.UI.ViewModels;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.RefSectionHeadPlacer.V015.Core.Models;
+using Revit26_Plugin_Revised.RefSectionHeadPlacer.V015.UI.ViewModels;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.RefSectionHeadPlacer.V015.UI.Views
+namespace Revit26_Plugin_Revised.RefSectionHeadPlacer.V015.UI.Views
 {
     public partial class RefSectionHeadPlacerWindow : Window
     {

@@ -1,6 +1,6 @@
 // =======================================================
 // File: AutoSlopeSettings.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.MultiCopies30
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30
 // Changes vs V028:
 //   - Single SlopePercent replaced with SlopeRows: 4 fixed rows
 //     (IsEnabled + Percent), matching the Multi-Slope Roof Variants
@@ -19,7 +19,7 @@
 
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.Core.Models
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30.Core.Models
 {
     public class CircleMarkerGroupSettings
     {

@@ -1,6 +1,6 @@
 // =======================================================
 // File: CircleMarkerGroupViewModel.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.UI.ViewModels
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.UI.ViewModels
 // Replaces V030's Core/Models/CircleMarkerGroup (an ObservableObject with
 // an ElementId living in Core). This is UI state; the run receives an
 // immutable MarkerStyle snapshot (B7). One class drives one DataTemplate
@@ -12,11 +12,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Core.Services;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.RoofOps;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Services;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.RoofOps;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.UI.ViewModels
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.UI.ViewModels
 {
     public partial class CircleMarkerGroupViewModel : ObservableObject
     {

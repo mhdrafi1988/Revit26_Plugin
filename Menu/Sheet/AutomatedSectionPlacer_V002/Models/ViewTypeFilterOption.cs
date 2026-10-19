@@ -1,7 +1,7 @@
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.AutomatedSectionPlacer.V002.Models
+namespace Revit26_Plugin_Revised.AutomatedSectionPlacer.V002.Models
 {
     /// <summary>
     /// One entry in Stage 1's "View Type" column filter popover checkbox list.

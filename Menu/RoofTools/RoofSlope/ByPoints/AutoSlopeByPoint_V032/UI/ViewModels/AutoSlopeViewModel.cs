@@ -1,6 +1,6 @@
 // =======================================================
 // File: AutoSlopeViewModel.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.UI.ViewModels
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.UI.ViewModels
 // Rewritten for V032 on Shared ToolViewModelBase (plan 1.1): IsRunning /
 // Progress / SummaryText, the log collection (2,000 cap) and the Copy /
 // Clear log commands come from the base class.
@@ -40,16 +40,16 @@ using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Events;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Core.Services;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.ExternalEvents;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.Helpers;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.RoofOps;
-using Revit26_Plugin.Shared.Models;
-using Revit26_Plugin.Shared.Services;
-using Revit26_Plugin.Shared.ViewModels;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Services;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.ExternalEvents;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.Helpers;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.RoofOps;
+using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Services;
+using Revit26_Plugin_Revised.Shared.ViewModels;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.UI.ViewModels
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.UI.ViewModels
 {
     public sealed record DrainModeOption(DrainMode Mode, string Label, string Hint);
 

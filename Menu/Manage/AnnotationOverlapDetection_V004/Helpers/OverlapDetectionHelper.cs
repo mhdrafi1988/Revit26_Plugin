@@ -1,10 +1,10 @@
 using Autodesk.Revit.DB;
-using Revit26_Plugin.AnnotationOverlapDetection.V004.Models;
+using Revit26_Plugin_Revised.AnnotationOverlapDetection.V004.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.AnnotationOverlapDetection.V004.Helpers
+namespace Revit26_Plugin_Revised.AnnotationOverlapDetection.V004.Helpers
 {
     /// <summary>
     /// Orchestrates Steps 2, 3, 5 and 6 from the spec: collect annotations,

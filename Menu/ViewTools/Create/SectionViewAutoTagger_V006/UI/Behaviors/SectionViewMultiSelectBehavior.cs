@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 
-namespace Revit26_Plugin.SectionViewAutoTagger.V006
+namespace Revit26_Plugin_Revised.SectionViewAutoTagger.V006
 {
     /// <summary>
     /// Attached behavior powering the searchable multi-select popover on

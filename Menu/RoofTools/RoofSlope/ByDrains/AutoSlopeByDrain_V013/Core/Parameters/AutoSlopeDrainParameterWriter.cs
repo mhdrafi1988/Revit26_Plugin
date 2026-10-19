@@ -17,11 +17,11 @@
 //      from AutoSlopeDrainResult.Version ("006" default, confirmed by Rafi).
 
 using Autodesk.Revit.DB;
-using Revit26_Plugin.MultiRoofSlopeByDrain.V013.Infrastructure.Helpers;
-using Revit26_Plugin.MultiRoofSlopeByDrain.V013.Core.Models;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Infrastructure.Helpers;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Core.Models;
 using System;
 
-namespace Revit26_Plugin.MultiRoofSlopeByDrain.V013.Core.Parameters
+namespace Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Core.Parameters
 {
     public class AutoSlopeDrainParameterWriter : IParameterWriter
     {
@@ -33,7 +33,7 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.V013.Core.Parameters
             double thresholdMeters,
             Action<string> logAction = null)
         {
-            return WriteAll(doc, roof, metrics, slopePercent, thresholdMeters, metrics?.Version ?? Revit26_Plugin.MultiRoofSlopeByDrain.V013.Core.Engine.AutoSlopeDrainEngine.FallbackToolVersion, logAction);
+            return WriteAll(doc, roof, metrics, slopePercent, thresholdMeters, metrics?.Version ?? Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Core.Engine.AutoSlopeDrainEngine.FallbackToolVersion, logAction);
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.V013.Core.Parameters
 
                 // FIX: version now passed in rather than hardcoded.
                 TrySetString(roof, AppConstants.Param_Versions,
-                    version ?? Revit26_Plugin.MultiRoofSlopeByDrain.V013.Core.Engine.AutoSlopeDrainEngine.FallbackToolVersion,
+                    version ?? Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Core.Engine.AutoSlopeDrainEngine.FallbackToolVersion,
                     ref successCount, ref failCount);
 
                 // Standardized (2026-09): AutoSlope_DrainToleranceMm added for parity

@@ -2,10 +2,10 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using Revit26_Plugin.Shared.Models;
-using Revit26_Plugin.SmartViewToSheetPlacer.V224.Models;
+using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin_Revised.SmartViewToSheetPlacer.V224.Models;
 
-namespace Revit26_Plugin.SmartViewToSheetPlacer.V224.ViewModels
+namespace Revit26_Plugin_Revised.SmartViewToSheetPlacer.V224.ViewModels
 {
     /// <summary>Settings persistence: %AppData%\Revit26_Plugin\SmartViewToSheetPlacer\settings.json,
     /// via System.Text.Json. Loaded once in the ctor; saved from NextToStage1→2

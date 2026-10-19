@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.RoofEdgeAroundSections.V007
+namespace Revit26_Plugin_Revised.RoofEdgeAroundSections.V007
 {
     /// <summary>
     /// The set of tokens available for building a section view name.

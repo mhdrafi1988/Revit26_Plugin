@@ -4,12 +4,12 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Events;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.DwgStatistics.V005.Core.Models;
-using Revit26_Plugin.DwgStatistics.V005.UI.ViewModels;
-using Revit26_Plugin.DwgStatistics.V005.UI.Views;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.DwgStatistics.V005.Core.Models;
+using Revit26_Plugin_Revised.DwgStatistics.V005.UI.ViewModels;
+using Revit26_Plugin_Revised.DwgStatistics.V005.UI.Views;
+using Revit26_Plugin_Revised.Shared.Services;
 
-namespace Revit26_Plugin.DwgStatistics.V005.Commands
+namespace Revit26_Plugin_Revised.DwgStatistics.V005.Commands
 {
     // V005 (2026-10-13) — bumped from V004, per Anas's confirmed list:
     //   • Far from origin: farthest DWG geometry (bounding box) from the internal origin; flagged above a

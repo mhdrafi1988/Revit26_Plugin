@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.ExportDwgToFolder.V004.Core.Models;
+using Revit26_Plugin_Revised.ExportDwgToFolder.V004.Core.Models;
 
-namespace Revit26_Plugin.ExportDwgToFolder.V004.Infrastructure.Helpers
+namespace Revit26_Plugin_Revised.ExportDwgToFolder.V004.Infrastructure.Helpers
 {
     /// <summary>
     /// Swaps one CAD instance for another of the opposite kind, in place. NEW in V004.

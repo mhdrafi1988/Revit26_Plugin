@@ -3,10 +3,10 @@ using System.Linq;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.Shared.Models;
-using Revit26_Plugin.SmartViewToSheetPlacer.V223.Infrastructure.ExternalEvents;
+using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin_Revised.SmartViewToSheetPlacer.V223.Infrastructure.ExternalEvents;
 
-namespace Revit26_Plugin.SmartViewToSheetPlacer.V223.ViewModels
+namespace Revit26_Plugin_Revised.SmartViewToSheetPlacer.V223.ViewModels
 {
     /// <summary>Stage 4: Confirm &amp; Place — the one Revit-API-touching action
     /// besides LoadViews/OpenSheets. Raises the shared ExternalEvent to create

@@ -16,12 +16,12 @@ Changes vs V014 (layout only):
   - No behaviour change — every binding/command is the V014 one.
 =======================================================
 -->
-<Window x:Class="Revit26_Plugin.RefSectionHeadPlacer.V015.UI.Views.RefSectionHeadPlacerWindow"
+<Window x:Class="Revit26_Plugin_Revised.RefSectionHeadPlacer.V015.UI.Views.RefSectionHeadPlacerWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:svc="clr-namespace:Revit26_Plugin.Shared.Services"
-        xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
-        xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
+        xmlns:svc="clr-namespace:Revit26_Plugin_Revised.Shared.Services"
+        xmlns:converters="clr-namespace:Revit26_Plugin_Revised.Shared.Models"
+        xmlns:shell="clr-namespace:Revit26_Plugin_Revised.Shared.Controls"
         Title="{Binding Source={x:Static svc:ToolCatalog.RefSectionHeadPlacer}, Path=Title}"
         Height="860" Width="1180"
         MinHeight="860" MinWidth="1180"

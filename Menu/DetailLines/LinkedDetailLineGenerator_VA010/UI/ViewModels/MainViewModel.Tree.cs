@@ -6,11 +6,11 @@ using System.Windows.Data;
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.LinkedDetailLineGenerator.VA010.Core.Models;
-using Revit26_Plugin.LinkedDetailLineGenerator.VA010.Core.Services;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA010.Core.Models;
+using Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA010.Core.Services;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.LinkedDetailLineGenerator.VA010.UI.ViewModels
+namespace Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA010.UI.ViewModels
 {
     public partial class MainViewModel
     {

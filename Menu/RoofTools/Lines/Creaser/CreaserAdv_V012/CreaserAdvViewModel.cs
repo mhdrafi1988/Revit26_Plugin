@@ -1,16 +1,16 @@
 ﻿// ==================================
 // File: CreaserAdvViewModel.cs
-// Namespace: Revit26_Plugin.CreaserAdv.V012.ViewModels
+// Namespace: Revit26_Plugin_Revised.CreaserAdv.V012.ViewModels
 // ==================================
 
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.CreaserAdv.V012.Core.Models;
-using Revit26_Plugin.CreaserAdv.V012.Infrastructure.ExternalEvents;
-using Revit26_Plugin.CreaserAdv.V012.Services;
-using Revit26_Plugin.Shared.Models;          // LogEntry, LogLevel, converters
+using Revit26_Plugin_Revised.CreaserAdv.V012.Core.Models;
+using Revit26_Plugin_Revised.CreaserAdv.V012.Infrastructure.ExternalEvents;
+using Revit26_Plugin_Revised.CreaserAdv.V012.Services;
+using Revit26_Plugin_Revised.Shared.Models;          // LogEntry, LogLevel, converters
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -19,7 +19,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Revit26_Plugin.CreaserAdv.V012.ViewModels
+namespace Revit26_Plugin_Revised.CreaserAdv.V012.ViewModels
 {
     /// <summary>
     /// ViewModel for Creaser Advanced V010.

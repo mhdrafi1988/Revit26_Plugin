@@ -2,7 +2,7 @@ using System;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.ExtensibleStorage;
 
-namespace Revit26_Plugin.LinkedDetailLineGenerator.VA010.Core.Services
+namespace Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA010.Core.Services
 {
     /// <summary>
     /// ExtensibleStorage schema + read/write for source metadata attached to every

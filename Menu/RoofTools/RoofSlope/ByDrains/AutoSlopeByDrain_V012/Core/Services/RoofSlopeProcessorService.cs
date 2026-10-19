@@ -21,14 +21,14 @@
 //     now also captured as a number instead of just logged text).
 
 using Autodesk.Revit.DB;
-using Revit26_Plugin.MultiRoofSlopeByDrain.V012.Core.Engine;
-using Revit26_Plugin.MultiRoofSlopeByDrain.V012.Core.Models;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V012.Core.Engine;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V012.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace Revit26_Plugin.MultiRoofSlopeByDrain.V012.Core.Services
+namespace Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V012.Core.Services
 {
     public class RoofSlopeProcessorService
     {

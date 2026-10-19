@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.SectionViewAutoTagger.V006
+namespace Revit26_Plugin_Revised.SectionViewAutoTagger.V006
 {
     /// <summary>
     /// Orchestrates a full batch Run: for each WorklistEntry, resolves

@@ -1,6 +1,6 @@
 // =======================================================
 // File: ExcelExportService.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.MultiCopies30
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30
 // Changes vs V06:
 //   - payload.Log is now Action<LogEntry>; all log calls
 //     emit new LogEntry(LogLevel.X, "...") instead of strings.
@@ -9,14 +9,14 @@
 // =======================================================
 
 using Autodesk.Revit.DB;
-using Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.Core.Models;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30.Core.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.Infrastructure.Helpers
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30.Infrastructure.Helpers
 {
     public static class ExcelExportService
     {

@@ -12,14 +12,14 @@
 
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.RoofDetailLineIntersect.V014.Core.Engine;
-using Revit26_Plugin.RoofDetailLineIntersect.V014.Core.Models;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.RoofDetailLineIntersect.V014.Core.Engine;
+using Revit26_Plugin_Revised.RoofDetailLineIntersect.V014.Core.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.RoofDetailLineIntersect.V014.Infrastructure.ExternalEvents
+namespace Revit26_Plugin_Revised.RoofDetailLineIntersect.V014.Infrastructure.ExternalEvents
 {
     public class RoofDetailLineIntersectHandler : IExternalEventHandler
     {

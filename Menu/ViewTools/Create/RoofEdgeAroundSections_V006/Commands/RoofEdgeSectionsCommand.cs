@@ -4,9 +4,9 @@ using System.Linq;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.Utilities;
+using Revit26_Plugin_Revised.Utilities;
 
-namespace Revit26_Plugin.RoofEdgeAroundSections.V006
+namespace Revit26_Plugin_Revised.RoofEdgeAroundSections.V006
 {
     /// <summary>
     /// Entry point: reads the user's pre-launch selection, splits it into

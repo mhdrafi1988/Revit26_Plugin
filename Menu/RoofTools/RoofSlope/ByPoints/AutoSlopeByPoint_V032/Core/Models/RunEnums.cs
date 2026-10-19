@@ -1,10 +1,10 @@
 // =======================================================
 // File: RunEnums.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models
 // New in V032.
 // =======================================================
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models
 {
     /// <summary>How each picked point becomes a drain (V032 D2).</summary>
     public enum DrainMode

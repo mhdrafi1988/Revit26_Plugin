@@ -1,14 +1,14 @@
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 using System.Collections;
 using System.Collections.Generic;
 using System.Windows;
 
-namespace Revit26_Plugin.BulkRename.V001
+namespace Revit26_Plugin_Revised.BulkRename.V001
 {
     /// <summary>
     /// Bulk Rename's log export entry point. Lives in the tool's own namespace so the tool's
     /// <c>LogExportService.AutoSave</c> / <c>ExportWithPicker</c> calls resolve here; the
-    /// work is done by <see cref="Revit26_Plugin.Shared.Services.LogExportService"/>.
+    /// work is done by <see cref="Revit26_Plugin_Revised.Shared.Services.LogExportService"/>.
     /// </summary>
     public static class LogExportService
     {

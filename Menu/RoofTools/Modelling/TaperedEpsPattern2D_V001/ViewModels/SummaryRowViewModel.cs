@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V001.ViewModels
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V001.ViewModels
 {
     /// <summary>Summary grid row: Layer | Lines | Total length m.</summary>
     public sealed class SummaryRowViewModel

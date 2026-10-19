@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V005.Core.Pattern
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V005.Core.Pattern
 {
     /// <summary>Removes segments whose end points match an earlier segment (either direction).</summary>
     public static class SegmentDeduplicator

@@ -1,7 +1,7 @@
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI.Selection;
 
-namespace Revit26_Plugin.RoofEdgeElementSections.V004
+namespace Revit26_Plugin_Revised.RoofEdgeElementSections.V004
 {
     /// <summary>Restricts PickObjects (the "Pick Roofs" button) to RoofBase elements only.</summary>
     public class RoofSelectionFilter : ISelectionFilter

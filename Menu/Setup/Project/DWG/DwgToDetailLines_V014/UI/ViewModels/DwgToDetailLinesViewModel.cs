@@ -34,12 +34,12 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
-using Revit26_Plugin.DwgToDetailLines.V014.Core.Models;
-using Revit26_Plugin.DwgToDetailLines.V014.Core.Services;
-using Revit26_Plugin.DwgToDetailLines.V014.Infrastructure.ExternalEvents;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.DwgToDetailLines.V014.Core.Models;
+using Revit26_Plugin_Revised.DwgToDetailLines.V014.Core.Services;
+using Revit26_Plugin_Revised.DwgToDetailLines.V014.Infrastructure.ExternalEvents;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.DwgToDetailLines.V014.UI.ViewModels
+namespace Revit26_Plugin_Revised.DwgToDetailLines.V014.UI.ViewModels
 {
     public partial class DwgToDetailLinesViewModel : ObservableObject
     {

@@ -11,11 +11,11 @@
 // =======================================================
 
 using Autodesk.Revit.DB;
-using Revit26_Plugin.InnerLoopDivider.V012.Core.Models;
-using Revit26_Plugin.InnerLoopDivider.V012.Infrastructure.Revit;
+using Revit26_Plugin_Revised.InnerLoopDivider.V012.Core.Models;
+using Revit26_Plugin_Revised.InnerLoopDivider.V012.Infrastructure.Revit;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.InnerLoopDivider.V012.Core.Services
+namespace Revit26_Plugin_Revised.InnerLoopDivider.V012.Core.Services
 {
     public class RoofGeometryService
     {

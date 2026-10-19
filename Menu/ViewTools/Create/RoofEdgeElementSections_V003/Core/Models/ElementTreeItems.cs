@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.RoofEdgeElementSections.V003
+namespace Revit26_Plugin_Revised.RoofEdgeElementSections.V003
 {
     /// <summary>
     /// Root node grouping Category items under a single linked model instance.

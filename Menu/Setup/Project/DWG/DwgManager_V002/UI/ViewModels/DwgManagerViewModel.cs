@@ -11,13 +11,13 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.DwgManager.V002.Core.Models;
-using Revit26_Plugin.DwgManager.V002.Core.Services;
-using Revit26_Plugin.Shared.Models;
-using Revit26_Plugin.Shared.Services;
-using Revit26_Plugin.Shared.ViewModels;
+using Revit26_Plugin_Revised.DwgManager.V002.Core.Models;
+using Revit26_Plugin_Revised.DwgManager.V002.Core.Services;
+using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Services;
+using Revit26_Plugin_Revised.Shared.ViewModels;
 
-namespace Revit26_Plugin.DwgManager.V002.UI.ViewModels
+namespace Revit26_Plugin_Revised.DwgManager.V002.UI.ViewModels
 {
     /// <summary>
     /// View model of the DWG Manager window: lists CAD links and imports grouped by link type and view

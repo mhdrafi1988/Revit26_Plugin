@@ -1,11 +1,11 @@
 // =======================================================
 // File: RunProgressInfo.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models
 // Changes vs V030: carries one monotonic OverallPercent (V030 P4: the bar
 // jumped between indeterminate phases and sat at 100 % after the graph).
 // =======================================================
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models
 {
     public sealed class RunProgressInfo
     {

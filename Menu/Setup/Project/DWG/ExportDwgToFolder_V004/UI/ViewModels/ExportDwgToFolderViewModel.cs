@@ -10,13 +10,13 @@ using System.Windows.Threading;
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.ExportDwgToFolder.V004.Core.Models;
-using Revit26_Plugin.ExportDwgToFolder.V004.Core.Services;
-using Revit26_Plugin.ExportDwgToFolder.V004.Infrastructure.ExternalEvents;
-using Revit26_Plugin.Shared.Models;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.ExportDwgToFolder.V004.Core.Models;
+using Revit26_Plugin_Revised.ExportDwgToFolder.V004.Core.Services;
+using Revit26_Plugin_Revised.ExportDwgToFolder.V004.Infrastructure.ExternalEvents;
+using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Services;
 
-namespace Revit26_Plugin.ExportDwgToFolder.V004.UI.ViewModels
+namespace Revit26_Plugin_Revised.ExportDwgToFolder.V004.UI.ViewModels
 {
     /// <summary>
     /// Export DWG to Folder (V004): nothing is scanned when the window opens. The user ticks a scan

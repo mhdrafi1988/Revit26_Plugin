@@ -15,7 +15,7 @@
 
 using System;
 
-namespace Revit26_Plugin.AutoSlopeByPointRidge.V003.Core.Models
+namespace Revit26_Plugin_Revised.AutoSlopeByPointRidge.V003.Core.Models
 {
     public class ExportConfig
     {

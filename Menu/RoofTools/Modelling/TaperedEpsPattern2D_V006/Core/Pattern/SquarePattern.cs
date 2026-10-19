@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.TaperedEpsPattern2D.V006.Core.Pattern
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V006.Core.Pattern
 {
     /// <summary>
     /// Laying patterns offered for square boards. Each is a preset of row start + joint pattern

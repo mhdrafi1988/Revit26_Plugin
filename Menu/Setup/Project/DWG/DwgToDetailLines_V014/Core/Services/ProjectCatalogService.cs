@@ -13,7 +13,7 @@ using Autodesk.Revit.DB;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
+namespace Revit26_Plugin_Revised.DwgToDetailLines.V014.Core.Services
 {
     public static class ProjectCatalogService
     {

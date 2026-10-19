@@ -14,15 +14,15 @@ using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
-using Revit26_Plugin.DwgStatistics.V005.Core.Models;
-using Revit26_Plugin.DwgStatistics.V005.Core.Services;
-using Revit26_Plugin.DwgStatistics.V005.Infrastructure.ExternalEvents;
-using Revit26_Plugin.DwgStatistics.V005.Infrastructure.RevitApi;
-using Revit26_Plugin.Shared.Models;
-using Revit26_Plugin.Shared.Services;
-using Revit26_Plugin.Shared.ViewModels;
+using Revit26_Plugin_Revised.DwgStatistics.V005.Core.Models;
+using Revit26_Plugin_Revised.DwgStatistics.V005.Core.Services;
+using Revit26_Plugin_Revised.DwgStatistics.V005.Infrastructure.ExternalEvents;
+using Revit26_Plugin_Revised.DwgStatistics.V005.Infrastructure.RevitApi;
+using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Services;
+using Revit26_Plugin_Revised.Shared.ViewModels;
 
-namespace Revit26_Plugin.DwgStatistics.V005.UI.ViewModels
+namespace Revit26_Plugin_Revised.DwgStatistics.V005.UI.ViewModels
 {
     /// <summary>
     /// View model of the DWG Statistics window. Every Revit read or write goes through the tool's

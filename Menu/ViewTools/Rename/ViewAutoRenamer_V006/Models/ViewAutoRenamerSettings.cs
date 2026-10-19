@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.ViewAutoRenamer.V006.Models
+namespace Revit26_Plugin_Revised.ViewAutoRenamer.V006.Models
 {
     /// <summary>
     /// Persisted at %AppData%\Revit26_Plugin\ViewAutoRenamer\settings.json

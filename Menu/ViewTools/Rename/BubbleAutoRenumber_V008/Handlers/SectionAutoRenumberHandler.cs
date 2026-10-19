@@ -1,11 +1,11 @@
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.BubbleAutoRenumber.V008.Models;
-using Revit26_Plugin.BubbleAutoRenumber.V008.Services;
-using Revit26_Plugin.BubbleAutoRenumber.V008.ViewModels;
+using Revit26_Plugin_Revised.BubbleAutoRenumber.V008.Models;
+using Revit26_Plugin_Revised.BubbleAutoRenumber.V008.Services;
+using Revit26_Plugin_Revised.BubbleAutoRenumber.V008.ViewModels;
 using System;
 
-namespace Revit26_Plugin.BubbleAutoRenumber.V008.Handlers
+namespace Revit26_Plugin_Revised.BubbleAutoRenumber.V008.Handlers
 {
     public class SectionAutoRenumberHandler : IExternalEventHandler
     {

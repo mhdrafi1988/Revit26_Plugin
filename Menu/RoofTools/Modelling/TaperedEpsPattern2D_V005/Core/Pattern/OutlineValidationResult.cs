@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V005.Core.Pattern
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V005.Core.Pattern
 {
     /// <summary>Validated outline (convex, CCW, collinear edges merged) or the reasons it was rejected.</summary>
     public sealed class OutlineValidationResult

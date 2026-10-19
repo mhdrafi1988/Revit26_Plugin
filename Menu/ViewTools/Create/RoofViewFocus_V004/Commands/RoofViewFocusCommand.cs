@@ -6,12 +6,12 @@ using System.Windows.Interop;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.RoofViewFocus.V004.Core.Models;
-using Revit26_Plugin.RoofViewFocus.V004.UI.ViewModels;
-using Revit26_Plugin.RoofViewFocus.V004.UI.Views;
-using Revit26_Plugin.Utilities;
+using Revit26_Plugin_Revised.RoofViewFocus.V004.Core.Models;
+using Revit26_Plugin_Revised.RoofViewFocus.V004.UI.ViewModels;
+using Revit26_Plugin_Revised.RoofViewFocus.V004.UI.Views;
+using Revit26_Plugin_Revised.Utilities;
 
-namespace Revit26_Plugin.RoofViewFocus.V004.Commands
+namespace Revit26_Plugin_Revised.RoofViewFocus.V004.Commands
 {
     /// <summary>
     /// Thin Revit-side entry point. Validates the active view (plan only) and the

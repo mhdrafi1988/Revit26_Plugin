@@ -1,7 +1,7 @@
 using System.Globalization;
-using Revit26_Plugin.TaperedEpsPattern2D.V006.Core.Pattern;
+using Revit26_Plugin_Revised.TaperedEpsPattern2D.V006.Core.Pattern;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V006.ViewModels
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V006.ViewModels
 {
     /// <summary>One row of the board size comparison grid.</summary>
     public sealed class SizeRowViewModel

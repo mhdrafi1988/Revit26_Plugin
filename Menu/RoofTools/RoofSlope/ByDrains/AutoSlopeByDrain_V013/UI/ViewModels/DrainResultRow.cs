@@ -1,6 +1,6 @@
 // =======================================================
 // File: DrainResultRow.cs
-// Namespace: Revit26_Plugin.MultiRoofSlopeByDrain.V013.UI.ViewModels
+// Namespace: Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.UI.ViewModels
 // New in V013: one row of the results side panel. Column names match the
 // Excel "Vertex Data" sheet, so the panel and the workbook read the same.
 // Display strings are formatted once here; the DataGrid binds to them.
@@ -9,10 +9,10 @@
 // =======================================================
 
 using Autodesk.Revit.DB;
-using Revit26_Plugin.MultiRoofSlopeByDrain.V013.Core.Models;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Core.Models;
 using System.Globalization;
 
-namespace Revit26_Plugin.MultiRoofSlopeByDrain.V013.UI.ViewModels
+namespace Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.UI.ViewModels
 {
     public enum ResultsTab
     {

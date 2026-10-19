@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.RoofEdgeAroundSections.V006
+namespace Revit26_Plugin_Revised.RoofEdgeAroundSections.V006
 {
     /// <summary>
     /// Persisted user settings for RoofEdgeSections V005.

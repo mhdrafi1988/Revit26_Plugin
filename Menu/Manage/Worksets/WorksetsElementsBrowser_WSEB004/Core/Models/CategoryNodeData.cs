@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB004.Core.Models
+namespace Revit26_Plugin_Revised.WorksetsElementsBrowser.WSEB004.Core.Models
 {
     /// <summary>One category (e.g. "Structural Framing") within one workset, holding its Types.</summary>
     public class CategoryNodeData

@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.TaperedEpsPattern2D.V002.Core.Pattern
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V002.Core.Pattern
 {
     /// <summary>One board (full or cut) of the grid, with its thickness range.</summary>
     public sealed record BoardPiece

@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Windows.Media.Imaging;
             
-namespace Revit26_Plugin.Resources.Icons
+namespace Revit26_Plugin_Revised.Resources.Icons
 {
     internal static class ImageUtils
     {

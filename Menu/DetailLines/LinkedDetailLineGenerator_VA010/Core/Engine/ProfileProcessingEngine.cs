@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.LinkedDetailLineGenerator.VA010.Core.Models;
-using Revit26_Plugin.LinkedDetailLineGenerator.VA010.Core.Services;
+using Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA010.Core.Models;
+using Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA010.Core.Services;
 
-namespace Revit26_Plugin.LinkedDetailLineGenerator.VA010.Core.Engine
+namespace Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA010.Core.Engine
 {
     /// <summary>
     /// Orchestrates the full Profile-group (Floor/Roof) pipeline for one enabled

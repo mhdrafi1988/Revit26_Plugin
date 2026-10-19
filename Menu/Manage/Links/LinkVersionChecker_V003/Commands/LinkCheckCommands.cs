@@ -4,11 +4,11 @@ using System.Windows.Interop;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.LinkVersionChecker_V003.Services;
-using Revit26_Plugin.LinkVersionChecker_V003.UI.ViewModels;
-using Revit26_Plugin.LinkVersionChecker_V003.UI.Views;
+using Revit26_Plugin_Revised.LinkVersionChecker_V003.Services;
+using Revit26_Plugin_Revised.LinkVersionChecker_V003.UI.ViewModels;
+using Revit26_Plugin_Revised.LinkVersionChecker_V003.UI.Views;
 
-namespace Revit26_Plugin.LinkVersionChecker_V003.Commands
+namespace Revit26_Plugin_Revised.LinkVersionChecker_V003.Commands
 {
     /// <summary>Pick a host .rvt and check its links without opening it. Works with no project open.</summary>
     [Transaction(TransactionMode.Manual)]

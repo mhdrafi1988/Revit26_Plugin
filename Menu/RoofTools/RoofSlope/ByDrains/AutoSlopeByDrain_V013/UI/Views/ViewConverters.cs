@@ -1,18 +1,18 @@
 // =======================================================
 // File: ViewConverters.cs
-// Namespace: Revit26_Plugin.MultiRoofSlopeByDrain.V013.UI.Views
+// Namespace: Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.UI.Views
 // New in V013: two small converters Shared/Converters.cs does not have.
 // Declared in the window's own Resources (UI_UX_PATTERNS.md).
 // =======================================================
 
-using Revit26_Plugin.MultiRoofSlopeByDrain.V013.Infrastructure.Helpers;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Infrastructure.Helpers;
 using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace Revit26_Plugin.MultiRoofSlopeByDrain.V013.UI.Views
+namespace Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.UI.Views
 {
     /// <summary>Non-empty string → Visible, null/empty → Collapsed (inline error lines).</summary>
     public class NonEmptyToVisibilityConverter : IValueConverter

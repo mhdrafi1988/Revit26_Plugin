@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 
-namespace Revit26_Plugin.LinkVersionChecker_V005.Services
+namespace Revit26_Plugin_Revised.LinkVersionChecker_V005.Services
 {
     public sealed class CheckerSettings
     {

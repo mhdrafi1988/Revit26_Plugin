@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Revit26_Plugin.Shared.Models; // LogLevel — shared enum, not redefined here
+using Revit26_Plugin_Revised.Shared.Models; // LogLevel — shared enum, not redefined here
 
-namespace Revit26_Plugin.LinkedDetailLineGenerator.VA010.Core.Models
+namespace Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA010.Core.Models
 {
     /// <summary>
     /// Single skipped/failed element entry for the processing log and error report.

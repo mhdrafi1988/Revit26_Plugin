@@ -1,7 +1,7 @@
 // File: Models/PlacementRunMetrics.cs
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.APUS.V324.Models
+namespace Revit26_Plugin_Revised.APUS.V324.Models
 {
     /// <summary>
     /// Backing data for the 3-metric bar (Placed / Skipped / Failed) shown

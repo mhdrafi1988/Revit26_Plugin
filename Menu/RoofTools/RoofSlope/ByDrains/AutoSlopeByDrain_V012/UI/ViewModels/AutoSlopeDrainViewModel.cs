@@ -45,10 +45,10 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.MultiRoofSlopeByDrain.V012.Core.Models;
-using Revit26_Plugin.MultiRoofSlopeByDrain.V012.Infrastructure.ExternalEvents;
-using Revit26_Plugin.MultiRoofSlopeByDrain.V012.Infrastructure.Helpers;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V012.Core.Models;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V012.Infrastructure.ExternalEvents;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V012.Infrastructure.Helpers;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -56,7 +56,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 
-namespace Revit26_Plugin.MultiRoofSlopeByDrain.V012.UI.ViewModels
+namespace Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V012.UI.ViewModels
 {
     public partial class AutoSlopeDrainViewModel : ObservableObject
     {

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V006.Core.Pattern
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V006.Core.Pattern
 {
     /// <summary>Everything the preview, the metric tiles and the Revit writer need.</summary>
     public sealed class Pattern2DResult

@@ -1,8 +1,8 @@
 using System;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.RoofViewFocus.V003.Core.Models;
+using Revit26_Plugin_Revised.RoofViewFocus.V003.Core.Models;
 
-namespace Revit26_Plugin.RoofViewFocus.V003.Infrastructure.ExternalEvents
+namespace Revit26_Plugin_Revised.RoofViewFocus.V003.Infrastructure.ExternalEvents
 {
     /// <summary>
     /// Static holder for the tool's single Handler + ExternalEvent pair.

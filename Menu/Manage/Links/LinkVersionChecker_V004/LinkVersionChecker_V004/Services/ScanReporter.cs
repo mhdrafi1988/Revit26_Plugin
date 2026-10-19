@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 
-namespace Revit26_Plugin.LinkVersionChecker_V004.Services
+namespace Revit26_Plugin_Revised.LinkVersionChecker_V004.Services
 {
     /// <summary>
     /// Progress + cancellation for long scans and batch actions that must stay on Revit's

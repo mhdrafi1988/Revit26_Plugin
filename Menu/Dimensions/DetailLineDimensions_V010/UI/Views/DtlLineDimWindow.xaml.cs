@@ -1,9 +1,9 @@
 using System.Windows;
 using System.Windows.Input;
-using Revit26_Plugin.DtlLineDim.V010.UI.ViewModels;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.DtlLineDim.V010.UI.ViewModels;
+using Revit26_Plugin_Revised.Shared.Services;
 
-namespace Revit26_Plugin.DtlLineDim.V010.UI.Views
+namespace Revit26_Plugin_Revised.DtlLineDim.V010.UI.Views
 {
     public partial class DtlLineDimWindow : Window
     {

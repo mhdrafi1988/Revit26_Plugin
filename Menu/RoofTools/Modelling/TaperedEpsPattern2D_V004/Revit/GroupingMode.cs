@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.TaperedEpsPattern2D.V004.Revit
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V004.Revit
 {
     /// <summary>How the created detail lines are packaged.</summary>
     public enum GroupingMode

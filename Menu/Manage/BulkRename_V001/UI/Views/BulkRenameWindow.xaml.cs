@@ -1,12 +1,12 @@
-using Revit26_Plugin.BulkRename.V001.UI.ViewModels;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.BulkRename.V001.UI.ViewModels;
+using Revit26_Plugin_Revised.Shared.Services;
 using System;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 
-namespace Revit26_Plugin.BulkRename.V001.UI.Views
+namespace Revit26_Plugin_Revised.BulkRename.V001.UI.Views
 {
     /// <summary>
     /// Bulk Rename window; everything is bound to <see cref="BulkRenameViewModel"/>. The code-behind only

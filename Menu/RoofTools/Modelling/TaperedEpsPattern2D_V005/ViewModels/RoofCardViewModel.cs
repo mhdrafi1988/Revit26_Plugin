@@ -1,8 +1,8 @@
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Revit26_Plugin.TaperedEpsPattern2D.V005.Revit;
+using Revit26_Plugin_Revised.TaperedEpsPattern2D.V005.Revit;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V005.ViewModels
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V005.ViewModels
 {
     /// <summary>Roof card: view, roof, level, edges, shape badge and any validation error.</summary>
     public sealed partial class RoofCardViewModel : ObservableObject

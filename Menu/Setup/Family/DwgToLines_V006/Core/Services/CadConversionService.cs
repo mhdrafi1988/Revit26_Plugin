@@ -18,12 +18,12 @@ using Autodesk.Revit.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Revit26_Plugin.DwgToLines.V006.Core.Models;
-using Revit26_Plugin.DwgToLines.V006.Infrastructure.Helpers;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.DwgToLines.V006.Core.Models;
+using Revit26_Plugin_Revised.DwgToLines.V006.Infrastructure.Helpers;
+using Revit26_Plugin_Revised.Shared.Models;
 using DBTransform = Autodesk.Revit.DB.Transform;
 
-namespace Revit26_Plugin.DwgToLines.V006.Core.Services
+namespace Revit26_Plugin_Revised.DwgToLines.V006.Core.Services
 {
     public class CadConversionService
     {

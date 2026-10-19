@@ -7,7 +7,7 @@
 
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.InnerLoopsAndPerpendicular.V007.Core.Models
+namespace Revit26_Plugin_Revised.InnerLoopsAndPerpendicular.V007.Core.Models
 {
     public class InnerLoopsAndPerpendicularResult
     {

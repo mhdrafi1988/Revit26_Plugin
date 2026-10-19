@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.RoofRidgeLines.V070.Models
+namespace Revit26_Plugin_Revised.RoofRidgeLines.V070.Models
 {
     /// <summary>
     /// Represents a group of drain points that are within the proximity threshold of each other.

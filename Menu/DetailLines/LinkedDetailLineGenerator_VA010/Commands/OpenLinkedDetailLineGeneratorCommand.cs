@@ -3,11 +3,11 @@ using System.Linq;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.LinkedDetailLineGenerator.VA010.UI.Views;
-using Revit26_Plugin.Shared.Services;
-using Revit26_Plugin.Utilities;
+using Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA010.UI.Views;
+using Revit26_Plugin_Revised.Shared.Services;
+using Revit26_Plugin_Revised.Utilities;
 
-namespace Revit26_Plugin.LinkedDetailLineGenerator.VA010.Commands
+namespace Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA010.Commands
 {
     /// <summary>
     /// Ribbon PushButton entry point for Detail Lines From Links VA010. Same entry flow as VA009:

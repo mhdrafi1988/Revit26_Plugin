@@ -1,10 +1,10 @@
-using Revit26_Plugin.ParaManager.V005.Models;
+using Revit26_Plugin_Revised.ParaManager.V005.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Revit26_Plugin.ParaManager.V005.Services
+namespace Revit26_Plugin_Revised.ParaManager.V005.Services
 {
     /// <summary>
     /// Parses a Revit shared parameter definition file (tab-delimited .txt, Revit's

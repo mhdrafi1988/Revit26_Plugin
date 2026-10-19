@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.RoofViewFocus.V003.Core.Models
+namespace Revit26_Plugin_Revised.RoofViewFocus.V003.Core.Models
 {
     /// <summary>
     /// Persisted to %AppData%\Revit26_Plugin\RoofViewFocus\settings.json.

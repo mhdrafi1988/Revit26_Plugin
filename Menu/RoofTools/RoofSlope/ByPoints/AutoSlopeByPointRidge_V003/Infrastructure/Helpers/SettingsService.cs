@@ -1,18 +1,18 @@
 // =======================================================
 // File: SettingsService.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPointRidge.V003
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPointRidge.V003
 // New in V026.
 // Purpose: Load/save AutoSlopeSettings as JSON at
 //          %AppData%\Revit26_Plugin\AutoSlopeByPointRidge\settings.json
 //          per this suite's shared settings-path convention.
 // =======================================================
 
-using Revit26_Plugin.AutoSlopeByPointRidge.V003.Core.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPointRidge.V003.Core.Models;
 using System;
 using System.IO;
 using System.Text.Json;
 
-namespace Revit26_Plugin.AutoSlopeByPointRidge.V003.Infrastructure.Helpers
+namespace Revit26_Plugin_Revised.AutoSlopeByPointRidge.V003.Infrastructure.Helpers
 {
     public static class SettingsService
     {

@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Revit26_Plugin.TaperedEpsPattern2D.V001.Core.Pattern;
-using Revit26_Plugin.TaperedEpsPattern2D.V001.Revit;
+using Revit26_Plugin_Revised.TaperedEpsPattern2D.V001.Core.Pattern;
+using Revit26_Plugin_Revised.TaperedEpsPattern2D.V001.Revit;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V001.ViewModels
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V001.ViewModels
 {
     /// <summary>One line layer: on/off checkbox and line-style picker.</summary>
     public sealed partial class LayerOptionViewModel : ObservableObject

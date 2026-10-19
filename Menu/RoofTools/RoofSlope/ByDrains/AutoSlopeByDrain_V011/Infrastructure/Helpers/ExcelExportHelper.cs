@@ -26,7 +26,7 @@
 using Autodesk.Revit.DB;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
-using Revit26_Plugin.MultiRoofSlopeByDrain.V011.Core.Models;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V011.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -35,7 +35,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using DrawingColor = System.Drawing.Color;
 
-namespace Revit26_Plugin.MultiRoofSlopeByDrain.V011.Infrastructure.Helpers
+namespace Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V011.Infrastructure.Helpers
 {
     public static class ExcelExportHelper
     {
@@ -239,8 +239,8 @@ namespace Revit26_Plugin.MultiRoofSlopeByDrain.V011.Infrastructure.Helpers
             }
             catch (Exception ex)
             {
-                payload?.Log?.Invoke(new Revit26_Plugin.Shared.Models.LogEntry(
-                    Revit26_Plugin.Shared.Models.LogLevel.Error, $"Excel Export Error: {ex.Message}"));
+                payload?.Log?.Invoke(new Revit26_Plugin_Revised.Shared.Models.LogEntry(
+                    Revit26_Plugin_Revised.Shared.Models.LogLevel.Error, $"Excel Export Error: {ex.Message}"));
                 return null;
             }
         }

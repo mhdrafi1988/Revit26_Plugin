@@ -1,6 +1,6 @@
 using System.Windows;
 
-namespace Revit26_Plugin.LinkVersionChecker_V003.UI.Infrastructure
+namespace Revit26_Plugin_Revised.LinkVersionChecker_V003.UI.Infrastructure
 {
     /// <summary>
     /// Lets DataGrid columns (which are not in the visual tree) bind to the window's DataContext,

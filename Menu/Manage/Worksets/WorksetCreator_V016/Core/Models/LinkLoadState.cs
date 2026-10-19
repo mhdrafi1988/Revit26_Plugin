@@ -11,7 +11,7 @@
 // itself here so the UI can say which it is.
 // ==============================================
 
-namespace Revit26_Plugin.WorksetCreator.V016.Core.Models
+namespace Revit26_Plugin_Revised.WorksetCreator.V016.Core.Models
 {
     /// <summary>
     /// Mirror of Revit's <c>LinkedFileStatus</c>, flattened to the three cases

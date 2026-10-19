@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.LinkedDetailLineGenerator.VA010.Core.Services
+namespace Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA010.Core.Services
 {
     /// <summary>
     /// VA007 same-source-element line cleanup: given the ordered curve list produced

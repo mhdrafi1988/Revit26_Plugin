@@ -1,8 +1,8 @@
 using System;
 using System.Windows;
-using Revit26_Plugin.TaperedEpsPattern2D.V005.ViewModels;
+using Revit26_Plugin_Revised.TaperedEpsPattern2D.V005.ViewModels;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V005.Views
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V005.Views
 {
     /// <summary>
     /// Modeless tool window. All logic lives in <see cref="TaperedEpsPattern2DViewModel"/>.

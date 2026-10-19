@@ -1,6 +1,6 @@
 // =======================================================
 // File: CurveIntersectionHelper.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.RoofOps
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.RoofOps
 // Moved from V030 Core/Engine (Revit API). Logic unchanged:
 //   - which shape points sit on a boundary/opening Arc
 //   - insert real shape points where a straight roof edge meets an Arc
@@ -11,7 +11,7 @@ using System;
 using System.Collections.Generic;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.RoofOps
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.RoofOps
 {
     /// <summary>An Arc a vertex lies on, and its parameter on that Arc.</summary>
     internal sealed class VertexCurveInfo

@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.ViewAutoRenamer.V006.Models
+namespace Revit26_Plugin_Revised.ViewAutoRenamer.V006.Models
 {
     /// <summary>
     /// Case rule applied by the Standardize row. None keeps original casing.

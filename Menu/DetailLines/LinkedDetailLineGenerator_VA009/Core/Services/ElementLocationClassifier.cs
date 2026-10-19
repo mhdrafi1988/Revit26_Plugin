@@ -1,6 +1,6 @@
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.LinkedDetailLineGenerator.VA009.Core.Services
+namespace Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA009.Core.Services
 {
     public enum ElementLocationKind { Point, Curve, Unsupported }
 

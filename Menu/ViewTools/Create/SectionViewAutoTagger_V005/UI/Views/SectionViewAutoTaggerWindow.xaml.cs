@@ -1,7 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Revit26_Plugin.SectionViewAutoTagger.V005
+namespace Revit26_Plugin_Revised.SectionViewAutoTagger.V005
 {
     public partial class SectionViewAutoTaggerWindow : Window
     {
@@ -41,7 +41,7 @@ namespace Revit26_Plugin.SectionViewAutoTagger.V005
             vm.SelectedLogEntries.Clear();
             foreach (var item in listBox.SelectedItems)
             {
-                if (item is Revit26_Plugin.Shared.Models.LogEntry entry)
+                if (item is Revit26_Plugin_Revised.Shared.Models.LogEntry entry)
                     vm.SelectedLogEntries.Add(entry);
             }
         }

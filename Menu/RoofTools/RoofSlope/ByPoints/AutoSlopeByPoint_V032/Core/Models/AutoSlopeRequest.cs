@@ -1,6 +1,6 @@
 // =======================================================
 // File: AutoSlopeRequest.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models
 // Replaces V030's mutable AutoSlopePayload (inputs + callbacks + token on
 // one object, with the marker groups passed by reference so UI edits
 // leaked into a running job — V030 B7). This is an immutable snapshot
@@ -9,7 +9,7 @@
 
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models
 {
     /// <summary>Marker style snapshot for one circle-marker group.</summary>
     public sealed record MarkerStyle(

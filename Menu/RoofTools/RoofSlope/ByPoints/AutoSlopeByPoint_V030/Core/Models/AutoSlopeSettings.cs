@@ -1,6 +1,6 @@
 // =======================================================
 // File: AutoSlopeSettings.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V030
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V030
 // Changes vs V025:
 //   - Persistence scope expanded: previously only the 3 Circle Marker
 //     groups + AllowedOffsetThresholdMm were saved. Now also persists
@@ -24,7 +24,7 @@
 //        match is found the constructor's default line style applies.
 // =======================================================
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V030.Core.Models
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V030.Core.Models
 {
     public class CircleMarkerGroupSettings
     {

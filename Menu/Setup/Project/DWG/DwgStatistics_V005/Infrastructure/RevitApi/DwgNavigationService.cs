@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.DwgStatistics.V005.Infrastructure.RevitApi
+namespace Revit26_Plugin_Revised.DwgStatistics.V005.Infrastructure.RevitApi
 {
     /// <summary>One view to open, and the CAD instances to select / zoom to once it is open.</summary>
     public sealed class DwgOpenRequest

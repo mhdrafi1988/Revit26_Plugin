@@ -1,10 +1,10 @@
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Revit26_Plugin.ViewAutoRenamer.V005.Models;
+using Revit26_Plugin_Revised.ViewAutoRenamer.V005.Models;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.ViewAutoRenamer.V005.ViewModels;
+namespace Revit26_Plugin_Revised.ViewAutoRenamer.V005.ViewModels;
 
 public partial class ViewItemViewModel : ObservableObject
 {

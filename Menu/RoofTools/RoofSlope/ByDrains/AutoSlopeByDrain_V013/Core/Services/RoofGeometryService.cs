@@ -1,6 +1,6 @@
 ﻿// =======================================================
 // File: RoofGeometryService.cs
-// Namespace: Revit26_Plugin.MultiRoofSlopeByDrain.V013.Core.Services
+// Namespace: Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Core.Services
 // Changes vs V012:
 //   - InitializeRoofGeometry (called at pick time) replaced by
 //     ResetShapePoints, called by the engine at the start of each roof's
@@ -12,7 +12,7 @@
 using Autodesk.Revit.DB;
 using System;
 
-namespace Revit26_Plugin.MultiRoofSlopeByDrain.V013.Core.Services
+namespace Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Core.Services
 {
     public static class RoofGeometryService
     {

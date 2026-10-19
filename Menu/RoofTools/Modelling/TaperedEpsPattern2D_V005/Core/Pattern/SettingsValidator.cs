@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V005.Core.Pattern
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V005.Core.Pattern
 {
     /// <summary>Range checks for <see cref="Pattern2DSettings"/>; returns messages, never throws.</summary>
     public static class SettingsValidator

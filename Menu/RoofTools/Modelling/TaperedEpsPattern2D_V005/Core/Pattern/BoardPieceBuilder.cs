@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V005.Core.Pattern
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V005.Core.Pattern
 {
     /// <summary>
     /// Cuts the outline into grid boards and measures each board's thickness range.

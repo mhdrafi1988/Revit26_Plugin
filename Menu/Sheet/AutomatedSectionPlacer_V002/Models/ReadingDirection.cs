@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.AutomatedSectionPlacer.V002.Models
+namespace Revit26_Plugin_Revised.AutomatedSectionPlacer.V002.Models
 {
     /// <summary>
     /// Primary/secondary axis order used to build reading order across views

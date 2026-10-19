@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace Revit26_Plugin.RoofEdgeAroundSections.V007
+namespace Revit26_Plugin_Revised.RoofEdgeAroundSections.V007
 {
     /// <summary>
     /// FLAGGED — NEW CONVERTER, NOT YET IN SHARED Converters.cs.

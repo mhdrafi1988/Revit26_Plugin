@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Revit26_Plugin.LinkVersionChecker_V003.Core.Models;
+using Revit26_Plugin_Revised.LinkVersionChecker_V003.Core.Models;
 
-namespace Revit26_Plugin.LinkVersionChecker_V003.Core.Rules
+namespace Revit26_Plugin_Revised.LinkVersionChecker_V003.Core.Rules
 {
     internal static class R
     {

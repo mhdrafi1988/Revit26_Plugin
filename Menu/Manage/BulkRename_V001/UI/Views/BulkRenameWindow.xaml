@@ -10,12 +10,12 @@ File: BulkRenameWindow.xaml  (Bulk Rename V001 — ToolWindowShell)
   Everything above the log is disabled while Revit runs a job.
 =======================================================
 -->
-<Window x:Class="Revit26_Plugin.BulkRename.V001.UI.Views.BulkRenameWindow"
+<Window x:Class="Revit26_Plugin_Revised.BulkRename.V001.UI.Views.BulkRenameWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:svc="clr-namespace:Revit26_Plugin.Shared.Services"
-        xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
-        xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
+        xmlns:svc="clr-namespace:Revit26_Plugin_Revised.Shared.Services"
+        xmlns:converters="clr-namespace:Revit26_Plugin_Revised.Shared.Models"
+        xmlns:shell="clr-namespace:Revit26_Plugin_Revised.Shared.Controls"
         Title="Bulk Rename"
         Width="960" Height="800"
         MinWidth="960" MinHeight="800"

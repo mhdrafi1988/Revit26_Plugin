@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.RoofViewFocus.V004.Core.Services
+namespace Revit26_Plugin_Revised.RoofViewFocus.V004.Core.Services
 {
     /// <summary>Writes the log to {ToolName}_Logs_{yyyy-MM-dd}_{HH-mm}.txt. Pure .NET.</summary>
     public static class RoofViewFocusLogExporter

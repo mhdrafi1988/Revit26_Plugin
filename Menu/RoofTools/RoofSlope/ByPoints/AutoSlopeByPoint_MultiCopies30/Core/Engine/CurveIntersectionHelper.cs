@@ -1,6 +1,6 @@
 // =======================================================
 // File: CurveIntersectionHelper.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.MultiCopies30
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30
 // Purpose:
 //   - Detect which SlabShapeVertex points already sit on a boundary/opening Arc.
 //   - Detect where a straight line between two vertices enters/exits an Arc
@@ -12,7 +12,7 @@ using Autodesk.Revit.DB;
 using System;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.Core.Engine
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30.Core.Engine
 {
     /// <summary>Maps a vertex position to the Arc it lies on (if any) and its parameter on that Arc.</summary>
     public class VertexCurveInfo

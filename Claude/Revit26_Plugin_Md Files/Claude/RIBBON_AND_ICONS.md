@@ -24,30 +24,25 @@ writing, everything a `*Ribbon.cs` file actually references is embedded).
   embedded PNG by its dotted manifest-resource name and throws
   `FileNotFoundException` if it isn't embedded.
 
-## Adding a new icon — two steps, both required
+## Adding a new icon
 
-1. Drop the PNG in the right `Resources/Icons/<Category>/` folder.
-2. Add a matching line to `Revit26_Plugin.csproj`, in **both** places —
-   an `<EmbeddedResource Include="Resources\Icons\<Category>\<file>.png" />`
-   and a `<None Remove="Resources\Icons\<Category>\<file>.png" />` (the SDK
-   auto-includes loose files as `None`; the `Remove` cancels that so it
-   isn't in the build twice):
+Drop the PNG in the right `Resources/Icons/<Category>/` folder. That's it:
+`Revit26_Plugin.csproj` embeds every `Resources\Icons\**\*.png` through one
+wildcard (with a matching `<None Remove>` so the SDK doesn't also include it
+as `None`):
 
 ```xml
-<EmbeddedResource Include="Resources\Icons\RoofTools\MyNewTool_16.png" />
+<None Remove="Resources\Icons\**\*.png" />
+<EmbeddedResource Include="Resources\Icons\**\*.png" />
 ```
 
-There is **no wildcard/glob** for `Resources/Icons/**/*.png` — each file is
-listed explicitly. Skipping step 2 doesn't fail the build; it fails at
-runtime the first time `ImageUtils.Load` is asked for that path (i.e. the
-first time the button is actually built in `OnStartup`), which can take the
-whole ribbon down. `Resources/Icons/` currently has more PNGs on disk than
-are embedded — that's fine on its own (unused/orphaned assets), but always
-grep the `.csproj` for a file before assuming it's live.
+A typo in the resource path doesn't fail the build; it fails at runtime the
+first time `ImageUtils.Load` is asked for that path (i.e. the first time the
+button is built in `OnStartup`). Names are case-sensitive.
 
-The manifest-resource path mirrors the folder as dotted segments:
+The manifest-resource path is the `<RootNamespace>` (`Revit26_Plugin_Revised`) followed by the folder as dotted segments:
 `Resources/Icons/RoofTools/by_point_16.png` on disk →
-`"Revit26_Plugin.Resources.Icons.RoofTools.by_point_16.png"` in code.
+`"Revit26_Plugin_Revised.Resources.Icons.RoofTools.by_point_16.png"` in code.
 
 ## 16px vs 32px
 
@@ -65,9 +60,9 @@ return the created item — **capture it and cast to set an icon**:
 ```csharp
 var btn = (PushButton)pulldown.AddPushButton(new PushButtonData(
     "Btn_MyTool_V001", "My Tool V001", assemblyPath,
-    "Revit26_Plugin.MyTool.V001.Commands.MyToolCommand")
+    "Revit26_Plugin_Revised.MyTool.V001.Commands.MyToolCommand")
 {
-    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.MyNewTool_16.png"),
+    Image = ImageUtils.Load("Revit26_Plugin_Revised.Resources.Icons.RoofTools.MyNewTool_16.png"),
     ToolTip = RibbonLayoutHelper.VersionTip("My Tool", "V001", "one-line description")
 });
 ```

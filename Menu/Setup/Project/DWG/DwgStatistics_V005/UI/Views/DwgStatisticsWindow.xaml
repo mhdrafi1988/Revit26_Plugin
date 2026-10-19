@@ -19,12 +19,12 @@ File: DwgStatisticsWindow.xaml  (DWG Statistics V005 — ToolWindowShell)
   Do NOT set RowDetailsVisibilityMode on the grids (see DWG Manager V003's note).
 =======================================================
 -->
-<Window x:Class="Revit26_Plugin.DwgStatistics.V005.UI.Views.DwgStatisticsWindow"
+<Window x:Class="Revit26_Plugin_Revised.DwgStatistics.V005.UI.Views.DwgStatisticsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:svc="clr-namespace:Revit26_Plugin.Shared.Services"
-        xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
-        xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
+        xmlns:svc="clr-namespace:Revit26_Plugin_Revised.Shared.Services"
+        xmlns:converters="clr-namespace:Revit26_Plugin_Revised.Shared.Models"
+        xmlns:shell="clr-namespace:Revit26_Plugin_Revised.Shared.Controls"
         Title="{Binding Source={x:Static svc:ToolCatalog.DwgStatistics}, Path=Title}"
         Width="1160" Height="820"
         MinWidth="1040" MinHeight="720"

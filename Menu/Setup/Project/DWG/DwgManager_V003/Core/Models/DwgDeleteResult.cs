@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.DwgManager.V003.Core.Models
+namespace Revit26_Plugin_Revised.DwgManager.V003.Core.Models
 {
     /// <summary>Counts from one delete run, shown as the completion summary line.</summary>
     public sealed class DwgDeleteResult

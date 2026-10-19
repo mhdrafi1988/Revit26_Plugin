@@ -1,6 +1,6 @@
 // =======================================================
 // File: AutoSlopeSettings.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models
 // Changes vs V030:
 //   - Every default comes from AutoSlopeConstants (V030 B2: this POCO's own
 //     defaults — 1 m threshold, 50 mm tolerance, Black markers — overrode
@@ -14,7 +14,7 @@
 // Line styles are persisted by NAME (ElementIds are per project).
 // =======================================================
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models
 {
     public class CircleMarkerGroupSettings
     {

@@ -15,7 +15,7 @@
 // current version on the next save.
 // ==============================================
 
-namespace Revit26_Plugin.WorksetCreator.V017.Core.Models
+namespace Revit26_Plugin_Revised.WorksetCreator.V017.Core.Models
 {
     public sealed class WorksetCreatorSettings
     {

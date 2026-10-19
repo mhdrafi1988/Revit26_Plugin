@@ -4,12 +4,12 @@ using System.Linq;
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.Shared.Models;
-using Revit26_Plugin.SmartViewToSheetPlacer.V224.Infrastructure.ExternalEvents;
-using Revit26_Plugin.SmartViewToSheetPlacer.V224.Models;
-using Revit26_Plugin.SmartViewToSheetPlacer.V224.Services;
+using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin_Revised.SmartViewToSheetPlacer.V224.Infrastructure.ExternalEvents;
+using Revit26_Plugin_Revised.SmartViewToSheetPlacer.V224.Models;
+using Revit26_Plugin_Revised.SmartViewToSheetPlacer.V224.Services;
 
-namespace Revit26_Plugin.SmartViewToSheetPlacer.V224.ViewModels
+namespace Revit26_Plugin_Revised.SmartViewToSheetPlacer.V224.ViewModels
 {
     /// <summary>Stage 1: Select Views — view/titleblock loading, selection, filtering.</summary>
     public partial class SmartViewToSheetPlacerViewModel

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Revit26_Plugin.TaperedEpsPattern2D.V002.Core.Pattern;
+using Revit26_Plugin_Revised.TaperedEpsPattern2D.V002.Core.Pattern;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V002.ViewModels
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V002.ViewModels
 {
     /// <summary>
     /// Board Settings card: board size, slope, minimum thickness, grid alignment and origin.

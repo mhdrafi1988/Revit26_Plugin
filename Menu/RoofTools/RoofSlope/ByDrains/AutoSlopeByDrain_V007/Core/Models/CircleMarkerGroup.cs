@@ -16,7 +16,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.AutoSlopeByDrain.V007.Core.Models
+namespace Revit26_Plugin_Revised.AutoSlopeByDrain.V007.Core.Models
 {
     public partial class CircleMarkerGroup : ObservableObject
     {

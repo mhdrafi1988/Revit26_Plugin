@@ -1,7 +1,7 @@
 using Autodesk.Revit.DB;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.CreateSections.V012.Services
+namespace Revit26_Plugin_Revised.CreateSections.V012.Services
 {
     /// <summary>
     /// Handles safe cleanup actions after successful creation.

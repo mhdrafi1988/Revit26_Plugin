@@ -8,11 +8,11 @@
 using Autodesk.Revit.DB;
 using System;
 using System.Collections.Generic;
-using Revit26_Plugin.DwgToDetailLines.V014.Core.Models;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.DwgToDetailLines.V014.Core.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 using DBTransform = Autodesk.Revit.DB.Transform;
 
-namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Services
+namespace Revit26_Plugin_Revised.DwgToDetailLines.V014.Core.Services
 {
     public static class CadGeometryExtractor
     {

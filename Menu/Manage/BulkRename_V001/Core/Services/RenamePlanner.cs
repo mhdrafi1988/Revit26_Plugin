@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.BulkRename.V001.Core.Services
+namespace Revit26_Plugin_Revised.BulkRename.V001.Core.Services
 {
     /// <summary>One rename the user asked for, identified by a caller-chosen key.</summary>
     public readonly struct RenameChange

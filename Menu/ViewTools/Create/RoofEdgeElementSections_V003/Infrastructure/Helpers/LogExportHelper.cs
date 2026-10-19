@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.RoofEdgeElementSections.V003
+namespace Revit26_Plugin_Revised.RoofEdgeElementSections.V003
 {
     /// <summary>
     /// Writes log entries to a .txt file using the standard naming convention:

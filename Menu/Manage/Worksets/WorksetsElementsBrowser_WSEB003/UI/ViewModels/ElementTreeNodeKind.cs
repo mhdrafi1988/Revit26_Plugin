@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB003.UI.ViewModels
+namespace Revit26_Plugin_Revised.WorksetsElementsBrowser.WSEB003.UI.ViewModels
 {
     public enum ElementTreeNodeKind
     {

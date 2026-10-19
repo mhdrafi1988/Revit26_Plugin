@@ -6,12 +6,12 @@
 // CopySelectedLogCommand.
 // ==============================================
 
-using Revit26_Plugin.Shared.Models;
-using Revit26_Plugin.WorksetCreator.V016.UI.ViewModels;
+using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin_Revised.WorksetCreator.V016.UI.ViewModels;
 using System.Linq;
 using System.Windows;
 
-namespace Revit26_Plugin.WorksetCreator.V016.UI.Views
+namespace Revit26_Plugin_Revised.WorksetCreator.V016.UI.Views
 {
     public partial class WorksetCreatorWindow : Window
     {

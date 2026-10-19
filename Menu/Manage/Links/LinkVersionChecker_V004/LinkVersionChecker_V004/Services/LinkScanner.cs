@@ -8,11 +8,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.PointClouds;
-using Revit26_Plugin.LinkVersionChecker_V004.Core.Models;
-using Revit26_Plugin.LinkVersionChecker_V004.Core.Rules;
+using Revit26_Plugin_Revised.LinkVersionChecker_V004.Core.Models;
+using Revit26_Plugin_Revised.LinkVersionChecker_V004.Core.Rules;
 using RevitApp = Autodesk.Revit.ApplicationServices.Application;
 
-namespace Revit26_Plugin.LinkVersionChecker_V004.Services
+namespace Revit26_Plugin_Revised.LinkVersionChecker_V004.Services
 {
     /// <summary>
     /// Scan pipeline:

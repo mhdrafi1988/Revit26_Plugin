@@ -1,6 +1,6 @@
 // =======================================================
 // File: RoofPreparer.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.RoofOps
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.RoofOps
 // First model-changing step of a run (split out of V030's AutoSlopeEngine):
 //   1. reset every shape point to 0
 //   2. optionally insert points where real edges meet arcs
@@ -16,11 +16,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Core.Services;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Services;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.RoofOps
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.RoofOps
 {
     internal sealed class PreparedRoof
     {

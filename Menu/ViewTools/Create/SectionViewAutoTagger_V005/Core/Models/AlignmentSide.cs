@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.SectionViewAutoTagger.V005
+namespace Revit26_Plugin_Revised.SectionViewAutoTagger.V005
 {
     /// <summary>
     /// Which side of the view crop boundary tags are aligned to.

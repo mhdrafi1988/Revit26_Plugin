@@ -1,7 +1,7 @@
 // IslandRoofSplitter V001 — persisted options (JSON). Roof type / level / offset / Mark prefix are
 // deliberately NOT persisted: they default from the source roof on every launch.
 #nullable enable
-namespace Revit26_Plugin.IslandRoofSplitter.V001.Core.Models
+namespace Revit26_Plugin_Revised.IslandRoofSplitter.V001.Core.Models
 {
     public sealed class IslandSplitterSettings
     {

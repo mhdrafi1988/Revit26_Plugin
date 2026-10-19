@@ -1,11 +1,11 @@
 ﻿// File: AutoPlaceSectionsViewModel.cs
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.APUS.V323.Commands;
-using Revit26_Plugin.APUS.V323.ExternalEvents;
-using Revit26_Plugin.APUS.V323.Models;
-using Revit26_Plugin.APUS.V323.Services;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.APUS.V323.Commands;
+using Revit26_Plugin_Revised.APUS.V323.ExternalEvents;
+using Revit26_Plugin_Revised.APUS.V323.Models;
+using Revit26_Plugin_Revised.APUS.V323.Services;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -16,7 +16,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
 
-namespace Revit26_Plugin.APUS.V323.ViewModels
+namespace Revit26_Plugin_Revised.APUS.V323.ViewModels
 {
     /// <summary>
     /// V321 changes vs V320:

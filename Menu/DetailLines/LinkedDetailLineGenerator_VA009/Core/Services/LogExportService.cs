@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.LinkedDetailLineGenerator.VA009.Core.Services
+namespace Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA009.Core.Services
 {
     /// <summary>
     /// Handles log file writes: silent auto-save on run completion, and manual

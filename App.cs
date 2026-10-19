@@ -1,9 +1,9 @@
 using System.Reflection;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.Menu.Ribbon;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.Menu.Ribbon;
+using Revit26_Plugin_Revised.Shared.Services;
 
-namespace Revit26_Plugin
+namespace Revit26_Plugin_Revised
 {
     /// <summary>
     /// Entry point for the Revit add-in.

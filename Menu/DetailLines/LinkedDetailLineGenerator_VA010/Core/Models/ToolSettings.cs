@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.LinkedDetailLineGenerator.VA010.Core.Models
+namespace Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA010.Core.Models
 {
     /// <summary>
     /// Plain POCO persisted via System.Text.Json to

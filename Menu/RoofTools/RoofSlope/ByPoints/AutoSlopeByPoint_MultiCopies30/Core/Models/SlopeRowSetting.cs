@@ -1,12 +1,12 @@
 // =======================================================
 // File: SlopeRowSetting.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.MultiCopies30
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30
 // Purpose: One of the 4 fixed slope rows in the Multi-Slope
 //          Roof Variants UI — a checkbox (IsEnabled) plus a
 //          typable/searchable slope percentage.
 // =======================================================
 
-namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.Core.Models
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30.Core.Models
 {
     public class SlopeRowSetting
     {

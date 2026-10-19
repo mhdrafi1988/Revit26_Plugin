@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.DwgManager.V002.Core.Models
+namespace Revit26_Plugin_Revised.DwgManager.V002.Core.Models
 {
     /// <summary>
     /// One row of the DWG Manager list: every instance of one CAD file (link or import) that is placed

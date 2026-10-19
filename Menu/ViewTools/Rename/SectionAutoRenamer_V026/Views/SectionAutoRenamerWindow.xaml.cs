@@ -1,13 +1,13 @@
-using Revit26_Plugin.SectionAutoRenamer.V026.ViewModels;
+using Revit26_Plugin_Revised.SectionAutoRenamer.V026.ViewModels;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Linq;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.Shared.Services;
 
-namespace Revit26_Plugin.SectionAutoRenamer.V026.Views;
+namespace Revit26_Plugin_Revised.SectionAutoRenamer.V026.Views;
 
 public partial class SectionsListWindow : Window
 {

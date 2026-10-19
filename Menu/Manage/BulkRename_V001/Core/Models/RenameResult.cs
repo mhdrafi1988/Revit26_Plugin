@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.BulkRename.V001.Core.Models
+namespace Revit26_Plugin_Revised.BulkRename.V001.Core.Models
 {
     /// <summary>What happened to one requested rename.</summary>
     public sealed class RenameOutcome

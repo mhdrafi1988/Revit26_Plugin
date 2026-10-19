@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.ScheduleExportImport.V007.Core.Models
+namespace Revit26_Plugin_Revised.ScheduleExportImport.V007.Core.Models
 {
     /// <summary>Extras for the Excel export beyond headers and rows.</summary>
     public class ExportExtras

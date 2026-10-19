@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Security;
 
-namespace Revit26_Plugin.DwgStatistics.V005.Core.Services
+namespace Revit26_Plugin_Revised.DwgStatistics.V005.Core.Services
 {
     /// <summary>
     /// Writes a minimal but valid .xlsx (Office Open XML) workbook with only System.IO.Compression,

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V006.Revit
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V006.Revit
 {
     /// <summary>
     /// Removes plain warnings (e.g. "Line is slightly off axis", which a nearly-orthogonal roof

@@ -11,11 +11,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.IslandRoofSplitter.V001.Core.Models;
-using Revit26_Plugin.IslandRoofSplitter.V001.Infrastructure.Helpers;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.IslandRoofSplitter.V001.Core.Models;
+using Revit26_Plugin_Revised.IslandRoofSplitter.V001.Infrastructure.Helpers;
+using Revit26_Plugin_Revised.Shared.Services;
 
-namespace Revit26_Plugin.IslandRoofSplitter.V001.Infrastructure.ExternalEvents
+namespace Revit26_Plugin_Revised.IslandRoofSplitter.V001.Infrastructure.ExternalEvents
 {
     public sealed class IslandRoofSplitterEventHandler : IExternalEventHandler
     {

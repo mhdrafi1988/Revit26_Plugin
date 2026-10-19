@@ -6,9 +6,9 @@ using System.IO;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.ExportDwgToFolder.V004.Core.Models;
+using Revit26_Plugin_Revised.ExportDwgToFolder.V004.Core.Models;
 
-namespace Revit26_Plugin.ExportDwgToFolder.V004.UI.ViewModels
+namespace Revit26_Plugin_Revised.ExportDwgToFolder.V004.UI.ViewModels
 {
     /// <summary>One selectable action in a review row's Action combo.</summary>
     public class PostExportActionChoice

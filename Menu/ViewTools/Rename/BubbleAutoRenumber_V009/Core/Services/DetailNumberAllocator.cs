@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.BubbleAutoRenumber.V009.Core.Services
+namespace Revit26_Plugin_Revised.BubbleAutoRenumber.V009.Core.Services
 {
     /// <summary>
     /// Hands out detail numbers that are unique on the sheet, and the temporary

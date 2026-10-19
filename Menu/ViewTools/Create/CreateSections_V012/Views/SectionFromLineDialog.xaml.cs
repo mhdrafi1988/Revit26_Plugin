@@ -5,9 +5,9 @@ using System.Windows;
 using System.Windows.Input;
 using Autodesk.Revit.UI;
 using Microsoft.Win32;
-using Revit26_Plugin.CreateSections.V012.ViewModels;
+using Revit26_Plugin_Revised.CreateSections.V012.ViewModels;
 
-namespace Revit26_Plugin.CreateSections.V012.Views.SectionFromLineDialog
+namespace Revit26_Plugin_Revised.CreateSections.V012.Views.SectionFromLineDialog
 {
     /// <summary>
     /// Interaction logic for SectionFromLineDialog.xaml. View wiring only.

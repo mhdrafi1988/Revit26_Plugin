@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace Revit26_Plugin.WorksetRenamer.FX05.ViewModels
+namespace Revit26_Plugin_Revised.WorksetRenamer.FX05.ViewModels
 {
     /// <summary>
     /// Converts a <see cref="RowRenameStatus"/> to a status-dot/text brush.

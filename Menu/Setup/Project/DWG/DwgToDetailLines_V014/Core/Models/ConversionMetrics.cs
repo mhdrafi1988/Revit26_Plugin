@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.DwgToDetailLines.V014.Core.Models
+namespace Revit26_Plugin_Revised.DwgToDetailLines.V014.Core.Models
 {
     /// <summary>
     /// Backs the Metrics Card in the UI.

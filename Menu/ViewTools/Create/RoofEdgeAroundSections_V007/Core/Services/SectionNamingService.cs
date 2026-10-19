@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.RoofEdgeAroundSections.V007
+namespace Revit26_Plugin_Revised.RoofEdgeAroundSections.V007
 {
     /// <summary>
     /// Builds section view names from the user-configured token pattern (Zone, Level,

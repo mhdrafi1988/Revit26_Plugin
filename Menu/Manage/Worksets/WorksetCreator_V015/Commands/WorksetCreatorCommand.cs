@@ -14,12 +14,12 @@
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.Shared.Services;
-using Revit26_Plugin.WorksetCreator.V015.UI.ViewModels;
-using Revit26_Plugin.WorksetCreator.V015.UI.Views;
+using Revit26_Plugin_Revised.Shared.Services;
+using Revit26_Plugin_Revised.WorksetCreator.V015.UI.ViewModels;
+using Revit26_Plugin_Revised.WorksetCreator.V015.UI.Views;
 using System.Windows.Interop;
 
-namespace Revit26_Plugin.WorksetCreator.V015.Commands
+namespace Revit26_Plugin_Revised.WorksetCreator.V015.Commands
 {
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]

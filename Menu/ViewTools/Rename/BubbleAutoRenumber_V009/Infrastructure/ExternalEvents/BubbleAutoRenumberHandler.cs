@@ -1,12 +1,12 @@
 using System;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.BubbleAutoRenumber.V009.Core.Models;
-using Revit26_Plugin.BubbleAutoRenumber.V009.Core.Services;
-using Revit26_Plugin.BubbleAutoRenumber.V009.Infrastructure.Helpers;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.BubbleAutoRenumber.V009.Core.Models;
+using Revit26_Plugin_Revised.BubbleAutoRenumber.V009.Core.Services;
+using Revit26_Plugin_Revised.BubbleAutoRenumber.V009.Infrastructure.Helpers;
+using Revit26_Plugin_Revised.Shared.Services;
 
-namespace Revit26_Plugin.BubbleAutoRenumber.V009.Infrastructure.ExternalEvents
+namespace Revit26_Plugin_Revised.BubbleAutoRenumber.V009.Infrastructure.ExternalEvents
 {
     /// <summary>
     /// Does the model mutation on Revit's API thread: re-reads the sheet, plans the

@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Revit26_Plugin.RoofRidgeLines.V070.Converters
+namespace Revit26_Plugin_Revised.RoofRidgeLines.V070.Converters
 {
     /// <summary>
     /// Shows an element only when the bound integer count is zero — used to display the

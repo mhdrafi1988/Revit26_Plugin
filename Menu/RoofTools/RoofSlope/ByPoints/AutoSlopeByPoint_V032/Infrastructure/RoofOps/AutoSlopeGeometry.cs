@@ -1,6 +1,6 @@
 // =======================================================
 // File: AutoSlopeGeometry.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.RoofOps
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.RoofOps
 // Moved from V030 Core/Engine (it uses the Revit API, so it belongs in
 // Infrastructure). Changes:
 //   - GetClosestLoopIndex measures in plan (XY): the point is projected at
@@ -12,7 +12,7 @@
 using System.Collections.Generic;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.RoofOps
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.RoofOps
 {
     internal static class AutoSlopeGeometry
     {

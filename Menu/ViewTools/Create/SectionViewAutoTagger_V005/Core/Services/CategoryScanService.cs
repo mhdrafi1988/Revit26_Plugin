@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.SectionViewAutoTagger.V005
+namespace Revit26_Plugin_Revised.SectionViewAutoTagger.V005
 {
     /// <summary>
     /// Scans the currently-checked section view(s) for model categories with

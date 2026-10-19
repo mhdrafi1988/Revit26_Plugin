@@ -1,9 +1,9 @@
 using System.IO;
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Revit26_Plugin.ExportDwgToFolder.V004.Core.Models;
+using Revit26_Plugin_Revised.ExportDwgToFolder.V004.Core.Models;
 
-namespace Revit26_Plugin.ExportDwgToFolder.V004.UI.ViewModels
+namespace Revit26_Plugin_Revised.ExportDwgToFolder.V004.UI.ViewModels
 {
     /// <summary>Status of one scanned DWG row.</summary>
     public enum DwgRowStatus

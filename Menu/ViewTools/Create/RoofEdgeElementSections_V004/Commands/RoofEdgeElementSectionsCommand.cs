@@ -2,9 +2,9 @@ using System;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.Utilities;
+using Revit26_Plugin_Revised.Utilities;
 
-namespace Revit26_Plugin.RoofEdgeElementSections.V004
+namespace Revit26_Plugin_Revised.RoofEdgeElementSections.V004
 {
     /// <summary>
     /// Entry point: no pre-launch selection is required (per confirmed spec) —

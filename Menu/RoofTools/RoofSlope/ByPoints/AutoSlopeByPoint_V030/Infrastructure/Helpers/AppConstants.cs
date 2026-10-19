@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.AutoSlopeByPoint.V030.Infrastructure.Helpers
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V030.Infrastructure.Helpers
 {
     public static class AppConstants
     {

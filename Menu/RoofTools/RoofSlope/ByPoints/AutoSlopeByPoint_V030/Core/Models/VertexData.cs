@@ -11,7 +11,7 @@
 using Autodesk.Revit.DB;
 using System;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V030.Core.Models
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V030.Core.Models
 {
     public class VertexData
     {

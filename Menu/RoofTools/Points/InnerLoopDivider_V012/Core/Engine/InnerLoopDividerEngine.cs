@@ -9,13 +9,13 @@
 
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.InnerLoopDivider.V012.Core.Models;
-using Revit26_Plugin.InnerLoopDivider.V012.Infrastructure.Revit;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.InnerLoopDivider.V012.Core.Models;
+using Revit26_Plugin_Revised.InnerLoopDivider.V012.Infrastructure.Revit;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Linq;
 
-namespace Revit26_Plugin.InnerLoopDivider.V012.Core.Engine
+namespace Revit26_Plugin_Revised.InnerLoopDivider.V012.Core.Engine
 {
     public static class InnerLoopDividerEngine
     {

@@ -1,7 +1,7 @@
 using Autodesk.Revit.DB;
 using System;
 
-namespace Revit26_Plugin.CalloutCOP.V020.Helpers
+namespace Revit26_Plugin_Revised.CalloutCOP.V020.Helpers
 {
     public static class RevitViewValidator
     {

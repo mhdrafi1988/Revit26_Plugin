@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.RoofPointElevationSync.V005
+namespace Revit26_Plugin_Revised.RoofPointElevationSync.V005
 {
     /// <summary>Persisted to %AppData%\Revit26_Plugin\RoofPointElevationSync\settings.json</summary>
     public class RoofSyncSettings

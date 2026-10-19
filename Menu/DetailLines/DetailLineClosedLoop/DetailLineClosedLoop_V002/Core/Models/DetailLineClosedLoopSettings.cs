@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.DetailLineClosedLoop.V002.Core.Models
+namespace Revit26_Plugin_Revised.DetailLineClosedLoop.V002.Core.Models
 {
     /// <summary>
     /// Persisted settings for DetailLineClosedLoop, serialized via System.Text.Json to

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.RoofTypeCreator.V003.Core.Models
+namespace Revit26_Plugin_Revised.RoofTypeCreator.V003.Core.Models
 {
     public class ImportPreviewItem : System.ComponentModel.INotifyPropertyChanged
     {

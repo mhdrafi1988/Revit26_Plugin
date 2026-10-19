@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.TaperedEpsPattern2D.V004.Core.Pattern
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V004.Core.Pattern
 {
     /// <summary>The part of the roof that drains to outline edge <see cref="EdgeIndex"/>.</summary>
     public sealed class SlopeFace

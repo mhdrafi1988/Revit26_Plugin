@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V006.Views
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V006.Views
 {
     /// <summary>Legend swatches: "#RRGGBB" (slot colour from data) → brush.</summary>
     public sealed class HexToBrushConverter : IValueConverter

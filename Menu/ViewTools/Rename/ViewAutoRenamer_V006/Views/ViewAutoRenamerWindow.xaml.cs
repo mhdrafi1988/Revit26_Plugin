@@ -1,13 +1,13 @@
-using Revit26_Plugin.ViewAutoRenamer.V006.ViewModels;
+using Revit26_Plugin_Revised.ViewAutoRenamer.V006.ViewModels;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Linq;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.Shared.Services;
 
-namespace Revit26_Plugin.ViewAutoRenamer.V006.Views;
+namespace Revit26_Plugin_Revised.ViewAutoRenamer.V006.Views;
 
 public partial class ViewsListWindow : Window
 {

@@ -1,6 +1,6 @@
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.SectionViewAutoTagger.V005
+namespace Revit26_Plugin_Revised.SectionViewAutoTagger.V005
 {
     /// <summary>
     /// Outcome for one element's tag placement attempt.

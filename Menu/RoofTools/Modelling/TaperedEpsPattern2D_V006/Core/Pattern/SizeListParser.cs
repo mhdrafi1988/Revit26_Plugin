@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V006.Core.Pattern
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V006.Core.Pattern
 {
     /// <summary>Parses "1.0x0.6; 1.2x0.6, 1.0×1.0" (separators ; , space; x × * between sizes).</summary>
     public static class SizeListParser

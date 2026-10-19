@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.DtlLineDim.V009.Infrastructure.ExternalEvents
+namespace Revit26_Plugin_Revised.DtlLineDim.V009.Infrastructure.ExternalEvents
 {
     /// <summary>
     /// Identifies which Revit-side action the external event handler should perform.

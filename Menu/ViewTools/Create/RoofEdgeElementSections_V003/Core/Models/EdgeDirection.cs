@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.RoofEdgeElementSections.V003
+namespace Revit26_Plugin_Revised.RoofEdgeElementSections.V003
 {
     /// <summary>
     /// The 4 view-aligned bounding-box sides used to bucket roof boundary edges.

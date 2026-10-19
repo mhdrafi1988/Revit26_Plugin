@@ -1,7 +1,7 @@
 using Autodesk.Revit.DB;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.ViewAutoRenamer.V005.Models;
+namespace Revit26_Plugin_Revised.ViewAutoRenamer.V005.Models;
 
 /// <summary>
 /// What a single Load pass should pull out of the model.

@@ -1,6 +1,6 @@
 // =======================================================
 // File: DrainSettingsStore.cs
-// Namespace: Revit26_Plugin.MultiRoofSlopeByDrain.V013.Infrastructure.Helpers
+// Namespace: Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Infrastructure.Helpers
 // Changes vs V012 (SettingsService.cs):
 //   - Renamed so it cannot clash with Shared.Services.SettingsService.
 //   - New file: %AppData%\Revit26_Plugin\AutoSlopeByDrain\settings.v013.json
@@ -15,7 +15,7 @@ using System;
 using System.IO;
 using System.Text.Json;
 
-namespace Revit26_Plugin.MultiRoofSlopeByDrain.V013.Infrastructure.Helpers
+namespace Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Infrastructure.Helpers
 {
     /// <summary>Persisted by Line Style NAME, not ElementId (ids are project-specific).</summary>
     public class CircleMarkerGroupSettings

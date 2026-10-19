@@ -4,9 +4,9 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Revit26_Plugin.DwgStatistics.V005.Core.Models;
+using Revit26_Plugin_Revised.DwgStatistics.V005.Core.Models;
 
-namespace Revit26_Plugin.DwgStatistics.V005.UI.ViewModels
+namespace Revit26_Plugin_Revised.DwgStatistics.V005.UI.ViewModels
 {
     /// <summary>
     /// One row of the file grid: the statistics of one DWG file, flattened for binding and sorting,

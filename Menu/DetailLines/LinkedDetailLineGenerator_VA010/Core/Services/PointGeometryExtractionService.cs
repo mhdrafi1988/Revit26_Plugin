@@ -1,7 +1,7 @@
 using System;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.LinkedDetailLineGenerator.VA010.Core.Services
+namespace Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA010.Core.Services
 {
     /// <summary>Outcome of extracting a Point-group element's location.</summary>
     public class PointExtractionResult

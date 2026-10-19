@@ -1,6 +1,6 @@
 // =======================================================
 // File: DialogService.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.Helpers
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.Helpers
 // Folder / save dialogs, the "open it now?" prompt, and a guarded file
 // open. V030 opened files in two places and only one was guarded (B9).
 // =======================================================
@@ -9,7 +9,7 @@ using System;
 using System.Diagnostics;
 using Autodesk.Revit.UI;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.Helpers
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.Helpers
 {
     public static class DialogService
     {

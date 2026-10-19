@@ -5,9 +5,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.TaperedEpsPattern2D.V006.Core.Pattern;
+using Revit26_Plugin_Revised.TaperedEpsPattern2D.V006.Core.Pattern;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V006.ViewModels
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V006.ViewModels
 {
     /// <summary>
     /// Board size comparison: lays the roof with each listed size (current settings) in the background

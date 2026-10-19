@@ -9,7 +9,7 @@
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.InnerLoopsAndPerpendicular.V006.Core.Models
+namespace Revit26_Plugin_Revised.InnerLoopsAndPerpendicular.V006.Core.Models
 {
     /// <summary>
     /// Represents one side of a selected 4-sided (rectangular) inner loop and the

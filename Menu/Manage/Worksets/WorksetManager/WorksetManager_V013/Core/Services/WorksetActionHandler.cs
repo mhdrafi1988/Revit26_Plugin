@@ -1,7 +1,7 @@
 using Autodesk.Revit.UI;
 using System;
 
-namespace Revit26_Plugin.WorksetManager.V013.Core.Services
+namespace Revit26_Plugin_Revised.WorksetManager.V013.Core.Services
 {
     public sealed class WorksetActionHandler : IExternalEventHandler
     {

@@ -2,11 +2,11 @@ using System;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Threading;
-using Revit26_Plugin.DwgStatistics.V005.Core.Models;
-using Revit26_Plugin.DwgStatistics.V005.UI.ViewModels;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.DwgStatistics.V005.Core.Models;
+using Revit26_Plugin_Revised.DwgStatistics.V005.UI.ViewModels;
+using Revit26_Plugin_Revised.Shared.Services;
 
-namespace Revit26_Plugin.DwgStatistics.V005.UI.Views
+namespace Revit26_Plugin_Revised.DwgStatistics.V005.UI.Views
 {
     /// <summary>
     /// DWG Statistics window; everything is bound to <see cref="DwgStatisticsViewModel"/>. The code-behind

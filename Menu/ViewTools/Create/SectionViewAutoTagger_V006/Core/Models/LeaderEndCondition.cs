@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.SectionViewAutoTagger.V006
+namespace Revit26_Plugin_Revised.SectionViewAutoTagger.V006
 {
     /// <summary>
     /// Global leader-end condition applied to every tag placed in a Run.

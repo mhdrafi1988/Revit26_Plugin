@@ -4,14 +4,14 @@ using System.Linq;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
-using Revit26_Plugin.DetailLineClosedLoop.V002.Core.Engine;
-using Revit26_Plugin.DetailLineClosedLoop.V002.Core.Models;
-using Revit26_Plugin.DetailLineClosedLoop.V002.Core.Services;
-using Revit26_Plugin.DetailLineClosedLoop.V002.Infrastructure.SelectionFilters;
-using Revit26_Plugin.DetailLineClosedLoop.V002.UI.ViewModels;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.DetailLineClosedLoop.V002.Core.Engine;
+using Revit26_Plugin_Revised.DetailLineClosedLoop.V002.Core.Models;
+using Revit26_Plugin_Revised.DetailLineClosedLoop.V002.Core.Services;
+using Revit26_Plugin_Revised.DetailLineClosedLoop.V002.Infrastructure.SelectionFilters;
+using Revit26_Plugin_Revised.DetailLineClosedLoop.V002.UI.ViewModels;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.DetailLineClosedLoop.V002.Infrastructure.ExternalEvents
+namespace Revit26_Plugin_Revised.DetailLineClosedLoop.V002.Infrastructure.ExternalEvents
 {
     /// <summary>
     /// Single handler for both Revit-side actions this tool needs (picking

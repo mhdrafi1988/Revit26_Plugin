@@ -2,10 +2,10 @@ using System;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.RefSectionHeadPlacer.V015.UI.Views;
-using Revit26_Plugin.Utilities;
+using Revit26_Plugin_Revised.RefSectionHeadPlacer.V015.UI.Views;
+using Revit26_Plugin_Revised.Utilities;
 
-namespace Revit26_Plugin.RefSectionHeadPlacer.V015.Commands
+namespace Revit26_Plugin_Revised.RefSectionHeadPlacer.V015.Commands
 {
     /// <summary>
     /// Ribbon entry point (bind a PushButtonData's ClassName to this type).

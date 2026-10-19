@@ -17,11 +17,11 @@
 //      from AutoSlopeDrainResult.Version ("006" default, confirmed by Rafi).
 
 using Autodesk.Revit.DB;
-using Revit26_Plugin.MultiRoofSlopeByDrain.V012.Infrastructure.Helpers;
-using Revit26_Plugin.MultiRoofSlopeByDrain.V012.Core.Models;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V012.Infrastructure.Helpers;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V012.Core.Models;
 using System;
 
-namespace Revit26_Plugin.MultiRoofSlopeByDrain.V012.Core.Parameters
+namespace Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V012.Core.Parameters
 {
     public class AutoSlopeDrainParameterWriter : IParameterWriter
     {

@@ -1,6 +1,6 @@
 // =======================================================
 // File: RidgeEngine.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPointRidge.V003
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPointRidge.V003
 // New in Ridge V001.
 // Purpose:
 //   Finds the roof's ridge points from the drains alone (no manual
@@ -42,7 +42,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.AutoSlopeByPointRidge.V003.Core.Engine
+namespace Revit26_Plugin_Revised.AutoSlopeByPointRidge.V003.Core.Engine
 {
     public static class RidgeEngine
     {

@@ -1,7 +1,7 @@
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.SectionAutoRenamer.V026.ViewModels;
+namespace Revit26_Plugin_Revised.SectionAutoRenamer.V026.ViewModels;
 
 public partial class SectionItemViewModel : ObservableObject
 {

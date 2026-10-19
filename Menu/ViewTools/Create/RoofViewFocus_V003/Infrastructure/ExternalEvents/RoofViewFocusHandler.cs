@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.RoofViewFocus.V003.Core.Models;
-using Revit26_Plugin.RoofViewFocus.V003.Core.Services;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.RoofViewFocus.V003.Core.Models;
+using Revit26_Plugin_Revised.RoofViewFocus.V003.Core.Services;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.RoofViewFocus.V003.Infrastructure.ExternalEvents
+namespace Revit26_Plugin_Revised.RoofViewFocus.V003.Infrastructure.ExternalEvents
 {
     /// <summary>
     /// Runs on Revit's API thread. Focuses the target plan view on the union of the

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.LinkVersionChecker_V005.Core.Models
+namespace Revit26_Plugin_Revised.LinkVersionChecker_V005.Core.Models
 {
     /// <summary>
     /// Whether the copy of an ACC / cloud-sync link we are using is the current one.  [V005]

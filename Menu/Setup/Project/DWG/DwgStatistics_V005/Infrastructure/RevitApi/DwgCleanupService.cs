@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.DwgStatistics.V005.Core.Models;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.DwgStatistics.V005.Core.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.DwgStatistics.V005.Infrastructure.RevitApi
+namespace Revit26_Plugin_Revised.DwgStatistics.V005.Infrastructure.RevitApi
 {
     /// <summary>
     /// The three cleanup actions: Pin All, Reload Links and Purge Unused. Each works on the CAD types

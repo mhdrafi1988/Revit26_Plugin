@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Text.Json;
 
-namespace Revit26_Plugin.RoofEdgeElementSections.V003
+namespace Revit26_Plugin_Revised.RoofEdgeElementSections.V003
 {
     /// <summary>
     /// Loads/saves RoofEdgeElementSectionsSettings to

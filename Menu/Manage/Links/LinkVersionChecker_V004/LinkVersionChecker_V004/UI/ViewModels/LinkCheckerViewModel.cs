@@ -9,9 +9,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.LinkVersionChecker_V004.Core.Models;
-using Revit26_Plugin.LinkVersionChecker_V004.Services;
-using Revit26_Plugin.LinkVersionChecker_V004.UI.Infrastructure;
+using Revit26_Plugin_Revised.LinkVersionChecker_V004.Core.Models;
+using Revit26_Plugin_Revised.LinkVersionChecker_V004.Services;
+using Revit26_Plugin_Revised.LinkVersionChecker_V004.UI.Infrastructure;
 using RevitApp = Autodesk.Revit.ApplicationServices.Application;
 using CollectionViewSource = System.Windows.Data.CollectionViewSource;
 using MsgBox = System.Windows.MessageBox;
@@ -19,7 +19,7 @@ using MsgButton = System.Windows.MessageBoxButton;
 using MsgImage = System.Windows.MessageBoxImage;
 using MsgResult = System.Windows.MessageBoxResult;
 
-namespace Revit26_Plugin.LinkVersionChecker_V004.UI.ViewModels
+namespace Revit26_Plugin_Revised.LinkVersionChecker_V004.UI.ViewModels
 {
     public enum ScanMode { PreOpen, InModel, Folder }
 

@@ -1,6 +1,6 @@
 // =======================================================
 // File: AutoSlopeParameterWriter.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.RoofOps
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.RoofOps
 // Moved from V030 Core/Parameters (Revit API). Same parameters and units
 // as V030 (confirmed 2026-09 standardisation kept):
 //   - slope stored as the raw percent
@@ -12,9 +12,9 @@
 
 using System;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.RoofOps
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.RoofOps
 {
     internal sealed class ParameterWriteOutcome
     {

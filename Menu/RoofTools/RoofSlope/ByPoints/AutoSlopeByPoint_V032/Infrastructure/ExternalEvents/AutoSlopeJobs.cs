@@ -1,6 +1,6 @@
 // =======================================================
 // File: AutoSlopeJobs.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.ExternalEvents
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.ExternalEvents
 // New in V032. One handler runs one of two jobs:
 //   RunJob     — a full AutoSlope run inside one TransactionGroup.
 //                Assimilate ONLY on success; cancel and failure RollBack
@@ -18,11 +18,11 @@ using System.Threading;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.RoofOps;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.RoofOps;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.ExternalEvents
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.ExternalEvents
 {
     public abstract class AutoSlopeJob
     {

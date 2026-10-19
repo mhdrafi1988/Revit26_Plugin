@@ -4,12 +4,12 @@ using System;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Linq;
-using Revit26_Plugin.CalloutCOP.V020.Helpers;
-using Revit26_Plugin.CalloutCOP.V020.Services;
-using Revit26_Plugin.CalloutCOP.V020.ViewModels;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.CalloutCOP.V020.Helpers;
+using Revit26_Plugin_Revised.CalloutCOP.V020.Services;
+using Revit26_Plugin_Revised.CalloutCOP.V020.ViewModels;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.CalloutCOP.V020.ExternalEvents
+namespace Revit26_Plugin_Revised.CalloutCOP.V020.ExternalEvents
 {
     public class CalloutPlacementExternalEvent : IExternalEventHandler
     {

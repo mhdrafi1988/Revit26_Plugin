@@ -1,11 +1,11 @@
-using Revit26_Plugin.ParaManager.V005.ViewModels;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.ParaManager.V005.ViewModels;
+using Revit26_Plugin_Revised.Shared.Models;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace Revit26_Plugin.ParaManager.V005.Views
+namespace Revit26_Plugin_Revised.ParaManager.V005.Views
 {
     /// <summary>
     /// Code-behind for the ParaManager modeless tool window.

@@ -1,8 +1,8 @@
 using Autodesk.Revit.DB;
-using Revit26_Plugin.ParaManager.V005.Models;
+using Revit26_Plugin_Revised.ParaManager.V005.Models;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.ParaManager.V005.Services
+namespace Revit26_Plugin_Revised.ParaManager.V005.Services
 {
     /// <summary>
     /// Supplies the category list offered in the multi-select combo.

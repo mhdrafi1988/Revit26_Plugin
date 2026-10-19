@@ -1,6 +1,6 @@
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.DwgToLines.V007.Core.Models
+namespace Revit26_Plugin_Revised.DwgToLines.V007.Core.Models
 {
     public class CadImportItem
     {

@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.TaperedEpsPattern2D.V001.Core.Pattern
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V001.Core.Pattern
 {
     /// <summary>One closed thickness contour (convex, CCW) at <see cref="ThicknessMm"/>.</summary>
     public sealed class ContourLoop

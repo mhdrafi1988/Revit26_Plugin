@@ -1,6 +1,6 @@
 using Autodesk.Revit.UI;
 
-namespace Revit26_Plugin.DwgToLines.V007.Infrastructure.Helpers
+namespace Revit26_Plugin_Revised.DwgToLines.V007.Infrastructure.Helpers
 {
     /// <summary>
     /// Centralized validation for Revit execution context.

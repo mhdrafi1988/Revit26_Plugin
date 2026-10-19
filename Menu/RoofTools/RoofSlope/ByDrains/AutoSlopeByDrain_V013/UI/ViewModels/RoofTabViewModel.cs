@@ -1,6 +1,6 @@
 ﻿// =======================================================
 // File: RoofTabViewModel.cs
-// Namespace: Revit26_Plugin.MultiRoofSlopeByDrain.V013.UI.ViewModels
+// Namespace: Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.UI.ViewModels
 // One tab per picked roof: the detected-drains grid, its size filter and
 // selection commands, and (after Run) that roof's status and results.
 // Changes vs V012:
@@ -19,15 +19,15 @@
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.MultiRoofSlopeByDrain.V013.Core.Models;
-using Revit26_Plugin.MultiRoofSlopeByDrain.V013.Core.Services;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Core.Models;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Core.Services;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
 
-namespace Revit26_Plugin.MultiRoofSlopeByDrain.V013.UI.ViewModels
+namespace Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.UI.ViewModels
 {
     public enum RoofTabStatus
     {

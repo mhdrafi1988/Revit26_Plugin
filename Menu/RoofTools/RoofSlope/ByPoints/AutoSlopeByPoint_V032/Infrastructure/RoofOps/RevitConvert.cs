@@ -1,14 +1,14 @@
 // =======================================================
 // File: RevitConvert.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.RoofOps
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.RoofOps
 // New in V032: the one place Revit types meet Core types, plus unit
 // helpers so call sites read "MmToFt(500)" instead of UnitUtils chains.
 // =======================================================
 
 using Autodesk.Revit.DB;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.RoofOps
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.RoofOps
 {
     internal static class RevitConvert
     {

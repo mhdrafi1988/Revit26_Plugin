@@ -1,7 +1,7 @@
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.LinkedDetailLineGenerator.VA009.Core.Models
+namespace Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA009.Core.Models
 {
     /// <summary>
     /// UI-bindable wrapper around a single RevitLinkInstance found in the host document.

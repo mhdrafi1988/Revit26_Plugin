@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.Infrastructure.Helpers
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30.Infrastructure.Helpers
 {
     public static class AppConstants
     {

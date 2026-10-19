@@ -1,5 +1,5 @@
 // File: PlacementProgressViewModel.cs
-namespace Revit26_Plugin.APUS.V324.ViewModels
+namespace Revit26_Plugin_Revised.APUS.V324.ViewModels
 {
     public class PlacementProgressViewModel : BaseViewModel
     {

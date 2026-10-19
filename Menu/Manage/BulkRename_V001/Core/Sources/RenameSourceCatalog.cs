@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.BulkRename.V001.Core.Sources
+namespace Revit26_Plugin_Revised.BulkRename.V001.Core.Sources
 {
     /// <summary>The kinds of item Bulk Rename offers. Add a new <see cref="RenameSource"/> here to show it.</summary>
     public static class RenameSourceCatalog

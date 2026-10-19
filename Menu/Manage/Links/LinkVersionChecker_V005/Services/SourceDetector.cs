@@ -5,9 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using Revit26_Plugin.LinkVersionChecker_V005.Core.Models;
+using Revit26_Plugin_Revised.LinkVersionChecker_V005.Core.Models;
 
-namespace Revit26_Plugin.LinkVersionChecker_V005.Services
+namespace Revit26_Plugin_Revised.LinkVersionChecker_V005.Services
 {
     /// <summary>What a file-system path turned out to be.</summary>
     public sealed class SourceFacts

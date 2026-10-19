@@ -15,13 +15,13 @@ from the model — a mixed Link+Import batch gets Imports-only / Links-only / Al
 V003: version bump of V002 (new folder + namespace); no behaviour change.
 =======================================================
 -->
-<Window x:Class="Revit26_Plugin.ExportDwgToFolder.V003.UI.Views.ExportDwgToFolderWindow"
+<Window x:Class="Revit26_Plugin_Revised.ExportDwgToFolder.V003.UI.Views.ExportDwgToFolderWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
-        xmlns:svc="clr-namespace:Revit26_Plugin.Shared.Services"
-        xmlns:vm="clr-namespace:Revit26_Plugin.ExportDwgToFolder.V003.UI.ViewModels"
-        xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
+        xmlns:shell="clr-namespace:Revit26_Plugin_Revised.Shared.Controls"
+        xmlns:svc="clr-namespace:Revit26_Plugin_Revised.Shared.Services"
+        xmlns:vm="clr-namespace:Revit26_Plugin_Revised.ExportDwgToFolder.V003.UI.ViewModels"
+        xmlns:converters="clr-namespace:Revit26_Plugin_Revised.Shared.Models"
         Title="Export DWG to Folder"
         Width="920" Height="840"
         MinWidth="920" MinHeight="840"

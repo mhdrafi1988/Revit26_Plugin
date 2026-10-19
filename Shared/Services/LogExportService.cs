@@ -1,4 +1,4 @@
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 
-namespace Revit26_Plugin.Shared.Services
+namespace Revit26_Plugin_Revised.Shared.Services
 {
     /// <summary>Writes a tool's log panel to a .txt file at a caller-chosen folder.</summary>
     public static class LogExportService

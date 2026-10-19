@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.DetailLineClosedLoop.V003.Core.Geometry;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.DetailLineClosedLoop.V003.Core.Geometry;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.DetailLineClosedLoop.V003.Core.Services
+namespace Revit26_Plugin_Revised.DetailLineClosedLoop.V003.Core.Services
 {
     /// <summary>
     /// Step 6 — repeatedly pairs the nearest two remaining loose ends

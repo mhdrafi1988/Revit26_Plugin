@@ -1,6 +1,6 @@
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.CalloutCOP.V020.Helpers
+namespace Revit26_Plugin_Revised.CalloutCOP.V020.Helpers
 {
     /// <summary>
     /// Suppresses expected, non-critical warnings (e.g. overlapping crop regions)

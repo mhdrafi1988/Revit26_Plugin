@@ -1,10 +1,10 @@
 using Autodesk.Revit.DB;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Revit26_Plugin.CalloutCOP.V021.Helpers;
-using Revit26_Plugin.CalloutCOP.V021.ViewModels;
+using Revit26_Plugin_Revised.CalloutCOP.V021.Helpers;
+using Revit26_Plugin_Revised.CalloutCOP.V021.ViewModels;
 
-namespace Revit26_Plugin.CalloutCOP.V021.Services
+namespace Revit26_Plugin_Revised.CalloutCOP.V021.Services
 {
     public static class ViewCollectionService
     {

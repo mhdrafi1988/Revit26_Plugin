@@ -7,8 +7,9 @@
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<PackageId />
 		<AssemblyName>Revit26_Plugin</AssemblyName>
+		<RootNamespace>Revit26_Plugin_Revised</RootNamespace>
 		<!-- Plugin version (SemVer). Per-tool versions live in Shared/Services/ToolCatalog.cs. -->
-		<Version>3.10.2</Version>
+		<Version>4.0.0</Version>
 		<BaseOutputPath>C:\Users\Rafi\source\repos\Revit26_Plugin\bin\51</BaseOutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -48,6 +49,11 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Resource Include="Shared\SharedStyles.xaml" />
+	</ItemGroup>
+	<ItemGroup>
+	  <!-- Ribbon icons, loaded by ImageUtils.Load as "Revit26_Plugin_Revised.Resources.Icons.<Category>.<file>.png". -->
+	  <None Remove="Resources\Icons\**\*.png" />
+	  <EmbeddedResource Include="Resources\Icons\**\*.png" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Update="Properties\Resources.Designer.cs">

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V002.Revit
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V002.Revit
 {
     /// <summary>Collects text note types; the document default is listed first.</summary>
     public static class TextNoteTypeProvider

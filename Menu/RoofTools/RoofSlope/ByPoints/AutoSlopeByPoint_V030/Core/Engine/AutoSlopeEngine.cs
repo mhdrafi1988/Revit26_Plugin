@@ -1,6 +1,6 @@
 // =======================================================
 // File: AutoSlopeEngine.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V030
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V030
 // Changes vs V06:
 //   - LogColorHelper removed entirely.
 //   - All data.Log() calls now emit new LogEntry(LogLevel.X, "...")
@@ -9,15 +9,15 @@
 
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.AutoSlopeByPoint.V030.Core.Models;
-using Revit26_Plugin.AutoSlopeByPoint.V030.Core.Parameters;
-using Revit26_Plugin.AutoSlopeByPoint.V030.Infrastructure.Helpers;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V030.Core.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V030.Core.Parameters;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V030.Infrastructure.Helpers;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V030.Core.Engine
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V030.Core.Engine
 {
     public static class AutoSlopeEngine
     {

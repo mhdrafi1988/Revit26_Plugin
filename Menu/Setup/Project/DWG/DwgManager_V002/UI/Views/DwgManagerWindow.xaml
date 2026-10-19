@@ -8,11 +8,11 @@ File: DwgManagerWindow.xaml  (DWG Manager V002 — ToolWindowShell)
   FOOTER  Delete Selected (left, same command as the toolbar button) · Open Views, Close (right)
 =======================================================
 -->
-<Window x:Class="Revit26_Plugin.DwgManager.V002.UI.Views.DwgManagerWindow"
+<Window x:Class="Revit26_Plugin_Revised.DwgManager.V002.UI.Views.DwgManagerWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
-        xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
+        xmlns:converters="clr-namespace:Revit26_Plugin_Revised.Shared.Models"
+        xmlns:shell="clr-namespace:Revit26_Plugin_Revised.Shared.Controls"
         Title="DWG Manager"
         Width="980" Height="760"
         MinWidth="980" MinHeight="760"

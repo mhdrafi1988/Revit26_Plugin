@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Revit26_Plugin.TaperedEpsPattern2D.V006.Core.Pattern;
-using Revit26_Plugin.TaperedEpsPattern2D.V006.Revit;
+using Revit26_Plugin_Revised.TaperedEpsPattern2D.V006.Core.Pattern;
+using Revit26_Plugin_Revised.TaperedEpsPattern2D.V006.Revit;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V006.ViewModels
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V006.ViewModels
 {
     /// <summary>Hatching card: colour-code pieces with filled regions, and where the fill types come from.</summary>
     public sealed partial class HatchingViewModel : ObservableObject

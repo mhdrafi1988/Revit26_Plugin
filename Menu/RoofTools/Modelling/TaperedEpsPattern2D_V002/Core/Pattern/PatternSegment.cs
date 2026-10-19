@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.TaperedEpsPattern2D.V002.Core.Pattern
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V002.Core.Pattern
 {
     /// <summary>One line to be drawn as a detail line, tagged with its layer.</summary>
     public sealed class PatternSegment

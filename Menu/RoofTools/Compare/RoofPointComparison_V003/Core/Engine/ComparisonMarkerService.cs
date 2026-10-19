@@ -1,12 +1,12 @@
 using Autodesk.Revit.DB;
-using Revit26_Plugin.RoofPointComparison.V003.Core.Models;
-using Revit26_Plugin.RoofPointComparison.V003.Infrastructure.Helpers;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.RoofPointComparison.V003.Core.Models;
+using Revit26_Plugin_Revised.RoofPointComparison.V003.Infrastructure.Helpers;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.RoofPointComparison.V003.Core.Engine
+namespace Revit26_Plugin_Revised.RoofPointComparison.V003.Core.Engine
 {
     /// <summary>
     /// Places DetailCurve circles (two half-arcs forming a closed circle, planar

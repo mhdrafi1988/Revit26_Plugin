@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Revit26_Plugin.BubbleAutoRenumber.V009.Core.Models
+namespace Revit26_Plugin_Revised.BubbleAutoRenumber.V009.Core.Models
 {
     /// <summary>What happened to one view during the run.</summary>
     public enum RenumberOutcome

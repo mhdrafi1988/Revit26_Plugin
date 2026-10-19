@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.SmartViewToSheetPlacer.V223.Models
+namespace Revit26_Plugin_Revised.SmartViewToSheetPlacer.V223.Models
 {
     /// <summary>
     /// Represents a single Revit view available for placement, along with its

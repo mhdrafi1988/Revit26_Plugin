@@ -1,12 +1,12 @@
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.BubbleAutoRenumber.V007.Handlers;
-using Revit26_Plugin.BubbleAutoRenumber.V007.Views;
+using Revit26_Plugin_Revised.BubbleAutoRenumber.V007.Handlers;
+using Revit26_Plugin_Revised.BubbleAutoRenumber.V007.Views;
 using System;
-using Revit26_Plugin.Utilities;
+using Revit26_Plugin_Revised.Utilities;
 
-namespace Revit26_Plugin.BubbleAutoRenumber.V007.Commands
+namespace Revit26_Plugin_Revised.BubbleAutoRenumber.V007.Commands
 {
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]

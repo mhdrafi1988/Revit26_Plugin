@@ -9,12 +9,12 @@ using System.Windows;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.RoofViewFocus.V004.Core.Models;
-using Revit26_Plugin.RoofViewFocus.V004.Core.Services;
-using Revit26_Plugin.RoofViewFocus.V004.Infrastructure.ExternalEvents;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.RoofViewFocus.V004.Core.Models;
+using Revit26_Plugin_Revised.RoofViewFocus.V004.Core.Services;
+using Revit26_Plugin_Revised.RoofViewFocus.V004.Infrastructure.ExternalEvents;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.RoofViewFocus.V004.UI.ViewModels
+namespace Revit26_Plugin_Revised.RoofViewFocus.V004.UI.ViewModels
 {
     /// <summary>
     /// Window state for Roof View Focus. No Revit API types here â€” the Revit-side work

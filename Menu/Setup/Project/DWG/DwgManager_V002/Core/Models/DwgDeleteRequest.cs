@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.DwgManager.V002.Core.Models
+namespace Revit26_Plugin_Revised.DwgManager.V002.Core.Models
 {
     /// <summary>
     /// What to delete for one list row: its instances, and whether to purge the CAD type afterwards.

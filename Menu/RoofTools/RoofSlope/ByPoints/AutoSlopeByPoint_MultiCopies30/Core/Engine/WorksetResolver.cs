@@ -1,6 +1,6 @@
 // =======================================================
 // File: WorksetResolver.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.MultiCopies30
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30
 // Purpose: Resolve (or create) the user-workset that a slope-variant
 //          roof copy belongs to. Called from within MultiSlopeVariantEngine's
 //          per-slope SubTransaction — Workset.Create requires an open
@@ -10,7 +10,7 @@
 using Autodesk.Revit.DB;
 using System.Linq;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.Core.Engine
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30.Core.Engine
 {
     public static class WorksetResolver
     {

@@ -1,6 +1,6 @@
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.CreateSections.V013.Models
+namespace Revit26_Plugin_Revised.CreateSections.V013.Models
 {
     /// <summary>
     /// Immutable snapshot of user-defined creation settings. UI-independent.

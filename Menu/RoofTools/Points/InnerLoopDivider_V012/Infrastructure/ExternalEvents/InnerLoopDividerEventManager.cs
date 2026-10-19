@@ -1,6 +1,6 @@
 using Autodesk.Revit.UI;
 
-namespace Revit26_Plugin.InnerLoopDivider.V012.Infrastructure.ExternalEvents
+namespace Revit26_Plugin_Revised.InnerLoopDivider.V012.Infrastructure.ExternalEvents
 {
     /// <summary>One handler + one ExternalEvent for the tool, created once (repo-wide pattern: Init() from the ViewModel).</summary>
     public static class InnerLoopDividerEventManager

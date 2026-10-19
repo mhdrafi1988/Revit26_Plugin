@@ -26,17 +26,17 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
-using Revit26_Plugin.MultiRoofSlopeByDrain.V012.Core.Models;
-using Revit26_Plugin.MultiRoofSlopeByDrain.V012.Core.Services;
-using Revit26_Plugin.MultiRoofSlopeByDrain.V012.UI.ViewModels;
-using Revit26_Plugin.MultiRoofSlopeByDrain.V012.UI.Views;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V012.Core.Models;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V012.Core.Services;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V012.UI.ViewModels;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V012.UI.Views;
+using Revit26_Plugin_Revised.Shared.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Interop;
-using Revit26_Plugin.Utilities;
+using Revit26_Plugin_Revised.Utilities;
 
-namespace Revit26_Plugin.MultiRoofSlopeByDrain.V012.Commands
+namespace Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V012.Commands
 {
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]

@@ -2,9 +2,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Revit26_Plugin.DetailLineClosedLoop.V002.UI.ViewModels;
+using Revit26_Plugin_Revised.DetailLineClosedLoop.V002.UI.ViewModels;
 
-namespace Revit26_Plugin.DetailLineClosedLoop.V002.UI.Views
+namespace Revit26_Plugin_Revised.DetailLineClosedLoop.V002.UI.Views
 {
     public partial class DetailLineClosedLoopWindow : Window
     {

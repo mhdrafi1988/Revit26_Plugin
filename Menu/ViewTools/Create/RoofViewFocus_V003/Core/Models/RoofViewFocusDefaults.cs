@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.RoofViewFocus.V003.Core.Models
+namespace Revit26_Plugin_Revised.RoofViewFocus.V003.Core.Models
 {
     /// <summary>Tool-level constants. Pure .NET — no Revit API.</summary>
     public static class RoofViewFocusDefaults

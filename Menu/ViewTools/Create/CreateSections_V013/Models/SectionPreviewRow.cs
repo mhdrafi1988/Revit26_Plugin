@@ -1,7 +1,7 @@
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.CreateSections.V013.Models
+namespace Revit26_Plugin_Revised.CreateSections.V013.Models
 {
     /// <summary>
     /// V009: new. One row in the "Sections To Create" preview grid —

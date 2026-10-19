@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V058.Models
+namespace Revit26_Plugin_Revised.RoofTools.LineAndPoints.RoofRidgeLines.V058.Models
 {
     /// <summary>
     /// Holds the equidistance validation result for a single generated ridge shape point.

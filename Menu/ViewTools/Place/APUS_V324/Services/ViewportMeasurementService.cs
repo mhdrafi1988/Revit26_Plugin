@@ -1,8 +1,8 @@
 // File: ViewportMeasurementService.cs
 using Autodesk.Revit.DB;
-using Revit26_Plugin.APUS.V324.Models;
+using Revit26_Plugin_Revised.APUS.V324.Models;
 
-namespace Revit26_Plugin.APUS.V324.Services
+namespace Revit26_Plugin_Revised.APUS.V324.Services
 {
     /// <summary>
     /// Replaces V320's ViewSizeService. V320 computed footprint from

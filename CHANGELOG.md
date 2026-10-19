@@ -9,6 +9,32 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [4.0.0] — 2026-10-19
+
+### Changed
+- **Root namespace renamed `Revit26_Plugin` → `Revit26_Plugin_Revised`** across all C# and XAML
+  (`namespace`/`using` declarations, `x:Class`, `clr-namespace:`, and the command class names the
+  ribbon passes to `PushButtonData`). The add-in entry class is now `Revit26_Plugin_Revised.App`,
+  and the installer scripts write that `FullClassName` into the `.addin` manifest.
+- **Project `<RootNamespace>` set to `Revit26_Plugin_Revised`**, so new files get the new namespace
+  and embedded-resource names move with it: icon paths passed to `ImageUtils.Load` now start with
+  `Revit26_Plugin_Revised.Resources.…`, and `Properties.Resources` loads
+  `Revit26_Plugin_Revised.Properties.Resources`.
+- Unchanged on purpose: the assembly name (`Revit26_Plugin.dll`), `pack://…/Revit26_Plugin;component`
+  URIs, and the `%AppData%\Revit26_Plugin` / `Documents\Revit26_Plugin` settings and log folders, so
+  existing settings and logs still load. No tool versions changed.
+
+### Fixed
+- **Ribbon icons are embedded again** — the `.csproj` clean-up in an earlier release dropped every
+  `<EmbeddedResource>` line for `Resources/Icons/*.png`, so `ImageUtils.Load` could not find the
+  ribbon icons. All PNGs under `Resources/Icons/` are now embedded through one wildcard; a new icon
+  only needs to be dropped in its category folder.
+
+**User note (breaking):** reinstall with the updated installer, or edit an existing `.addin` file so
+`FullClassName` reads `Revit26_Plugin_Revised.App`; a manifest still pointing at
+`Revit26_Plugin.App` will fail to load. Keyboard shortcuts and Quick Access Toolbar entries are keyed
+to command class names and must be re-assigned.
+
 ## [3.10.2] — 2026-10-19
 
 ### Fixed

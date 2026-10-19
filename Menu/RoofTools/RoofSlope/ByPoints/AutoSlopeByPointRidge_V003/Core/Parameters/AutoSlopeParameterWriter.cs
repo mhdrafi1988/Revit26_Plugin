@@ -9,11 +9,11 @@
 // =======================================================
 
 using Autodesk.Revit.DB;
-using Revit26_Plugin.AutoSlopeByPointRidge.V003.Core.Models;
-using Revit26_Plugin.AutoSlopeByPointRidge.V003.Infrastructure.Helpers;
+using Revit26_Plugin_Revised.AutoSlopeByPointRidge.V003.Core.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPointRidge.V003.Infrastructure.Helpers;
 using System;
 
-namespace Revit26_Plugin.AutoSlopeByPointRidge.V003.Core.Parameters
+namespace Revit26_Plugin_Revised.AutoSlopeByPointRidge.V003.Core.Parameters
 {
     public static class AutoSlopeParameterWriter
     {
@@ -131,8 +131,8 @@ namespace Revit26_Plugin.AutoSlopeByPointRidge.V003.Core.Parameters
                 tx.Commit();
             }
 
-            data?.Log?.Invoke(new Revit26_Plugin.Shared.Models.LogEntry(
-                Revit26_Plugin.Shared.Models.LogLevel.Info,
+            data?.Log?.Invoke(new Revit26_Plugin_Revised.Shared.Models.LogEntry(
+                Revit26_Plugin_Revised.Shared.Models.LogLevel.Info,
                 $"AutoSlope Parameters: {successCount} updated, {failCount} skipped"));
 
             return statusValue;

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.RoofRidgeLines.V069.Models
+namespace Revit26_Plugin_Revised.RoofRidgeLines.V069.Models
 {
     /// <summary>
     /// Aggregates all computed outputs from the Voronoi ridge generation pipeline.

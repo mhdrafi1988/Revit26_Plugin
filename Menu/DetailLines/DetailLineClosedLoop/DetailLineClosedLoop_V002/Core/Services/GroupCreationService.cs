@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.DetailLineClosedLoop.V002.Core.Services
+namespace Revit26_Plugin_Revised.DetailLineClosedLoop.V002.Core.Services
 {
     /// <summary>Groups newly-drawn detail lines, resolving duplicate group names with an incremental numeric suffix. Must run inside an open Transaction.</summary>
     public static class GroupCreationService

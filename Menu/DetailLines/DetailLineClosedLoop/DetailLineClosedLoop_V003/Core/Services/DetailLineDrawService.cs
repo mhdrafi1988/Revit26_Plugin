@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.DetailLineClosedLoop.V003.Core.Services
+namespace Revit26_Plugin_Revised.DetailLineClosedLoop.V003.Core.Services
 {
     /// <summary>Draws the validated CurveLoop as new Detail Lines/Arcs in the active view. Must run inside an open Transaction.</summary>
     public static class DetailLineDrawService

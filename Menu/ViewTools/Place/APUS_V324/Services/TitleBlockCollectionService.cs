@@ -1,10 +1,10 @@
 // File: TitleBlockCollectionService.cs
 using Autodesk.Revit.DB;
-using Revit26_Plugin.APUS.V324.Models;
+using Revit26_Plugin_Revised.APUS.V324.Models;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.APUS.V324.Services
+namespace Revit26_Plugin_Revised.APUS.V324.Services
 {
     public class TitleBlockCollectionService
     {

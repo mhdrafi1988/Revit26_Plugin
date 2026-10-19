@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.Shared.Models;
-using Revit26_Plugin.AutomatedSectionPlacer.V002.Models;
-using Revit26_Plugin.AutomatedSectionPlacer.V002.Services;
+using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin_Revised.AutomatedSectionPlacer.V002.Models;
+using Revit26_Plugin_Revised.AutomatedSectionPlacer.V002.Services;
 
-namespace Revit26_Plugin.AutomatedSectionPlacer.V002.Infrastructure.ExternalEvents
+namespace Revit26_Plugin_Revised.AutomatedSectionPlacer.V002.Infrastructure.ExternalEvents
 {
     /// <summary>
     /// Requests this tool's orchestrator handler can execute. Set on the

@@ -19,12 +19,12 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
-using Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.UI.Views;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30.UI.Views;
 using System;
 using System.Collections.Generic;
-using Revit26_Plugin.Utilities;
+using Revit26_Plugin_Revised.Utilities;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.Commands
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30.Commands
 
 {
     [Transaction(TransactionMode.Manual)]

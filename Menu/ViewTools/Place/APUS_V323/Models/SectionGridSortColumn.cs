@@ -1,5 +1,5 @@
 // File: Models/SectionGridSortColumn.cs
-namespace Revit26_Plugin.APUS.V323.Models
+namespace Revit26_Plugin_Revised.APUS.V323.Models
 {
     /// <summary>
     /// Columns the Sections DataGrid can be sorted by. Checkbox column is not

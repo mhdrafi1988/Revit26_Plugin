@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.TaperedEpsPattern2D.V001.Core.Pattern
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V001.Core.Pattern
 {
     /// <summary>A text label to place at <see cref="Position"/> (board centroid).</summary>
     public sealed class PatternLabel

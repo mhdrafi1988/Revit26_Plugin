@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V002.Core.Pattern
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V002.Core.Pattern
 {
     /// <summary>
     /// Layer C — thickness contours at h = tmin + n·Δ (n ≥ 1). The loop at h is the outline

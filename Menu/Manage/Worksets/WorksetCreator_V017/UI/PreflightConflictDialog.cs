@@ -14,11 +14,11 @@
 // ==============================================
 
 using Autodesk.Revit.UI;
-using Revit26_Plugin.WorksetCreator.V017.Core.Services;
+using Revit26_Plugin_Revised.WorksetCreator.V017.Core.Services;
 using System;
 using System.Linq;
 
-namespace Revit26_Plugin.WorksetCreator.V017.UI
+namespace Revit26_Plugin_Revised.WorksetCreator.V017.UI
 {
     internal static class PreflightConflictDialog
     {

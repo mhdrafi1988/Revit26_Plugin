@@ -1,8 +1,8 @@
-using Revit26_Plugin.BulkRename.V001.Core.Models;
+using Revit26_Plugin_Revised.BulkRename.V001.Core.Models;
 using System;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.BulkRename.V001.Core.Services
+namespace Revit26_Plugin_Revised.BulkRename.V001.Core.Services
 {
     /// <summary>One row as the validator sees it.</summary>
     public readonly struct NameEntry

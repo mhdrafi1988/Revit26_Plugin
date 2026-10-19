@@ -7,7 +7,7 @@
 using System.Collections.Generic;
 using RevitColor = Autodesk.Revit.DB.Color;
 
-namespace Revit26_Plugin.AutoSlopeByDrain.V007.Infrastructure.Helpers
+namespace Revit26_Plugin_Revised.AutoSlopeByDrain.V007.Infrastructure.Helpers
 {
     public static class NamedColorHelper
     {

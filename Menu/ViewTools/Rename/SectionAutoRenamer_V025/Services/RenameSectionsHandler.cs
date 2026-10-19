@@ -1,13 +1,13 @@
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.SectionAutoRenamer.V025.Models;
-using Revit26_Plugin.SectionAutoRenamer.V025.ViewModels;
+using Revit26_Plugin_Revised.SectionAutoRenamer.V025.Models;
+using Revit26_Plugin_Revised.SectionAutoRenamer.V025.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Revit26_Plugin.SectionAutoRenamer.V025.Services;
+namespace Revit26_Plugin_Revised.SectionAutoRenamer.V025.Services;
 
 public class RenameSectionsHandler : IExternalEventHandler
 {

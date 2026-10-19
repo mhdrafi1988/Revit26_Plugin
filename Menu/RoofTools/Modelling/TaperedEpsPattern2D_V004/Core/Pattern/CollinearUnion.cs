@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V004.Core.Pattern
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V004.Core.Pattern
 {
     /// <summary>
     /// Joins segments that lie on the same line and overlap or touch into one segment,

@@ -5,7 +5,7 @@ using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V002.ViewModels
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V002.ViewModels
 {
     /// <summary>Log panel (collapsed by default) with Copy All / Copy Selected.</summary>
     public sealed partial class LogViewModel : ObservableObject

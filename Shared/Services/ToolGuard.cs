@@ -8,7 +8,7 @@ using System.Windows.Threading;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 
-namespace Revit26_Plugin.Shared.Services
+namespace Revit26_Plugin_Revised.Shared.Services
 {
     /// <summary>
     /// Signature of an <see cref="IExternalCommand.Execute"/> body, so it can be passed to

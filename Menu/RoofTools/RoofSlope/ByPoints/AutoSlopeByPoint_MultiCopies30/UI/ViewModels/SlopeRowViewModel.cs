@@ -1,6 +1,6 @@
 // =======================================================
 // File: SlopeRowViewModel.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.MultiCopies30
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30
 // Purpose: One of the 4 fixed rows in the Multi-Slope Roof Variants
 //          section — a checkbox (IsEnabled) plus a typable/searchable
 //          slope % ComboBox (PercentText). Raises RowChanged whenever
@@ -12,7 +12,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Globalization;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.UI.ViewModels
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30.UI.ViewModels
 {
     public partial class SlopeRowViewModel : ObservableObject
     {

@@ -1,5 +1,5 @@
 // File: Models/PlacementAlgorithm.cs
-namespace Revit26_Plugin.APUS.V323.Models
+namespace Revit26_Plugin_Revised.APUS.V323.Models
 {
     /// <summary>
     /// V321: only one live placement algorithm remains.

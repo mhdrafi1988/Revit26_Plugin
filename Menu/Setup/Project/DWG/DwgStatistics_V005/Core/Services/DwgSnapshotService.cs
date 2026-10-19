@@ -5,9 +5,9 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using Revit26_Plugin.DwgStatistics.V005.Core.Models;
+using Revit26_Plugin_Revised.DwgStatistics.V005.Core.Models;
 
-namespace Revit26_Plugin.DwgStatistics.V005.Core.Services
+namespace Revit26_Plugin_Revised.DwgStatistics.V005.Core.Services
 {
     /// <summary>
     /// "Compare with last scan" (V004) + "DWG updated on disk" (V005): builds snapshots and compares a

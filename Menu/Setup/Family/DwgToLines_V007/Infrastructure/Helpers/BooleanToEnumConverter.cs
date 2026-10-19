@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace Revit26_Plugin.DwgToLines.V007.Infrastructure.Helpers
+namespace Revit26_Plugin_Revised.DwgToLines.V007.Infrastructure.Helpers
 {
     public class BooleanToEnumConverter : IValueConverter
     {

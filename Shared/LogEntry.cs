@@ -1,6 +1,6 @@
 using System;
 
-namespace Revit26_Plugin.Shared.Models
+namespace Revit26_Plugin_Revised.Shared.Models
 {
     /// <summary>
     /// Single log row: timestamp, severity level, and message.

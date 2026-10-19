@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.LinkedDetailLineGenerator.VA010.Core.Models
+namespace Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA010.Core.Models
 {
     /// <summary>Per-Type geometric metrics backing the Categories panel's Width/
     /// Height/Perimeter/Area filters. Computed once per Type from a single

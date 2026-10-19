@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.RoofRidgeLines.V069.Services
+namespace Revit26_Plugin_Revised.RoofRidgeLines.V069.Services
 {
     /// <summary>
     /// Extracts all interior void/opening loops from a <see cref="RoofBase"/> element.

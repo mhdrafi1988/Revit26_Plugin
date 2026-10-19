@@ -1,11 +1,11 @@
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.UI;
 using System.Windows.Interop;
-using Revit26_Plugin.DtlLineDim.V009.UI.ViewModels;
-using Revit26_Plugin.DtlLineDim.V009.UI.Views;
-using Revit26_Plugin.Utilities;
+using Revit26_Plugin_Revised.DtlLineDim.V009.UI.ViewModels;
+using Revit26_Plugin_Revised.DtlLineDim.V009.UI.Views;
+using Revit26_Plugin_Revised.Utilities;
 
-namespace Revit26_Plugin.DtlLineDim.V009.Commands
+namespace Revit26_Plugin_Revised.DtlLineDim.V009.Commands
 {
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]

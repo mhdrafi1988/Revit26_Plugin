@@ -10,14 +10,14 @@ using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.LinkedDetailLineGenerator.VA009.Core.Engine;
-using Revit26_Plugin.LinkedDetailLineGenerator.VA009.Core.Models;
-using Revit26_Plugin.LinkedDetailLineGenerator.VA009.Core.Services;
-using Revit26_Plugin.LinkedDetailLineGenerator.VA009.Infrastructure.ExternalEvents;
-using Revit26_Plugin.LinkedDetailLineGenerator.VA009.Infrastructure.Helpers;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA009.Core.Engine;
+using Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA009.Core.Models;
+using Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA009.Core.Services;
+using Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA009.Infrastructure.ExternalEvents;
+using Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA009.Infrastructure.Helpers;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.LinkedDetailLineGenerator.VA009.UI.ViewModels
+namespace Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA009.UI.ViewModels
 {
     /// <summary>
     /// PHASE 4 SCOPE (feature-complete for V1's three representation groups): Live

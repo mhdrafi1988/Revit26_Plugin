@@ -1,6 +1,6 @@
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.CreateSections.V012.Models
+namespace Revit26_Plugin_Revised.CreateSections.V012.Models
 {
     /// <summary>
     /// Immutable result describing section orientation.

@@ -32,14 +32,14 @@
 //   - offset-circle counter reset per run
 
 using Autodesk.Revit.DB;
-using Revit26_Plugin.MultiRoofSlopeByDrain.V013.Core.Engine;
-using Revit26_Plugin.MultiRoofSlopeByDrain.V013.Core.Models;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Core.Engine;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace Revit26_Plugin.MultiRoofSlopeByDrain.V013.Core.Services
+namespace Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Core.Services
 {
     public class RoofSlopeProcessorService
     {

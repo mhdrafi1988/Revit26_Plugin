@@ -1,9 +1,9 @@
 using Autodesk.Revit.DB;
-using Revit26_Plugin.ViewAutoRenamer.V005.Models;
+using Revit26_Plugin_Revised.ViewAutoRenamer.V005.Models;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.ViewAutoRenamer.V005.Services;
+namespace Revit26_Plugin_Revised.ViewAutoRenamer.V005.Services;
 
 /// <summary>
 /// Sheet-placement facts for one view, built once per Load pass.

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V001.Revit
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V001.Revit
 {
     /// <summary>
     /// Finds, deletes and creates the result detail group. The "EPS2D_&lt;roofId&gt;_&lt;viewId&gt;" name is the

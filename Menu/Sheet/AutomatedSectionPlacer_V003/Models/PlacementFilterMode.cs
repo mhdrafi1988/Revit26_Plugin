@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.AutomatedSectionPlacer.V003.Models
+namespace Revit26_Plugin_Revised.AutomatedSectionPlacer.V003.Models
 {
     /// <summary>
     /// Stage 1's view-selection grid filter: show all views, only views

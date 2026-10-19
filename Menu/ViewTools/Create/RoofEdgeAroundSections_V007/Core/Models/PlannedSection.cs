@@ -1,7 +1,7 @@
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.RoofEdgeAroundSections.V007
+namespace Revit26_Plugin_Revised.RoofEdgeAroundSections.V007
 {
     /// <summary>
     /// One row of the Planned Sections grid: a single roof edge (one of up to 4 per roof)

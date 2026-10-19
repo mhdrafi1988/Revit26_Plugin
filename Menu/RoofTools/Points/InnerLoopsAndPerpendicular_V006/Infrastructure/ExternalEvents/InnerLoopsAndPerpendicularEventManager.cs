@@ -1,6 +1,6 @@
 using Autodesk.Revit.UI;
 
-namespace Revit26_Plugin.InnerLoopsAndPerpendicular.V006.Infrastructure.ExternalEvents
+namespace Revit26_Plugin_Revised.InnerLoopsAndPerpendicular.V006.Infrastructure.ExternalEvents
 {
     public static class InnerLoopsAndPerpendicularEventManager
     {

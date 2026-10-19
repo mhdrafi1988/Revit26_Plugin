@@ -12,12 +12,12 @@ Changes vs V009 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
   - No behaviour change — every binding/command is the V009 one.
 =======================================================
 -->
-<Window x:Class="Revit26_Plugin.DtlLineDim.V010.UI.Views.DtlLineDimWindow"
+<Window x:Class="Revit26_Plugin_Revised.DtlLineDim.V010.UI.Views.DtlLineDimWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:svc="clr-namespace:Revit26_Plugin.Shared.Services"
-        xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
-        xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
+        xmlns:svc="clr-namespace:Revit26_Plugin_Revised.Shared.Services"
+        xmlns:converters="clr-namespace:Revit26_Plugin_Revised.Shared.Models"
+        xmlns:shell="clr-namespace:Revit26_Plugin_Revised.Shared.Controls"
         Title="{Binding Source={x:Static svc:ToolCatalog.DtlLineDim}, Path=Title}"
         Height="680" Width="560"
         MinHeight="680" MinWidth="560"

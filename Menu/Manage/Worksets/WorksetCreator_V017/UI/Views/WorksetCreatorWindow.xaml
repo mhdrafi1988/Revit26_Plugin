@@ -33,12 +33,12 @@ Added later in V016 — IFC toggle and duplicate prevention:
 =======================================================
 -->
 <Window
-    x:Class="Revit26_Plugin.WorksetCreator.V017.UI.Views.WorksetCreatorWindow"
+    x:Class="Revit26_Plugin_Revised.WorksetCreator.V017.UI.Views.WorksetCreatorWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:Revit26_Plugin.WorksetCreator.V017.UI.Views"
-    xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
-    xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
+    xmlns:local="clr-namespace:Revit26_Plugin_Revised.WorksetCreator.V017.UI.Views"
+    xmlns:converters="clr-namespace:Revit26_Plugin_Revised.Shared.Models"
+    xmlns:shell="clr-namespace:Revit26_Plugin_Revised.Shared.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"

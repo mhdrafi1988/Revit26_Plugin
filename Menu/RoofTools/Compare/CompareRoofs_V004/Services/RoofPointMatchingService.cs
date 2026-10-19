@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.RoofPointElevationSync.V004
+namespace Revit26_Plugin_Revised.RoofPointElevationSync.V004
 {
     /// <summary>
     /// Finds shape-edit points on two roofs that coincide in XY within a tolerance,

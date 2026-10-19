@@ -1,6 +1,6 @@
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.BulkRename.V001.Core.Services
+namespace Revit26_Plugin_Revised.BulkRename.V001.Core.Services
 {
     /// <summary>Worksharing check shared by the item sources and the rename step.</summary>
     public static class WorksharingGuard

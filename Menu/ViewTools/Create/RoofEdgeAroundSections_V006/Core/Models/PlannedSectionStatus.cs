@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.RoofEdgeAroundSections.V006
+namespace Revit26_Plugin_Revised.RoofEdgeAroundSections.V006
 {
     /// <summary>
     /// Status of a single planned section row in the preview table,

@@ -1,9 +1,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.BulkRename.V001.Core.Services;
+using Revit26_Plugin_Revised.BulkRename.V001.Core.Services;
 using System;
 
-namespace Revit26_Plugin.BulkRename.V001.UI.ViewModels
+namespace Revit26_Plugin_Revised.BulkRename.V001.UI.ViewModels
 {
     /// <summary>
     /// The rules card: find/replace, prefix/suffix, tidy, case and numbering. Each command checks its own

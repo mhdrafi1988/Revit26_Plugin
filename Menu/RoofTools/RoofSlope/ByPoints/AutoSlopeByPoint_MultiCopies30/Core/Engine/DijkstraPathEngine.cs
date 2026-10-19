@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.Core.Engine
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30.Core.Engine
 {
     public class DijkstraPathEngine
     {

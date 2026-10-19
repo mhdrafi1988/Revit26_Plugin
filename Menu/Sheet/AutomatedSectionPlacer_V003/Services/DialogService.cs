@@ -3,7 +3,7 @@ using System.IO;
 using System.Windows;
 using Autodesk.Revit.UI;
 
-namespace Revit26_Plugin.AutomatedSectionPlacer.V003.Services
+namespace Revit26_Plugin_Revised.AutomatedSectionPlacer.V003.Services
 {
     /// <summary>
     /// Pure-WPF dialog helper — no System.Windows.Forms dependency. WPF has

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.RoofRidgeLines.V069.Models
+namespace Revit26_Plugin_Revised.RoofRidgeLines.V069.Models
 {
     public enum OpeningShapeType
     {

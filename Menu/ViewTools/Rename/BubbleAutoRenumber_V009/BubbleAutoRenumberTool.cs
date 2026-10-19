@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.BubbleAutoRenumber.V009
+namespace Revit26_Plugin_Revised.BubbleAutoRenumber.V009
 {
     /// <summary>
     /// Name and version of this tool version, in its own folder so the tool builds

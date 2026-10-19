@@ -1,10 +1,10 @@
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.BubbleAutoRenumber.V009.UI.Views;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.BubbleAutoRenumber.V009.UI.Views;
+using Revit26_Plugin_Revised.Shared.Services;
 
-namespace Revit26_Plugin.BubbleAutoRenumber.V009.Commands
+namespace Revit26_Plugin_Revised.BubbleAutoRenumber.V009.Commands
 {
     /// <summary>
     /// Ribbon entry point for Bubble Auto Renumber V009. Thin by design — opens the

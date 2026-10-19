@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.AutomatedSectionPlacer.V003.Models
+namespace Revit26_Plugin_Revised.AutomatedSectionPlacer.V003.Models
 {
     /// <summary>
     /// Represents one suggested (and later, actually created) sheet: its

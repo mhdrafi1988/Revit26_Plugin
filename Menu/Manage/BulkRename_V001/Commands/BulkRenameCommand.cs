@@ -1,12 +1,12 @@
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.BulkRename.V001.UI.ViewModels;
-using Revit26_Plugin.BulkRename.V001.UI.Views;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.BulkRename.V001.UI.ViewModels;
+using Revit26_Plugin_Revised.BulkRename.V001.UI.Views;
+using Revit26_Plugin_Revised.Shared.Services;
 using System.Windows.Interop;
 
-namespace Revit26_Plugin.BulkRename.V001.Commands
+namespace Revit26_Plugin_Revised.BulkRename.V001.Commands
 {
     /// <summary>
     /// Opens the Bulk Rename window, which renames many line styles, line patterns, arrowheads or

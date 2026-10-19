@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V058.Services;
-using Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V058.ViewModels;
-using Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V058.Views;
-using Revit26_Plugin.Utilities;
+using Revit26_Plugin_Revised.RoofTools.LineAndPoints.RoofRidgeLines.V058.Services;
+using Revit26_Plugin_Revised.RoofTools.LineAndPoints.RoofRidgeLines.V058.ViewModels;
+using Revit26_Plugin_Revised.RoofTools.LineAndPoints.RoofRidgeLines.V058.Views;
+using Revit26_Plugin_Revised.Utilities;
 
-namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V058.Commands
+namespace Revit26_Plugin_Revised.RoofTools.LineAndPoints.RoofRidgeLines.V058.Commands
 {
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]

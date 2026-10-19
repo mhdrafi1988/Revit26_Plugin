@@ -1,11 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.CreateSections.V012.Services
+namespace Revit26_Plugin_Revised.CreateSections.V012.Services
 {
     /// <summary>
-    /// V008: migrated to the shared Revit26_Plugin.Shared.Models.LogEntry/LogLevel
+    /// V008: migrated to the shared Revit26_Plugin_Revised.Shared.Models.LogEntry/LogLevel
     /// instead of V07's tool-local LogEntry (which incorrectly baked a WPF
     /// Brush directly into the model). Color now comes from the shared
     /// LogLevelToColorConverter in XAML, per suite convention.

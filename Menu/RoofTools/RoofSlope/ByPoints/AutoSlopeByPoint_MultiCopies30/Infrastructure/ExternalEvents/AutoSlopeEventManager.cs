@@ -1,6 +1,6 @@
 using Autodesk.Revit.UI;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.Infrastructure.ExternalEvents
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30.Infrastructure.ExternalEvents
 {
     public static class AutoSlopeEventManager
     {

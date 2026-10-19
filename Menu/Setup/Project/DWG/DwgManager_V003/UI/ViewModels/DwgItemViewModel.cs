@@ -4,9 +4,9 @@ using System.Linq;
 using Autodesk.Revit.DB;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.DwgManager.V003.Core.Models;
+using Revit26_Plugin_Revised.DwgManager.V003.Core.Models;
 
-namespace Revit26_Plugin.DwgManager.V003.UI.ViewModels
+namespace Revit26_Plugin_Revised.DwgManager.V003.UI.ViewModels
 {
     /// <summary>
     /// One list row: the instances of one CAD file placed in one view.

@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.TaperedEpsPattern2D.V004.Core.Pattern
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V004.Core.Pattern
 {
     /// <summary>Line count and total length of one layer (summary grid row).</summary>
     public sealed class LayerStats

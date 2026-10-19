@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.LinkVersionChecker_V004.Core.Models;
+using Revit26_Plugin_Revised.LinkVersionChecker_V004.Core.Models;
 
-namespace Revit26_Plugin.LinkVersionChecker_V004.Services
+namespace Revit26_Plugin_Revised.LinkVersionChecker_V004.Services
 {
     public sealed class RvtHeader
     {

@@ -9,11 +9,11 @@
 
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.CreaserAdv.V010.Core.Models;
+using Revit26_Plugin_Revised.CreaserAdv.V010.Core.Models;
 using System;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.Shared.Services;
 
-namespace Revit26_Plugin.CreaserAdv.V010.Infrastructure.ExternalEvents
+namespace Revit26_Plugin_Revised.CreaserAdv.V010.Infrastructure.ExternalEvents
 {
     public class CreaserAdvHandler : IExternalEventHandler
     {

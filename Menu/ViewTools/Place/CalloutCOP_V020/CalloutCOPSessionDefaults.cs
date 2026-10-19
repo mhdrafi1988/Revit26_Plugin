@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using Revit26_Plugin.CalloutCOP.V020.ViewModels;
+using Revit26_Plugin_Revised.CalloutCOP.V020.ViewModels;
 
-namespace Revit26_Plugin.CalloutCOP.V020.Helpers
+namespace Revit26_Plugin_Revised.CalloutCOP.V020.Helpers
 {
     /// <summary>
     /// In-memory-only "last used" state for the Callout COP tool, scoped to the

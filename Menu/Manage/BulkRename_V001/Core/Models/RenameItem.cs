@@ -1,6 +1,6 @@
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.BulkRename.V001.Core.Models
+namespace Revit26_Plugin_Revised.BulkRename.V001.Core.Models
 {
     /// <summary>
     /// One renameable project item (a line style, line pattern, arrowhead or fill pattern) as listed from

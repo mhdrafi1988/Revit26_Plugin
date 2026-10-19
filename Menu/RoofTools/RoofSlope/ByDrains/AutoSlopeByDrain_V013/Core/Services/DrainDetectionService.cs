@@ -16,7 +16,7 @@
 //
 // Original rewrite (V005, first round): detection comes from the roof's
 // Sketch profile (FootPrintRoof only), not raw solid/face geometry — ported
-// from Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V67's
+// from Revit26_Plugin_Revised.RoofTools.LineAndPoints.RoofRidgeLines.V67's
 // InnerLoopService + OpeningAnalyzerService, adapted to still produce
 // DrainItem so every downstream consumer (RoofSlopeProcessorService, the
 // ViewModel grid, Excel export, parameter writer) is untouched.
@@ -49,14 +49,14 @@
 // (operate on DrainItem post-detection, no dependency on how detection works).
 
 using Autodesk.Revit.DB;
-using Revit26_Plugin.MultiRoofSlopeByDrain.V013.Core.Engine;
-using Revit26_Plugin.MultiRoofSlopeByDrain.V013.Core.Models;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Core.Engine;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Core.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.MultiRoofSlopeByDrain.V013.Core.Services
+namespace Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.Core.Services
 {
     public class DrainDetectionService
     {

@@ -1,9 +1,9 @@
 using Autodesk.Revit.UI;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.Shared.Services;
 using System;
 using System.Collections.Concurrent;
 
-namespace Revit26_Plugin.BulkRename.V001.Core.Services
+namespace Revit26_Plugin_Revised.BulkRename.V001.Core.Services
 {
     /// <summary>
     /// Runs jobs queued by the WPF window inside the Revit API context, through one external event.

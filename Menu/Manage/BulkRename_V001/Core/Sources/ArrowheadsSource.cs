@@ -1,10 +1,10 @@
 using Autodesk.Revit.DB;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.BulkRename.V001.Core.Sources
+namespace Revit26_Plugin_Revised.BulkRename.V001.Core.Sources
 {
     /// <summary>
     /// Arrowheads (Manage &gt; Additional Settings &gt; Arrowheads). The Revit API has no arrowhead category,

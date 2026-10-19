@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.LinkedDetailLineGenerator.VA009.Core.Services
+namespace Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA009.Core.Services
 {
     /// <summary>
     /// Loads valid Detail Line Styles (Lines subcategories under the Lines category)

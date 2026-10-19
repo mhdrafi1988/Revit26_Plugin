@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V005.Core.Pattern
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V005.Core.Pattern
 {
     /// <summary>Assigns a colour slot to every piece for the chosen <see cref="HatchMode"/>, and builds the legend.</summary>
     public static class HatchAssigner

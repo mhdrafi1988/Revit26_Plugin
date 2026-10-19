@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.RoofPointElevationSync.V005
+namespace Revit26_Plugin_Revised.RoofPointElevationSync.V005
 {
     /// <summary>
     /// One row of the point mapping grid: a pair of shape-edit points on Roof A / Roof B

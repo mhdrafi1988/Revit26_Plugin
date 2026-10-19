@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.DwgToLines.V006.Core.Models
+namespace Revit26_Plugin_Revised.DwgToLines.V006.Core.Models
 {
     public enum MissingLineStyleDecision
     {

@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V059.Models;
+using Revit26_Plugin_Revised.RoofTools.LineAndPoints.RoofRidgeLines.V059.Models;
 
-namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V059.Services
+namespace Revit26_Plugin_Revised.RoofTools.LineAndPoints.RoofRidgeLines.V059.Services
 {
     /// <summary>
     /// Validates that every generated ridge shape point satisfies the equidistance

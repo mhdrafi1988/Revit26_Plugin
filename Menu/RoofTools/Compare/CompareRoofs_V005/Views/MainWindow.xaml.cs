@@ -4,7 +4,7 @@ using System.Windows.Input;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 
-namespace Revit26_Plugin.RoofPointElevationSync.V005
+namespace Revit26_Plugin_Revised.RoofPointElevationSync.V005
 {
     public partial class MainWindow : Window
     {

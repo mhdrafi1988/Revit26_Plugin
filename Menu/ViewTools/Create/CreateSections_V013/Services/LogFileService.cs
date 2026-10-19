@@ -1,9 +1,9 @@
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.CreateSections.V013.Services
+namespace Revit26_Plugin_Revised.CreateSections.V013.Services
 {
     /// <summary>
     /// Writes the live log to a .txt file on completion.

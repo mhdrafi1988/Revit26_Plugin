@@ -1,9 +1,9 @@
 using Autodesk.Revit.UI;
-using Revit26_Plugin.ViewAutoRenamer.V005.Models;
-using Revit26_Plugin.ViewAutoRenamer.V005.ViewModels;
+using Revit26_Plugin_Revised.ViewAutoRenamer.V005.Models;
+using Revit26_Plugin_Revised.ViewAutoRenamer.V005.ViewModels;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.ViewAutoRenamer.V005.Services;
+namespace Revit26_Plugin_Revised.ViewAutoRenamer.V005.Services;
 
 public static class RevitEventManager
 {

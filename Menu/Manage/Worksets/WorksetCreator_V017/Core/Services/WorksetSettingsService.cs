@@ -12,13 +12,13 @@
 // the disk, so nothing in here is allowed to throw at the caller.
 // ==============================================
 
-using Revit26_Plugin.Shared.Models;
-using Revit26_Plugin.WorksetCreator.V017.Core.Models;
+using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin_Revised.WorksetCreator.V017.Core.Models;
 using System;
 using System.IO;
 using System.Text.Json;
 
-namespace Revit26_Plugin.WorksetCreator.V017.Core.Services
+namespace Revit26_Plugin_Revised.WorksetCreator.V017.Core.Services
 {
     public sealed class WorksetSettingsService
     {

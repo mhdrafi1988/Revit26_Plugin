@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.LinkedDetailLineGenerator.VA009.Core.Models
+namespace Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA009.Core.Models
 {
     /// <summary>
     /// Master override for the Mapping Grid (Section 3): when IsEnabled, LineStyleName

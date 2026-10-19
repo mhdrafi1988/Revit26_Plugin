@@ -1,11 +1,11 @@
 using Autodesk.Revit.DB;
-using Revit26_Plugin.BulkRename.V001.Core.Models;
-using Revit26_Plugin.BulkRename.V001.Core.Sources;
+using Revit26_Plugin_Revised.BulkRename.V001.Core.Models;
+using Revit26_Plugin_Revised.BulkRename.V001.Core.Sources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.BulkRename.V001.Core.Services
+namespace Revit26_Plugin_Revised.BulkRename.V001.Core.Services
 {
     /// <summary>
     /// Renames items in the model. Every kind of item is renamed the same way, by setting the element's

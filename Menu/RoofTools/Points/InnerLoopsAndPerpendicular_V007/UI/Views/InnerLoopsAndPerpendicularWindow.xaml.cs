@@ -7,12 +7,12 @@
 //   (Show()); IsCancel="True" alone only auto-closes for ShowDialog().
 // =======================================================
 
-using Revit26_Plugin.InnerLoopsAndPerpendicular.V007.UI.ViewModels;
+using Revit26_Plugin_Revised.InnerLoopsAndPerpendicular.V007.UI.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.Shared.Services;
 
-namespace Revit26_Plugin.InnerLoopsAndPerpendicular.V007.UI.Views
+namespace Revit26_Plugin_Revised.InnerLoopsAndPerpendicular.V007.UI.Views
 {
     public partial class InnerLoopsAndPerpendicularWindow : Window
     {

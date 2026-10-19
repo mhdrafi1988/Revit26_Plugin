@@ -1,12 +1,12 @@
 ﻿using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.WorksetManager.V014.UI.ViewModels;
-using Revit26_Plugin.WorksetManager.V014.UI.Views;
+using Revit26_Plugin_Revised.WorksetManager.V014.UI.ViewModels;
+using Revit26_Plugin_Revised.WorksetManager.V014.UI.Views;
 using System.Windows.Interop;
-using Revit26_Plugin.Utilities;
+using Revit26_Plugin_Revised.Utilities;
 
-namespace Revit26_Plugin.WorksetManager.V014.Commands
+namespace Revit26_Plugin_Revised.WorksetManager.V014.Commands
 {
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]

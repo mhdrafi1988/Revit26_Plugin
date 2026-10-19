@@ -1,7 +1,7 @@
 using System;
 using System.Globalization;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V006.Core.Pattern
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V006.Core.Pattern
 {
     /// <summary>Immutable 2D vector / point in plan, metres.</summary>
     public readonly struct Vec2 : IEquatable<Vec2>

@@ -1,6 +1,6 @@
 // =======================================================
 // File: NamedColors.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models
 // Replaces V030's Infrastructure/Helpers/NamedColorHelper (which returned
 // a Revit Color from Infrastructure and was used by Core). Pure RGB here;
 // Infrastructure builds the Revit Color, the UI builds the WPF brush.
@@ -9,7 +9,7 @@
 
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models
 {
     public static class NamedColors
     {

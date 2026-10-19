@@ -8,12 +8,12 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using Revit26_Plugin.ExportDwgToFolder.V004.UI.ViewModels;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.ExportDwgToFolder.V004.UI.ViewModels;
+using Revit26_Plugin_Revised.Shared.Services;
 // GroupRows (flattens a CollectionViewGroup to its leaf rows) lives alongside
 // GroupTickStateConverter in UI/ViewModels/GroupTickStateConverter.cs.
 
-namespace Revit26_Plugin.ExportDwgToFolder.V004.UI.Views
+namespace Revit26_Plugin_Revised.ExportDwgToFolder.V004.UI.Views
 {
     /// <summary>
     /// Export DWG to Folder window. Code-behind handles grid-only behaviour: sorting inside the

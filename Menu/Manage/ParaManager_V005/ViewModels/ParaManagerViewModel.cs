@@ -2,10 +2,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
-using Revit26_Plugin.ParaManager.V005.Models;
-using Revit26_Plugin.ParaManager.V005.Services;
-using Revit26_Plugin.Shared.Models;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.ParaManager.V005.Models;
+using Revit26_Plugin_Revised.ParaManager.V005.Services;
+using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,7 +14,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
 
-namespace Revit26_Plugin.ParaManager.V005.ViewModels
+namespace Revit26_Plugin_Revised.ParaManager.V005.ViewModels
 {
     public partial class ParaManagerViewModel : ObservableObject
     {

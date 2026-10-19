@@ -27,12 +27,12 @@
 //   VerifyElevationsAfterCommit  — opt-in toggle, off by default.
 
 using Autodesk.Revit.DB;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace Revit26_Plugin.AutoSlopeByDrain.V007.Core.Models
+namespace Revit26_Plugin_Revised.AutoSlopeByDrain.V007.Core.Models
 {
     public class AutoSlopeDrainPayload
     {

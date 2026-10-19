@@ -20,13 +20,13 @@
 // =======================================================
 
 using Autodesk.Revit.DB;
-using Revit26_Plugin.InnerLoopDivider.V012.Core.Geometry;
-using Revit26_Plugin.InnerLoopDivider.V012.Core.Models;
+using Revit26_Plugin_Revised.InnerLoopDivider.V012.Core.Geometry;
+using Revit26_Plugin_Revised.InnerLoopDivider.V012.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.InnerLoopDivider.V012.Infrastructure.Revit
+namespace Revit26_Plugin_Revised.InnerLoopDivider.V012.Infrastructure.Revit
 {
     public sealed class RoofLoopReadResult
     {

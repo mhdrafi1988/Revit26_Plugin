@@ -10,13 +10,13 @@ Changes vs V019 (layout only, per Revit_Plugin_UI_Standard.md):
   - No behaviour change — every binding/command is the V019 one.
 =======================================================
 -->
-<Window x:Class="Revit26_Plugin.CalloutCOP.V020.Views.CalloutCOPWindow"
+<Window x:Class="Revit26_Plugin_Revised.CalloutCOP.V020.Views.CalloutCOPWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:converters="clr-namespace:Revit26_Plugin.Shared.Models"
-        xmlns:local="clr-namespace:Revit26_Plugin.CalloutCOP.V020.Views"
+        xmlns:converters="clr-namespace:Revit26_Plugin_Revised.Shared.Models"
+        xmlns:local="clr-namespace:Revit26_Plugin_Revised.CalloutCOP.V020.Views"
         mc:Ignorable="d"
         Title="Callout COP — V020"
         Height="900"

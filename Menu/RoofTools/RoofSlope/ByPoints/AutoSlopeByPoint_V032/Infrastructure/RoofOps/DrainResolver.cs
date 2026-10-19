@@ -1,6 +1,6 @@
 // =======================================================
 // File: DrainResolver.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.RoofOps
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.RoofOps
 // Replaces V030's DrainDetectionHelper + the engine's second radius match.
 // Fixes from the review:
 //   D1  Returns the exact set of drain VERTEX INDICES. The engine uses it
@@ -17,11 +17,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Core.Services;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Services;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.RoofOps
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.RoofOps
 {
     internal sealed class DrainResolution
     {

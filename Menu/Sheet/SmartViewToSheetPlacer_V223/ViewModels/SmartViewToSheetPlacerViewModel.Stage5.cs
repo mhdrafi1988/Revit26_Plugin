@@ -3,11 +3,11 @@ using System.IO;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.Shared.Models;
-using Revit26_Plugin.SmartViewToSheetPlacer.V223.Infrastructure.ExternalEvents;
-using Revit26_Plugin.SmartViewToSheetPlacer.V223.Models;
+using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin_Revised.SmartViewToSheetPlacer.V223.Infrastructure.ExternalEvents;
+using Revit26_Plugin_Revised.SmartViewToSheetPlacer.V223.Models;
 
-namespace Revit26_Plugin.SmartViewToSheetPlacer.V223.ViewModels
+namespace Revit26_Plugin_Revised.SmartViewToSheetPlacer.V223.ViewModels
 {
     /// <summary>Stage 5: Placement Complete — results summary, open-sheets
     /// selection, and log export (manual + auto-save on completion).</summary>

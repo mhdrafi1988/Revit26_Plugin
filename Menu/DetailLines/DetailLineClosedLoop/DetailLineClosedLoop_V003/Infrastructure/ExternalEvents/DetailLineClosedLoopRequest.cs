@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.DetailLineClosedLoop.V003.Infrastructure.ExternalEvents
+namespace Revit26_Plugin_Revised.DetailLineClosedLoop.V003.Infrastructure.ExternalEvents
 {
     /// <summary>Identifies which Revit-side action the external event handler should perform.</summary>
     public enum DetailLineClosedLoopRequest

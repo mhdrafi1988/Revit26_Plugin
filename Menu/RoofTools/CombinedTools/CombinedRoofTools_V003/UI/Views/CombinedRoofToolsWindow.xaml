@@ -19,13 +19,13 @@ Changes vs V002 (layout only):
   - No behaviour change — every binding/command is the V002 one.
 =======================================================
 -->
-<Window x:Class="Revit26_Plugin.CombinedRoofTools.V003.UI.Views.CombinedRoofToolsWindow"
+<Window x:Class="Revit26_Plugin_Revised.CombinedRoofTools.V003.UI.Views.CombinedRoofToolsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:svc="clr-namespace:Revit26_Plugin.Shared.Services"
-        xmlns:tabs="clr-namespace:Revit26_Plugin.CombinedRoofTools.V003.UI.Views.Tabs"
-        xmlns:conv="clr-namespace:Revit26_Plugin.Shared.Models"
-        xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
+        xmlns:svc="clr-namespace:Revit26_Plugin_Revised.Shared.Services"
+        xmlns:tabs="clr-namespace:Revit26_Plugin_Revised.CombinedRoofTools.V003.UI.Views.Tabs"
+        xmlns:conv="clr-namespace:Revit26_Plugin_Revised.Shared.Models"
+        xmlns:shell="clr-namespace:Revit26_Plugin_Revised.Shared.Controls"
         Title="{Binding Source={x:Static svc:ToolCatalog.CombinedRoofTools}, Path=Title}"
         Width="1200" Height="880"
         MinWidth="1200" MinHeight="880"

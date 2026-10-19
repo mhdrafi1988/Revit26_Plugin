@@ -1,6 +1,6 @@
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.AutomatedSectionPlacer.V003.Services
+namespace Revit26_Plugin_Revised.AutomatedSectionPlacer.V003.Services
 {
     /// <summary>
     /// Single source of truth for human-friendly ViewType labels. Previously

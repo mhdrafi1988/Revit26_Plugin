@@ -1,6 +1,6 @@
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.CreateSections.V012.Models
+namespace Revit26_Plugin_Revised.CreateSections.V012.Models
 {
     /// <summary>
     /// V008: converted from V07's 5-parameter positional constructor to

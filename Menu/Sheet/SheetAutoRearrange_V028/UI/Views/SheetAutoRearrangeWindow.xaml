@@ -18,14 +18,14 @@ Changes vs V027 (layout only):
   - No behaviour change — every binding/command is the V027 one.
 =======================================================
 -->
-<Window x:Class="Revit26_Plugin.SheetAutoRearrange.V028.UI.Views.SheetAutoRearrangeWindow"
+<Window x:Class="Revit26_Plugin_Revised.SheetAutoRearrange.V028.UI.Views.SheetAutoRearrangeWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:svc="clr-namespace:Revit26_Plugin.Shared.Services"
-        xmlns:models="clr-namespace:Revit26_Plugin.SheetAutoRearrange.V028.Core.Models"
-        xmlns:local="clr-namespace:Revit26_Plugin.SheetAutoRearrange.V028.UI.Views"
-        xmlns:conv="clr-namespace:Revit26_Plugin.Shared.Models"
-        xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
+        xmlns:svc="clr-namespace:Revit26_Plugin_Revised.Shared.Services"
+        xmlns:models="clr-namespace:Revit26_Plugin_Revised.SheetAutoRearrange.V028.Core.Models"
+        xmlns:local="clr-namespace:Revit26_Plugin_Revised.SheetAutoRearrange.V028.UI.Views"
+        xmlns:conv="clr-namespace:Revit26_Plugin_Revised.Shared.Models"
+        xmlns:shell="clr-namespace:Revit26_Plugin_Revised.Shared.Controls"
         Title="{Binding Source={x:Static svc:ToolCatalog.SheetAutoRearrange}, Path=Title}"
         Height="920" Width="1180"
         MinHeight="920" MinWidth="1180"

@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.LinkedDetailLineGenerator.VA009.Core.Models
+namespace Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA009.Core.Models
 {
     /// <summary>
     /// Broad classification of how a selected linked-model Type will be represented

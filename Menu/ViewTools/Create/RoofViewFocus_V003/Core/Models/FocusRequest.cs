@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 
-namespace Revit26_Plugin.RoofViewFocus.V003.Core.Models
+namespace Revit26_Plugin_Revised.RoofViewFocus.V003.Core.Models
 {
     /// <summary>
     /// Payload handed from the ViewModel to the ExternalEvent handler.

@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Autodesk.Revit.DB;
 
-namespace Revit26_Plugin.DeleteWorkset.V001.Core.Models
+namespace Revit26_Plugin_Revised.DeleteWorkset.V001.Core.Models
 {
     /// <summary>
     /// Single row in the Delete Workset data grid.

@@ -1,12 +1,12 @@
 // File: Services/PlacingAlgorithms/EvenGapPlacementService.cs
 using Autodesk.Revit.DB;
-using Revit26_Plugin.APUS.V324.Models;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.APUS.V324.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.APUS.V324.Services.PlacingAlgorithms
+namespace Revit26_Plugin_Revised.APUS.V324.Services.PlacingAlgorithms
 {
     /// <summary>
     /// A single section queued for placement, carrying everything the engine

@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.RefSectionHeadPlacer.V014.Core.Models
+namespace Revit26_Plugin_Revised.RefSectionHeadPlacer.V014.Core.Models
 {
     /// <summary>
     /// Bindable row for the Roof Type filter popover (row 3, next to Boundary buffer).

@@ -1,9 +1,9 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
-using Revit26_Plugin.LinkVersionChecker_V004.UI.ViewModels;
+using Revit26_Plugin_Revised.LinkVersionChecker_V004.UI.ViewModels;
 
-namespace Revit26_Plugin.LinkVersionChecker_V004.UI.Views
+namespace Revit26_Plugin_Revised.LinkVersionChecker_V004.UI.Views
 {
     public partial class LinkCheckerWindow : Window
     {

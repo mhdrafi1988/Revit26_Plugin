@@ -7,10 +7,10 @@
 // ==============================================
 
 using Autodesk.Revit.UI;
-using Revit26_Plugin.WorksetCreator.V017.Core.Models;
+using Revit26_Plugin_Revised.WorksetCreator.V017.Core.Models;
 using System;
 
-namespace Revit26_Plugin.WorksetCreator.V017.UI
+namespace Revit26_Plugin_Revised.WorksetCreator.V017.UI
 {
     internal static class RunSummaryDialog
     {

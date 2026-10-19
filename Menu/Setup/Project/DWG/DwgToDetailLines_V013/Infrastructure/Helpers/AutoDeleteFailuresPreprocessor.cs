@@ -6,7 +6,7 @@
 using Autodesk.Revit.DB;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.DwgToDetailLines.V013.Infrastructure.Helpers
+namespace Revit26_Plugin_Revised.DwgToDetailLines.V013.Infrastructure.Helpers
 {
     /// <summary>
     /// Auto-resolves Revit's commit-time geometry failures (e.g. "Line is too

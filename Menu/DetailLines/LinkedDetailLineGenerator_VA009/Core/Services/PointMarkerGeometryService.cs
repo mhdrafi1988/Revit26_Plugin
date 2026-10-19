@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.LinkedDetailLineGenerator.VA009.Core.Models;
+using Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA009.Core.Models;
 
-namespace Revit26_Plugin.LinkedDetailLineGenerator.VA009.Core.Services
+namespace Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA009.Core.Services
 {
     /// <summary>
     /// Builds the 2D marker geometry (curve loop) centered on a transformed/projected

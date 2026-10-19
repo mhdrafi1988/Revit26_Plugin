@@ -1,8 +1,8 @@
 using System;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Revit26_Plugin.DwgStatistics.V005.Core.Models;
+using Revit26_Plugin_Revised.DwgStatistics.V005.Core.Models;
 
-namespace Revit26_Plugin.DwgStatistics.V005.UI.ViewModels
+namespace Revit26_Plugin_Revised.DwgStatistics.V005.UI.ViewModels
 {
     /// <summary>
     /// V005: one row of the Layers tab — a DWG layer with how many views hide / override it, plus the tick

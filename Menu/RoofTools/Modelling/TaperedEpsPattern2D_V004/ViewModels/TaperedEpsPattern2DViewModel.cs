@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.TaperedEpsPattern2D.V004.Core.Pattern;
-using Revit26_Plugin.TaperedEpsPattern2D.V004.Events;
-using Revit26_Plugin.TaperedEpsPattern2D.V004.Revit;
+using Revit26_Plugin_Revised.TaperedEpsPattern2D.V004.Core.Pattern;
+using Revit26_Plugin_Revised.TaperedEpsPattern2D.V004.Events;
+using Revit26_Plugin_Revised.TaperedEpsPattern2D.V004.Revit;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V004.ViewModels
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V004.ViewModels
 {
     /// <summary>
     /// Main window view model. Recomputes the Core pattern live (debounced, off the UI thread)

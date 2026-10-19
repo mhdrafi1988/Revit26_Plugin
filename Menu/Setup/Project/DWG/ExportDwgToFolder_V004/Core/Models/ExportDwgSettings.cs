@@ -1,8 +1,8 @@
-namespace Revit26_Plugin.ExportDwgToFolder.V004.Core.Models
+namespace Revit26_Plugin_Revised.ExportDwgToFolder.V004.Core.Models
 {
     /// <summary>
     /// Persisted settings for Export DWG to Folder.
-    /// Serialised by <see cref="Revit26_Plugin.Shared.Services.SettingsService{T}"/>.
+    /// Serialised by <see cref="Revit26_Plugin_Revised.Shared.Services.SettingsService{T}"/>.
     /// <para>
     /// Format version 2 (tool v2.0.0): the scan scope (source and view-type boxes) is no longer
     /// remembered — every window opens with nothing in scope. The v1 scope fields below are kept

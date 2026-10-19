@@ -1,10 +1,10 @@
 // File: Converters/EnumDisplayConverter.cs
-using Revit26_Plugin.APUS.V323.Models;
+using Revit26_Plugin_Revised.APUS.V323.Models;
 using System;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace Revit26_Plugin.APUS.V323.Converters
+namespace Revit26_Plugin_Revised.APUS.V323.Converters
 {
     /// <summary>
     /// Renders enum values used in the Reading Order card dropdowns as

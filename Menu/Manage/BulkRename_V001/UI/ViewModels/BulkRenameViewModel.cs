@@ -2,12 +2,12 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.BulkRename.V001.Core.Models;
-using Revit26_Plugin.BulkRename.V001.Core.Services;
-using Revit26_Plugin.BulkRename.V001.Core.Sources;
-using Revit26_Plugin.Shared.Models;
-using Revit26_Plugin.Shared.Services;
-using Revit26_Plugin.Shared.ViewModels;
+using Revit26_Plugin_Revised.BulkRename.V001.Core.Models;
+using Revit26_Plugin_Revised.BulkRename.V001.Core.Services;
+using Revit26_Plugin_Revised.BulkRename.V001.Core.Sources;
+using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Services;
+using Revit26_Plugin_Revised.Shared.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +15,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Threading;
 
-namespace Revit26_Plugin.BulkRename.V001.UI.ViewModels
+namespace Revit26_Plugin_Revised.BulkRename.V001.UI.ViewModels
 {
     /// <summary>
     /// View model of the Bulk Rename window. It ties the parts together: the user picks what to rename

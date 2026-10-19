@@ -5,12 +5,12 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Interop;
-using Revit26_Plugin.DtlLineDim.V010.Core.Models;
-using Revit26_Plugin.DtlLineDim.V010.Infrastructure.ExternalEvents;
-using Revit26_Plugin.Shared.Models;
-using Revit26_Plugin.Shared.Services;
+using Revit26_Plugin_Revised.DtlLineDim.V010.Core.Models;
+using Revit26_Plugin_Revised.DtlLineDim.V010.Infrastructure.ExternalEvents;
+using Revit26_Plugin_Revised.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Services;
 
-namespace Revit26_Plugin.DtlLineDim.V010.UI.ViewModels
+namespace Revit26_Plugin_Revised.DtlLineDim.V010.UI.ViewModels
 {
     public partial class DtlLineDimViewModel : ObservableObject
     {

@@ -2,9 +2,9 @@ using System;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Threading;
-using Revit26_Plugin.RoofViewFocus.V004.UI.ViewModels;
+using Revit26_Plugin_Revised.RoofViewFocus.V004.UI.ViewModels;
 
-namespace Revit26_Plugin.RoofViewFocus.V004.UI.Views
+namespace Revit26_Plugin_Revised.RoofViewFocus.V004.UI.Views
 {
     /// <summary>Modeless window. Never auto-closes; Esc / Close button close it.</summary>
     public partial class RoofViewFocusWindow : Window

@@ -1,6 +1,6 @@
 // =======================================================
 // File: VertexData.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models
 // Changes vs V030:
 //   - Point3 instead of XYZ (Core stays Revit-free).
 //   - Raw values are stored; rounding happens only for display/Excel
@@ -12,7 +12,7 @@
 
 using System;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models
 {
     public sealed class VertexData
     {

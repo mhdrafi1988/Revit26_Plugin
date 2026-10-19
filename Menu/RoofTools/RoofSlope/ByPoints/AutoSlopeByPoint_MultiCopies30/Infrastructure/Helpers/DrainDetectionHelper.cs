@@ -1,9 +1,9 @@
 using Autodesk.Revit.DB;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.Infrastructure.Helpers
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30.Infrastructure.Helpers
 {
     public static class DrainDetectionHelper
     {

@@ -22,13 +22,13 @@
 
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.CreaserAdv.V011.Core.Models;
-using Revit26_Plugin.CreaserAdv.V011.Services;
+using Revit26_Plugin_Revised.CreaserAdv.V011.Core.Models;
+using Revit26_Plugin_Revised.CreaserAdv.V011.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.CreaserAdv.V011.Core.Engine
+namespace Revit26_Plugin_Revised.CreaserAdv.V011.Core.Engine
 {
     public static class CreaserAdvEngine
     {

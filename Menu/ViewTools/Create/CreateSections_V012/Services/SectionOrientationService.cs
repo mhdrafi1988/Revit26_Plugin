@@ -1,8 +1,8 @@
 using Autodesk.Revit.DB;
 using System;
-using Revit26_Plugin.CreateSections.V012.Models;
+using Revit26_Plugin_Revised.CreateSections.V012.Models;
 
-namespace Revit26_Plugin.CreateSections.V012.Services
+namespace Revit26_Plugin_Revised.CreateSections.V012.Services
 {
     /// <summary>
     /// Produces stable, readable section orientation from a detail/model line.

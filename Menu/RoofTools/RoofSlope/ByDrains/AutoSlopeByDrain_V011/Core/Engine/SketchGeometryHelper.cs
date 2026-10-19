@@ -1,6 +1,6 @@
 ﻿// File: SketchGeometryHelper.cs
 // Location: Core/Engine/
-// Ported from Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V67's
+// Ported from Revit26_Plugin_Revised.RoofTools.LineAndPoints.RoofRidgeLines.V67's
 // RoofGeometry2D.cs — only the tessellation + polygon-area primitives that
 // DrainDetectionService's Sketch-based opening detection actually needs.
 // The Voronoi/ridge-line-specific members of the original file (PointInPolygon,
@@ -11,7 +11,7 @@ using Autodesk.Revit.DB;
 using System;
 using System.Collections.Generic;
 
-namespace Revit26_Plugin.MultiRoofSlopeByDrain.V011.Core.Engine
+namespace Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V011.Core.Engine
 {
     public static class SketchGeometryHelper
     {

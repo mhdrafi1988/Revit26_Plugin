@@ -2,15 +2,15 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Revit26_Plugin.BubbleAutoRenumber.V008.Handlers;
-using Revit26_Plugin.BubbleAutoRenumber.V008.Models;
-using Revit26_Plugin.BubbleAutoRenumber.V008.Services;
+using Revit26_Plugin_Revised.BubbleAutoRenumber.V008.Handlers;
+using Revit26_Plugin_Revised.BubbleAutoRenumber.V008.Models;
+using Revit26_Plugin_Revised.BubbleAutoRenumber.V008.Services;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
 
-namespace Revit26_Plugin.BubbleAutoRenumber.V008.ViewModels
+namespace Revit26_Plugin_Revised.BubbleAutoRenumber.V008.ViewModels
 {
     public partial class SectionAutoRenumberViewModel : ObservableObject
     {

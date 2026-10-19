@@ -1,7 +1,7 @@
 using Autodesk.Revit.DB;
 using System;
 
-namespace Revit26_Plugin.DwgToLines.V006.Infrastructure.Helpers
+namespace Revit26_Plugin_Revised.DwgToLines.V006.Infrastructure.Helpers
 {
     /// <summary>
     /// Lightweight helper for safe transaction execution with rollback on failure.

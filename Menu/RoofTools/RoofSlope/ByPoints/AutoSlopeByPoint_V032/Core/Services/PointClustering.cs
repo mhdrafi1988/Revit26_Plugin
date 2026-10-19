@@ -1,6 +1,6 @@
 // =======================================================
 // File: PointClustering.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.Core.Services
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Services
 // Moved out of V030's CircleMarkerService (pure logic, now testable).
 // Change: clusters by XY distance (V032 D3) — markers are drawn in plan,
 // so two points at different heights but the same plan spot are one mark.
@@ -8,9 +8,9 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Revit26_Plugin.AutoSlopeByPoint.V032.Core.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Models;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.Core.Services
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Core.Services
 {
     public static class PointClustering
     {

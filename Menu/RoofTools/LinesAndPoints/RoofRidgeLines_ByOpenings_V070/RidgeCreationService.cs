@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autodesk.Revit.DB;
-using Revit26_Plugin.RoofRidgeLines.V070.Models;
+using Revit26_Plugin_Revised.RoofRidgeLines.V070.Models;
 
-namespace Revit26_Plugin.RoofRidgeLines.V070.Services
+namespace Revit26_Plugin_Revised.RoofRidgeLines.V070.Services
 {
     public class RidgeCreationService
     {

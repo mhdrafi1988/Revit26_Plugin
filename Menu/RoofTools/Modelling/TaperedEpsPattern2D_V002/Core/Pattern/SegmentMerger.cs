@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V002.Core.Pattern
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V002.Core.Pattern
 {
     /// <summary>
     /// Joins collinear segments that touch end to end — but only through a vertex where

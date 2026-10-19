@@ -1,6 +1,6 @@
 using Autodesk.Revit.UI;
 
-namespace Revit26_Plugin.AutoSlopeByPointRidge.V003.Infrastructure.ExternalEvents
+namespace Revit26_Plugin_Revised.AutoSlopeByPointRidge.V003.Infrastructure.ExternalEvents
 {
     public static class AutoSlopeEventManager
     {

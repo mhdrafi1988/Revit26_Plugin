@@ -2,7 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace Revit26_Plugin.ParaManager.V005.Models
+namespace Revit26_Plugin_Revised.ParaManager.V005.Models
 {
     /// <summary>
     /// One selectable parameter leaf inside the popover's grouped list.

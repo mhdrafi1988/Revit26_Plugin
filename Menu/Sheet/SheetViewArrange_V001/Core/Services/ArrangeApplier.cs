@@ -2,7 +2,7 @@ using Autodesk.Revit.DB;
 using System;
 using System.Linq;
 
-namespace Revit26_Plugin.SheetViewArrange.V001.Core.Services
+namespace Revit26_Plugin_Revised.SheetViewArrange.V001.Core.Services
 {
     /// <summary>Outcome of <see cref="ArrangeApplier.Apply"/>.</summary>
     public sealed class ApplyResult

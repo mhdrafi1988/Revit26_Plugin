@@ -1,6 +1,6 @@
 // =======================================================
 // File: AutoSlopeByDrainWindow.xaml.cs
-// Namespace: Revit26_Plugin.MultiRoofSlopeByDrain.V013.UI.Views
+// Namespace: Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.UI.Views
 // Changes vs V012:
 //   - Owner set to Revit's main window here (was in the Command).
 //   - One window at a time: the Command brings an open window to the front.
@@ -13,8 +13,8 @@
 //     expander state (first group open, manual choices remembered per tab).
 // =======================================================
 
-using Revit26_Plugin.MultiRoofSlopeByDrain.V013.UI.ViewModels;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.UI.ViewModels;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -26,7 +26,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 
-namespace Revit26_Plugin.MultiRoofSlopeByDrain.V013.UI.Views
+namespace Revit26_Plugin_Revised.MultiRoofSlopeByDrain.V013.UI.Views
 {
     public partial class AutoSlopeByDrainWindow : Window
     {

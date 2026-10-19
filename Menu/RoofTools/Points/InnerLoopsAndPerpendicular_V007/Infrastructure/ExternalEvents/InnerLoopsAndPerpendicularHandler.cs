@@ -10,12 +10,12 @@
 
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Revit26_Plugin.InnerLoopsAndPerpendicular.V007.Core.Engine;
-using Revit26_Plugin.InnerLoopsAndPerpendicular.V007.Core.Models;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.InnerLoopsAndPerpendicular.V007.Core.Engine;
+using Revit26_Plugin_Revised.InnerLoopsAndPerpendicular.V007.Core.Models;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 
-namespace Revit26_Plugin.InnerLoopsAndPerpendicular.V007.Infrastructure.ExternalEvents
+namespace Revit26_Plugin_Revised.InnerLoopsAndPerpendicular.V007.Infrastructure.ExternalEvents
 {
     public class InnerLoopsAndPerpendicularHandler : IExternalEventHandler
     {

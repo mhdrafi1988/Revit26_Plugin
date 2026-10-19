@@ -1,6 +1,6 @@
 using Autodesk.Revit.UI;
 
-namespace Revit26_Plugin.InnerLoopDivider.V009.Infrastructure.ExternalEvents
+namespace Revit26_Plugin_Revised.InnerLoopDivider.V009.Infrastructure.ExternalEvents
 {
     public static class InnerLoopDividerEventManager
     {

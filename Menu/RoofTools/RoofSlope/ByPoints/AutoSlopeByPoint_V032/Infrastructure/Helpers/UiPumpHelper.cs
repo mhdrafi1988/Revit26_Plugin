@@ -1,6 +1,6 @@
 // =======================================================
 // File: UiPumpHelper.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.Helpers
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.Helpers
 // Unchanged idea from V030 (per Rafi's confirmed progress/Cancel decision):
 // the window and the ExternalEvent handler share Revit's main thread, so
 // during a long synchronous run WPF can only repaint the progress bar, and
@@ -12,7 +12,7 @@
 
 using System.Windows.Threading;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.V032.Infrastructure.Helpers
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.V032.Infrastructure.Helpers
 {
     public static class UiPumpHelper
     {

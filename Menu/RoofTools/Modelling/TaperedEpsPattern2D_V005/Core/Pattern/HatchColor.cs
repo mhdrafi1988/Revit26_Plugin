@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace Revit26_Plugin.TaperedEpsPattern2D.V005.Core.Pattern
+namespace Revit26_Plugin_Revised.TaperedEpsPattern2D.V005.Core.Pattern
 {
     /// <summary>An RGB colour used for a hatch slot (shared by the preview, the legend and created fill types).</summary>
     public readonly struct HatchColor

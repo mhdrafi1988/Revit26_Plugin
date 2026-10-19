@@ -1,8 +1,8 @@
 using System;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Revit26_Plugin.DwgStatistics.V005.Core.Models;
+using Revit26_Plugin_Revised.DwgStatistics.V005.Core.Models;
 
-namespace Revit26_Plugin.DwgStatistics.V005.UI.ViewModels
+namespace Revit26_Plugin_Revised.DwgStatistics.V005.UI.ViewModels
 {
     /// <summary>
     /// One row of the Views tab (V002): a view that owns, draws or (V004) hides the selected DWG, plus the

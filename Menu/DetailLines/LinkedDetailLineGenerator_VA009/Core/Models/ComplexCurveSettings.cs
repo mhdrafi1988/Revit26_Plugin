@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Revit26_Plugin.LinkedDetailLineGenerator.VA009.Core.Models
+namespace Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA009.Core.Models
 {
     /// <summary>
     /// Section 6 settings: how non-analytic (spline/NURBS) boundary edges are handled.

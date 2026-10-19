@@ -11,10 +11,10 @@ Changes vs V003 (layout only, per Revit_Plugin_UI_Standard.md):
   - No behaviour change — every binding/command is the V003 one.
 =======================================================
 -->
-<Window x:Class="Revit26_Plugin.RoofPointElevationSync.V004.MainWindow"
+<Window x:Class="Revit26_Plugin_Revised.RoofPointElevationSync.V004.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="clr-namespace:Revit26_Plugin.RoofPointElevationSync.V004"
+        xmlns:local="clr-namespace:Revit26_Plugin_Revised.RoofPointElevationSync.V004"
         Title="Roof Point Elevation Sync — V004"
         Width="1000" Height="800" MinWidth="1000" MinHeight="800"
         WindowStartupLocation="CenterScreen"

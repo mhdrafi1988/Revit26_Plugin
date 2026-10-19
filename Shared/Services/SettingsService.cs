@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Text.Json;
 
-namespace Revit26_Plugin.Shared.Services
+namespace Revit26_Plugin_Revised.Shared.Services
 {
     /// <summary>
     /// Generic settings load/save helper, per suite convention:

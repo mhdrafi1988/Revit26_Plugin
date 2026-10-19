@@ -1,4 +1,4 @@
-namespace Revit26_Plugin.ScheduleExportImport.V007.UI.ViewModels
+namespace Revit26_Plugin_Revised.ScheduleExportImport.V007.UI.ViewModels
 {
     public enum CardTone { Neutral, Accent, Success, Warning, Danger }
 

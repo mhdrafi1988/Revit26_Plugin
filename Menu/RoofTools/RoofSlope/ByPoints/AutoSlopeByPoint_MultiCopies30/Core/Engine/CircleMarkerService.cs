@@ -1,6 +1,6 @@
 // =======================================================
 // File: CircleMarkerService.cs
-// Namespace: Revit26_Plugin.AutoSlopeByPoint.MultiCopies30
+// Namespace: Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30
 // New in V026.
 // Purpose: Places DetailCurve circles (2 half-arcs forming a closed
 //          circle, planar to the active view's sketch plane) marking:
@@ -36,14 +36,14 @@
 // =======================================================
 
 using Autodesk.Revit.DB;
-using Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.Core.Models;
-using Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.Infrastructure.Helpers;
-using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30.Core.Models;
+using Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30.Infrastructure.Helpers;
+using Revit26_Plugin_Revised.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.Core.Engine
+namespace Revit26_Plugin_Revised.AutoSlopeByPoint.MultiCopies30.Core.Engine
 {
     public static class CircleMarkerService
     {
