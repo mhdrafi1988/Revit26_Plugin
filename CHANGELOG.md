@@ -9,6 +9,17 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [3.10.2] — 2026-10-19
+
+### Fixed
+- **Ribbon tooltips read `ToolCatalog`** — every ribbon button whose tool is in `ToolCatalog` (64
+  buttons) now shows the catalog title line, "Name — vX.Y.Z (build Vnnn)", instead of a build tag
+  typed into the ribbon code ("Tool — V032"), which had drifted from the real versions. The
+  description lines under the title are unchanged, and each dropdown's version-list tooltip follows
+  automatically. Older versions without a catalog entry keep their existing tooltip. Done once in
+  `RibbonLayoutHelper` (new `ToolCatalog.Find(string)` lookup by command class); no button names,
+  labels or icons changed.
+
 ## [3.10.1] — 2026-10-19
 
 ### Fixed
