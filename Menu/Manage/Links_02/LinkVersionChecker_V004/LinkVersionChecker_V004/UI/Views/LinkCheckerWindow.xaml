@@ -5,16 +5,21 @@
         Title="Link Version Checker V004 — Revit26_Plugin"
         Width="1280" Height="800" MinWidth="1280" MinHeight="800" MaxWidth="1664" MaxHeight="1040" ResizeMode="CanResizeWithGrip"
         WindowStartupLocation="CenterOwner"
-        FontFamily="Segoe UI" FontSize="12.5" Background="White">
+        FontFamily="Segoe UI" FontSize="12.5" Background="{DynamicResource BrushSurfaceCard}">
 
     <Window.Resources>
+      <ResourceDictionary>
+        <ResourceDictionary.MergedDictionaries>
+            <ResourceDictionary Source="pack://application:,,,/Revit26_Plugin;component/Shared/SharedStyles.xaml"/>
+        </ResourceDictionary.MergedDictionaries>
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
         <infra:BindingProxy x:Key="Proxy" Data="{Binding}"/>
 
-        <SolidColorBrush x:Key="Accent" Color="#0B6BCB"/>
-        <SolidColorBrush x:Key="Line" Color="#E5E7EB"/>
-        <SolidColorBrush x:Key="Head" Color="#F3F4F6"/>
-        <SolidColorBrush x:Key="Muted" Color="#6B7280"/>
+        <!-- Local names kept; values come from the shared UI standard v4.0 tokens. -->
+        <SolidColorBrush x:Key="Accent" Color="{StaticResource AppleBlue}"/>
+        <SolidColorBrush x:Key="Line" Color="{StaticResource BorderDefault}"/>
+        <SolidColorBrush x:Key="Head" Color="{StaticResource SystemSecondaryBackground}"/>
+        <SolidColorBrush x:Key="Muted" Color="{StaticResource TextSecondary}"/>
 
         <Style x:Key="Btn" TargetType="Button">
             <Setter Property="Padding" Value="12,6"/>
@@ -54,15 +59,15 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="RadioButton">
                         <Border x:Name="bd" Padding="14,6" Background="Transparent" Cursor="Hand">
-                            <TextBlock x:Name="tx" Text="{TemplateBinding Content}" Foreground="#1F2937"/>
+                            <TextBlock x:Name="tx" Text="{TemplateBinding Content}" Foreground="{StaticResource BrushTextPrimary}"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="bd" Property="Background" Value="#0B6BCB"/>
+                                <Setter TargetName="bd" Property="Background" Value="{StaticResource Accent}"/>
                                 <Setter TargetName="tx" Property="Foreground" Value="White"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="tx" Property="Foreground" Value="#9CA3AF"/>
+                                <Setter TargetName="tx" Property="Foreground" Value="{StaticResource BrushTextTertiary}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -97,24 +102,25 @@
 
         <!-- Check pill coloured by severity -->
         <DataTemplate x:Key="CheckPill">
-            <Border x:Name="pill" CornerRadius="9" Padding="8,1" Background="#E8F5E9" HorizontalAlignment="Left">
-                <TextBlock x:Name="txt" Text="{Binding CheckText}" FontWeight="SemiBold" FontSize="11.5" Foreground="#2E7D32"/>
+            <Border x:Name="pill" CornerRadius="9" Padding="8,1" Background="{StaticResource BrushStatusOkSoft}" HorizontalAlignment="Left">
+                <TextBlock x:Name="txt" Text="{Binding CheckText}" FontWeight="SemiBold" FontSize="11.5" Foreground="{StaticResource BrushStatusOk}"/>
             </Border>
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding Severity}" Value="Critical">
-                    <Setter TargetName="pill" Property="Background" Value="#FDECEA"/>
-                    <Setter TargetName="txt" Property="Foreground" Value="#C62828"/>
+                    <Setter TargetName="pill" Property="Background" Value="{StaticResource BrushStatusErrorSoft}"/>
+                    <Setter TargetName="txt" Property="Foreground" Value="{StaticResource BrushStatusError}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Severity}" Value="Warning">
-                    <Setter TargetName="pill" Property="Background" Value="#FFF4E0"/>
-                    <Setter TargetName="txt" Property="Foreground" Value="#B26A00"/>
+                    <Setter TargetName="pill" Property="Background" Value="{StaticResource BrushStatusWarnSoft}"/>
+                    <Setter TargetName="txt" Property="Foreground" Value="{StaticResource BrushStatusWarn}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Severity}" Value="Info">
-                    <Setter TargetName="pill" Property="Background" Value="#E6F0FB"/>
-                    <Setter TargetName="txt" Property="Foreground" Value="#0B6BCB"/>
+                    <Setter TargetName="pill" Property="Background" Value="{StaticResource BrushStatusInfoSoft}"/>
+                    <Setter TargetName="txt" Property="Foreground" Value="{StaticResource BrushStatusInfo}"/>
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
+      </ResourceDictionary>
     </Window.Resources>
 
     <Grid>
@@ -176,7 +182,7 @@
                         <TextBlock Style="{StaticResource CardLbl}" Text="Linked Files"/></StackPanel>
                 </Border>
                 <Border Grid.Column="1" Style="{StaticResource Card}">
-                    <StackPanel><TextBlock Style="{StaticResource CardNum}" Foreground="#0B6BCB" Text="{Binding CountAcc}"/>
+                    <StackPanel><TextBlock Style="{StaticResource CardNum}" Foreground="{StaticResource BrushStatusInfo}" Text="{Binding CountAcc}"/>
                         <TextBlock Style="{StaticResource CardLbl}" Text="From ACC"/></StackPanel>
                 </Border>
                 <Border Grid.Column="2" Style="{StaticResource Card}">
@@ -184,23 +190,23 @@
                         <TextBlock Style="{StaticResource CardLbl}" Text="On Disk"/></StackPanel>
                 </Border>
                 <Border Grid.Column="3" Style="{StaticResource Card}">
-                    <StackPanel><TextBlock Style="{StaticResource CardNum}" Foreground="#C62828" Text="{Binding CountUpgrade}"/>
+                    <StackPanel><TextBlock Style="{StaticResource CardNum}" Foreground="{StaticResource BrushStatusError}" Text="{Binding CountUpgrade}"/>
                         <TextBlock Style="{StaticResource CardLbl}" Text="Temporary Upgrades"/></StackPanel>
                 </Border>
                 <Border Grid.Column="4" Style="{StaticResource Card}">
-                    <StackPanel><TextBlock Style="{StaticResource CardNum}" Foreground="#B26A00" Text="{Binding CountIfc}"/>
+                    <StackPanel><TextBlock Style="{StaticResource CardNum}" Foreground="{StaticResource BrushStatusWarn}" Text="{Binding CountIfc}"/>
                         <TextBlock Style="{StaticResource CardLbl}" Text="IFC Cache Issues"/></StackPanel>
                 </Border>
                 <Border Grid.Column="5" Style="{StaticResource Card}">
-                    <StackPanel><TextBlock Style="{StaticResource CardNum}" Foreground="#C62828" Text="{Binding CountMissing}"/>
+                    <StackPanel><TextBlock Style="{StaticResource CardNum}" Foreground="{StaticResource BrushStatusError}" Text="{Binding CountMissing}"/>
                         <TextBlock Style="{StaticResource CardLbl}" Text="Not Found"/></StackPanel>
                 </Border>
                 <Border Grid.Column="6" Style="{StaticResource Card}">
-                    <StackPanel><TextBlock Style="{StaticResource CardNum}" Foreground="#B26A00" Text="{Binding EstTotalText}"/>
+                    <StackPanel><TextBlock Style="{StaticResource CardNum}" Foreground="{StaticResource BrushStatusWarn}" Text="{Binding EstTotalText}"/>
                         <TextBlock Style="{StaticResource CardLbl}" Text="Est. Extra Load Time"/></StackPanel>
                 </Border>
                 <Border Grid.Column="7" Style="{StaticResource Card}">
-                    <StackPanel><TextBlock Style="{StaticResource CardNum}" Foreground="#0B6BCB" Text="{Binding MeasuredHostText}"/>
+                    <StackPanel><TextBlock Style="{StaticResource CardNum}" Foreground="{StaticResource BrushStatusInfo}" Text="{Binding MeasuredHostText}"/>
                         <TextBlock Style="{StaticResource CardLbl}" Text="{Binding MeasuredHostSub}"/></StackPanel>
                 </Border>
             </Grid>
@@ -246,7 +252,7 @@
                           AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="FullRow"
                           HeadersVisibility="Column" GridLinesVisibility="Horizontal"
                           HorizontalGridLinesBrush="{StaticResource Line}" BorderBrush="{StaticResource Line}"
-                          RowHeight="28" CanUserAddRows="False" CanUserDeleteRows="False" Background="White"
+                          RowHeight="28" CanUserAddRows="False" CanUserDeleteRows="False" Background="{StaticResource BrushSurfaceCard}"
                           EnableRowVirtualization="True" VirtualizingPanel.IsVirtualizing="True">
                     <DataGrid.ColumnHeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
@@ -371,7 +377,7 @@
                                                    TextWrapping="Wrap"/>
                                     </Grid>
 
-                                    <Border Background="White" BorderBrush="{StaticResource Accent}" BorderThickness="3,0,0,0"
+                                    <Border Background="{StaticResource BrushSurfaceCard}" BorderBrush="{StaticResource Accent}" BorderThickness="3,0,0,0"
                                             CornerRadius="4" Padding="10,8" Margin="0,10,0,0">
                                         <StackPanel>
                                             <TextBlock Text="Recommendations" FontWeight="SemiBold"/>
@@ -388,7 +394,7 @@
 
         <!-- Progress overlay -->
         <Grid Background="#99FFFFFF" Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}">
-            <Border Width="460" Background="White" BorderBrush="{StaticResource Line}" BorderThickness="1"
+            <Border Width="460" Background="{StaticResource BrushSurfaceCard}" BorderBrush="{StaticResource Line}" BorderThickness="1"
                     CornerRadius="10" Padding="20" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="18" ShadowDepth="2" Opacity="0.2"/>
