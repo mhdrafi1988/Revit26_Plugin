@@ -16,7 +16,7 @@ namespace Revit26_Plugin_Revised.Menu.Ribbon
         {
             return new PushButtonData(name, text, assemblyPath, commandClass)
             {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons." + icon),
+                Image = ImageUtils.Load("Revit26_Plugin_Revised.Resources.Icons." + icon),
                 ToolTip = RibbonLayoutHelper.VersionTip(tool, version, detail)
             };
         }

@@ -23,13 +23,13 @@ namespace Revit26_Plugin_Revised.Menu.Ribbon
             // Highest version number first, every older version below it in descending order.
             var dtlLineV009 = new PushButtonData("Btn_DtlLine_09", "Detail Lines V009", assemblyPath, "Revit26_Plugin_Revised.DtlLineDim.V009.Commands.DtlLineDimCommand")
             {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Dimensions.AutoDimDetailLine_16.png"),
+                Image = ImageUtils.Load("Revit26_Plugin_Revised.Resources.Icons.Dimensions.AutoDimDetailLine_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Auto Dim Detail Line", "V009",
                     "UI Standard layout: metrics card, always-visible footer log with Copy All / Copy Selected, Generate Dimensions → Close.")
             };
             var dtlLineV010 = new PushButtonData("Btn_DtlLine_10", "Detail Lines V010", assemblyPath, "Revit26_Plugin_Revised.DtlLineDim.V010.Commands.DtlLineDimCommand")
             {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.Dimensions.AutoDimDetailLine_16.png"),
+                Image = ImageUtils.Load("Revit26_Plugin_Revised.Resources.Icons.Dimensions.AutoDimDetailLine_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Auto Dim Detail Line", "V010",
                     "V009 on the shared ToolWindowShell (log in body).")
             };

@@ -9,7 +9,7 @@ namespace Revit26_Plugin_Revised.Menu.Ribbon
         // Every roof tool is a pulldown: highest version number first,
         // every older version below it in descending order. Each tool lists only
         // its latest two versions.
-        private const string Icons = "Revit26_Plugin.Resources.Icons.RoofTools.";
+        private const string Icons = "Revit26_Plugin_Revised.Resources.Icons.RoofTools.";
 
         private static PushButtonData Btn(string assemblyPath, string name, string text, string commandClass,
                                           string icon, string tool, string version, string detail = null)

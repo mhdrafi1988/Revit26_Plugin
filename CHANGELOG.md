@@ -16,9 +16,12 @@ Each release lists every tool whose version changed, under the plugin version.
   (`namespace`/`using` declarations, `x:Class`, `clr-namespace:`, and the command class names the
   ribbon passes to `PushButtonData`). The add-in entry class is now `Revit26_Plugin_Revised.App`,
   and the installer scripts write that `FullClassName` into the `.addin` manifest.
+- **Project `<RootNamespace>` set to `Revit26_Plugin_Revised`**, so new files get the new namespace
+  and embedded-resource names move with it: icon paths passed to `ImageUtils.Load` now start with
+  `Revit26_Plugin_Revised.Resources.…`, and `Properties.Resources` loads
+  `Revit26_Plugin_Revised.Properties.Resources`.
 - Unchanged on purpose: the assembly name (`Revit26_Plugin.dll`), `pack://…/Revit26_Plugin;component`
-  URIs, embedded-resource names (`Revit26_Plugin.Resources.…`, `Revit26_Plugin.Properties.Resources`),
-  and the `%AppData%\Revit26_Plugin` / `Documents\Revit26_Plugin` settings and log folders, so
+  URIs, and the `%AppData%\Revit26_Plugin` / `Documents\Revit26_Plugin` settings and log folders, so
   existing settings and logs still load. No tool versions changed.
 
 **User note (breaking):** reinstall with the updated installer, or edit an existing `.addin` file so

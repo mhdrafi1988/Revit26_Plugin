@@ -21,13 +21,13 @@ namespace Revit26_Plugin_Revised.Menu.Ribbon
             // its latest two versions.
             var linesVA009 = new PushButtonData("Btn_ DeatailLInes VA009", "From Links VA009", assemblyPath, "Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA009.Commands.OpenLinkedDetailLineGeneratorCommand")
             {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.Linematch32_16.png"),
+                Image = ImageUtils.Load("Revit26_Plugin_Revised.Resources.Icons.DetailLiner.Linematch32_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Detail Lines From Links", "VA009",
                     "VA008 on the shared ToolWindowShell (log in body, element-selection lists scroll with the body).")
             };
             var linesVA010 = new PushButtonData("Btn_ DeatailLInes VA010", "From Links VA010", assemblyPath, "Revit26_Plugin_Revised.LinkedDetailLineGenerator.VA010.Commands.OpenLinkedDetailLineGeneratorCommand")
             {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.Linematch32_16.png"),
+                Image = ImageUtils.Load("Revit26_Plugin_Revised.Resources.Icons.DetailLiner.Linematch32_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Detail Lines From Links", "VA010",
                     "VA009 + ToolViewModelBase (Options 1/2/3): base log/shell, 3-way partial split, TreeVisibilityFilter service.")
             };
@@ -35,13 +35,13 @@ namespace Revit26_Plugin_Revised.Menu.Ribbon
 
             var closedLoopV002 = new PushButtonData("Btn_DetailLineClosedLoop_V002", "Closed Loop V002", assemblyPath, "Revit26_Plugin_Revised.DetailLineClosedLoop.V002.Commands.DetailLineClosedLoopCommand")
             {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.ClosedLoop_16.png"),
+                Image = ImageUtils.Load("Revit26_Plugin_Revised.Resources.Icons.DetailLiner.ClosedLoop_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Detail Line Closed Loop", "V002",
                     "UI Standard layout: two-column middle with a full-height Created Lines grid, footer log, Run → Close.")
             };
             var closedLoopV003 = new PushButtonData("Btn_DetailLineClosedLoop_V003", "Closed Loop V003", assemblyPath, "Revit26_Plugin_Revised.DetailLineClosedLoop.V003.Commands.DetailLineClosedLoopCommand")
             {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.DetailLiner.ClosedLoop_16.png"),
+                Image = ImageUtils.Load("Revit26_Plugin_Revised.Resources.Icons.DetailLiner.ClosedLoop_16.png"),
                 ToolTip = RibbonLayoutHelper.VersionTip("Detail Line Closed Loop", "V003",
                     "V002 on the shared ToolWindowShell (log in body, capped grid).")
             };

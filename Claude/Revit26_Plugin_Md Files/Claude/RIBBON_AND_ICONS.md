@@ -45,9 +45,9 @@ whole ribbon down. `Resources/Icons/` currently has more PNGs on disk than
 are embedded — that's fine on its own (unused/orphaned assets), but always
 grep the `.csproj` for a file before assuming it's live.
 
-The manifest-resource path mirrors the folder as dotted segments:
+The manifest-resource path is the `<RootNamespace>` (`Revit26_Plugin_Revised`) followed by the folder as dotted segments:
 `Resources/Icons/RoofTools/by_point_16.png` on disk →
-`"Revit26_Plugin.Resources.Icons.RoofTools.by_point_16.png"` in code.
+`"Revit26_Plugin_Revised.Resources.Icons.RoofTools.by_point_16.png"` in code.
 
 ## 16px vs 32px
 
@@ -65,9 +65,9 @@ return the created item — **capture it and cast to set an icon**:
 ```csharp
 var btn = (PushButton)pulldown.AddPushButton(new PushButtonData(
     "Btn_MyTool_V001", "My Tool V001", assemblyPath,
-    "Revit26_Plugin.MyTool.V001.Commands.MyToolCommand")
+    "Revit26_Plugin_Revised.MyTool.V001.Commands.MyToolCommand")
 {
-    Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.RoofTools.MyNewTool_16.png"),
+    Image = ImageUtils.Load("Revit26_Plugin_Revised.Resources.Icons.RoofTools.MyNewTool_16.png"),
     ToolTip = RibbonLayoutHelper.VersionTip("My Tool", "V001", "one-line description")
 });
 ```
