@@ -176,7 +176,7 @@ Changes vs V008:
                         <TextBlock Text="{Binding ValidationMessage}" Margin="12,2,12,10">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock" BasedOn="{StaticResource HintText}">
-                                    <Setter Property="Foreground" Value="{StaticResource BrushDanger}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource BrushStatusError}"/>
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding ValidationMessage}" Value="">
                                             <Setter Property="Visibility" Value="Collapsed"/>
