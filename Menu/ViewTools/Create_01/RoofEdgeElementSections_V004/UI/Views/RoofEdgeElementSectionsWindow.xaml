@@ -28,7 +28,7 @@ Changes vs V003 (layout only):
         Width="1020" Height="960" MinWidth="1020" MinHeight="960"
         ResizeMode="CanResizeWithGrip"
         WindowStartupLocation="Manual"
-        Background="{DynamicResource BrushSystemBackground}">
+        Background="{DynamicResource BrushSurfaceWindow}">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -97,14 +97,14 @@ Changes vs V003 (layout only):
                     <Border Grid.Column="8" Background="{StaticResource BrushSystemSecondaryBackground}" CornerRadius="6" Padding="8,4">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <TextBlock Text="Created " FontSize="10" Foreground="{StaticResource BrushTextTertiary}" VerticalAlignment="Center"/>
-                            <TextBlock Text="{Binding FinallyCreatedCount}" FontSize="15" FontWeight="Bold" Foreground="{StaticResource BrushSuccess}" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding FinallyCreatedCount}" FontSize="15" FontWeight="Bold" Foreground="{StaticResource BrushStatusOk}" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Border>
 
                     <Border Grid.Column="10" Background="{StaticResource BrushSystemSecondaryBackground}" CornerRadius="6" Padding="8,4">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <TextBlock Text="Skipped " FontSize="10" Foreground="{StaticResource BrushTextTertiary}" VerticalAlignment="Center"/>
-                            <TextBlock Text="{Binding SkippedCount}" FontSize="15" FontWeight="Bold" Foreground="{StaticResource BrushWarning}" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding SkippedCount}" FontSize="15" FontWeight="Bold" Foreground="{StaticResource BrushStatusWarn}" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Border>
                 </Grid>
@@ -118,8 +118,8 @@ Changes vs V003 (layout only):
                 <StackPanel>
                     <!-- 1. ROOFS -->
                     <Expander Header="1. Roofs" IsExpanded="True" Margin="0,0,0,8"
-                              Background="{StaticResource BrushCardBackground}"
-                              BorderBrush="{StaticResource BrushCardBorder}" BorderThickness="1">
+                              Background="{StaticResource BrushSurfaceCard}"
+                              BorderBrush="{StaticResource BrushBorderDefault}" BorderThickness="1">
                         <StackPanel Margin="12,6,12,10">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
                                 <Button Content="Pick Roofs" Style="{StaticResource SmallSecondaryButton}" Margin="0,0,6,0"
@@ -154,8 +154,8 @@ Changes vs V003 (layout only):
 
                     <!-- 2. LINKED ELEMENTS -->
                     <Expander Header="2. Linked Elements" IsExpanded="True" Margin="0,0,0,8"
-                              Background="{StaticResource BrushCardBackground}"
-                              BorderBrush="{StaticResource BrushCardBorder}" BorderThickness="1">
+                              Background="{StaticResource BrushSurfaceCard}"
+                              BorderBrush="{StaticResource BrushBorderDefault}" BorderThickness="1">
                         <StackPanel Margin="0,4,0,4">
                             <TextBlock Text="Linked Models" FontSize="11" FontWeight="Bold" Foreground="{StaticResource BrushNavyPrimary}" Margin="14,6,14,2"/>
                             <ItemsControl ItemsSource="{Binding LinkedModels}">
@@ -181,11 +181,11 @@ Changes vs V003 (layout only):
                                                         <TextBlock.Style>
                                                             <Style TargetType="TextBlock" BasedOn="{StaticResource BadgeText}">
                                                                 <Setter Property="Text" Value="Unloaded"/>
-                                                                <Setter Property="Foreground" Value="{StaticResource BrushWarning}"/>
+                                                                <Setter Property="Foreground" Value="{StaticResource BrushStatusWarn}"/>
                                                                 <Style.Triggers>
                                                                     <DataTrigger Binding="{Binding IsLoaded}" Value="True">
                                                                         <Setter Property="Text" Value="Loaded"/>
-                                                                        <Setter Property="Foreground" Value="{StaticResource BrushSuccess}"/>
+                                                                        <Setter Property="Foreground" Value="{StaticResource BrushStatusOk}"/>
                                                                     </DataTrigger>
                                                                 </Style.Triggers>
                                                             </Style>
@@ -246,8 +246,8 @@ Changes vs V003 (layout only):
                                             <Popup PlacementTarget="{Binding ElementName=CategoryFilterToggle}"
                                                    IsOpen="{Binding IsCategoryFilterOpen, Mode=TwoWay}"
                                                    StaysOpen="False" AllowsTransparency="True" Placement="Bottom" PopupAnimation="Fade">
-                                                <Border Background="{StaticResource BrushCardBackground}"
-                                                        BorderBrush="{StaticResource BrushCardBorder}" BorderThickness="1"
+                                                <Border Background="{StaticResource BrushSurfaceCard}"
+                                                        BorderBrush="{StaticResource BrushBorderDefault}" BorderThickness="1"
                                                         CornerRadius="8" Width="240" Padding="8">
                                                     <Border.Effect>
                                                         <DropShadowEffect ShadowDepth="2" BlurRadius="10" Opacity="0.22" Color="{StaticResource NavyDark}"/>
@@ -476,8 +476,8 @@ Changes vs V003 (layout only):
 
                     <!-- SECTION NAMING PATTERN -->
                     <Expander Header="Section Naming Pattern" IsExpanded="True" Margin="0,0,0,8"
-                              Background="{StaticResource BrushCardBackground}"
-                              BorderBrush="{StaticResource BrushCardBorder}" BorderThickness="1">
+                              Background="{StaticResource BrushSurfaceCard}"
+                              BorderBrush="{StaticResource BrushBorderDefault}" BorderThickness="1">
                         <StackPanel>
                             <TextBlock Text="Click a token to include/exclude it. Order below = order in the built name."
                                        Style="{StaticResource HintText}" Margin="12,0,12,6"/>

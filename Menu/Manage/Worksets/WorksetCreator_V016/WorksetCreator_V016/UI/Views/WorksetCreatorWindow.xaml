@@ -74,11 +74,11 @@ Added later in V016 — IFC toggle and duplicate prevention:
                 <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}"/>
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding LoadState}" Value="Unloaded">
-                        <Setter Property="Foreground" Value="{StaticResource BrushWarning}"/>
+                        <Setter Property="Foreground" Value="{StaticResource BrushStatusWarn}"/>
                         <Setter Property="FontWeight" Value="SemiBold"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding LoadState}" Value="NotFound">
-                        <Setter Property="Foreground" Value="{StaticResource BrushDanger}"/>
+                        <Setter Property="Foreground" Value="{StaticResource BrushStatusError}"/>
                         <Setter Property="FontWeight" Value="SemiBold"/>
                     </DataTrigger>
                 </Style.Triggers>
@@ -93,7 +93,7 @@ Added later in V016 — IFC toggle and duplicate prevention:
                 <Setter Property="Background"          Value="{StaticResource BrushTextSecondary}"/>
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding Outcome}" Value="Created">
-                        <Setter Property="Background" Value="{StaticResource BrushSuccess}"/>
+                        <Setter Property="Background" Value="{StaticResource BrushStatusOk}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding Outcome}" Value="CreatedNoInstances">
                         <Setter Property="Background" Value="{StaticResource BrushAppleBlue}"/>
@@ -102,10 +102,10 @@ Added later in V016 — IFC toggle and duplicate prevention:
                         <Setter Property="Background" Value="{StaticResource BrushAppleBlue}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding Outcome}" Value="Missed">
-                        <Setter Property="Background" Value="{StaticResource BrushWarning}"/>
+                        <Setter Property="Background" Value="{StaticResource BrushStatusWarn}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding Outcome}" Value="Error">
-                        <Setter Property="Background" Value="{StaticResource BrushDanger}"/>
+                        <Setter Property="Background" Value="{StaticResource BrushStatusError}"/>
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
@@ -119,12 +119,12 @@ Added later in V016 — IFC toggle and duplicate prevention:
                         <Setter Property="FontFamily" Value="Segoe UI"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding MatchConfidence}" Value="Ambiguous">
-                        <Setter Property="Foreground" Value="{StaticResource BrushWarning}"/>
+                        <Setter Property="Foreground" Value="{StaticResource BrushStatusWarn}"/>
                         <Setter Property="FontWeight" Value="SemiBold"/>
                         <Setter Property="FontFamily" Value="Segoe UI"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding MatchConfidence}" Value="Weak">
-                        <Setter Property="Foreground" Value="{StaticResource BrushWarning}"/>
+                        <Setter Property="Foreground" Value="{StaticResource BrushStatusWarn}"/>
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
@@ -197,7 +197,7 @@ Added later in V016 — IFC toggle and duplicate prevention:
         <!-- ═══ HEADER ═══════════════════════════════════════════ -->
         <shell:ToolWindowShell.HeaderContent>
             <Border CornerRadius="6" Margin="0,0,0,8"
-                    Background="{StaticResource BrushSystemBackground}"
+                    Background="{StaticResource BrushSurfaceWindow}"
                     BorderBrush="{StaticResource BrushSeparatorThin}"
                     BorderThickness="0,0,0,1"
                     Padding="12,8">
@@ -234,21 +234,21 @@ Added later in V016 — IFC toggle and duplicate prevention:
 
                     <!-- Assigned -->
                     <Border Grid.Column="1"
-                            BorderBrush="{StaticResource BrushSuccess}"
+                            BorderBrush="{StaticResource BrushStatusOk}"
                             BorderThickness="1"
                             CornerRadius="8"
                             Background="{StaticResource BrushTintSuccess}"
                             Padding="12,7"
                             Margin="0,0,6,0">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Ellipse Width="7" Height="7" Fill="{StaticResource BrushSuccess}"
+                            <Ellipse Width="7" Height="7" Fill="{StaticResource BrushStatusOk}"
                                      VerticalAlignment="Center" Margin="0,0,8,0"/>
                             <StackPanel>
                                 <TextBlock Text="ASSIGNED" FontSize="9" FontWeight="SemiBold"
-                                           Foreground="{StaticResource BrushSuccess}"/>
+                                           Foreground="{StaticResource BrushStatusOk}"/>
                                 <TextBlock Text="{Binding Grid1Count}"
                                            FontSize="20" FontWeight="Bold"
-                                           Foreground="{StaticResource BrushSuccess}"
+                                           Foreground="{StaticResource BrushStatusOk}"
                                            FontFamily="Consolas"/>
                             </StackPanel>
                         </StackPanel>
@@ -278,21 +278,21 @@ Added later in V016 — IFC toggle and duplicate prevention:
 
                     <!-- Rename match — links whose existing workset will be renamed -->
                     <Border Grid.Column="3"
-                            BorderBrush="{StaticResource BrushSuccess}"
+                            BorderBrush="{StaticResource BrushStatusOk}"
                             BorderThickness="1"
                             CornerRadius="8"
                             Background="{StaticResource BrushTintSuccess}"
                             Padding="12,7"
                             Margin="0,0,6,0">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Ellipse Width="7" Height="7" Fill="{StaticResource BrushSuccess}"
+                            <Ellipse Width="7" Height="7" Fill="{StaticResource BrushStatusOk}"
                                      VerticalAlignment="Center" Margin="0,0,8,0"/>
                             <StackPanel>
                                 <TextBlock Text="RENAME MATCH" FontSize="9" FontWeight="SemiBold"
-                                           Foreground="{StaticResource BrushSuccess}"/>
+                                           Foreground="{StaticResource BrushStatusOk}"/>
                                 <TextBlock Text="{Binding RenameMatchCount}"
                                            FontSize="20" FontWeight="Bold"
-                                           Foreground="{StaticResource BrushSuccess}"
+                                           Foreground="{StaticResource BrushStatusOk}"
                                            FontFamily="Consolas"
                                            ToolTip="Links that already have a workset under a different naming pattern. Renaming it keeps one workset per link."/>
                             </StackPanel>
@@ -301,21 +301,21 @@ Added later in V016 — IFC toggle and duplicate prevention:
 
                     <!-- Needs review — the matcher will not decide these -->
                     <Border Grid.Column="4"
-                            BorderBrush="{StaticResource BrushWarning}"
+                            BorderBrush="{StaticResource BrushStatusWarn}"
                             BorderThickness="1"
                             CornerRadius="8"
                             Background="{StaticResource BrushTintWarning}"
                             Padding="12,7"
                             Margin="0,0,6,0">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Ellipse Width="7" Height="7" Fill="{StaticResource BrushWarning}"
+                            <Ellipse Width="7" Height="7" Fill="{StaticResource BrushStatusWarn}"
                                      VerticalAlignment="Center" Margin="0,0,8,0"/>
                             <StackPanel>
                                 <TextBlock Text="NEEDS REVIEW" FontSize="9" FontWeight="SemiBold"
-                                           Foreground="{StaticResource BrushWarning}"/>
+                                           Foreground="{StaticResource BrushStatusWarn}"/>
                                 <TextBlock Text="{Binding NeedsReviewCount}"
                                            FontSize="20" FontWeight="Bold"
-                                           Foreground="{StaticResource BrushWarning}"
+                                           Foreground="{StaticResource BrushStatusWarn}"
                                            FontFamily="Consolas"
                                            ToolTip="Rows held out of the run until you pick an action — a naming pattern too rare to trust, or more than one candidate workset."/>
                             </StackPanel>
@@ -404,7 +404,7 @@ Added later in V016 — IFC toggle and duplicate prevention:
 
                         <TextBlock Grid.Column="4"
                                    Text="{Binding PatternErrorMessage}"
-                                   Foreground="{StaticResource BrushDanger}"
+                                   Foreground="{StaticResource BrushStatusError}"
                                    FontSize="10"
                                    VerticalAlignment="Center"
                                    HorizontalAlignment="Right"
@@ -453,10 +453,10 @@ Added later in V016 — IFC toggle and duplicate prevention:
                                                            Margin="2,0,0,0">
                                                     <TextBlock.Style>
                                                         <Style TargetType="TextBlock">
-                                                            <Setter Property="Foreground" Value="{StaticResource BrushWarning}"/>
+                                                            <Setter Property="Foreground" Value="{StaticResource BrushStatusWarn}"/>
                                                             <Style.Triggers>
                                                                 <DataTrigger Binding="{Binding IsAccepted}" Value="True">
-                                                                    <Setter Property="Foreground" Value="{StaticResource BrushSuccess}"/>
+                                                                    <Setter Property="Foreground" Value="{StaticResource BrushStatusOk}"/>
                                                                 </DataTrigger>
                                                             </Style.Triggers>
                                                         </Style>
@@ -533,7 +533,7 @@ Added later in V016 — IFC toggle and duplicate prevention:
 
                         <!-- Counts -->
                         <Border Grid.Row="1"
-                                Background="{StaticResource BrushSystemBackground}"
+                                Background="{StaticResource BrushSurfaceWindow}"
                                 BorderBrush="{StaticResource BrushSeparatorThin}"
                                 BorderThickness="0,1,0,1"
                                 Padding="10,8">
@@ -687,13 +687,13 @@ Added later in V016 — IFC toggle and duplicate prevention:
                                     CornerRadius="10,10,0,0"
                                     Padding="12,6">
                                 <StackPanel Orientation="Horizontal">
-                                    <Ellipse Style="{StaticResource StatusDot}" Fill="{StaticResource BrushSuccess}"/>
+                                    <Ellipse Style="{StaticResource StatusDot}" Fill="{StaticResource BrushStatusOk}"/>
                                     <TextBlock Text="Already created &amp; assigned"
                                                Style="{StaticResource SectionTitle}"
                                                FontSize="10" Margin="0"
                                                VerticalAlignment="Center"/>
                                     <Border Style="{StaticResource BadgePill}"
-                                            Background="{StaticResource BrushSuccess}"
+                                            Background="{StaticResource BrushStatusOk}"
                                             Margin="8,0,0,0">
                                         <TextBlock Text="{Binding Grid1Count}"
                                                    FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource BrushTextOnAccent}"/>
@@ -708,7 +708,7 @@ Added later in V016 — IFC toggle and duplicate prevention:
 
                             <!-- Per-section search -->
                             <Border Grid.Row="1"
-                                    Background="{StaticResource BrushSystemBackground}"
+                                    Background="{StaticResource BrushSurfaceWindow}"
                                     BorderBrush="{StaticResource BrushSeparatorThin}"
                                     BorderThickness="0,1,0,1"
                                     Padding="10,4">
@@ -767,7 +767,7 @@ Added later in V016 — IFC toggle and duplicate prevention:
                                             <DataTemplate>
                                                 <TextBlock Text="{Binding ProposedWorksetName}"
                                                            Style="{StaticResource MonoCell}"
-                                                           Foreground="{StaticResource BrushSuccess}"/>
+                                                           Foreground="{StaticResource BrushStatusOk}"/>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
@@ -788,7 +788,7 @@ Added later in V016 — IFC toggle and duplicate prevention:
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <Border CornerRadius="10"
-                                                        Background="{StaticResource BrushSuccess}"
+                                                        Background="{StaticResource BrushStatusOk}"
                                                         Padding="7,2"
                                                         HorizontalAlignment="Left"
                                                         Margin="8,0">
@@ -897,7 +897,7 @@ Added later in V016 — IFC toggle and duplicate prevention:
 
                             <!-- Per-section search -->
                             <Border Grid.Row="1"
-                                    Background="{StaticResource BrushSystemBackground}"
+                                    Background="{StaticResource BrushSurfaceWindow}"
                                     BorderBrush="{StaticResource BrushSeparatorThin}"
                                     BorderThickness="0,1,0,1"
                                     Padding="10,4">
@@ -1085,13 +1085,13 @@ Added later in V016 — IFC toggle and duplicate prevention:
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Grid.Column="0" Orientation="Horizontal">
-                                        <Ellipse Style="{StaticResource StatusDot}" Fill="{StaticResource BrushWarning}"/>
+                                        <Ellipse Style="{StaticResource StatusDot}" Fill="{StaticResource BrushStatusWarn}"/>
                                         <TextBlock Text="No instances in model"
                                                    Style="{StaticResource SectionTitle}"
                                                    FontSize="10" Margin="0"
                                                    VerticalAlignment="Center"/>
                                         <Border Style="{StaticResource BadgePill}"
-                                                Background="{StaticResource BrushWarning}"
+                                                Background="{StaticResource BrushStatusWarn}"
                                                 Margin="8,0,0,0">
                                             <TextBlock Text="{Binding Grid3Count}"
                                                        FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource BrushTextOnAccent}"/>
@@ -1133,7 +1133,7 @@ Added later in V016 — IFC toggle and duplicate prevention:
 
                             <!-- Per-section search -->
                             <Border Grid.Row="1"
-                                    Background="{StaticResource BrushSystemBackground}"
+                                    Background="{StaticResource BrushSurfaceWindow}"
                                     BorderBrush="{StaticResource BrushSeparatorThin}"
                                     BorderThickness="0,1,0,1"
                                     Padding="10,4">

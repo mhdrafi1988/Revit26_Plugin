@@ -93,7 +93,7 @@ own ScrollViewer(s) removed, grids and the log cap their height
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid Margin="12" Background="{StaticResource BrushCardBackground}">
+    <Grid Margin="12" Background="{StaticResource BrushSurfaceCard}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>  <!-- Top: metrics -->
             <RowDefinition Height="*"/>     <!-- Middle -->
@@ -502,7 +502,7 @@ own ScrollViewer(s) removed, grids and the log cap their height
             <!-- Inline hint shown only when Run is disabled specifically because
                  0 drains are selected — not a silent disable. -->
             <TextBlock Text="Select at least one drain to run."
-                       Foreground="{StaticResource BrushWarning}"
+                       Foreground="{StaticResource BrushStatusWarn}"
                        FontSize="10.5"
                        Margin="4,0,4,7"
                        TextWrapping="Wrap"
@@ -588,11 +588,11 @@ own ScrollViewer(s) removed, grids and the log cap their height
                                                     <DataTrigger Binding="{Binding StatusMessage}" Value="Processing...">
                                                         <Setter Property="Content" Value="⏳ Processing..."/>
                                                         <Setter Property="IsEnabled" Value="False"/>
-                                                        <Setter Property="Background" Value="{StaticResource BrushWarning}"/>
+                                                        <Setter Property="Background" Value="{StaticResource BrushStatusWarn}"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding StatusMessage}" Value="Completed">
                                                         <Setter Property="Content" Value="✓ Complete"/>
-                                                        <Setter Property="Background" Value="{StaticResource BrushSuccess}"/>
+                                                        <Setter Property="Background" Value="{StaticResource BrushStatusOk}"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>

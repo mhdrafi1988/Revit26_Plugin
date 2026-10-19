@@ -132,7 +132,7 @@ Changes vs VA008 (layout only):
                         <Run Text=" (id "/><Run Text="{Binding SelectedElementId, Mode=OneWay}"/><Run Text=")"/>
                     </TextBlock>
                     <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,0,0">
-                        <Ellipse Width="6" Height="6" Fill="{StaticResource BrushSuccess}" VerticalAlignment="Center" Margin="0,0,5,0"
+                        <Ellipse Width="6" Height="6" Fill="{StaticResource BrushStatusOk}" VerticalAlignment="Center" Margin="0,0,5,0"
                                  Visibility="{Binding SettingsLoaded, Converter={StaticResource BoolToVisibilityConverter}}"/>
                         <TextBlock Text="Settings loaded" FontSize="10.5" Foreground="{StaticResource BrushTextSecondary}" VerticalAlignment="Center"
                                    Visibility="{Binding SettingsLoaded, Converter={StaticResource BoolToVisibilityConverter}}"/>
@@ -214,8 +214,8 @@ Changes vs VA008 (layout only):
                     <Expander Header="1. Linked Models &amp; Instances"
                               IsExpanded="{Binding IsLinkedModelsExpanded}"
                               Margin="0,0,0,8"
-                              Background="{StaticResource BrushCardBackground}"
-                              BorderBrush="{StaticResource BrushCardBorder}" BorderThickness="1">
+                              Background="{StaticResource BrushSurfaceCard}"
+                              BorderBrush="{StaticResource BrushBorderDefault}" BorderThickness="1">
                         <StackPanel Margin="0,4,0,4">
                             <!-- Search + sort + status filter row. Only Loaded/CanBeUpgraded
                                  links ever reach this list at all (LinkService excludes
@@ -263,10 +263,10 @@ Changes vs VA008 (layout only):
                                                     <TextBlock Text="{Binding StatusDisplay}">
                                                         <TextBlock.Style>
                                                             <Style TargetType="TextBlock" BasedOn="{StaticResource BadgeText}">
-                                                                <Setter Property="Foreground" Value="{StaticResource BrushSuccess}"/>
+                                                                <Setter Property="Foreground" Value="{StaticResource BrushStatusOk}"/>
                                                                 <Style.Triggers>
                                                                     <DataTrigger Binding="{Binding StatusDisplay}" Value="Needs Review">
-                                                                        <Setter Property="Foreground" Value="{StaticResource BrushWarning}"/>
+                                                                        <Setter Property="Foreground" Value="{StaticResource BrushStatusWarn}"/>
                                                                     </DataTrigger>
                                                                 </Style.Triggers>
                                                             </Style>
@@ -360,8 +360,8 @@ Changes vs VA008 (layout only):
                     <Expander Header="2a. Element Selection — Profile (Floor/Roof)"
                               IsExpanded="{Binding IsProfileSelectionExpanded}"
                               Margin="0,0,0,8"
-                              Background="{StaticResource BrushCardBackground}"
-                              BorderBrush="{StaticResource BrushCardBorder}" BorderThickness="1">
+                              Background="{StaticResource BrushSurfaceCard}"
+                              BorderBrush="{StaticResource BrushBorderDefault}" BorderThickness="1">
                             <Grid>
                                 <!-- By Category (default) -->
                                 <ItemsControl ItemsSource="{Binding ElementTree}" Margin="14,8,14,8"
@@ -420,8 +420,8 @@ Changes vs VA008 (layout only):
                     <Expander Header="2b. Element Selection — Linear (Wall/Beam)"
                               IsExpanded="{Binding IsLinearSelectionExpanded}"
                               Margin="0,0,0,8"
-                              Background="{StaticResource BrushCardBackground}"
-                              BorderBrush="{StaticResource BrushCardBorder}" BorderThickness="1">
+                              Background="{StaticResource BrushSurfaceCard}"
+                              BorderBrush="{StaticResource BrushBorderDefault}" BorderThickness="1">
                             <Grid>
                                 <ItemsControl ItemsSource="{Binding ElementTree}" Margin="14,8,14,8"
                                               Visibility="{Binding GroupElementsByType, Converter={StaticResource InverseBoolToVisibilityConverter}}">
@@ -478,8 +478,8 @@ Changes vs VA008 (layout only):
                     <Expander Header="2c. Element Selection — Point (Columns/Mech. Equipment)"
                               IsExpanded="{Binding IsPointSelectionExpanded}"
                               Margin="0,0,0,8"
-                              Background="{StaticResource BrushCardBackground}"
-                              BorderBrush="{StaticResource BrushCardBorder}" BorderThickness="1">
+                              Background="{StaticResource BrushSurfaceCard}"
+                              BorderBrush="{StaticResource BrushBorderDefault}" BorderThickness="1">
                             <Grid>
                                 <ItemsControl ItemsSource="{Binding ElementTree}" Margin="14,8,14,8"
                                               Visibility="{Binding GroupElementsByType, Converter={StaticResource InverseBoolToVisibilityConverter}}">
@@ -967,7 +967,7 @@ Changes vs VA008 (layout only):
                     <Ellipse Width="7" Height="7" VerticalAlignment="Center" Margin="0,0,6,0">
                         <Ellipse.Style>
                             <Style TargetType="Ellipse">
-                                <Setter Property="Fill" Value="{StaticResource BrushSuccess}"/>
+                                <Setter Property="Fill" Value="{StaticResource BrushStatusOk}"/>
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsFormLocked}" Value="True">
                                         <Setter Property="Fill" Value="{StaticResource BrushTextDisabled}"/>

@@ -10,6 +10,8 @@ File: AutoSlopeByPointWindow.xaml  (V032, ToolWindowShell — CLAUDE.md v1.1)
                  same columns as the Excel "Vertex Data" sheet
           below: Processing log (closed by default, LogHeaderToggle)
   FOOTER  shell status strip; Export results… left; Cancel · Run · Close right
+v32.1.0: UI standard v4.0 pilot. Semantic tokens only (Surface*,
+  Status*, BorderDefault); window title bound to WindowTitle (ToolCatalog).
 Rules followed: no ScrollViewer in tool content (DataGrids/log use
 ShellBehaviors), no inline colours, root brushes via DynamicResource,
 converters declared here.
@@ -24,12 +26,12 @@ converters declared here.
         xmlns:shell="clr-namespace:Revit26_Plugin.Shared.Controls"
         xmlns:local="clr-namespace:Revit26_Plugin.AutoSlopeByPoint.V032.UI.Views"
         mc:Ignorable="d"
-        Title="Auto Slope By Point — V032"
+        Title="{Binding WindowTitle}"
         Width="1120" Height="800"
         MinWidth="960" MinHeight="620"
         WindowStartupLocation="CenterScreen"
         ResizeMode="CanResizeWithGrip"
-        Background="{DynamicResource BrushSystemBackground}"
+        Background="{DynamicResource BrushSurfaceWindow}"
         KeyDown="Window_KeyDown">
 
     <Window.Resources>
@@ -49,13 +51,13 @@ converters declared here.
             <!-- ── Text helpers ───────────────────────────────────── -->
             <Style x:Key="FieldError" TargetType="TextBlock">
                 <Setter Property="FontSize" Value="10.5"/>
-                <Setter Property="Foreground" Value="{StaticResource BrushDanger}"/>
+                <Setter Property="Foreground" Value="{StaticResource BrushStatusError}"/>
                 <Setter Property="TextWrapping" Value="Wrap"/>
                 <Setter Property="Margin" Value="0,2,0,0"/>
                 <Setter Property="Visibility" Value="{Binding Text, RelativeSource={RelativeSource Self}, Converter={StaticResource NonEmptyToVisibility}}"/>
             </Style>
             <Style x:Key="CalcHint" TargetType="TextBlock" BasedOn="{StaticResource HintText}">
-                <Setter Property="Foreground" Value="{StaticResource BrushTileInfoText}"/>
+                <Setter Property="Foreground" Value="{StaticResource BrushStatusInfo}"/>
                 <Setter Property="FontWeight" Value="SemiBold"/>
             </Style>
             <Style x:Key="SectionHeaderText" TargetType="TextBlock">
@@ -80,7 +82,7 @@ converters declared here.
 
             <!-- "Custom" tag on a section header -->
             <Style x:Key="CustomTag" TargetType="Border">
-                <Setter Property="Background" Value="{StaticResource BrushPillInfoBackground}"/>
+                <Setter Property="Background" Value="{StaticResource BrushStatusInfoSoft}"/>
                 <Setter Property="CornerRadius" Value="6"/>
                 <Setter Property="Padding" Value="6,1"/>
                 <Setter Property="VerticalAlignment" Value="Center"/>
@@ -89,7 +91,7 @@ converters declared here.
                 <Setter Property="Text" Value="Custom"/>
                 <Setter Property="FontSize" Value="10"/>
                 <Setter Property="FontWeight" Value="SemiBold"/>
-                <Setter Property="Foreground" Value="{StaticResource BrushPillInfoText}"/>
+                <Setter Property="Foreground" Value="{StaticResource BrushStatusInfo}"/>
             </Style>
 
             <!-- Small text button ("Reset to defaults") -->
@@ -104,63 +106,63 @@ converters declared here.
             <Style x:Key="StateBadge" TargetType="Border" BasedOn="{StaticResource BadgePill}">
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding State}" Value="Running">
-                        <Setter Property="Background" Value="{StaticResource BrushPillInfoBackground}"/>
+                        <Setter Property="Background" Value="{StaticResource BrushStatusInfoSoft}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding State}" Value="Picking">
-                        <Setter Property="Background" Value="{StaticResource BrushBannerNoteBackground}"/>
+                        <Setter Property="Background" Value="{StaticResource BrushStatusWarnSoft}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding State}" Value="Done">
-                        <Setter Property="Background" Value="{StaticResource BrushPillSuccessBackground}"/>
+                        <Setter Property="Background" Value="{StaticResource BrushStatusOkSoft}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding State}" Value="Cancelled">
-                        <Setter Property="Background" Value="{StaticResource BrushSoftDangerBackground}"/>
+                        <Setter Property="Background" Value="{StaticResource BrushStatusErrorSoft}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding State}" Value="Failed">
-                        <Setter Property="Background" Value="{StaticResource BrushSoftDangerBackground}"/>
+                        <Setter Property="Background" Value="{StaticResource BrushStatusErrorSoft}"/>
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
             <Style x:Key="StateBadgeText" TargetType="TextBlock" BasedOn="{StaticResource BadgeText}">
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding State}" Value="Running">
-                        <Setter Property="Foreground" Value="{StaticResource BrushPillInfoText}"/>
+                        <Setter Property="Foreground" Value="{StaticResource BrushStatusInfo}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding State}" Value="Picking">
-                        <Setter Property="Foreground" Value="{StaticResource BrushBannerNoteText}"/>
+                        <Setter Property="Foreground" Value="{StaticResource BrushStatusWarn}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding State}" Value="Done">
-                        <Setter Property="Foreground" Value="{StaticResource BrushPillSuccessText}"/>
+                        <Setter Property="Foreground" Value="{StaticResource BrushStatusOk}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding State}" Value="Cancelled">
-                        <Setter Property="Foreground" Value="{StaticResource BrushPillDangerText}"/>
+                        <Setter Property="Foreground" Value="{StaticResource BrushStatusError}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding State}" Value="Failed">
-                        <Setter Property="Foreground" Value="{StaticResource BrushPillDangerText}"/>
+                        <Setter Property="Foreground" Value="{StaticResource BrushStatusError}"/>
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
             <Style x:Key="ViewBadge" TargetType="Border" BasedOn="{StaticResource BadgePill}">
-                <Setter Property="Background" Value="{StaticResource BrushBannerWarningBackground}"/>
-                <Setter Property="BorderBrush" Value="{StaticResource BrushBannerWarningBorder}"/>
+                <Setter Property="Background" Value="{StaticResource BrushStatusWarnSoft}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource BrushStatusWarnBorder}"/>
                 <Setter Property="BorderThickness" Value="1"/>
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding IsPlanView}" Value="True">
-                        <Setter Property="Background" Value="{StaticResource BrushPillSuccessBackground}"/>
+                        <Setter Property="Background" Value="{StaticResource BrushStatusOkSoft}"/>
                         <Setter Property="BorderThickness" Value="0"/>
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
             <Style x:Key="ViewBadgeText" TargetType="TextBlock" BasedOn="{StaticResource BadgeText}">
-                <Setter Property="Foreground" Value="{StaticResource BrushBannerWarningText}"/>
+                <Setter Property="Foreground" Value="{StaticResource BrushStatusWarn}"/>
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding IsPlanView}" Value="True">
-                        <Setter Property="Foreground" Value="{StaticResource BrushPillSuccessText}"/>
+                        <Setter Property="Foreground" Value="{StaticResource BrushStatusOk}"/>
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
             <Style x:Key="WarnLine" TargetType="Border">
-                <Setter Property="Background" Value="{StaticResource BrushBannerWarningBackground}"/>
-                <Setter Property="BorderBrush" Value="{StaticResource BrushBannerWarningBorder}"/>
+                <Setter Property="Background" Value="{StaticResource BrushStatusWarnSoft}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource BrushStatusWarnBorder}"/>
                 <Setter Property="BorderThickness" Value="1"/>
                 <Setter Property="CornerRadius" Value="6"/>
                 <Setter Property="Padding" Value="8,3"/>
@@ -240,7 +242,7 @@ converters declared here.
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
                                             <Border Width="12" Height="12" CornerRadius="2" Margin="0,0,6,0"
-                                                    BorderBrush="{StaticResource BrushCardBorder}" BorderThickness="1"
+                                                    BorderBrush="{StaticResource BrushBorderDefault}" BorderThickness="1"
                                                     Background="{Binding Converter={StaticResource ColorNameToBrush}}"/>
                                             <TextBlock Text="{Binding}"/>
                                         </StackPanel>
@@ -288,10 +290,10 @@ converters declared here.
                 </Style.Triggers>
             </Style>
             <Style x:Key="DiffCell" TargetType="DataGridCell" BasedOn="{StaticResource ResultsCell}">
-                <Setter Property="Background" Value="{StaticResource BrushTileSuccessBackground}"/>
+                <Setter Property="Background" Value="{StaticResource BrushStatusOkSoft}"/>
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding IsAdjusted}" Value="True">
-                        <Setter Property="Background" Value="{StaticResource BrushTileWarningBackground}"/>
+                        <Setter Property="Background" Value="{StaticResource BrushStatusWarnSoft}"/>
                         <Setter Property="FontWeight" Value="SemiBold"/>
                     </DataTrigger>
                     <Trigger Property="IsSelected" Value="True">
@@ -300,7 +302,7 @@ converters declared here.
                 </Style.Triggers>
             </Style>
             <Style x:Key="ResultsRow" TargetType="DataGridRow">
-                <Setter Property="Background" Value="{StaticResource BrushCardBackground}"/>
+                <Setter Property="Background" Value="{StaticResource BrushSurfaceCard}"/>
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding IsTop}" Value="True">
                         <Setter Property="FontWeight" Value="SemiBold"/>
@@ -309,18 +311,18 @@ converters declared here.
                         <Setter Property="Background" Value="{StaticResource BrushSystemSecondaryBackground}"/>
                     </Trigger>
                     <Trigger Property="IsSelected" Value="True">
-                        <Setter Property="Background" Value="{StaticResource BrushPillInfoBackground}"/>
+                        <Setter Property="Background" Value="{StaticResource BrushStatusInfoSoft}"/>
                     </Trigger>
                 </Style.Triggers>
             </Style>
             <Style x:Key="CalcHeader" TargetType="DataGridColumnHeader" BasedOn="{StaticResource DataGridColumnHeaderStyle}">
-                <Setter Property="Background" Value="{StaticResource BrushTileSuccessBackground}"/>
+                <Setter Property="Background" Value="{StaticResource BrushStatusOkSoft}"/>
             </Style>
             <Style x:Key="ModelHeader" TargetType="DataGridColumnHeader" BasedOn="{StaticResource DataGridColumnHeaderStyle}">
-                <Setter Property="Background" Value="{StaticResource BrushTileInfoBackground}"/>
+                <Setter Property="Background" Value="{StaticResource BrushStatusInfoSoft}"/>
             </Style>
             <Style x:Key="DiffHeader" TargetType="DataGridColumnHeader" BasedOn="{StaticResource DataGridColumnHeaderStyle}">
-                <Setter Property="Background" Value="{StaticResource BrushTileWarningBackground}"/>
+                <Setter Property="Background" Value="{StaticResource BrushStatusWarnSoft}"/>
             </Style>
             <Style x:Key="NumText" TargetType="TextBlock">
                 <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -348,8 +350,8 @@ converters declared here.
                 <Setter Property="GridLinesVisibility" Value="All"/>
                 <Setter Property="HorizontalGridLinesBrush" Value="{StaticResource BrushSeparator}"/>
                 <Setter Property="VerticalGridLinesBrush" Value="{StaticResource BrushSeparator}"/>
-                <Setter Property="Background" Value="{StaticResource BrushCardBackground}"/>
-                <Setter Property="BorderBrush" Value="{StaticResource BrushCardBorder}"/>
+                <Setter Property="Background" Value="{StaticResource BrushSurfaceCard}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource BrushBorderDefault}"/>
                 <Setter Property="BorderThickness" Value="1"/>
                 <Setter Property="RowHeight" Value="24"/>
                 <Setter Property="FontSize" Value="11.5"/>
@@ -418,7 +420,7 @@ converters declared here.
                             <TextBlock Text="{Binding LongestPathText}" Style="{StaticResource MetricTileNumberInfo}"/>
                         </StackPanel>
                     </Border>
-                    <Border Style="{StaticResource MetricTile}" Background="{StaticResource BrushCardBackground}" Margin="3,0,0,0">
+                    <Border Style="{StaticResource MetricTile}" Background="{StaticResource BrushSurfaceCard}" Margin="3,0,0,0">
                         <StackPanel>
                             <TextBlock Text="RUN TIME" Style="{StaticResource MetricTileLabel}"/>
                             <TextBlock Text="{Binding RunTimeText}" Style="{StaticResource MetricTileNumber}"/>
@@ -495,7 +497,7 @@ converters declared here.
                                 </Grid>
 
                                 <Border Style="{StaticResource WarnLine}" Margin="0,10,0,0">
-                                    <TextBlock TextWrapping="Wrap" FontSize="11" Foreground="{StaticResource BrushBannerWarningText}"
+                                    <TextBlock TextWrapping="Wrap" FontSize="11" Foreground="{StaticResource BrushStatusWarn}"
                                                Text="⚠ Run resets every existing shape-point elevation on this roof. Ctrl+Z undoes the whole run in one step."/>
                                 </Border>
                             </StackPanel>

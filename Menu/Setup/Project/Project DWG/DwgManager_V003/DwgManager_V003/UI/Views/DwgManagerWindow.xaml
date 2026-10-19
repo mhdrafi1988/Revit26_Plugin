@@ -67,8 +67,8 @@ File: DwgManagerWindow.xaml  (DWG Manager V003 — ToolWindowShell)
 
             <!-- Small red button for row Delete and the inline confirmation -->
             <Style x:Key="SmallDangerButton" TargetType="Button" BasedOn="{StaticResource SmallSecondaryButton}">
-                <Setter Property="Foreground" Value="{StaticResource BrushDanger}"/>
-                <Setter Property="BorderBrush" Value="{StaticResource BrushDanger}"/>
+                <Setter Property="Foreground" Value="{StaticResource BrushStatusError}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource BrushStatusError}"/>
             </Style>
 
             <!-- Active / Inactive pill -->
@@ -77,10 +77,10 @@ File: DwgManagerWindow.xaml  (DWG Manager V003 — ToolWindowShell)
                 <Setter Property="Padding" Value="8,1"/>
                 <Setter Property="HorizontalAlignment" Value="Center"/>
                 <Setter Property="VerticalAlignment" Value="Center"/>
-                <Setter Property="Background" Value="{StaticResource BrushPillMutedBackground}"/>
+                <Setter Property="Background" Value="{StaticResource BrushSystemTertiaryBackground}"/>
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding IsActive}" Value="True">
-                        <Setter Property="Background" Value="{StaticResource BrushPillSuccessBackground}"/>
+                        <Setter Property="Background" Value="{StaticResource BrushStatusOkSoft}"/>
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
@@ -88,11 +88,11 @@ File: DwgManagerWindow.xaml  (DWG Manager V003 — ToolWindowShell)
             <Style x:Key="ActivePillText" TargetType="TextBlock">
                 <Setter Property="FontSize" Value="10"/>
                 <Setter Property="Text" Value="Inactive"/>
-                <Setter Property="Foreground" Value="{StaticResource BrushPillMutedText}"/>
+                <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}"/>
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding IsActive}" Value="True">
                         <Setter Property="Text" Value="Active"/>
-                        <Setter Property="Foreground" Value="{StaticResource BrushPillSuccessText}"/>
+                        <Setter Property="Foreground" Value="{StaticResource BrushStatusOk}"/>
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
@@ -107,8 +107,8 @@ File: DwgManagerWindow.xaml  (DWG Manager V003 — ToolWindowShell)
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
-                            <Border x:Name="Bg" Background="{StaticResource BrushPillInfoBackground}"
-                                    BorderBrush="{StaticResource BrushCardBorder}" BorderThickness="1"
+                            <Border x:Name="Bg" Background="{StaticResource BrushStatusInfoSoft}"
+                                    BorderBrush="{StaticResource BrushBorderDefault}" BorderThickness="1"
                                     CornerRadius="4" Padding="7,2">
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
@@ -117,7 +117,7 @@ File: DwgManagerWindow.xaml  (DWG Manager V003 — ToolWindowShell)
                                     <Setter TargetName="Bg" Property="BorderBrush" Value="{StaticResource BrushAppleBlue}"/>
                                 </Trigger>
                                 <Trigger Property="IsEnabled" Value="False">
-                                    <Setter TargetName="Bg" Property="Background" Value="{StaticResource BrushPillMutedBackground}"/>
+                                    <Setter TargetName="Bg" Property="Background" Value="{StaticResource BrushSystemTertiaryBackground}"/>
                                     <Setter Property="Foreground" Value="{StaticResource BrushTextDisabled}"/>
                                 </Trigger>
                             </ControlTemplate.Triggers>
@@ -280,7 +280,7 @@ File: DwgManagerWindow.xaml  (DWG Manager V003 — ToolWindowShell)
                               RowStyle="{StaticResource DwgRowStyle}"
                               CellStyle="{StaticResource DataGridCellStyle}"
                               ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
-                              Background="{StaticResource BrushSystemBackground}"
+                              Background="{StaticResource BrushSurfaceWindow}"
                               BorderThickness="0"
                               HeadersVisibility="Column"
                               VirtualizingPanel.IsVirtualizing="True"
@@ -373,8 +373,8 @@ File: DwgManagerWindow.xaml  (DWG Manager V003 — ToolWindowShell)
                                 <StackPanel Margin="36,0,8,6">
 
                                     <!-- Inline delete confirmation -->
-                                    <Border Background="{StaticResource BrushSoftDangerBackground}"
-                                            BorderBrush="{StaticResource BrushDanger}" BorderThickness="2,0,0,0"
+                                    <Border Background="{StaticResource BrushStatusErrorSoft}"
+                                            BorderBrush="{StaticResource BrushStatusError}" BorderThickness="2,0,0,0"
                                             CornerRadius="4" Padding="10,6" Margin="0,2,0,4"
                                             Visibility="{Binding IsConfirmingDelete, Converter={StaticResource BoolToVisibilityConverter}}">
                                         <DockPanel LastChildFill="False">

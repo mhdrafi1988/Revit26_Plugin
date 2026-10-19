@@ -25,7 +25,7 @@ Changes vs V006 (layout only):
         Width="960" Height="950" MinWidth="960" MinHeight="950"
         ResizeMode="CanResizeWithGrip"
         WindowStartupLocation="Manual"
-        Background="{DynamicResource BrushSystemBackground}">
+        Background="{DynamicResource BrushSurfaceWindow}">
 
     <Window.Resources>
         <ResourceDictionary>

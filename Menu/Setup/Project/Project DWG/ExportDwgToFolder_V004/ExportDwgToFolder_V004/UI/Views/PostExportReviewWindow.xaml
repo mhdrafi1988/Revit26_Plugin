@@ -76,7 +76,7 @@ Layout: shell header (metric tiles) / body (grid) / footer (Apply, Open).
                  second cell tries to show it. Declared per cell inside a
                  DataTemplate, each row gets its own. -->
             <DataTemplate x:Key="PathTooltipTemplate" DataType="{x:Type vm:PostExportRowViewModel}">
-                        <Border Background="{DynamicResource BrushCardBackground}"
+                        <Border Background="{DynamicResource BrushSurfaceCard}"
                                 BorderBrush="{DynamicResource BrushNavyLight}"
                                 BorderThickness="1" CornerRadius="6" Padding="10,8"
                                 MaxWidth="560">
@@ -250,11 +250,11 @@ Layout: shell header (metric tiles) / body (grid) / footer (Apply, Open).
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <Border Style="{StaticResource BadgePill}"
-                                                    Background="{DynamicResource BrushPillInfoBackground}"
+                                                    Background="{DynamicResource BrushStatusInfoSoft}"
                                                     Padding="7,2" HorizontalAlignment="Left">
                                                 <TextBlock x:Name="Pill" Text="{Binding SourceGroup}"
                                                            FontSize="10.5" FontWeight="SemiBold"
-                                                           Foreground="{DynamicResource BrushPillInfoText}"/>
+                                                           Foreground="{DynamicResource BrushStatusInfo}"/>
                                             </Border>
                                             <DataTemplate.Triggers>
                                                 <DataTrigger Binding="{Binding SourceGroup}" Value="Import">
@@ -330,21 +330,21 @@ Layout: shell header (metric tiles) / body (grid) / footer (Apply, Open).
 
                         <!-- The refused-sixth-tick note. -->
                         <Border Margin="12,8,12,0" Padding="9,6" CornerRadius="7"
-                                Background="{DynamicResource BrushBannerWarningBackground}"
-                                BorderBrush="{DynamicResource BrushBannerWarningBorder}"
+                                Background="{DynamicResource BrushStatusWarnSoft}"
+                                BorderBrush="{DynamicResource BrushStatusWarnBorder}"
                                 BorderThickness="1"
                                 Visibility="{Binding ShowOpenLimitNote, Converter={StaticResource BoolToVisibilityConverter}}">
                             <TextBlock TextWrapping="Wrap" FontSize="11.5"
-                                       Foreground="{DynamicResource BrushBannerWarningText}"
+                                       Foreground="{DynamicResource BrushStatusWarn}"
                                        Text="Open is limited to 5 files at a time — untick one first. Every exported file stays listed."/>
                         </Border>
 
                         <Border Margin="12,8,12,12" Padding="9,6" CornerRadius="7"
-                                Background="{DynamicResource BrushBannerNoteBackground}"
-                                BorderBrush="{DynamicResource BrushBannerNoteBorder}"
+                                Background="{DynamicResource BrushStatusWarnSoft}"
+                                BorderBrush="{DynamicResource BrushStatusWarnBorder}"
                                 BorderThickness="1">
                             <TextBlock TextWrapping="Wrap" FontSize="11.5"
-                                       Foreground="{DynamicResource BrushBannerNoteText}"
+                                       Foreground="{DynamicResource BrushStatusWarn}"
                                        Text="Both conversions delete the instance and recreate it — Revit has no API for Manage Links' Import button. Per-view graphic and layer overrides do not carry over, anything dimensioned to the CAD will stop that one row, and the element ID changes; each is named in the log. Replace with link to exported file is the safer direction, since that DWG was written from this instance and lands in the right place. Everything applied here is one undo step."/>
                         </Border>
                     </StackPanel>

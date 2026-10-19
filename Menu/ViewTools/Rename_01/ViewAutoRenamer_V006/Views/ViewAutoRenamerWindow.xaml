@@ -73,7 +73,7 @@ Changes vs V005 (layout only):
             <StackPanel>
                 <WrapPanel Margin="0,0,0,8" VerticalAlignment="Center">
                     <Border Style="{StaticResource BadgePill}" Margin="0,0,6,0"
-                            Background="{StaticResource BrushInputBackground}" BorderBrush="{StaticResource BrushWarning}" BorderThickness="1"
+                            Background="{StaticResource BrushInputBackground}" BorderBrush="{StaticResource BrushStatusWarn}" BorderThickness="1"
                             Visibility="{Binding IsDryRun, Converter={StaticResource BoolToVisibilityConverter}}">
                         <TextBlock Text="Dry run on" Style="{StaticResource BadgeText}" Foreground="{StaticResource BrushTextPrimary}"/>
                     </Border>
@@ -140,7 +140,7 @@ Changes vs V005 (layout only):
                     <Border Grid.Row="0"
                             x:Name="FilterBarBorder"
                             Background="{StaticResource BrushSystemSecondaryBackground}"
-                            BorderBrush="{StaticResource BrushCardBorder}"
+                            BorderBrush="{StaticResource BrushBorderDefault}"
                             BorderThickness="0,0,0,1"
                             Padding="12,7">
                         <Grid>
@@ -160,7 +160,7 @@ Changes vs V005 (layout only):
                                     </StackPanel>
                                 </Button>
 
-                                <Border Width="0.5" Height="18" Background="{StaticResource BrushCardBorder}" Margin="0,0,12,0"/>
+                                <Border Width="0.5" Height="18" Background="{StaticResource BrushBorderDefault}" Margin="0,0,12,0"/>
 
                                 <TextBlock Text="Sheet" Style="{StaticResource FieldLabel}"
                                            VerticalAlignment="Center" Margin="0,0,5,0"/>
@@ -168,7 +168,7 @@ Changes vs V005 (layout only):
                                           ItemsSource="{Binding SheetFilters}"
                                           SelectedItem="{Binding SelectedSheetFilter}"/>
 
-                                <Border Width="0.5" Height="18" Background="{StaticResource BrushCardBorder}" Margin="0,0,12,0"/>
+                                <Border Width="0.5" Height="18" Background="{StaticResource BrushBorderDefault}" Margin="0,0,12,0"/>
 
                                 <TextBlock Text="Search" Style="{StaticResource FieldLabel}"
                                            VerticalAlignment="Center" Margin="0,0,5,0"/>
@@ -177,7 +177,7 @@ Changes vs V005 (layout only):
                                          Tag="View name…"
                                          Text="{Binding ViewNameSearchText, UpdateSourceTrigger=PropertyChanged}"/>
 
-                                <Border Width="0.5" Height="18" Background="{StaticResource BrushCardBorder}" Margin="0,0,12,0"/>
+                                <Border Width="0.5" Height="18" Background="{StaticResource BrushBorderDefault}" Margin="0,0,12,0"/>
 
                                 <TextBlock Text="Dup. fix" Style="{StaticResource FieldLabel}"
                                            VerticalAlignment="Center" Margin="0,0,5,0"/>
@@ -185,7 +185,7 @@ Changes vs V005 (layout only):
                                           ItemsSource="{Binding DuplicateFixStrategies}"
                                           SelectedItem="{Binding DuplicateStrategy}"/>
 
-                                <Border Width="0.5" Height="18" Background="{StaticResource BrushCardBorder}" Margin="0,0,12,0"/>
+                                <Border Width="0.5" Height="18" Background="{StaticResource BrushBorderDefault}" Margin="0,0,12,0"/>
 
                                 <CheckBox Content="Dry run"
                                           IsChecked="{Binding IsDryRun}"
@@ -197,14 +197,14 @@ Changes vs V005 (layout only):
                                    PlacementTarget="{Binding ElementName=ViewsGridControl}"
                                    Placement="Relative" HorizontalOffset="12" VerticalOffset="8"
                                    StaysOpen="False" AllowsTransparency="True" Width="340">
-                                <Border Background="{StaticResource BrushCardBackground}" BorderBrush="{StaticResource BrushCardBorder}" BorderThickness="1"
+                                <Border Background="{StaticResource BrushSurfaceCard}" BorderBrush="{StaticResource BrushBorderDefault}" BorderThickness="1"
                                         CornerRadius="8">
                                     <Border.Effect>
                                         <DropShadowEffect Opacity="0.18" BlurRadius="24" ShadowDepth="4"/>
                                     </Border.Effect>
                                     <StackPanel>
                                         <!-- Popover header -->
-                                        <Border Padding="14,10" BorderBrush="{StaticResource BrushCardBorder}" BorderThickness="0,0,0,1">
+                                        <Border Padding="14,10" BorderBrush="{StaticResource BrushBorderDefault}" BorderThickness="0,0,0,1">
                                             <DockPanel>
                                                 <TextBlock Text="View filters" FontSize="12.5" FontWeight="SemiBold"/>
                                                 <TextBlock DockPanel.Dock="Right" Text="Clear all" FontSize="11"
@@ -229,7 +229,7 @@ Changes vs V005 (layout only):
                                                          Text="{Binding ViewNameSearchText, UpdateSourceTrigger=PropertyChanged}"
                                                          Tag="Filter by name…"/>
 
-                                                <Border Height="1" Background="{StaticResource BrushCardBorder}" Margin="14,0,14,8"/>
+                                                <Border Height="1" Background="{StaticResource BrushBorderDefault}" Margin="14,0,14,8"/>
 
                                                 <!-- View Type — grouped categories with expand -->
                                                 <TextBlock Text="VIEW TYPE" FontSize="11" FontWeight="Bold"
@@ -304,7 +304,7 @@ Changes vs V005 (layout only):
                                                     </ItemsControl.ItemTemplate>
                                                 </ItemsControl>
 
-                                                <Border Height="1" Background="{StaticResource BrushCardBorder}" Margin="14,10"/>
+                                                <Border Height="1" Background="{StaticResource BrushBorderDefault}" Margin="14,10"/>
 
                                                 <!-- Sheet -->
                                                 <TextBlock Text="SHEET" FontSize="11" FontWeight="Bold"
@@ -321,7 +321,7 @@ Changes vs V005 (layout only):
                                         </ScrollViewer>
 
                                         <!-- Popover footer -->
-                                        <Border Padding="14,10" BorderBrush="{StaticResource BrushCardBorder}" BorderThickness="0,1,0,0">
+                                        <Border Padding="14,10" BorderBrush="{StaticResource BrushBorderDefault}" BorderThickness="0,1,0,0">
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                                 <Button Content="Reset" Style="{StaticResource SmallSecondaryButton}"
                                                         Command="{Binding ResetFilterPopoverCommand}" Margin="0,0,8,0"/>
@@ -336,7 +336,7 @@ Changes vs V005 (layout only):
                     </Border>
                     <Border Grid.Row="1"
                             Background="{StaticResource BrushSystemSecondaryBackground}"
-                            BorderBrush="{StaticResource BrushCardBorder}"
+                            BorderBrush="{StaticResource BrushBorderDefault}"
                             BorderThickness="0,0,0,1">
                         <StackPanel>
 
@@ -377,7 +377,7 @@ Changes vs V005 (layout only):
                                 </StackPanel>
 
                                 <!-- Separator 1 -->
-                                <Border Grid.Column="1" Background="{StaticResource BrushCardBorder}"/>
+                                <Border Grid.Column="1" Background="{StaticResource BrushBorderDefault}"/>
 
                                 <!-- Col 2: Find / Replace -->
                                 <StackPanel Grid.Column="2" Margin="12,0,12,8">
@@ -406,7 +406,7 @@ Changes vs V005 (layout only):
                                 </StackPanel>
 
                                 <!-- Separator 2 -->
-                                <Border Grid.Column="3" Background="{StaticResource BrushCardBorder}"/>
+                                <Border Grid.Column="3" Background="{StaticResource BrushBorderDefault}"/>
 
                                 <!-- Col 4: Options -->
                                 <StackPanel Grid.Column="4" Margin="12,0,12,8">
@@ -438,12 +438,12 @@ Changes vs V005 (layout only):
                             </Grid>
 
                             <!-- Row B: Standardize — full width -->
-                            <Border BorderBrush="{StaticResource BrushCardBorder}" BorderThickness="0,1,0,0"
+                            <Border BorderBrush="{StaticResource BrushBorderDefault}" BorderThickness="0,1,0,0"
                                     Padding="12,8">
                                 <StackPanel IsEnabled="{Binding StandardizeEnabled}">
                                     <TextBlock Text="STANDARDIZE"
                                                FontSize="10" FontWeight="SemiBold"
-                                               Foreground="{StaticResource BrushSuccess}"
+                                               Foreground="{StaticResource BrushStatusOk}"
                                                Margin="0,0,0,6"/>
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="Case" Style="{StaticResource FieldLabel}"
@@ -461,8 +461,8 @@ Changes vs V005 (layout only):
                         </StackPanel>
                     </Border>
                     <Border Grid.Row="2"
-                            Background="{StaticResource BrushSystemBackground}"
-                            BorderBrush="{StaticResource BrushCardBorder}"
+                            Background="{StaticResource BrushSurfaceWindow}"
+                            BorderBrush="{StaticResource BrushBorderDefault}"
                             BorderThickness="0,0,0,1"
                             Padding="12,5">
                         <DockPanel>
@@ -505,7 +505,7 @@ Changes vs V005 (layout only):
                     ═══════════════════════════════════════════ -->
                     <Border Grid.Row="3"
                             Background="{StaticResource BrushSystemSecondaryBackground}"
-                            BorderBrush="{StaticResource BrushCardBorder}"
+                            BorderBrush="{StaticResource BrushBorderDefault}"
                             BorderThickness="0,0,0,1"
                             Padding="12,6">
                         <StackPanel Orientation="Horizontal">
@@ -555,7 +555,7 @@ Changes vs V005 (layout only):
                               AlternationCount="2"
                               ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
                               CellStyle="{StaticResource DataGridCellStyle}"
-                              Background="{StaticResource BrushSystemBackground}"
+                              Background="{StaticResource BrushSurfaceWindow}"
                               BorderThickness="0"
                               VirtualizingPanel.IsVirtualizing="True"
                               VirtualizingPanel.VirtualizationMode="Recycling"
@@ -629,11 +629,11 @@ Changes vs V005 (layout only):
                                             <TextBlock Text="{Binding PreviewName}"
                                                     VerticalAlignment="Center"/>
                                             <Border Margin="5,0,0,0" CornerRadius="8"
-                                                    Background="{StaticResource BrushInputBackground}" BorderBrush="{StaticResource BrushDanger}" BorderThickness="0.5"
+                                                    Background="{StaticResource BrushInputBackground}" BorderBrush="{StaticResource BrushStatusError}" BorderThickness="0.5"
                                                     Padding="5,1"
                                                     Visibility="{Binding IsDuplicate, Converter={StaticResource BoolToVisibilityConverter}}"
                                                     VerticalAlignment="Center">
-                                                <TextBlock Text="dup" FontSize="10" Foreground="{StaticResource BrushDanger}"/>
+                                                <TextBlock Text="dup" FontSize="10" Foreground="{StaticResource BrushStatusError}"/>
                                             </Border>
                                         </StackPanel>
                                     </DataTemplate>
@@ -713,15 +713,15 @@ Changes vs V005 (layout only):
                                         Command="{Binding ResetSelectedNamesCommand}"
                                         Style="{StaticResource SmallSecondaryButton}">
                                     <Button.Foreground>
-                                        <SolidColorBrush Color="{StaticResource ColorDanger}"/>
+                                        <SolidColorBrush Color="{StaticResource StatusError}"/>
                                     </Button.Foreground>
                                     <TextBlock Text="↺  Reset all names"
-                                               Foreground="{StaticResource BrushDanger}"/>
+                                               Foreground="{StaticResource BrushStatusError}"/>
                                 </Button>
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal"
                             HorizontalAlignment="Right" VerticalAlignment="Center">
                     <Border CornerRadius="10" Margin="0,0,10,0" Padding="9,3" VerticalAlignment="Center"
-                            Background="{StaticResource BrushInputBackground}" BorderBrush="{StaticResource BrushWarning}" BorderThickness="1"
+                            Background="{StaticResource BrushInputBackground}" BorderBrush="{StaticResource BrushStatusWarn}" BorderThickness="1"
                             Visibility="{Binding IsDryRun, Converter={StaticResource BoolToVisibilityConverter}}">
                         <TextBlock FontSize="11" Foreground="{StaticResource BrushTextPrimary}"
                                    Text="Dry run — no changes will be saved"/>

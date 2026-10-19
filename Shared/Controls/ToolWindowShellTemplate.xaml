@@ -25,7 +25,7 @@ A template (not a UserControl) so tool content can use x:Name freely.
     <BooleanToVisibilityConverter x:Key="ShellBoolToVisibility"/>
 
     <ControlTemplate x:Key="ToolWindowShellTemplate" TargetType="{x:Type local:ToolWindowShell}">
-        <Grid Background="{StaticResource BrushSystemBackground}">
+        <Grid Background="{StaticResource BrushSurfaceWindow}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>  <!-- HEADER -->
                 <RowDefinition Height="*"/>     <!-- BODY   -->
@@ -66,10 +66,10 @@ A template (not a UserControl) so tool content can use x:Name freely.
 
             <!-- ═══ FOOTER ═════════════════════════════════════ -->
             <Border Grid.Row="2"
-                    Background="{StaticResource BrushSystemBackground}"
+                    Background="{StaticResource BrushSurfaceWindow}"
                     BorderBrush="{StaticResource BrushCardBorder}"
                     BorderThickness="0,1,0,0"
-                    Padding="12,7">
+                    Padding="12,8">
                 <StackPanel>
                     <Grid Margin="0,0,0,6">
                         <Grid.ColumnDefinitions>

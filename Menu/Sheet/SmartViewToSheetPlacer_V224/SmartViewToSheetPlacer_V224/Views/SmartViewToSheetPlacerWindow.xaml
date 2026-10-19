@@ -323,7 +323,7 @@ Changes vs V223 (layout only):
                                                             <Setter Property="Background" Value="{StaticResource BrushNavyPrimary}"/>
                                                         </MultiDataTrigger>
                                                         <DataTrigger Binding="{Binding Stage1Complete}" Value="True">
-                                                            <Setter Property="Background" Value="{StaticResource BrushSuccess}"/>
+                                                            <Setter Property="Background" Value="{StaticResource BrushStatusOk}"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                     <Setter Property="Background" Value="{StaticResource BrushTextDisabled}"/>
@@ -347,7 +347,7 @@ Changes vs V223 (layout only):
                                                             <Setter Property="Background" Value="{StaticResource BrushSystemSecondaryBackground}"/>
                                                         </MultiDataTrigger>
                                                         <DataTrigger Binding="{Binding Stage1Complete}" Value="True">
-                                                            <Setter Property="Background" Value="{StaticResource BrushStageCompleteBackground}"/>
+                                                            <Setter Property="Background" Value="{StaticResource BrushStatusOkSoft}"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                     <Setter Property="Background" Value="{StaticResource BrushSystemTertiaryBackground}"/>
@@ -365,7 +365,7 @@ Changes vs V223 (layout only):
                                                                 <Setter Property="Foreground" Value="{StaticResource BrushNavyPrimary}"/>
                                                             </MultiDataTrigger>
                                                             <DataTrigger Binding="{Binding Stage1Complete}" Value="True">
-                                                                <Setter Property="Foreground" Value="{StaticResource BrushSuccess}"/>
+                                                                <Setter Property="Foreground" Value="{StaticResource BrushStatusOk}"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -393,7 +393,7 @@ Changes vs V223 (layout only):
                                     </StackPanel>
                                 </Grid>
                             </ToggleButton>
-                            <Border BorderThickness="0,1,0,0" BorderBrush="{StaticResource BrushCardBorder}"
+                            <Border BorderThickness="0,1,0,0" BorderBrush="{StaticResource BrushBorderDefault}"
                                     Visibility="{Binding Stage1Expanded, Converter={StaticResource BoolToVisibilityConverter}}">
                                 <StackPanel Margin="14">
 
@@ -532,8 +532,8 @@ Changes vs V223 (layout only):
                                                           Width="110" Margin="0,0,10,0"
                                                           Height="28"
                                                           IsChecked="{Binding IsViewTypeFilterOpen, Mode=TwoWay}"
-                                                          Background="{StaticResource BrushCardBackground}"
-                                                          BorderBrush="{StaticResource BrushCardBorder}"
+                                                          Background="{StaticResource BrushSurfaceCard}"
+                                                          BorderBrush="{StaticResource BrushBorderDefault}"
                                                           BorderThickness="1"
                                                           Cursor="Hand">
                                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -550,8 +550,8 @@ Changes vs V223 (layout only):
                                                    Placement="Bottom"
                                                    HorizontalOffset="0"
                                                    VerticalOffset="2">
-                                                <Border Background="{StaticResource BrushCardBackground}"
-                                                        BorderBrush="{StaticResource BrushCardBorder}"
+                                                <Border Background="{StaticResource BrushSurfaceCard}"
+                                                        BorderBrush="{StaticResource BrushBorderDefault}"
                                                         BorderThickness="1" CornerRadius="8" Padding="0,6"
                                                         Width="190">
                                                     <Border.Effect>
@@ -594,8 +594,8 @@ Changes vs V223 (layout only):
                                                           Width="120" Margin="0,0,4,0" HorizontalAlignment="Stretch"
                                                           Height="28"
                                                           IsChecked="{Binding IsFilterParameterOpen, Mode=TwoWay}"
-                                                          Background="{StaticResource BrushCardBackground}"
-                                                          BorderBrush="{StaticResource BrushCardBorder}"
+                                                          Background="{StaticResource BrushSurfaceCard}"
+                                                          BorderBrush="{StaticResource BrushBorderDefault}"
                                                           BorderThickness="1"
                                                           Cursor="Hand">
                                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -612,8 +612,8 @@ Changes vs V223 (layout only):
                                                    Placement="Bottom"
                                                    HorizontalOffset="0"
                                                    VerticalOffset="2">
-                                                <Border Background="{StaticResource BrushCardBackground}"
-                                                        BorderBrush="{StaticResource BrushCardBorder}"
+                                                <Border Background="{StaticResource BrushSurfaceCard}"
+                                                        BorderBrush="{StaticResource BrushBorderDefault}"
                                                         BorderThickness="1" CornerRadius="8" Padding="8"
                                                         Width="220">
                                                     <Border.Effect>
@@ -750,7 +750,7 @@ Changes vs V223 (layout only):
                                                             <Setter Property="Background" Value="{StaticResource BrushNavyPrimary}"/>
                                                         </MultiDataTrigger>
                                                         <DataTrigger Binding="{Binding Stage2Complete}" Value="True">
-                                                            <Setter Property="Background" Value="{StaticResource BrushSuccess}"/>
+                                                            <Setter Property="Background" Value="{StaticResource BrushStatusOk}"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                     <Setter Property="Background" Value="{StaticResource BrushTextDisabled}"/>
@@ -774,7 +774,7 @@ Changes vs V223 (layout only):
                                                             <Setter Property="Background" Value="{StaticResource BrushSystemSecondaryBackground}"/>
                                                         </MultiDataTrigger>
                                                         <DataTrigger Binding="{Binding Stage2Complete}" Value="True">
-                                                            <Setter Property="Background" Value="{StaticResource BrushStageCompleteBackground}"/>
+                                                            <Setter Property="Background" Value="{StaticResource BrushStatusOkSoft}"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                     <Setter Property="Background" Value="{StaticResource BrushSystemTertiaryBackground}"/>
@@ -792,7 +792,7 @@ Changes vs V223 (layout only):
                                                                 <Setter Property="Foreground" Value="{StaticResource BrushNavyPrimary}"/>
                                                             </MultiDataTrigger>
                                                             <DataTrigger Binding="{Binding Stage2Complete}" Value="True">
-                                                                <Setter Property="Foreground" Value="{StaticResource BrushSuccess}"/>
+                                                                <Setter Property="Foreground" Value="{StaticResource BrushStatusOk}"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -820,7 +820,7 @@ Changes vs V223 (layout only):
                                     </StackPanel>
                                 </Grid>
                             </ToggleButton>
-                            <Border BorderThickness="0,1,0,0" BorderBrush="{StaticResource BrushCardBorder}"
+                            <Border BorderThickness="0,1,0,0" BorderBrush="{StaticResource BrushBorderDefault}"
                                     Visibility="{Binding Stage2Expanded, Converter={StaticResource BoolToVisibilityConverter}}">
                                 <StackPanel Margin="14">
 
@@ -982,11 +982,11 @@ Changes vs V223 (layout only):
                                              pixel geometry (Preview*Px on the ViewModel, Preview*Px on each
                                              ViewPlacement) is pre-computed in the VM's RecomputePreviewGeometry —
                                              plain OneWay bindings here, no converters needed. -->
-                                        <Border Background="{StaticResource BrushSystemBackground}"
+                                        <Border Background="{StaticResource BrushSurfaceWindow}"
                                                 BorderBrush="{StaticResource BrushSeparator}" BorderThickness="1"
                                                 CornerRadius="8" Padding="20" HorizontalAlignment="Center">
                                             <Border Width="{Binding PreviewSheetWidthPx}" Height="{Binding PreviewSheetHeightPx}"
-                                                    Background="{StaticResource BrushCardBackground}" BorderBrush="{StaticResource BrushTextTertiary}" BorderThickness="1.5">
+                                                    Background="{StaticResource BrushSurfaceCard}" BorderBrush="{StaticResource BrushTextTertiary}" BorderThickness="1.5">
                                                 <Canvas>
                                                     <!-- Usable-area outline (post-margin) -->
                                                     <Border Canvas.Left="{Binding PreviewUsableLeftPx}" Canvas.Top="{Binding PreviewUsableTopPx}"
@@ -1013,8 +1013,8 @@ Changes vs V223 (layout only):
                                                                             <Setter Property="BorderBrush" Value="{StaticResource BrushNavyLight}"/>
                                                                             <Style.Triggers>
                                                                                 <DataTrigger Binding="{Binding Fits}" Value="False">
-                                                                                    <Setter Property="BorderBrush" Value="{StaticResource BrushDanger}"/>
-                                                                                    <Setter Property="Background" Value="{StaticResource BrushSheetNoFitBackground}"/>
+                                                                                    <Setter Property="BorderBrush" Value="{StaticResource BrushStatusError}"/>
+                                                                                    <Setter Property="Background" Value="{StaticResource BrushStatusErrorSoft}"/>
                                                                                 </DataTrigger>
                                                                             </Style.Triggers>
                                                                         </Style>
@@ -1084,7 +1084,7 @@ Changes vs V223 (layout only):
                                                             <Setter Property="Background" Value="{StaticResource BrushNavyPrimary}"/>
                                                         </MultiDataTrigger>
                                                         <DataTrigger Binding="{Binding Stage3Complete}" Value="True">
-                                                            <Setter Property="Background" Value="{StaticResource BrushSuccess}"/>
+                                                            <Setter Property="Background" Value="{StaticResource BrushStatusOk}"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                     <Setter Property="Background" Value="{StaticResource BrushTextDisabled}"/>
@@ -1108,7 +1108,7 @@ Changes vs V223 (layout only):
                                                             <Setter Property="Background" Value="{StaticResource BrushSystemSecondaryBackground}"/>
                                                         </MultiDataTrigger>
                                                         <DataTrigger Binding="{Binding Stage3Complete}" Value="True">
-                                                            <Setter Property="Background" Value="{StaticResource BrushStageCompleteBackground}"/>
+                                                            <Setter Property="Background" Value="{StaticResource BrushStatusOkSoft}"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                     <Setter Property="Background" Value="{StaticResource BrushSystemTertiaryBackground}"/>
@@ -1126,7 +1126,7 @@ Changes vs V223 (layout only):
                                                                 <Setter Property="Foreground" Value="{StaticResource BrushNavyPrimary}"/>
                                                             </MultiDataTrigger>
                                                             <DataTrigger Binding="{Binding Stage3Complete}" Value="True">
-                                                                <Setter Property="Foreground" Value="{StaticResource BrushSuccess}"/>
+                                                                <Setter Property="Foreground" Value="{StaticResource BrushStatusOk}"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -1154,7 +1154,7 @@ Changes vs V223 (layout only):
                                     </StackPanel>
                                 </Grid>
                             </ToggleButton>
-                            <Border BorderThickness="0,1,0,0" BorderBrush="{StaticResource BrushCardBorder}"
+                            <Border BorderThickness="0,1,0,0" BorderBrush="{StaticResource BrushBorderDefault}"
                                     Visibility="{Binding Stage3Expanded, Converter={StaticResource BoolToVisibilityConverter}}">
                                 <StackPanel Margin="14">
 
@@ -1209,11 +1209,11 @@ Changes vs V223 (layout only):
                                                                 <TextBlock.Style>
                                                                     <Style TargetType="TextBlock">
                                                                         <Setter Property="Text" Value="OK"/>
-                                                                        <Setter Property="Foreground" Value="{StaticResource BrushSuccess}"/>
+                                                                        <Setter Property="Foreground" Value="{StaticResource BrushStatusOk}"/>
                                                                         <Style.Triggers>
                                                                             <DataTrigger Binding="{Binding Fits}" Value="False">
                                                                                 <Setter Property="Text" Value="⚠ Overflow"/>
-                                                                                <Setter Property="Foreground" Value="{StaticResource BrushDanger}"/>
+                                                                                <Setter Property="Foreground" Value="{StaticResource BrushStatusError}"/>
                                                                             </DataTrigger>
                                                                         </Style.Triggers>
                                                                     </Style>
@@ -1271,7 +1271,7 @@ Changes vs V223 (layout only):
                                                             <Setter Property="Background" Value="{StaticResource BrushNavyPrimary}"/>
                                                         </MultiDataTrigger>
                                                         <DataTrigger Binding="{Binding Stage4Complete}" Value="True">
-                                                            <Setter Property="Background" Value="{StaticResource BrushSuccess}"/>
+                                                            <Setter Property="Background" Value="{StaticResource BrushStatusOk}"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                     <Setter Property="Background" Value="{StaticResource BrushTextDisabled}"/>
@@ -1295,7 +1295,7 @@ Changes vs V223 (layout only):
                                                             <Setter Property="Background" Value="{StaticResource BrushSystemSecondaryBackground}"/>
                                                         </MultiDataTrigger>
                                                         <DataTrigger Binding="{Binding Stage4Complete}" Value="True">
-                                                            <Setter Property="Background" Value="{StaticResource BrushStageCompleteBackground}"/>
+                                                            <Setter Property="Background" Value="{StaticResource BrushStatusOkSoft}"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                     <Setter Property="Background" Value="{StaticResource BrushSystemTertiaryBackground}"/>
@@ -1313,7 +1313,7 @@ Changes vs V223 (layout only):
                                                                 <Setter Property="Foreground" Value="{StaticResource BrushNavyPrimary}"/>
                                                             </MultiDataTrigger>
                                                             <DataTrigger Binding="{Binding Stage4Complete}" Value="True">
-                                                                <Setter Property="Foreground" Value="{StaticResource BrushSuccess}"/>
+                                                                <Setter Property="Foreground" Value="{StaticResource BrushStatusOk}"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -1341,7 +1341,7 @@ Changes vs V223 (layout only):
                                     </StackPanel>
                                 </Grid>
                             </ToggleButton>
-                            <Border BorderThickness="0,1,0,0" BorderBrush="{StaticResource BrushCardBorder}"
+                            <Border BorderThickness="0,1,0,0" BorderBrush="{StaticResource BrushBorderDefault}"
                                     Visibility="{Binding Stage4Expanded, Converter={StaticResource BoolToVisibilityConverter}}">
                                 <StackPanel Margin="14">
 
@@ -1463,7 +1463,7 @@ Changes vs V223 (layout only):
                                     </StackPanel>
                                 </Grid>
                             </ToggleButton>
-                            <Border BorderThickness="0,1,0,0" BorderBrush="{StaticResource BrushCardBorder}"
+                            <Border BorderThickness="0,1,0,0" BorderBrush="{StaticResource BrushBorderDefault}"
                                     Visibility="{Binding Stage5Expanded, Converter={StaticResource BoolToVisibilityConverter}}">
                                 <StackPanel Margin="14">
 
@@ -1522,7 +1522,7 @@ Changes vs V223 (layout only):
                                                                 </Grid>
                                                             </ToggleButton>
 
-                                                            <Border BorderThickness="0,1,0,0" BorderBrush="{StaticResource BrushCardBorder}"
+                                                            <Border BorderThickness="0,1,0,0" BorderBrush="{StaticResource BrushBorderDefault}"
                                                                     Margin="0,8,0,0" Padding="0,8,0,0"
                                                                     Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibilityConverter}}">
                                                                 <StackPanel>

@@ -50,13 +50,13 @@ Changes vs V006 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                         <Setter TargetName="Num" Property="Foreground" Value="{StaticResource BrushAppleBlue}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding Tone}" Value="Success">
-                        <Setter TargetName="Num" Property="Foreground" Value="{StaticResource BrushSuccess}"/>
+                        <Setter TargetName="Num" Property="Foreground" Value="{StaticResource BrushStatusOk}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding Tone}" Value="Warning">
-                        <Setter TargetName="Num" Property="Foreground" Value="{StaticResource BrushWarning}"/>
+                        <Setter TargetName="Num" Property="Foreground" Value="{StaticResource BrushStatusWarn}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding Tone}" Value="Danger">
-                        <Setter TargetName="Num" Property="Foreground" Value="{StaticResource BrushDanger}"/>
+                        <Setter TargetName="Num" Property="Foreground" Value="{StaticResource BrushStatusError}"/>
                     </DataTrigger>
                 </DataTemplate.Triggers>
             </DataTemplate>
@@ -230,7 +230,7 @@ Changes vs V006 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                   RowStyle="{StaticResource DataGridRowStyle}"
                                   CellStyle="{StaticResource DataGridCellStyle}"
                                   ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
-                                  Background="{StaticResource BrushSystemBackground}"
+                                  Background="{StaticResource BrushSurfaceWindow}"
                                   BorderThickness="0" RowHeight="26"
                                   IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}">
                             <DataGrid.Columns>

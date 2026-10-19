@@ -19,7 +19,7 @@ No inline colours: every brush is a SharedStyles token.
         Title="Roof Name Builder — V002"
         Height="820" Width="1240" MinHeight="820" MinWidth="1240" MaxHeight="1066" MaxWidth="1612" ResizeMode="CanResizeWithGrip"
         WindowStartupLocation="CenterOwner"
-        Background="{DynamicResource BrushSystemBackground}"
+        Background="{DynamicResource BrushSurfaceWindow}"
         FontFamily="{DynamicResource SystemFont}">
 
     <Window.Resources>
@@ -40,7 +40,7 @@ No inline colours: every brush is a SharedStyles token.
                         <Setter Property="Background" Value="{StaticResource BrushRowSuccessBackground}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding IsTooLong}" Value="True">
-                        <Setter Property="Background" Value="{StaticResource BrushSoftWarningBackground}"/>
+                        <Setter Property="Background" Value="{StaticResource BrushStatusWarnSoft}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding HasBlockingIssue}" Value="True">
                         <Setter Property="Background" Value="{StaticResource BrushRowDangerBackground}"/>
@@ -189,8 +189,8 @@ No inline colours: every brush is a SharedStyles token.
 
                 <!-- Bulk action bar -->
                 <Border Margin="0,0,0,8" Padding="10,8" CornerRadius="6" BorderThickness="1"
-                        Background="{StaticResource BrushBannerInfoBackground}"
-                        BorderBrush="{StaticResource BrushBannerInfoBorder}"
+                        Background="{StaticResource BrushStatusInfoSoft}"
+                        BorderBrush="{StaticResource BrushStatusInfoBorder}"
                         Visibility="{Binding HasSelection, Converter={StaticResource BoolToVisibilityConverter}}">
                     <WrapPanel>
                         <TextBlock VerticalAlignment="Center" Margin="0,0,14,0" FontWeight="SemiBold"

@@ -33,7 +33,7 @@ Changes vs V012: window 1280×820 (min 1100×640; V012's minimum height of
         MinWidth="1100" MinHeight="640"
         WindowStartupLocation="CenterScreen"
         ResizeMode="CanResizeWithGrip"
-        Background="{DynamicResource BrushSystemBackground}"
+        Background="{DynamicResource BrushSurfaceWindow}"
         KeyDown="Window_KeyDown">
 
     <Window.Resources>
@@ -53,13 +53,13 @@ Changes vs V012: window 1280×820 (min 1100×640; V012's minimum height of
             <!-- ── Text helpers ───────────────────────────────────── -->
             <Style x:Key="FieldError" TargetType="TextBlock">
                 <Setter Property="FontSize" Value="10.5"/>
-                <Setter Property="Foreground" Value="{StaticResource BrushDanger}"/>
+                <Setter Property="Foreground" Value="{StaticResource BrushStatusError}"/>
                 <Setter Property="TextWrapping" Value="Wrap"/>
                 <Setter Property="Margin" Value="0,2,0,0"/>
                 <Setter Property="Visibility" Value="{Binding Text, RelativeSource={RelativeSource Self}, Converter={StaticResource NonEmptyToVisibility}}"/>
             </Style>
             <Style x:Key="CalcHint" TargetType="TextBlock" BasedOn="{StaticResource HintText}">
-                <Setter Property="Foreground" Value="{StaticResource BrushTileInfoText}"/>
+                <Setter Property="Foreground" Value="{StaticResource BrushStatusInfo}"/>
                 <Setter Property="FontWeight" Value="SemiBold"/>
             </Style>
             <Style x:Key="SectionHeaderText" TargetType="TextBlock">
@@ -89,7 +89,7 @@ Changes vs V012: window 1280×820 (min 1100×640; V012's minimum height of
 
             <!-- "Custom" tag on a section header -->
             <Style x:Key="CustomTag" TargetType="Border">
-                <Setter Property="Background" Value="{StaticResource BrushPillInfoBackground}"/>
+                <Setter Property="Background" Value="{StaticResource BrushStatusInfoSoft}"/>
                 <Setter Property="CornerRadius" Value="6"/>
                 <Setter Property="Padding" Value="6,1"/>
                 <Setter Property="VerticalAlignment" Value="Center"/>
@@ -98,7 +98,7 @@ Changes vs V012: window 1280×820 (min 1100×640; V012's minimum height of
                 <Setter Property="Text" Value="Custom"/>
                 <Setter Property="FontSize" Value="10"/>
                 <Setter Property="FontWeight" Value="SemiBold"/>
-                <Setter Property="Foreground" Value="{StaticResource BrushPillInfoText}"/>
+                <Setter Property="Foreground" Value="{StaticResource BrushStatusInfo}"/>
             </Style>
 
             <!-- Small text button ("Reset to defaults") -->
@@ -113,57 +113,57 @@ Changes vs V012: window 1280×820 (min 1100×640; V012's minimum height of
             <Style x:Key="StateBadge" TargetType="Border" BasedOn="{StaticResource BadgePill}">
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding State}" Value="Running">
-                        <Setter Property="Background" Value="{StaticResource BrushPillInfoBackground}"/>
+                        <Setter Property="Background" Value="{StaticResource BrushStatusInfoSoft}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding State}" Value="Done">
-                        <Setter Property="Background" Value="{StaticResource BrushPillSuccessBackground}"/>
+                        <Setter Property="Background" Value="{StaticResource BrushStatusOkSoft}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding State}" Value="Cancelled">
-                        <Setter Property="Background" Value="{StaticResource BrushSoftDangerBackground}"/>
+                        <Setter Property="Background" Value="{StaticResource BrushStatusErrorSoft}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding State}" Value="Failed">
-                        <Setter Property="Background" Value="{StaticResource BrushSoftDangerBackground}"/>
+                        <Setter Property="Background" Value="{StaticResource BrushStatusErrorSoft}"/>
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
             <Style x:Key="StateBadgeText" TargetType="TextBlock" BasedOn="{StaticResource BadgeText}">
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding State}" Value="Running">
-                        <Setter Property="Foreground" Value="{StaticResource BrushPillInfoText}"/>
+                        <Setter Property="Foreground" Value="{StaticResource BrushStatusInfo}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding State}" Value="Done">
-                        <Setter Property="Foreground" Value="{StaticResource BrushPillSuccessText}"/>
+                        <Setter Property="Foreground" Value="{StaticResource BrushStatusOk}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding State}" Value="Cancelled">
-                        <Setter Property="Foreground" Value="{StaticResource BrushPillDangerText}"/>
+                        <Setter Property="Foreground" Value="{StaticResource BrushStatusError}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding State}" Value="Failed">
-                        <Setter Property="Foreground" Value="{StaticResource BrushPillDangerText}"/>
+                        <Setter Property="Foreground" Value="{StaticResource BrushStatusError}"/>
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
             <Style x:Key="ViewBadge" TargetType="Border" BasedOn="{StaticResource BadgePill}">
-                <Setter Property="Background" Value="{StaticResource BrushBannerWarningBackground}"/>
-                <Setter Property="BorderBrush" Value="{StaticResource BrushBannerWarningBorder}"/>
+                <Setter Property="Background" Value="{StaticResource BrushStatusWarnSoft}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource BrushStatusWarnBorder}"/>
                 <Setter Property="BorderThickness" Value="1"/>
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding IsPlanView}" Value="True">
-                        <Setter Property="Background" Value="{StaticResource BrushPillSuccessBackground}"/>
+                        <Setter Property="Background" Value="{StaticResource BrushStatusOkSoft}"/>
                         <Setter Property="BorderThickness" Value="0"/>
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
             <Style x:Key="ViewBadgeText" TargetType="TextBlock" BasedOn="{StaticResource BadgeText}">
-                <Setter Property="Foreground" Value="{StaticResource BrushBannerWarningText}"/>
+                <Setter Property="Foreground" Value="{StaticResource BrushStatusWarn}"/>
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding IsPlanView}" Value="True">
-                        <Setter Property="Foreground" Value="{StaticResource BrushPillSuccessText}"/>
+                        <Setter Property="Foreground" Value="{StaticResource BrushStatusOk}"/>
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
             <Style x:Key="WarnLine" TargetType="Border">
-                <Setter Property="Background" Value="{StaticResource BrushBannerWarningBackground}"/>
-                <Setter Property="BorderBrush" Value="{StaticResource BrushBannerWarningBorder}"/>
+                <Setter Property="Background" Value="{StaticResource BrushStatusWarnSoft}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource BrushStatusWarnBorder}"/>
                 <Setter Property="BorderThickness" Value="1"/>
                 <Setter Property="CornerRadius" Value="6"/>
                 <Setter Property="Padding" Value="8,3"/>
@@ -175,50 +175,50 @@ Changes vs V012: window 1280×820 (min 1100×640; V012's minimum height of
                 <Setter Property="Padding" Value="6,0"/>
                 <Setter Property="Margin" Value="6,0,0,0"/>
                 <Setter Property="VerticalAlignment" Value="Center"/>
-                <Setter Property="Background" Value="{StaticResource BrushPillNeutralBackground}"/>
+                <Setter Property="Background" Value="{StaticResource BrushSystemSecondaryBackground}"/>
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding DisplayStatus}" Value="Done">
-                        <Setter Property="Background" Value="{StaticResource BrushPillSuccessBackground}"/>
+                        <Setter Property="Background" Value="{StaticResource BrushStatusOkSoft}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding DisplayStatus}" Value="Running">
-                        <Setter Property="Background" Value="{StaticResource BrushPillInfoBackground}"/>
+                        <Setter Property="Background" Value="{StaticResource BrushStatusInfoSoft}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding DisplayStatus}" Value="RolledBack">
-                        <Setter Property="Background" Value="{StaticResource BrushSoftDangerBackground}"/>
+                        <Setter Property="Background" Value="{StaticResource BrushStatusErrorSoft}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding DisplayStatus}" Value="Failed">
-                        <Setter Property="Background" Value="{StaticResource BrushSoftDangerBackground}"/>
+                        <Setter Property="Background" Value="{StaticResource BrushStatusErrorSoft}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding DisplayStatus}" Value="NoDrains">
-                        <Setter Property="Background" Value="{StaticResource BrushBannerWarningBackground}"/>
+                        <Setter Property="Background" Value="{StaticResource BrushStatusWarnSoft}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding DisplayStatus}" Value="Skipped">
-                        <Setter Property="Background" Value="{StaticResource BrushBannerWarningBackground}"/>
+                        <Setter Property="Background" Value="{StaticResource BrushStatusWarnSoft}"/>
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
             <Style x:Key="TabPillText" TargetType="TextBlock">
                 <Setter Property="FontSize" Value="9.5"/>
                 <Setter Property="FontWeight" Value="SemiBold"/>
-                <Setter Property="Foreground" Value="{StaticResource BrushPillNeutralText}"/>
+                <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}"/>
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding DisplayStatus}" Value="Done">
-                        <Setter Property="Foreground" Value="{StaticResource BrushPillSuccessText}"/>
+                        <Setter Property="Foreground" Value="{StaticResource BrushStatusOk}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding DisplayStatus}" Value="Running">
-                        <Setter Property="Foreground" Value="{StaticResource BrushPillInfoText}"/>
+                        <Setter Property="Foreground" Value="{StaticResource BrushStatusInfo}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding DisplayStatus}" Value="RolledBack">
-                        <Setter Property="Foreground" Value="{StaticResource BrushPillDangerText}"/>
+                        <Setter Property="Foreground" Value="{StaticResource BrushStatusError}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding DisplayStatus}" Value="Failed">
-                        <Setter Property="Foreground" Value="{StaticResource BrushPillDangerText}"/>
+                        <Setter Property="Foreground" Value="{StaticResource BrushStatusError}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding DisplayStatus}" Value="NoDrains">
-                        <Setter Property="Foreground" Value="{StaticResource BrushBannerWarningText}"/>
+                        <Setter Property="Foreground" Value="{StaticResource BrushStatusWarn}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding DisplayStatus}" Value="Skipped">
-                        <Setter Property="Foreground" Value="{StaticResource BrushBannerWarningText}"/>
+                        <Setter Property="Foreground" Value="{StaticResource BrushStatusWarn}"/>
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
@@ -271,7 +271,7 @@ Changes vs V012: window 1280×820 (min 1100×640; V012's minimum height of
             <DataTemplate x:Key="ColorItemTemplate">
                 <StackPanel Orientation="Horizontal">
                     <Border Width="12" Height="12" CornerRadius="2" Margin="0,0,6,0"
-                            BorderBrush="{StaticResource BrushCardBorder}" BorderThickness="1"
+                            BorderBrush="{StaticResource BrushBorderDefault}" BorderThickness="1"
                             Background="{Binding Converter={StaticResource ColorNameToBrush}}"/>
                     <TextBlock Text="{Binding}"/>
                 </StackPanel>
@@ -323,7 +323,7 @@ Changes vs V012: window 1280×820 (min 1100×640; V012's minimum height of
                 </Style.Triggers>
             </Style>
             <Style x:Key="ResultsRow" TargetType="DataGridRow">
-                <Setter Property="Background" Value="{StaticResource BrushCardBackground}"/>
+                <Setter Property="Background" Value="{StaticResource BrushSurfaceCard}"/>
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding IsTop}" Value="True">
                         <Setter Property="FontWeight" Value="SemiBold"/>
@@ -332,12 +332,12 @@ Changes vs V012: window 1280×820 (min 1100×640; V012's minimum height of
                         <Setter Property="Background" Value="{StaticResource BrushSystemSecondaryBackground}"/>
                     </Trigger>
                     <Trigger Property="IsSelected" Value="True">
-                        <Setter Property="Background" Value="{StaticResource BrushPillInfoBackground}"/>
+                        <Setter Property="Background" Value="{StaticResource BrushStatusInfoSoft}"/>
                     </Trigger>
                 </Style.Triggers>
             </Style>
             <Style x:Key="CalcHeader" TargetType="DataGridColumnHeader" BasedOn="{StaticResource DataGridColumnHeaderStyle}">
-                <Setter Property="Background" Value="{StaticResource BrushTileSuccessBackground}"/>
+                <Setter Property="Background" Value="{StaticResource BrushStatusOkSoft}"/>
             </Style>
             <Style x:Key="NumText" TargetType="TextBlock">
                 <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -365,8 +365,8 @@ Changes vs V012: window 1280×820 (min 1100×640; V012's minimum height of
                 <Setter Property="GridLinesVisibility" Value="All"/>
                 <Setter Property="HorizontalGridLinesBrush" Value="{StaticResource BrushSeparator}"/>
                 <Setter Property="VerticalGridLinesBrush" Value="{StaticResource BrushSeparator}"/>
-                <Setter Property="Background" Value="{StaticResource BrushCardBackground}"/>
-                <Setter Property="BorderBrush" Value="{StaticResource BrushCardBorder}"/>
+                <Setter Property="Background" Value="{StaticResource BrushSurfaceCard}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource BrushBorderDefault}"/>
                 <Setter Property="BorderThickness" Value="1"/>
                 <Setter Property="RowHeight" Value="24"/>
                 <Setter Property="FontSize" Value="11.5"/>
@@ -433,7 +433,7 @@ Changes vs V012: window 1280×820 (min 1100×640; V012's minimum height of
                             <TextBlock Text="{Binding LongestPathText}" Style="{StaticResource MetricTileNumberInfo}"/>
                         </StackPanel>
                     </Border>
-                    <Border Style="{StaticResource MetricTile}" Background="{StaticResource BrushCardBackground}" Margin="3,0,0,0">
+                    <Border Style="{StaticResource MetricTile}" Background="{StaticResource BrushSurfaceCard}" Margin="3,0,0,0">
                         <StackPanel>
                             <TextBlock Text="RUN TIME" Style="{StaticResource MetricTileLabel}"/>
                             <TextBlock Text="{Binding RunTimeText}" Style="{StaticResource MetricTileNumber}"/>
@@ -493,7 +493,7 @@ Changes vs V012: window 1280×820 (min 1100×640; V012's minimum height of
                                 </Grid>
 
                                 <Border Style="{StaticResource WarnLine}" Margin="0,10,0,0">
-                                    <TextBlock TextWrapping="Wrap" FontSize="11" Foreground="{StaticResource BrushBannerWarningText}"
+                                    <TextBlock TextWrapping="Wrap" FontSize="11" Foreground="{StaticResource BrushStatusWarn}"
                                                Text="⚠ Run first resets every shape point on each roof to 0. Picking roofs no longer changes them, so closing without running leaves them as they were. Ctrl+Z undoes the whole run in one step."/>
                                 </Border>
                             </StackPanel>
@@ -830,7 +830,7 @@ Changes vs V012: window 1280×820 (min 1100×640; V012's minimum height of
                                                 <Setter Property="Background" Value="Transparent"/>
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding HasNoDrainsSelected}" Value="True">
-                                                        <Setter Property="Background" Value="{StaticResource BrushBannerWarningBackground}"/>
+                                                        <Setter Property="Background" Value="{StaticResource BrushStatusWarnSoft}"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>

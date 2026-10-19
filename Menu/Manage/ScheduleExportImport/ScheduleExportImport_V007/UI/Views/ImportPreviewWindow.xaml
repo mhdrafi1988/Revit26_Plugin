@@ -46,13 +46,13 @@ File: ImportPreviewWindow.xaml  (V007, per CLAUDE.md v1.1 — ToolWindowShell)
                         <Setter TargetName="Num" Property="Foreground" Value="{StaticResource BrushAppleBlue}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding Tone}" Value="Success">
-                        <Setter TargetName="Num" Property="Foreground" Value="{StaticResource BrushSuccess}"/>
+                        <Setter TargetName="Num" Property="Foreground" Value="{StaticResource BrushStatusOk}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding Tone}" Value="Warning">
-                        <Setter TargetName="Num" Property="Foreground" Value="{StaticResource BrushWarning}"/>
+                        <Setter TargetName="Num" Property="Foreground" Value="{StaticResource BrushStatusWarn}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding Tone}" Value="Danger">
-                        <Setter TargetName="Num" Property="Foreground" Value="{StaticResource BrushDanger}"/>
+                        <Setter TargetName="Num" Property="Foreground" Value="{StaticResource BrushStatusError}"/>
                     </DataTrigger>
                 </DataTemplate.Triggers>
             </DataTemplate>
@@ -78,41 +78,41 @@ File: ImportPreviewWindow.xaml  (V007, per CLAUDE.md v1.1 — ToolWindowShell)
 
             <!-- Status pill coloured by ImportChangeStatus (semantic, not accent) -->
             <DataTemplate x:Key="StatusPillTemplate">
-                <Border x:Name="Pill" CornerRadius="9" Padding="7,1" HorizontalAlignment="Left" VerticalAlignment="Center" Background="{StaticResource BrushPillNeutralBackground}">
-                    <TextBlock x:Name="Txt" Text="{Binding StatusLabel}" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource BrushPillNeutralText}"/>
+                <Border x:Name="Pill" CornerRadius="9" Padding="7,1" HorizontalAlignment="Left" VerticalAlignment="Center" Background="{StaticResource BrushSystemSecondaryBackground}">
+                    <TextBlock x:Name="Txt" Text="{Binding StatusLabel}" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource BrushTextSecondary}"/>
                 </Border>
                 <DataTemplate.Triggers>
                     <DataTrigger Binding="{Binding Status}" Value="Change">
-                        <Setter TargetName="Pill" Property="Background" Value="{StaticResource BrushPillInfoBackground}"/>
-                        <Setter TargetName="Txt" Property="Foreground" Value="{StaticResource BrushPillInfoText}"/>
+                        <Setter TargetName="Pill" Property="Background" Value="{StaticResource BrushStatusInfoSoft}"/>
+                        <Setter TargetName="Txt" Property="Foreground" Value="{StaticResource BrushStatusInfo}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding Status}" Value="Applied">
-                        <Setter TargetName="Pill" Property="Background" Value="{StaticResource BrushPillSuccessBackground}"/>
-                        <Setter TargetName="Txt" Property="Foreground" Value="{StaticResource BrushPillSuccessText}"/>
+                        <Setter TargetName="Pill" Property="Background" Value="{StaticResource BrushStatusOkSoft}"/>
+                        <Setter TargetName="Txt" Property="Foreground" Value="{StaticResource BrushStatusOk}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding Status}" Value="Failed">
-                        <Setter TargetName="Pill" Property="Background" Value="{StaticResource BrushGroupDangerBackground}"/>
-                        <Setter TargetName="Txt" Property="Foreground" Value="{StaticResource BrushPillDangerText}"/>
+                        <Setter TargetName="Pill" Property="Background" Value="{StaticResource BrushStatusErrorSoft}"/>
+                        <Setter TargetName="Txt" Property="Foreground" Value="{StaticResource BrushStatusError}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding Status}" Value="Duplicate">
-                        <Setter TargetName="Pill" Property="Background" Value="{StaticResource BrushGroupDangerBackground}"/>
-                        <Setter TargetName="Txt" Property="Foreground" Value="{StaticResource BrushPillDangerText}"/>
+                        <Setter TargetName="Pill" Property="Background" Value="{StaticResource BrushStatusErrorSoft}"/>
+                        <Setter TargetName="Txt" Property="Foreground" Value="{StaticResource BrushStatusError}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding Status}" Value="NotFound">
-                        <Setter TargetName="Pill" Property="Background" Value="{StaticResource BrushGroupWarningBackground}"/>
-                        <Setter TargetName="Txt" Property="Foreground" Value="{StaticResource BrushGroupWarningText}"/>
+                        <Setter TargetName="Pill" Property="Background" Value="{StaticResource BrushStatusWarnSoft}"/>
+                        <Setter TargetName="Txt" Property="Foreground" Value="{StaticResource BrushStatusWarn}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding Status}" Value="MissingFromFile">
-                        <Setter TargetName="Pill" Property="Background" Value="{StaticResource BrushGroupWarningBackground}"/>
-                        <Setter TargetName="Txt" Property="Foreground" Value="{StaticResource BrushGroupWarningText}"/>
+                        <Setter TargetName="Pill" Property="Background" Value="{StaticResource BrushStatusWarnSoft}"/>
+                        <Setter TargetName="Txt" Property="Foreground" Value="{StaticResource BrushStatusWarn}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding Status}" Value="Conflict">
-                        <Setter TargetName="Pill" Property="Background" Value="{StaticResource BrushGroupDangerBackground}"/>
-                        <Setter TargetName="Txt" Property="Foreground" Value="{StaticResource BrushPillDangerText}"/>
+                        <Setter TargetName="Pill" Property="Background" Value="{StaticResource BrushStatusErrorSoft}"/>
+                        <Setter TargetName="Txt" Property="Foreground" Value="{StaticResource BrushStatusError}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding Status}" Value="NotEditable">
-                        <Setter TargetName="Pill" Property="Background" Value="{StaticResource BrushPillMutedBackground}"/>
-                        <Setter TargetName="Txt" Property="Foreground" Value="{StaticResource BrushPillMutedText}"/>
+                        <Setter TargetName="Pill" Property="Background" Value="{StaticResource BrushSystemTertiaryBackground}"/>
+                        <Setter TargetName="Txt" Property="Foreground" Value="{StaticResource BrushTextSecondary}"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding Status}" Value="TypeParameter">
                         <Setter TargetName="Pill" Property="Background" Value="{StaticResource BrushPillTypeBackground}"/>
@@ -135,7 +135,7 @@ File: ImportPreviewWindow.xaml  (V007, per CLAUDE.md v1.1 — ToolWindowShell)
         <shell:ToolWindowShell.HeaderContent>
             <StackPanel>
                 <!-- Schedule-name mismatch warning -->
-                <Border Background="{StaticResource BrushBannerWarningBackground}" BorderBrush="{StaticResource BrushBannerWarningBorder}" BorderThickness="1" CornerRadius="6"
+                <Border Background="{StaticResource BrushStatusWarnSoft}" BorderBrush="{StaticResource BrushStatusWarnBorder}" BorderThickness="1" CornerRadius="6"
                         Padding="10,6" Margin="0,0,0,8">
                     <Border.Style>
                         <Style TargetType="Border">
@@ -146,7 +146,7 @@ File: ImportPreviewWindow.xaml  (V007, per CLAUDE.md v1.1 — ToolWindowShell)
                             </Style.Triggers>
                         </Style>
                     </Border.Style>
-                    <TextBlock Text="{Binding PreviewWarning}" TextWrapping="Wrap" FontSize="11" Foreground="{StaticResource BrushBannerWarningText}"/>
+                    <TextBlock Text="{Binding PreviewWarning}" TextWrapping="Wrap" FontSize="11" Foreground="{StaticResource BrushStatusWarn}"/>
                 </Border>
                 <ItemsControl ItemsSource="{Binding PreviewCards}" ItemTemplate="{StaticResource SummaryCardTemplate}" Margin="0,0,0,8">
                     <ItemsControl.ItemsPanel>
@@ -245,7 +245,7 @@ File: ImportPreviewWindow.xaml  (V007, per CLAUDE.md v1.1 — ToolWindowShell)
                               RowStyle="{StaticResource DataGridRowStyle}"
                               CellStyle="{StaticResource DataGridCellStyle}"
                               ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
-                              Background="{StaticResource BrushSystemBackground}"
+                              Background="{StaticResource BrushSurfaceWindow}"
                               BorderThickness="0" RowHeight="26"
                               EnableRowVirtualization="True"
                               IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}">

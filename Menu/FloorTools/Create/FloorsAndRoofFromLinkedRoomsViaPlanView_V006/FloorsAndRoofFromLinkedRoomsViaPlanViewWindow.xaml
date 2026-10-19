@@ -203,7 +203,7 @@ Changes vs V005 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                     </Grid>
 
                     <TextBlock Text="{Binding ToastMessage}" Style="{StaticResource HintText}" Margin="0,0,0,8"
-                               Foreground="{StaticResource BrushSuccess}"
+                               Foreground="{StaticResource BrushStatusOk}"
                                Visibility="{Binding HasToast, Converter={StaticResource BoolToVisibilityConverter}}"/>
                 </StackPanel>
 

@@ -33,7 +33,7 @@ Changes vs V069 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
     Width="1080" Height="860" MinWidth="1080" MinHeight="860"
     WindowStartupLocation="CenterScreen"
     ResizeMode="CanResizeWithGrip"
-    Background="{DynamicResource BrushSystemBackground}">
+    Background="{DynamicResource BrushSurfaceWindow}">
 
     <mah:MetroWindow.Resources>
         <ResourceDictionary>
@@ -153,7 +153,7 @@ Changes vs V069 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                      MinHeight="60"
                                      shell:ShellBehaviors.MaxHeightRatio="0.15"
                                      shell:ShellBehaviors.ForwardMouseWheel="True"
-                                     BorderBrush="{StaticResource BrushCardBorder}"
+                                     BorderBrush="{StaticResource BrushBorderDefault}"
                                      BorderThickness="1">
                                 <ListBox.ItemContainerStyle>
                                     <Style TargetType="ListBoxItem">
@@ -336,10 +336,10 @@ Changes vs V069 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                             </Grid.RowDefinitions>
                             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="12,6" VerticalAlignment="Center">
                                 <TextBlock Text="Validation Results" Style="{StaticResource SectionTitle}" Margin="0,0,16,0" VerticalAlignment="Center"/>
-                                <TextBlock FontSize="11" Foreground="{StaticResource BrushSuccess}" FontWeight="SemiBold">
+                                <TextBlock FontSize="11" Foreground="{StaticResource BrushStatusOk}" FontWeight="SemiBold">
                                     <Run Text="PASS: "/><Run Text="{Binding PassCount}"/>
                                 </TextBlock>
-                                <TextBlock FontSize="11" Margin="16,0,0,0" Foreground="{StaticResource BrushDanger}" FontWeight="SemiBold">
+                                <TextBlock FontSize="11" Margin="16,0,0,0" Foreground="{StaticResource BrushStatusError}" FontWeight="SemiBold">
                                     <Run Text="FAIL: "/><Run Text="{Binding FailCount}"/>
                                 </TextBlock>
                                 <TextBlock FontSize="11" Margin="16,0,0,0" Foreground="{StaticResource BrushNavyPrimary}" Opacity="0.8">
@@ -416,7 +416,7 @@ Changes vs V069 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="{Binding VersionDetails}" Style="{StaticResource FieldLabel}" FontSize="10" Opacity="0.6" VerticalAlignment="Center"/>
                 <TextBlock Grid.Column="1" Width="200" Margin="12,0" VerticalAlignment="Center"
-                           Text="{Binding ProgressDetail}" FontSize="11" Foreground="{StaticResource BrushWarning}" TextTrimming="CharacterEllipsis"
+                           Text="{Binding ProgressDetail}" FontSize="11" Foreground="{StaticResource BrushStatusWarn}" TextTrimming="CharacterEllipsis"
                            Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"/>
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
                     <Button Content="Generate Ridges" Command="{Binding RunCommand}" Style="{StaticResource PrimaryButton}" Width="160" Height="36" FontSize="13" Margin="0,0,8,0" IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBool}}"/>

@@ -286,7 +286,7 @@
                                             <Setter Property="Background" Value="{DynamicResource BrushRowDangerBackground}" />
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Status}" Value="Skipped">
-                                            <Setter Property="Background" Value="{DynamicResource BrushSoftWarningBackground}" />
+                                            <Setter Property="Background" Value="{DynamicResource BrushStatusWarnSoft}" />
                                         </DataTrigger>
                                         <!-- re-stated last so a selected row still shows as selected over its status tint -->
                                         <Trigger Property="IsSelected" Value="True">

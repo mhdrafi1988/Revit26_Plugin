@@ -190,7 +190,7 @@ Changes vs V004 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                               RowStyle="{StaticResource DataGridRowStyle}"
                               CellStyle="{StaticResource DataGridCellStyle}"
                               ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
-                              Background="{StaticResource BrushSystemBackground}"
+                              Background="{StaticResource BrushSurfaceWindow}"
                               BorderThickness="0"
                               RowHeight="30"
                               VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling">

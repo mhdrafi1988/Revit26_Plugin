@@ -69,7 +69,7 @@ Changes vs V013 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
         <!-- ═══ HEADER ═══════════════════════════════════════════ -->
         <shell:ToolWindowShell.HeaderContent>
             <Border CornerRadius="6" Margin="0,0,0,8"
-                    Background="{StaticResource BrushSystemBackground}"
+                    Background="{StaticResource BrushSurfaceWindow}"
                     BorderBrush="{StaticResource BrushSeparatorThin}"
                     BorderThickness="0,0,0,1"
                     Padding="12,8">
@@ -104,21 +104,21 @@ Changes vs V013 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
 
                     <!-- Assigned -->
                     <Border Grid.Column="1"
-                            BorderBrush="{StaticResource BrushSuccess}"
+                            BorderBrush="{StaticResource BrushStatusOk}"
                             BorderThickness="1"
                             CornerRadius="8"
                             Background="{StaticResource BrushTintSuccess}"
                             Padding="12,7"
                             Margin="0,0,6,0">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Ellipse Width="7" Height="7" Fill="{StaticResource BrushSuccess}"
+                            <Ellipse Width="7" Height="7" Fill="{StaticResource BrushStatusOk}"
                                      VerticalAlignment="Center" Margin="0,0,8,0"/>
                             <StackPanel>
                                 <TextBlock Text="ASSIGNED" FontSize="9" FontWeight="SemiBold"
-                                           Foreground="{StaticResource BrushSuccess}"/>
+                                           Foreground="{StaticResource BrushStatusOk}"/>
                                 <TextBlock Text="{Binding Grid1Count}"
                                            FontSize="20" FontWeight="Bold"
-                                           Foreground="{StaticResource BrushSuccess}"
+                                           Foreground="{StaticResource BrushStatusOk}"
                                            FontFamily="Consolas"/>
                             </StackPanel>
                         </StackPanel>
@@ -148,20 +148,20 @@ Changes vs V013 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
 
                     <!-- No Instances -->
                     <Border Grid.Column="3"
-                            BorderBrush="{StaticResource BrushWarning}"
+                            BorderBrush="{StaticResource BrushStatusWarn}"
                             BorderThickness="1"
                             CornerRadius="8"
                             Background="{StaticResource BrushTintWarning}"
                             Padding="12,7">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Ellipse Width="7" Height="7" Fill="{StaticResource BrushWarning}"
+                            <Ellipse Width="7" Height="7" Fill="{StaticResource BrushStatusWarn}"
                                      VerticalAlignment="Center" Margin="0,0,8,0"/>
                             <StackPanel>
                                 <TextBlock Text="NO INSTANCES" FontSize="9" FontWeight="SemiBold"
-                                           Foreground="{StaticResource BrushWarning}"/>
+                                           Foreground="{StaticResource BrushStatusWarn}"/>
                                 <TextBlock Text="{Binding Grid3Count}"
                                            FontSize="20" FontWeight="Bold"
-                                           Foreground="{StaticResource BrushWarning}"
+                                           Foreground="{StaticResource BrushStatusWarn}"
                                            FontFamily="Consolas"/>
                             </StackPanel>
                         </StackPanel>
@@ -207,7 +207,7 @@ Changes vs V013 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
 
                         <TextBlock Grid.Column="3"
                                    Text="{Binding PatternErrorMessage}"
-                                   Foreground="{StaticResource BrushDanger}"
+                                   Foreground="{StaticResource BrushStatusError}"
                                    FontSize="10"
                                    VerticalAlignment="Center"
                                    HorizontalAlignment="Right"
@@ -238,13 +238,13 @@ Changes vs V013 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                     CornerRadius="10,10,0,0"
                                     Padding="12,6">
                                 <StackPanel Orientation="Horizontal">
-                                    <Ellipse Style="{StaticResource StatusDot}" Fill="{StaticResource BrushSuccess}"/>
+                                    <Ellipse Style="{StaticResource StatusDot}" Fill="{StaticResource BrushStatusOk}"/>
                                     <TextBlock Text="Already created &amp; assigned"
                                                Style="{StaticResource SectionTitle}"
                                                FontSize="10" Margin="0"
                                                VerticalAlignment="Center"/>
                                     <Border Style="{StaticResource BadgePill}"
-                                            Background="{StaticResource BrushSuccess}"
+                                            Background="{StaticResource BrushStatusOk}"
                                             Margin="8,0,0,0">
                                         <TextBlock Text="{Binding Grid1Count}"
                                                    FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource BrushTextOnAccent}"/>
@@ -259,7 +259,7 @@ Changes vs V013 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
 
                             <!-- Per-section search -->
                             <Border Grid.Row="1"
-                                    Background="{StaticResource BrushSystemBackground}"
+                                    Background="{StaticResource BrushSurfaceWindow}"
                                     BorderBrush="{StaticResource BrushSeparatorThin}"
                                     BorderThickness="0,1,0,1"
                                     Padding="10,4">
@@ -318,7 +318,7 @@ Changes vs V013 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                             <DataTemplate>
                                                 <TextBlock Text="{Binding ProposedWorksetName}"
                                                            Style="{StaticResource MonoCell}"
-                                                           Foreground="{StaticResource BrushSuccess}"/>
+                                                           Foreground="{StaticResource BrushStatusOk}"/>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
@@ -331,7 +331,7 @@ Changes vs V013 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <Border CornerRadius="10"
-                                                        Background="{StaticResource BrushSuccess}"
+                                                        Background="{StaticResource BrushStatusOk}"
                                                         Padding="7,2"
                                                         HorizontalAlignment="Left"
                                                         Margin="8,0">
@@ -410,7 +410,7 @@ Changes vs V013 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
 
                             <!-- Per-section search -->
                             <Border Grid.Row="1"
-                                    Background="{StaticResource BrushSystemBackground}"
+                                    Background="{StaticResource BrushSurfaceWindow}"
                                     BorderBrush="{StaticResource BrushSeparatorThin}"
                                     BorderThickness="0,1,0,1"
                                     Padding="10,4">
@@ -522,13 +522,13 @@ Changes vs V013 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Grid.Column="0" Orientation="Horizontal">
-                                        <Ellipse Style="{StaticResource StatusDot}" Fill="{StaticResource BrushWarning}"/>
+                                        <Ellipse Style="{StaticResource StatusDot}" Fill="{StaticResource BrushStatusWarn}"/>
                                         <TextBlock Text="No instances in model"
                                                    Style="{StaticResource SectionTitle}"
                                                    FontSize="10" Margin="0"
                                                    VerticalAlignment="Center"/>
                                         <Border Style="{StaticResource BadgePill}"
-                                                Background="{StaticResource BrushWarning}"
+                                                Background="{StaticResource BrushStatusWarn}"
                                                 Margin="8,0,0,0">
                                             <TextBlock Text="{Binding Grid3Count}"
                                                        FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource BrushTextOnAccent}"/>
@@ -570,7 +570,7 @@ Changes vs V013 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
 
                             <!-- Per-section search -->
                             <Border Grid.Row="1"
-                                    Background="{StaticResource BrushSystemBackground}"
+                                    Background="{StaticResource BrushSurfaceWindow}"
                                     BorderBrush="{StaticResource BrushSeparatorThin}"
                                     BorderThickness="0,1,0,1"
                                     Padding="10,4">

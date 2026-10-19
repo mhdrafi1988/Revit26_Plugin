@@ -118,6 +118,9 @@ namespace Revit26_Plugin.AutoSlopeByPoint.V032.UI.ViewModels
 
         public string ToolTitle => "Auto Slope By Point";
         public string VersionText => "v" + AutoSlopeRunner.ToolVersion;
+
+        /// <summary>Window caption, "Auto Slope By Point — vX.Y.Z"; version comes from ToolCatalog.</summary>
+        public string WindowTitle => ToolTitle + " — " + VersionText;
         public string RoofText { get; }
         public string RoofLevelText { get; }
 

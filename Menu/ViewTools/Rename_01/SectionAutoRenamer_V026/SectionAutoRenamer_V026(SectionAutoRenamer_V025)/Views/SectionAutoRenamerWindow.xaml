@@ -56,7 +56,7 @@ Changes vs V025 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
             <StackPanel>
                 <WrapPanel Margin="0,0,0,8" VerticalAlignment="Center">
                     <Border Style="{StaticResource BadgePill}" Margin="0,0,6,0"
-                            Background="{StaticResource BrushInputBackground}" BorderBrush="{StaticResource BrushWarning}" BorderThickness="1"
+                            Background="{StaticResource BrushInputBackground}" BorderBrush="{StaticResource BrushStatusWarn}" BorderThickness="1"
                             Visibility="{Binding IsDryRun, Converter={StaticResource BoolToVisibilityConverter}}">
                         <TextBlock Text="Dry run on" Style="{StaticResource BadgeText}" Foreground="{StaticResource BrushTextPrimary}"/>
                     </Border>
@@ -107,7 +107,7 @@ Changes vs V025 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
             <StackPanel>
                 <Border
                         Background="{StaticResource BrushSystemSecondaryBackground}"
-                        BorderBrush="{StaticResource BrushCardBorder}"
+                        BorderBrush="{StaticResource BrushBorderDefault}"
                         BorderThickness="0,0,0,1"
                         Padding="12,7">
                     <WrapPanel Orientation="Horizontal" VerticalAlignment="Center">
@@ -118,7 +118,7 @@ Changes vs V025 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                   ItemsSource="{Binding SheetFilters}"
                                   SelectedItem="{Binding SelectedSheetFilter}"/>
 
-                        <Border Width="0.5" Height="18" Background="{StaticResource BrushCardBorder}"
+                        <Border Width="0.5" Height="18" Background="{StaticResource BrushBorderDefault}"
                                 Margin="0,0,12,0"/>
 
                         <TextBlock Text="Search" Style="{StaticResource FieldLabel}"
@@ -127,7 +127,7 @@ Changes vs V025 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                  Style="{StaticResource StyledTextInput}"
                                  Text="{Binding SheetSearchText, UpdateSourceTrigger=PropertyChanged}"/>
 
-                        <Border Width="0.5" Height="18" Background="{StaticResource BrushCardBorder}"
+                        <Border Width="0.5" Height="18" Background="{StaticResource BrushBorderDefault}"
                                 Margin="0,0,12,0"/>
 
                         <TextBlock Text="Dup. fix" Style="{StaticResource FieldLabel}"
@@ -136,7 +136,7 @@ Changes vs V025 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                   ItemsSource="{Binding DuplicateFixStrategies}"
                                   SelectedItem="{Binding DuplicateStrategy}"/>
 
-                        <Border Width="0.5" Height="18" Background="{StaticResource BrushCardBorder}"
+                        <Border Width="0.5" Height="18" Background="{StaticResource BrushBorderDefault}"
                                 Margin="0,0,12,0"/>
 
                         <CheckBox Content="Dry run"
@@ -148,7 +148,7 @@ Changes vs V025 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                 <!-- Rename panel — Row A: Prefix/Postfix | Find/Replace | Options; Row B: Standardize -->
                 <Border
                         Background="{StaticResource BrushSystemSecondaryBackground}"
-                        BorderBrush="{StaticResource BrushCardBorder}"
+                        BorderBrush="{StaticResource BrushBorderDefault}"
                         BorderThickness="0,0,0,1">
                     <StackPanel>
 
@@ -178,7 +178,7 @@ Changes vs V025 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                              Text="{Binding Prefix, UpdateSourceTrigger=PropertyChanged}"/>
                                 </Grid>
 
-                                <Border Height="0.5" Background="{StaticResource BrushCardBorder}" Margin="0,4"/>
+                                <Border Height="0.5" Background="{StaticResource BrushBorderDefault}" Margin="0,4"/>
 
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -190,7 +190,7 @@ Changes vs V025 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                              Text="{Binding Postfix, UpdateSourceTrigger=PropertyChanged}"/>
                                 </Grid>
 
-                                <Border Height="0.5" Background="{StaticResource BrushCardBorder}" Margin="0,4"/>
+                                <Border Height="0.5" Background="{StaticResource BrushBorderDefault}" Margin="0,4"/>
 
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -206,7 +206,7 @@ Changes vs V025 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                             </StackPanel>
 
                             <!-- Separator 1 -->
-                            <Border Grid.Column="1" Background="{StaticResource BrushCardBorder}"/>
+                            <Border Grid.Column="1" Background="{StaticResource BrushBorderDefault}"/>
 
                             <!-- Col 2: Find / Replace -->
                             <StackPanel Grid.Column="2" Margin="12,0,12,8">
@@ -235,7 +235,7 @@ Changes vs V025 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                             </StackPanel>
 
                             <!-- Separator 2 -->
-                            <Border Grid.Column="3" Background="{StaticResource BrushCardBorder}"/>
+                            <Border Grid.Column="3" Background="{StaticResource BrushBorderDefault}"/>
 
                             <!-- Col 4: Options -->
                             <StackPanel Grid.Column="4" Margin="12,0,12,8">
@@ -268,12 +268,12 @@ Changes vs V025 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                         </Grid>
 
                         <!-- Row B: Standardize — full width, below Prefix/Postfix + Find/Replace -->
-                        <Border BorderBrush="{StaticResource BrushCardBorder}" BorderThickness="0,1,0,0"
+                        <Border BorderBrush="{StaticResource BrushBorderDefault}" BorderThickness="0,1,0,0"
                                 Padding="12,8">
                             <StackPanel IsEnabled="{Binding StandardizeEnabled}">
                                 <TextBlock Text="STANDARDIZE"
                                            FontSize="10" FontWeight="SemiBold"
-                                           Foreground="{StaticResource BrushSuccess}"
+                                           Foreground="{StaticResource BrushStatusOk}"
                                            Margin="0,0,0,6"/>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="Case" Style="{StaticResource FieldLabel}"
@@ -292,8 +292,8 @@ Changes vs V025 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                 </Border>
 
                 <Border
-                        Background="{StaticResource BrushSystemBackground}"
-                        BorderBrush="{StaticResource BrushCardBorder}"
+                        Background="{StaticResource BrushSurfaceWindow}"
+                        BorderBrush="{StaticResource BrushBorderDefault}"
                         BorderThickness="0,0,0,1"
                         Padding="12,5">
                     <DockPanel>
@@ -350,7 +350,7 @@ Changes vs V025 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                           AlternationCount="2"
                           ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
                           CellStyle="{StaticResource DataGridCellStyle}"
-                          Background="{StaticResource BrushSystemBackground}"
+                          Background="{StaticResource BrushSurfaceWindow}"
                           BorderThickness="0">
 
                     <DataGrid.Columns>
@@ -403,11 +403,11 @@ Changes vs V025 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                         <TextBlock Text="{Binding PreviewName}"
                                                 VerticalAlignment="Center"/>
                                         <Border Margin="5,0,0,0" CornerRadius="8"
-                                                Background="{StaticResource BrushInputBackground}" BorderBrush="{StaticResource BrushDanger}" BorderThickness="0.5"
+                                                Background="{StaticResource BrushInputBackground}" BorderBrush="{StaticResource BrushStatusError}" BorderThickness="0.5"
                                                 Padding="5,1"
                                                 Visibility="{Binding IsDuplicate, Converter={StaticResource BoolToVisibilityConverter}}"
                                                 VerticalAlignment="Center">
-                                            <TextBlock Text="dup" FontSize="10" Foreground="{StaticResource BrushDanger}"/>
+                                            <TextBlock Text="dup" FontSize="10" Foreground="{StaticResource BrushStatusError}"/>
                                         </Border>
                                     </StackPanel>
                                 </DataTemplate>
@@ -488,15 +488,15 @@ Changes vs V025 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                         Command="{Binding ResetSelectedNamesCommand}"
                                         Style="{StaticResource SmallSecondaryButton}">
                                     <Button.Foreground>
-                                        <SolidColorBrush Color="{StaticResource ColorDanger}"/>
+                                        <SolidColorBrush Color="{StaticResource StatusError}"/>
                                     </Button.Foreground>
                                     <TextBlock Text="↺  Reset all names"
-                                               Foreground="{StaticResource BrushDanger}"/>
+                                               Foreground="{StaticResource BrushStatusError}"/>
                                 </Button>
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal"
                             HorizontalAlignment="Right" VerticalAlignment="Center">
                     <Border CornerRadius="10" Margin="0,0,10,0" Padding="9,3" VerticalAlignment="Center"
-                            Background="{StaticResource BrushInputBackground}" BorderBrush="{StaticResource BrushWarning}" BorderThickness="1"
+                            Background="{StaticResource BrushInputBackground}" BorderBrush="{StaticResource BrushStatusWarn}" BorderThickness="1"
                             Visibility="{Binding IsDryRun, Converter={StaticResource BoolToVisibilityConverter}}">
                         <TextBlock FontSize="11" Foreground="{StaticResource BrushTextPrimary}"
                                    Text="Dry run — no changes will be saved"/>

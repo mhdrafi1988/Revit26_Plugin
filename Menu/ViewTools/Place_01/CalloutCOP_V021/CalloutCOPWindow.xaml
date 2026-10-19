@@ -88,7 +88,7 @@ Changes vs V020 (layout only):
                 <Setter Property="ItemTemplate" Value="{StaticResource DraftingViewDropdownRowTemplate}"/>
                 <Setter Property="FontSize" Value="10"/>
                 <Setter Property="Height" Value="24"/>
-                <Setter Property="Background" Value="{StaticResource BrushSystemBackground}"/>
+                <Setter Property="Background" Value="{StaticResource BrushSurfaceWindow}"/>
                 <Setter Property="BorderBrush" Value="{StaticResource BrushSeparator}"/>
                 <Setter Property="BorderThickness" Value="1"/>
                 <!-- V018: enables DraftingViewSearchBehavior, which wires the
@@ -148,8 +148,8 @@ Changes vs V020 (layout only):
                                        IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
                                        Placement="Bottom" AllowsTransparency="True" Focusable="False"
                                        PopupAnimation="None" StaysOpen="False">
-                                    <Border Background="{StaticResource BrushCardBackground}"
-                                            BorderBrush="{StaticResource BrushCardBorder}"
+                                    <Border Background="{StaticResource BrushSurfaceCard}"
+                                            BorderBrush="{StaticResource BrushBorderDefault}"
                                             BorderThickness="1" CornerRadius="6"
                                             MinWidth="260"
                                             MaxHeight="300">
@@ -320,8 +320,8 @@ Changes vs V020 (layout only):
                                            PlacementTarget="{Binding ElementName=SheetFilterButton}"
                                            Placement="Bottom" StaysOpen="False" AllowsTransparency="True"
                                            PopupAnimation="None">
-                                        <Border Background="{StaticResource BrushCardBackground}"
-                                                BorderBrush="{StaticResource BrushCardBorder}"
+                                        <Border Background="{StaticResource BrushSurfaceCard}"
+                                                BorderBrush="{StaticResource BrushBorderDefault}"
                                                 BorderThickness="1" CornerRadius="8" Width="260">
                                             <Border.Effect>
                                                 <DropShadowEffect ShadowDepth="3" BlurRadius="12" Opacity="0.2"/>
@@ -622,7 +622,7 @@ Changes vs V020 (layout only):
                                                         <Setter Property="Background" Value="{StaticResource BrushSystemSecondaryBackground}"/>
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding IsPlaced}" Value="True">
-                                                                <Setter Property="Background" Value="{StaticResource BrushPillPlacedBackground}"/>
+                                                                <Setter Property="Background" Value="{StaticResource BrushStatusOkSoft}"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -635,7 +635,7 @@ Changes vs V020 (layout only):
                                                             <Style.Triggers>
                                                                 <DataTrigger Binding="{Binding IsPlaced}" Value="True">
                                                                     <Setter Property="Text" Value="Placed"/>
-                                                                    <Setter Property="Foreground" Value="{StaticResource BrushPillPlacedText}"/>
+                                                                    <Setter Property="Foreground" Value="{StaticResource BrushStatusOk}"/>
                                                                 </DataTrigger>
                                                             </Style.Triggers>
                                                         </Style>
