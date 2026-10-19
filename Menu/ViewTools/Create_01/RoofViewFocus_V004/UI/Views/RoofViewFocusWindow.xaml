@@ -183,7 +183,7 @@ Changes vs V003 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                         <TextBlock Style="{StaticResource HintText}" Margin="12,0,12,2"
                                    Text="Total margin = entered margin + default offset. Annotation offsets are in Revit paper units (view scale is not applied)."/>
                         <TextBlock Style="{StaticResource HintText}" Margin="12,0,12,8"
-                                   Foreground="{StaticResource BrushDanger}"
+                                   Foreground="{StaticResource BrushStatusError}"
                                    Text="Enter a number of 0 or more (mm)."
                                    Visibility="{Binding HasInputError, Converter={StaticResource BoolToVisibilityConverter}}"/>
                     </StackPanel>

@@ -104,7 +104,7 @@ namespace Revit26_Plugin.Shared.Services
         public static readonly ToolInfo IslandRoofSplitter = Add("Island Roof Splitter", "0.2.0", "V001 (WIP)", "Revit26_Plugin.IslandRoofSplitter.V001");
         public static readonly ToolInfo LinkVersionChecker = Add("Link Version Checker", "3.0.0", "V003", "Revit26_Plugin.LinkVersionChecker_V003");
         public static readonly ToolInfo LinkVersionCheckerV004 = Add("Link Version Checker", "4.1.0", "V004", "Revit26_Plugin.LinkVersionChecker_V004");
-        public static readonly ToolInfo RoofViewFocus = Add("Roof View Focus", "4.0.0", "V004", "Revit26_Plugin.RoofViewFocus.V004");
+        public static readonly ToolInfo RoofViewFocus = Add("Roof View Focus", "4.1.0", "V004", "Revit26_Plugin.RoofViewFocus.V004");
         public static readonly ToolInfo CreateSections = Add("Create Sections From Detail Lines", "13.0.0", "V013", "Revit26_Plugin.CreateSections.V013");
         public static readonly ToolInfo APUS = Add("Auto Place Sections", "324.0.0", "V324", "Revit26_Plugin.APUS.V324");
         public static readonly ToolInfo CalloutCOP = Add("Callout To Section View Placement", "21.0.0", "V021", "Revit26_Plugin.CalloutCOP.V021");
