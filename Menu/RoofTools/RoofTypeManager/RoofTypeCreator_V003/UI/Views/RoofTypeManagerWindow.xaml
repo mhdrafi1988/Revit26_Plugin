@@ -126,8 +126,8 @@ Changes vs V002 (layout only):
         <shell:ToolWindowShell.BodyContent>
             <StackPanel>
                 <!-- Export / Import tabs in workflow order -->
-                <TabControl Margin="0,0,0,10" Background="{StaticResource BrushCardBackground}"
-                            BorderBrush="{StaticResource BrushCardBorder}">
+                <TabControl Margin="0,0,0,10" Background="{StaticResource BrushSurfaceCard}"
+                            BorderBrush="{StaticResource BrushBorderDefault}">
                     <TabItem Header="Export">
                         <Grid>
                             <Grid.RowDefinitions>
@@ -501,13 +501,13 @@ Changes vs V002 (layout only):
                                                 </Border>
                                                 <DataTemplate.Triggers>
                                                     <DataTrigger Binding="{Binding Status}" Value="New">
-                                                        <Setter TargetName="PillBorder" Property="Background" Value="{StaticResource BrushPillNewBackground}"/>
-                                                        <Setter TargetName="PillText"   Property="Foreground" Value="{StaticResource BrushPillNewText}"/>
+                                                        <Setter TargetName="PillBorder" Property="Background" Value="{StaticResource BrushStatusInfoSoft}"/>
+                                                        <Setter TargetName="PillText"   Property="Foreground" Value="{StaticResource BrushStatusInfo}"/>
                                                         <Setter TargetName="PillText"   Property="Text"       Value="NEW"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding Status}" Value="Dup">
-                                                        <Setter TargetName="PillBorder" Property="Background" Value="{StaticResource BrushPillDupBackground}"/>
-                                                        <Setter TargetName="PillText"   Property="Foreground" Value="{StaticResource BrushPillDupText}"/>
+                                                        <Setter TargetName="PillBorder" Property="Background" Value="{StaticResource BrushStatusWarnSoft}"/>
+                                                        <Setter TargetName="PillText"   Property="Foreground" Value="{StaticResource BrushStatusWarn}"/>
                                                         <Setter TargetName="PillText"   Property="Text"       Value="DUP → RENAME"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding Status}" Value="Renamed">
