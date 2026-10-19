@@ -64,11 +64,11 @@ Changes vs V009 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                     </Border>
                 </UniformGrid>
                 <!-- View validation warning -->
-                <Border Background="{StaticResource BrushInputBackground}" BorderBrush="{StaticResource BrushWarning}" BorderThickness="1"
+                <Border Background="{StaticResource BrushInputBackground}" BorderBrush="{StaticResource BrushStatusWarn}" BorderThickness="1"
                         CornerRadius="8" Padding="10,8" Margin="0,10,0,8"
                         Visibility="{Binding IsViewValid, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                     <TextBlock Text="{Binding ViewValidationMessage, StringFormat='⚠ {0}'}"
-                               FontSize="11.5" Foreground="{StaticResource BrushWarning}" TextWrapping="Wrap"/>
+                               FontSize="11.5" Foreground="{StaticResource BrushStatusWarn}" TextWrapping="Wrap"/>
                 </Border>
             </StackPanel>
         </shell:ToolWindowShell.HeaderContent>
