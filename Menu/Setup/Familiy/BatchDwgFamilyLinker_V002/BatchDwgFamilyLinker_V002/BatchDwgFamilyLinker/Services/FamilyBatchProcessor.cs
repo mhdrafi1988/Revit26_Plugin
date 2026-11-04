@@ -20,6 +20,9 @@ namespace BatchDwgFamilyLinker.V002
         }
 
         public void Execute(UIApplication app)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             var famFiles = Directory.GetFiles(Options.FamilyFolderPath, "*.rfa");
             _vm.TotalFamilies = famFiles.Length;

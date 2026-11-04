@@ -24,6 +24,9 @@ namespace Revit26_Plugin.CreaserAdv.V012.Infrastructure.ExternalEvents
         public static CreaserAdvPayload Payload;
 
         public void Execute(UIApplication app)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             // Take the payload and clear the slot so a stray second Raise() can
             // never re-run a request that has already been handled.

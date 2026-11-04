@@ -9,6 +9,19 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [3.9.1] — 2026-11-04
+
+### Fixed
+- **Error safety net on every tool** — 95 command and 98 external-event handler files did not route
+  `Execute` through `ToolGuard`, so an unexpected error could reach Revit unhandled with no log.
+  Every compiled `IExternalCommand.Execute` and `IExternalEventHandler.Execute` now delegates to
+  `ToolGuard.RunCommand` / `ToolGuard.RunHandler`. Older versions still on the ribbon are covered
+  too. Patch bump for each affected tool: Annotation Overlap Detection v4.0.1 (V004), Auto Dim Detail Line v10.0.1 (V010), Auto Place Sections v324.0.1 (V324), Auto Slope By Drain (Multi-Roof) v12.0.1 (V012), Auto Slope By Point v30.0.1 (V030), Auto Slope By Point (Multi Copies) v30.0.1 (MultiCopies30), Auto Slope By Point (Ridge) v3.0.1 (V003), Automated Section Placer v3.0.1 (V003), Batch Link DWG Family v2.0.1 (V002), Bubble Auto Renumber v8.0.1 (V008), Callout To Section View Placement v21.0.1 (V021), Combined Roof Tools v3.0.1 (V003), Creaser Adv v12.0.1 (V012), Create Sections From Detail Lines v13.0.1 (V013), Detail Line Closed Loop v3.0.1 (V003), Detail Lines From Links v10.0.1 (VA010), Divide Inner Loops v12.0.1 (V012), DWG To DL(P) v14.0.1 (V014), DWG To Lines v7.0.1 (V007), Floors And Roof From Linked Rooms v13.0.1 (V013), Floors And Roof From Linked Rooms (Via Plan View) v6.0.1 (V006), Inner Loops And Perpendicular v7.0.1 (V007), Link Version Checker v3.0.1 (V003), Link Version Checker v4.0.1 (V004), Multiple Points (1/2–1/4) v3.0.1 (V003), Outer Curve Divider v6.0.1 (V006), ParaManager v5.0.1 (V005), Plan From Scope Box v6.0.1 (V006), Reference Section Head Placer v15.0.1 (V015), Ridge By Openings v70.0.1 (V070), Ridge By Points v59.0.1 (V059), Roof Detail Line Intersect v14.0.1 (V014), Roof Edge Around Sections v7.0.1 (V007), Roof Edge Element Sections v4.0.1 (V004), Roof Edge Vertex Reducer v9.0.1 (V009), Roof Point Comparison v3.0.1 (V003), Roof Point Elevation Sync v5.0.1 (V005), Roof Tag v18.0.1 (V018), Roof Type Manager v3.0.1 (V003), Roof View Focus v4.0.1 (V004), Schedule Export / Import v7.0.1 (V007), Section Auto Renamer v26.0.1 (V026), Section View Auto Tagger v6.0.1 (V006), Sheet Auto Rearrange v28.0.1 (V028), Smart View To Sheet Placer v224.0.1 (V224), Tapered EPS 2D Pattern v6.0.1 (V006), View Auto Renamer v6.0.1 (V006), Workset Manager v14.0.1 (V014), Workset Renamer v5.0.1 (V005), Workset Renamer (From Excel) v5.0.1 (FX05), Worksets & Elements Browser v4.0.1 (WSEB004).
+
+**User note:** no change to how the tools work. If a tool hits an unexpected error, you now get an
+error dialog and an entry in `%AppData%\Revit26_Plugin\Logs` instead of a Revit crash or a silent
+failure.
+
 ## [3.9.0] — 2026-11-04
 
 ### Added

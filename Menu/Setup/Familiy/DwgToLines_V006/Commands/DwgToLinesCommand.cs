@@ -21,7 +21,10 @@ namespace Revit26_Plugin.DwgToLines.V006.Commands
     [Regeneration(RegenerationOption.Manual)]
     public class DwgToLinesCommand : IExternalCommand
     {
-        public Result Execute(
+        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunCommand(GetType(), commandData, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(
             ExternalCommandData commandData,
             ref string message,
             ElementSet elements)

@@ -26,6 +26,9 @@ namespace Revit26_Plugin.DtlLineDim.V009.Infrastructure.ExternalEvents
         }
 
         public void Execute(UIApplication app)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             Document doc = app.ActiveUIDocument?.Document;
             View view = doc?.ActiveView;

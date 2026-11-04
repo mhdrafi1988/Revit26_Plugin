@@ -34,7 +34,10 @@ public class OpenViewAutoRenamerCommand : IExternalCommand
     // ViewType exists for them) and are included automatically by this
     // filter. See ClassifyView for the SectionOrCallout grouping rationale.
 
-    public Result Execute(ExternalCommandData c, ref string m, ElementSet e)
+    public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+        => global::Revit26_Plugin.Shared.Services.ToolGuard.RunCommand(GetType(), commandData, ref message, elements, ExecuteUnguarded);
+
+    private Result ExecuteUnguarded(ExternalCommandData c, ref string m, ElementSet e)
     {
         try
         {

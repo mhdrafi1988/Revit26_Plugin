@@ -110,6 +110,9 @@ namespace Revit26_Plugin.AutomatedSectionPlacer.V003.Infrastructure.ExternalEven
         }
 
         public void Execute(UIApplication app)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             try
             {

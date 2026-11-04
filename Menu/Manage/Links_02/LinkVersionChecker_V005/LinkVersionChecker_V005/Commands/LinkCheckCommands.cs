@@ -14,7 +14,10 @@ namespace Revit26_Plugin.LinkVersionChecker_V005.Commands
     [Transaction(TransactionMode.Manual)]
     public class CmdLinkCheckPreOpen : IExternalCommand
     {
-        public Result Execute(ExternalCommandData data, ref string message, ElementSet elements) =>
+        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunCommand(GetType(), commandData, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData data, ref string message, ElementSet elements) =>
             LinkCheckLauncher.Show(data.Application, ScanMode.PreOpen, ref message);
     }
 
@@ -22,7 +25,10 @@ namespace Revit26_Plugin.LinkVersionChecker_V005.Commands
     [Transaction(TransactionMode.Manual)]
     public class CmdLinkCheckInModel : IExternalCommand
     {
-        public Result Execute(ExternalCommandData data, ref string message, ElementSet elements)
+        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunCommand(GetType(), commandData, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData data, ref string message, ElementSet elements)
         {
             Document doc = data.Application.ActiveUIDocument?.Document;
             if (doc == null || doc.IsFamilyDocument)
@@ -38,7 +44,10 @@ namespace Revit26_Plugin.LinkVersionChecker_V005.Commands
     [Transaction(TransactionMode.Manual)]
     public class CmdLinkCheckFolder : IExternalCommand
     {
-        public Result Execute(ExternalCommandData data, ref string message, ElementSet elements) =>
+        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunCommand(GetType(), commandData, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData data, ref string message, ElementSet elements) =>
             LinkCheckLauncher.Show(data.Application, ScanMode.Folder, ref message);
     }
 

@@ -41,6 +41,9 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V014.Infrastructure.ExternalEvents
         public event Action<int, int> ProgressChanged;
 
         public void Execute(UIApplication app)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             var request = PendingRequest;
             if (request == null) return;

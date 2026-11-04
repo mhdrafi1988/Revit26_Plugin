@@ -37,6 +37,9 @@ namespace Revit26_Plugin.APUS.V324.ExternalEvents
         public List<SectionItemViewModel> SectionsToPlace { get; set; }
 
         public void Execute(UIApplication app)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             var uidoc = app.ActiveUIDocument;
             var doc = uidoc?.Document;

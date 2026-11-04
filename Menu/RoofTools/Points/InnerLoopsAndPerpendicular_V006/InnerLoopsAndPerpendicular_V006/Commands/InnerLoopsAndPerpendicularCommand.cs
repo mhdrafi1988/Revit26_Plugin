@@ -51,6 +51,9 @@ namespace Revit26_Plugin.InnerLoopsAndPerpendicular.V006.Commands
     public class InnerLoopsAndPerpendicularCommand : IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunCommand(GetType(), commandData, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             UIDocument uidoc = commandData.Application.ActiveUIDocument;
             Document   doc   = uidoc.Document;

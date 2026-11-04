@@ -48,6 +48,9 @@ namespace Revit26_Plugin.RoofEdgeElementSections.V004
         public Action<RunResult, ObservableCollection<LogEntry>> OnRunComplete { get; set; }
 
         public void Execute(UIApplication app)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             Document doc = app.ActiveUIDocument.Document;
             var log = new ObservableCollection<LogEntry>();

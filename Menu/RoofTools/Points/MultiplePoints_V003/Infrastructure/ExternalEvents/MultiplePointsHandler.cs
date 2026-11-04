@@ -26,6 +26,9 @@ namespace Revit26_Plugin.MultiplePoints.V003.Infrastructure.ExternalEvents
         public static MultiplePointsPayload Payload;
 
         public void Execute(UIApplication app)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             if (Payload == null) return;
 

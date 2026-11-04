@@ -16,7 +16,10 @@ namespace Revit26_Plugin.RoofTag.V018
     {
         private const double PointDedupTolFt = 10.0 / 304.8;
 
-        public Result Execute(
+        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunCommand(GetType(), commandData, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(
             ExternalCommandData commandData,
             ref string          message,
             ElementSet          elements)

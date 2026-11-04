@@ -103,6 +103,9 @@ namespace Revit26_Plugin.SmartViewToSheetPlacer.V224.Infrastructure.ExternalEven
         }
 
         public void Execute(UIApplication app)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             try
             {
