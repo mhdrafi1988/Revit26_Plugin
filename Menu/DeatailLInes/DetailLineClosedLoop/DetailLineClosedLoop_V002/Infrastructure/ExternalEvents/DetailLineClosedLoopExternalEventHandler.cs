@@ -10,6 +10,7 @@ using Revit26_Plugin.DetailLineClosedLoop.V002.Core.Services;
 using Revit26_Plugin.DetailLineClosedLoop.V002.Infrastructure.SelectionFilters;
 using Revit26_Plugin.DetailLineClosedLoop.V002.UI.ViewModels;
 using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.DetailLineClosedLoop.V002.Infrastructure.ExternalEvents
 {
@@ -27,7 +28,11 @@ namespace Revit26_Plugin.DetailLineClosedLoop.V002.Infrastructure.ExternalEvents
 
         public DetailLineClosedLoopExternalEventHandler(DetailLineClosedLoopViewModel vm) => _vm = vm;
 
+        /// <summary>Revit entry point — guarded so no exception reaches Revit.</summary>
         public void Execute(UIApplication app)
+            => ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             UIDocument uiDoc = app.ActiveUIDocument;
             Document doc = uiDoc?.Document;

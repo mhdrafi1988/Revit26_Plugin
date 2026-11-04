@@ -14,6 +14,7 @@ using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 using Revit26_Plugin.CombinedRoofTools.V003.Core;
 using System;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.CombinedRoofTools.V003.Infrastructure.ExternalEvents
 {
@@ -21,7 +22,11 @@ namespace Revit26_Plugin.CombinedRoofTools.V003.Infrastructure.ExternalEvents
     {
         public static ChangeRoofPayload Payload;
 
+        /// <summary>Revit entry point — guarded so no exception reaches Revit.</summary>
         public void Execute(UIApplication app)
+            => ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             if (Payload == null) return;
             ChangeRoofPayload current = Payload;

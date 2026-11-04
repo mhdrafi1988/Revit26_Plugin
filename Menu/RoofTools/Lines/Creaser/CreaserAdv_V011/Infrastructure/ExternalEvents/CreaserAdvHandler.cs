@@ -11,6 +11,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.CreaserAdv.V011.Core.Models;
 using System;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.CreaserAdv.V011.Infrastructure.ExternalEvents
 {
@@ -23,7 +24,11 @@ namespace Revit26_Plugin.CreaserAdv.V011.Infrastructure.ExternalEvents
         /// </summary>
         public static CreaserAdvPayload Payload;
 
+        /// <summary>Revit entry point — guarded so no exception reaches Revit.</summary>
         public void Execute(UIApplication app)
+            => ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             // Take the payload and clear the slot so a stray second Raise() can
             // never re-run a request that has already been handled.

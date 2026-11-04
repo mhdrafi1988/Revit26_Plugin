@@ -6,6 +6,7 @@ using Revit26_Plugin.ViewAutoRenamer.V005.ViewModels;
 using Revit26_Plugin.ViewAutoRenamer.V005.Views;
 using System.Diagnostics;
 using Revit26_Plugin.Utilities;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.ViewAutoRenamer.V005.Commands;
 
@@ -26,7 +27,11 @@ namespace Revit26_Plugin.ViewAutoRenamer.V005.Commands;
 [Regeneration(RegenerationOption.Manual)]
 public class OpenViewAutoRenamerCommand : IExternalCommand
 {
+    /// <summary>Revit entry point — delegates to <see cref="ToolGuard.RunCommand"/>.</summary>
     public Result Execute(ExternalCommandData c, ref string m, ElementSet e)
+        => ToolGuard.RunCommand(GetType(), c, ref m, e, ExecuteUnguarded);
+
+    private Result ExecuteUnguarded(ExternalCommandData c, ref string m, ElementSet e)
     {
         try
         {

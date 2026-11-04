@@ -21,6 +21,7 @@ using Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.Core.Engine;
 using Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.Core.Models;
 using Revit26_Plugin.Shared.Models;
 using System;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.Infrastructure.ExternalEvents
 {
@@ -33,7 +34,11 @@ namespace Revit26_Plugin.AutoSlopeByPoint.MultiCopies30.Infrastructure.ExternalE
         /// </summary>
         public static MultiSlopePayload Payload;
 
+        /// <summary>Revit entry point — guarded so no exception reaches Revit.</summary>
         public void Execute(UIApplication app)
+            => ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             if (Payload == null) return;
 

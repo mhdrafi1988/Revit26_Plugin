@@ -6,6 +6,7 @@
 using Autodesk.Revit.UI;
 using System;
 using Revit26_Plugin.Utilities;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.DwgToDetailLines.V013.Infrastructure.ExternalEvents
 {
@@ -25,7 +26,11 @@ namespace Revit26_Plugin.DwgToDetailLines.V013.Infrastructure.ExternalEvents
             externalEvent.Raise();
         }
 
+        /// <summary>Revit entry point — guarded so no exception reaches Revit.</summary>
         public void Execute(UIApplication app)
+            => ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             try
             {

@@ -4,6 +4,7 @@ using Revit26_Plugin.RoofPointComparison.V003.Core.Engine;
 using Revit26_Plugin.RoofPointComparison.V003.Core.Models;
 using Revit26_Plugin.Shared.Models;
 using System;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.RoofPointComparison.V003.Infrastructure.ExternalEvents
 {
@@ -12,7 +13,11 @@ namespace Revit26_Plugin.RoofPointComparison.V003.Infrastructure.ExternalEvents
         /// <summary>Set by the ViewModel immediately before raising the ExternalEvent.</summary>
         public static ComparisonPayload Payload;
 
+        /// <summary>Revit entry point — guarded so no exception reaches Revit.</summary>
         public void Execute(UIApplication app)
+            => ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             if (Payload == null) return;
             ComparisonPayload current = Payload;

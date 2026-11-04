@@ -4,6 +4,7 @@ using Autodesk.Revit.UI;
 using Revit26_Plugin.SmartViewToSheetPlacer.V224.ViewModels;
 using Revit26_Plugin.SmartViewToSheetPlacer.V224.Views;
 using Revit26_Plugin.Utilities;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.SmartViewToSheetPlacer.V224
 {
@@ -18,7 +19,11 @@ namespace Revit26_Plugin.SmartViewToSheetPlacer.V224
     [Regeneration(RegenerationOption.Manual)]
     public class SmartViewToSheetPlacerCommand : IExternalCommand
     {
+        /// <summary>Revit entry point — delegates to <see cref="ToolGuard.RunCommand"/>.</summary>
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+            => ToolGuard.RunCommand(GetType(), commandData, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             try
             {

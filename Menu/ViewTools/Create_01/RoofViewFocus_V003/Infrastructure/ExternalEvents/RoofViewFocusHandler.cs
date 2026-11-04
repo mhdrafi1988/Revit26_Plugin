@@ -6,6 +6,7 @@ using Autodesk.Revit.UI;
 using Revit26_Plugin.RoofViewFocus.V003.Core.Models;
 using Revit26_Plugin.RoofViewFocus.V003.Core.Services;
 using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.RoofViewFocus.V003.Infrastructure.ExternalEvents
 {
@@ -23,7 +24,11 @@ namespace Revit26_Plugin.RoofViewFocus.V003.Infrastructure.ExternalEvents
 
         public string GetName() => "RoofViewFocusHandler";
 
+        /// <summary>Revit entry point — guarded so no exception reaches Revit.</summary>
         public void Execute(UIApplication app)
+            => ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             FocusRequest? request = PendingRequest;
             PendingRequest = null;

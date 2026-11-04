@@ -9,6 +9,7 @@ using Revit26_Plugin.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.APUS.V324.ExternalEvents
 {
@@ -36,7 +37,11 @@ namespace Revit26_Plugin.APUS.V324.ExternalEvents
         public AutoPlaceSectionsViewModel ViewModel { get; set; }
         public List<SectionItemViewModel> SectionsToPlace { get; set; }
 
+        /// <summary>Revit entry point — guarded so no exception reaches Revit.</summary>
         public void Execute(UIApplication app)
+            => ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             var uidoc = app.ActiveUIDocument;
             var doc = uidoc?.Document;

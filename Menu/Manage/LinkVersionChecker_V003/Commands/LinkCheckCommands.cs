@@ -7,6 +7,7 @@ using Autodesk.Revit.UI;
 using Revit26_Plugin.LinkVersionChecker_V003.Services;
 using Revit26_Plugin.LinkVersionChecker_V003.UI.ViewModels;
 using Revit26_Plugin.LinkVersionChecker_V003.UI.Views;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.LinkVersionChecker_V003.Commands
 {
@@ -14,7 +15,11 @@ namespace Revit26_Plugin.LinkVersionChecker_V003.Commands
     [Transaction(TransactionMode.Manual)]
     public class CmdLinkCheckPreOpen : IExternalCommand
     {
-        public Result Execute(ExternalCommandData data, ref string message, ElementSet elements) =>
+        /// <summary>Revit entry point — delegates to <see cref="ToolGuard.RunCommand"/>.</summary>
+        public Result Execute(ExternalCommandData data, ref string message, ElementSet elements)
+            => ToolGuard.RunCommand(GetType(), data, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData data, ref string message, ElementSet elements) =>
             LinkCheckLauncher.Show(data.Application, ScanMode.PreOpen, ref message);
     }
 
@@ -22,7 +27,11 @@ namespace Revit26_Plugin.LinkVersionChecker_V003.Commands
     [Transaction(TransactionMode.Manual)]
     public class CmdLinkCheckInModel : IExternalCommand
     {
+        /// <summary>Revit entry point — delegates to <see cref="ToolGuard.RunCommand"/>.</summary>
         public Result Execute(ExternalCommandData data, ref string message, ElementSet elements)
+            => ToolGuard.RunCommand(GetType(), data, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData data, ref string message, ElementSet elements)
         {
             Document doc = data.Application.ActiveUIDocument?.Document;
             if (doc == null || doc.IsFamilyDocument)
@@ -38,7 +47,11 @@ namespace Revit26_Plugin.LinkVersionChecker_V003.Commands
     [Transaction(TransactionMode.Manual)]
     public class CmdLinkCheckFolder : IExternalCommand
     {
-        public Result Execute(ExternalCommandData data, ref string message, ElementSet elements) =>
+        /// <summary>Revit entry point — delegates to <see cref="ToolGuard.RunCommand"/>.</summary>
+        public Result Execute(ExternalCommandData data, ref string message, ElementSet elements)
+            => ToolGuard.RunCommand(GetType(), data, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData data, ref string message, ElementSet elements) =>
             LinkCheckLauncher.Show(data.Application, ScanMode.Folder, ref message);
     }
 

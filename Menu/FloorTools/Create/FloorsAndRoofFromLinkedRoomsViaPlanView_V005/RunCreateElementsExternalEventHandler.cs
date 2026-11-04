@@ -3,6 +3,7 @@ using System.Windows.Threading;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V005
 {
@@ -24,7 +25,11 @@ namespace Revit26_Plugin.FloorsAndRoofFromLinkedRoomsViaPlanView.V005
         public MainViewModel ViewModel { get; set; }
         public CreateRunRequest PendingRequest { get; set; }
 
+        /// <summary>Revit entry point — guarded so no exception reaches Revit.</summary>
         public void Execute(UIApplication app)
+            => ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             var doc = app.ActiveUIDocument.Document;
             var request = PendingRequest;

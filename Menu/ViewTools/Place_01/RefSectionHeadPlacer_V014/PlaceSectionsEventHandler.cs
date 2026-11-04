@@ -6,6 +6,7 @@ using Revit26_Plugin.RefSectionHeadPlacer.V014.Core.Engine;
 using Revit26_Plugin.RefSectionHeadPlacer.V014.Core.Models;
 using Revit26_Plugin.RefSectionHeadPlacer.V014.Core.Services;
 using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.RefSectionHeadPlacer.V014.Infrastructure.ExternalEvents
 {
@@ -40,7 +41,11 @@ namespace Revit26_Plugin.RefSectionHeadPlacer.V014.Infrastructure.ExternalEvents
         public event Action<LogEntry> LogEmitted;
         public event Action<int, int> ProgressChanged;
 
+        /// <summary>Revit entry point — guarded so no exception reaches Revit.</summary>
         public void Execute(UIApplication app)
+            => ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             var request = PendingRequest;
             if (request == null) return;

@@ -1,6 +1,7 @@
 using System;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.TaperedEpsPattern2D.V001.Revit;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.TaperedEpsPattern2D.V001.Events
 {
@@ -11,7 +12,11 @@ namespace Revit26_Plugin.TaperedEpsPattern2D.V001.Events
 
         public event Action<RoofContext>? Completed;
 
+        /// <summary>Revit entry point — guarded so no exception reaches Revit.</summary>
         public void Execute(UIApplication app)
+            => ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             RoofContext? current = Current;
             if (current == null)

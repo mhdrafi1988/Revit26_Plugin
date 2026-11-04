@@ -5,6 +5,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit26_Plugin.CreateSections.V012.Models;
 using Revit26_Plugin.CreateSections.V012.ViewModels;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.CreateSections.V012.Services
 {
@@ -55,7 +56,11 @@ namespace Revit26_Plugin.CreateSections.V012.Services
             _externalEvent.Raise();
         }
 
+        /// <summary>Revit entry point — guarded so no exception reaches Revit.</summary>
         public void Execute(UIApplication app)
+            => ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             Document doc = _uiDoc.Document;
 

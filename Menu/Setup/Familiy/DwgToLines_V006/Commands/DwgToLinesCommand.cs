@@ -10,6 +10,7 @@ using Autodesk.Revit.UI;
 using Revit26_Plugin.DwgToLines.V006.Infrastructure.Helpers;
 using Revit26_Plugin.DwgToLines.V006.UI.Views;
 using Revit26_Plugin.Utilities;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.DwgToLines.V006.Commands
 {
@@ -21,10 +22,11 @@ namespace Revit26_Plugin.DwgToLines.V006.Commands
     [Regeneration(RegenerationOption.Manual)]
     public class DwgToLinesCommand : IExternalCommand
     {
-        public Result Execute(
-            ExternalCommandData commandData,
-            ref string message,
-            ElementSet elements)
+        /// <summary>Revit entry point — delegates to <see cref="ToolGuard.RunCommand"/>.</summary>
+        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+            => ToolGuard.RunCommand(GetType(), commandData, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             try
             {

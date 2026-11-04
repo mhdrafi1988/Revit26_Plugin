@@ -8,6 +8,7 @@ using System.Windows.Interop;
 using Revit26_Plugin.CreateSections.V012.Filters;
 using Revit26_Plugin.CreateSections.V012.Views.SectionFromLineDialog;
 using Revit26_Plugin.CreateSections.V012.Services;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.CreateSections.V012.Commands
 {
@@ -32,10 +33,11 @@ namespace Revit26_Plugin.CreateSections.V012.Commands
     [Regeneration(RegenerationOption.Manual)]
     public class CreateSectionsFromDetailLines : IExternalCommand
     {
-        public Result Execute(
-            ExternalCommandData commandData,
-            ref string message,
-            ElementSet elements)
+        /// <summary>Revit entry point — delegates to <see cref="ToolGuard.RunCommand"/>.</summary>
+        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+            => ToolGuard.RunCommand(GetType(), commandData, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             UIDocument uidoc = commandData.Application.ActiveUIDocument;
             Document doc = uidoc.Document;

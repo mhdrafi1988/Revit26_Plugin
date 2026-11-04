@@ -8,6 +8,7 @@ using Revit26_Plugin.CalloutCOP.V020.Helpers;
 using Revit26_Plugin.CalloutCOP.V020.Services;
 using Revit26_Plugin.CalloutCOP.V020.ViewModels;
 using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.CalloutCOP.V020.ExternalEvents
 {
@@ -37,7 +38,11 @@ namespace Revit26_Plugin.CalloutCOP.V020.ExternalEvents
             _onFinished = onFinished;
         }
 
+        /// <summary>Revit entry point — guarded so no exception reaches Revit.</summary>
         public void Execute(UIApplication app)
+            => ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             int success = 0;
             int failed = 0;
