@@ -5,6 +5,7 @@ using Autodesk.Revit.DB;
 using Revit26_Plugin.PlanFromScopeBox.V006.Core.Engine;
 using Revit26_Plugin.PlanFromScopeBox.V006.Core.Services;
 using Revit26_Plugin.Shared.Models;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.PlanFromScopeBox.V006.Infrastructure.ExternalEvents
 {
@@ -49,7 +50,11 @@ namespace Revit26_Plugin.PlanFromScopeBox.V006.Infrastructure.ExternalEvents
             while (_queue.TryDequeue(out _)) { }
         }
 
+        /// <summary>Revit entry point — guarded so no exception reaches Revit.</summary>
         public void Execute(UIApplication app)
+            => ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             UIDocument uidoc = app.ActiveUIDocument;
             if (uidoc == null)

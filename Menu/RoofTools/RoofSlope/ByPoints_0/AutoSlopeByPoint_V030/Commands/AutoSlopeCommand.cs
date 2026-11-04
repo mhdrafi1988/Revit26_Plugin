@@ -23,6 +23,7 @@ using Revit26_Plugin.AutoSlopeByPoint.V030.UI.Views;
 using System;
 using System.Collections.Generic;
 using Revit26_Plugin.Utilities;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.AutoSlopeByPoint.V030.Commands
 
@@ -31,7 +32,11 @@ namespace Revit26_Plugin.AutoSlopeByPoint.V030.Commands
     [Regeneration(RegenerationOption.Manual)]
     public class AutoSlopeCommand : IExternalCommand
     {
+        /// <summary>Revit entry point — delegates to <see cref="ToolGuard.RunCommand"/>.</summary>
         public Result Execute(ExternalCommandData data, ref string msg, ElementSet elems)
+            => ToolGuard.RunCommand(GetType(), data, ref msg, elems, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData data, ref string msg, ElementSet elems)
         {
             UIDocument uidoc = data.Application.ActiveUIDocument;
             Document doc = uidoc.Document;

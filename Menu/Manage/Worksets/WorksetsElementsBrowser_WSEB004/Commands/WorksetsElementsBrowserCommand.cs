@@ -5,6 +5,7 @@ using Revit26_Plugin.WorksetsElementsBrowser.WSEB004.UI.ViewModels;
 using Revit26_Plugin.WorksetsElementsBrowser.WSEB004.UI.Views;
 using System.Windows.Interop;
 using Revit26_Plugin.Utilities;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB004.Commands
 {
@@ -17,7 +18,11 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB004.Commands
     [Regeneration(RegenerationOption.Manual)]
     public class WorksetsElementsBrowserCommand : IExternalCommand
     {
+        /// <summary>Revit entry point — delegates to <see cref="ToolGuard.RunCommand"/>.</summary>
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+            => ToolGuard.RunCommand(GetType(), commandData, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             try
             {

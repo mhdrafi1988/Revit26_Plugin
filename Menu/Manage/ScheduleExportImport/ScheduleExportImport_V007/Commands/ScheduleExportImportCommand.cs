@@ -6,6 +6,7 @@ using Autodesk.Revit.UI;
 using Revit26_Plugin.ScheduleExportImport.V007.Infrastructure.ExternalEvents;
 using Revit26_Plugin.ScheduleExportImport.V007.UI.ViewModels;
 using Revit26_Plugin.ScheduleExportImport.V007.UI.Views;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.ScheduleExportImport.V007.Commands
 {
@@ -15,7 +16,11 @@ namespace Revit26_Plugin.ScheduleExportImport.V007.Commands
     [Regeneration(RegenerationOption.Manual)]
     public class ScheduleExportImportCommand : IExternalCommand
     {
+        /// <summary>Revit entry point — delegates to <see cref="ToolGuard.RunCommand"/>.</summary>
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+            => ToolGuard.RunCommand(GetType(), commandData, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             try
             {

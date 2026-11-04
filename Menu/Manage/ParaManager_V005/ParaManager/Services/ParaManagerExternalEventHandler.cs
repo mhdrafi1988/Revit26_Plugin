@@ -2,6 +2,7 @@ using Autodesk.Revit.UI;
 using Revit26_Plugin.ParaManager.V005.Models;
 using System;
 using System.Collections.Generic;
+using Revit26_Plugin.Shared.Services;
 
 namespace Revit26_Plugin.ParaManager.V005.Services
 {
@@ -20,7 +21,11 @@ namespace Revit26_Plugin.ParaManager.V005.Services
         /// <summary>Raised on the API thread when the batch finishes (success or handled failure).</summary>
         public event Action<List<RowResult>, Exception> Completed;
 
+        /// <summary>Revit entry point — guarded so no exception reaches Revit.</summary>
         public void Execute(UIApplication app)
+            => ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             List<RowResult> results = null;
             Exception failure = null;

@@ -9,6 +9,69 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [3.8.1] — 2026-11-04
+
+### Fixed
+- **Error handling on 51 tools** — every ribbon command and external-event handler of these tools
+  now runs through `ToolGuard`, as the development standard requires. An error that escapes a tool
+  is now written to `%AppData%\Revit26_Plugin\Logs` and shown in a dialog that names the tool and
+  version, instead of being lost or reaching Revit. Each tool's own error handling is unchanged.
+  Tool versions (PATCH bump):
+  - Detail Line Closed Loop 3.0.0 → 3.0.1 (V003)
+  - Detail Lines From Links 10.0.0 → 10.0.1 (VA010)
+  - Auto Dim Detail Line 10.0.0 → 10.0.1 (V010)
+  - Floors And Roof From Linked Rooms (Via Plan View) 6.0.0 → 6.0.1 (V006)
+  - Floors And Roof From Linked Rooms 13.0.0 → 13.0.1 (V013)
+  - Annotation Overlap Detection 4.0.0 → 4.0.1 (V004)
+  - ParaManager 5.0.0 → 5.0.1 (V005)
+  - Schedule Export / Import 7.0.0 → 7.0.1 (V007)
+  - Workset Manager 14.0.0 → 14.0.1 (V014)
+  - Workset Renamer (From Excel) 5.0.0 → 5.0.1 (FX05)
+  - Workset Renamer 5.0.0 → 5.0.1 (V005)
+  - Worksets & Elements Browser 4.0.0 → 4.0.1 (WSEB004)
+  - Combined Roof Tools 3.0.0 → 3.0.1 (V003)
+  - Roof Point Elevation Sync 5.0.0 → 5.0.1 (V005)
+  - Roof Point Comparison 3.0.0 → 3.0.1 (V003)
+  - Ridge By Points 59.0.0 → 59.0.1 (V059)
+  - Ridge By Openings 70.0.0 → 70.0.1 (V070)
+  - Creaser Adv 12.0.0 → 12.0.1 (V012)
+  - Tapered EPS 2D Pattern 6.0.0 → 6.0.1 (V006)
+  - Divide Inner Loops 12.0.0 → 12.0.1 (V012)
+  - Inner Loops And Perpendicular 7.0.0 → 7.0.1 (V007)
+  - Multiple Points (1/2–1/4) 3.0.0 → 3.0.1 (V003)
+  - Outer Curve Divider 6.0.0 → 6.0.1 (V006)
+  - Roof Detail Line Intersect 14.0.0 → 14.0.1 (V014)
+  - Roof Edge Vertex Reducer 9.0.0 → 9.0.1 (V009)
+  - Auto Slope By Drain (Multi-Roof) 12.0.0 → 12.0.1 (V012)
+  - Auto Slope By Point (Ridge) 3.0.0 → 3.0.1 (V003)
+  - Auto Slope By Point (Multi Copies) 30.0.0 → 30.0.1 (MultiCopies30)
+  - Auto Slope By Point 30.0.0 → 30.0.1 (V030)
+  - Roof Type Manager 3.0.0 → 3.0.1 (V003)
+  - Batch Link DWG Family 2.0.0 → 2.0.1 (V002)
+  - DWG To Lines 7.0.0 → 7.0.1 (V007)
+  - DWG To DL(P) 14.0.0 → 14.0.1 (V014)
+  - Automated Section Placer 3.0.0 → 3.0.1 (V003)
+  - Plan From Scope Box 6.0.0 → 6.0.1 (V006)
+  - Sheet Auto Rearrange 28.0.0 → 28.0.1 (V028)
+  - Smart View To Sheet Placer 224.0.0 → 224.0.1 (V224)
+  - Roof Tag 18.0.0 → 18.0.1 (V018)
+  - Create Sections From Detail Lines 13.0.0 → 13.0.1 (V013)
+  - Roof Edge Around Sections 7.0.0 → 7.0.1 (V007)
+  - Roof Edge Element Sections 4.0.0 → 4.0.1 (V004)
+  - Roof View Focus 4.0.0 → 4.0.1 (V004)
+  - Section View Auto Tagger 6.0.0 → 6.0.1 (V006)
+  - Auto Place Sections 324.0.0 → 324.0.1 (V324)
+  - Callout To Section View Placement 21.0.0 → 21.0.1 (V021)
+  - Reference Section Head Placer 15.0.0 → 15.0.1 (V015)
+  - Bubble Auto Renumber 8.0.0 → 8.0.1 (V008)
+  - Section Auto Renamer 26.0.0 → 26.0.1 (V026)
+  - View Auto Renamer 6.0.0 → 6.0.1 (V006)
+  - Link Version Checker 3.0.0 → 3.0.1 (V003)
+  - Link Version Checker 4.0.0 → 4.0.1 (V004)
+
+**User note:** nothing changes for normal use. If a tool fails unexpectedly you now get a clear error
+dialog and a log file to send in.
+
 ## [3.8.0] — 2026-10-17
 
 ### Added
