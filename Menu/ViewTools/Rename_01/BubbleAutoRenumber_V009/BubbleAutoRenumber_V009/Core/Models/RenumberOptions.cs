@@ -8,6 +8,13 @@ namespace Revit26_Plugin.BubbleAutoRenumber.V009.Core.Models
         /// <summary>First number of the sequence. 1-based, always &gt; 0.</summary>
         public int StartNumber { get; set; } = 1;
 
+        /// <summary>
+        /// When true, bubbles get letters (A, B, C… Z, AA…, skipping I and O) instead of
+        /// numbers; <see cref="StartNumber"/> is then the letter's position (A = 1).
+        /// Off by default, so existing runs keep numbering 1, 2, 3.
+        /// </summary>
+        public bool UseLetters { get; set; }
+
         /// <summary>Row-banding tolerance in internal units (feet), converted from the
         /// window's millimetres by the ViewModel.</summary>
         public double ThresholdFt { get; set; }
