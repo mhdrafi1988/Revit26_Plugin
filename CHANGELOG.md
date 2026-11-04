@@ -69,6 +69,11 @@ Each release lists every tool whose version changed, under the plugin version.
   - Link Version Checker 3.0.0 → 3.0.1 (V003)
   - Link Version Checker 4.0.0 → 4.0.1 (V004)
 
+- **Error handling on older and uncatalogued versions** — the same `ToolGuard` routing is applied to
+  every other compiled entry point still on the ribbon (96 files): older versions such as Auto Slope
+  By Drain V011, Sheet Auto Rearrange V027 and APUS V323, and Link Version Checker V005. These have
+  no `ToolCatalog` entry, so their error dialog is titled "SloperPro" and no version is bumped.
+
 **User note:** nothing changes for normal use. If a tool fails unexpectedly you now get a clear error
 dialog and a log file to send in.
 
