@@ -9,6 +9,31 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [3.11.0] — 2026-11-04
+
+### Added
+- **Annotation Overlap Detection v4.2.0 (V004)**
+  - **Batch Check…** — tick sheets and/or views (two tabs, with a filter). The check covers every
+    ticked view plus every supported view placed on a ticked sheet; each view is checked on its
+    own, never against another view. A **View** column is added at the end of the results, and
+    clicking an ID opens that view and zooms to the pair. **Back to Start View** returns to the
+    original scope.
+  - Can be started from a **sheet**: it checks the views placed on that sheet.
+  - **Include leaders** option (unticked by default).
+
+### Changed
+- **Annotation Overlap Detection v4.2.0** — tighter outlines: rotated text notes and tags are
+  checked as rotated rectangles instead of their larger axis-aligned box, so fewer false
+  overlaps. Dimensions are still checked by their whole box. Leaders are left out unless
+  **Include leaders** is ticked. To measure without leaders, the tool removes them inside a
+  transaction that is always rolled back: the model is never changed and nothing is added to
+  Undo. Elements it cannot edit keep their leader in the check, with a message.
+- The window now opens even when the starting view has no annotations, so Batch Check is
+  still available.
+
+**User note:** leaders are now left out by default, as requested, so a tag whose only clash is its
+leader is no longer reported. Tick **Include leaders** to get the v4.1 results back.
+
 ## [3.10.0] — 2026-11-04
 
 ### Added

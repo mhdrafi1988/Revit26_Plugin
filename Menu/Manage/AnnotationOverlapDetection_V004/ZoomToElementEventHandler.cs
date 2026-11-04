@@ -11,14 +11,15 @@ namespace Revit26_Plugin.AnnotationOverlapDetection.V004
     /// touch the Revit API directly - so the click sets <see cref="ElementIdsToZoom"/> and
     /// calls Raise(). Revit then calls Execute() in a valid API context.
     /// Since v4.1.0 it zooms to and selects both elements of a pair, and reports
-    /// deleted elements or a changed active view through <see cref="ReportMessage"/>.
+    /// deleted elements through <see cref="ReportMessage"/>. Since v4.2.0 it opens the
+    /// pair's view first when another view is active (batch results span many views).
     /// </summary>
     public class ZoomToElementEventHandler : IExternalEventHandler
     {
         /// <summary>Elements to zoom to and select (usually the two elements of a pair).</summary>
         public IList<ElementId> ElementIdsToZoom { get; set; }
 
-        /// <summary>The view the results were collected in; zoom only works while it is active.</summary>
+        /// <summary>The view the elements were found in; it is opened first if another view is active.</summary>
         public ElementId TargetViewId { get; set; }
 
         /// <summary>Called with a user-facing message when the zoom cannot be done; null message clears it.</summary>
@@ -43,11 +44,31 @@ namespace Revit26_Plugin.AnnotationOverlapDetection.V004
 
             Document doc = uiDoc.Document;
             View view = uiDoc.ActiveView;
-            if (TargetViewId != null && view.Id != TargetViewId)
+            if (TargetViewId != null && TargetViewId != ElementId.InvalidElementId && view.Id != TargetViewId)
             {
-                string name = (doc.GetElement(TargetViewId) as View)?.Name ?? "the scanned view";
-                ReportMessage?.Invoke($"Switch back to view \"{name}\" to zoom to these elements.");
-                return;
+                if (doc.GetElement(TargetViewId) is not View target || !target.IsValidObject)
+                {
+                    ReportMessage?.Invoke("The view these elements were found in no longer exists. Click Refresh.");
+                    return;
+                }
+
+                try
+                {
+                    uiDoc.ActiveView = target;
+                    view = uiDoc.ActiveView;
+                }
+                catch (Exception ex)
+                {
+                    ReportMessage?.Invoke($"Could not open view \"{target.Name}\": {ex.Message}");
+                    return;
+                }
+
+                if (view.Id != TargetViewId)
+                {
+                    uiDoc.RequestViewChange(target);
+                    ReportMessage?.Invoke($"Opening view \"{target.Name}\" - click the ID again to zoom.");
+                    return;
+                }
             }
 
             var found = new List<ElementId>();

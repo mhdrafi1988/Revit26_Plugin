@@ -35,5 +35,11 @@ namespace Revit26_Plugin.AnnotationOverlapDetection.V004.Models
 
         /// <summary>Height of the overlap area as printed on the sheet, paper mm (v4.1.0).</summary>
         public double OverlapHeightPaper { get; set; }
+
+        /// <summary>Id of the view the pair was found in (v4.2.0).</summary>
+        public long ViewId { get; set; }
+
+        /// <summary>Name of the view the pair was found in (v4.2.0).</summary>
+        public string ViewName { get; set; }
     }
 }

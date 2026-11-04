@@ -17,6 +17,9 @@ v4.1.0:
   - ID links zoom to and select both elements of the pair.
   - Overlap W / H (paper mm) columns appended at the end.
   - Refresh button in the footer.
+v4.2.0:
+  - Include leaders option; scope row with Batch Check… and Back to start view.
+  - View column appended at the end of the results.
 =======================================================
 -->
 <Window x:Class="Revit26_Plugin.AnnotationOverlapDetection.V004.Views.AnnotationOverlapPanel"
@@ -42,7 +45,7 @@ v4.1.0:
     </Window.Resources>
 
     <shell:ToolWindowShell Title="Annotation Overlap Detection"
-                           Subtitle="Find overlapping annotations in the active 2D view"
+                           Subtitle="Find overlapping annotations in 2D views and sheets"
                            Version="V004"
                            IsRunning="{Binding IsLoading}"
                            IsIndeterminate="True"
@@ -113,24 +116,43 @@ v4.1.0:
                             </ListBox.ItemTemplate>
                         </ListBox>
 
-                        <!-- v4.1.0 options -->
-                        <Grid Margin="0,10,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <CheckBox Grid.Column="0" IsChecked="{Binding CheckAcrossTypes}" VerticalAlignment="Center"
+                        <!-- v4.1.0 / v4.2.0 options -->
+                        <WrapPanel Margin="0,10,0,0">
+                            <CheckBox IsChecked="{Binding CheckAcrossTypes}" VerticalAlignment="Center" Margin="0,0,16,4"
                                       Content="Check across types"
                                       ToolTip="Also report overlaps between different types, e.g. a tag over a text note." />
-                            <TextBlock Grid.Column="1" Text="Min overlap (paper mm):" Margin="16,0,6,0" VerticalAlignment="Center"
-                                       ToolTip="Ignore overlaps smaller than this on the printed sheet. 0 reports every overlap." />
-                            <TextBox Grid.Column="2" Width="60" VerticalAlignment="Center"
-                                     Style="{StaticResource BoxedTextInput}"
-                                     Text="{Binding MinOverlapPaperMm, UpdateSourceTrigger=PropertyChanged}" />
-                            <TextBlock Grid.Column="3" Text="{Binding ViewInfoText}" HorizontalAlignment="Right" VerticalAlignment="Center"
-                                       Foreground="{StaticResource BrushTextSecondary}" TextTrimming="CharacterEllipsis" Margin="12,0,0,0" />
+                            <CheckBox IsChecked="{Binding IncludeLeaders}" VerticalAlignment="Center" Margin="0,0,16,4"
+                                      Content="Include leaders"
+                                      ToolTip="Unticked: only the tag head / text box is checked. Ticked: leaders count too (re-scans on Check)." />
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                                <TextBlock Text="Min overlap (paper mm):" Margin="0,0,6,0" VerticalAlignment="Center"
+                                           ToolTip="Ignore overlaps smaller than this on the printed sheet. 0 reports every overlap." />
+                                <TextBox Width="60" VerticalAlignment="Center"
+                                         Style="{StaticResource BoxedTextInput}"
+                                         Text="{Binding MinOverlapPaperMm, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                        </WrapPanel>
+
+                        <!-- v4.2.0 scope -->
+                        <Grid Margin="0,8,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
+                                       Foreground="{StaticResource BrushTextSecondary}">
+                                <Run Text="Checking: " /><Run Text="{Binding ViewInfoText, Mode=OneWay}" />
+                            </TextBlock>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <Button Content="Back to Start View" Style="{StaticResource SmallSecondaryButton}" Margin="0,0,6,0"
+                                        Command="{Binding BackToStartViewCommand}"
+                                        Visibility="{Binding IsBatchScope, Converter={StaticResource BoolToVisibilityConverter}}"
+                                        IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}" />
+                                <Button Content="Batch Check…" Style="{StaticResource SmallSecondaryButton}"
+                                        Command="{Binding BatchCheckCommand}"
+                                        IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"
+                                        ToolTip="Check several sheets and/or views at once." />
+                            </StackPanel>
                         </Grid>
                     </StackPanel>
                 </Border>
@@ -182,6 +204,7 @@ v4.1.0:
                         </DataGridTemplateColumn>
                         <DataGridTextColumn Header="Overlap W (paper mm)" Binding="{Binding OverlapWidthPaper, StringFormat={}{0:F2}}" />
                         <DataGridTextColumn Header="Overlap H (paper mm)" Binding="{Binding OverlapHeightPaper, StringFormat={}{0:F2}}" />
+                        <DataGridTextColumn Header="View" Binding="{Binding ViewName}" />
                     </DataGrid.Columns>
                 </DataGrid>
             </StackPanel>
