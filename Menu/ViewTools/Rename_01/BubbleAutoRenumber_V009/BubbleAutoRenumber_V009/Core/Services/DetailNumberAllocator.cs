@@ -42,8 +42,10 @@ namespace Revit26_Plugin.BubbleAutoRenumber.V009.Core.Services
         /// Sequential numbers from <paramref name="startNumber"/>, skipping anything in
         /// <paramref name="reserved"/>. Every number returned is added to
         /// <paramref name="reserved"/>, so the caller's set stays the live picture.
+        /// With <paramref name="useLetters"/>, each position is written as letters
+        /// (A, B, C…, no I or O) via <see cref="LetterSequence"/>.
         /// </summary>
-        public static List<string> Allocate(int count, int startNumber, HashSet<string> reserved)
+        public static List<string> Allocate(int count, int startNumber, HashSet<string> reserved, bool useLetters = false)
         {
             var allocated = new List<string>(count);
             HashSet<string> used = reserved ?? new HashSet<string>();
@@ -52,7 +54,8 @@ namespace Revit26_Plugin.BubbleAutoRenumber.V009.Core.Services
 
             for (int i = 0; i < count; i++)
             {
-                allocated.Add(MakeUnique(next.ToString(), used));
+                string label = useLetters ? LetterSequence.ToLetters(next) : next.ToString();
+                allocated.Add(MakeUnique(label, used));
                 next++;
             }
 
