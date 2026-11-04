@@ -12,6 +12,11 @@ Changes vs V003 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
     ForwardMouseWheel (type list's fixed MaxHeight=150 replaced).
   - This tool has no log in its ViewModel — nothing to move.
   - No behaviour change — every binding/command is the V003 one.
+v4.1.0:
+  - Options row: Check across types, Min overlap (paper mm), view name + scale.
+  - ID links zoom to and select both elements of the pair.
+  - Overlap W / H (paper mm) columns appended at the end.
+  - Refresh button in the footer.
 =======================================================
 -->
 <Window x:Class="Revit26_Plugin.AnnotationOverlapDetection.V004.Views.AnnotationOverlapPanel"
@@ -37,7 +42,7 @@ Changes vs V003 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
     </Window.Resources>
 
     <shell:ToolWindowShell Title="Annotation Overlap Detection"
-                           Subtitle="Find overlapping annotations in the active view"
+                           Subtitle="Find overlapping annotations in the active 2D view"
                            Version="V004"
                            IsRunning="{Binding IsLoading}"
                            IsIndeterminate="True"
@@ -107,6 +112,26 @@ Changes vs V003 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
+
+                        <!-- v4.1.0 options -->
+                        <Grid Margin="0,10,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <CheckBox Grid.Column="0" IsChecked="{Binding CheckAcrossTypes}" VerticalAlignment="Center"
+                                      Content="Check across types"
+                                      ToolTip="Also report overlaps between different types, e.g. a tag over a text note." />
+                            <TextBlock Grid.Column="1" Text="Min overlap (paper mm):" Margin="16,0,6,0" VerticalAlignment="Center"
+                                       ToolTip="Ignore overlaps smaller than this on the printed sheet. 0 reports every overlap." />
+                            <TextBox Grid.Column="2" Width="60" VerticalAlignment="Center"
+                                     Style="{StaticResource BoxedTextInput}"
+                                     Text="{Binding MinOverlapPaperMm, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Grid.Column="3" Text="{Binding ViewInfoText}" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                       Foreground="{StaticResource BrushTextSecondary}" TextTrimming="CharacterEllipsis" Margin="12,0,0,0" />
+                        </Grid>
                     </StackPanel>
                 </Border>
 
@@ -127,9 +152,10 @@ Changes vs V003 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Button Content="{Binding ElementId1}"
-                                            Command="{Binding DataContext.ZoomToElementCommand,
+                                            Command="{Binding DataContext.ZoomToPairCommand,
                                                       RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                            CommandParameter="{Binding ElementId1}"
+                                            CommandParameter="{Binding}"
+                                            ToolTip="Zoom to and select both elements"
                                             Foreground="{StaticResource BrushAppleBlue}" BorderThickness="0" Background="Transparent"
                                             Cursor="Hand" />
                                 </DataTemplate>
@@ -145,14 +171,17 @@ Changes vs V003 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Button Content="{Binding ElementId2}"
-                                            Command="{Binding DataContext.ZoomToElementCommand,
+                                            Command="{Binding DataContext.ZoomToPairCommand,
                                                       RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                            CommandParameter="{Binding ElementId2}"
+                                            CommandParameter="{Binding}"
+                                            ToolTip="Zoom to and select both elements"
                                             Foreground="{StaticResource BrushAppleBlue}" BorderThickness="0" Background="Transparent"
                                             Cursor="Hand" />
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Overlap W (paper mm)" Binding="{Binding OverlapWidthPaper, StringFormat={}{0:F2}}" />
+                        <DataGridTextColumn Header="Overlap H (paper mm)" Binding="{Binding OverlapHeightPaper, StringFormat={}{0:F2}}" />
                     </DataGrid.Columns>
                 </DataGrid>
             </StackPanel>
@@ -167,6 +196,10 @@ Changes vs V003 (layout only, per CLAUDE.md v1.1 — ToolWindowShell):
                     <TextBlock Text="{Binding ErrorMessage}" Foreground="{StaticResource BrushDanger}" TextWrapping="Wrap" />
                 </Border>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="Refresh" Style="{StaticResource OutlineButton}" Width="90" Height="38" Margin="0,0,8,0"
+                            Command="{Binding RefreshCommand}"
+                            IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"
+                            ToolTip="Re-scan the view after annotations were moved, added or deleted." />
                     <Button Content="Check Overlaps" Style="{StaticResource PrimaryButton}"
                             Command="{Binding CheckOverlapsCommand}"
                             IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"

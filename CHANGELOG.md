@@ -9,6 +9,30 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [3.10.0] — 2026-11-04
+
+### Added
+- **Annotation Overlap Detection v4.1.0 (V004)**
+  - **Check across types** option — also reports overlaps between different types, e.g. a tag
+    over a text note (shown as `IndependentTag / TextNote`).
+  - **Min overlap (paper mm)** — ignore overlaps smaller than this on the printed sheet. The view
+    name and scale are shown next to it.
+  - Two new columns at the end of the results: **Overlap W / H (paper mm)**, the size of the clash
+    as printed (model size ÷ view scale).
+  - **Refresh** button — re-scans the view after annotations are moved, added or deleted. Unticked
+    types stay unticked.
+  - Works in ceiling, area and structural plans, sections, elevations, detail, drafting and legend
+    views, not just floor plans. Boxes are measured along the view's own axes.
+
+### Changed
+- **Annotation Overlap Detection v4.1.0** — clicking either ID now zooms to **both** elements of
+  the pair and selects both. If an element was deleted or the active view changed, a message says
+  so instead of doing nothing. Within each pair, the lower element ID is now listed first, so the
+  order is the same on every run. Faster check on views with many annotations.
+
+**User note:** both new options are off by default (`Check across types` unticked, min overlap 0),
+so a floor plan check returns the same pairs as v4.0.1.
+
 ## [3.9.1] — 2026-11-04
 
 ### Fixed
