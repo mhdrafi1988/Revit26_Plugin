@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Revit26_Plugin.BubbleAutoRenumber.V009.Core.Models;
@@ -37,7 +38,7 @@ namespace Revit26_Plugin.BubbleAutoRenumber.V009.Core.Services
             // Numbers held by views that are NOT being renumbered — out of scope, or in
             // scope but read-only. These are the only genuinely taken numbers, and
             // seeding from them rather than from everything is the V008 fix.
-            var reserved = new HashSet<string>();
+            var reserved = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             foreach (BubbleRow row in allRowsOnSheet)
             {
@@ -48,7 +49,8 @@ namespace Revit26_Plugin.BubbleAutoRenumber.V009.Core.Services
             }
 
             List<string> finals = DetailNumberAllocator.Allocate(
-                targets.Count, options.StartNumber, reserved, options.UseLetters);
+                targets.Count, options.StartNumber, reserved,
+                n => NumberFormatter.Format(options.Format, n, options.Prefix));
 
             List<string> temporaries = DetailNumberAllocator.AllocateTemporaries(
                 targets.Count, reserved, finals);

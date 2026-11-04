@@ -43,6 +43,7 @@ Changes vs V008:
             <converters:LogLevelToColorConverter     x:Key="LogLevelToColorConverter"/>
             <converters:InverseBoolConverter         x:Key="InverseBoolConverter"/>
             <converters:ViewTypeGroupToBrushConverter x:Key="ViewTypeGroupToBrushConverter"/>
+            <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
         </ResourceDictionary>
     </Window.Resources>
 
@@ -119,19 +120,35 @@ Changes vs V008:
                         <Border Style="{StaticResource SeparatorLine}"/>
 
                         <StackPanel Style="{StaticResource FieldRow}" Orientation="Horizontal">
-                            <TextBlock Text="Starting Number" Style="{StaticResource FieldLabel}"
+                            <TextBlock Text="Number Format" Style="{StaticResource FieldLabel}"
+                                       VerticalAlignment="Center" Width="130"/>
+                            <ComboBox ItemsSource="{Binding NumberFormats}"
+                                      SelectedItem="{Binding SelectedFormat}"
+                                      DisplayMemberPath="Label"
+                                      Style="{StaticResource StandardComboBox}"
+                                      MinWidth="200"/>
+                            <TextBlock Text="Prefix" Style="{StaticResource FieldLabel}"
+                                       VerticalAlignment="Center" Margin="12,0,6,0"
+                                       Visibility="{Binding IsPrefixFormat, Converter={StaticResource BoolToVisibility}}"/>
+                            <TextBox Text="{Binding Prefix, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource StyledTextInput}"
+                                     Width="60"
+                                     Visibility="{Binding IsPrefixFormat, Converter={StaticResource BoolToVisibility}}"/>
+                        </StackPanel>
+
+                        <Border Style="{StaticResource SeparatorLine}"/>
+
+                        <StackPanel Style="{StaticResource FieldRow}" Orientation="Horizontal">
+                            <TextBlock Text="{Binding StartLabel}" Style="{StaticResource FieldLabel}"
                                        VerticalAlignment="Center" Width="130"/>
                             <TextBox Text="{Binding StartingNumber, UpdateSourceTrigger=PropertyChanged}"
                                      Style="{StaticResource StyledTextInput}"
                                      Width="80"/>
-                            <CheckBox Content="Use letters (A, B, C…)"
-                                      IsChecked="{Binding UseLetters}"
-                                      Foreground="{StaticResource BrushTextPrimary}" FontSize="11.5"
-                                      VerticalAlignment="Center" Margin="12,0,0,0"/>
-                            <TextBlock Text="skips I and O · Z is followed by AA"
+                            <TextBlock Text="{Binding StartHint}"
                                        Style="{StaticResource HintText}"
                                        VerticalAlignment="Center" Margin="10,0,0,0"
-                                       MaxWidth="220"/>
+                                       MaxWidth="280"
+                                       TextTrimming="CharacterEllipsis"/>
                         </StackPanel>
 
                         <Border Style="{StaticResource SeparatorLine}"/>

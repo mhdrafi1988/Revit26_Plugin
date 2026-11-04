@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -45,7 +47,18 @@ namespace Revit26_Plugin.BubbleAutoRenumber.V009.UI.ViewModels
 
         [ObservableProperty] private ViewSheet _selectedSheet;
 
-        partial void OnSelectedSheetChanged(ViewSheet value) => RefreshPreview();
+        partial void OnSelectedSheetChanged(ViewSheet value)
+        {
+            ApplySuggestedStart();
+            RefreshPreview();
+        }
+
+        /// <summary>All sheets in sheet-number order — "previous sheet" is read from this,
+        /// not from <see cref="Sheets"/>, which lists the active sheet first.</summary>
+        private readonly List<ViewSheet> _sheetsByNumber = new();
+
+        /// <summary>Set while the start box is filled in code, so the preview is built once.</summary>
+        private bool _suppressRefresh;
 
         public string SelectedSheetName => SelectedSheet?.Name ?? string.Empty;
 
@@ -53,33 +66,42 @@ namespace Revit26_Plugin.BubbleAutoRenumber.V009.UI.ViewModels
         [ObservableProperty] private string _startingNumber = "1";
         [ObservableProperty] private string _verticalThreshold = "20";
 
-        /// <summary>Number with letters (A, B, C…, skipping I and O) instead of 1, 2, 3.</summary>
-        [ObservableProperty] private bool _useLetters;
+        // ── Number format (9.2.0) ─────────────────────────────────────────────────
+        /// <summary>Entries for the Number Format dropdown.</summary>
+        public NumberFormatOption[] NumberFormats => NumberFormatOption.All;
 
-        partial void OnStartingNumberChanged(string value) => RefreshPreview();
+        /// <summary>Chosen format. Defaults to 1, 2, 3 — the old behaviour.</summary>
+        [ObservableProperty] private NumberFormatOption _selectedFormat = NumberFormatOption.All[0];
 
-        /// <summary>
-        /// Carries the start value across when the style flips, so "3" becomes "C" and
-        /// back again instead of leaving an input the new style rejects.
-        /// </summary>
-        partial void OnUseLettersChanged(bool value)
+        /// <summary>Text before the number for the A1, A2, A3 format.</summary>
+        [ObservableProperty] private string _prefix = NumberFormatter.DefaultPrefix;
+
+        /// <summary>Where the default start value came from, shown under the start box.</summary>
+        [ObservableProperty] private string _startHint = string.Empty;
+
+        /// <summary>True when the Prefix box applies (A1, A2, A3 format).</summary>
+        public bool IsPrefixFormat => SelectedFormat?.Format == NumberFormat.PrefixNumber;
+
+        /// <summary>Label beside the start box: a letter for the letter formats, else a number.</summary>
+        public string StartLabel => NumberFormatter.IsLetters(CurrentFormat) ? "Starting Letter" : "Starting Number";
+
+        private NumberFormat CurrentFormat => SelectedFormat?.Format ?? NumberFormat.Numbers;
+
+        partial void OnStartingNumberChanged(string value)
         {
-            if (value)
-            {
-                if (int.TryParse(StartingNumber, out int n) && n > 0)
-                {
-                    StartingNumber = LetterSequence.ToLetters(n);
-                    return; // the setter already refreshed the preview
-                }
-            }
-            else if (LetterSequence.TryParse(StartingNumber, out int pos))
-            {
-                StartingNumber = pos.ToString();
-                return;
-            }
+            if (!_suppressRefresh) RefreshPreview();
+        }
 
+        partial void OnSelectedFormatChanged(NumberFormatOption value)
+        {
+            OnPropertyChanged(nameof(IsPrefixFormat));
+            OnPropertyChanged(nameof(StartLabel));
+            ApplySuggestedStart();
             RefreshPreview();
         }
+
+        partial void OnPrefixChanged(string value) => RefreshPreview();
+
         partial void OnVerticalThresholdChanged(string value) => RefreshPreview();
 
         // ── Type filter (NEW in V009) ─────────────────────────────────────────────
@@ -162,9 +184,72 @@ namespace Revit26_Plugin.BubbleAutoRenumber.V009.UI.ViewModels
                 }
             }
 
+            _sheetsByNumber.AddRange(all.OrderBy(s => s.SheetNumber));
+
             foreach (ViewSheet sheet in all) Sheets.Add(sheet);
 
             SelectedSheet = Sheets.FirstOrDefault();
+        }
+
+        // ── Default start value ───────────────────────────────────────────────────
+        /// <summary>
+        /// Fills the start box with the highest detail number on the previous sheet
+        /// (by sheet number) plus one, in the chosen format. A sheet numbered 1–7 gives
+        /// 8 (or H, h, A8). Falls back to 1 / A when there is no previous sheet or none
+        /// of its numbers can be read. The user can still type over it.
+        /// </summary>
+        private void ApplySuggestedStart()
+        {
+            if (SelectedSheet == null) return;
+
+            int next = 1;
+            int index = _sheetsByNumber.FindIndex(s => s.Id == SelectedSheet.Id);
+            ViewSheet previous = index > 0 ? _sheetsByNumber[index - 1] : null;
+
+            if (previous == null)
+            {
+                StartHint = "first sheet — starts at the beginning";
+            }
+            else
+            {
+                int highest = 0;
+
+                try
+                {
+                    foreach (BubbleRow row in ViewportReader.Read(_doc, previous))
+                    {
+                        if (NumberFormatter.TryReadPosition(row.CurrentNumber, Prefix, out int pos) && pos > highest)
+                            highest = pos;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // A read failure only loses the suggestion; the user can still type a start.
+                    AddLog(LogLevel.Warning, $"Could not read detail numbers on {previous.SheetNumber}: {ex.Message}");
+                }
+
+                if (highest > 0)
+                {
+                    next = highest + 1;
+                    StartHint = $"after {previous.SheetNumber} (last {NumberFormatter.Format(CurrentFormat, highest, Prefix)})";
+                }
+                else
+                {
+                    StartHint = $"{previous.SheetNumber} has no detail numbers — starts at the beginning";
+                }
+            }
+
+            _suppressRefresh = true;
+            try
+            {
+                StartingNumber = NumberFormatter.IsLetters(CurrentFormat)
+                    ? NumberFormatter.Format(CurrentFormat, next)
+                    : next.ToString();
+            }
+            finally
+            {
+                _suppressRefresh = false;
+            }
         }
 
         // ── Preview ───────────────────────────────────────────────────────────────
@@ -219,19 +304,19 @@ namespace Revit26_Plugin.BubbleAutoRenumber.V009.UI.ViewModels
         {
             options = null;
 
-            int start;
+            NumberFormat format = CurrentFormat;
 
-            if (UseLetters)
+            if (!NumberFormatter.TryParseStart(format, StartingNumber, out int start))
             {
-                if (!LetterSequence.TryParse(StartingNumber, out start))
-                {
-                    ValidationMessage = "Starting letter must be letters only, e.g. A or AB. I and O are not used.";
-                    return false;
-                }
+                ValidationMessage = NumberFormatter.IsLetters(format)
+                    ? "Starting letter must be letters only, e.g. A or AB. I and O are not used."
+                    : "Starting number must be a whole number above zero.";
+                return false;
             }
-            else if (!int.TryParse(StartingNumber, out start) || start <= 0)
+
+            if (format == NumberFormat.PrefixNumber && string.IsNullOrWhiteSpace(Prefix))
             {
-                ValidationMessage = "Starting number must be a whole number above zero.";
+                ValidationMessage = "Enter a prefix for the A1, A2, A3 format.";
                 return false;
             }
 
@@ -244,7 +329,8 @@ namespace Revit26_Plugin.BubbleAutoRenumber.V009.UI.ViewModels
             var built = new RenumberOptions
             {
                 StartNumber = start,
-                UseLetters = UseLetters,
+                Format = format,
+                Prefix = Prefix?.Trim() ?? string.Empty,
                 ThresholdFt = UnitUtils.ConvertToInternalUnits(mm, UnitTypeId.Millimeters),
                 IncludeSections = IncludeSections,
                 IncludeDrafting = IncludeDrafting,
@@ -278,7 +364,7 @@ namespace Revit26_Plugin.BubbleAutoRenumber.V009.UI.ViewModels
 
             AddLog(LogLevel.Info,
                 $"Run started on {SelectedSheet.SheetNumber} — {TargetCount} view(s) in scope, "
-                + $"starting at {(options.UseLetters ? LetterSequence.ToLetters(options.StartNumber) : options.StartNumber.ToString())}.");
+                + $"starting at {NumberFormatter.Format(options.Format, options.StartNumber, options.Prefix)}.");
 
             _handler.Request = new RenumberRequest
             {

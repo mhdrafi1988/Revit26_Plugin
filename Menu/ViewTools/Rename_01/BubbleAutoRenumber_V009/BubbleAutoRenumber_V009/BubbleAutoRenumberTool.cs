@@ -12,7 +12,7 @@ namespace Revit26_Plugin.BubbleAutoRenumber.V009
         public const string Name = "Bubble Auto Renumber";
 
         /// <summary>Semantic version, matching the ToolCatalog entry.</summary>
-        public const string Version = "9.1.0";
+        public const string Version = "9.2.0";
 
         /// <summary>Legacy build tag carried by this folder and namespace.</summary>
         public const string BuildTag = "V009";

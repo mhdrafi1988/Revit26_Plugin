@@ -9,11 +9,13 @@ namespace Revit26_Plugin.BubbleAutoRenumber.V009.Core.Models
         public int StartNumber { get; set; } = 1;
 
         /// <summary>
-        /// When true, bubbles get letters (A, B, C… Z, AA…, skipping I and O) instead of
-        /// numbers; <see cref="StartNumber"/> is then the letter's position (A = 1).
-        /// Off by default, so existing runs keep numbering 1, 2, 3.
+        /// How numbers are written (1, 01, A, a, A1). <see cref="StartNumber"/> is the
+        /// position in that sequence (A = 1). Defaults to plain numbers.
         /// </summary>
-        public bool UseLetters { get; set; }
+        public NumberFormat Format { get; set; } = NumberFormat.Numbers;
+
+        /// <summary>Text before the number for <see cref="NumberFormat.PrefixNumber"/>, e.g. "A".</summary>
+        public string Prefix { get; set; } = "A";
 
         /// <summary>Row-banding tolerance in internal units (feet), converted from the
         /// window's millimetres by the ViewModel.</summary>

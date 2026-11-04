@@ -9,6 +9,23 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [3.10.0] — 2026-11-04
+
+### Added
+- **Bubble Auto Renumber v9.2.0 (V009)** — **Number Format** dropdown: `1, 2, 3` · `01, 02, 03` ·
+  `A, B, C` · `a, b, c` · `A1, A2, A3` (with a Prefix box). Letter formats skip I and O.
+- **Default start from the previous sheet** — picking a sheet (or a format) fills the start box
+  with the highest detail number on the sheet before it, by sheet number, plus one, written in the
+  chosen format (previous sheet ends at 7 → 8, H, h or A8). A hint shows which sheet it came from.
+  The first sheet, or a previous sheet with no readable numbers, starts at 1 / A.
+
+### Changed
+- The 9.1.0 **Use letters** checkbox is replaced by the Number Format dropdown (`A, B, C`).
+- Clash checks ignore letter case, so `a` and `A` count as the same number.
+
+**User note:** the start box is no longer always 1 — it now continues from the previous sheet.
+Type over it to start somewhere else. The default format is still `1, 2, 3`.
+
 ## [3.9.0] — 2026-11-04
 
 ### Added
