@@ -9,6 +9,18 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [3.9.0] — 2026-11-04
+
+### Added
+- **Bubble Auto Renumber v9.1.0 (V009)** — new **Use letters (A, B, C…)** option next to Starting
+  Number. Bubbles are lettered A, B, C… Z, then AA, AB…; **I and O are skipped** so they are not
+  read as 1 and 0. Type a start letter (e.g. `C`, lowercase is fine); ticking the box converts the
+  current start value (3 → C) and unticking converts it back. Clashes with views left alone still
+  get the `(D)` suffix, e.g. `C (D)`. V009 also gets its own `ToolCatalog` entry so error dialogs
+  and logs name the right version.
+
+**User note:** the option is off by default — existing runs still number 1, 2, 3.
+
 ## [3.8.0] — 2026-10-17
 
 ### Added
