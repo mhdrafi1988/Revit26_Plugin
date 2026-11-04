@@ -31,7 +31,10 @@ namespace Revit26_Plugin.AutoSlopeByPointRidge.V003.Commands
     [Regeneration(RegenerationOption.Manual)]
     public class AutoSlopeCommand : IExternalCommand
     {
-        public Result Execute(ExternalCommandData data, ref string msg, ElementSet elems)
+        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunCommand(GetType(), commandData, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData data, ref string msg, ElementSet elems)
         {
             UIDocument uidoc = data.Application.ActiveUIDocument;
             Document doc = uidoc.Document;

@@ -21,6 +21,9 @@ namespace Revit26_Plugin.ParaManager.V005.Services
         public event Action<List<RowResult>, Exception> Completed;
 
         public void Execute(UIApplication app)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             List<RowResult> results = null;
             Exception failure = null;

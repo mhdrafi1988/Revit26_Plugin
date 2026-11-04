@@ -21,6 +21,9 @@ namespace Revit26_Plugin.TaperedEpsPattern2D.V002.Commands
     public sealed class TaperedEpsPattern2DCommand : IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunCommand(GetType(), commandData, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             UIApplication uiapp = commandData.Application;
             UIDocument? uidoc = uiapp.ActiveUIDocument;

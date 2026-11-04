@@ -48,6 +48,9 @@ namespace Revit26_Plugin.RoofTools.LineAndPoints.RoofRidgeLines.V059.Services
         }
 
         public void Execute(UIApplication app)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             while (_queue.TryDequeue(out var item))
             {

@@ -53,6 +53,9 @@ namespace Revit26_Plugin.WorksetsElementsBrowser.WSEB004.Infrastructure.External
         }
 
         public void Execute(UIApplication app)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             WsebDebugLog.Write($"Execute() entered, Request={Request}");
             ErrorMessage = string.Empty;

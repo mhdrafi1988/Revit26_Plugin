@@ -24,6 +24,9 @@ namespace Revit26_Plugin.RoofViewFocus.V004.Infrastructure.ExternalEvents
         public string GetName() => "RoofViewFocusHandler";
 
         public void Execute(UIApplication app)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             FocusRequest? request = PendingRequest;
             PendingRequest = null;

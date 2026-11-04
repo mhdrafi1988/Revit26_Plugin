@@ -15,6 +15,9 @@ namespace Revit26_Plugin.RoofDetailLineIntersect.V014.Commands
     public class RoofDetailLineIntersectCommand : IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunCommand(GetType(), commandData, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             UIDocument uiDoc      = commandData.Application.ActiveUIDocument;
             Document   doc        = uiDoc.Document;

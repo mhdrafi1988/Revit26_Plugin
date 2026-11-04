@@ -51,6 +51,9 @@ namespace Revit26_Plugin.SectionViewAutoTagger.V006
         public bool IsPending { get; private set; }
 
         public void Execute(UIApplication app)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             IsPending = true;
             var doc = app.ActiveUIDocument?.Document;

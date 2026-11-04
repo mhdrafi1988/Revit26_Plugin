@@ -56,6 +56,9 @@ namespace Revit26_Plugin.CreateSections.V013.Services
         }
 
         public void Execute(UIApplication app)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             Document doc = _uiDoc.Document;
 

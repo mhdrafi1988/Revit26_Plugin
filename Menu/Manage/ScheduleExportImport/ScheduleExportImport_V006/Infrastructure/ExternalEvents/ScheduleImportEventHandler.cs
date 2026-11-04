@@ -55,6 +55,9 @@ namespace Revit26_Plugin.ScheduleExportImport.V006.Infrastructure.ExternalEvents
         }
 
         public void Execute(UIApplication app)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             ErrorMessage = string.Empty;
             try

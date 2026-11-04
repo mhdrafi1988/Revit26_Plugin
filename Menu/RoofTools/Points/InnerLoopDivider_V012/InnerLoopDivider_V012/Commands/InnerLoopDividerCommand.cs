@@ -31,6 +31,9 @@ namespace Revit26_Plugin.InnerLoopDivider.V012.Commands
     public class InnerLoopDividerCommand : IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunCommand(GetType(), commandData, ref message, elements, ExecuteUnguarded);
+
+        private Result ExecuteUnguarded(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             UIDocument uidoc = commandData.Application.ActiveUIDocument;
             if (uidoc == null)

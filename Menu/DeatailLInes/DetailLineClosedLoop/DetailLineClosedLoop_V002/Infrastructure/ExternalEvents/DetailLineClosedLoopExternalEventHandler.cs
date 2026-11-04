@@ -28,6 +28,9 @@ namespace Revit26_Plugin.DetailLineClosedLoop.V002.Infrastructure.ExternalEvents
         public DetailLineClosedLoopExternalEventHandler(DetailLineClosedLoopViewModel vm) => _vm = vm;
 
         public void Execute(UIApplication app)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             UIDocument uiDoc = app.ActiveUIDocument;
             Document doc = uiDoc?.Document;

@@ -29,6 +29,9 @@ namespace Revit26_Plugin.RoofTypeCreator.V002.Infrastructure.ExternalEvents
         public Action<string, string>          OnLog              { get; set; }
 
         public void Execute(UIApplication app)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             var doc = app.ActiveUIDocument?.Document;
             if (doc == null) return;

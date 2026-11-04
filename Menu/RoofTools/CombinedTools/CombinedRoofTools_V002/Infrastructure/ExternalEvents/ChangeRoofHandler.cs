@@ -22,6 +22,9 @@ namespace Revit26_Plugin.CombinedRoofTools.V002.Infrastructure.ExternalEvents
         public static ChangeRoofPayload Payload;
 
         public void Execute(UIApplication app)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             if (Payload == null) return;
             ChangeRoofPayload current = Payload;

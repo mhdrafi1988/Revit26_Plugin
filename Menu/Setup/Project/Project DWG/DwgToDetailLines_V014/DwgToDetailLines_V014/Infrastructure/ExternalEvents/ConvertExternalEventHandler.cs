@@ -26,6 +26,9 @@ namespace Revit26_Plugin.DwgToDetailLines.V014.Infrastructure.ExternalEvents
         }
 
         public void Execute(UIApplication app)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             try
             {

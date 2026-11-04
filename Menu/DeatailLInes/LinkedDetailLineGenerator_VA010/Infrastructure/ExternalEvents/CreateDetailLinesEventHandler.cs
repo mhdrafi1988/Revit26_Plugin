@@ -37,6 +37,9 @@ namespace Revit26_Plugin.LinkedDetailLineGenerator.VA010.Infrastructure.External
         public Action<ProcessingResult>? OnComplete { get; set; }
 
         public void Execute(UIApplication app)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             var request = PendingRequest;
             PendingRequest = null;

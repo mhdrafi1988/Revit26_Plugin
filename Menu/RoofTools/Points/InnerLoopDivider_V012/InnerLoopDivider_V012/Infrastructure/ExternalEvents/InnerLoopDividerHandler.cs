@@ -23,6 +23,9 @@ namespace Revit26_Plugin.InnerLoopDivider.V012.Infrastructure.ExternalEvents
         public static InnerLoopDividerPayload Payload;
 
         public void Execute(UIApplication app)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             InnerLoopDividerPayload current = Payload;
             Payload = null;

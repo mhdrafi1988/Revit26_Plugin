@@ -16,6 +16,9 @@ namespace Revit26_Plugin.TaperedEpsPattern2D.V002.Events
         public event Action<PatternWriteResult>? Completed;
 
         public void Execute(UIApplication app)
+            => global::Revit26_Plugin.Shared.Services.ToolGuard.RunHandler(GetType(), app, ExecuteUnguarded);
+
+        private void ExecuteUnguarded(UIApplication app)
         {
             PatternWriteRequest? request = Pending;
             Pending = null;
