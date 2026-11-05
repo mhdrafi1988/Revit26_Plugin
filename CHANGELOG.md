@@ -9,6 +9,25 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [3.12.0] — 2026-11-05
+
+### Added
+- **Annotation Overlap Detection v4.3.0 (V004)**
+  - **Export…** — save the results to **Excel (.xlsx)** or **CSV**. Columns match the results
+    table. The Excel file has a filter row, a frozen header and an **Info** sheet (export format
+    version 1, document, tool version, scope and settings).
+  - **Highlight in Revit** — colours both elements of every listed overlap red in their view, as
+    one undoable step. Only the line colour is overridden; other overrides you set (weight,
+    pattern, halftone…) are kept.
+  - **Clear Highlight** — removes every highlight the tool made in the model and puts back each
+    element's original colour. This works even after the window or Revit was closed: the original
+    colours are saved on the view (new Extensible Storage schema
+    `AnnotationOverlapDetection_Highlight`). Views being edited by another user are skipped, with
+    a message.
+
+**User note:** highlighting changes view graphics and is saved with the model until you click
+**Clear Highlight** (or undo it).
+
 ## [3.11.0] — 2026-11-04
 
 ### Added

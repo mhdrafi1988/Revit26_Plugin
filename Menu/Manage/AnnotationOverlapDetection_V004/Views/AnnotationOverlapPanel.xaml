@@ -20,6 +20,8 @@ v4.1.0:
 v4.2.0:
   - Include leaders option; scope row with Batch Check… and Back to start view.
   - View column appended at the end of the results.
+v4.3.0:
+  - Results toolbar: Export…, Highlight in Revit, Clear Highlight.
 =======================================================
 -->
 <Window x:Class="Revit26_Plugin.AnnotationOverlapDetection.V004.Views.AnnotationOverlapPanel"
@@ -156,6 +158,21 @@ v4.2.0:
                         </Grid>
                     </StackPanel>
                 </Border>
+
+                <!-- v4.3.0: results toolbar -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,6">
+                    <Button Content="Highlight in Revit" Style="{StaticResource SmallSecondaryButton}" Margin="0,0,6,0"
+                            Command="{Binding HighlightCommand}"
+                            IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"
+                            ToolTip="Colour both elements of every listed overlap red in their view (undoable)." />
+                    <Button Content="Clear Highlight" Style="{StaticResource SmallSecondaryButton}" Margin="0,0,6,0"
+                            Command="{Binding ClearHighlightCommand}"
+                            IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"
+                            ToolTip="Remove every highlight this tool made in the model and restore the original colours." />
+                    <Button Content="Export…" Style="{StaticResource SmallSecondaryButton}"
+                            Command="{Binding ExportCommand}"
+                            ToolTip="Save the results to Excel (.xlsx) or CSV." />
+                </StackPanel>
 
                 <!-- Section 4: Results grid -->
                 <DataGrid ItemsSource="{Binding OverlapResults}" MinHeight="160"

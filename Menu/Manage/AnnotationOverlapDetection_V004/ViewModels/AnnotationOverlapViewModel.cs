@@ -16,11 +16,13 @@ namespace Revit26_Plugin.AnnotationOverlapDetection.V004.ViewModels
     /// <summary>
     /// View model for the Annotation Overlap Detection window.
     /// Since v4.2.0 a scan can cover several views (batch check by sheets and/or views),
-    /// and leaders can be left out of the check.
+    /// and leaders can be left out of the check. Since v4.3.0 results can be exported and
+    /// the clashing elements highlighted red in Revit.
     /// </summary>
     public partial class AnnotationOverlapViewModel : ObservableObject
     {
         private readonly Document _doc;
+        private readonly string _docTitle;
         private readonly List<ElementId> _startScope;
         private readonly ExternalEvent _zoomEvent;
         private readonly ZoomToElementEventHandler _zoomHandler;
@@ -101,6 +103,7 @@ namespace Revit26_Plugin.AnnotationOverlapDetection.V004.ViewModels
             ExternalEvent refreshEvent, RefreshAnnotationsEventHandler refreshHandler)
         {
             _doc = doc;
+            _docTitle = doc.Title;
             _startScope = startScope.Select(v => v.Id).ToList();
             _scopeViewIds = new List<ElementId>(_startScope);
             _zoomEvent = zoomEvent;
@@ -274,6 +277,104 @@ namespace Revit26_Plugin.AnnotationOverlapDetection.V004.ViewModels
                 });
 
             return new BatchScopePickerViewModel(sheetItems.ToList(), viewItems.ToList());
+        }
+
+        /// <summary>v4.3.0: save the results to Excel (.xlsx) or CSV.</summary>
+        [RelayCommand]
+        private void Export()
+        {
+            ShowMessage(null);
+            if (OverlapResults.Count == 0)
+            {
+                ShowMessage("Nothing to export - run Check Overlaps first.");
+                return;
+            }
+
+            var dialog = new Microsoft.Win32.SaveFileDialog
+            {
+                Title = "Export overlap results",
+                Filter = "Excel workbook (*.xlsx)|*.xlsx|CSV (*.csv)|*.csv",
+                FileName = MakeSafeFileName($"{_docTitle} - Annotation Overlaps") + ".xlsx",
+                AddExtension = true,
+                OverwritePrompt = true
+            };
+            if (dialog.ShowDialog() != true)
+                return;
+
+            try
+            {
+                OverlapExportService.Export(dialog.FileName, OverlapResults.ToList(), new OverlapExportService.ExportInfo
+                {
+                    DocumentTitle = _docTitle,
+                    ToolVersion = global::Revit26_Plugin.Shared.Services.ToolCatalog.AnnotationOverlapDetection.Version,
+                    Scope = ViewInfoText,
+                    CheckAcrossTypes = CheckAcrossTypes,
+                    IncludeLeaders = _scannedWithLeaders,
+                    MinOverlapPaperMm = MinOverlapPaperMm
+                });
+                SummaryText = $"Exported {OverlapResults.Count} overlaps to {System.IO.Path.GetFileName(dialog.FileName)}.";
+            }
+            catch (System.IO.IOException ex)
+            {
+                ShowMessage($"Could not save the file - is it open in another program? ({ex.Message})");
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                ShowMessage($"No permission to save there: {ex.Message}");
+            }
+        }
+
+        /// <summary>v4.3.0: colour both elements of every listed overlap red in their view.</summary>
+        [RelayCommand]
+        private void Highlight()
+        {
+            ShowMessage(null);
+            if (OverlapResults.Count == 0)
+            {
+                ShowMessage("Nothing to highlight - run Check Overlaps first.");
+                return;
+            }
+
+            var byView = new Dictionary<ElementId, HashSet<ElementId>>();
+            foreach (var r in OverlapResults)
+            {
+                var viewId = new ElementId(r.ViewId);
+                if (!byView.TryGetValue(viewId, out var set))
+                    byView[viewId] = set = new HashSet<ElementId>();
+                set.Add(new ElementId(r.ElementId1));
+                set.Add(new ElementId(r.ElementId2));
+            }
+
+            RunInApiContext(_ =>
+            {
+                var outcome = HighlightService.Highlight(_doc, byView);
+                SummaryText = $"Highlighted {outcome.Elements} element(s) red in {outcome.Views} view(s). Use Clear Highlight to remove.";
+                if (outcome.Warnings.Count > 0)
+                    ShowMessage(string.Join(Environment.NewLine, outcome.Warnings));
+            });
+        }
+
+        /// <summary>v4.3.0: remove every highlight this tool made in the model and restore the original colours.</summary>
+        [RelayCommand]
+        private void ClearHighlight()
+        {
+            ShowMessage(null);
+            RunInApiContext(_ =>
+            {
+                var outcome = HighlightService.ClearAll(_doc);
+                SummaryText = outcome.Views == 0 && outcome.Warnings.Count == 0
+                    ? "No highlights to clear."
+                    : $"Cleared highlight on {outcome.Elements} element(s) in {outcome.Views} view(s).";
+                if (outcome.Warnings.Count > 0)
+                    ShowMessage(string.Join(Environment.NewLine, outcome.Warnings));
+            });
+        }
+
+        private static string MakeSafeFileName(string name)
+        {
+            foreach (char c in System.IO.Path.GetInvalidFileNameChars())
+                name = name.Replace(c, '_');
+            return name;
         }
 
         private void ShowMessage(string message)
