@@ -14,9 +14,11 @@ namespace Revit26_Plugin.AnnotationOverlapDetection.V004.Helpers
         private const double FeetToMm = 304.8;
 
         /// <summary>
-        /// Reads an element's bounding box (as seen in the given view) and
-        /// converts it to (x, y, width, height) in mm. Returns null if the
-        /// element has no bounding box in this view (e.g. hidden).
+        /// Reads an element's bounding box (as seen in the given view) and returns it as
+        /// (x, y, width, height) in mm, measured along the view's own right / up axes.
+        /// This makes the check work in sections, elevations and drafting views, not only
+        /// plans. In a plan view the axes are world X / Y, so results match v4.0.
+        /// Returns null if the element has no bounding box in this view (e.g. hidden).
         /// </summary>
         public static (double x, double y, double width, double height)? GetBoundingBox(Element elem, View view)
         {
@@ -24,18 +26,33 @@ namespace Revit26_Plugin.AnnotationOverlapDetection.V004.Helpers
             if (bbox == null)
                 return null;
 
-            double x = bbox.Min.X * FeetToMm;
-            double y = bbox.Min.Y * FeetToMm;
-            double width = (bbox.Max.X - bbox.Min.X) * FeetToMm;
-            double height = (bbox.Max.Y - bbox.Min.Y) * FeetToMm;
+            XYZ right = view.RightDirection;
+            XYZ up = view.UpDirection;
+            Transform t = bbox.Transform ?? Transform.Identity;
 
-            return (x, y, width, height);
+            double minU = double.MaxValue, maxU = double.MinValue;
+            double minV = double.MaxValue, maxV = double.MinValue;
+
+            // Project all 8 corners onto the view plane axes.
+            for (int i = 0; i < 8; i++)
+            {
+                var local = new XYZ(
+                    (i & 1) == 0 ? bbox.Min.X : bbox.Max.X,
+                    (i & 2) == 0 ? bbox.Min.Y : bbox.Max.Y,
+                    (i & 4) == 0 ? bbox.Min.Z : bbox.Max.Z);
+                XYZ p = t.OfPoint(local);
+
+                double u = p.DotProduct(right);
+                double v = p.DotProduct(up);
+                minU = Math.Min(minU, u); maxU = Math.Max(maxU, u);
+                minV = Math.Min(minV, v); maxV = Math.Max(maxV, v);
+            }
+
+            return (minU * FeetToMm, minV * FeetToMm, (maxU - minU) * FeetToMm, (maxV - minV) * FeetToMm);
         }
 
         /// <summary>
         /// Insertion point in mm - defaults to the bounding box min corner.
-        /// (Elements with a LocationPoint could be handled more precisely by
-        /// the caller before falling back to this.)
         /// </summary>
         public static (double x, double y) GetInsertionPoint(AnnotationData data)
         {
@@ -51,6 +68,16 @@ namespace Revit26_Plugin.AnnotationOverlapDetection.V004.Helpers
             bool overlapsX = a.X < b.Right && b.X < a.Right;
             bool overlapsY = a.Y < b.Bottom && b.Y < a.Bottom;
             return overlapsX && overlapsY;
+        }
+
+        /// <summary>
+        /// Width and height of the overlap area in model mm (0 when the boxes do not overlap).
+        /// </summary>
+        public static (double width, double height) GetOverlapSize(AnnotationData a, AnnotationData b)
+        {
+            double w = Math.Min(a.Right, b.Right) - Math.Max(a.X, b.X);
+            double h = Math.Min(a.Bottom, b.Bottom) - Math.Max(a.Y, b.Y);
+            return (Math.Max(0, w), Math.Max(0, h));
         }
 
         /// <summary>

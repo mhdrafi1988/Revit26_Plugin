@@ -9,6 +9,74 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [3.12.0] — 2026-11-05
+
+### Added
+- **Annotation Overlap Detection v4.3.0 (V004)**
+  - **Export…** — save the results to **Excel (.xlsx)** or **CSV**. Columns match the results
+    table. The Excel file has a filter row, a frozen header and an **Info** sheet (export format
+    version 1, document, tool version, scope and settings).
+  - **Highlight in Revit** — colours both elements of every listed overlap red in their view, as
+    one undoable step. Only the line colour is overridden; other overrides you set (weight,
+    pattern, halftone…) are kept.
+  - **Clear Highlight** — removes every highlight the tool made in the model and puts back each
+    element's original colour. This works even after the window or Revit was closed: the original
+    colours are saved on the view (new Extensible Storage schema
+    `AnnotationOverlapDetection_Highlight`). Views being edited by another user are skipped, with
+    a message.
+
+**User note:** highlighting changes view graphics and is saved with the model until you click
+**Clear Highlight** (or undo it).
+
+## [3.11.0] — 2026-11-04
+
+### Added
+- **Annotation Overlap Detection v4.2.0 (V004)**
+  - **Batch Check…** — tick sheets and/or views (two tabs, with a filter). The check covers every
+    ticked view plus every supported view placed on a ticked sheet; each view is checked on its
+    own, never against another view. A **View** column is added at the end of the results, and
+    clicking an ID opens that view and zooms to the pair. **Back to Start View** returns to the
+    original scope.
+  - Can be started from a **sheet**: it checks the views placed on that sheet.
+  - **Include leaders** option (unticked by default).
+
+### Changed
+- **Annotation Overlap Detection v4.2.0** — tighter outlines: rotated text notes and tags are
+  checked as rotated rectangles instead of their larger axis-aligned box, so fewer false
+  overlaps. Dimensions are still checked by their whole box. Leaders are left out unless
+  **Include leaders** is ticked. To measure without leaders, the tool removes them inside a
+  transaction that is always rolled back: the model is never changed and nothing is added to
+  Undo. Elements it cannot edit keep their leader in the check, with a message.
+- The window now opens even when the starting view has no annotations, so Batch Check is
+  still available.
+
+**User note:** leaders are now left out by default, as requested, so a tag whose only clash is its
+leader is no longer reported. Tick **Include leaders** to get the v4.1 results back.
+
+## [3.10.0] — 2026-11-04
+
+### Added
+- **Annotation Overlap Detection v4.1.0 (V004)**
+  - **Check across types** option — also reports overlaps between different types, e.g. a tag
+    over a text note (shown as `IndependentTag / TextNote`).
+  - **Min overlap (paper mm)** — ignore overlaps smaller than this on the printed sheet. The view
+    name and scale are shown next to it.
+  - Two new columns at the end of the results: **Overlap W / H (paper mm)**, the size of the clash
+    as printed (model size ÷ view scale).
+  - **Refresh** button — re-scans the view after annotations are moved, added or deleted. Unticked
+    types stay unticked.
+  - Works in ceiling, area and structural plans, sections, elevations, detail, drafting and legend
+    views, not just floor plans. Boxes are measured along the view's own axes.
+
+### Changed
+- **Annotation Overlap Detection v4.1.0** — clicking either ID now zooms to **both** elements of
+  the pair and selects both. If an element was deleted or the active view changed, a message says
+  so instead of doing nothing. Within each pair, the lower element ID is now listed first, so the
+  order is the same on every run. Faster check on views with many annotations.
+
+**User note:** both new options are off by default (`Check across types` unticked, min overlap 0),
+so a floor plan check returns the same pairs as v4.0.1.
+
 ## [3.9.1] — 2026-11-04
 
 ### Fixed

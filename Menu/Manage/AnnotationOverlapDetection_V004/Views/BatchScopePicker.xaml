@@ -1,0 +1,67 @@
+<!-- v4.2.0: batch picker for Annotation Overlap Detection - tick sheets and/or views. -->
+<Window x:Class="Revit26_Plugin.AnnotationOverlapDetection.V004.Views.BatchScopePicker"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Batch Check — choose sheets and views"
+        Width="560" Height="600" MinWidth="460" MinHeight="420"
+        ResizeMode="CanResizeWithGrip"
+        WindowStartupLocation="CenterOwner">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Revit26_Plugin;component/Shared/SharedStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <DataTemplate x:Key="ScopeRow">
+                <StackPanel Orientation="Horizontal" Margin="0,2">
+                    <CheckBox IsChecked="{Binding IsSelected}" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding Name}" Margin="6,0,6,0" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding Detail}" Foreground="{StaticResource BrushTextSecondary}" VerticalAlignment="Center" />
+                </StackPanel>
+            </DataTemplate>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="0,0,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Filter:" VerticalAlignment="Center" Margin="0,0,6,0" />
+            <TextBox Grid.Column="1" Style="{StaticResource BoxedTextInput}"
+                     Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" />
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="8,0,0,0">
+                <Button Content="Select Visible" Style="{StaticResource SmallSecondaryButton}" Command="{Binding SelectVisibleCommand}" Margin="0,0,6,0" />
+                <Button Content="Clear All" Style="{StaticResource SmallSecondaryButton}" Command="{Binding ClearAllCommand}" />
+            </StackPanel>
+        </Grid>
+
+        <TabControl Grid.Row="1">
+            <TabItem Header="Sheets">
+                <ListBox ItemsSource="{Binding SheetsView}" ItemTemplate="{StaticResource ScopeRow}"
+                         BorderThickness="0" VirtualizingStackPanel.IsVirtualizing="True" />
+            </TabItem>
+            <TabItem Header="Views">
+                <ListBox ItemsSource="{Binding ViewsView}" ItemTemplate="{StaticResource ScopeRow}"
+                         BorderThickness="0" VirtualizingStackPanel.IsVirtualizing="True" />
+            </TabItem>
+        </TabControl>
+
+        <TextBlock Grid.Row="2" Text="{Binding SelectionSummary}" Margin="0,8,0,8"
+                   Foreground="{StaticResource BrushTextSecondary}" TextWrapping="Wrap" />
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Scan" Style="{StaticResource PrimaryButton}" Command="{Binding AcceptCommand}" MinWidth="110" Margin="0,0,8,0" />
+            <Button Content="Cancel" Style="{StaticResource OutlineButton}" Command="{Binding CancelCommand}" Width="90" Height="38" />
+        </StackPanel>
+    </Grid>
+</Window>
