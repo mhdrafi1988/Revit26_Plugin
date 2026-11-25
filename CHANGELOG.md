@@ -9,6 +9,27 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [3.10.0] — 2026-11-25
+
+### Added
+- **Section To Sheet v1.0.0 (V001)** — new full-size button in the **Sheet Create** panel. Run it
+  from a plan view: it lists every section visible in that plan (placed and not placed) and places
+  the ticked ones on sheets in one step, laid out with Section Placer's packing. Setup in the same
+  window: start sheet (new or existing), what to do when a sheet is full (new sheets, or existing
+  sheets you tick, then new sheets), what to do when a sheet already has views (stack below / skip to
+  the next sheet / rearrange all views together), titleblock, new sheet number (prefix + start,
+  used numbers skipped) and name, layout algorithm, margins and gaps. The setup is remembered.
+  Sections already on a sheet are **moved** (their viewport type is kept). One Undo step; any error
+  rolls everything back. Views or sheets checked out by another user are skipped and logged.
+
+### Changed
+- **Rearrange** (dropdown, V028 / V027) and **Arrange Views** are now **full-size ribbon buttons**
+  instead of small stacked ones. Their names, commands and version order are unchanged.
+
+**User note:** the Sheet Create panel now shows Rearrange, Arrange Views and the new Section To
+Sheet as large buttons; Scope Box, Sheet Placer and Section Placer stay stacked. "Rearrange all"
+moves existing views only — schedules, legends and text on that sheet stay where they are.
+
 ## [3.9.1] — 2026-11-04
 
 ### Fixed
