@@ -67,6 +67,7 @@ namespace Revit26_Plugin.Menu.Ribbon
                 ToolTip = RibbonLayoutHelper.VersionTip("Sheet Auto Rearrange", "V028", "V027 on the shared ToolWindowShell (log in body, capped grid).")
             };
             var rearrangePulldownData = RibbonLayoutHelper.CreatePulldownButtonData("Pulldown_SheetAutoRearrange", "Rearrange", rearrangeV028);
+            rearrangePulldownData.LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SheetAutoRearrange_V025_32.png");
 
             // Sheet View Arrange: separate tool (not a Rearrange version) — keeps the views'
             // sizes, orders them by detail number and lays them out as a reading table.
@@ -80,15 +81,31 @@ namespace Revit26_Plugin.Menu.Ribbon
                     "left to right, rows top to bottom, evenly spread and bottom-aligned so titles line up.")
             };
 
+            // Section To Sheet: standalone tool — places every section visible in the active plan
+            // onto existing / new sheets in one window (already-placed sections are moved).
+            // TODO: swap for a dedicated icon — temporarily reusing the Sheet Placer icon.
+            var sectionToSheetV001 = new PushButtonData("Btn_SectionToSheet.V001", "Section To Sheet", assemblyPath, "Revit26_Plugin.SectionToSheet.V001.Commands.SectionToSheetCommand")
+            {
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SmartViewToSheetPlacer_V222_16.png"),
+                LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SmartViewToSheetPlacer_V222_32.png"),
+                ToolTip = ToolCatalog.SectionToSheet.Tip(
+                    "Places every section visible in the active plan onto sheets in one step — on an existing or a new sheet, " +
+                    "continuing on more sheets when one is full. Sections already on a sheet are moved.")
+            };
+
             var sheetCreateItems = RibbonLayoutHelper.AddStackedButtons(createPanel, new List<RibbonItemData>
             {
                 scopeBoxPulldownData, sheetPlacerPulldownData, autoSectionPlacerPulldownData,
-                rearrangePulldownData, viewArrangeV001,
             });
             RibbonLayoutHelper.WirePulldownButton(sheetCreateItems, "Pulldown_PlanFromScopeBox", scopeBoxV006, scopeBoxV005);
             RibbonLayoutHelper.WirePulldownButton(sheetCreateItems, "Pulldown_SmartViewToSheetPlacer", sheetPlacerV224, sheetPlacerV223);
             RibbonLayoutHelper.WirePulldownButton(sheetCreateItems, "Pulldown_AutomatedSectionPlacer", autoSectionPlacerV003, autoSectionPlacerV002);
-            RibbonLayoutHelper.WirePulldownButton(sheetCreateItems, "Pulldown_SheetAutoRearrange", rearrangeV028, rearrangeV027);
+
+            // Rearrange, Arrange Views and Section To Sheet are full-size buttons (plugin 3.10.0).
+            var rearrangeItem = createPanel.AddItem(rearrangePulldownData);
+            RibbonLayoutHelper.WirePulldownButton(new List<RibbonItem> { rearrangeItem }, "Pulldown_SheetAutoRearrange", rearrangeV028, rearrangeV027);
+            createPanel.AddItem(viewArrangeV001);
+            createPanel.AddItem(sectionToSheetV001);
         }
     }
 }
