@@ -83,11 +83,10 @@ namespace Revit26_Plugin.Menu.Ribbon
 
             // Section To Sheet: standalone tool — places every section visible in the active plan
             // onto existing / new sheets in one window (already-placed sections are moved).
-            // TODO: swap for a dedicated icon — temporarily reusing the Sheet Placer icon.
             var sectionToSheetV001 = new PushButtonData("Btn_SectionToSheet.V001", "Section To Sheet", assemblyPath, "Revit26_Plugin.SectionToSheet.V001.Commands.SectionToSheetCommand")
             {
-                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SmartViewToSheetPlacer_V222_16.png"),
-                LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SmartViewToSheetPlacer_V222_32.png"),
+                Image = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SectionToSheet_16.png"),
+                LargeImage = ImageUtils.Load("Revit26_Plugin.Resources.Icons.SheetTools.SectionToSheet_32.png"),
                 ToolTip = ToolCatalog.SectionToSheet.Tip(
                     "Places every section visible in the active plan onto sheets in one step — on an existing or a new sheet, " +
                     "continuing on more sheets when one is full. Sections already on a sheet are moved.")
