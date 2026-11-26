@@ -9,6 +9,14 @@ versions follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 Each release lists every tool whose version changed, under the plugin version.
 
+## [3.10.1] — 2026-11-26
+
+### Changed
+- **Section To Sheet v1.0.1 (V001)** — own ribbon icon (section marker and a sheet with views)
+  instead of the borrowed Sheet Placer icon.
+
+**User note:** icon only; the tool works the same.
+
 ## [3.10.0] — 2026-11-25
 
 ### Added

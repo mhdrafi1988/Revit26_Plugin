@@ -96,7 +96,7 @@ namespace Revit26_Plugin.Shared.Services
         public static readonly ToolInfo AutomatedSectionPlacer = Add("Automated Section Placer", "3.0.1", "V003", "Revit26_Plugin.AutomatedSectionPlacer.V003");
         public static readonly ToolInfo SheetAutoRearrange = Add("Sheet Auto Rearrange", "28.0.1", "V028", "Revit26_Plugin.SheetAutoRearrange.V028");
         public static readonly ToolInfo SheetViewArrange = Add("Sheet View Arrange", "1.1.0", "V001", "Revit26_Plugin.SheetViewArrange.V001");
-        public static readonly ToolInfo SectionToSheet = Add("Section To Sheet", "1.0.0", "V001", "Revit26_Plugin.SectionToSheet.V001");
+        public static readonly ToolInfo SectionToSheet = Add("Section To Sheet", "1.0.1", "V001", "Revit26_Plugin.SectionToSheet.V001");
         public static readonly ToolInfo RoofEdgeAroundSections = Add("Roof Edge Around Sections", "7.0.1", "V007", "Revit26_Plugin.RoofEdgeAroundSections.V007");
         public static readonly ToolInfo RoofEdgeElementSections = Add("Roof Edge Element Sections", "4.0.1", "V004", "Revit26_Plugin.RoofEdgeElementSections.V004");
         public static readonly ToolInfo RoofNameBuilder = Add("Roof Name Builder", "2.0.0", "V002", "Revit26_Plugin.RoofNameBuilder.V002");
